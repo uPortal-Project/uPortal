@@ -50,8 +50,6 @@ import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.security.*;
 import org.xml.sax.DocumentHandler;
-import java.util.Hashtable;
-import java.net.URL;
 import javax.servlet.http.HttpSession;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -151,15 +149,17 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     }
 
     doc.appendChild(loginStatusElement);
-
-    Hashtable params = new Hashtable(2);
-    params.put("baseActionURL", runtimeData.getBaseActionURL());
-    if (fullName != null && fullName.equals("Guest"))
-      params.put("guest", "true");
-
+    
     try
     {
-      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getBrowserInfo());
+      XSLT xslt = new XSLT();
+      xslt.setXML(doc);
+      xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+      if (fullName != null && fullName.equals("Guest"))
+        xslt.setStylesheetParameter("guest", "true");            
+      xslt.transform();
     }
     catch (Exception e)
     {
