@@ -49,6 +49,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
   private static final String PARAMETER = "parameter";
 
 
+    private static final String CHANNEL_PREFIX="n";
+    private static final String FOLDER_PREFIX="s";
+
 
   public AggregatedUserLayoutImpl( IPerson person, int layoutId) {
     this.person = person;
@@ -173,7 +176,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
              folderDescription = (UserLayoutFolderDescription) folder.getNodeDescription();
              String folderId = folderDescription.getId();
              attributes.addAttribute("","ID","ID","ID",
-                        rootNodeId.equals(folderId)?folderId:UserLayoutFolderDescription.FOLDER_PREFIX+folderId);
+                        rootNodeId.equals(folderId)?folderId:FOLDER_PREFIX+folderId);
              attributes.addAttribute("","type","type","CDATA",
                         UserLayoutFolderDescription.folderTypeNames[folderDescription.getFolderType()]);
              attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(folderDescription.isHidden()));
@@ -203,7 +206,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
               channelDescription = (UserLayoutChannelDescription) node.getNodeDescription();
 
-              attributes.addAttribute("","ID","ID","ID",UserLayoutChannelDescription.CHANNEL_PREFIX+channelDescription.getId());
+              attributes.addAttribute("","ID","ID","ID",CHANNEL_PREFIX+channelDescription.getId());
               attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
               attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(channelDescription.isHidden()));
               attributes.addAttribute("","editable","editable","CDATA",CommonUtils.boolToStr(channelDescription.isEditable()));
@@ -319,9 +322,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
       String nodeId = node.getAttribute("ID");
 
       if ( nodeDesc instanceof UserLayoutFolderDescription )
-        nodeId = nodeId.substring(UserLayoutFolderDescription.FOLDER_PREFIX.length());
+        nodeId = nodeId.substring(FOLDER_PREFIX.length());
       else if ( nodeDesc instanceof UserLayoutChannelDescription )
-        nodeId = nodeId.substring(UserLayoutChannelDescription.CHANNEL_PREFIX.length());
+        nodeId = nodeId.substring(CHANNEL_PREFIX.length());
 
 
       nodeDesc.setId(nodeId);
