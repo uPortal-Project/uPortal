@@ -186,7 +186,8 @@ public class CUserPreferences implements ISpecialChannel
 		this.internalState=managePreferences;
 		
 	    }
-	} else 
+	}
+	if(internalState!=null)
 	    internalState.setRuntimeData(rd);
 
     }

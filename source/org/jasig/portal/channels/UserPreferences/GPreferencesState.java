@@ -169,7 +169,7 @@ class GPreferencesState extends BaseState {
 	String action = runtimeData.getParameter ("action");
 	if (action != null) {
 	    if(action.equals("submitEditChoice")) {
-		String manageTarget=runtimeData.getParameter("userPreferenceAction");
+		String manageTarget=runtimeData.getParameter("userPreferencesAction");
 		if(manageTarget.equals("layout")) {
 		    this.folderID=this.getLayoutRootID();
 		    // browse mode

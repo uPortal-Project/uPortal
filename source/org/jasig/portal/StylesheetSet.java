@@ -207,7 +207,7 @@ public class StylesheetSet extends SAXFilterImpl
 
       if (media_table == null)
         return null;
-
+      Logger.log(Logger.DEBUG,"media=\""+media+"\"");
       StylesheetDescription sd = (StylesheetDescription) media_table.get (media);
 
       if (sd == null)
@@ -332,10 +332,11 @@ public class StylesheetSet extends SAXFilterImpl
 
       if (url!=null)
         props=new OrderedProps (url.openStream ());
+      else Logger.log(Logger.ERROR,"StylesheetSet::setMediaProps() : unable to read the following URL \""+url.toString()+"\"");
     }
     catch (IOException ioe1)
     {
-      Logger.log (Logger.ERROR,"SytlesheetSet::setMediaProps : Exception occurred while media properties file: " + uri + ". "+ ioe1);
+      Logger.log (Logger.ERROR,"SytlesheetSet::setMediaProps() : Exception occurred while media properties file: " + uri + ". "+ ioe1);
     }
   }
 

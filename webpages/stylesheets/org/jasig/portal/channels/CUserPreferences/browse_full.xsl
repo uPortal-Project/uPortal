@@ -11,7 +11,7 @@
 
 <!-- header table -->
 
-<form method="post">
+<form action="{$baseActionURL}" method="post">
 <xsl:attribute name="action"><xsl:value-of select="$baseActionURL"/></xsl:attribute>
 <input type="hidden" name="action" value="submitEditChoice"/>
 <table width="100%" border="0"><tr><td align="left">profile name: <xsl:value-of select="$profileName"/></td><td align="right">
