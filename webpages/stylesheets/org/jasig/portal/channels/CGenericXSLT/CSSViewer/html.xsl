@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:variable name="mediaPath">media\org\jasig\portal\channels\CGenericXSLT\CCssViewer</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT/CCssViewer</xsl:variable>
+  <xsl:variable name="genericMediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
   <xsl:template match="/">
     <xsl:apply-templates/>
   </xsl:template>
@@ -100,7 +101,7 @@
             <xsl:attribute name="class">
               <xsl:value-of select="substring-after(class,'.')"/>
             </xsl:attribute>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+            <img alt="interface image" src="{$genericMediaPath}/transparent.gif" width="1" height="1"/>
           </td>
         </tr>
       </xsl:when>
