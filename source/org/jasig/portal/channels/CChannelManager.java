@@ -90,7 +90,8 @@ public class CChannelManager extends BaseChannel {
   protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
   protected IPerson person;
 
-  public void setStaticData (ChannelStaticData sd) {
+  public void setStaticData (ChannelStaticData sd) throws PortalException {
+    staticData = sd;
     person = sd.getPerson();
   }
 
@@ -411,7 +412,7 @@ public class CChannelManager extends BaseChannel {
         state = DEFAULT_STATE; // we need to add a confirmation and channel preview screen
         Set catIDs = categorySettings.getSelectedCategories();
         Set roles = roleSettings.getSelectedRoles();
-        int publisherID = staticData.getPerson().getID();
+        int publisherID = person.getID();
         try {
           Element channelE = channelDef.toXML();
           ChannelRegistryManager.publishChannel(channelE, catIDs, roles, publisherID);
