@@ -51,8 +51,10 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -62,6 +64,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.oro.text.perl.Perl5Util;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -135,6 +139,9 @@ public class DbLoader
   private static String admin_locale;
   private static boolean localeAware;
   private static Hashtable tableColumnTypes = new Hashtable(300);
+  private static String upgradeVersion;
+  private static int upgradeMajor;
+  private static int upgradeMinor;
 
   public static void main(String[] args)
   {
@@ -168,6 +175,7 @@ public class DbLoader
         boolean usetable = false;
         boolean usedata  = false;
         boolean useLocale  = false;
+        boolean upgrade = false;
 
         for (int i = 0; i < args.length; i++) {
            //System.out.println("args["+i+"]: "+args[i]);
@@ -182,7 +190,19 @@ public class DbLoader
                  admin_locale = args[i];
                  System.out.println("Using admin locale '" + admin_locale + "'");
                  useLocale = false;
+              } else if (upgrade) {
+                 upgradeVersion = args[i];
+                 int index = upgradeVersion.indexOf('.');
+                 upgradeMajor = Integer.parseInt(upgradeVersion.substring(0, index));
+                 if (upgradeVersion.indexOf('.', index+1) != -1) {
+                    upgradeMinor = Integer.parseInt(upgradeVersion.substring(index+1, upgradeVersion.indexOf('.', index+1)));
+                 } else {
+                    upgradeMinor = Integer.parseInt(upgradeVersion.substring(index+1));
+                 }
+                 upgrade = false;
               }
+           } else if (args[i].equals("-u")) {
+              upgrade = true;
            } else if (args[i].equals("-t")) {
               usetable = true;
            } else if (args[i].equals("-d")) {
@@ -252,6 +272,11 @@ public class DbLoader
         xslt.setXML(tablesDoc);
         xslt.setXSL(tablesXslUri);
         xslt.setTarget(new TableHandler());
+        if (upgradeVersion != null) {
+           int index = upgradeVersion.indexOf('.');
+           xslt.setStylesheetParameter("upgradeMajor", Integer.toString(upgradeMajor));
+           xslt.setStylesheetParameter("upgradeMinor", Integer.toString(upgradeMinor));
+        }
         xslt.transform();
 
         // data.xml --> INSERT sql statements
@@ -913,7 +938,11 @@ public class DbLoader
     private static boolean insideRow = false;
     private static boolean insideColumn = false;
     private static boolean insideValue = false;
+    private static boolean insideSequence = false;
     private static boolean supportsPreparedStatements = false;
+    private static String sequenceId;
+    
+    private static Map sequences = new HashMap();
 
     static Table table;
     static Row row;
@@ -947,6 +976,9 @@ public class DbLoader
         insideTable = true;
         table = new Table();
         action = atts.getValue("action");
+        if (atts.getValue("sinceMajor") != null && atts.getValue("sinceMinor") != null) {
+          table.setSince(atts.getValue("sinceMajor"), atts.getValue("sinceMinor"));
+        }
       }
       else if (qName.equals("name"))
         insideName = true;
@@ -954,6 +986,12 @@ public class DbLoader
       {
         insideRow = true;
         row = new Row();
+        if (atts.getValue("sinceMajor") != null) {
+           row.setSinceMajor(Integer.parseInt(atts.getValue("sinceMajor")));
+        }
+        if (atts.getValue("sinceMinor") != null) {
+           row.setSinceMinor(Integer.parseInt(atts.getValue("sinceMinor")));
+        }
       }
       else if (qName.equals("column"))
       {
@@ -963,9 +1001,14 @@ public class DbLoader
       }
       else if (qName.equals("value"))
         insideValue = true;
+      else if (qName.equals("sequence"))
+      {
+        sequenceId = atts.getValue("id");
+        insideSequence = true;
+      }
     }
 
-    public void endElement (String namespaceURI, String localName, String qName)
+    public void endElement (String namespaceURI, String localName, String qName) throws SAXException
     {
       if (qName.equals("data"))
         insideData = false;
@@ -984,17 +1027,27 @@ public class DbLoader
       {
         insideRow = false;
 
-        if (action != null)
-        {
-          if ( action.equals("delete") )
-            executeSQL(table, row, "delete");
-          else if ( action.equals("modify") )
-            executeSQL(table, row, "modify");
-          else if ( action.equals("add") )
+        int sinceMajor = row.getSinceMajor();
+        int sinceMinor = row.getSinceMinor();
+        
+        if (sinceMajor == -1) {
+           sinceMajor = table.getSinceMajor();
+           sinceMinor = table.getSinceMinor();
+        }
+        if ((sinceMajor == -1 || upgradeMajor == -1) ||
+            (sinceMajor > upgradeMajor || sinceMinor > upgradeMinor)) {
+          if (action != null)
+          {
+            if ( action.equals("delete") )
+              executeSQL(table, row, "delete");
+            else if ( action.equals("modify") )
+              executeSQL(table, row, "modify");
+            else if ( action.equals("add") )
+              executeSQL(table, row, "insert");
+          }
+          else if (populateTables)
             executeSQL(table, row, "insert");
         }
-        else if (populateTables)
-          executeSQL(table, row, "insert");
       }
       else if (qName.equals("column"))
       {
@@ -1008,6 +1061,26 @@ public class DbLoader
 
         if (insideColumn) // column value
           column.setValue(charBuff.toString());
+      }
+      else if (qName.equals("sequence"))
+      {
+        insideSequence = false;
+        if (insideValue)
+        {
+          // if it's already been generated, return it, otherwise get the next one
+          String name = charBuff.toString();
+          if (sequences.get(name) != null) {
+            charBuff = (StringBuffer)sequences.get(name);
+          } else {
+            try {
+               charBuff = new StringBuffer(SequenceGenerator.instance().getNext(sequenceId));
+            } catch (Exception e) {
+               LogService.log(LogService.ERROR, e);
+               throw new SAXException("Error generating next ID in sequence: "+e.getMessage());
+            }
+            sequences.put(name, charBuff);
+          }
+        }
       }
     }
 
@@ -1394,17 +1467,31 @@ public class DbLoader
     class Table
     {
       private String name;
+      private int sinceMajor = -1;
+      private int sinceMinor = -1;
 
       public String getName() { return name; }
       public void setName(String name) { this.name = name; }
+      public void setSince(String major, String minor) {
+         this.sinceMajor = Integer.parseInt(major);
+         this.sinceMinor = Integer.parseInt(minor);
+      }
+      public int getSinceMajor() { return sinceMajor; }
+      public int getSinceMinor() { return sinceMinor; }
     }
 
     class Row
     {
       ArrayList columns = new ArrayList();
+      private int sinceMajor = -1;
+      private int sinceMinor = -1;
 
       public ArrayList getColumns() { return columns; }
       public void addColumn(Column column) { columns.add(column); }
+      public void setSinceMajor(int sinceMajor) { this.sinceMajor = sinceMajor; }
+      public void setSinceMinor(int sinceMinor) { this.sinceMinor = sinceMinor; }
+      public int getSinceMajor() { return sinceMajor; }
+      public int getSinceMinor() { return sinceMinor; }
     }
 
     class Column
