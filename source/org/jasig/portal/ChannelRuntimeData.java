@@ -201,7 +201,20 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         }
         return url;
     }
-
+    
+    /**
+     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+     * Typically the channel that is invoked with the worker will have to implement an
+     * interface specific for that worker.  This method has been renamed to
+     * getBaseWorkerURL(String) and will be removed in the next major uPortal release.
+     * @param worker - Worker string must be a UPFileSpec.xxx value.
+     * @return URL to invoke the worker.
+     * @deprecated renamed to {@link #getBaseWorkerURL(String)}     
+     */
+    public String getWorkerActionURL(String worker) {
+      return getBaseWorkerURL(worker);
+    }    
+    
     /**
      * Returns the URL to invoke one of the workers specified in PortalSessionManager.
      * Typically the channel that is invoked with the worker will have to implement an
