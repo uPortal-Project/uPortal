@@ -109,7 +109,6 @@ public class SimpleLayout2ALIM {
         final int NEW_LAYOUT_ID =1;  /* id to use when creating new layout */
         UserProfile simpleProfile = null;
         UserProfile ALProfile = null;
-        IUserLayoutManager sulm = null;
         IUserLayoutStore uls = null;
         int structSsId = 0, themeSsId = 0;
         int ALProfileId = 0;
