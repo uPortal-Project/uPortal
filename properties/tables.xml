@@ -235,7 +235,7 @@
   <table>
     <name>UP_SEQUENCE</name>
     <columns>
-      <column> <name>SEQUENCE_NAME</name>  <type>VARCHAR</type> <param>35</param> </column>
+      <column> <name>SEQUENCE_NAME</name>  <type>VARCHAR</type> <param>255</param> </column>
       <column> <name>SEQUENCE_VALUE</name> <type>INTEGER</type>                   </column>
     </columns>
     <primary-key>SEQUENCE_NAME</primary-key>
@@ -397,8 +397,8 @@
   <table>
     <name>UP_GROUP_MEMBERSHIP</name>
     <columns>
-      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>30</param>  </column>
-      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>255</param>  </column>
+      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>255</param>  </column>
       <column> <name>MEMBER_IS_GROUP</name>  <type>VARCHAR</type>     <param>1</param>   </column>
     </columns>
     <primary-key>GROUP_ID</primary-key>
