@@ -153,7 +153,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
 
     ChannelType[] channelTypes = crs.getChannelTypes();
     for (int i = 0; i < channelTypes.length; i++) {
-      int channelTypeId = channelTypes[i].getChannelTypeId();
+      int channelTypeId = channelTypes[i].getId();
       String javaClass = channelTypes[i].getJavaClass();
       String name = channelTypes[i].getName();
       String descr = channelTypes[i].getDescription();
