@@ -54,28 +54,22 @@ public class RestrictedPerson implements IPerson {
         return this.person.isGuest();
     }
 
-    /**
-     * RestrictedPerson's implementation of setAttribute does nothing.
-     */
     public void setAttribute(String key, Object value) {
-        // Part of RestrictedPerson's restrictedness is to do nothing
-        // when this method is invoked.
+        this.person.setAttribute(key, value);
     }
 
     /**
      * RestrictedPerson's implementation of setFullName does nothing.
      */
     public void setFullName(String sFullName) {
-        // Part of RestrictedPerson's restrictedness is to do nothing
-        // when this method is invoked.
+        this.person.setFullName(sFullName);
     }
 
     /**
      * RestrictedPerson's implementation of setID does nothing.
      */
     public void setID(int sID) {
-        // Part of RestrictedPerson's restrictedness is to do nothing
-        // when this method is invoked.
+        this.person.setID(sID);
     }
 
     /**
