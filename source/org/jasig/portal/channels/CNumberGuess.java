@@ -43,11 +43,9 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.XSLT;
-import org.xml.sax.ContentHandler;
-
 import org.jasig.portal.i18n.LocaleAwareXSLT;
+import org.jasig.portal.services.LogService;
+import org.xml.sax.ContentHandler;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>

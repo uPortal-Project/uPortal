@@ -45,13 +45,11 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StandaloneChannelRenderer;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile.

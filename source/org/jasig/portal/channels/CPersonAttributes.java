@@ -45,15 +45,13 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * This channel demonstrates the method of obtaining and displaying

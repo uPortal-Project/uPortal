@@ -52,15 +52,13 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /** 
  * <p>CUserPreferences state for managing profiles</p>

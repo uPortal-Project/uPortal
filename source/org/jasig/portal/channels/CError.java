@@ -51,16 +51,14 @@ import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CError is the error channel, also known as the null channel, it is
