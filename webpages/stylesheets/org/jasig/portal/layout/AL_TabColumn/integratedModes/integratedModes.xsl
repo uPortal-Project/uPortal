@@ -25,11 +25,11 @@
 		</layout>
 	</xsl:variable>
 	<!--These variables and parameters are used in preferences mode-->
-	<xsl:variable name="moveID" select="/layout/@selectedID"/>
-	<xsl:variable name="selectedID" select="/layout/@selectedID"/>
-	<xsl:variable name="focusedTabID" select="/layout/@focusedTabID"/>
-	<xsl:variable name="targetRestriction" select="/layout/@targetRestriction"/>
-	<xsl:variable name="targetAction" select="/layout/@targetAction"/>
+	<xsl:param name="moveID" select="/layout/@selectedID"/>
+	<xsl:param name="selectedID" select="/layout/@selectedID"/>
+	<xsl:param name="focusedTabID" select="/layout/@focusedTabID"/>
+	<xsl:param name="targetRestriction" select="/layout/@targetRestriction"/>
+	<xsl:param name="targetAction" select="/layout/@targetAction"/>
 	<!-- Commented out due to lack of evidence that it is used anywhere
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
 	-->
@@ -101,12 +101,12 @@
 						<table border="0" cellspacing="10" cellpadding="0">
 							<tr>
 								<td>
-									<a href="{$baseActionURL}?uP_root=root&amp;uP_cancel_targets=true">
+									<a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 										<img src="{$mediaPathIcons}/home.gif" width="24" height="24" alt="Home" title="Home" border="0"/>
 									</a>
 								</td>
 								<td>
-									<a href="{$baseActionURL}?uP_fname=layout-sitemap&amp;uP_cancel_targets=true">
+									<a href="{$baseActionURL}?uP_fname=layout-sitemap&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 										<img src="{$mediaPathIcons}/sitemap.gif" width="24" height="24" alt="View Sitemap" title="View Sitemap" border="0"/>
 									</a>
 								</td>
@@ -128,7 +128,7 @@
 										</xsl:when>
 										<xsl:when test="$mode='preferences'">
 											<td>
-												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">
+												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 													<img width="24" height="24" alt="Turn off Preferences" title="Turn off Preferences" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
 												</a>
 											</td>
@@ -830,7 +830,7 @@
 	<xsl:template name="preferencesControls">
 		<xsl:choose>
 			<xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
-				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Channel Move">
+				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 					<img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="Cancel Channel Move" title="Cancel Channel Move" border="0"/>
 				</a>
 			</xsl:when>
@@ -1551,7 +1551,7 @@
 										<xsl:value-of select="@name"/>
 									</span>
 									<img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
-									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Tab Move">
+									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 										<img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="Cancel Tab Move" title="Cancel Tab Move" border="0"/>
 									</a>
 								</td>
@@ -1675,7 +1675,7 @@
 								<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 							</td>
 							<td valign="middle" width="100%">
-								<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">
+								<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 									<img alt="Click to select target location" title="Click to select target location" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 								</a>
 							</td>
@@ -1711,7 +1711,7 @@
 			</xsl:when>
 			<xsl:when test="$type='column'">
 				<td valign="top">
-					<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">
+					<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 						<img alt="Click to move column here" title="Click to move column here" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
 					</a>
 				</td>
@@ -1720,7 +1720,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="4">
 					<tr>
 						<td align="center">
-							<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">
+							<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 								<img alt="Click to move channel here" title="Click to move channel here" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
 							</a>
 						</td>
@@ -1739,7 +1739,7 @@
 							<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 						</td>
 						<td valign="middle">
-							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_cancel_targets=true">
+							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 								<img alt="Click to add new tab here" title="Click to add new tab here" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 							</a>
 						</td>
@@ -2008,20 +2008,20 @@
 				<td align="left" class="uportal-background-light">
 					<span class="uportal-label">
 						<xsl:if test="not($targetRestriction='no targetRestriction parameter')">
-							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/></a>
+							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/></a>
 							<span> |<xsl:text/></span>
 						</xsl:if>
-						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_cancel_targets=true">Turn Preferences Off</a>
+						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Turn Preferences Off</a>
 						<span> |<xsl:text/></span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New Tab</a>
 						<span> |<xsl:text/></span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New Column</a>
 						<span> |<xsl:text/></span>
-						<a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_cancel_targets=true">Add Content</a>
+						<a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Add Content</a>
 						<span> |<xsl:text/></span>
-						<a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_cancel_targets=true">Skins</a>
+						<a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Skins</a>
 						<span> |<xsl:text/></span>
-						<a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_cancel_targets=true">Languages</a>
+						<a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Languages</a>
 						<!--  Profiles action temporarily removed
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
@@ -2522,7 +2522,7 @@
 										<td>
 											<xsl:choose>
 												<xsl:when test="$selectedID=@ID and $targetAction='Column Move'">
-													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Column Move">
+													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
 														<img src="{$mediaPathIcons}/columncancelmove.gif" width="28" height="25" alt="cancel move action" title="cancel move action" border="0"/>
 													</a>
 												</xsl:when>
