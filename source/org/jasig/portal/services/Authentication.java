@@ -48,6 +48,9 @@ import  org.jasig.portal.PropertiesManager;
 import  java.util.HashMap;
 import  java.util.Hashtable;
 import  java.util.Enumeration;
+import  java.util.Map;
+import  java.util.Set;
+import  java.util.Iterator;
 
 
 /**
@@ -57,6 +60,7 @@ import  java.util.Enumeration;
 public class Authentication {
   protected org.jasig.portal.security.IPerson m_Person = null;
   protected ISecurityContext ic = null;
+  protected static PropertiesManager m_propertiesManager = new PropertiesManager();
 
   /**
    * Attempts to authenticate a given IPerson based on a set of principals and credentials
@@ -88,15 +92,41 @@ public class Authentication {
     securityContext.authenticate();
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
-      // Get the AdditionalDescriptor from the security context
-      // This is created by the SecurityContext and should be an
-      // IPerson object if present.  This is a likely scenario if the
-      // security provider also supplies directory information.
+      // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
-      // If the IPerson object was not provided by the security context then
-      // creating an IPerson object at this point and populating it from
-      // directory information is the recommended scenario.
-      if (addInfo == null || !(addInfo instanceof PersonImpl)) {
+      // Process the additional descriptor if one was created
+      if (addInfo != null) {
+        // Replace the passed in IPerson with the additional descriptor if the
+        // additional descriptor is an IPerson object created by the security context
+        // NOTE: This is not the preferred method, creation of IPerson objects should be
+        //       handled by the PersonManager.
+        if (addInfo instanceof IPerson) {
+          IPerson newPerson = (IPerson)addInfo;
+          person.setFullName(newPerson.getFullName());
+          for (Enumeration e = newPerson.getAttributeNames(); e.hasMoreElements();) {
+            String attributeName = (String)e.nextElement();
+            person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
+          }
+        } 
+        // If the additional descriptor is a map then we can
+        // simply copy all of these additional attributes into the IPerson
+        else if (addInfo instanceof Map) {
+          // Cast the additional descriptor as a Map
+          Map additionalAttributes = (Map)addInfo;
+          // Copy each additional attribute into the person object
+          for (Iterator keys = additionalAttributes.keySet().iterator(); keys.hasNext();) {
+            // Get a key
+            String key = (String)keys.next();
+            // Set the attribute
+            person.setAttribute(key, additionalAttributes.get(key));
+          }
+        } 
+        else {
+          LogService.instance().log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
+        }
+      }
+      // Populate the person object using the PersonDirectory if applicable
+      if (m_propertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
         // Username attribute comes from principal
         // It is either what was typed in or supplied by the security provider
         person.setAttribute("username", username);
@@ -109,36 +139,36 @@ public class Authentication {
           String value = (String)attribs.get(key);
           person.setAttribute(key, value);
         }
+      }
+      // Make sure the the user's fullname is set
+      if (person.getFullName() == null) {
         // Use portal display name if one exists
-        if (attribs.get("portalDisplayName") != null) {
-          person.setFullName((String)attribs.get("portalDisplayName"));
+        if (person.getAttribute("portalDisplayName") != null) {
+          person.setFullName((String)person.getAttribute("portalDisplayName"));
         } 
         // If not try the eduPerson displyName
-        else if (attribs.get("displayName") != null) {
-          person.setFullName((String)attribs.get("displayName"));
+        else if (person.getAttribute("displayName") != null) {
+          person.setFullName((String)person.getAttribute("displayName"));
         }
         // If still no FullName use an unrecognized string
         if (person.getFullName() == null) {
           person.setFullName("Unrecognized person: " + person.getAttribute("username"));
         }
-      } 
-      else {
-        // Set the IPerson to be the AdditionalDescriptor object
-        person = (IPerson)addInfo;
       }
       // Find the uPortal userid for this user or flunk authentication if not found
       // The template username should actually be derived from directory information.
       // The reference implemenatation sets the uPortalTemplateUserName to the default in
       // the portal.properties file.
       // A more likely template would be staff or faculty or undergraduate.
-      PropertiesManager pm = new PropertiesManager();
-      boolean autocreate = pm.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+      boolean autocreate = m_propertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+      // If we are going to be auto creating accounts then we must find the default template to use
       if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
-        person.setAttribute("uPortalTemplateUserName", pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
+        String defaultTemplateUserName = m_propertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
+        person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
       }
-      IUserIdentityStore UIDStore = RdbmServices.getUserIdentityStoreImpl();
       try {
-        int newUID = UIDStore.getPortalUID(person, autocreate);
+        // Attempt to retrieve the UID
+        int newUID = RdbmServices.getUserIdentityStoreImpl().getPortalUID(person, autocreate);
         person.setID(newUID);
       } catch (AuthorizationException ae) {
         LogService.instance().log(LogService.ERROR, ae);
