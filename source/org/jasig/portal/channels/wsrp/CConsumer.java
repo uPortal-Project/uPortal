@@ -42,9 +42,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedCharacterChannel;
 import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.MediaManager;
@@ -83,7 +85,7 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CConsumer implements IMultithreadedCharacterChannel, IMultithreadedPrivileged {
+public class CConsumer implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable {
 
     protected static Map channelStateMap;
     protected static RegistrationContext registrationContext;
@@ -118,6 +120,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      */
     protected class ChannelData {
         private String sessionId = null;
+        private boolean receivedEvent = false;
+        private boolean focused = false;
         private MarkupService markupService = null;
         private PortletContext portletContext = null;
         private MarkupParams markupParams = null;
@@ -130,6 +134,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         }
         
         public String getSessionId() { return this.sessionId; }
+        public boolean getReceivedEvent() { return this.receivedEvent; }
+        public boolean getFocused() { return this.focused; }
         public MarkupService getMarkupService() { return this.markupService; }
         public PortletContext getPortletContext() { return this.portletContext; }
         public MarkupParams getMarkupParams() { return this.markupParams; }
@@ -146,6 +152,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         }
         
         public void setSessionId(String sessionId) { this.sessionId = sessionId; }
+        public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
+        public void setFocused(boolean focused) { this.focused = focused; }
         public void setMarkupService(MarkupService markupService) { this.markupService = markupService; }
         public void setPortletContext(PortletContext portletContext) { this.portletContext = portletContext; }
         public void setMarkupParams(MarkupParams markupParams) { this.markupParams = markupParams; }
@@ -309,8 +317,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      * @param out a sax document handler
      * @param uid a unique ID used to identify the state of the channel
      */
-    public void renderXML(ContentHandler out, String uid) throws PortalException {        
-        try {
+    public void renderXML(ContentHandler out, String uid) throws PortalException {    
+         try {
             String markupString = getMarkup(uid);
                                 
             // Output content.  This assumes that markupString
@@ -323,6 +331,74 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
             throw new PortalException(e);
         }
     }
+    
+    // IMultithreadedCacheable methods
+
+    /**
+     * Generates a channel cache key.  The key scope is set to be system-wide
+     * when the channel is anonymously accessed, otherwise it is set to be
+     * instance-wide.  The caching implementation here is simple and may not
+     * handle all cases.
+     * @param uid the unique identifier
+     * @return the channel cache key
+     */
+    public ChannelCacheKey generateKey(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ChannelData cd = channelState.getChannelData();
+
+        ChannelCacheKey cck = new ChannelCacheKey();
+
+        // Anonymously accessed pages can be cached system-wide
+        if(staticData.getPerson().isGuest()) {
+            cck.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+            cck.setKey("SYSTEM_SCOPE_KEY");
+        } else {
+            cck.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+            cck.setKey("INSTANCE_SCOPE_KEY");
+        }
+
+        return cck;
+    }
+
+    /**
+     * Determines whether the cached content for this channel is still valid.
+     * <p>
+     * Return <code>true</code> when:<br>
+     * <ol>
+     * <li>We have not just received an event</li>
+     * <li>No runtime parameters are sent to the channel</li>
+     * <li>The focus hasn't switched.</li>
+     * </ol>
+     * Otherwise, return <code>false</code>.  
+     * <p>
+     * In other words, cache the content in all cases <b>except</b> 
+     * for when a user clicks a channel button, a link or form button within the channel, 
+     * or the <i>focus</i> or <i>unfocus</i> button.
+     * @param validity the validity object
+     * @param uid the unique identifier
+     * @return <code>true</code> if the cache is still valid, otherwise <code>false</code>
+     */
+    public boolean isCacheValid(Object validity, String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ChannelData cd = channelState.getChannelData();
+
+        // Determine if the channel focus has changed
+        boolean previouslyFocused = cd.getFocused();
+        cd.setFocused(runtimeData.isRenderingAsRoot());
+        boolean focusHasSwitched = cd.getFocused() != previouslyFocused;
+    
+        // Dirty cache only when we receive an event, one or more request params, or a change in focus
+        boolean cacheValid = !cd.getReceivedEvent() && runtimeData.size() == 0 && !focusHasSwitched;
+    
+        cd.setReceivedEvent(false);
+        return cacheValid;
+    }    
 
     /**
      * This is where we do the real work of getting the markup.
@@ -366,11 +442,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
                 }
             }
         }
-        
-        if (markup != null) {
-            System.out.println("Using cached markup!!!");
-        }
-        
+                
         if (markup == null) {
             // Go get the markup from the producer
             MarkupResponse markupResponse = getMarkupFromProducer(uid);
