@@ -411,9 +411,13 @@
       <fileset dir="docs"/>
     </copy>
 
-    <!-- Create application JAR file -->
+    <!-- Create application WAR file -->
     <jar jarfile="${dist.home}/${app.name}.war"
          basedir="${deploy.home}"/>
+
+    <!-- Create application JAR file -->
+    <jar jarfile="${dist.home}/${app.name}.jar"
+         basedir="${deploy.home}/WEB-INF/classes"/>
 
     <!-- Copy additional files to ${dist.home} as necessary -->
 
