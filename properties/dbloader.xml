@@ -4,8 +4,8 @@
 
   <!-- Set to false to disable execution of DROP, CREATE, and/or POPULATE TABLE SQL statements -->
 
-  <drop-tables>true</drop-tables>
-  <create-tables>true</create-tables>
+  <drop-tables>false</drop-tables>
+  <create-tables>false</create-tables>
   <populate-tables>true</populate-tables>
 
   <!-- Location of tables.xml file -->
@@ -13,25 +13,25 @@
 
   <!-- Location of tables.xsl stylesheet -->
   <tables-xsl-uri>webpages/stylesheets/org/jasig/portal/tools/DbLoader/tables.xsl</tables-xsl-uri>
-  
-  <!-- Location of data.xml file -->  
+
+  <!-- Location of data.xml file -->
   <data-uri>properties/data.xml</data-uri>
 
   <!-- DbLoader can dump DROP, CREATE, and INSERT statements to a file. If <create-script> is
        set to true, the script file will be created in <portal base directory>/properties -->
-       
+
   <create-script>true</create-script>
   <script-file-name>dbloader.script</script-file-name>
   <statement-terminator>;</statement-terminator>
-  
+
   <!-- Mappings for cases where database metadata is incomplete.
        "db-name", "db-version", "driver-name", and "driver-version"
        must match the values returned by
        java.sql.Connection.getMetaData().getDatabaseProductName(),
-       java.sql.Connection.getMetaData().getDatabaseProductVersion(),       
-       java.sql.Connection.getMetaData().getDriverName(), and      
+       java.sql.Connection.getMetaData().getDatabaseProductVersion(),
+       java.sql.Connection.getMetaData().getDriverName(), and
        java.sql.Connection.getMetaData().getDriverVersion() -->
-       
+
   <db-type-mapping>
     <db-name>HypersonicSQL</db-name>
     <db-version>1.4</db-version>
@@ -42,33 +42,43 @@
     <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type>
     <!-- map more types here -->
   </db-type-mapping>
-  
+
   <db-type-mapping>
     <db-name>InstantDB</db-name>
     <db-version>Version 3.26</db-version>
     <driver-name>InstantDB JDBC Driver</driver-name>
-    <driver-version>Version 3.26</driver-version>    
+    <driver-version>Version 3.26</driver-version>
     <type><generic>LONGVARCHAR</generic><local>BINARY</local></type>
     <!-- map more types here -->
   </db-type-mapping>
-  
+
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
     <db-version>07.00.0699</db-version>
     <driver-name>JDBC-ODBC Bridge (SQLSRV32.DLL)</driver-name>
-    <driver-version>2.0001 (03.70.0820)</driver-version>    
+    <driver-version>2.0001 (03.70.0820)</driver-version>
     <type><generic>INTEGER</generic><local>INTEGER</local></type>
     <!-- map more types here -->
   </db-type-mapping>
-  
+
   <db-type-mapping>
     <db-name>MySQL</db-name>
     <db-version>3.23.34a</db-version>
     <driver-name>Mark Matthews&apos; MySQL Driver</driver-name>
-    <driver-version>1.2b</driver-version>    
+    <driver-version>1.2b</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <!-- map more types here -->
-  </db-type-mapping> 
-  
+  </db-type-mapping>
+
+  <db-type-mapping>
+    <db-name>Oracle</db-name>
+    <!-- Line break has to be here -->
+    <db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production
+PL/SQL Release 8.0.6.2.0 - Production</db-version>
+    <driver-name>Oracle JDBC driver</driver-name>
+    <driver-version>8.1.6.0.0</driver-version>
+    <type><generic>DATE</generic><local>DATE</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
 </properties>
 
