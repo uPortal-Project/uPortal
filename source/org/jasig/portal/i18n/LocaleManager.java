@@ -144,7 +144,9 @@ public class LocaleManager  {
         // Add highest priority locales first
         addToLocaleList(locales, sessionLocales);
         addToLocaleList(locales, userLocales);
-        addToLocaleList(locales, browserLocales);
+        // We will ignore browser locales until we know how to
+        // translate them into proper java.util.Locales
+        //addToLocaleList(locales, browserLocales);
         addToLocaleList(locales, portalLocales);
         addToLocaleList(locales, new Locale[] { jvmLocale });
         return (Locale[])locales.toArray(new Locale[0]);
