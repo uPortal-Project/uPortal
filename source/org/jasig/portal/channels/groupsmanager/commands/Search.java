@@ -57,6 +57,16 @@ import org.w3c.dom.Document;
  *  by the user.
  */
 public class Search extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+  private static String grpPrefix = "IEntityGroup::";
+  private static String[] methods;
+  
+  static{
+    methods = new String[5];
+    methods[1]=" is ";
+    methods[2]=" starts with ";
+    methods[3]=" ends with ";
+    methods[4]=" contains "; 
+  }
 
    /**
     * put your documentation comment here
@@ -76,14 +86,14 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
       Class type;
       String grpTypeName = null;
       EntityIdentifier[] results;
-      String grpPrefix = "IEntityGroup::";
+      String label = null;
       boolean isGroupSearch;
       // if present, the command arg will be the ancestor
       String ancestorKey = getCommandArg(runtimeData);
       IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(ancestorKey);
       String query = runtimeData.getParameter("grpQuery");
       String method = runtimeData.getParameter("grpMethod");
-      int methodInt = Integer.getInteger(method).intValue();
+      int methodInt = Integer.parseInt(method);
       // For an EntityGroup search, the grpType will have the  form of "IEntityGroup::classname"
       // For an Entity search, the grpType will have the  form of "classname"
       String grpType = runtimeData.getParameter("grpType");
@@ -100,6 +110,7 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
          }
          type = Class.forName(grpTypeName);
          if (isGroupSearch){
+            label = "Group of "+org.jasig.portal.EntityTypes.getDescriptiveName(type)+"s";
             if (entGrp != null){
                results = GroupService.searchForGroups(query, methodInt, type, entGrp);
             }
@@ -108,6 +119,7 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
             }
          }
          else{
+            label = org.jasig.portal.EntityTypes.getDescriptiveName(type);
             if (entGrp != null){
                results = GroupService.searchForEntities(query, methodInt, type, entGrp);
             }
@@ -115,37 +127,24 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
                results = GroupService.searchForEntities(query, methodInt, type);
             }
          }
-         /* addional attributes:
-            canEdit = "false
-            criteria = "query::method::type::ancestor"
-         */
          Document model = sessionData.model;
-         // put srch in description
-         //Element searchElem = GroupsManagerXML.createElement("Search [" + query + "]", model, false);
-         Element searchElem = GroupsManagerXML.createElement(GROUP_TAGNAME, model, false);
-         searchElem.setAttribute("id", "srch:"+GroupsManagerXML.getNextUid());
-         //searchElem.setAttribute("key", "");
-         searchElem.setAttribute("expanded", String.valueOf(results.length > 0));
-         searchElem.setAttribute("searchCriteria", searchCriteria);
-         searchElem.setAttribute("canEdit", "false");
+
+         IEntityGroup sr = new EntityGroupImpl(null,type);
+         sr.setName("Search Results");
+         sr.setDescription("Search for a "+label+" that"+methods[methodInt]+query);
          Element myGroups = GroupsManagerXML.getElementById (model, "0");
-         myGroups.appendChild(searchElem);
 
          for (int sub=0 ; sub < results.length ; sub++) {
             EntityIdentifier entID = results[sub];
-            IGroupMember resultGroup = (IGroupMember)GroupsManagerXML.retrieveGroup(entID.getKey());
-            Element result = GroupsManagerXML.getGroupMemberXml(resultGroup, false, null, model);
-            searchElem.appendChild(result);
+            IGroupMember resultGroup = GroupService.getGroupMember(entID);
+            sr.addMember(resultGroup);
          }
-         sessionData.highlightedGroupID = searchElem.getAttribute("id");
-         if((sessionData.lockedGroup!=null) && (!sessionData.lockedGroup.getEntityIdentifier().getKey().equals(sessionData.highlightedGroupID)) && (!sessionData.mode.equals("select"))){
-         try{
-            sessionData.lockedGroup.getLock().release();
-         }
-         catch(Exception e){}
-         sessionData.lockedGroup = null;
-         sessionData.mode = BROWSE_MODE;
-         }
+         Element searchElem = GroupsManagerXML.getGroupMemberXml(sr,true,null,sessionData.model);
+         searchElem.setAttribute("searchResults", "true");
+         myGroups.appendChild(searchElem);
+         
+         this.setCommandArg(sessionData.runtimeData,searchElem.getAttribute("id"));
+         GroupsManagerCommandFactory.get("Highlight").execute(sessionData);
       }
       catch (GroupsException ge){
          Utility.logMessage("ERROR", "Search failed for criteria = " + searchCriteria + "/n" + ge);
