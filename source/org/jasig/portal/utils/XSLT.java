@@ -54,14 +54,27 @@ import java.util.Iterator;
 import java.util.Enumeration;
 import java.net.URL;
 
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TemplatesHandler;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.xml.sax.*;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 import org.w3c.dom.Node;
 
 /**
@@ -95,31 +108,30 @@ public class XSLT {
   private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
   private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
-    
-    private static SAXTransformerFactory saxTFactory = null;
+  private static SAXTransformerFactory saxTFactory = null;
 
-    private Source xmlSource;
-    private Result xmlResult;
-    private HashMap stylesheetParams;
-    private String xslURI;
+  private Source xmlSource;
+  private Result xmlResult;
+  private HashMap stylesheetParams;
+  private String xslURI;
 
   /**
-   * Constructs an XSLT object. 
-   */  
+   * Constructs an XSLT object.
+   */
   public XSLT () {
       stylesheetParams = new HashMap();
   }
-    
+
   public static SAXTransformerFactory getSAXTFactory() {
-      if(saxTFactory==null) {
+      if(saxTFactory == null) {
           // attempt to instantiate a sax transformer factory
           TransformerFactory tFactory = TransformerFactory.newInstance();
           if(tFactory instanceof SAXTransformerFactory) {
               saxTFactory = ((SAXTransformerFactory) tFactory);
           }
       }
-      if(saxTFactory==null) {
-          LogService.instance().log(LogService.ERROR,"XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
+      if(saxTFactory == null) {
+          LogService.instance().log(LogService.ERROR, "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
       }
       return saxTFactory;
   }
@@ -127,36 +139,43 @@ public class XSLT {
   /**
    * Configures the xml source.
    * @param xml a string representing the xml document
-   */  
+   */
   public void setXML(String xml) {
-      xmlSource=new StreamSource(new StringReader(xml));
+      xmlSource = new StreamSource(new StringReader(xml));
   }
-  
+
   /**
    * Configures the xml source.
    * @param xml a node representing the xml document
-   */  
+   */
   public void setXML(Node xml) {
-      xmlSource=new DOMSource(xml);
+      xmlSource = new DOMSource(xml);
   }
 
   /**
    * Configures the xml source.
    * @param xml an input stream to the serialized xml source
-   */  
+   */
     public void setXML(java.io.InputStream is) {
-        xmlSource=new StreamSource(is);
+        xmlSource = new StreamSource(is);
     }
 
-    
+  /**
+   * Configures the xml source.
+   * @param xml a File object representing the xml source
+   */
+    public void setXML(java.io.File file) {
+        xmlSource = new StreamSource(file);
+    }
+
   /**
    * Configures the xsl source.
    * @param xslUri the URL of an XSLT stylesheet
-   */    
+   */
   public void setXSL(String xslUri) {
-      this.xslURI=xslUri;
+      this.xslURI = xslUri;
   }
-  
+
   /**
    * Configures the xsl source by choosing the appropriate stylesheet from
    * the provided stylesheet list file.
@@ -164,37 +183,37 @@ public class XSLT {
    * @param stylesheetTitle the title of a stylesheet within the stylesheet list file
    * @param browserInfo the browser info object
    * @throws org.jasig.portal.PortalException
-   */  
+   */
   public void setXSL(String sslUri, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
     StylesheetSet set = getStylesheetSet(sslUri);
     set.setMediaProps(mediaProps);
     String xslUri = set.getStylesheetURI(stylesheetTitle, browserInfo);
     setXSL(xslUri);
   }
-  
+
   /**
    * Configures the xsl source by choosing the appropriate stylesheet from
    * the provided stylesheet list file.
    * @param sslUri the URL of the stylesheet list file
    * @param browserInfo the browser info object
    * @throws org.jasig.portal.PortalException
-   */  
+   */
   public void setXSL(String sslUri, BrowserInfo browserInfo) throws PortalException {
     setXSL(sslUri, (String)null, browserInfo);
   }
-  
+
   /**
    * Configures the xslt target.
    * @param contentHandler the content handler
-   */  
+   */
   public void setTarget(ContentHandler contentHandler) {
       xmlResult=new SAXResult(contentHandler);
   }
-  
+
   /**
    * Configures the xslt target.
    * @param os output stream
-   */  
+   */
   public void setTarget(java.io.OutputStream os) {
       xmlResult=new StreamResult(os);
   }
@@ -202,15 +221,15 @@ public class XSLT {
   /**
    * Configures the xslt target.
    * @param node target node
-   */  
+   */
   public void setTarget(org.w3c.dom.Node node) {
       xmlResult=new DOMResult(node);
   }
-  
+
   /**
    * Sets all the stylesheet parameters at once.
    * @param stylesheetParameters a Hashtable of stylesheet parameters
-   */  
+   */
   public void setStylesheetParameters(Hashtable stylesheetParameters) {
     stylesheetParams.putAll(stylesheetParameters);
   }
@@ -218,24 +237,24 @@ public class XSLT {
   /**
    * Sets all the stylesheet parameters at once.
    * @param stylesheetParameters a HashMap of stylesheet parameters
-   */  
+   */
   public void setStylesheetParameters(HashMap stylesheetParameters) {
     stylesheetParams = stylesheetParameters;
-  }  
-  
+  }
+
   /**
    * Sets all the stylesheet parameters at once.
    * @param stylesheetParameters a Hashtable of stylesheet parameters
-   */  
+   */
   public void setStylesheetParameter(String name, String value) {
     stylesheetParams.put(name, value);
   }
-  
+
   /**
    * Performs a transformation.  Assumes that the XML, XSL, and result targets
    * have already been set.
    * @throws org.jasig.portal.PortalException
-   */  
+   */
   public void transform() throws PortalException {
     try {
         try {
@@ -249,7 +268,7 @@ public class XSLT {
       throw new GeneralRenderingException(e.getMessage());
     }
   }
-  
+
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
@@ -273,7 +292,7 @@ public class XSLT {
           throw new GeneralRenderingException(e.getMessage());
       }
   }
-    
+
 
 
   /**
@@ -295,7 +314,7 @@ public class XSLT {
           transform(new StreamSource(new StringReader(xml)), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
 
   /**
@@ -316,9 +335,9 @@ public class XSLT {
           transform(new StreamSource(new StringReader(xml)), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
-  }  
-  
+      }
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -338,7 +357,7 @@ public class XSLT {
           transform(new StreamSource(new StringReader(xml)), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
 
   /**
@@ -360,9 +379,9 @@ public class XSLT {
           transform(new StreamSource(new StringReader(xml)), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
-    
+
   /**
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
@@ -389,8 +408,8 @@ public class XSLT {
    */
   public static void transform (String xml, URL sslUri, ContentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -419,8 +438,8 @@ public class XSLT {
    */
   public static void transform (String xml, URL sslUri, ContentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, stylesheetParams, (String)null, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
@@ -446,7 +465,7 @@ public class XSLT {
   public static void transform (String xml, URL sslUri, ContentHandler out, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, (String)null, browserInfo);
   }
-    
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -466,7 +485,7 @@ public class XSLT {
           transform(new DOMSource(xmlNode), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
 
   /**
@@ -488,9 +507,9 @@ public class XSLT {
           transform(new DOMSource(xmlNode), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
-  }  
-  
+      }
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -510,7 +529,7 @@ public class XSLT {
           transform(new DOMSource(xmlNode), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
 
   /**
@@ -532,9 +551,9 @@ public class XSLT {
           transform(new DOMSource(xmlNode), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
       } catch (Exception e) {
           throw new GeneralRenderingException(e.getMessage());
-      } 
+      }
   }
-    
+
   /**
    * Performs an XSL transformation.
    * @param xmlNode a DOM node of the document to be transformed
@@ -561,8 +580,8 @@ public class XSLT {
    */
   public static void transform (Node xmlNode, URL sslUri, ContentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
     transform(xmlNode, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -591,8 +610,8 @@ public class XSLT {
    */
   public static void transform (Node xmlNode, URL sslUri, ContentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
     transform(xmlNode, sslUri, out, stylesheetParams, (String)null, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -621,8 +640,8 @@ public class XSLT {
    */
   public static void transform (Node xmlNode, URL sslUri, StringWriter out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
     transform(xmlNode, sslUri, out, stylesheetParams, (String)null, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation.
    * @param xmlNode a DOM node of the document to be transformed
@@ -647,8 +666,8 @@ public class XSLT {
    */
   public static void transform (Node xmlNode, URL sslUri, ContentHandler out, BrowserInfo browserInfo) throws PortalException {
     transform(xmlNode, sslUri, out, (Hashtable)null, (String)null, browserInfo);
-  }  
-  
+  }
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -715,7 +734,7 @@ public class XSLT {
   public static void transform (Node xmlNode, URL xslUri, ContentHandler out) throws PortalException {
     transform(xmlNode, xslUri, out, (Hashtable)null);
   }
-  
+
   /**
    * Extracts name/value pairs from a Hashtable and uses them to create stylesheet parameters
    * @param processor the XSLT processor
@@ -736,7 +755,7 @@ public class XSLT {
    * @param stylesheetParams name/value pairs used as stylesheet parameters
    */
   private static void setStylesheetParams (Transformer transformer, HashMap stylesheetParams) {
-    if (stylesheetParams != null) {      
+    if (stylesheetParams != null) {
       Iterator iterator = stylesheetParams.keySet().iterator();
       while (iterator.hasNext()) {
         String key = (String)iterator.next();
@@ -748,8 +767,8 @@ public class XSLT {
         transformer.setParameter(key,o);
       }
     }
-  }  
-  
+  }
+
   /**
    * This method caches compiled stylesheet objects, keyed by the stylesheet's URI.
    * @param stylesheetURI the URI of the XSLT stylesheet
@@ -783,7 +802,7 @@ public class XSLT {
 																 px.getMessage()+" line:"+px.getLineNumber()+
 																 " col:"+px.getColumnNumber());
 			 } catch (SAXException sx) {
-				 // Catch the sax exception so we can report line number info 
+				 // Catch the sax exception so we can report line number info
 				 if ( null != sx.getException()
 						&& (sx.getException() instanceof TransformerException) )
 				 {
@@ -848,8 +867,8 @@ public class XSLT {
       }
     }
     return  stylesheetSet;
-  }  
-  
+  }
+
   /**
    * Returns a stylesheet URI.
    * @param sslUri the stylesheet list file URI
@@ -861,7 +880,7 @@ public class XSLT {
     StylesheetSet set = getStylesheetSet(sslUri);
     String xslUri = set.getStylesheetURI(browserInfo);
     return  xslUri;
-  }  
+  }
 }
 
 
