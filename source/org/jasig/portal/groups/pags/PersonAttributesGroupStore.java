@@ -196,7 +196,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
 
    private boolean testRecursively(GroupDefinition groupDef, IPerson person)
    throws GroupsException {
-       if ( ! groupDef.test(person) )
+       if ( ! groupDef.contains(person) )
            { return false;}
        else
        {
@@ -371,6 +371,9 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       }
       public void addTestGroup(TestGroup testGroup) {
          testGroups.add(testGroup);
+      }
+      public boolean contains(IPerson person) {
+         return ( testGroups.isEmpty() ) ? false : test(person);
       }
       public boolean test(IPerson person) {
          if (testGroups.isEmpty())
