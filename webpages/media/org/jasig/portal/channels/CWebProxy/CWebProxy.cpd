@@ -131,6 +131,86 @@ Version $Revision$
         </type>
       </parameter>
 
+      <!-- added for cacheable CWebProxy -->
+      <parameter modify="publish-only">
+      	<name>cw_cacheDefaultTimeout</name>
+	<label>Default Timeout (in seconds)</label>
+        <type base="string" input="text" display="text">
+          <length>7</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>900</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+      	<name>cw_cacheDefaultScope</name>
+	<label>Default Caching Scope</label>
+	<type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value default="true">instance</value>
+            <value>user</value>
+            <value>system</value>
+          </restriction>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheDefaultMode</name>
+	<label>Default Caching Mode</label>
+	<type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+	    <value default="true">none</value>
+	    <value>http</value>
+	    <value>all</value>
+	  </restriction>
+	</type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheTimeout</name>
+	<label>Timeout for initial request only</label>
+	<type base="string" input="text" display="text">
+	  <length>7</length>
+	  <maxlength>10</maxlength>
+	</type>
+	<defaultValue>900</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheScope</name>
+	<label>Caching Scope for initial request only</label>
+	<type base="string" input="single-choice" display="drop-down">
+	  <restriction type="enumeration">
+	    <value default="true">instance</value>
+	    <value>user</value>
+	    <value>system</value>
+	  </restriction>
+	</type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheMode</name>
+	<label>Caching Mode for initial request only</label>
+	<type base="string" input="single-choice" display="drop-down">
+	  <restriction type="enumeration">
+	    <value default="true">none</value>
+	    <value>http</value>
+	    <value>all</value>
+	  </restriction>                                
+	</type>                                        
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_person</name>
+	<label>IPerson Attributes To Pass</label>
+	<type base="string" input="text" display="text">
+	  <length>40</length>
+	  <maxlength>500</maxlength>
+	</type>
+	<defaultValue></defaultValue>
+	<example>eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
+      </parameter>
+
     </step>
 
   </params>
