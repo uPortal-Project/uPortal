@@ -512,28 +512,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PrintWriter pw = new PrintWriter(sw);
             HttpServletRequest wrappedRequest = ((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest();
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
+            transferActionResultsToRequest(channelState, wrappedRequest);
             
-            // Check if this portlet has just processed an action during this request.
-            // If so, then we capture the changes that the portlet may have made during
-            // its processAction implementation (captured in the portlet's ActionResponse)
-            // and we pass them to the render request.
-            // Pluto's portlet container implementation does this by creating a new render URL 
-            // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
-            if (cd.hasProcessedAction()) {
-                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
-                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(wrappedRequest).getPortletActionProvider(cd.getPortletWindow());
-                // Change modes
-                if (actionResponse.getChangedPortletMode() != null) {
-                    pap.changePortletMode(actionResponse.getChangedPortletMode());
-                }
-                // Change window states
-                if (actionResponse.getChangedWindowState() != null) {
-                    pap.changePortletWindowState(actionResponse.getChangedWindowState());
-                }
-                // Change render parameters
-                Map renderParameters = actionResponse.getRenderParameters();
-                ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
-            }
                                                 
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
@@ -631,11 +611,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     
     public synchronized void setResponse(String uid, HttpServletResponse response) {        
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelRuntimeData rd = channelState.getRuntimeData();
-        ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
-        
         
         try {
             PortletContainerServices.prepare(uniqueContainerName);
@@ -646,50 +623,66 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
             PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
             
-            // If portlet is rendering as root, change mode to maximized, otherwise minimized
+            //Since the portlet is rendering through IDirectResponse change the window state to "exclusive"
             PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
             pap.changePortletWindowState(new WindowState("exclusive"));
-        } finally {
-            PortletContainerServices.release();
-        }            
 
-        try {
-            PortletContainerServices.prepare(uniqueContainerName);
+            //Create the request to send to the portlet container
             HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
-           
-            // Check if this portlet has just processed an action during this request.
-            // If so, then we capture the changes that the portlet may have made during
-            // its processAction implementation (captured in the portlet's ActionResponse)
-            // and we pass them to the render request.
-            // Pluto's portlet container implementation does this by creating a new render URL 
-            // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
-            if (cd.hasProcessedAction()) {
-                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
-                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
-                // Change modes
-                if (actionResponse.getChangedPortletMode() != null) {
-                    pap.changePortletMode(actionResponse.getChangedPortletMode());
-                }
-                // Change window states
-                if (actionResponse.getChangedWindowState() != null) {
-                    pap.changePortletWindowState(actionResponse.getChangedWindowState());
-                }
-                // Change render parameters
-                Map renderParameters = actionResponse.getRenderParameters();
-                ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
-            }
+            transferActionResultsToRequest(channelState, wrappedRequest);
                 
-            // Add the user information
+            // Add the user information to the request
             wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
 
+            //render the portlet
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, response);
                         
         } catch (Throwable t) {
             t.printStackTrace();
             LogService.log(LogService.ERROR, t);
-            //throw new PortalException(t.getMessage());
         } finally {
             PortletContainerServices.release();
+        }
+    }
+    
+    
+    //***************************************************************
+    // helper methods
+    //***************************************************************  
+
+    /**
+     * Checks if the portlet has just processed an action during this request. If so then the
+     * changes that the portlet may have made during it's processAction are captured from the 
+     * portlet's ActionResponse and they are added to the request that will be passed to the portlet
+     * container.
+     * 
+     * <br>
+     * <b>PortletContainerServices.prepare</b> MUST be called before this method is called.
+     * <br>
+     * <b>PortletContainerServices.release</b> MUST be called after this method is called. 
+     * 
+     * @param channelState The state to read the action information from
+     * @param wrappedRequest The request to add data from the action to
+     * @return An unchanged request if there wasn't an action, a request the data from the action if there was one.
+     */
+    private void transferActionResultsToRequest(ChannelState channelState, HttpServletRequest wrappedRequest) {
+        ChannelData cd = channelState.getChannelData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        
+        if (cd.hasProcessedAction()) {
+            InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
+            PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
+            // Change modes
+            if (actionResponse.getChangedPortletMode() != null) {
+                pap.changePortletMode(actionResponse.getChangedPortletMode());
+            }
+            // Change window states
+            if (actionResponse.getChangedWindowState() != null) {
+                pap.changePortletWindowState(actionResponse.getChangedWindowState());
+            }
+            // Change render parameters
+            Map renderParameters = actionResponse.getRenderParameters();
+            ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
         }
     }
 }
