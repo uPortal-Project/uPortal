@@ -29,6 +29,24 @@ VALUES ('Just4Fun') ;
 INSERT INTO PORTAL_CLASS (name)
 VALUES ('Applications') ;
 
+DROP TABLE PORTAL_CHAN_TYPES;
+
+CREATE TABLE PORTAL_CHAN_TYPES (
+	TYPE_ID INTEGER IDENTITY,
+	TYPE VARCHAR(50) NOT NULL,
+	NAME VARCHAR(70) NOT NULL,
+	DESC VARCHAR(256) NOT NULL
+	);
+
+INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESC)
+VALUES ('CRSSChannel', 'RSS Channel', 'RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.');
+
+INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESC)
+VALUES ('CPageRenderer', 'HTML Channel', 'HTML is a quick and easy way to create a channel. Anyone may publish a HTML channel as long as the HTML is valid and stored on a publicly accessible web server. You will need to provide a URL for the HTML file.');
+
+INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESC)
+VALUES ('CInlineFrame', 'Inline Frame Channel', 'This channel uses HTML and presents it in an Inline Frame. Please note that only newer browsers support this.');
+
 DROP TABLE PORTAL_CHANNELS;
 
 CREATE TABLE PORTAL_CHANNELS (
