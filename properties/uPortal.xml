@@ -1,2 +1,6 @@
 <Context path="/uPortal" docBase="uPortal" crossContext="true">
+
+    <!-- Disables restart persistence of sessions -->
+    <Manager pathname=""/>
+
 </Context>
