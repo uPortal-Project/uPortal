@@ -95,7 +95,7 @@ public class ChannelManager {
 
     private IAuthorizationPrincipal ap;
 
-    public String uPElement;
+    public UPFileSpec uPElement;
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
@@ -118,9 +118,9 @@ public class ChannelManager {
      * @param request a <code>HttpServletRequest</code> value
      * @param response a <code>HttpServletResponse</code> value
      * @param manager an <code>IUserLayoutManager</code> value
-     * @param uPElement a <code>String</code> specifying beginning of the URL file (last one) element. It lacks ".uP" or whatever separator+suffix string is.
+     * @param uPElement an <code>UPFileSpec</code> that includes a tag number.
      */
-    public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserLayoutManager manager,String uPElement) {
+    public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserLayoutManager manager,UPFileSpec uPElement) {
         this();
         this.ulm=manager;
         pcs=new PortalControlStructures();
@@ -226,7 +226,11 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelSubscribeId(channelSubscribeId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                        UPFileSpec up=new UPFileSpec(uPElement);
+                        up.setTargetNodeId(channelSubscribeId);
+                        rd.setUPFile(up);
+
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -260,7 +264,11 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelSubscribeId(channelSubscribeId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                        UPFileSpec up=new UPFileSpec(uPElement);
+                        up.setTargetNodeId(channelSubscribeId);
+                        rd.setUPFile(up);
+
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -479,7 +487,11 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelSubscribeId(channelSubscribeId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                        UPFileSpec up=new UPFileSpec(uPElement);
+                        up.setTargetNodeId(channelSubscribeId);
+                        rd.setUPFile(up);
+
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -513,7 +525,11 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelSubscribeId(channelSubscribeId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                        UPFileSpec up=new UPFileSpec(uPElement);
+                        up.setTargetNodeId(channelSubscribeId);
+                        rd.setUPFile(up);
+
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -634,7 +650,11 @@ public class ChannelManager {
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setChannelSubscribeId(channelTarget);
-                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                UPFileSpec up=new UPFileSpec(uPElement);
+                up.setTargetNodeId(channelTarget);
+                rd.setUPFile(up);
+
                 try {
                     isc.setRuntimeData(rd);
                 }
@@ -648,7 +668,11 @@ public class ChannelManager {
                         ChannelRuntimeData erd = new ChannelRuntimeData();
                         erd.setBrowserInfo(binfo);
                         erd.setChannelSubscribeId(channelTarget);
-                        erd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                        UPFileSpec eup=new UPFileSpec(uPElement);
+                        eup.setTargetNodeId(channelTarget);
+                        erd.setUPFile(up);
+
                         errorChannel.setPortalControlStructures(pcs);
                         errorChannel.setRuntimeData(erd);
                     } catch (Exception e2) {
@@ -709,7 +733,7 @@ public class ChannelManager {
     }
 
 
-    public void setReqNRes(HttpServletRequest request, HttpServletResponse response, String uPElement) {
+    public void setReqNRes(HttpServletRequest request, HttpServletResponse response, UPFileSpec uPElement) {
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
@@ -736,7 +760,7 @@ public class ChannelManager {
     }
 
 
-    public void setUPElement(String uPElement) {
+    public void setUPElement(UPFileSpec uPElement) {
         this.uPElement=uPElement;
     }
 
@@ -796,14 +820,22 @@ public class ChannelManager {
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
             rd.setChannelSubscribeId(channelSubscribeId);
-            rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+            UPFileSpec up=new UPFileSpec(uPElement);
+            up.setTargetNodeId(channelSubscribeId);
+            rd.setUPFile(up);
+
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setChannelSubscribeId(channelSubscribeId);
-                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+
+                UPFileSpec up=new UPFileSpec(uPElement);
+                up.setTargetNodeId(channelSubscribeId);
+                rd.setUPFile(up);
+
             }
         }
 

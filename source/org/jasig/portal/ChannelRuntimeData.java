@@ -52,19 +52,18 @@ import  org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
-    private String baseActionURL;
-    private boolean renderingAsRoot;
+    private boolean renderingAsRoot=false;
     private static final String fs = File.separator;
-    private BrowserInfo binfo;
-    private String channelSubscribeId;
+    private BrowserInfo binfo=null;
+    private String channelSubscribeId=null;
+    private UPFileSpec channelUPFile;
 
   /**
    * default empty constructor
    */
   public ChannelRuntimeData() {
     super();
-    // set the default values for the parameters here
-    baseActionURL = null;
+    channelUPFile = new UPFileSpec();
   }
 
   /**
@@ -73,7 +72,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    */
   public Object clone() {
     ChannelRuntimeData crd = new ChannelRuntimeData();
-    crd.baseActionURL = baseActionURL;
+    crd.channelUPFile = channelUPFile;
     crd.binfo = binfo;
     crd.channelSubscribeId=channelSubscribeId;
     crd.renderingAsRoot=renderingAsRoot;
@@ -81,23 +80,24 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     return  crd;
   }
 
-
+    
     /**
-     * Setter method for baseActionURL
+     * Set a UPFileSpec which will be used to produce
+     * baseActionURL and workerActionURL.
      *
      * @param baURL a baseActionURL value.
      */
-    public void setBaseActionURL(String baURL) {
-        baseActionURL = baURL;
+    public void setUPFile(UPFileSpec upfs) {
+        channelUPFile = upfs;
     }
 
-  /**
-   * Sets whether or not the channel is rendering as the root of the layout.
-   * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
-   */
-  public void setRenderingAsRoot(boolean rar) {
-    renderingAsRoot = rar;
-  }
+    /**
+     * Sets whether or not the channel is rendering as the root of the layout.
+     * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+     */
+    public void setRenderingAsRoot(boolean rar) {
+        renderingAsRoot = rar;
+    }
 
     /**
      * Setter method for browser info object.
@@ -105,7 +105,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @param bi a browser info associated with the current request
      */
     public void setBrowserInfo(BrowserInfo bi) {
-    this.binfo = bi;
+        this.binfo = bi;
     }
 
     /**
@@ -163,12 +163,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
     }
 
-  public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
-    com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
-    valueArray[0] = value;
-    super.put(key, valueArray);
-  }
-
+    public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
+        com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
+        valueArray[0] = value;
+        super.put(key, valueArray);
+    }
 
     /**
      * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
@@ -177,25 +176,90 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        return  baseActionURL;
+        return this.getBaseActionURL(false);
     }
 
-  /**
-   * Returns the URL to invoke one of the workers specified in PortalSessionManager.
-   * Typically the channel that is invoked with the worker will have to implement an
-   * interface specific for that worker.
-   * @param worker - Worker string must be a UPFileSpec.xxx value.
-   * @return URL to invoke the worker.
-   */
-    public String getWorkerActionURL(String worker) {
+    /**
+     * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
+     * will be placed into the ChannelRuntimeData object for channel's use.
+     *
+     * @param idempotent a <code>boolean</code> value specifying if a given URL should be idepotent.
+     * @return a value of URL to which parameter sequences should be appended.
+     */
+    public String getBaseActionURL(boolean idempotent) {
         String url=null;
         try {
-            url=UPFileSpec.buildUPFile(null,UPFileSpec.WORKER_METHOD,worker,this.channelSubscribeId,null);
+            if(idempotent) {
+                UPFileSpec upfs=new UPFileSpec(channelUPFile);
+                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                url=upfs.getUPFile();
+            } else {
+                url=channelUPFile.getUPFile();
+            }
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+        }
+        return url;
+    }
+    
+    /**
+     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+     * Typically the channel that is invoked with the worker will have to implement an
+     * interface specific for that worker.  This method has been renamed to
+     * getBaseWorkerURL(String) and will be removed in the next major uPortal release.
+     * @param worker - Worker string must be a UPFileSpec.xxx value.
+     * @return URL to invoke the worker.
+     * @deprecated renamed to {@link #getBaseWorkerURL(String)}     
+     */
+    public String getWorkerActionURL(String worker) {
+      return getBaseWorkerURL(worker);
+    }    
+    
+    /**
+     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+     * Typically the channel that is invoked with the worker will have to implement an
+     * interface specific for that worker.
+     * @param worker - Worker string must be a UPFileSpec.xxx value.
+     * @return URL to invoke the worker.
+     */
+    public String getBaseWorkerURL(String worker) {
+        // todo: propagate the exception
+        String url=null;
+        try {
+            url=getBaseWorkerURL(worker,false);
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
         return url;
     }
+
+    /**
+     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+     * Typically the channel that is invoked with the worker will have to implement an
+     * interface specific for that worker.
+     * @param worker - Worker string must be a UPFileSpec.xxx value.
+     * @param idempotent a <code>boolean</code> value sepcifying if a URL should be idempotent
+     * @return URL to invoke the worker.
+     * @exception PortalException if an error occurs
+     */
+    public String getBaseWorkerURL(String worker, boolean idempotent) throws PortalException {
+        String url=null;
+        UPFileSpec upfs=new UPFileSpec(channelUPFile);
+        upfs.setMethod(UPFileSpec.WORKER_METHOD);
+        upfs.setMethodNodeId(worker);
+        if(idempotent) {
+            upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+        }
+                        
+        url=upfs.getUPFile();
+        /*
+          } catch (Exception e) {
+          LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+          }
+        */
+        return url;
+    }
+
 
   /**
    * Tells whether or not the channel is rendering as the root of the layout.

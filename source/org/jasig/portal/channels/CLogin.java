@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,9 +56,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Allows a user to logon to the portal.  Logon info is posted to
- * <code>authenticate.jsp</code>.  If user enters incorrect username and
+ * <code>AuthenticationServlet</code>.  If user enters incorrect username and
  * password, he/she is instructed to log in again with a different
- * password (the username of the previous attempt is preserved.</p>
+ * password (the username of the previous attempt is preserved).</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
@@ -87,6 +87,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     HttpSession session = pcs.getHttpSession();
     String authenticationAttempted = (String)session.getAttribute("up_authenticationAttempted");
     String authenticationError = (String)session.getAttribute("up_authenticationError");
+    attemptedUserName = (String)session.getAttribute("up_attemptedUserName");
 
     if (authenticationAttempted != null)
       bauthenticationAttemptFailed = true;
@@ -116,7 +117,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    attemptedUserName = runtimeData.getParameter("userName");
   }
 
   public void renderXML (ContentHandler out) throws PortalException
@@ -150,22 +150,15 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
     doc.appendChild(loginStatusElement);
 
-    try
-    {
-      XSLT xslt = new XSLT(this);
-      xslt.setXML(doc);
-      xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
-      xslt.setTarget(out);
-      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
-        xslt.setStylesheetParameter("unauthenticated", "true");
-      }
-      xslt.transform();
+    XSLT xslt = new XSLT(this);
+    xslt.setXML(doc);
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
+      xslt.setStylesheetParameter("unauthenticated", "true");
     }
-    catch (Exception e)
-    {
-      throw new GeneralRenderingException(e.getMessage());
-    }
+    xslt.transform();
   }
 
   public ChannelCacheKey generateKey() {

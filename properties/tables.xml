@@ -675,11 +675,11 @@
     <name>UP_GROUP_MEMBERSHIP</name>
     <desc>Mapping of member (that is, portal entity or group) to its containing group and flag if it is a group</desc>
     <columns>
-      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>255</param>
+      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>240</param>
         <desc>Unique group id number, key to GROUP_ID in UP_GROUP</desc>
         <key>CK</key>
       </column>
-      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>255</param>
+      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>240</param>
         <desc>Key to either the entity or group, e.g., GROUP_ID in UP_GROUP, USER_ID in UP_USER, etc.</desc>
         <key>CK</key>
       </column>

@@ -223,6 +223,11 @@ public class RDBMServices {
       try {
         Class.forName(sJdbcDriver).newInstance();
         conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
+        // Make sure autocommit is set to true
+        if (conn != null && !conn.getAutoCommit()) {
+          conn.rollback();
+          conn.setAutoCommit(true);
+        }        
         prevErrorMsg = "";
       } catch (ClassNotFoundException cnfe) {
         LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the rdbm.properties file and your classpath.");

@@ -34,7 +34,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 Author: Justin Tilton, jet@immagic.com
 Version $Revision$
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rss09="http://my.netscape.com/rdf/simple/0.9/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" exclude-result-prefixes="rss09">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rss09="http://my.netscape.com/rdf/simple/0.9/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" exclude-result-prefixes="rss09">
 
   <xsl:output method="html" indent="yes"/>
 
@@ -78,7 +78,7 @@ Version $Revision$
         </td>
 
         <td width="100%" class="uportal-channel-subtitle-reversed">
-          <a href="{link}" target="_blank">
+          <a href="{rss09:link}" target="_blank">
             <xsl:value-of select="rss09:title"/>
           </a>
         </td>
