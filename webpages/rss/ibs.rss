@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rss PUBLIC "-//Netscape Communications//DTD RSS 0.91//EN"
+            "http://my.netscape.com/publish/formats/rss-0.91.dtd">
+
+<rss version="0.91">
+
+  <channel>
+  
+    <title>Interactive Business Solutions, Inc.</title>
+    <link>http://interactivebusiness.com</link>
+    <description>A leader in Enterprise Java Solutions with
+      emphasis on Higher Education. </description>
+    <language>en-us</language>
+    <rating>(PICS-1.1 "http://www.rsac.org/ratingsv01.html"
+      l gen true comment "RSACi North America Server" 
+      for "http://www.rsac.org" on "1996.04.16T08:15-0500" 
+      r (n 0 s 0 v 0 l 0))</rating>
+
+    <image>
+      <title>IBS</title>
+      <url>http://interactivebusiness.com:8082/portal/images/ibs.gif</url>
+      <link>http://interactivebusiness.com</link>
+      <width>88</width>
+      <height>31</height>
+      <description>a leader in Enterprise Java Solutions with
+        emphasis on Higher Education. </description>
+    </image>
+    
+    <item>
+      <title>IBS Releases Student Affairs 1.6</title>
+      <link>http://www.interactivebusiness.com/News/StudentAffairsoct99.html</link>
+      <description>IBS is pleased to announce release 1.6 of IBS Student Affairs.
+        This new incremental release of our product is designed to greatly
+        improve the performance of the program.</description>
+    </item>
+    
+    <item>
+      <title>IBS Releases Enterprise Java Framework 0.8</title>
+      <link>http://www.interactivebusiness.com/News/EnterpriseFrameworkmar99.html</link>
+      <description>The IBS Enterprise Java Framework (EJF) provides tools and methods
+        for companies that wish to build secure business applications,
+        which make use of distributed-object computing and standard
+        Internet technologies...</description>
+    </item>
+    
+    <item>
+      <title>IBS releases Distributed Message Agent Server 7.5</title>
+      <link>http://www.interactivebusiness.com/News/DMAS75.html</link>
+      <description>IBS today announced the new version of its Distributed
+        Message Agent Server (DMAS) for extremely scalable, fault-tolerant
+        connectivity to PeopleSoft applications</description>
+    </item>
+
+  </channel>
+  
+</rss>
+
