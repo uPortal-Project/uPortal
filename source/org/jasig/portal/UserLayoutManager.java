@@ -71,7 +71,7 @@ public class UserLayoutManager {
   private ThemeStylesheetDescription tsd;
   private StructureStylesheetDescription ssd;
   private boolean unmapped_user_agent = false;
-  private IPerson person;
+  private IPerson m_person;
 
   /**
    * Constructor does the following
@@ -86,30 +86,32 @@ public class UserLayoutManager {
     int guestId = 1;            // belongs in a properties file
     uLayoutXML = null;
     try {
-      this.person = person;
-
+      m_person = person;
       // load user preferences
       // Should obtain implementation in a different way!!
       IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
       // determine user profile
       String userAgent = req.getHeader("User-Agent");
-      UserProfile upl = updb.getUserProfile(this.person.getID(), userAgent);
-      if(upl==null) upl=updb.getSystemProfile(userAgent);
+      UserProfile upl = updb.getUserProfile(m_person.getID(), userAgent);
+      if (upl == null) {
+        upl = updb.getSystemProfile(userAgent);
+      }
       if (upl != null) {
-	  // read uLayoutXML
-	  uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(this.person.getID(), upl.getProfileId());
-	  if (uLayoutXML == null)
-	      Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
-			 this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
-	  this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(), upl));
-	  // Initialize the JNDI context for this user
-	  JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
+        // read uLayoutXML
+        uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(m_person.getID(), upl.getProfileId());
+        if (uLayoutXML == null) {
+          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
+              m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
+        }
+        this.setCurrentUserPreferences(updb.getUserPreferences(m_person.getID(), upl));
+        // Initialize the JNDI context for this user
+        JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
       } 
       else {
         // there is no user-defined mapping for this particular browser.
         // user should be redirected to a browser-registration page.
         unmapped_user_agent = true;
-        Logger.log(Logger.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + this.person.getID()
+        Logger.log(Logger.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + m_person.getID()
             + "\" and userAgent=\"" + userAgent + "\".");
       }
     } catch (Exception e) {
@@ -214,7 +216,27 @@ public class UserLayoutManager {
    * @return
    */
   public IPerson getPerson () {
-    return  person;
+    return  (m_person);
+  }
+
+  /**
+   * Returns a global channel ID given a channel instance ID
+   * @param channelInstanceID
+   * @return 
+   */
+  public String getChannelGlobalID (String channelInstanceID) {
+    // Get the channel node from the user's layout
+    Node channelNode = getNode(channelInstanceID);
+    if (channelNode == null) {
+      return  (null);
+    }
+    // Get the global channel ID from the channel node
+    Node channelIDNode = channelNode.getAttributes().getNamedItem("chanID");
+    if (channelIDNode == null) {
+      return  (null);
+    }
+    // Return the channel's global ID
+    return  (channelIDNode.getNodeValue());
   }
 
   /**
@@ -252,13 +274,14 @@ public class UserLayoutManager {
     if (newPreferences != null) {
       // Should obtain implementation in a different way!!
       IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
-      updb.putUserPreferences(person.getID(), newPreferences);
+      updb.putUserPreferences(m_person.getID(), newPreferences);
       this.setCurrentUserPreferences(newPreferences);
     }
     if (newLayout != null) {
       uLayoutXML = newLayout;
       try {
-        GenericPortalBean.getUserLayoutStore().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), 
+            uLayoutXML);
       } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
