@@ -304,7 +304,8 @@
                        Version: 3.8.1
                        URL: http://www.junit.org/
 
-  commons-collection.jar Collection components from the Apache Commons project - needed
+  commons-collection.jar 
+                       Collection components from the Apache Commons project - needed
                        for database pooling.
                        Version: 3.1
                        URL: http://jakarta.apache.org/commons/logging.html
@@ -324,9 +325,10 @@
                        Version: 2.2, 2.3, or 2.4
                        URL: http://jakarta.apache.org/tomcat/
   
-  spring.jar        Spring framework
-                      Version 1.1.1
-                      URL: http://www.springframework.org/
+  spring.jar           Spring, a java/j2ee application framework that facilitates
+                       the use of the Inversion of Control (IoC) design pattern.
+                       Version 1.1.1
+                       URL: http://www.springframework.org/
 
 -->
 
