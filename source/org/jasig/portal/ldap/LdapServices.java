@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -12,14 +12,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.naming.Context;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 import javax.xml.transform.TransformerException;
 
+import org.apache.xpath.XPathAPI;
+import org.jasig.portal.ldap.ILdapServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.XPathAPI;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,22 +35,32 @@ import org.w3c.dom.Text;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
-public class LdapServices
-{  
+public final class LdapServices {  
+    
     private static final Log log = LogFactory.getLog(LdapServices.class);
     
+    /**
+     * The special name which can be used by clients to request the ILdapServer
+     * representing that configured in the .properties file rather (as opposed to
+     * the named servers configured in the XML configuration file.)
+     */
+    public static final String DEFAULT_LDAP_SERVER = "DEFAULT_LDAP_SERVER";
+    
     private static final String PROPERTIES_PATH = "/properties/";
-    private static final String LDAP_PROPERTIES_FILE = PROPERTIES_PATH + "ldap.properties";
+    private static final String LDAP_PROPERTIES_FILE = 
+        PROPERTIES_PATH + "ldap.properties";
     private static final String LDAP_XML_FILE = PROPERTIES_PATH + "ldap.xml";
-    private static final String LDAP_XML_CONNECTION_XPATH = "ldapConnections/connection";
-    
-    private static final Map ldapConnections = new Hashtable();
-    private static ILdapServer defaultConn = null;
-    private static boolean initialized = false;
-    
+    private static final String LDAP_XML_CONNECTION_XPATH = 
+        "ldapConnections/connection";
     
     /**
-     * Load the ldap servers.
+     * Map from server names to ILdapServer objects.
+     */
+    private static final Map ldapConnections = new Hashtable();
+    private static ILdapServer defaultConn = null;
+    
+    /**
+     * Load the ILdapServers in response to our configuration.
      */
     static {
         loadLdapProperties();
@@ -61,30 +69,33 @@ public class LdapServices
         
         //Make sure a default connection was created.
         if (defaultConn == null) {
-            RuntimeException re = new IllegalStateException("No default connection was created during initialization.");
+            RuntimeException re = 
+                new IllegalStateException("No default connection was created during initialization.");
             log.error(re.getMessage(), re);
             throw re;
         }
     }
-    
+  
     /**
-     * Load LDAP servers from the XML configuration file
+     * Load LDAP servers from the XML configuration file.
      */
     private static void loadLdapXml() {
         //Read extra connections from ldap.xml
         Document config = null;
         try {
-            config = ResourceLoader.getResourceAsDocument(LdapServices.class, LDAP_XML_FILE);
+            config = ResourceLoader.getResourceAsDocument(LdapServices.class, 
+                    LDAP_XML_FILE);
         } 
         catch (Exception e) {
-            log.error("Could not create Document from " + LDAP_XML_FILE, e);
+            log.error( "Could not create Document from " + LDAP_XML_FILE, e);
         }
         
         if (config != null){
             config.normalize();
 
             try {
-                NodeList connElements = XPathAPI.selectNodeList(config, LDAP_XML_CONNECTION_XPATH);
+                NodeList connElements = 
+                    XPathAPI.selectNodeList(config, LDAP_XML_CONNECTION_XPATH);
                 
                 //Loop through each <connection> element
                 for (int connIndex = 0; connIndex < connElements.getLength(); connIndex++) {
@@ -109,7 +120,7 @@ public class LdapServices
                             String managerDN = null;
                             String managerPW = null;
                             String uidAttribute = null;
-                            String protocol = null;
+                            boolean useSsl = false;
                             String factory = null;
 
                             //Loop through all the child nodes of the connection
@@ -147,7 +158,7 @@ public class LdapServices
                                         uidAttribute = tagValue;
                                     }
                                     else if (tagName.equals("protocol")) {
-                                        protocol = tagValue;
+                                        useSsl = "ssl".equals(tagValue);
                                     }
                                     else if (tagName.equals("factory")) {
                                         factory = tagValue;
@@ -158,232 +169,143 @@ public class LdapServices
                             //Create a new ILdapServer
                             if (name != null) {
                                 try {
-                                    ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol, factory);
+                                    ILdapServer newConn = new LdapServerImpl(
+                                            name, host, port, baseDN, uidAttribute, managerDN, managerPW, useSsl, factory);
                                     ldapConnections.put(name, newConn);
                                     
                                     if (isDefaultConn) {
                                         defaultConn = newConn;
                                         if (log.isInfoEnabled())
-                                            log.info("Replaced '" + LDAP_PROPERTIES_FILE + "' connection with default connection '" + name + "' from '" + LDAP_XML_FILE + "'");
+                                            log.info("Replaced '" + LDAP_PROPERTIES_FILE + 
+                                                    "' connection with default connection '" + 
+                                                    name + "' from '" + LDAP_XML_FILE + "'");
                                     }
                                 }
                                 catch (IllegalArgumentException iae) {
-                                    log.info( "Invalid data for server " + name + " in " + LDAP_XML_FILE, iae);
+                                    if (log.isInfoEnabled())
+                                        log.info("Invalid data for server " + name + 
+                                                " in " + LDAP_XML_FILE, iae);
                                 }                                    
                             }
                             else {
-                                log.error("Error creating ILdapServer, no name specified.");
+                                log.error( "Error creating ILdapServer, no name specified.");
                             }
                         }
                     }
                     catch (Exception e) {
-                        log.error("Error creating ILdapServer from node: " + connElement.getNodeName(), e);
+                        log.error( "Error creating ILdapServer from node: " + connElement.getNodeName(), e);
                     }
                 }
             }
             catch (TransformerException te) {
-                log.error("Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
+                log.error( "Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
             }
         }
         else {
-            log.error("No document was loaded from " + LDAP_XML_FILE);                
+            log.error( "No document was loaded from " + LDAP_XML_FILE);                
         }
     }
-
+    
     /**
-     * Load LDAP server from ldap.properties
+     * Load LDAP server from ldap.properties.
      */
     private static void loadLdapProperties() {
+
         //This try/catch/finaly block reads the default LDAP connection
         //from a properties file.
         InputStream ins = null;
         try {
             //Read properties file
             ins = LdapServices.class.getResourceAsStream(LDAP_PROPERTIES_FILE);
-            
+
             //If the properties file was found
             if (ins != null) {
                 Properties ldapProps = new Properties();
                 ldapProps.load(ins);
-              
+
                 try {
                     //Create the default connection object
-                    defaultConn = new LdapConnectionImpl(
-                        "ldap.properties configured connection",
-                        ldapProps.getProperty("ldap.host"),
-                        ldapProps.getProperty("ldap.port"),
-                        ldapProps.getProperty("ldap.baseDN"),
-                        ldapProps.getProperty("ldap.uidAttribute"),
-                        ldapProps.getProperty("ldap.managerDN"),
-                        ldapProps.getProperty("ldap.managerPW"),
-                        ldapProps.getProperty("ldap.protocol"),
-                        ldapProps.getProperty("ldap.factory"));
+                    defaultConn = new LdapServerImpl(
+                            "ldap.properties configured connection", 
+                            ldapProps.getProperty("ldap.host"), 
+                            ldapProps.getProperty("ldap.port"), 
+                            ldapProps.getProperty("ldap.baseDN"), 
+                            ldapProps.getProperty("ldap.uidAttribute"),
+                            ldapProps.getProperty("ldap.managerDN"), 
+                            ldapProps.getProperty("ldap.managerPW"), 
+                            "ssl".equals(ldapProps.getProperty("ldap.protocol")),
+                            ldapProps.getProperty("ldap.factory"));
+                    
+                } catch (IllegalArgumentException iae) {
+                    if (log.isInfoEnabled())
+                        log.info("Invalid data in "
+                                                + LDAP_PROPERTIES_FILE, iae);
                 }
-                catch (IllegalArgumentException iae) {
-                    log.info("Invalid data in " + LDAP_PROPERTIES_FILE, iae);
-                }
+            } else {
+                if (log.isInfoEnabled())
+                    log.info(LDAP_PROPERTIES_FILE
+                            + " was not found, all ldap "
+                            + "connections will be loaded from "
+                            + LDAP_XML_FILE);
             }
-            else {
-                log.info(LDAP_PROPERTIES_FILE + " was not found, all ldap connections will be loaded from " + LDAP_XML_FILE);
-            }
-        }
-        catch(Exception e) {
-            log.error("Error while loading default ldap connection from " + LDAP_PROPERTIES_FILE, e);
-        }
-        finally {
+        } catch (Exception e) {
+            log.error("LdapServices::initConnections(): Error while loading "
+                                    + "default ldap connection from "
+                                    + LDAP_PROPERTIES_FILE, e);
+        } finally {
             try {
-                if(ins != null)
+                if (ins != null)
                     ins.close();
-            }
-            catch(IOException ioe) {
-                log.error("Unable to close " + LDAP_PROPERTIES_FILE + " InputStream ", ioe);
+            } catch (IOException ioe) {
+                log.error("Unable to close "
+                        + LDAP_PROPERTIES_FILE + " InputStream ", ioe);
             }
         }
-    }
 
+    }
+    
     /**
-     * Get the default {@link ILdapServer}. A one-time initialization
-     * is performed when this method or {@link #getLdapServer(String name)}
-     * is called. If a default connection is not found during initialization
-     * an <code>IllegalStateException</code> will be thrown.
-     * 
+     * Get the default {@link ILdapServer}.
      * @return The default {@link ILdapServer}. 
      */
     public static ILdapServer getDefaultLdapServer() {
         return defaultConn;
     }
-  
-    /**
-     * Get a named {@link ILdapServer}. A one-time initialization
-     * is performed when this method or {@link #getDefaultLdapServer()}
-     * is called. If a default connection is not found during initialization
-     * an <code>IllegalStateException</code> will be thrown.
-     * 
-     * @param name The name of the connection to return.
-     * @return An {@link ILdapServer} with the specified name, <code>null</code> if there is no connection with the specified name.
-     */
-    public static ILdapServer getLdapServer(String name) {
-        return (ILdapServer)ldapConnections.get(name);
-    }
     
     /**
-     * Get a list of all the named {@link ILdapServer} instances. If a
-     * server is configured in ldap.properties it will not be avalable via
-     * this method, only servers configured in ldap.xml are.
-     * 
-     * @return An iterator of named {@link ILdapServer}s.
+     * Get a named {@link ILdapServer}.
+     * Using the special name 'DEFAULT_LDAP_SERVER' causes this method to
+     * return the default Ldap server.
+     * @param name The name of the ILdapServer to return.
+     * @return An {@link ILdapServer} with the specified name, 
+     * <code>null</code> if there is no connection with the specified name.
+     */
+    public static ILdapServer getLdapServer(String name) {
+        /**
+         * If the request is for the special name indicating the default Ldap server
+         * return that rather than looking in the map of named servers.
+         */
+        if (LdapServices.DEFAULT_LDAP_SERVER.equals(name))
+            return getDefaultLdapServer();
+        
+        return (ILdapServer) ldapConnections.get(name);
+    }
+  
+    /**
+     * Get an iterator over the named {@link ILdapServer} instances.
+     * If a server is configured in ldap.properties it will not be available via this
+     * method; only servers configured in ldap.xml are available via this method.
+     * @return an Iterator over named {@link ILdapServer}s.
      */
     public static Iterator getNamedLdapServers() {
         return ldapConnections.values().iterator();
     }
-  
     
     /**
      * This class only provides static methods.
      */
     private LdapServices() {
-    }
-    
-
-    /**
-     * Internal implementation of the {@link ILdapServer} interface.
-     * 
-     * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
-     */
-    private static class LdapConnectionImpl implements ILdapServer {
-        private final String ldapName;
-        private final String ldapHost;
-        private final String ldapPort;
-        private final String ldapBaseDn;
-        private final String ldapUidAttribute;
-        private final String ldapManagerDn;
-        private final String ldapManagerPw;
-        private final String ldapManagerProtocol;
-        private final String ldapInitCtxFactory;
-        
-        public LdapConnectionImpl(
-            String name, String host, String port, String baseDn,
-            String uidAttribute, String managerDn, String managerPw,
-            String managerProtocol, String initialContextFactory) {
-            
-            if (name == null)
-                throw new IllegalArgumentException("name cannot be null.");
-            if (host == null)
-                throw new IllegalArgumentException("host cannot be null.");
-            
-            this.ldapName = name;
-            this.ldapHost = checkNull(host, "");
-            this.ldapPort = checkNull(port, "389");
-            this.ldapBaseDn = checkNull(baseDn, "");
-            this.ldapUidAttribute = checkNull(uidAttribute, "");
-            this.ldapManagerDn = checkNull(managerDn, "");
-            this.ldapManagerPw = checkNull(managerPw, "");
-            this.ldapManagerProtocol = checkNull(managerProtocol, "");
-            this.ldapInitCtxFactory = checkNull(initialContextFactory, "com.sun.jndi.ldap.LdapCtxFactory");
-            
-            log.debug("LdapServices: Creating LDAP Connection: " + this.ldapName);
-            log.debug("\thost = " + this.ldapHost);
-            log.debug("\tport = " + this.ldapPort);
-            log.debug("\tbaseDN = " + this.ldapBaseDn);
-            log.debug("\tuidAttribute = " + this.ldapUidAttribute);
-            log.debug("\tmanagerDN = " + this.ldapManagerDn);
-            log.debug("\tmanagerPW = " + this.ldapManagerPw);
-            log.debug("\tprotocol = " + this.ldapManagerProtocol);            
-        }
-        
-        
-        private String checkNull(String chkStr, String defStr) {
-            if (chkStr == null)
-                return defStr;
-            else
-                return chkStr;
-        }
-        
-        
-        public DirContext getConnection() {
-            DirContext conn = null;
-
-            try {
-                Hashtable env = new Hashtable(5, 0.75f);
-                env.put(Context.INITIAL_CONTEXT_FACTORY, this.ldapInitCtxFactory);
-                StringBuffer urlBuffer = new StringBuffer("ldap://");
-                urlBuffer.append(ldapHost).append(":").append(ldapPort);
-     
-                env.put(Context.PROVIDER_URL, urlBuffer.toString());
-                env.put(Context.SECURITY_AUTHENTICATION, "simple");
-                env.put(Context.SECURITY_PRINCIPAL,      ldapManagerDn);
-                env.put(Context.SECURITY_CREDENTIALS,    ldapManagerPw);
-                
-                if(ldapManagerProtocol.equals("ssl"))
-                    env.put(Context.SECURITY_PROTOCOL,"ssl");
-                
-                conn = new InitialDirContext(env);
-            }
-            catch ( Exception e ) {
-                log.error( "LdapServices::LdapConnectionImpl::getConnection(): Error creating the LDAP Connection.", e);
-            }
-     
-            return conn;
-        }
-
-        public String getBaseDN() {
-            return ldapBaseDn;
-        }
-
-        public String getUidAttribute() {
-            return ldapUidAttribute;
-        }
-
-        public void releaseConnection (DirContext conn) {
-            if (conn == null)
-                return;
-            
-            try {
-                conn.close();
-            }
-            catch (Exception e) {
-                log.debug("LdapServices::LdapConnectionImpl::getConnection(): Error closing the LDAP Connection.", e);
-            }
-        }       
-    }
+        // private constructor prevents instantiation of this 
+        // static service-providing class
+    }  
 }
