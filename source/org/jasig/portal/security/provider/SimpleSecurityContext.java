@@ -40,7 +40,7 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
 import java.security.MessageDigest;
-
+import java.util.Enumeration;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -116,8 +116,10 @@ class SimpleSecurityContext extends ChainingSecurityContext
         throw  (ep);
       }
     }
+    // If the principal and/or credential are missing, the context authentication
+    // simply fails. It should not be construed that this is an error.
     else {
-        LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+        LogService.log(LogService.INFO, "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
@@ -162,6 +164,3 @@ class SimpleSecurityContext extends ChainingSecurityContext
     return  -1;
   }
 }
-
-
-

@@ -48,7 +48,8 @@ import  org.jasig.portal.services.Authentication;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.PersonManagerFactory;
 import  org.jasig.portal.services.LogService;
-
+import  org.jasig.portal.utils.ResourceLoader;
+import  java.util.Properties;
 
 /**
  * Receives the username and password and tries to authenticate the user.
@@ -56,6 +57,9 @@ import  org.jasig.portal.services.LogService;
  * to generate the post to this servlet.
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @version $Revision$
+ * @author Don Fracapane (df7@columbia.edu)
+ * Added properties in the security properties file that hold the tokens used to
+ * represent the principal and credential for each security context.
  */
 public class AuthenticationServlet extends HttpServlet {
   private static final String redirectString;
@@ -84,7 +88,8 @@ public class AuthenticationServlet extends HttpServlet {
    * Forwards request to doGet() method
    * @param req
    * @param res
-   * @exception ServletException, IOException
+   * @exception ServletException
+   * @exception IOException
    */
   public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     // Just handle this request in the doGet() method
@@ -93,9 +98,10 @@ public class AuthenticationServlet extends HttpServlet {
 
   /**
    * Process the incoming HttpServletRequest
-   * @param req
-   * @param res
-   * @exception ServletException, IOException
+   * @param request
+   * @param response
+   * @exception ServletException
+   * @exception IOException
    */
   public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // Clear out the existing session for the user
@@ -106,14 +112,14 @@ public class AuthenticationServlet extends HttpServlet {
     try {
       // Get the person object associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      // Grab all of the principals from the request
-      // NOTE: This should refer to a properties file
-      HashMap principals = new HashMap(1);
-      principals.put("username", request.getParameter("userName"));
-      // Grab all of the credentials from the request
-      // NOTE: This should refer to a properties file
-      HashMap credentials = new HashMap(1);
-      credentials.put("password", request.getParameter("password"));
+      // We retrieve the tokens representing the credential and userid parameters
+      // from the security properties file and then grab all of the principals and
+      // credentials from the request and load them into their respective HashMaps.
+      Properties props =
+      ResourceLoader.getResourceAsProperties(this.getClass(), "/properties/security.properties");
+      HashMap principals = getPropertyFromRequest (props, "principalToken", request);
+      HashMap credentials = getPropertyFromRequest (props, "credentialToken", request);
+
       // Attempt to authenticate using the incoming request
       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
@@ -141,7 +147,38 @@ public class AuthenticationServlet extends HttpServlet {
       response.sendRedirect(request.getContextPath() + '/' + redirectString);
     }
   }
+
+  /**
+   * Gather all properties from a properties file matching a name and get their
+   * values from the request and load them into a HashMap that is returned.
+   * @param props
+   * @param propName
+   * @param request
+   * @return HashMap of properties
+   */
+  private HashMap getPropertyFromRequest (Properties props, String propName, HttpServletRequest request) {
+   // Iterate through all of the other property keys looking for the first property
+   // named like propname that has a value in the request
+    HashMap retHash = new HashMap(1);
+    Enumeration propNames = props.propertyNames();
+    while (propNames.hasMoreElements()) {
+      String candidate = (String)propNames.nextElement();
+      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() Candidate = " + candidate);
+      String candidateValue = props.getProperty(candidate);
+      if (candidate.startsWith(propName)) {
+         String propValue = request.getParameter(candidateValue);
+         // null value causes exception in context.authentication
+         // alternately we could just not set parm if value is null
+         propValue = (propValue == null ? "" : propValue);
+         // The relationship between the way the properties are stored and the way
+         // the subcontexts are named has to be closely looked at to make this work.
+         // Do we want to strip off the "root." or even the "root.simple."?
+         String key = candidate.substring(propName.length() + 1);
+         // 2nd part assumes prefix of "root.". This obviously is weak and ready to break.
+         key = (key.equals("root") ? key : key.substring(5));
+         retHash.put(key, propValue);
+      }
+    }
+    return (retHash);
+  }
 }
-
-
-

@@ -52,6 +52,9 @@ import java.util.Vector;
  *
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
+ * @author Don Fracapane (df7@columbia.edu)
+ * Added a new method named getSubContextNames() that returns an Enumeration of names
+ * for the subcontexts.
  */
 
 public abstract class ChainingSecurityContext implements ISecurityContext
@@ -99,10 +102,11 @@ public abstract class ChainingSecurityContext implements ISecurityContext
 
     while (e.hasMoreElements()) {
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
-      IPrincipal sp = sctx.getPrincipalInstance();
-      IOpaqueCredentials op = sctx.getOpaqueCredentialsInstance();
-      sp.setUID(this.myPrincipal.UID);
-      op.setCredentials(this.myOpaqueCredentials.credentialstring);
+      // The principal and credential are now set for all subcontexts in Authentication
+      //IPrincipal sp = sctx.getPrincipalInstance();
+      //IOpaqueCredentials op = sctx.getOpaqueCredentialsInstance();
+      //sp.setUID(this.myPrincipal.UID);
+      //op.setCredentials(this.myOpaqueCredentials.credentialstring);
       sctx.authenticate();
       // Stop attempting to authenticate if authenticated and if the property flag is set
       if(stopWhenAuthenticated && sctx.isAuthenticated()) {
@@ -110,11 +114,12 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       }
     }
 
-    // Zero out the actual credentials
-
-    for (i = 0; i < this.myOpaqueCredentials.credentialstring.length; i++)
-      this.myOpaqueCredentials.credentialstring[i] = 0;
-    myOpaqueCredentials.credentialstring = null;
+    // Zero out the actual credentials if it isn't already null
+    if (this.myOpaqueCredentials.credentialstring != null){
+       for (i = 0; i < this.myOpaqueCredentials.credentialstring.length; i++)
+         this.myOpaqueCredentials.credentialstring[i] = 0;
+       myOpaqueCredentials.credentialstring = null;
+    }
     return;
   }
 
@@ -169,7 +174,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     return(false);
   }
 
-  // return an enumeration of subcontexts by running the vector and
+  // Return an enumeration of subcontexts by running the vector and
   // creating the enumeration.  All this so the subcontexts will
   // be returned in the order they appeared in the properties file.
   public synchronized Enumeration getSubContexts() {
@@ -257,6 +262,20 @@ public abstract class ChainingSecurityContext implements ISecurityContext
         setCredentials(credentials.getBytes());
     }
   }
+
+  // Returns an Enumeration of the names of the subcontexts.
+  public synchronized Enumeration getSubContextNames() {
+   Vector scNames = new Vector();
+   for (int i = 0; i < mySubContexts.size(); i++)
+   {
+      Entry entry = (Entry) mySubContexts.get(i);
+      if (entry.getKey() != null){
+         scNames.add(entry.getKey());
+       }
+   }
+   return scNames.elements();
+  }
+
 
   protected class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
   }

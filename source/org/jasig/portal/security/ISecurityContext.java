@@ -45,7 +45,9 @@ import org.jasig.portal.security.*;
  *
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
- */
+ * @author Don Fracapane (df7@columbia.edu)
+ * Added getSubContextNames() to support principal and credential tokens
+  */
 
 public interface ISecurityContext {
 
@@ -159,6 +161,14 @@ public interface ISecurityContext {
    * @return The enumeration object containing all of the contexts.
    */
   public Enumeration getSubContexts();
+
+  /**
+   * Returns an enumeration of the names of the security contexts currently
+   * registered as being subserviant to this one.
+   *
+   * @return The enumeration object containing all of the subcontext names.
+   */
+  public Enumeration getSubContextNames();
 
   /**
    * Adds a named sub context to the list of subserviant subcontexts.
