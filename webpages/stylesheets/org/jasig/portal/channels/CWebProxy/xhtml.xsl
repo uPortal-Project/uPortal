@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-                xmlns:lxslt="http://xml.apache.org/xslt"
                 xmlns:portal="class:org.jasig.portal.StylesheetUtils" 
                 version="1.0" exclude-result-prefixes="portal">
 
@@ -36,7 +35,7 @@
       <xsl:param name="action-uri">
         <xsl:choose>
            <!--handles relative URIs for action attributes-->
-           <xsl:when test="not(contains(@action, ':')) or not( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) )">       
+           <xsl:when test="not(string-length(normalize-space(@action))=0) and (not(contains(@action, ':')) or not( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) ))">       
               <xsl:choose>
                 <xsl:when test="//base">
                   <xsl:call-template name="get-absolute-uri">
@@ -63,10 +62,13 @@
          <xsl:copy-of select="attribute::*[not(name()='action')]" />
          <xsl:attribute name="action">
            <xsl:value-of select="$baseActionURL"/>
-	 </xsl:attribute>
+         </xsl:attribute>
+         <xsl:if test="not(string-length(normalize-space(@action))=0 or $action-uri=$cw_xml)">
+            <input type="hidden" name="cw_xml" value="{$action-uri}"/>
+         </xsl:if>
          <xsl:apply-templates/>
        </xsl:when>
-       <xsl:when test="$cw_passThrough='application' and ( string-length(normalize-space(@action))=0 or $cw_xml=@action or $cw_xml=$action-uri )">
+       <xsl:when test="$cw_passThrough='application' and ( string-length(normalize-space(@action))=0 or $cw_xml=$action-uri )">
          <xsl:copy-of select="attribute::*[not(name()='action')]" />
          <xsl:attribute name="action">
            <xsl:value-of select="$baseActionURL"/>
@@ -78,24 +80,17 @@
          <xsl:attribute name="action">
            <xsl:value-of select="$baseActionURL"/>
          </xsl:attribute>
-         <xsl:if test="not(string-length(normalize-space(@action))=0 or $cw_xml=@action or $cw_xml=$action-uri)">
+         <xsl:if test="not(string-length(normalize-space(@action))=0 or $cw_xml=$action-uri)">
            <input type="hidden" name="cw_xml" value="{$action-uri}"/>
          </xsl:if>
          <xsl:apply-templates/>
        </xsl:when>
        <xsl:otherwise>
-         <xsl:choose>
-          <xsl:when test="not(contains(@action, ':')) or not( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) )">
-           <xsl:copy-of select="attribute::*[not(name()='action')]"/>
-           <xsl:attribute name="action">
-             <xsl:value-of select="$action-uri"/>
-           </xsl:attribute>
-           <xsl:apply-templates/>
-          </xsl:when>
-          <xsl:otherwise>
-           <xsl:apply-templates select="@*|*|text()|comment()"/>
-          </xsl:otherwise>
-         </xsl:choose>
+         <xsl:copy-of select="attribute::*[not(name()='action')]"/>
+         <xsl:attribute name="action">
+           <xsl:value-of select="$action-uri"/>
+         </xsl:attribute>
+         <xsl:apply-templates/>
        </xsl:otherwise>
       </xsl:choose>
       </xsl:copy>
@@ -143,11 +138,10 @@
    </xsl:template>
 
    <xsl:template match="a">
-      <xsl:copy>
       <xsl:param name="href-uri">
         <xsl:choose>
-           <xsl:when test="not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) )">
-              <!--handles relative URIs for href attributes-->
+           <!--handles relative URIs for href attributes-->
+           <xsl:when test=" not(string-length(normalize-space(@href))=0) and (not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) ))">
               <xsl:choose>
                 <xsl:when test="//base">
                   <xsl:call-template name="get-absolute-uri">
@@ -168,15 +162,23 @@
            </xsl:otherwise>
         </xsl:choose>
       </xsl:param> 
+      <xsl:copy>
       <xsl:choose>
        <xsl:when test="$cw_passThrough='marked' and (contains(@href, '&amp;cw_inChannelLink=') or contains(@href, '?cw_inChannelLink=') )">
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
          <xsl:attribute name="href">
-           <xsl:value-of select="concat($baseActionURL, '?', substring-after(@href, '?'))"/>
+           <xsl:choose>
+             <xsl:when test="string-length(normalize-space($href-uri))=0 or $href-uri=$cw_xml">
+               <xsl:value-of select="concat($baseActionURL, '?', substring-after(@href, '?'))"/>
+             </xsl:when>
+             <xsl:otherwise>
+                <xsl:value-of select="concat($baseActionURL, '?', substring-after(@href, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
+             </xsl:otherwise>
+           </xsl:choose>
          </xsl:attribute>
          <xsl:apply-templates/>
        </xsl:when>
-       <xsl:when test="$cw_passThrough='application' and ( string-length(normalize-space(@href))=0 or $cw_xml=@href or $cw_xml=$href-uri )">
+       <xsl:when test="$cw_passThrough='application' and ( string-length(normalize-space(@href))=0 or $cw_xml=$href-uri )">
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
          <xsl:attribute name="href">
            <xsl:value-of select="$baseActionURL"/>
@@ -187,7 +189,7 @@
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
          <xsl:attribute name="href">
            <xsl:choose>
-             <xsl:when test="string-length(normalize-space(@href))=0 or $cw_xml=@href or $cw_xml=$href-uri">
+             <xsl:when test="string-length(normalize-space(@href))=0 or $cw_xml=$href-uri">
                <xsl:value-of select="$baseActionURL"/>
              </xsl:when>
              <xsl:otherwise>
@@ -198,18 +200,11 @@
          <xsl:apply-templates/>
        </xsl:when>
        <xsl:otherwise>
-         <xsl:choose>
-          <xsl:when test="not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) )">
-           <xsl:copy-of select="attribute::*[not(name()='href')]"/>
-           <xsl:attribute name="href">
-              <xsl:value-of select="$href-uri"/>
-           </xsl:attribute>
-           <xsl:apply-templates/>
-          </xsl:when>
-          <xsl:otherwise>
-           <xsl:apply-templates select="@*|*|text()|comment()"/>
-          </xsl:otherwise>
-         </xsl:choose>
+         <xsl:copy-of select="attribute::*[not(name()='href')]"/>
+         <xsl:attribute name="href">
+            <xsl:value-of select="$href-uri"/>
+         </xsl:attribute>
+         <xsl:apply-templates/>
        </xsl:otherwise>
       </xsl:choose> 
       </xsl:copy>
