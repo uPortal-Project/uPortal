@@ -45,11 +45,38 @@ public class StylesheetUtils
 {
 
   /**
+   * Returns the absolute uri calculated from the base and file parameters...
+   * Returns an empty string when the base does not contain the correct
+   * protocol (ie. <something>://<something>).
+   */
+  public static String getAbsURI (String base, String file)
+  {
+    String uri = "";
+    if (file.startsWith("/"))
+    {
+      int i = base.indexOf("://");
+      if (i != -1)
+      {
+        int first = base.indexOf("/", i+1);
+        uri = base.substring(0, first).concat(file);
+      }
+    }
+    else
+    {
+      int last = base.lastIndexOf("/");
+      uri = base.substring(0, last+1).concat(file);
+    }
+   
+    return uri;
+
+  }
+
+  /**
    * Returns the absolute URI without any '/../'.  Some browsers and web 
    * servers do not handle these URIs correctly.
    * @param uri the absolute URI generated from the input source document
    */
-  public static String getAbsURI (String uri)
+  private static String removeUpDirs (String uri)
   {
     if ( uri.indexOf("/../") != -1 )
     {
