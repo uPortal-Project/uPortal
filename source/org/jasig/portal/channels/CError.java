@@ -43,6 +43,7 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
@@ -91,6 +92,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     protected String str_message=null;
     protected IChannel the_channel=null;
     protected int errorID=-1;
+    protected boolean placeHolder = false;
 
     private boolean showStackTrace=false;
 
@@ -130,6 +132,19 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
     public void setPortalControlStructures(PortalControlStructures pcs) {
         this.portcs=pcs;
+    }
+
+
+    /**
+     * This is so CError can be used by getUserLayout() as a placeholder for
+     * channels that have either been deleted from the portal database or
+     * the users permission to use the channel has been removed (permanently or
+     * temporarily).
+     */
+    public void setStaticData (ChannelStaticData sd) {
+      this.str_message = sd.getParameter("CErrorMessage");
+      this.str_channelID = sd.getParameter("CErrorChanId");
+      placeHolder = true;  // Should only get here if we are a "normal channel"
     }
 
     public void renderXML(ContentHandler out) {
@@ -313,6 +328,11 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                 if(!((PortalException)channelException).allowReinstantiation())
                     allowRel="false";
             }
+        }
+
+        if (placeHolder) { // We are just displaying a message. Nothing to restart
+          allowRef = "false";
+          allowRel = "false";
         }
 
         // debug block

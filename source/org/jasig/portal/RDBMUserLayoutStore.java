@@ -168,10 +168,10 @@ public class RDBMUserLayoutStore
   static final HashMap channelCache = new HashMap();
 
   protected final class ChannelDefinition {
-    int chanId;
-    String chanTitle;
-    String chanDesc;
-    String chanClass;
+    int chanId = -1;
+    String chanTitle = "";
+    String chanDesc = "";
+    String chanClass = "";
     int chanTypeId;
     int chanPupblUsrId;
     int chanApvlId;
@@ -184,8 +184,8 @@ public class RDBMUserLayoutStore
     boolean chanHasAbout;
     //   boolean chanUnremovable;
     boolean chanDetachable;
-    String chanName;
-    String chanFName;
+    String chanName = "";
+    String chanFName = "";
     ArrayList parameters;
 
     private class ChannelParameter {
@@ -204,6 +204,12 @@ public class RDBMUserLayoutStore
     }
 
     public Timestamp getchanApvlDt() { return chanApvlDt;}
+
+    public ChannelDefinition(int chanId, String chanTitle) {
+      this.chanId = chanId;
+      this.chanTitle = chanTitle;
+    }
+
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
       Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, String chanMinimizable, String chanEditable, String chanHasHelp,
       String chanHasAbout, /*   String chanUnremovable, */ String chanDetachable, String chanName, String chanFName) {
@@ -216,6 +222,7 @@ public class RDBMUserLayoutStore
               chanDetachable!= null && chanDetachable.equalsIgnoreCase("Y"),
               chanName, chanFName);
     }
+
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
       Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, boolean chanMinimizable, boolean chanEditable, boolean chanHasHelp,
       boolean chanHasAbout, /*   boolean chanUnremovable, */ boolean chanDetachable, String chanName, String chanFName) {
@@ -248,7 +255,11 @@ public class RDBMUserLayoutStore
         parameters.add(new ChannelParameter(name, value, override));
       }
 
-      public Element getDocument(DocumentImpl doc, String idTag) {
+      /**
+       * Minimum attributes a channel must have
+       */
+      private Element getBase(DocumentImpl doc, String idTag, String chanClass, boolean minimizable,
+        boolean editable, boolean hasHelp, boolean  hasAbout, boolean detachable) {
         Element channel = doc.createElement("channel");
         doc.putIdentifier(idTag, channel);
         channel.setAttribute("ID", idTag);
@@ -256,33 +267,59 @@ public class RDBMUserLayoutStore
         if (DEBUG > 1) {
           System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
         }
+        channel.setAttribute("timeout", chanTimeout + "");
         channel.setAttribute("name", chanName);
-        channel.setAttribute("description", chanDesc);
         channel.setAttribute("title", chanTitle);
         channel.setAttribute("fname", chanFName);
         channel.setAttribute("class", chanClass);
         channel.setAttribute("typeID", chanTypeId + "");
-        channel.setAttribute("timeout", chanTimeout + "");
-        channel.setAttribute("minimizable", chanMinimizable ? "true" : "false");
-        channel.setAttribute("editable", chanEditable ? "true" : "false");
-        channel.setAttribute("hasHelp", chanHasHelp ? "true" : "false");
-        channel.setAttribute("hasAbout", chanHasAbout ? "true" : "false");
-        //    channel.setAttribute("unremovable", chanUnremovable ? "true" : "false");
-        channel.setAttribute("detachable", chanDetachable ? "true" : "false");
+        channel.setAttribute("minimizable", minimizable ? "true" : "false");
+        channel.setAttribute("editable", editable ? "true" : "false");
+        channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
+        channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
+        channel.setAttribute("detachable", detachable ? "true" : "false");
+        return channel;
+      }
+      private final Element nodeParameter(DocumentImpl doc, String name, String value) {
+        Element parameter = doc.createElement("parameter");
+        parameter.setAttribute("name", name);
+        parameter.setAttribute("value", value);
+        return parameter;
+      }
 
+      private final void addParameters(DocumentImpl doc, Element channel) {
         if (parameters != null) {
           for (int i = 0; i < parameters.size(); i++) {
             ChannelParameter cp = (ChannelParameter) parameters.get(i);
 
-            Element parameter = doc.createElement("parameter");
-            parameter.setAttribute("name", cp.name);
-            parameter.setAttribute("value", cp.value);
+            Element parameter = nodeParameter(doc, cp.name, cp.value);
             if (cp.override) {
               parameter.setAttribute("override", "yes");
             }
             channel.appendChild(parameter);
           }
         }
+      }
+      /**
+       * Display a message where this channel should be
+       */
+      public Element getDocument(DocumentImpl doc, String idTag, String statusMsg) {
+        Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false,
+                                  false, false);
+        addParameters(doc, channel);
+        channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
+        channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
+        return channel;
+      }
+      /**
+       * return an xml representation of this channel
+       */
+      public Element getDocument(DocumentImpl doc, String idTag) {
+        Element channel = getBase(doc, idTag, chanClass, chanMinimizable, chanEditable, chanHasHelp,
+          chanHasAbout, chanDetachable);
+        channel.setAttribute("description", chanDesc);
+        //    channel.setAttribute("unremovable", chanUnremovable ? "true" : "false");
+        addParameters(doc, channel);
         return channel;
       }
 
@@ -501,8 +538,15 @@ public class RDBMUserLayoutStore
      /**
       * Get a channel from the cache (it better be there)
       */
+  protected ChannelDefinition getChannel(int chanId) {
+    return (ChannelDefinition)channelCache.get(new Integer(chanId));
+  }
+
+     /**
+      * Get a channel from the cache (it better be there)
+      */
   protected Element getChannel(int chanId, DocumentImpl doc, String idTag) {
-    ChannelDefinition channel = (ChannelDefinition)channelCache.get(new Integer(chanId));
+    ChannelDefinition channel = getChannel(chanId);
     if (channel != null) {
       return channel.getDocument(doc, idTag);
     } else {
@@ -747,11 +791,14 @@ public class RDBMUserLayoutStore
         try {
           if (rs.next()) {
             structure = getChannel(chanId, doc, channelPrefix + structId);
-          } else {
-            // No access
+          } else {            // No access
+            ChannelDefinition channel= getChannel(chanId);
             LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
-            + chanId + " (ignored)");
-            structure = getChannel(chanId, doc, channelPrefix + structId);
+              + chanId + " (ignored)");
+            if (channel != null) {
+            structure = channel.getDocument(doc, channelPrefix + structId,
+              "You do not have permission to this use channel.");
+           }
           }
         } catch (SQLException sqle) {
           // database error
@@ -762,6 +809,9 @@ public class RDBMUserLayoutStore
         }
         if (structure == null) {
           // Can't find channel
+          ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
+          structure = cd.getDocument(doc, channelPrefix + structId,
+           "This channel no longer exists. You should remove it from your layout.");
         }
       } else {
         structure = doc.createElement("folder");
@@ -806,6 +856,7 @@ public class RDBMUserLayoutStore
   public Document getUserLayout (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
     Connection con = rdbmService.getConnection();
+    setAutoCommit(con, false);          // May speed things up, can't hurt
     String str_uLayoutXML = null;
     try {
       DocumentImpl doc = new DocumentImpl();
@@ -1107,7 +1158,8 @@ public class RDBMUserLayoutStore
 
     }
     if (node.getNodeName().equals("channel")) {
-      structStmt.setInt(5, Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue()));
+      int chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
+      structStmt.setInt(5, chanId);
       structStmt.setNull(6,java.sql.Types.VARCHAR);
     }
     else {
