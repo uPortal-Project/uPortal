@@ -30,7 +30,7 @@ import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdde
  * The default merger is {@link ReplacingAttributeAdder}
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttributeDao {
     private static final Log LOG = LogFactory.getLog(CascadingPersonAttributeDao.class);
