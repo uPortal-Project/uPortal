@@ -62,6 +62,7 @@ import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.SAXBufferImpl;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelSAXStreamFilter;
 
 
 import org.jasig.portal.utils.XSLT;
@@ -79,7 +80,7 @@ public class ChannelServlet extends HttpServlet
 {
     private boolean dbImplSet = false;
     private boolean baseDirSet=false;
-    
+
     public static String renderBase="render.uP";
     public static String detachBaseStart="detach_";
     private static int sizeLimit = 3000000; // Should be channel specific
@@ -89,7 +90,7 @@ public class ChannelServlet extends HttpServlet
     MediaManager mediaM;
     private boolean initialized=false;
     private String baseDir;
-    
+
     private IChannel channel;
     private String channelName;
     private boolean hasEdit=false;
@@ -99,7 +100,7 @@ public class ChannelServlet extends HttpServlet
 
     private static final String fs = File.separator;
     private static final String relativeSSLLocation = "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "tools" + fs + "ChannelServlet" + fs + "ChannelServlet.ssl";
-    
+
 
     public void init() throws ServletException {
 	ServletConfig sc=this.getServletConfig();
@@ -111,6 +112,10 @@ public class ChannelServlet extends HttpServlet
 		if(portalBaseDir.exists())  {
 		    // initialize stylesheet set
 		    GenericPortalBean.setPortalBaseDir(baseDir);
+
+		    // once JNDI DB access is in place the following line can be removed
+		    GenericPortalBean.setDbImpl(new org.jasig.portal.DBImpl());
+
 		    this.set = new StylesheetSet (baseDir+ fs + relativeSSLLocation);
 		    String propertiesDir=baseDir+fs+"properties"+fs;
 		    this.set.setMediaProps (propertiesDir + "media.properties");
@@ -124,13 +129,13 @@ public class ChannelServlet extends HttpServlet
 		    hasAbout=Boolean.getBoolean(sc.getInitParameter("hasAbout"));
 		    String s_timeOut=sc.getInitParameter("timeOut");
 
-		    if(s_timeOut!=null) 
+		    if(s_timeOut!=null)
 			this.timeOut=Long.parseLong(s_timeOut);
 
 		    // instantiate channel class
 		    try {
 			channel = (org.jasig.portal.IChannel) Class.forName (className).newInstance ();
-		    
+
 			// construct a ChannelStaticData object
 			ChannelStaticData sd = new ChannelStaticData ();
 			sd.setChannelID ("singlet");
@@ -139,6 +144,7 @@ public class ChannelServlet extends HttpServlet
 			int guestUserId = 1;
 			IPerson person=new org.jasig.portal.security.provider.PersonImpl();
 			person.setID(guestUserId);
+                        person.setFullName("Guest");
 
 			sd.setPerson(person);
 
@@ -152,7 +158,7 @@ public class ChannelServlet extends HttpServlet
 		    }
 		} else System.out.println("base diretctory does not exist");
 	    } else System.out.println("base directory is null");
-	}  
+	}
     }
 
     public void doPost (HttpServletRequest req, HttpServletResponse res)
@@ -164,7 +170,7 @@ public class ChannelServlet extends HttpServlet
         throws ServletException, IOException
     {
         if(initialized) {
-	    
+
 	    // construct runtime data object
 	    ChannelRuntimeData rd = new ChannelRuntimeData ();
 	    for(Enumeration en=req.getParameterNames(); en.hasMoreElements(); ) {
@@ -199,8 +205,10 @@ public class ChannelServlet extends HttpServlet
 	    Thread workerThread = new Thread (worker);
 	    workerThread.start ();
 	    long startTime = System.currentTimeMillis ();
-	    
-	    
+
+
+	    // set the mime type
+	    res.setContentType(mediaM.getReturnMimeType(req));
 
 	    // set up the serializer
 	    BaseMarkupSerializer ser=mediaM.getSerializer(mediaM.getMedia(req),res.getWriter());
@@ -221,18 +229,26 @@ public class ChannelServlet extends HttpServlet
 		    // thread waiting on the worker has been interrupted
 		    System.out.println("thread waiting on the worker has been interrupted.");
 		}
-		
+
 		// kill the working thread
 		// yes, this is terribly crude and unsafe, but I don't see an alternative
 		workerThread.stop ();
-		
+
 		if (worker.done ()) {
 		    if (worker.successful ()) {
 			// unplug the buffer
 			try {
-			    buffer.setDocumentHandler(processor);
-			    buffer.stopBuffering();
-			}
+                            processor.startDocument();
+                            org.xml.sax.helpers.AttributeListImpl atl=new org.xml.sax.helpers.AttributeListImpl();
+                            atl.addAttribute("name","CDATA",channelName);
+                            // add other attributes: hasHelp, hasAbout, hasEdit
+                            processor.startElement("channel",atl);
+                            ChannelSAXStreamFilter custodian=new ChannelSAXStreamFilter(processor);
+                            buffer.setDocumentHandler(custodian);
+  			    buffer.stopBuffering();
+                            processor.endElement("channel");
+                            processor.endDocument();
+  			}
 			catch (SAXException e) {
 			    // worst case scenario: partial content output :(
 			    System.out.println("error during unbuffering");
@@ -243,7 +259,7 @@ public class ChannelServlet extends HttpServlet
 			Exception e;
 			if((e=worker.getException())!=null) {
 			    // channel generated an exception ... this should be handled
-			    
+
 			    StringWriter sw=new StringWriter();
 			    e.printStackTrace(new PrintWriter(sw));
 			    sw.flush();
@@ -269,11 +285,11 @@ public class ChannelServlet extends HttpServlet
 	    PrintWriter out = res.getWriter ();
 	    out.println("<html>");
 	    out.println("<body>");
-	    if(channelName!=null) 
+	    if(channelName!=null)
 		out.println("<h1>" + channelName + "</h1>");
-	    else 
+	    else
 	    out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-	    
+
 	    out.println("<h3>Error !</h3>");
 	    out.println("<p>"+message+"<p>");
 	    out.println("</body></html>");
