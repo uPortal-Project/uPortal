@@ -33,32 +33,27 @@
 <td class="body"><br>
 
 <span class="subhead1">Code Repository</span> 
-<P>uPortal uses CVS for its code repository. You can access the
+<P>uPortal uses CVS for its code repository.</P> 
+
+<span class="subhead2">ViewCVS</span>
+<p>
+You can use this <a href="http://mis105.mis.udel.edu/cgi-bin/viewcvs.cgi/">web interface</a> to the uPortal CVS code repository to
+browse through all the branches of the uPortal code.</P> 
+			 
+<span class="subhead2">CVS Monitor</span> 
+<IMG height="13" alt="" src="images/diamond.gif" width="8" border="0">NEW<IMG height="13" alt="" src="images/diamond.gif" width="8" border="0"></span>
+<p>
+   An updated summary of development activity for 
+   <a href="http://cvsmonitor.unicon.net/cvs/cvsmonitor.pl?cmd=viewBrowseModule&module=JASIG.uPortal">uPortal</a>
+   and several <a href="http://cvsmonitor.unicon.net/">uPortal channels</a> is available via CVS Monitor.
+</p>
+       			 
+<span class="subhead2">Anonymous access to CVS</span>
+<p>You can access the
 uPortal code via anonymous access using a CVS client. Most *nix operating
 systems have a CVS client available and there are CVS clients available for
 Microsoft Windows (<A HREF="http://www.cvsgui.org">WinCVS</A> being a popular
-choice).</P> 
-<P>The
- <A HREF="http://mis105.mis.udel.edu/cgi-bin/viewcvs.cgi/">JA-SIG CVS Repository</A>
-is a web interface to the uPortal CVS code repository. You can use this to
-browse through all the branches of the uPortal code.</P> 
-			 
-<p>
-   <IMG height="13" alt="" src="images/diamond.gif" width="8" border="0">NEW<IMG height="13" alt="" src="images/diamond.gif" width="8" border="0"></span>
-   An updated summary of development activity for 
-   <a href="http://www.rootbin.com/cgi-bin/cvsmonitor/cvsmonitor.pl?cmd=viewBrowseModule&module=JASIG.uPortal">uPortal</a>
-   and several uPortal channel <a href="http://www.rootbin.com/cgi-bin/cvsmonitor/cvsmonitor.pl">projects</a> is available via CVS Monitor.
-</p>
-       
-<P>If you are interested in contributing to the uPortal coding effort, refer to 
-the <A HREF="getinv.html">Getting Involved</A> section of the website for more 
-information. For developer access to the CVS repository, refer to the 
-<A HREF="cvsaccess.html">CVS access</A> page.</P>
-
-
-			 
-<P><strong>Anonymous access to CVS:</strong><br/>
-<br/>
+choice).
 The uPortal project's CVS repository can be checked out through anonymous (pserver) 
 CVS with the following instruction set. When prompted for a password for anonymous, 
 simply press the Enter key.<br/>
@@ -72,8 +67,9 @@ Next, checkout the <b>portal</b> module with the following command:</p>
 <P>uPortal channels are kept as a separate module <b>portal_channels</b>. Use
 the following command to checkout portal_channels:</P>
 <code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:2401:/home/cvs/jasig co portal_channels</code>
-<p>Updates from within the module's directory do not need the -d parameter.</p>
-
+<p>Note: Updates from within the module's directory do not need the -d parameter.</p>
+<p>For developer access to the CVS repository, refer to the 
+<A HREF="cvsaccess.html">CVS access</A> page.</P>
 
 <p><b>Current portal CVS branches</b>:<br/>
 <ul>
