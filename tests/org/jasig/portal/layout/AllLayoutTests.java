@@ -13,7 +13,7 @@ public class AllLayoutTests {
         junit.textui.TestRunner.run(suite());
     }
 	
-    public static Test suite() {
+    public static TestSuite suite() {
         TestSuite suite= new TestSuite("uPortal Layout Tests");
         suite.addTestSuite(SimpleUserLayoutManagerTest.class);
         return suite;
