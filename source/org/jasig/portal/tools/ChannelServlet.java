@@ -125,6 +125,7 @@ public class ChannelServlet extends HttpServlet {
         int guestUserId = 1;
         IPerson person = new org.jasig.portal.security.provider.PersonImpl();
         person.setID(guestUserId);
+        person.setAttribute(person.USERNAME,"guest");
         person.setFullName("Guest");
         sd.setPerson(person);
         // todo: determine and pass channel publish/subscribe parameters.
