@@ -2,23 +2,66 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<!-- the default implementation of PersonDirectory is a legacy implementation which hard-codes in
-		Java the configuration of PersonDirectory using the legacy PersonDirs.xml .
+	<!-- 
+		Prior to uPortal 2.5, PersonDirectory was a monolithic static service which had a lot of responsibilities.
+		It would parse PersonDirs.xml coniguration file.  It would instantiate sources of attributes, 
+		manage JDBC drivers, apply attribute merge policies, and be the static lookup mechanism whereby client
+		code gets access to PersonDirectory services.
+		
+		For uPortal 2.5, PersonDirectory was refactored to a more loosely coupled object oriented approach.
+		This change makes feasible attribute sources other than LDAP and JDBC.  This change also prepared
+		PersonDirectory to be used in other projects, such as uPortal 3.  This change also makes possible unit
+		testing of individual PersonDirectory components.
+		
+		Old model: need to change PersonDirectory to accomodate anything other than JDBC or LDAP sources? 
+		Want a different attribute merge strategy? Hack PersonDirectory.java and recompile.
+		
+		New model: need to change an aspect of PersonDirectory?  Re-use all the objects that still apply to
+		you, but wire in a changed component.
+		
+		The static PersonDirectory service we knew and loved from prior to uPortal 2.5 continues to exist.
+		Your client code can still statically access PersonDirectory services.  However, that static service
+		is now backed by a Spring-configured instance of IPersonAttributeDao, a "data access object" interface
+		which knows how to take attributes like username and access a backing store to return more attributes.
+		
+		The default Spring configuration for this IPersonAttributeDao instance is a legacy implementation 
+		which hard-codes in
+		Java the configuration of parsing and using the legacy PersonDirs.xml .
 		
 		Your options for customizing the PersonDirectory implementation for your institution:
-		1) Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
-		institutions attribute sources.
-		2) Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
-		Edit the LegacyPersonDirectoryImpl class and/or the classes it uses to customize the Java logic
-		 that implements PersonDirectory.
-		3) Edit this XML file to use Spring to configure PersonDirectory, declaring different configurations of the
-		distributed classes and/or using your own classes.
 		
-		This personDirectory.xml file is likely a temporary solution that will be replaced before uPortal 2.5 is released, in favor of
-		PersonDirectory discovering an ApplicationContext that might be shared with other components.
+		1) uP 2.4-style: Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
+		institutions attribute sources.  Rely upon the default configuration in this file, which will 
+		cause Spring to instantiate the legacy implementation which will parse PersonDirs.xml and use 
+		default configurations for such things as merge policies to replicate the behavior of uPortal 2.4 and
+		and previous.  This approach is recommended for deployers familiar with 2.4-style PersonDirectory 
+		configuration who are not familiar with Spring and do not have needs beyond what is accomodated by
+		configuration in the domain-specific language of the PersonDirs.xml file.
+		
+		2) Hack uPortal style: Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
+		Edit the LegacyPersonDirectoryImpl class and/or the classes it uses to customize the Java logic
+		 that implements PersonDirectory.  This approach of hacking the provided .java files is not recommended.
+		 
+		3) Edit this XML file to use Spring to configure an instance of IPersonAttributeDao, 
+		declaring different configurations of the distributed classes and/or using your own classes.  This
+		is the recommended approach when approach (1) will not meet your needs or you are already familiar with
+		using Spring to wire together objects.
+		
+		
+		Finally, a few words about what is happening that makes this configuration file actually have an effect on
+		the static PersonDirectory service.
+		
+		PersonDirectory in 2.5 asks the PortalApplicationContextFacade for the Spring-configured bean named
+		"personAttributeDao". The PortalApplicationContextFacade delegates to a Spring bean factory.  That
+		bean factory is configured in /properties/beanRefFactory.xml .  beanRefFactory.xml declares the 
+		Spring beans.dtd-compliant files that are to be considered in instantiating the objects to be made
+		available by the bean factory.  Among the .xml files declared by beanRefFactory.xml is this XML file.
+		This file declares the bean named "personAttributeDao".  So it is the bean that is configured here that
+		PersonDirectory acquires when it asks for the bean of that name.
 		-->
 	
-	<!-- Legacy Person Directory configruation. This will read the config from PersonDirs.xml -->
+	<!-- Legacy Person Directory configruation. This will read the config from PersonDirs.xml 
+		and otherwise emulate pre-2.5 PersonDirectory behavior. -->
 	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonAttributeDao"/>
 	
 	<!--
