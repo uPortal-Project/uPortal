@@ -232,8 +232,8 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID()
                            + "\" and userAgent=\"" + userAgent + "\".");
             }
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+        } catch (Throwable t) {
+            LogService.instance().log(LogService.ERROR, t);
         }
 
         stateTable.put(req.getSession(false).getId(),newState);
