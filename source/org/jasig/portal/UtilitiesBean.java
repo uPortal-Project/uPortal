@@ -307,7 +307,7 @@ public class UtilitiesBean extends GenericPortalBean
   public static String getContentsAsString (String uri) throws IOException, MalformedURLException
   {
     String line = null;
-    URL url = new URL (uri);
+    URL url = new URL (fixURI(uri));
     BufferedReader in = new BufferedReader (new InputStreamReader (url.openStream()));
     StringBuffer sbText = new StringBuffer (1024);
 
