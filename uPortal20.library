@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+  <!--JBuilder Library Definition File-->
+  <fullname>uPortal20</fullname>
+  <class>
+    <path>[../libup/xml-apis.jar]</path>
+    <path>[../libup/xsltc.jar]</path>
+    <path>[../libup/xerces.jar]</path>
+    <path>[../libup/xalan.jar]</path>
+    <path>[../libup/oromatcher11.jar]</path>
+    <path>[../libup/log4j.jar]</path>
+    <path>[../libup/bsf.jar]</path>
+    <path>[../libup/Tidy.jar]</path>
+    <path>[../libup/jakarta-oro-2.0.4.jar]</path>
+    <path>[../libup/jnet.jar]</path>
+    <path>[../libup/ldap.jar]</path>
+    <path>[../libup/jndi.jar]</path>
+    <path>[../libup/activation.jar]</path>
+    <path>[../libup/jaas.jar]</path>
+    <path>[../libup/tyrex-0.9.7.0.jar]</path>
+    <path>[../libup/log4j-core.jar]</path>
+    <path>[../libup/hsql.jar]</path>
+    <path>[../libup/jconn2.jar]</path>
+    <path>[../libup/mail.jar]</path>
+    <path>[../libup/ldapbp.jar]</path>
+    <path>[../libup/cos.jar]</path>
+  </class>
+</library>
