@@ -40,6 +40,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.text.ParseException;
 import javax.servlet.http.Cookie;
 import javax.xml.parsers.*;
@@ -1019,7 +1020,8 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
            token = cookieValue.nextToken();
            if ( (!ageSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("expires") )
            {
-              SimpleDateFormat f = new SimpleDateFormat("EEE, d-MMM-yyyy hh:mm:ss z");
+              SimpleDateFormat f = new SimpleDateFormat("EEE, d-MMM-yyyy HH:mm:ss z", Locale.ENGLISH);
+	      f.setTimeZone(TimeZone.getTimeZone("GMT"));
               f.setLenient(true);
               Date date = f.parse( token.substring(token.indexOf("=")+1).trim());
               Date current = new Date();
