@@ -356,7 +356,7 @@
         <desc>Foreign key user_id of table up_user</desc>
         <key>CK</key>
       </column>
-      <column> <name>USER_AGENT</name> <type>VARCHAR</type> <param>100</param>
+      <column> <name>USER_AGENT</name> <type>VARCHAR</type> <param>255</param>
         <desc>User agent string identifying a particular browser and version</desc>
       </column>
       <column> <name>PROFILE_ID</name> <type>INTEGER</type>
