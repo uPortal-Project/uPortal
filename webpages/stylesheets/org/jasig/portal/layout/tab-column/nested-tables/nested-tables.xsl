@@ -31,6 +31,7 @@
       </body>
     </html>
   </xsl:template>
+  
   <xsl:template match="layout">
     <html>
       <head>
@@ -70,6 +71,7 @@
       </body>
     </html>
   </xsl:template>
+  
   <xsl:template match="header">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr class="uportal-background-med">
@@ -103,6 +105,7 @@
       </tr>
     </table>
   </xsl:template>
+  
   <xsl:template match="navigation">
       <!--<tr>-->
       <!--<td>-->
@@ -348,6 +351,7 @@
       </tr>
     </table>
   </xsl:template>
+  
   <xsl:template match="footer">
     <xsl:for-each select="channel">
       <td align="center">
@@ -356,7 +360,7 @@
     </xsl:for-each>
   </xsl:template>
 
-<xsl:template name="controls">
+  <xsl:template name="controls">
 	          <xsl:if test="not(@hasHelp='false')">
             <a href="{$baseActionURL}?uP_help_target={@ID}">
               <img alt="help" src="{$mediaPath}/{$skin}/controls/help.gif" width="16" height="16" border="0"/>
@@ -377,7 +381,7 @@
               <img alt="print" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
-          <xsl:if test="not(@minimizable='false')">
+          <xsl:if test="not(@minimizable='false') and not(//focused)">
             <xsl:choose>
               <xsl:when test="@minimized='true'">
                 <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
@@ -397,150 +401,75 @@
             </a>
           </xsl:if>
 
-          <xsl:if test="not(@unremovable='true')">
+          <xsl:if test="not(@unremovable='true') and not(//focused)">
             <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
               <img alt="remove" src="{$mediaPath}/{$skin}/controls/remove.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
 
-</xsl:template>
+  </xsl:template>
 
-<xsl:template match="focused">
-<xsl:apply-templates select="channel" mode="focused"/>
-</xsl:template>
+  <xsl:template match="focused">
+    <xsl:apply-templates select="channel" mode="focused"/>
+  </xsl:template>
 
-<xsl:template match="channel" mode="focused">
-		    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="uportal-background-content">
+  <xsl:template match="channel" mode="focused">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="uportal-background-content">
 
       <tr>
-
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_01.gif" width="80" height="21" border="0" usemap="#focused_01_Map" /></td>
-
-
-
         <td width="100%" height="21" colspan="2" style="background-image:url({$mediaPath}/{$skin}/focused/focused_03.gif); background-repeat:repeat-x;"><img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="21" /></td>
-
-
-
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_04.gif" width="45" height="21" /></td>
-
       </tr>
 
-
-
       <tr>
-
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_05.gif" width="80" height="33" border="0" usemap="#focused_05_Map" /></td>
-
-
-
         <td width="100%" align="left" valign="bottom" class="uportal-channel-title" nowrap="nowrap"><xsl:value-of select="@name"/></td>
-
-
-
         <td align="right" valign="bottom">
         <xsl:call-template name="controls"/>
-
-          <xsl:if test="not(@unremovable='true')">
-            <xsl:if test="not(/layout/navigation/tab[@activeTab='true' and @immutable='true'])">
-              <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
-                <img alt="remove" src="{$mediaPath}/remove.gif" width="16" height="16" border="0"/>
-              </a>
-            </xsl:if>
-          </xsl:if>
-
         </td>
-
-
-
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_08.gif" width="45" height="33" /></td>
-
       </tr>
 
-
-
       <tr>
-
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_09.gif" width="80" height="1" /></td>
-
-
-
         <td colspan="2" class="uportal-background-dark"><img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="1" /></td>
-
-
-
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_12.gif" width="45" height="1" /></td>
-
       </tr>
 
-
-
       <tr>
-
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_13.gif" width="80" height="15" /></td>
-
-
-
         <td colspan="2"><img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="15" /></td>
-
-
-
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_16.gif" width="45" height="15" /></td>
-
       </tr>
 
-
-
       <tr>
-
         <td width="80" style="background-image:url({$mediaPath}/{$skin}/focused/focused_17.gif); background-repeat:repeat-y;"><img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="80" height="1" /></td>
-
-
-
         <td align="left" valign="top" colspan="2" class="uportal-channel-text">
-                  <xsl:if test="@minimized != 'true'">
+          <xsl:if test="@minimized != 'true'">
             <xsl:copy-of select="."/>
           </xsl:if>
-          
-      
-      
         </td>
-
-
-
         <td width="45" style="background-image:url({$mediaPath}/{$skin}/focused/focused_20.gif); background-repeat:repeat-y;"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_20.gif" width="45" height="1" /></td>
-
       </tr>
 
-
-
       <tr>
-
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_24.gif" width="80" height="50" /></td>
-
-
-
         <td height="50" colspan="2" style="background-image:url({$mediaPath}/{$skin}/focused/focused_26.gif); background-repeat:repeat-x;"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_26.gif" width="1" height="50" /></td>
-
-
-
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_27.gif" width="45" height="50" /></td>
-
       </tr>
 
     </table>
 
     <map id="focused_01_Map" name="focused_01_Map">
-
       <area shape="circle" alt="Return to portal" coords="36,34,19" href="{$baseActionURL}?uP_root=root" />
-
-    </map> <map id="focused_05_Map" name="focused_05_Map">
-
+    </map> 
+    <map id="focused_05_Map" name="focused_05_Map">
       <area shape="circle" alt="Return to portal" coords="36,13,19" href="{$baseActionURL}?uP_root=root" />
-
     </map>
 
-</xsl:template>
+  </xsl:template>
+  
 </xsl:stylesheet>
 
 
