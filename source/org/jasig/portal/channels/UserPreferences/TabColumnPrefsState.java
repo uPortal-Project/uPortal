@@ -49,6 +49,7 @@ import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RDBMUserPreferencesStore;
+import org.jasig.portal.StylesheetSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -73,6 +74,7 @@ final class TabColumnPrefsState extends BaseState
   private Document userLayout;
   private UserPreferences userPrefs;
   private IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
+    private StylesheetSet set;
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
@@ -95,12 +97,16 @@ final class TabColumnPrefsState extends BaseState
   {
     super();
     this.internalState = new DefaultState(this);
+    // initialize stylesheet set
+    set=new StylesheetSet(sslLocation);
   }
 
   public TabColumnPrefsState(CUserPreferences context)
   {
     super(context);
     this.internalState = new DefaultState(this);
+    // initialize stylesheet set
+    set=new StylesheetSet(sslLocation);
   }
 
   public void setStaticData (ChannelStaticData sd) throws PortalException
@@ -110,9 +116,20 @@ final class TabColumnPrefsState extends BaseState
   }
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
-  {
-    this.runtimeData = rd;
-    this.internalState.setRuntimeData(rd);
+    {
+	this.runtimeData = rd;
+	
+	// see if a top-level action has been given
+	String action=rd.getParameter("action");
+	if(action!=null && action.equals("manageSkins")) {
+	    // switch the internal state 
+	    internalState=new SelectSkinsState(this);
+	    internalState.setStaticData(staticData);
+	} else if(action!=null && action.equals("managePreferences")) {
+	    internalState=new DefaultState(this);
+	    internalState.setStaticData(staticData);
+	}
+	this.internalState.setRuntimeData(rd);
 
     try
     {
@@ -426,6 +443,13 @@ final class TabColumnPrefsState extends BaseState
     ulm.setNewUserLayoutAndUserPreferences(userLayout, null);
   }
 
+  private void saveUserPreferences () throws PortalException
+  {
+    // Persist user preferences
+    UserLayoutManager ulm = context.getUserLayoutManager();
+    ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
+  }
+
   /**
    * A sub-state of TabColumnPrefsState for visualizing the user layout
    * in tab-column form.
@@ -704,8 +728,8 @@ final class TabColumnPrefsState extends BaseState
         // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
         // Currently this code assumes the use of Xalan as does much of the framework
         org.apache.xalan.xslt.XSLTProcessor processor = org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor();
-        String xslUri = new org.jasig.portal.StylesheetSet(sslLocation).getStylesheetURI(runtimeData.getMedia());
-        org.apache.xalan.xslt.StylesheetRoot ssRoot = XSLT.getStylesheetRoot(xslUri);
+	String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
+        org.apache.xalan.xslt.StylesheetRoot ssRoot = XSLT.getStylesheetRoot(xslURI);
         processor.setStylesheet(ssRoot);
         processor.setDocumentHandler(out);
         processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
@@ -728,5 +752,59 @@ final class TabColumnPrefsState extends BaseState
         throw new GeneralRenderingException(e.getMessage());
       }
     }
+  }
+  /**
+   * A sub-state of TabColumnPrefsState for selecting skins
+   */
+  protected class SelectSkinsState extends BaseState
+  {
+      protected TabColumnPrefsState context;
+      
+      public SelectSkinsState(TabColumnPrefsState context) {
+	  this.context = context;
+      }
+
+      public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+	  runtimeData = rd;
+	  String action = runtimeData.getParameter("action");
+	  if (action != null) {
+	      if (runtimeData.getParameter("submitSave")!=null) {
+		  // save
+		  String skinName = runtimeData.getParameter("skinName");
+		  userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
+		  // save user preferences ?
+		  saveUserPreferences();
+		  // reset state
+		  BaseState df=new DefaultState(context);
+		  df.setStaticData(staticData);
+		  context.setState(df);
+	      } else if (runtimeData.getParameter("submitCancel")!=null) {
+		  // return to the default state
+		  BaseState df=new DefaultState(context);
+		  df.setStaticData(staticData);
+		  context.setState(df);
+	      }
+	  }
+      }
+
+      public void renderXML (DocumentHandler out) throws PortalException
+      {
+	  String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+	  Document doc = new org.apache.xerces.dom.DocumentImpl();
+
+	  Hashtable params = new Hashtable(2);
+	  params.put("baseActionURL", runtimeData.getBaseActionURL());
+	  if(currentSkin!=null)
+	      params.put("currentSkin", currentSkin);
+
+	  String xslURI=set.getStylesheetURI("skinList",runtimeData.getBrowserInfo());
+
+	  try {
+	      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(xslURI)), out, params);
+	  } catch (Exception e) {
+	      throw new GeneralRenderingException(e.getMessage());
+	  }
+	  
+      }
   }
 }

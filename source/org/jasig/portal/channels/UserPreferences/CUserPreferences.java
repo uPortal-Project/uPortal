@@ -66,8 +66,9 @@ public class CUserPreferences implements IPrivilegedChannel {
   IPrivilegedChannel managePreferences = null;
   IPrivilegedChannel manageProfiles = null;
   protected IUserPreferencesStore updb;
-  protected ThemeStylesheetDescription tsd;
   private PortalControlStructures pcs;
+    private boolean initialized=false;
+    UserProfile editedProfile=null;
 
   /**
    * put your documentation comment here
@@ -128,24 +129,41 @@ public class CUserPreferences implements IPrivilegedChannel {
     // instantiate the browse state here
     this.pcs = pcs;
 
-    if (internalState == null)
-    {
-      try {
-        String cupmClass = getThemeStylesheetDescription().getCustomUserPreferencesManagerClass();
-        managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
-        ((BaseState)managePreferences).setContext(this);
-      } catch (Exception e) {
-        Logger.log(Logger.ERROR, e);
-        managePreferences = new GPreferencesState(this);
-      }
+    if (!initialized) {
+	instantiateManagePreferencesState(up.getProfile());
+	// Initial state should be manage preferences
+	manageProfiles.setStaticData(staticData);
+	internalState = managePreferences;
+	editedProfile=up.getProfile();
+	initialized=true;
     }
-
-    // Initial state should be manage preferences
-    internalState = managePreferences;
-
-    internalState.setPortalControlStructures(pcs);
-    internalState.setStaticData(staticData);
+    if(internalState!=null) {
+	internalState.setPortalControlStructures(pcs);
+    }
   }
+
+    
+    /**
+     * Instantiates appropriate managePreferences object.
+     *
+     * @param profile profile for which preferences are to be edited
+     */
+    private void instantiateManagePreferencesState(UserProfile profile) {
+	try {
+	    ThemeStylesheetDescription tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
+	    if(tsd!=null) {
+		String cupmClass = tsd.getCustomUserPreferencesManagerClass();
+		managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
+		((BaseState)managePreferences).setContext(this);
+	    } else {
+		Logger.log(Logger.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+		managePreferences = new GPreferencesState(this);
+	    }
+	} catch (Exception e) {
+	    Logger.log(Logger.ERROR, e);
+	    managePreferences = new GPreferencesState(this);
+	}
+    }
 
   /** Returns channel runtime properties
    * @return handle to runtime properties
@@ -198,25 +216,36 @@ public class CUserPreferences implements IPrivilegedChannel {
         }
         else {
           // reset to the manage profiles state
-          manageProfiles.setRuntimeData(rd);
+	    //          manageProfiles.setRuntimeData(rd);
           this.internalState = manageProfiles;
         }
       }
       else if (action.equals("managePreferences")) {
-        UserProfile profile = null;
-        if (profileId != null) {
-          // find the profile mapping
-          updb = RdbmServices.getUserPreferencesStoreImpl();
-          if (systemProfile)
-            profile = updb.getSystemProfileById(profileId.intValue());
-          else
-            profile = updb.getUserProfileById(ulm.getPerson().getID(), profileId.intValue());
-        }
-        else {
-          profile = up.getProfile();
-        }
-        managePreferences.setRuntimeData(rd);
-        this.internalState = managePreferences;
+	  if (profileId != null) {
+	      // find the profile mapping
+	      updb = RdbmServices.getUserPreferencesStoreImpl();
+	      if (systemProfile) {
+		  UserProfile newProfile = updb.getSystemProfileById(profileId.intValue());
+		  if(newProfile!=null && (!(editedProfile.isSystemProfile() && editedProfile.getProfileId()==newProfile.getProfileId()))) {
+		      // new profile has been selected
+		      editedProfile=newProfile;
+		      instantiateManagePreferencesState(editedProfile);
+		  }
+	      } else {
+		  UserProfile newProfile = updb.getUserProfileById(ulm.getPerson().getID(), profileId.intValue());
+		  if(newProfile!=null && (editedProfile.isSystemProfile() || (editedProfile.getProfileId()!=newProfile.getProfileId()))) {
+		      // new profile has been selected
+		      editedProfile=newProfile;
+		      instantiateManagePreferencesState(editedProfile);
+		  }
+	      }
+	  }
+
+	  if(editedProfile==null) {
+	      editedProfile = up.getProfile();
+	  }
+	  //        managePreferences.setRuntimeData(rd);
+	  this.internalState = managePreferences;
       }
     }
     if (internalState != null)
@@ -248,19 +277,6 @@ public class CUserPreferences implements IPrivilegedChannel {
       up = upStore.getUserPreferences(getUserLayoutManager().getPerson().getID(), profile);
       up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson().getID(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
-  }
-
-  protected ThemeStylesheetDescription getThemeStylesheetDescription()
-  {
-    if (tsd == null) {
-      ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
-      tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(tsup.getStylesheetId());
-      if (tsd == null) {
-        Logger.log(Logger.ERROR, "CUserPreferences::getThemeStylesheetDescription() : theme stylesheet description for a stylesheet \""
-            + tsup.getStylesheetId() + "\" is null");
-      }
-    }
-    return  tsd;
   }
 }
 
