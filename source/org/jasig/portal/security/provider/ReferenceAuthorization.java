@@ -42,10 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-
 import org.jasig.portal.SmartCache;
 
 import org.jasig.portal.security.IPerson;
@@ -59,6 +55,8 @@ import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.Logger;
+import org.jasig.portal.DBImpl;
+import org.jasig.portal.IDBImpl;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -117,81 +115,29 @@ public class ReferenceAuthorization implements IAuthorization
       return(false);
     }
 
-    RdbmServices rdbmServices = null;
-    Connection conn = null;
-
     try
     {
-      rdbmServices = new RdbmServices();
-
-      conn = rdbmServices.getConnection();
-      Statement stmt = conn.createStatement();
-
-      String query = "SELECT * FROM PORTAL_USER_ROLES WHERE " +
-                     "ID=" + userId + "') AND " +
-                     "UPPER(ROLE)=UPPER('" + (String)role.getRoleTitle() + "')";
-
-      ResultSet rs = stmt.executeQuery(query);
-
-      if (rs.next())
-      {
-        return(true);
-      }
-      else
-      {
-        return(false);
-      }
+      IDBImpl dbImpl = new DBImpl();
+      return dbImpl.isUserInRole(userId, (String)role.getRoleTitle());
     }
     catch(Exception e)
     {
       Logger.log(Logger.ERROR, e);
       return(false);
     }
-    finally
-    {
-      rdbmServices.releaseConnection(conn);
-    }
   }
 
   public Vector getAllRoles()
   {
-    RdbmServices rdbmService = new RdbmServices();
-    Connection con = null;
-    ResultSet rs = null;
-    Statement stmt = null;
-
     try
     {
-      con = rdbmService.getConnection();
-      stmt = con.createStatement();
-
-      String sQuery = "SELECT ROLE, DESCR FROM PORTAL_ROLES";
-      Logger.log(Logger.DEBUG, sQuery);
-
-      rs = stmt.executeQuery(sQuery);
-
-      Vector roles = new Vector();
-      RoleImpl roleImpl = null;
-
-      // Add all of the roles in the portal database to to the vector
-      while(rs.next())
-      {
-        roleImpl = new RoleImpl(rs.getString("ROLE"));
-        roles.add(roleImpl);
-      }
-
-      stmt.close();
-
-      return(roles);
+      IDBImpl dbImpl = new DBImpl();
+      return dbImpl.getAllRoles();
     }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
       return(null);
-    }
-    finally
-    {
-      rdbmService.releaseConnection(con);
     }
   }
 
@@ -203,40 +149,14 @@ public class ReferenceAuthorization implements IAuthorization
       return(0);
     }
 
-    RdbmServices rdbmServices = null;
-    Connection con = null;
-    Statement stmt = null;
-
-    try
-    {
-      rdbmServices = new RdbmServices ();
-      con = rdbmServices.getConnection();
-      stmt = con.createStatement();
-
-      // Count the number of records inserted
-      int recordsInserted = 0;
-
-      for(int i = 0; i < roles.size(); i++)
-      {
-        String sInsert = "INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','"
-        + roles.elementAt(i) + "')";
-
-        Logger.log (Logger.DEBUG, sInsert);
-        recordsInserted += stmt.executeUpdate(sInsert);
-      }
-
-      stmt.close();
-
-      return(recordsInserted);
+    try {
+      IDBImpl dbImpl = new DBImpl();
+      return dbImpl.setChannelRoles(channelID, roles);
     }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
       return(-1);
-    }
-    finally
-    {
-      rdbmServices.releaseConnection(con);
     }
   }
 
@@ -321,25 +241,10 @@ public class ReferenceAuthorization implements IAuthorization
       channelRoles = new Vector();
     }
 
-    RdbmServices rdbmServices = null;
-    Connection conn = null;
-
     try
     {
-      rdbmServices = new RdbmServices();
-
-      conn = rdbmServices.getConnection();
-      Statement stmt = conn.createStatement();
-
-      String query = "select role from portal_chan_roles where " +
-      "chan_id='" + channelID + "'";
-
-      ResultSet rs = stmt.executeQuery(query);
-
-      while(rs.next())
-      {
-        channelRoles.addElement(rs.getString("ROLE"));
-      }
+      IDBImpl dbImpl = new DBImpl();
+      dbImpl.getChannelRoles(channelRoles, channelID);
 
       chanRolesCache.put("" + channelID, channelRoles);
 
@@ -350,10 +255,7 @@ public class ReferenceAuthorization implements IAuthorization
       Logger.log(Logger.ERROR, e);
       return(null);
     }
-    finally
-    {
-      rdbmServices.releaseConnection(conn);
-    }
+
   }
 
   // For the render mechanism to use
@@ -377,37 +279,17 @@ public class ReferenceAuthorization implements IAuthorization
       userRoles = new Vector();
     }
 
-    RdbmServices rdbmServices = null;
-    Connection conn = null;
-
     try
     {
-      rdbmServices = new RdbmServices();
-
-      conn = rdbmServices.getConnection();
-      Statement stmt = conn.createStatement();
-
-      String query = "SELECT ROLE FROM PORTAL_USER_ROLES WHERE " +
-      "ID='" + userId + "'";
-
-      ResultSet rs = stmt.executeQuery(query);
-
-      while(rs.next())
-      {
-        userRoles.addElement(rs.getString("ROLE"));
-      }
-
+      IDBImpl dbImpl = new DBImpl();
+      dbImpl.getUserRoles(userRoles, userId);
       userRolesCache.put(new Integer(userId), userRoles);
-      return(userRoles);
+      return userRoles;
     }
     catch(Exception e)
     {
       Logger.log(Logger.ERROR, e);
       return(null);
-    }
-    finally
-    {
-      rdbmServices.releaseConnection(conn);
     }
   }
 
@@ -419,40 +301,14 @@ public class ReferenceAuthorization implements IAuthorization
       return;
     }
 
-    RdbmServices rdbmServices = null;
-    Connection conn = null;
-
     try
     {
-      rdbmServices = new RdbmServices();
-
-      conn = rdbmServices.getConnection();
-      Statement stmt = conn.createStatement();
-
-      String insert = new String();
-      int insertCount = 0;
-
-      for(int i = 0; i < roles.size(); i++)
-      {
-        insert = "INSERT INTO PORTAL_USER_ROLES (ID, ROLE) VALUES (" + person.getID() + ", " + roles.elementAt(i) + ")";
-        insertCount = stmt.executeUpdate(insert);
-
-        if(insertCount != 1)
-        {
-          Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
-        }
-      }
-
-      return;
+      IDBImpl dbImpl = new DBImpl();
+      dbImpl.addUserRoles(person.getID(), roles);
     }
     catch(Exception e)
     {
       Logger.log(Logger.ERROR, e);
-      return;
-    }
-    finally
-    {
-      rdbmServices.releaseConnection(conn);
     }
   }
 
@@ -463,40 +319,16 @@ public class ReferenceAuthorization implements IAuthorization
       return;
     }
 
-    RdbmServices rdbmServices = null;
-    Connection conn = null;
-
     try
     {
-      rdbmServices = new RdbmServices();
-
-      conn = rdbmServices.getConnection();
-      Statement stmt = conn.createStatement();
-
-      String delete = new String();
-      int deleteCount = 0;
-
-      for(int i = 0; i < roles.size(); i++)
-      {
-        delete = "DELETE FROM PORTAL_USER_ROLES WHERE ID=" + person.getID() + " AND ROLE=" + roles.elementAt(i);
-        deleteCount = stmt.executeUpdate(delete);
-
-        if(deleteCount != 1)
-        {
-          Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
-        }
-      }
-
+      IDBImpl dbImpl = new DBImpl();
+      dbImpl.removeUserRoles(person.getID(), roles);
       return;
     }
     catch(Exception e)
     {
       Logger.log(Logger.ERROR, e);
       return;
-    }
-    finally
-    {
-      rdbmServices.releaseConnection(conn);
     }
   }
 }

@@ -51,6 +51,7 @@ import org.xml.sax.InputSource;
 import org.jasig.portal.utils.DTDResolver;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.jasig.portal.security.provider.RoleImpl;
 
 public class DBImpl implements IDBImpl {
 
@@ -163,8 +164,10 @@ public class DBImpl implements IDBImpl {
             Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " +sQuery);
             stmt.executeUpdate(sQuery);
             con.commit();
-        } finally {
+        } catch (Exception e) {
             con.rollback();
+            throw e;
+        } finally {
             rdbmService.releaseConnection (con);
         }
     }
@@ -434,6 +437,9 @@ public class DBImpl implements IDBImpl {
           stmt.executeUpdate (sInsert);
         }
         con.commit();
+      } catch (Exception e) {
+        con.rollback();
+        throw e;
       }
       finally{
             try{
@@ -443,7 +449,6 @@ public class DBImpl implements IDBImpl {
             catch (SQLException ex){
                 Logger.log(Logger.ERROR, ex);
             }
-            con.rollback();
             rdbmService.releaseConnection(con);
         }
     }
@@ -786,7 +791,7 @@ public class DBImpl implements IDBImpl {
       }
     }
 
-    public void  addThemeStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText, String mimeType, Enumeration e) throws Exception {
+    public void  addThemeStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception {
         String sQuery = "INSERT INTO UP_THEME_SS (STYLESHEET_NAME,STYLESHEET_URI,STYLESHEET_DESCRIPTION_URI,STYLESHEET_DESCRIPTION_TEXT) VALUES ('"+xmlStylesheetName+"','"+stylesheetURI+"','"+stylesheetDescriptionURI+"','"+xmlStylesheetDescriptionText+"')";
         Logger.log(Logger.DEBUG,"DBImpl::addThemeStylesheetDescription() : "+sQuery);
 
@@ -796,15 +801,17 @@ public class DBImpl implements IDBImpl {
         try {
           Statement stmt=con.createStatement();
           stmt.executeUpdate(sQuery);
-          while (e.hasMoreElements()) {
-              String ssName=(String) e.nextElement();
+          while (enum.hasMoreElements()) {
+              String ssName=(String) enum.nextElement();
               sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('"+xmlStylesheetName+"','"+ssName+"','"+mimeType+"');";
               Logger.log(Logger.DEBUG,"DBImpl::addThemeStylesheetDescription() : "+sQuery);
               stmt.executeUpdate(sQuery);
           }
           con.commit();
-        } finally {
+        } catch (Exception e) {
           con.rollback();
+          throw e;
+        } finally {
           rdbmService.releaseConnection (con);
         }
     }
@@ -868,4 +875,215 @@ public class DBImpl implements IDBImpl {
       }
     }
 
+  /**
+   *
+   *   ReferenceAuthorization
+   *
+   */
+
+  public boolean isUserInRole(int userId, String role) throws Exception
+  {
+      RdbmServices rdbmService = new RdbmServices();
+      Connection con=rdbmService.getConnection();
+
+      try
+      {
+          String query = "SELECT * FROM PORTAL_USER_ROLES WHERE " +
+                     "ID=" + userId + "') AND " +
+                     "UPPER(ROLE)=UPPER('" + role + "')";
+          Logger.log(Logger.DEBUG, "DBImpl::isUserInRole(): " + query);
+
+          Statement stmt = con.createStatement();
+          ResultSet rs = stmt.executeQuery(query);
+
+          if (rs.next())
+          {
+            return(true);
+          }
+          else
+          {
+            return(false);
+          }
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+  }
+
+  public Vector getAllRoles() throws Exception
+  {
+      RdbmServices rdbmService = new RdbmServices();
+      Connection con = rdbmService.getConnection();
+      Vector roles = new Vector();
+      try {
+        Statement stmt = con.createStatement();
+
+        String sQuery = "SELECT ROLE, DESCR FROM PORTAL_ROLES";
+        Logger.log(Logger.DEBUG, "DBImpl::getAllRolessQuery(): " + sQuery);
+
+        ResultSet rs = stmt.executeQuery(sQuery);
+
+        RoleImpl roleImpl = null;
+
+        // Add all of the roles in the portal database to to the vector
+        while(rs.next())
+        {
+          roleImpl = new RoleImpl(rs.getString("ROLE"));
+          roles.add(roleImpl);
+        }
+
+        stmt.close();
+
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+
+      return(roles);
+
+  }
+
+  public int setChannelRoles(int channelID, Vector roles) throws Exception
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+
+    try
+    {
+      con.setAutoCommit(false);
+      Statement stmt = con.createStatement();
+
+      // Count the number of records inserted
+      int recordsInserted = 0;
+
+      for(int i = 0; i < roles.size(); i++)
+      {
+        String sInsert = "INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','"
+        + roles.elementAt(i) + "')";
+
+        Logger.log (Logger.DEBUG, "DBImpl::setChannelRoles(): " + sInsert);
+        recordsInserted += stmt.executeUpdate(sInsert);
+      }
+
+      stmt.close();
+
+      con.commit();
+      return(recordsInserted);
+    } catch (Exception e) {
+      con.rollback();
+      throw e;
+    } finally {
+      rdbmService.releaseConnection (con);
+    }
+  }
+
+  public void getChannelRoles(Vector channelRoles, int channelID) throws Exception
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+
+      try {
+      Statement stmt = con.createStatement();
+
+      String query = "SELECT ROLE FROM PORTAL_CHAN_ROLES WHERE " +
+      "CHAN_ID='" + channelID + "'";
+      Logger.log(Logger.DEBUG, "DBImpl::getChannelRoles(): " + query);
+      ResultSet rs = stmt.executeQuery(query);
+
+      while(rs.next())
+      {
+        channelRoles.addElement(rs.getString("ROLE"));
+      }
+    }
+    finally
+    {
+      rdbmService.releaseConnection(con);
+    }
+  }
+
+  public void getUserRoles(Vector userRoles, int userId) throws Exception
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+
+    try {
+      Statement stmt = con.createStatement();
+
+      String query = "SELECT ROLE FROM PORTAL_USER_ROLES WHERE " +
+      "ID='" + userId + "'";
+      Logger.log(Logger.DEBUG, "DBImpl::getUserRoles(): " + query);
+      ResultSet rs = stmt.executeQuery(query);
+
+      while(rs.next())
+      {
+        userRoles.addElement(rs.getString("ROLE"));
+      }
+
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+  }
+
+  public void addUserRoles(int userId, Vector roles) throws Exception
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+
+    try {
+      con.setAutoCommit(false);
+      Statement stmt = con.createStatement();
+
+      int insertCount = 0;
+
+      for(int i = 0; i < roles.size(); i++)
+      {
+        String insert = "INSERT INTO PORTAL_USER_ROLES (ID, ROLE) VALUES (" + userId + ", " + roles.elementAt(i) + ")";
+        Logger.log(Logger.DEBUG, "DBImpl::addUserRoles(): " + insert);
+        insertCount = stmt.executeUpdate(insert);
+
+        if(insertCount != 1)
+        {
+          Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
+        }
+      }
+      con.commit();
+    } catch (Exception e) {
+      con.rollback();
+      throw e;
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+  }
+
+  public void removeUserRoles(int userId, Vector roles) throws Exception
+  {
+
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+
+    try {
+      con.setAutoCommit(false);
+      Statement stmt = con.createStatement();
+
+      int deleteCount = 0;
+
+      for(int i = 0; i < roles.size(); i++)
+      {
+        String delete = "DELETE FROM PORTAL_USER_ROLES WHERE ID=" + userId + " AND ROLE=" + roles.elementAt(i);
+        Logger.log(Logger.DEBUG, "DBImpl::removeUserRoles(): " + delete);
+        deleteCount = stmt.executeUpdate(delete);
+
+        if(deleteCount != 1)
+        {
+          Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
+        }
+      }
+      con.commit();
+    } catch (Exception e) {
+      con.rollback();
+      throw e;
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+
+
+  }
 }
