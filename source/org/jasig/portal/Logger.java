@@ -39,6 +39,7 @@
 package  org.jasig.portal;
 
 import  org.jasig.portal.services.LogService;
+import  org.apache.log4j.Priority;
 
 
 /**
@@ -59,66 +60,69 @@ import  org.jasig.portal.services.LogService;
  * @deprecated Use org.jasig.portal.LogService instead
  */
 public class Logger extends GenericPortalBean {
-  // Log levels
-  public static final int NONE = 0;
-  public static final int SEVERE = 1;
-  public static final int ERROR = 2;
-  public static final int WARN = 3;
-  public static final int INFO = 4;
-  public static final int DEBUG = 5;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority NONE = Priority.DEBUG;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority SEVERE = Priority.FATAL;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority ERROR = Priority.ERROR;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority WARN = Priority.WARN;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority INFO = Priority.INFO;
+  /**
+   *  Description of the Field
+   */
+  public final static Priority DEBUG = Priority.DEBUG;
 
   /**
-   * Sets the current log level.  Use one of the static integer members
-   * of this class ranging from  Logger.DEBUG to Logger.NONE.
-   * The log level setting will determine the severity threshold of all log
-   * messages.  The more lenient the log level, the more log messages will be logged.
+   * put your documentation comment here
+   * @param iLogLevel
+   * @param sMessage
+   * @deprecated Use org.jasig.portal.LogService instead
+   */
+  public static void log (Priority logLevel, String sMessage) {
+    LogService.instance().log(logLevel, sMessage);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param iLogLevel
+   * @param ex
+   * @deprecated Use org.jasig.portal.LogService instead
+   */
+  public static void log (Priority logLevel, Throwable ex) {
+    LogService.instance().log(logLevel, ex);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param logLevel
+   * @param sMessage
+   * @param ex
+   */
+  public static void log (Priority logLevel, String sMessage, Throwable ex) {
+    LogService.instance().log(logLevel, sMessage, ex);
+  }
+
+  /**
+   *  Generic logging method that logs to a default of INFO. These should be
+   *  eliminated eventually.
    *
-   * @param a log level
-   * @throws IllegalArgumentException if the log level is not one of the acceptable log levels
-   * @deprecated Use org.jasig.portal.LogService instead
+   *@param  sMessage  Description of Parameter
    */
-  public static void setLogLevel (int iLogLevel) {
-    LogService.instance().setLogLevel(iLogLevel);
-  }
-
-  /**
-   * Gets the current log level setting
-   * @return the current log level setting
-   * @deprecated Use org.jasig.portal.LogService instead
-   */
-  public static int getLogLevel () {
-    return  (LogService.instance().getLogLevel());
-  }
-
-  /**
-   * put your documentation comment here
-   * @param iLogLevel
-   * @param sMessage
-   * @param ex
-   * @deprecated Use org.jasig.portal.LogService instead
-   */
-  public static void log (int iLogLevel, String sMessage, Throwable ex) {
-    LogService.instance().log(iLogLevel, sMessage, ex);
-  }
-
-  /**
-   * put your documentation comment here
-   * @param iLogLevel
-   * @param sMessage
-   * @deprecated Use org.jasig.portal.LogService instead
-   */
-  public static void log (int iLogLevel, String sMessage) {
-    LogService.instance().log(iLogLevel, sMessage);
-  }
-
-  /**
-   * put your documentation comment here
-   * @param iLogLevel
-   * @param ex
-   * @deprecated Use org.jasig.portal.LogService instead
-   */
-  public static void log (int iLogLevel, Throwable ex) {
-    LogService.instance().log(iLogLevel, ex);
+  public final static void log (String sMessage) {
+    LogService.instance().log(sMessage);
   }
 }
 
