@@ -18,10 +18,11 @@
   <table>
     <name>UP_PERSON_DIR</name>
     <columns>
-      <column> <name>USER_ID</name>         <type>INTEGER</type>	                   </column>
-      <column> <name>ENCRPTD_PSWD</name>	<type>VARCHAR</type>	 <param>64</param> </column>
+      <column> <name>USER_ID</name>         <type>INTEGER</type>	             </column>
+      <column> <name>USER_NAME</name>       <type>VARCHAR</type>   <param>35</param> </column>
+      <column> <name>ENCRPTD_PSWD</name>    <type>VARCHAR</type>   <param>64</param> </column>
       <column> <name>LST_PSWD_CGH_DT</name> <type>TIMESTAMP</type>                   </column>
-      <column> <name>FIRST_NAME</name>		<type>VARCHAR</type>   <param>15</param> </column>
+      <column> <name>FIRST_NAME</name>	    <type>VARCHAR</type>   <param>15</param> </column>
       <column> <name>LAST_NAME</name>       <type>VARCHAR</type>   <param>15</param> </column>
       <column> <name>EMAIL</name>           <type>VARCHAR</type>   <param>60</param> </column>
     </columns>
