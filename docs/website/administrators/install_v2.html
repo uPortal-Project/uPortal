@@ -38,7 +38,7 @@
    <TD valign="top" width="690">
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
    
-<h2> uPortal 2.0.2: Getting Started </h2>
+            <h2> uPortal 2.1.3: Getting Started </h2>
               
                
 <h3>Table of Contents</h3>
@@ -185,31 +185,22 @@ same server the uPortal only distribution may be the best choice.
 Quick Start Distribution
 </h3>
 <h4 class="title"> <a name="quick-what"></a> What is included?</h4>
-<p>
-The quick start distribution is downloaded as a 
-<i> zip </i>
-file which extracts to directory called 
-<tt> uPortal_2_0_1-quick-start </tt> .  The directory contains 
-the following...
-</p>
+            <p> The quick start distribution is downloaded as a <i> zip </i> file 
+               which extracts to directory called <tt> uPortal_2_1_3-quick-start 
+               </tt> . The directory contains the following... </p>
         
 <ul type="disc">
+               <li> uPortal 2.1.3 - directory ( <tt> uPortal_rel-2.1.3</tt> ) 
+                  containing the uPortal source code, stylesheets, and other required 
+                  files (essentially, the uPortal-only distibution). </li>
+               <li> Tomcat 4.1.24 - a directory ( <tt> Tomcat_4-1-24</tt> ) containing 
+                  the Tomcat servlet container with the uPortal context preloaded. 
+               </li>
+               <li> Ant 1-5-3 - a directory ( <tt> Ant_1-5-3</tt>- ) containing 
+                  a distribution of the <it>Ant</it> build tool. </li>
 <li>
-uPortal 2.0.2 - directory ( <tt> uPortal_rel-2.0.2</tt> ) containing the 
-uPortal source code, stylesheets, and other required files 
-(essentially, the uPortal-only distibution).
-</li>
-<li>
-Tomcat 4.0.4 - a directory ( <tt> Tomcat_4-0-4</tt> ) containing 
-the Tomcat servlet container with the uPortal context preloaded.
-</li>
-<li>
-Ant 1-5 - a directory ( <tt> Ant_1-5</tt> ) containing a 
-distribution of the <it>Ant</it> build tool.
-</li>
-<li>
-HypersonicSQL 1.4.3 - a directory (<tt>HypersonicSQL-1-4-3</tt>) containing
-a distribution of the HypersonicSQL database engine. The databaes is 
+HypersonicSQL 1.6.1 - a directory (<tt>HSQL_1-6-1</tt>) containing
+a distribution of the HypersonicSQL database engine. The database is 
 preloaded with the data and tables required by uPortal.
 </li>
 </ul>
@@ -302,13 +293,11 @@ Unix:
 <a name="quick-database"></a>
 Starting the Database
 </h4>
-<p>
-The HypersonicSQL database is preloaded with the tables required for uPortal
-and must be started using <em> Ant </em>.  The <em>hsql</em>
-target starts the database server which loads the files located in the 
-<tt> HypersonicSQ-1-4-3/demo </tt>
-directory.  To start up the database use one of the following:
-</p>
+            <p> The HypersonicSQL database is preloaded with the tables required 
+               for uPortal and must be started using <em> Ant </em>. The <em>hsql</em> 
+               target starts the database server which loads the files located 
+               in the <tt> HSQL_1-6-1/demo </tt> directory. To start up the database 
+               use one of the following: </p>
 
 <ul type="disc">
 <li>
@@ -431,13 +420,9 @@ uPortal Only Distribution
    
 <h4 class="title"> <a name="uportal-include"></a> What is included?</h4>
       
-<p>
-The uPortal-only distribution is downloaded as a 
-<i> zip </i> file which extracts to directory called 
-<tt> uPortal_rel-2-0-1.zip </tt> .  The directory contains the 
-following...
-   
-</p>
+            <p> The uPortal-only distribution is downloaded as a <i> zip </i> 
+               file which extracts to directory called <tt> uPortal_rel-2-1-3.zip 
+               </tt> . The directory contains the following... </p>
    
 <ul type="disc">
    <li>
@@ -508,9 +493,7 @@ environments and the Ant tool from the Apache Jakarta project.
    <li>
    JAVA_HOME environment variable must be set.
    </li>
-   <li>
-   The Jakarta-Ant build tool (version 1.5 or later). 
-   </li>
+               <li> The Jakarta-Ant build tool (version 1.5.3 or later). </li>
    <li>
    A web application environment such as  <em>Tomcat</em> or 
    <em>IBM Websphere</em>
@@ -523,16 +506,15 @@ environments and the Ant tool from the Apache Jakarta project.
 <h4 class="title"> <a name="uportal-webapp"></a> 
 Setting up a Web Application  Environment </h4>
                   
-<p> The uPortal web application requires a web application enviroment 
-such as <span class="emphasis"> <em> Tomcat </em> </span> or 
-<span class="emphasis"> <em> IBM Webshere </em> </span> . If 
-you already have a web application environment installed on 
-a server, the uPortal context can just be deployed to that environment, 
-otherwise you will have to install one. The build files for 
-uPortal have been set up such that it can be easily deployed 
-into Tomcat. The Jakarta-Tomcat servlet container can be downloaded 
-from: <a href="http://jakarta.apache.org/tomcat/index.html" target="_top">http://jakarta.apache.org/tomcat/index.html</a> 
-. Version 4.0.4 is recommended. </p>
+            <p> The uPortal web application requires a web application enviroment 
+               such as <span class="emphasis"> <em> Tomcat </em> </span> or <span class="emphasis"> 
+               <em> IBM Webshere </em> </span> . If you already have a web application 
+               environment installed on a server, the uPortal context can just 
+               be deployed to that environment, otherwise you will have to install 
+               one. The build files for uPortal have been set up such that it 
+               can be easily deployed into Tomcat. The Jakarta-Tomcat servlet 
+               container can be downloaded from: <a href="http://jakarta.apache.org/tomcat/index.html" target="_top">http://jakarta.apache.org/tomcat/index.html</a> 
+               . Version 4.1.24 is recommended. </p>
                
 <h4 class="title"> <a name="uportal-compile"></a> Compiling and Deploying uPortal </h4>  
 <p> Compiling and deploying uPortal is managed using the Jakarta Ant 
@@ -557,11 +539,11 @@ about databases can be found in the:</p>
 <h4 class="title"> <a name="issues"></a> Issues and known problems</h4>
 
 <h5>JDK version issues</h5>        
-<p> Some people have encountered problems starting up uPortal on systems with 
-newer versions of the JDK. Typically it resultes in a NoClassDefFoundError exception. 
-The solution is to recompile uPortal with the JDK which resides on the system. 
-Go to the build directory (<code>uPortal_rel-2-0-2</code>) and type &quot;<code>ant 
-deploy</code>&quot; to recompile uPortal.</p>
+            <p> Some people have encountered problems starting up uPortal on systems 
+               with newer versions of the JDK. Typically it resultes in a NoClassDefFoundError 
+               exception. The solution is to recompile uPortal with the JDK which 
+               resides on the system. Go to the build directory (<code>uPortal_rel-2-1-3</code>) 
+               and type &quot;<code>ant deploy</code>&quot; to recompile uPortal.</p>
 
 <h5>Proxy/Firewall issues</h5>
 <p> If uPortal is installed on a system which requires a proxy server for access to remote 
