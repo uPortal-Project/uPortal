@@ -586,7 +586,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
         xslt.setXSL(state.xslUri);
       else
         xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
-      xslt.setTarget(out);
+      xslt.setTarget((ContentHandler)CWebProxyURLFilter.newCWebProxyURLFilter(state.runtimeData, out));
       xslt.setStylesheetParameters(state.runtimeData);
       xslt.transform();
     }
