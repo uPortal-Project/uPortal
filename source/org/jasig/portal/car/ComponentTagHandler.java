@@ -83,8 +83,8 @@ extends DefaultHandler
                 + CarResources.DEPLOYMENT_DESCRIPTOR
                 + " in "
                 + ctx.getJarFile().getName()
-                + ". Details: "
-                + exception);
+                + "."
+                , exception);
     }
     
     public void fatalError(SAXParseException exception)
@@ -101,8 +101,8 @@ extends DefaultHandler
                 + CarResources.DEPLOYMENT_DESCRIPTOR
                 + " in "
                 + ctx.getJarFile().getName()
-                + ". Details: "
-                + exception);
+                + "."
+                , exception);
     }
 
     /////// ContentHandler methods of interest

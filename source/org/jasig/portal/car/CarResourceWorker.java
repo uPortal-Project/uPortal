@@ -141,8 +141,8 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
                     out.close();
             } catch (IOException ioe) {
                 log.error(
-                    "CarResourceWorker::processWorkerDispatch() could not close IO Stream"
-                        + ioe);
+                    "CarResourceWorker::processWorkerDispatch() " +
+                    "could not close IO Stream", ioe);
             }
         }
     }

@@ -182,8 +182,7 @@ public class CarResources {
                             + DEPLOYMENT_DESCRIPTOR
                             + " in "
                             + jarFile.getName()
-                            + ". Details: "
-                            + e);
+                            + ". ", e);
                 }
             }
         }
