@@ -77,6 +77,27 @@ public class XML {
     }
     return val;
   }
+  
+  /**
+   * Gets the text value of a child Element.  For example, if an element nameElement
+   * looks like this: <name><first>Fred</first><last>Flinstone</last></name>, then
+   * getChildElementText(nameElement, "first") would return "Fred".
+   * @param e the Element to search under
+   * @param childElementName the name of the child Element
+   * @return the text value of the child element
+   */
+  public static String getChildElementText(Element e, String childElementName) {
+    String val = null;
+    for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
+       if (n.getNodeType() == Node.ELEMENT_NODE && 
+           n.getNodeName() != null &&
+           n.getNodeName().equals(childElementName)) {
+         Element childElement = (Element)n;
+         val = getElementText(childElement);
+       }
+    }
+    return val;
+  }
 
   /**
    * Gets the contents of an XML Document or Element as a nicely formatted string.
