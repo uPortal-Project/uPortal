@@ -107,6 +107,7 @@ public class CInlineFrame implements org.jasig.portal.IChannel
           if ((sBrowser.indexOf("MSIE 3")>=0)||
               (sBrowser.indexOf(" MSIE 4")>=0) ||
               (sBrowser.indexOf("MSIE 5")>=0) ||
+              (sBrowser.indexOf("MSIE 6")>=0) ||
               (sBrowser.indexOf("Mozilla/5")>=0) )
             sHTML = "<IFRAME height=" + sHeight + " width=100% frameborder='no' src='" +
               m_sUrl + "'></IFRAME>";
