@@ -55,14 +55,10 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CSessionLocalesSelector extends BaseChannel implements IPrivileged {
+public class CSessionLocalesSelector extends BaseChannel {
     
     protected final String sslUri = "sessionLocales.ssl";
     
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
- 
-    }
-
     public void renderXML(ContentHandler out) throws PortalException {
             Locale[] locales = runtimeData.getLocales();
             Document doc = LocaleManager.xmlValueOf(locales, locales[0]);
