@@ -85,6 +85,7 @@ import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
+import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
@@ -465,15 +466,20 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         
         try {
             PortletContainerServices.prepare(uniqueContainerName);
+
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
+            HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             
             // Check if this portlet has just processed an action during this request.
             // If so, then we capture the changes that the portlet may have made during
             // its processAction implementation (captured in the portlet's ActionResponse)
-            //  and we pass them to the render request.
+            // and we pass them to the render request.
             // Pluto's portlet container implementation does this by creating a new render URL 
             // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
             if (cd.hasProcessedAction()) {
-                /*InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
+                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
                 PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
                 // Change modes
                 if (actionResponse.getChangedPortletMode() != null) {
@@ -485,26 +491,21 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 }
                 // Change render parameters
                 Map renderParameters = actionResponse.getRenderParameters();
-                PortletStateManager psm = ((DynamicInformationProviderImpl)InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest())).getPortletStateManager(cd.getPortletWindow());
-                psm.addParameters(renderParameters);*/
+                ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
             }
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest request = pcs.getHttpServletRequest();
-            HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                                     
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
-                request = new EmptyRequestImpl(request);
+                wrappedRequest = new EmptyRequestImpl(wrappedRequest);
             }
             
             //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
-            portletContainer.renderPortlet(cd.getPortletWindow(), request, wrappedResponse);
+            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             
             markup = sw.toString();
             
             cd.setProcessedAction(false);
+            ((PortletWindowImpl)cd.getPortletWindow()).setInternalActionResponse(null);
                         
         } catch (Throwable t) {
             t.printStackTrace();
@@ -513,5 +514,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         }
         
         return markup;
-    }    
+    }
+    
 }

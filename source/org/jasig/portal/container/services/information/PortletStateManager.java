@@ -35,19 +35,18 @@
 
 package org.jasig.portal.container.services.information;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-import org.apache.pluto.om.window.PortletWindow;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.pluto.core.InternalActionResponse;
-
-
+import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 
@@ -118,51 +117,38 @@ public class PortletStateManager {
 		nextAction = true;
 	}
 	
-	private void analizeRequestInformation() {
-	  params.clear();
-	  response = windowOfAction.getInternalActionResponse();
-	  if ( response != null ) {
-		 Map renderParams = response.getRenderParameters();
-		 if ( renderParams != null && !renderParams.isEmpty() )
-		  params.putAll(renderParams);
-		  PortletMode mode = response.getChangedPortletMode();
-		  WindowState state = response.getChangedWindowState();
-		  if ( mode != null )
-		   setMode ( windowOfAction, mode );
-		  if ( state != null )
-		   setState ( windowOfAction, state );  
-	  } else {  
-		 String windowId = windowOfAction.getId().toString();
-		 for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
-		  String paramName = (String) names.nextElement();
-		  String[] values = runtimeData.getParameterValues(paramName);
-		  
-		  if ( ACTION.equals(paramName) ) {
-		    if ( "true".equals(values[0]) )
-		      isAction = true;		  
-		  } else if ( UP_HELP_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
-			  setMode ( windowOfAction, PortletMode.HELP ); 
-		  } else if ( UP_EDIT_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
-		      setMode ( windowOfAction, PortletMode.EDIT ); 
-		  }	else if ( UP_VIEW_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
-			  setMode ( windowOfAction, PortletMode.VIEW );   
-	      } else if ( UP_ROOT.equals(paramName) ) {
-		     if ( !ROOT.equals(values[0]) )
-		      setState ( windowOfAction, WindowState.MAXIMIZED); 
-		     else if ( getPrevState(windowOfAction).equals(WindowState.MAXIMIZED) )
-			  setState ( windowOfAction, WindowState.NORMAL ); 			   
-		  }	else if ( UP_TCATTR.equals(paramName) ) {
-		      if ( MINIMIZED.equals(values[0]) ) {
-		        String state = runtimeData.getParameter(MINIMIZED+"_"+getKey(windowOfAction)+"_value");
-		        if ( "true".equals(state) )
-				 setState ( windowOfAction, WindowState.MINIMIZED );
-				else
-				 setState ( windowOfAction, WindowState.NORMAL ); 
-		      }	  		     
-		    } 
-		 }
-	   }	   
-	}
+    private void analizeRequestInformation() {
+        params.clear();
+        String windowId = windowOfAction.getId().toString();
+        for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
+            String paramName = (String)names.nextElement();
+            String[] values = runtimeData.getParameterValues(paramName);
+
+            if (ACTION.equals(paramName)) {
+                if ("true".equals(values[0]))
+                    isAction = true;
+            } else if (UP_HELP_TARGET.equals(paramName) && windowId.equals(values[0])) {
+                setMode(windowOfAction, PortletMode.HELP);
+            } else if (UP_EDIT_TARGET.equals(paramName) && windowId.equals(values[0])) {
+                setMode(windowOfAction, PortletMode.EDIT);
+            } else if (UP_VIEW_TARGET.equals(paramName) && windowId.equals(values[0])) {
+                setMode(windowOfAction, PortletMode.VIEW);
+            } else if (UP_ROOT.equals(paramName)) {
+                if (!ROOT.equals(values[0]))
+                    setState(windowOfAction, WindowState.MAXIMIZED);
+                else if (getPrevState(windowOfAction).equals(WindowState.MAXIMIZED))
+                    setState(windowOfAction, WindowState.NORMAL);
+            } else if (UP_TCATTR.equals(paramName)) {
+                if (MINIMIZED.equals(values[0])) {
+                    String state = runtimeData.getParameter(MINIMIZED + "_" + getKey(windowOfAction) + "_value");
+                    if ("true".equals(state))
+                        setState(windowOfAction, WindowState.MINIMIZED);
+                    else
+                        setState(windowOfAction, WindowState.NORMAL);
+                }
+            }
+        }
+    }
 	
 	public void setParameters(Map parameters) {	
 	  if ( parameters != null && !parameters.isEmpty() && response == null )	
