@@ -1574,7 +1574,7 @@ Version $Revision$
                         <xsl:if test="fragments and $fragmentAuthor='true'">
                             <!-- <br/> -->
                             <span> |<xsl:text>&#160;</xsl:text> </span>
-                            <a href="{$baseActionURL}?uP_fname=fragmentManager&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Fragments</a>
+                            <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Fragments</a>
                             <!-- <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content"> -->
                                     <!-- This test wil need to be modified when multiple layouts are allowed -->
                                     <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')"> -->
