@@ -48,6 +48,7 @@ import org.w3c.dom.Element;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.Collections;
 
@@ -253,16 +254,28 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             // If a channel specifies "me" as its root, set the root
             // to the channel's instance Id
             if (root.equals("me")) {
-                String chanInstanceId = null;
+                // get uPFile spec and search for "channel" clause
+                root=null;
                 String servletPath = req.getServletPath();
-                String searchFor = "/channel/";
-                int chanIdBegIndex = servletPath.indexOf(searchFor) + searchFor.length();
-                if (chanIdBegIndex != -1) {
-                    int chanIdEndIndex = servletPath.indexOf("/", chanIdBegIndex);
-                    root = servletPath.substring(chanIdBegIndex, chanIdEndIndex);
+                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
+                StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
+                while(uPTokenizer.hasMoreTokens()) {
+                    String nextToken=uPTokenizer.nextToken();
+                    if(nextToken.equals(PortalSessionManager.CHANNEL_URL_ELEMENT)) {
+                        if(uPTokenizer.hasMoreTokens()) {
+                            root=uPTokenizer.nextToken();
+                        } else {
+                            // abrupt end after channel element
+                            LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::processUserPreferencesParameters() : unable to extract channel ID. uPFile=\""+uPFile+"\".");
+                        }
+                    }
                 }
             }
-            state.complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
+            if(root!=null) {
+                state.complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
+            } else {
+                LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
+            }
         }
         // other params
         String[] sparams = req.getParameterValues("uP_sparam");
