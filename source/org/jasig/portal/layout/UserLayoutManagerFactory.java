@@ -31,7 +31,7 @@ public class UserLayoutManagerFactory {
 
     static {
         // Retrieve the class name of the core IUserLayoutManager implementation
-        String className = PropertiesManager.getProperty("org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation");
+        String className = PropertiesManager.getProperty("org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation", null);
         if (className == null)
             log.error( "UserLayoutManagerFactory: org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation must be specified in portal.properties");
         try {

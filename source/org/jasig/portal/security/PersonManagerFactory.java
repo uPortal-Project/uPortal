@@ -20,7 +20,7 @@ public class PersonManagerFactory {
   private static IPersonManager m_personManager = null;
   static {
     // Retrieve the class name of the concrete IPersonManager implementation
-    String personManagerClass = PropertiesManager.getProperty("org.jasig.portal.security.PersonManagerFactory.implementation");
+    String personManagerClass = PropertiesManager.getProperty("org.jasig.portal.security.PersonManagerFactory.implementation", null);
     // Fail if this is not found
     if (personManagerClass == null) {
       log.error( "PersonManagerFactory: org.jasig.portal.security.PersonManagerFactory.implementation must be specified in portal.properties");

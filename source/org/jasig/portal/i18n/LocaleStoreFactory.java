@@ -22,7 +22,7 @@ public class LocaleStoreFactory {
 
     static {
       // Retrieve the class name of the concrete ILocaleStore implementation
-      String className = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleStoreFactory.implementation");
+      String className = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleStoreFactory.implementation", null);
       // Fail if this is not found
       if (className == null)
         log.error( "LocaleStoreFactory: org.jasig.portal.i18n.LocaleStoreFactory.implementation must be specified in portal.properties");
