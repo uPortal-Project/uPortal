@@ -25,7 +25,7 @@ public class LayoutBean extends GenericPortalBean
 {       
   private static boolean bPropsLoaded = false;
   private static String sPathToLayoutDtd = null;
-  private static String sLayoutDtd = "layout.dtd";
+  private static final String sLayoutDtd = "layout.dtd";
   private Hashtable htChannelInstances = new Hashtable ();
 
   /**
@@ -161,12 +161,24 @@ public class LayoutBean extends GenericPortalBean
             
       String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
       Logger.log (Logger.DEBUG, sQuery);
-        
       ResultSet rs = stmt.executeQuery (sQuery);
           
       if (rs.next ())
       {
         String sLayoutXml = rs.getString ("LAYOUT_XML");
+        
+        // If user has no layout xml, get it from the default user
+        if (sLayoutXml == null || sLayoutXml.length () <= 0)
+        {
+          sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
+          Logger.log (Logger.DEBUG, sQuery);
+          rs = stmt.executeQuery (sQuery);
+          
+          if (rs.next ())
+          {
+            sLayoutXml = rs.getString ("LAYOUT_XML");
+          }
+        }
             
         // Tack on the full path to layout.dtd
         int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
@@ -212,11 +224,25 @@ public class LayoutBean extends GenericPortalBean
       int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
       int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
       sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
-          
-      String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-      int iUpdated = stmt.executeUpdate (sUpdate);
-      Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-      stmt.close ();
+        
+      try
+      {
+        String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
+        int iUpdated = stmt.executeUpdate (sUpdate);
+        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
+        stmt.close ();
+      }
+      catch (SQLException e)
+      {
+        // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
+        PreparedStatement pstmt = con.prepareStatement ("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
+        pstmt.clearParameters ();
+        pstmt.setCharacterStream (1, new StringReader (sLayoutXml), sLayoutXml.length ());
+        pstmt.setString (2, sUserName);
+        int iUpdated = pstmt.executeUpdate ();
+        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
+        pstmt.close ();
+      }
     }
     catch (Exception e)
     {
