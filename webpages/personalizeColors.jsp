@@ -58,7 +58,7 @@ if (sAction != null) {
 <html>
 <head>
 <title>Personalize Colors</title>
-<META HTTP-EQUIV="expires" CONTENT="Tue, 20 Aug 1996 14:25:27 GMT">
+<meta http-equiv="expires" content="Tue, 20 Aug 1996 14:25:27 GMT">
 <% 
 
 String fComponent = (String)request.getParameter("Component");
@@ -103,12 +103,8 @@ myChannelColor = myChannelColor.trim();
 if ((myChannelColor.substring(0,1)).equals("#")) myChannelColor = myChannelColor.substring(1);
 if (fChannelColor == null) fChannelColor = myChannelColor;
 %>
-
-
-<STYLE>
-
-
-BODY { color: <%=myTextColor%>;
+<style>
+body { color: <%=myTextColor%>;
 
 	 background: <%=myBGColor%>}
 
@@ -141,8 +137,8 @@ BODY { color: <%=myTextColor%>;
                               font-weight:plain; font-family:arial,helvetica,times,courier;
 
                               font-size:12pt}
-</STYLE>
-<SCRIPT LANGUAGE="Javascript">
+</style>
+<script language="Javascript">
 
 <!--
 
@@ -176,9 +172,9 @@ function viewNewColor(whatColor) {
 
 -->
 
-</SCRIPT>
+</script>
 </head>
-<BODY BGCOLOR=<%=myBGColor%> TEXT=<%=myTextColor%> LINK=<%=myActiveTabColor%> VLINK=<%=myTabColor%> ALINK=<%=myChannelColor%>>
+<body bgcolor=<%=myBGColor%> text=<%=myTextColor%> link=<%=myActiveTabColor%> vlink=<%=myTabColor%> alink=<%=myChannelColor%>>
 <%-- <% layoutBean.writeBodyStyle (request, response, out); %> --%>
 
 <%-- Header --%>
@@ -186,135 +182,135 @@ function viewNewColor(whatColor) {
 <%@ include file="header.jsp" %>
 
 <%-- begin one column formatting table for mini-portal --%>
-<TABLE><TR><TD VALIGN=TOP>
+<table><tr><td valign="top">
 
 
 
-<TABLE>
+<table>
 
-<TR><TD>
+<tr><td>
 
-View your color changes on the mini portal below:</TD><TR>
+View your color changes on the mini portal below:</td><tr>
 
-<TR><TD>
+<tr><td>
 
-<TABLE BORDER=1 BGCOLOR="<%=fBGColor%>">
+<table border="1" bgcolor="<%=fBGColor%>">
 
-<TR><TD>
+<tr><td>
 
-<TABLE BORDER=0 cellspacing=0 cellpadding=0>
+<table border="0" cellspacing="0" cellpadding="0">
 
-<TR>
+<tr>
 
-  <TD BGCOLOR="<%=fActiveTabColor%>"><SPAN CLASS="MiniPortalTitleText"><CENTER>Active Tab</CENTER></SPAN></TD>
+  <td bgcolor="<%=fActiveTabColor%>"><span class="MiniPortalTitleText"><center>Active Tab</center></span></td>
 
-  <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+  <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-  <TD BGCOLOR="<%=fTabColor%>"><SPAN CLASS="MiniPortalTitleText"><CENTER>Tab 2</CENTER></SPAN></TD>
+  <td bgcolor="<%=fTabColor%>"><span class="MiniPortalTitleText"><center>Tab 2</center></span></td>
 
-  <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+  <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-  <TD BGCOLOR="<%=fTabColor%>"><SPAN CLASS="MiniPortalTitleText"><CENTER>Tab 3</CENTER></SPAN></TD>
+  <td bgcolor="<%=fTabColor%>"><span class="MiniPortalTitleText"><center>Tab 3</center></span></td>
 
-</TR>
+</tr>
 
-<TR><TD COLSPAN=5 BGCOLOR="<%=fActiveTabColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=2></TD></TR>
+<tr><td colspan="5" bgcolor="<%=fActiveTabColor%>"><img src="images/dot_clear.gif" vspace=2></td></tr>
 
 
 
-<TR><TD COLSPAN=5><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
+<tr><td colspan="5"><img src="images/dot_clear.gif" vspace="6"/></td></tr>
 
-<TR><TD BGCOLOR="<%=fChannelColor%>"><SPAN CLASS="MiniPortalTitleText">Plain Text</SPAN></TD>
+<tr><td bgcolor="<%=fChannelColor%>"><span class="MiniPortalTitleText">Plain Text</span></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR="<%=fChannelColor%>"><SPAN CLASS="MiniPortalTitleText">All Capitals</SPAN></TD>
+    <td bgcolor="<%=fChannelColor%>"><span class="MiniPortalTitleText">All Capitals</span></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR="<%=fChannelColor%>"><SPAN CLASS="MiniPortalTitleText">Numbers</SPAN></TD>
+    <td bgcolor="<%=fChannelColor%>"><span class="MiniPortalTitleText">Numbers</span></td>
 
-</TR>
+</tr>
 
-<TR>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-</TR>
+<tr>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+</tr>
 
-<TR><TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">a b c d e f g h i j k l m n o p q r s t u v w x y z<IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+<tr><td bgcolor="ffffff"><span class="MiniPortalText">a b c d e f g h i j k l m n o p q r s t u v w x y z<img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</TD>
+    <td bgcolor="ffffff"><span class="MiniPortalText">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">1 2 3 4 5 6 7 8 9 0 ! @  $ % ^ & * ( )</TD>
+    <td bgcolor="ffffff"><span class="MiniPortalText">1 2 3 4 5 6 7 8 9 0 ! @  $ % ^ & * ( )</td>
 
-</TR>
+</tr>
 
-<TR>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-</TR>
+<tr>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+</tr>
 
-<TR><TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">a b c d e f g h i j k l m n o p q r s t u v w x y z </SPAN></TD>
+<tr><td bgcolor="ffffff"><span class="MiniPortalText">a b c d e f g h i j k l m n o p q r s t u v w x y z </span></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z </SPAN></TD>
+    <td bgcolor="ffffff"><span class="MiniPortalText">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z </span></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><SPAN CLASS="MiniPortalText">1 2 3 4 5 6 7 8 9 0 ! @  $ % ^ & * ( ) </SPAN></TD>
+    <td bgcolor="ffffff"><span class="MiniPortalText">1 2 3 4 5 6 7 8 9 0 ! @  $ % ^ & * ( ) </span></td>
 
-</TR>
+</tr>
 
-<TR>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-</TR>
+<tr>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+</tr>
 
-<TR><TD BGCOLOR=FFFFFF><A HREF="personalizeColors.jsp"><FONT COLOR="<%=fActiveTabColor%>"><B>Note your Link color is assigned to Active Tab color</B></FONT></A></TD>
+<tr><td bgcolor="ffffff"><A HREF="personalizeColors.jsp"><FONT COLOR="<%=fActiveTabColor%>"><B>Note your Link color is assigned to Active Tab color</B></FONT></A></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><A HREF="personalizeColors.jsp"><FONT COLOR="<%=fTabColor%>"><B>Your visited link color is assigned to the non-active tab color</B></FONT></A></TD>
+    <td bgcolor="ffffff"><A HREF="personalizeColors.jsp"><FONT COLOR="<%=fTabColor%>"><B>Your visited link color is assigned to the non-active tab color</B></FONT></A></td>
 
-    <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td><img src="images/dot_clear.gif" hspace="2"/></td>
 
-    <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
+    <td bgcolor="ffffff"><img src="images/dot_clear.gif" hspace="2"/></td>
 
-</TR>
+</tr>
 
-<TR>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-   <TD><IMG SRC="images/dot_clear.gif" HSPACE=2></TD>
-   <TD BGCOLOR=FFFFFF><IMG SRC="images/dot_clear.gif" VSPACE=6></TD>
-</TR>
+<tr>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+   <td><img src="images/dot_clear.gif" hspace="2"/></td>
+   <td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="6"/></td>
+</tr>
 
-<TR><TD COLSPAN=5><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
+<tr><td colspan="5"><img src="images/dot_clear.gif" vspace="6"/></td></tr>
 
-<TR><TD COLSPAN=5><CENTER><SPAN CLASS="MiniPortalText">Save your new colors or return to your portal:</SPAN></CENTER></TD></TR>
+<tr><td colspan="5"><center><span class="MiniPortalText">Save your new colors or return to your portal:</span></center></td></tr>
 
-<TR><TD COLSPAN=5><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
+<tr><td colspan="5"><img src="images/dot_clear.gif" vspace="6"/></td></tr>
 
-<TR><TD COLSPAN=5><CENTER>
+<tr><td colspan="5"><center>
 
 <form name=SaveReturn action="personalizeColors.jsp" method=post>
 
-<input type=hidden name="bgColor" value="<%=fBGColor%>">
+<input type=hidden name="bgcolor" value="<%=fBGColor%>">
 
 <input type=hidden name="fgColor" value="<%=fTextColor%>">
 
@@ -327,29 +323,29 @@ View your color changes on the mini portal below:</TD><TR>
 <input type=hidden name=action value="saveColors">
 
 <input type=submit name=submit value="Save Colors">
-</form></CENTER>
+</form></center>
 
-</TD></TR>
+</td></tr>
 
-</TABLE>
+</table>
 
-</TD></TR>
+</td></tr>
 
-</TABLE>
+</table>
 
-</TD></TR></TABLE><%-- end one column formatting table - mini-portal --%>
+</td></tr></table><%-- end one column formatting table - mini-portal --%>
 
 
 <%-- begin two column formatting table --%>
 
-<TABLE><TR><TD VALIGN=TOP>
+<table><tr><td valign=TOP>
 
-<TABLE BORDER=1><TR><TD>
-<TABLE BORDER=0>
-<TR><TD>Change by scheme:</TD></TR>
-<TR><TD><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
-<TR><TD>
-<FORM NAME="colorGroup">
+<table border=1><tr><td>
+<table border=0>
+<tr><td>Change by scheme:</td></tr>
+<tr><td><img src="images/dot_clear.gif" vspace="6"/></td></tr>
+<tr><td>
+<form name="colorGroup">
       <select name="selColorGroup" onchange="top.location=(this.options[selectedIndex].value)">
 <%--
 For testing without DB
@@ -398,30 +394,30 @@ For testing without DB
 <%=SchemeDrop%>
 
       </select>
-</FORM>
+</form>
 
-</TD></TR>
-<TR><TD>
-<TABLE BORDER=1 BORDERCOLOR="<%=myTextColor%>" BORDERCOLORDARK="<%=myTextColor%>" BORDERCOLORLIGHT="<%=myTextColor%>">
+</td></tr>
+<tr><td>
+<table border="1" bordercolor="<%=myTextColor%>" bordercolordark="<%=myTextColor%>" bordercolorlight="<%=myTextColor%>">
 
-<TR>
+<tr>
 
-<TD>Apply</TD><TD><IMG SRC="images/dot_clear.gif">BG</TD><TD><IMG SRC="images/dot_clear.gif">TX</TD><TD><IMG SRC="images/dot_clear.gif">AT</TD><TD><IMG SRC="images/dot_clear.gif">OT</TD><TD><IMG SRC="images/dot_clear.gif">CH</TD>
+<td>Apply</td><td><img src="images/dot_clear.gif">BG</td><td><img src="images/dot_clear.gif">TX</td><td><img src="images/dot_clear.gif">AT</td><td><img src="images/dot_clear.gif">OT</td><td><img src="images/dot_clear.gif">CH</td>
 
-</TR>
+</tr>
 
-<FORM NAME=ColorScheme>
+<form name="ColorScheme">
 
-<TR><TD><CENTER><INPUT TYPE=RADIO NAME=COLORS onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=<%=myBGColor%>&TextColor=<%=myTextColor%>&ActiveTabColor=<%=myActiveTabColor%>&TabColor=<%=myTabColor%>&ChannelColor=<%=myChannelColor%>';">Revert to your colors</CENTER></TD><TD BGCOLOR="<%=myBGColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="<%=myTextColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="<%=myActiveTabColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="<%=myTabColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="<%=myChannelColor%>"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR>
+<tr><td><center><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=<%=myBGColor%>&TextColor=<%=myTextColor%>&ActiveTabColor=<%=myActiveTabColor%>&TabColor=<%=myTabColor%>&ChannelColor=<%=myChannelColor%>';">Revert to your colors</center></td><td bgcolor="<%=myBGColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTextColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myActiveTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myChannelColor%>"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
 <%--
 For testing without DB
-<TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=FFFFFF&TextColor=000000&ActiveTabColor=FF9900&TabColor=CC6633&ChannelColor=FFCC33';"></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="CC6633"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFCC33"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=FFFFFF&TextColor=000000&ActiveTabColor=83A368&TabColor=99CCFF&ChannelColor=009900';"></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="99CCFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="009900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=FFFFFF&TextColor=000000&ActiveTabColor=009900&TabColor=336699&ChannelColor=83A368';"></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="009900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="336699"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="009900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=EEEEEE&TextColor=000000&ActiveTabColor=83A368&TabColor=336699&ChannelColor=83A368';"></TD><TD BGCOLOR="EEEEEE"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="336699"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="83A368"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=CC6633&TextColor=000000&ActiveTabColor=FF9900&TabColor=FFFFFF&ChannelColor=FFCC33';"></TD><TD BGCOLOR="CC6633"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFCC33"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=0044AA&TextColor=FFFFFF&ActiveTabColor=FFDD00&TabColor=FF6600&ChannelColor=FFDD00';"></TD><TD BGCOLOR="0044AA"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFDD00"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF6600"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFDD00"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFDD00"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR><TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=000000&TextColor=FFFFFF&ActiveTabColor=FF9900&TabColor=CC6633&ChannelColor=FFCC33';"></TD><TD BGCOLOR="000000"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFFFFF"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="CC6633"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FFCC33"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD><TD BGCOLOR="FF9900"><IMG SRC="images/dot_clear.gif" VSPACE=12></TD></TR>
+<tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=83a368&TabColor=99ccff&ChannelColor=009900';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="99ccff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=009900&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=eeeeee&TextColor=000000&ActiveTabColor=83a368&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="eeeeee"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=cc6633&TextColor=000000&ActiveTabColor=ff9900&TabColor=ffffff&ChannelColor=ffcc33';"></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=0044AA&TextColor=ffffff&ActiveTabColor=ffDD00&TabColor=ff6600&ChannelColor=ffDD00';"></td><td bgcolor="0044AA"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff6600"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=000000&TextColor=ffffff&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
 --%>
 <%
   connection = null;
   String ColorSquares = "";
   String SeqID = null;
-  String BGColor = null;
+  String bgcolor = null;
   String TextColor = null;
   String Link = null;
   String VLink = null;
@@ -430,17 +426,17 @@ For testing without DB
    try {
        connection = rdbmService.getConnection();
        Statement statement = connection.createStatement();
-       String SQLString = "SELECT SEQ_ID, BGCOLOR, TEXT, LINK, VLINK, ALINK FROM PORTAL_COLORS WHERE COLOR_SCHEME_NAME='" + fColorScheme + "' ORDER BY BGCOLOR DESC, TEXT DESC, LINK DESC, VLINK DESC";
+       String SQLString = "SELECT SEQ_ID, bgcolor, TEXT, LINK, VLINK, ALINK FROM PORTAL_COLORS WHERE COLOR_SCHEME_name='" + fColorScheme + "' ORDER BY bgcolor DESC, TEXT DESC, LINK DESC, VLINK DESC";
        Logger.log (Logger.DEBUG, SQLString);
        ResultSet rs = statement.executeQuery(SQLString);
        while(rs.next()) {
           SeqID     = rs.getString(1);
-          BGColor   = rs.getString(2);
+          bgcolor   = rs.getString(2);
           TextColor = rs.getString(3);
           Link      = rs.getString(4);
           VLink     = rs.getString(5);
           ALink     = rs.getString(6);
-          ColorSquares = ColorSquares + "<TR><TD><INPUT TYPE=RADIO NAME=COLORS onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&BGColor=" + BGColor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</TD><TD BGCOLOR=\"" + BGColor + "\"><IMG SRC=\"images/dot_clear.gif\" VSPACE=12></TD><TD BGCOLOR=\"" + TextColor + "\"><IMG SRC=\"images/dot_clear.gif\" VSPACE=12></TD><TD BGCOLOR=\"" + Link + "\"><IMG SRC=\"images/dot_clear.gif\" VSPACE=12></TD><TD BGCOLOR=\"" + VLink + "\"><IMG SRC=\"images/dot_clear.gif\" VSPACE=12></TD><TD BGCOLOR=\"" + ALink + "\"><IMG SRC=\"images/dot_clear.gif\" VSPACE=12></TD></TR>";
+          ColorSquares = ColorSquares + "<tr><td><input type="radio" name="colors" onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&BGColor=" + bgcolor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</td><td bgcolor=\"" + bgcolor + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + TextColor + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + Link + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + VLink + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + ALink + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td></tr>";
        }
        statement.close();
        rdbmService.releaseConnection(connection);
@@ -453,27 +449,27 @@ For testing without DB
 <%=ColorSquares%>
 
 
-</FORM>
+</form>
 
-</TABLE>
+</table>
 
-</TD></TR></TABLE>
-</TD></TR></TABLE>
+</td></tr></table>
+</td></tr></table>
 
 
 
-</TD><TD VALIGN=TOP>
+</td><td valign="top">
 
-<IMG SRC="images/dot_clear.gif" HSPACE=10>
+<img src="images/dot_clear.gif" hspace="10"/>
 
-</TD><TD VALIGN=TOP>
+</td><td valign="top">
 
-<TABLE BORDER=1><TR><TD>
-<TABLE BORDER=0>
-<TR><TD>Change Individual Colors:</TD></TR>
-<TR><TD><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
-<TR><TD>
-  <FORM NAME="ComponentsForm">
+<table border="1"><tr><td>
+<table border="0">
+<tr><td>Change Individual Colors:</td></tr>
+<tr><td><img src="images/dot_clear.gif" vspace="6"/></td></tr>
+<tr><td>
+  <form name="ComponentsForm">
         <select name="PortalComponent">
 <%
 String IndivDrop="<option ";
@@ -491,42 +487,42 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 <%=IndivDrop%>
         </select>
 
-  </FORM>
-</TD></TR>
-<TR><TD>Click on a color below to change:</TD></TR>
-<TR><TD><IMG SRC="images/dot_clear.gif" VSPACE=6></TD></TR>
-<TR><TD HALIGN=LEFT>
-<IMG SRC="images/<%=fColorPalette%>.gif" usemap="#ColorsMap" ismap BORDER=0>
+  </form>
+</td></tr>
+<tr><td>Click on a color below to change:</td></tr>
+<tr><td><img src="images/dot_clear.gif" vspace="6"/></td></tr>
+<tr><td halign=LEFT>
+<img src="images/<%=fColorPalette%>.gif" usemap="#ColorsMap" ismap border="0"/>
 
      <map name="ColorsMap">
 
-     <area shape="rect" coords="145,373,155,383" alt="Cyan" href="javascript:viewNewColor('00FFFF')">
+     <area shape="rect" coords="145,373,155,383" alt="Cyan" href="javascript:viewNewColor('00ffff')">
 
-     <area shape="rect" coords="145,313,155,323" alt="Blue" href="javascript:viewNewColor('0000FF')">
+     <area shape="rect" coords="145,313,155,323" alt="Blue" href="javascript:viewNewColor('0000ff')">
 
-     <area shape="rect" coords="145,253,155,263" alt="Magenta" href="javascript:viewNewColor('FF00FF')">
+     <area shape="rect" coords="145,253,155,263" alt="Magenta" href="javascript:viewNewColor('ff00ff')">
 
-     <area shape="rect" coords="145,193,155,203" alt="Red" href="javascript:viewNewColor('FF0000')">
+     <area shape="rect" coords="145,193,155,203" alt="Red" href="javascript:viewNewColor('ff0000')">
 
-     <area shape="rect" coords="145,133,155,143" alt="Yellow" href="javascript:viewNewColor('FFFF00')">
+     <area shape="rect" coords="145,133,155,143" alt="Yellow" href="javascript:viewNewColor('ffff00')">
 
-     <area shape="rect" coords="145,73,155,83" alt="Green" href="javascript:viewNewColor('00FF00')">
+     <area shape="rect" coords="145,73,155,83" alt="Green" href="javascript:viewNewColor('00ff00')">
 
-     <area shape="rect" coords="145,13,155,23" alt="Cyan" href="javascript:viewNewColor('00FFFF')">
+     <area shape="rect" coords="145,13,155,23" alt="Cyan" href="javascript:viewNewColor('00ffff')">
 
 
 
-     <area shape="rect" coords="24,12,36,24" href="javascript:viewNewColor('CCFFFF')">
+     <area shape="rect" coords="24,12,36,24" href="javascript:viewNewColor('ccffff')">
 
-     <area shape="rect" coords="36,12,48,24" href="javascript:viewNewColor('99FFFF')">
+     <area shape="rect" coords="36,12,48,24" href="javascript:viewNewColor('99ffff')">
 
-     <area shape="rect" coords="48,12,60,24" href="javascript:viewNewColor('66FFFF')">
+     <area shape="rect" coords="48,12,60,24" href="javascript:viewNewColor('66ffff')">
 
-     <area shape="rect" coords="60,12,72,24" href="javascript:viewNewColor('33FFFF')">
+     <area shape="rect" coords="60,12,72,24" href="javascript:viewNewColor('33ffff')">
 
-     <area shape="rect" coords="72,12,84,24" href="javascript:viewNewColor('00FFFF')">
+     <area shape="rect" coords="72,12,84,24" href="javascript:viewNewColor('00ffff')">
 
-     <area shape="rect" coords="84,12,96,36" href="javascript:viewNewColor('00CCCC')">
+     <area shape="rect" coords="84,12,96,36" href="javascript:viewNewColor('00cccc')">
 
      <area shape="rect" coords="96,12,108,48" href="javascript:viewNewColor('009999')">
 
@@ -536,47 +532,47 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="24,24,36,132" href="javascript:viewNewColor('CCFFCC')">
+     <area shape="rect" coords="24,24,36,132" href="javascript:viewNewColor('ccffcc')">
 
-     <area shape="rect" coords="36,24,48,36" href="javascript:viewNewColor('99FFCC')">
+     <area shape="rect" coords="36,24,48,36" href="javascript:viewNewColor('99ffcc')">
 
-     <area shape="rect" coords="48,24,60,36" href="javascript:viewNewColor('66FFCC')">
+     <area shape="rect" coords="48,24,60,36" href="javascript:viewNewColor('66ffcc')">
 
-     <area shape="rect" coords="60,24,72,36" href="javascript:viewNewColor('33FFCC')">
+     <area shape="rect" coords="60,24,72,36" href="javascript:viewNewColor('33ffcc')">
 
-     <area shape="rect" coords="72,24,84,36" href="javascript:viewNewColor('00FFCC')">
-
-
-
-     <area shape="rect" coords="36,36,48,120" href="javascript:viewNewColor('99FF99')">
-
-     <area shape="rect" coords="48,36,60,48" href="javascript:viewNewColor('66FF99')">
-
-     <area shape="rect" coords="60,36,72,48" href="javascript:viewNewColor('33FF99')">
-
-     <area shape="rect" coords="72,36,84,48" href="javascript:viewNewColor('00FF99')">
-
-     <area shape="rect" coords="84,36,96,48" href="javascript:viewNewColor('00CC99')">
+     <area shape="rect" coords="72,24,84,36" href="javascript:viewNewColor('00ffcc')">
 
 
 
-     <area shape="rect" coords="48,48,60,108" href="javascript:viewNewColor('66FF66')">
+     <area shape="rect" coords="36,36,48,120" href="javascript:viewNewColor('99ff99')">
 
-     <area shape="rect" coords="60,48,72,60" href="javascript:viewNewColor('33FF66')">
+     <area shape="rect" coords="48,36,60,48" href="javascript:viewNewColor('66ff99')">
 
-     <area shape="rect" coords="72,48,84,60" href="javascript:viewNewColor('00FF66')">
+     <area shape="rect" coords="60,36,72,48" href="javascript:viewNewColor('33ff99')">
 
-     <area shape="rect" coords="84,48,96,60" href="javascript:viewNewColor('00CC66')">
+     <area shape="rect" coords="72,36,84,48" href="javascript:viewNewColor('00ff99')">
+
+     <area shape="rect" coords="84,36,96,48" href="javascript:viewNewColor('00cc99')">
+
+
+
+     <area shape="rect" coords="48,48,60,108" href="javascript:viewNewColor('66ff66')">
+
+     <area shape="rect" coords="60,48,72,60" href="javascript:viewNewColor('33ff66')">
+
+     <area shape="rect" coords="72,48,84,60" href="javascript:viewNewColor('00ff66')">
+
+     <area shape="rect" coords="84,48,96,60" href="javascript:viewNewColor('00cc66')">
 
      <area shape="rect" coords="96,48,108,60" href="javascript:viewNewColor('009966')">
 
 
 
-     <area shape="rect" coords="60,60,72,96" href="javascript:viewNewColor('33FF33')">
+     <area shape="rect" coords="60,60,72,96" href="javascript:viewNewColor('33ff33')">
 
-     <area shape="rect" coords="72,60,84,72" href="javascript:viewNewColor('00FF33')">
+     <area shape="rect" coords="72,60,84,72" href="javascript:viewNewColor('00ff33')">
 
-     <area shape="rect" coords="84,60,96,72" href="javascript:viewNewColor('00CC33')">
+     <area shape="rect" coords="84,60,96,72" href="javascript:viewNewColor('00cc33')">
 
      <area shape="rect" coords="96,60,108,72" href="javascript:viewNewColor('009933')">
 
@@ -584,11 +580,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,72,84,84" href="javascript:viewNewColor('00FF00')">
+     <area shape="rect" coords="72,72,84,84" href="javascript:viewNewColor('00ff00')">
 
      <area shape="rect" coords="84,72,96,84" href="javascript:viewNewColor('009900')">
 
-     <area shape="rect" coords="96,72,108,84" href="javascript:viewNewColor('00CC00')">
+     <area shape="rect" coords="96,72,108,84" href="javascript:viewNewColor('00cc00')">
 
      <area shape="rect" coords="108,72,120,84" href="javascript:viewNewColor('009900')">
 
@@ -596,11 +592,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,84,84,96" href="javascript:viewNewColor('33FF00')">
+     <area shape="rect" coords="72,84,84,96" href="javascript:viewNewColor('33ff00')">
 
      <area shape="rect" coords="84,84,96,96" href="javascript:viewNewColor('339900')">
 
-     <area shape="rect" coords="96,84,108,96" href="javascript:viewNewColor('33CC00')">
+     <area shape="rect" coords="96,84,108,96" href="javascript:viewNewColor('33cc00')">
 
      <area shape="rect" coords="108,84,120,96" href="javascript:viewNewColor('339900')">
 
@@ -608,11 +604,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="60,96,72,108" href="javascript:viewNewColor('66FF33')">
+     <area shape="rect" coords="60,96,72,108" href="javascript:viewNewColor('66ff33')">
 
-     <area shape="rect" coords="72,96,84,108" href="javascript:viewNewColor('66FF00')">
+     <area shape="rect" coords="72,96,84,108" href="javascript:viewNewColor('66ff00')">
 
-     <area shape="rect" coords="84,96,96,108" href="javascript:viewNewColor('66CC00')">
+     <area shape="rect" coords="84,96,96,108" href="javascript:viewNewColor('66cc00')">
 
      <area shape="rect" coords="96,96,108,108" href="javascript:viewNewColor('669900')">
 
@@ -620,83 +616,83 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="48,108,60,120" href="javascript:viewNewColor('99FF66')">
+     <area shape="rect" coords="48,108,60,120" href="javascript:viewNewColor('99ff66')">
 
-     <area shape="rect" coords="60,108,72,120" href="javascript:viewNewColor('99FF33')">
+     <area shape="rect" coords="60,108,72,120" href="javascript:viewNewColor('99ff33')">
 
-     <area shape="rect" coords="72,108,84,120" href="javascript:viewNewColor('99FF00')">
+     <area shape="rect" coords="72,108,84,120" href="javascript:viewNewColor('99ff00')">
 
-     <area shape="rect" coords="84,108,96,120" href="javascript:viewNewColor('99CC00')">
+     <area shape="rect" coords="84,108,96,120" href="javascript:viewNewColor('99cc00')">
 
      <area shape="rect" coords="96,108,108,168" href="javascript:viewNewColor('999900')">
 
 
 
-     <area shape="rect" coords="36,120,48,132" href="javascript:viewNewColor('CCFF99')">
+     <area shape="rect" coords="36,120,48,132" href="javascript:viewNewColor('ccff99')">
 
-     <area shape="rect" coords="48,120,60,132" href="javascript:viewNewColor('CCFF66')">
+     <area shape="rect" coords="48,120,60,132" href="javascript:viewNewColor('ccff66')">
 
-     <area shape="rect" coords="60,120,72,132" href="javascript:viewNewColor('CCFF33')">
+     <area shape="rect" coords="60,120,72,132" href="javascript:viewNewColor('ccff33')">
 
-     <area shape="rect" coords="72,120,84,132" href="javascript:viewNewColor('CCFF00')">
+     <area shape="rect" coords="72,120,84,132" href="javascript:viewNewColor('ccff00')">
 
-     <area shape="rect" coords="84,120,96,156" href="javascript:viewNewColor('CCCC00')">
-
-
-
-     <area shape="rect" coords="24,132,36,144" href="javascript:viewNewColor('FFFFCC')">
-
-     <area shape="rect" coords="36,132,48,144" href="javascript:viewNewColor('FFFF99')">
-
-     <area shape="rect" coords="48,132,60,144" href="javascript:viewNewColor('FFFF66')">
-
-     <area shape="rect" coords="60,132,72,144" href="javascript:viewNewColor('FFFF33')">
-
-     <area shape="rect" coords="72,132,84,144" href="javascript:viewNewColor('FFFF00')">
+     <area shape="rect" coords="84,120,96,156" href="javascript:viewNewColor('cccc00')">
 
 
 
-     <area shape="rect" coords="24,144,36,252" href="javascript:viewNewColor('FFCCCC')">
+     <area shape="rect" coords="24,132,36,144" href="javascript:viewNewColor('ffffcc')">
 
-     <area shape="rect" coords="36,144,48,156" href="javascript:viewNewColor('FFCC99')">
+     <area shape="rect" coords="36,132,48,144" href="javascript:viewNewColor('ffff99')">
 
-     <area shape="rect" coords="48,144,60,156" href="javascript:viewNewColor('FFCC66')">
+     <area shape="rect" coords="48,132,60,144" href="javascript:viewNewColor('ffff66')">
 
-     <area shape="rect" coords="60,144,72,156" href="javascript:viewNewColor('FFCC33')">
+     <area shape="rect" coords="60,132,72,144" href="javascript:viewNewColor('ffff33')">
 
-     <area shape="rect" coords="72,144,84,156" href="javascript:viewNewColor('FFCC00')">
-
-
-
-     <area shape="rect" coords="36,156,48,240" href="javascript:viewNewColor('FF9999')">
-
-     <area shape="rect" coords="48,156,60,168" href="javascript:viewNewColor('FF9966')">
-
-     <area shape="rect" coords="60,156,72,168" href="javascript:viewNewColor('FF9933')">
-
-     <area shape="rect" coords="72,156,84,168" href="javascript:viewNewColor('FF9900')">
-
-     <area shape="rect" coords="84,156,96,168" href="javascript:viewNewColor('CC9900')">
+     <area shape="rect" coords="72,132,84,144" href="javascript:viewNewColor('ffff00')">
 
 
 
-     <area shape="rect" coords="48,168,60,228" href="javascript:viewNewColor('FF6666')">
+     <area shape="rect" coords="24,144,36,252" href="javascript:viewNewColor('ffcccc')">
 
-     <area shape="rect" coords="60,168,72,180" href="javascript:viewNewColor('33FF6633')">
+     <area shape="rect" coords="36,144,48,156" href="javascript:viewNewColor('ffcc99')">
 
-     <area shape="rect" coords="72,168,84,180" href="javascript:viewNewColor('FF6600')">
+     <area shape="rect" coords="48,144,60,156" href="javascript:viewNewColor('ffcc66')">
 
-     <area shape="rect" coords="84,168,96,180" href="javascript:viewNewColor('CC6600)">
+     <area shape="rect" coords="60,144,72,156" href="javascript:viewNewColor('ffcc33')">
+
+     <area shape="rect" coords="72,144,84,156" href="javascript:viewNewColor('ffcc00')">
+
+
+
+     <area shape="rect" coords="36,156,48,240" href="javascript:viewNewColor('ff9999')">
+
+     <area shape="rect" coords="48,156,60,168" href="javascript:viewNewColor('ff9966')">
+
+     <area shape="rect" coords="60,156,72,168" href="javascript:viewNewColor('ff9933')">
+
+     <area shape="rect" coords="72,156,84,168" href="javascript:viewNewColor('ff9900')">
+
+     <area shape="rect" coords="84,156,96,168" href="javascript:viewNewColor('cc9900')">
+
+
+
+     <area shape="rect" coords="48,168,60,228" href="javascript:viewNewColor('ff6666')">
+
+     <area shape="rect" coords="60,168,72,180" href="javascript:viewNewColor('33ff6633')">
+
+     <area shape="rect" coords="72,168,84,180" href="javascript:viewNewColor('ff6600')">
+
+     <area shape="rect" coords="84,168,96,180" href="javascript:viewNewColor('cc6600)">
 
      <area shape="rect" coords="96,168,108,180" href="javascript:viewNewColor('996600">
 
 
 
-     <area shape="rect" coords="60,180,72,216" href="javascript:viewNewColor('FF3333')">
+     <area shape="rect" coords="60,180,72,216" href="javascript:viewNewColor('ff3333')">
 
-     <area shape="rect" coords="72,180,84,192" href="javascript:viewNewColor('FF3300')">
+     <area shape="rect" coords="72,180,84,192" href="javascript:viewNewColor('ff3300')">
 
-     <area shape="rect" coords="84,180,96,192" href="javascript:viewNewColor('CC3300')">
+     <area shape="rect" coords="84,180,96,192" href="javascript:viewNewColor('cc3300')">
 
      <area shape="rect" coords="96,180,108,192" href="javascript:viewNewColor('993300')">
 
@@ -704,9 +700,9 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,192,84,204" href="javascript:viewNewColor('FF0000')">
+     <area shape="rect" coords="72,192,84,204" href="javascript:viewNewColor('ff0000')">
 
-     <area shape="rect" coords="84,192,96,204" href="javascript:viewNewColor('CC0000')">
+     <area shape="rect" coords="84,192,96,204" href="javascript:viewNewColor('cc0000')">
 
      <area shape="rect" coords="96,192,108,204" href="javascript:viewNewColor('990000')">
 
@@ -716,9 +712,9 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,204,84,216" href="javascript:viewNewColor('FF0033')">
+     <area shape="rect" coords="72,204,84,216" href="javascript:viewNewColor('ff0033')">
 
-     <area shape="rect" coords="84,204,96,216" href="javascript:viewNewColor('CC0033')">
+     <area shape="rect" coords="84,204,96,216" href="javascript:viewNewColor('cc0033')">
 
      <area shape="rect" coords="96,204,108,216" href="javascript:viewNewColor('990033')">
 
@@ -728,11 +724,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="60,216,72,228" href="javascript:viewNewColor('FF3333')">
+     <area shape="rect" coords="60,216,72,228" href="javascript:viewNewColor('ff3333')">
 
-     <area shape="rect" coords="72,216,84,228" href="javascript:viewNewColor('FF0066')">
+     <area shape="rect" coords="72,216,84,228" href="javascript:viewNewColor('ff0066')">
 
-     <area shape="rect" coords="84,216,96,228" href="javascript:viewNewColor('CC0066')">
+     <area shape="rect" coords="84,216,96,228" href="javascript:viewNewColor('cc0066')">
 
      <area shape="rect" coords="96,216,108,228" href="javascript:viewNewColor('990066')">
 
@@ -740,83 +736,83 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="48,228,60,240" href="javascript:viewNewColor('FF6699')">
+     <area shape="rect" coords="48,228,60,240" href="javascript:viewNewColor('ff6699')">
 
-     <area shape="rect" coords="60,228,72,240" href="javascript:viewNewColor('FF3399')">
+     <area shape="rect" coords="60,228,72,240" href="javascript:viewNewColor('ff3399')">
 
-     <area shape="rect" coords="72,228,84,240" href="javascript:viewNewColor('FF0099')">
+     <area shape="rect" coords="72,228,84,240" href="javascript:viewNewColor('ff0099')">
 
-     <area shape="rect" coords="84,228,96,240" href="javascript:viewNewColor('CC0099')">
+     <area shape="rect" coords="84,228,96,240" href="javascript:viewNewColor('cc0099')">
 
      <area shape="rect" coords="96,228,108,288" href="javascript:viewNewColor('990099')">
 
 
 
-     <area shape="rect" coords="36,240,48,252" href="javascript:viewNewColor('FF99CC')">
+     <area shape="rect" coords="36,240,48,252" href="javascript:viewNewColor('ff99cc')">
 
-     <area shape="rect" coords="48,240,60,252" href="javascript:viewNewColor('FF66CC')">
+     <area shape="rect" coords="48,240,60,252" href="javascript:viewNewColor('ff66cc')">
 
-     <area shape="rect" coords="60,240,72,252" href="javascript:viewNewColor('FF33CC')">
+     <area shape="rect" coords="60,240,72,252" href="javascript:viewNewColor('ff33cc')">
 
-     <area shape="rect" coords="72,240,84,252" href="javascript:viewNewColor('FF00CC')">
+     <area shape="rect" coords="72,240,84,252" href="javascript:viewNewColor('ff00cc')">
 
-     <area shape="rect" coords="84,240,96,276" href="javascript:viewNewColor('CC00CC')">
-
-
-
-     <area shape="rect" coords="24,252,36,264" href="javascript:viewNewColor('FFCCFF')">
-
-     <area shape="rect" coords="36,252,48,264" href="javascript:viewNewColor('FF99FF')">
-
-     <area shape="rect" coords="48,252,60,264" href="javascript:viewNewColor('FF66FF')">
-
-     <area shape="rect" coords="60,252,72,264" href="javascript:viewNewColor('FF33FF')">
-
-     <area shape="rect" coords="72,252,84,264" href="javascript:viewNewColor('FF00FF')">
+     <area shape="rect" coords="84,240,96,276" href="javascript:viewNewColor('cc00cc')">
 
 
 
-     <area shape="rect" coords="24,264,36,372" href="javascript:viewNewColor('CCCCFF')">
+     <area shape="rect" coords="24,252,36,264" href="javascript:viewNewColor('ffccff')">
 
-     <area shape="rect" coords="36,264,48,276" href="javascript:viewNewColor('CC99FF')">
+     <area shape="rect" coords="36,252,48,264" href="javascript:viewNewColor('ff99ff')">
 
-     <area shape="rect" coords="48,264,60,276" href="javascript:viewNewColor('CC66FF')">
+     <area shape="rect" coords="48,252,60,264" href="javascript:viewNewColor('ff66ff')">
 
-     <area shape="rect" coords="60,264,72,276" href="javascript:viewNewColor('CC33FF')">
+     <area shape="rect" coords="60,252,72,264" href="javascript:viewNewColor('ff33ff')">
 
-     <area shape="rect" coords="72,264,84,276" href="javascript:viewNewColor('CC00FF')">
-
-
-
-     <area shape="rect" coords="36,276,48,360" href="javascript:viewNewColor('9999FF')">
-
-     <area shape="rect" coords="48,276,60,288" href="javascript:viewNewColor('9966FF')">
-
-     <area shape="rect" coords="60,276,72,288" href="javascript:viewNewColor('9933FF')">
-
-     <area shape="rect" coords="72,276,84,288" href="javascript:viewNewColor('9900FF')">
-
-     <area shape="rect" coords="84,276,96,360" href="javascript:viewNewColor('9900CC')">
+     <area shape="rect" coords="72,252,84,264" href="javascript:viewNewColor('ff00ff')">
 
 
 
-     <area shape="rect" coords="48,288,60,348" href="javascript:viewNewColor('6666FF')">
+     <area shape="rect" coords="24,264,36,372" href="javascript:viewNewColor('ccccff')">
 
-     <area shape="rect" coords="60,288,72,300" href="javascript:viewNewColor('6633FF')">
+     <area shape="rect" coords="36,264,48,276" href="javascript:viewNewColor('cc99ff')">
 
-     <area shape="rect" coords="72,288,84,300" href="javascript:viewNewColor('6600FF')">
+     <area shape="rect" coords="48,264,60,276" href="javascript:viewNewColor('cc66ff')">
 
-     <area shape="rect" coords="84,288,96,300" href="javascript:viewNewColor('6600CC')">
+     <area shape="rect" coords="60,264,72,276" href="javascript:viewNewColor('cc33ff')">
+
+     <area shape="rect" coords="72,264,84,276" href="javascript:viewNewColor('cc00ff')">
+
+
+
+     <area shape="rect" coords="36,276,48,360" href="javascript:viewNewColor('9999ff')">
+
+     <area shape="rect" coords="48,276,60,288" href="javascript:viewNewColor('9966ff')">
+
+     <area shape="rect" coords="60,276,72,288" href="javascript:viewNewColor('9933ff')">
+
+     <area shape="rect" coords="72,276,84,288" href="javascript:viewNewColor('9900ff')">
+
+     <area shape="rect" coords="84,276,96,360" href="javascript:viewNewColor('9900cc')">
+
+
+
+     <area shape="rect" coords="48,288,60,348" href="javascript:viewNewColor('6666ff')">
+
+     <area shape="rect" coords="60,288,72,300" href="javascript:viewNewColor('6633ff')">
+
+     <area shape="rect" coords="72,288,84,300" href="javascript:viewNewColor('6600ff')">
+
+     <area shape="rect" coords="84,288,96,300" href="javascript:viewNewColor('6600cc')">
 
      <area shape="rect" coords="96,288,108,348" href="javascript:viewNewColor('660099')">
 
 
 
-     <area shape="rect" coords="60,300,72,336" href="javascript:viewNewColor('3333FF')">
+     <area shape="rect" coords="60,300,72,336" href="javascript:viewNewColor('3333ff')">
 
-     <area shape="rect" coords="72,300,84,312" href="javascript:viewNewColor('3300FF')">
+     <area shape="rect" coords="72,300,84,312" href="javascript:viewNewColor('3300ff')">
 
-     <area shape="rect" coords="84,300,96,312" href="javascript:viewNewColor('3300CC')">
+     <area shape="rect" coords="84,300,96,312" href="javascript:viewNewColor('3300cc')">
 
      <area shape="rect" coords="96,300,108,312" href="javascript:viewNewColor('330099')">
 
@@ -824,11 +820,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,312,84,324" href="javascript:viewNewColor('0000FF')">
+     <area shape="rect" coords="72,312,84,324" href="javascript:viewNewColor('0000ff')">
 
      <area shape="rect" coords="84,312,96,324" href="javascript:viewNewColor('000099')">
 
-     <area shape="rect" coords="96,312,108,324" href="javascript:viewNewColor('0000CC')">
+     <area shape="rect" coords="96,312,108,324" href="javascript:viewNewColor('0000cc')">
 
      <area shape="rect" coords="108,312,120,324" href="javascript:viewNewColor('000099')">
 
@@ -836,9 +832,9 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="72,324,84,336" href="javascript:viewNewColor('0066FF')">
+     <area shape="rect" coords="72,324,84,336" href="javascript:viewNewColor('0066ff')">
 
-     <area shape="rect" coords="84,324,96,336" href="javascript:viewNewColor('0033CC')">
+     <area shape="rect" coords="84,324,96,336" href="javascript:viewNewColor('0033cc')">
 
      <area shape="rect" coords="96,324,108,336" href="javascript:viewNewColor('003399')">
 
@@ -848,11 +844,11 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="60,336,72,348" href="javascript:viewNewColor('3366FF')">
+     <area shape="rect" coords="60,336,72,348" href="javascript:viewNewColor('3366ff')">
 
-     <area shape="rect" coords="72,336,84,348" href="javascript:viewNewColor('0066FF')">
+     <area shape="rect" coords="72,336,84,348" href="javascript:viewNewColor('0066ff')">
 
-     <area shape="rect" coords="84,336,96,348" href="javascript:viewNewColor('0066CC')">
+     <area shape="rect" coords="84,336,96,348" href="javascript:viewNewColor('0066cc')">
 
      <area shape="rect" coords="96,336,108,348" href="javascript:viewNewColor('006699')">
 
@@ -860,41 +856,41 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="48,348,60,360" href="javascript:viewNewColor('6699FF')">
+     <area shape="rect" coords="48,348,60,360" href="javascript:viewNewColor('6699ff')">
 
-     <area shape="rect" coords="60,348,72,360" href="javascript:viewNewColor('3399FF')">
+     <area shape="rect" coords="60,348,72,360" href="javascript:viewNewColor('3399ff')">
 
-     <area shape="rect" coords="72,348,84,360" href="javascript:viewNewColor('0099FF')">
+     <area shape="rect" coords="72,348,84,360" href="javascript:viewNewColor('0099ff')">
 
-     <area shape="rect" coords="84,348,96,360" href="javascript:viewNewColor('0099CC')">
+     <area shape="rect" coords="84,348,96,360" href="javascript:viewNewColor('0099cc')">
 
      <area shape="rect" coords="96,348,108,372" href="javascript:viewNewColor('009999')">
 
 
 
-     <area shape="rect" coords="36,360,48,372" href="javascript:viewNewColor('99CCFF')">
+     <area shape="rect" coords="36,360,48,372" href="javascript:viewNewColor('99ccff')">
 
-     <area shape="rect" coords="48,360,60,372" href="javascript:viewNewColor('66CCFF')">
+     <area shape="rect" coords="48,360,60,372" href="javascript:viewNewColor('66ccff')">
 
-     <area shape="rect" coords="60,360,72,372" href="javascript:viewNewColor('33CCFF')">
+     <area shape="rect" coords="60,360,72,372" href="javascript:viewNewColor('33ccff')">
 
-     <area shape="rect" coords="72,360,84,372" href="javascript:viewNewColor('00CCFF')">
+     <area shape="rect" coords="72,360,84,372" href="javascript:viewNewColor('00ccff')">
 
-     <area shape="rect" coords="84,360,96,372" href="javascript:viewNewColor('00CCCC')">
+     <area shape="rect" coords="84,360,96,372" href="javascript:viewNewColor('00cccc')">
 
 
 
-     <area shape="rect" coords="24,372,36,384" href="javascript:viewNewColor('CCFFFF')">
+     <area shape="rect" coords="24,372,36,384" href="javascript:viewNewColor('ccffff')">
 
-     <area shape="rect" coords="36,372,48,384" href="javascript:viewNewColor('99FFFF')">
+     <area shape="rect" coords="36,372,48,384" href="javascript:viewNewColor('99ffff')">
 
-     <area shape="rect" coords="48,372,60,384" href="javascript:viewNewColor('66FFFF')">
+     <area shape="rect" coords="48,372,60,384" href="javascript:viewNewColor('66ffff')">
 
-     <area shape="rect" coords="60,372,72,384" href="javascript:viewNewColor('33FFFF')">
+     <area shape="rect" coords="60,372,72,384" href="javascript:viewNewColor('33ffff')">
 
-     <area shape="rect" coords="72,372,84,384" href="javascript:viewNewColor('00FFFF')">
+     <area shape="rect" coords="72,372,84,384" href="javascript:viewNewColor('00ffff')">
 
-     <area shape="rect" coords="84,372,96,384" href="javascript:viewNewColor('00CCCC')">
+     <area shape="rect" coords="84,372,96,384" href="javascript:viewNewColor('00cccc')">
 
      <area shape="rect" coords="96,372,108,384" href="javascript:viewNewColor('009999')">
 
@@ -904,9 +900,9 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="12,384,36,396" href="javascript:viewNewColor('FFFFFF')">
+     <area shape="rect" coords="12,384,36,396" href="javascript:viewNewColor('"ffffff"')">
 
-     <area shape="rect" coords="36,384,60,396" href="javascript:viewNewColor('CCCCCC')">
+     <area shape="rect" coords="36,384,60,396" href="javascript:viewNewColor('cccccc')">
 
      <area shape="rect" coords="60,384,84,396" href="javascript:viewNewColor('999999')">
 
@@ -916,33 +912,33 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="12,12,24,396" alt="White" href="javascript:viewNewColor('FFFFFF')">
+     <area shape="rect" coords="12,12,24,396" alt="White" href="javascript:viewNewColor('"ffffff"')">
 
      <area shape="rect" coords="0,0,190,408" alt="Black" href="javascript:viewNewColor('000000')">
 
      </map>
 
-</TD></TR>
-</TABLE>
+</td></tr>
+</table>
 
-</TD></TR>
-</TABLE>
+</td></tr>
+</table>
 
 
 
-<%-- Table formating in rows for View and individual select colors --%>
+<%-- table formating in rows for View and individual select colors --%>
 
-</TD></TR>
+</td></tr>
 
-</TABLE>
+</table>
 
 
 
 <%-- end two column formatting table --%>
 
-</TD></TR>
+</td></tr>
 
-</TABLE>
+</table>
 
 
 
