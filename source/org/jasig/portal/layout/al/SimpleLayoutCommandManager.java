@@ -7,7 +7,7 @@ package org.jasig.portal.layout.al;
 
 import java.util.Iterator;
 import java.util.List;
-import org.jasig.portal.layout.node.INodeId;
+import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
  * A naive implementation of the command manager that

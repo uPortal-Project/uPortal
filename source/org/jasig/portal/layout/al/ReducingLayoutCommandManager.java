@@ -8,7 +8,7 @@ package org.jasig.portal.layout.al;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.jasig.portal.layout.node.INodeId;
+import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
  * A layout command manager that optimizies command recording
