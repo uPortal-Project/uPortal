@@ -231,7 +231,6 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
                 cd.getMarkupService().releaseSessions(cd.getRegistrationContext(), new String[] { cd.getSessionId() });
             }
         } catch (Exception e) {
-            e.printStackTrace(); // TODO: Take out printStackTrace for release
             LogService.log(LogService.ERROR, "Unable to release session '" + cd.getSessionId() + "' in remote portal");      
             LogService.log(LogService.ERROR, e);      
         }
