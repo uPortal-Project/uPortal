@@ -54,7 +54,7 @@ public class SecurityRoleRefSetImpl extends HashSet implements SecurityRoleRefSe
     
     public SecurityRoleRef get(String name) {
         SecurityRoleRef securityRoleRef = null;
-        Iterator iterator = this.iterator();
+        Iterator iterator = iterator();
         while (iterator.hasNext()) {
             SecurityRoleRef securityRoleRefCandidate = (SecurityRoleRef)iterator.next();
             if (securityRoleRefCandidate.getRoleName().equals(name)) {
@@ -67,12 +67,12 @@ public class SecurityRoleRefSetImpl extends HashSet implements SecurityRoleRefSe
     // SecurityRoleRefSetCtrl methods
 
     public SecurityRoleRef add(SecurityRoleRef securityRoleRef) {
-        this.add(securityRoleRef);
+        super.add(securityRoleRef);
         return securityRoleRef;
     }
 
     public void remove(SecurityRoleRef securityRoleRef) {
-        this.remove(securityRoleRef);
+        super.remove(securityRoleRef);
     }
 
     public SecurityRoleRef remove(String name) {
