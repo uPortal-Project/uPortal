@@ -90,6 +90,14 @@ public class BrowserInfo {
     }
 
     /**
+     * Get the headers as a Map.
+     * @return a map of headers
+     */
+    public Map getHeaders() {
+        return headers;
+    }
+
+    /**
      * Obtain all header names.
      *
      * @return an <code>Enumeration</code> value
