@@ -36,7 +36,6 @@
 package org.jasig.portal;
 
 import java.util.Map;
-
 import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -88,7 +87,7 @@ public class ChannelFactory {
     /**
      * Construct channel instance based on a channel description object.
      *
-     * @param description an <code>UserLayoutChannelDescription</code> value
+     * @param description an <code>IUserLayoutChannelDescription</code> value
      * @param sessionId a <code>String</code> HTTP session Id value
      * @return an <code>IChannel</code> value
      */
@@ -132,35 +131,81 @@ public class ChannelFactory {
 
         // determine what kind of a channel it is.
         // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
-        if(cobj instanceof IMultithreadedChannel) {
-            if(cobj instanceof IMultithreadedCacheable) {
-                if(cobj instanceof IMultithreadedPrivileged) {
-                    // both cacheable and privileged
-                    ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-                } else if (cobj instanceof IMultithreadedMimeResponse){
-                    // cacheable and download-worker enabled
-                    ch=new MultithreadedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj,uid);
+        if (cobj instanceof IMultithreadedCharacterChannel) {
+            if (cobj instanceof IMultithreadedCacheable) {
+                if (cobj instanceof IMultithreadedPrivileged) {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedPrivilegedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    } else {
+                        // both cacheable and privileged
+                        ch = new MultithreadedPrivilegedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    }
                 } else {
-                    // just cacheable
-                    ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    } else {
+                        // just cacheable
+                        ch = new MultithreadedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    }
                 }
-            } else if(cobj instanceof IMultithreadedPrivileged) {
-                ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
-            } else if (cobj instanceof IMultithreadedMimeResponse) {
-                // download-worker enabled
-                ch=new MultithreadedMimeResponseChannelAdapter((IMultithreadedChannel)cobj,uid);
+            } else if (cobj instanceof IMultithreadedPrivileged) {
+                if (cobj instanceof IMultithreadedMimeResponse) {
+                    ch = new MultithreadedPrivilegedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                } else {
+                    ch = new MultithreadedPrivilegedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                }
             } else {
-                // plain multithreaded
-                ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
+                if (cobj instanceof IMultithreadedMimeResponse) {
+                    ch = new MultithreadedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                } else {
+                    // plain multithreaded
+                    ch = new MultithreadedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                }
             }
             // see if we need to add the instance to the staticChannels
-            if(!exists) {
-                staticChannels.put(className,cobj);
+            if (!exists) {
+                staticChannels.put(className, cobj);
+            }
+        } else if (cobj instanceof IMultithreadedChannel) {
+            if (cobj instanceof IMultithreadedCacheable) {
+                if (cobj instanceof IMultithreadedPrivileged) {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedPrivilegedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    } else {
+                        // both cacheable and privileged
+                        ch = new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    }
+                } else {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    } else {
+                        // just cacheable
+                        ch = new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    }
+                }
+            } else if (cobj instanceof IMultithreadedPrivileged) {
+                if (cobj instanceof IMultithreadedMimeResponse) {
+                    ch = new MultithreadedPrivilegedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                } else {
+                    ch = new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj, uid);
+                }
+            } else {
+                if (cobj instanceof IMultithreadedMimeResponse) {
+                    ch = new MultithreadedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                } else {
+                    // plain multithreaded
+                    ch = new MultithreadedChannelAdapter((IMultithreadedChannel)cobj, uid);
+                }
+            }
+            // see if we need to add the instance to the staticChannels
+            if (!exists) {
+                staticChannels.put(className, cobj);
             }
         } else {
             // vanilla IChannel
-            ch=(IChannel)cobj;
+            ch = (IChannel)cobj;
         }
+
         return ch;
     }
 }

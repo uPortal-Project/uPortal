@@ -36,6 +36,8 @@
 package org.jasig.portal;
 
 import java.util.Map;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAX2BufferImpl;
@@ -486,27 +488,53 @@ public class ChannelRenderer
 
                         // check if need to render
                         if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
-                            // need to render again and cache the output
-                            buffer = new SAX2BufferImpl ();
-                            buffer.startBuffering();
-                            channel.renderXML(buffer);
+                            if (ccacheable && channel instanceof ICharacterChannel) {
+                                StringWriter sw = new StringWriter(100);
+                                PrintWriter pw = new PrintWriter(sw);
+                                ((ICharacterChannel)channel).renderCharacters(pw);
+                                pw.flush();
+                                cbuffer = sw.toString();
+                                // save cache
+                                if (key != null) {
+                                    if (key.getKeyScope() == ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                                        systemCache.put(key.getKey(), new ChannelCacheEntry(cbuffer, key.getKeyValidity()));
+                                        LogService.log(LogService.DEBUG, "ChannelRenderer.Worker::run() : recorded system character cache based on a key \"" + key.getKey() + "\"");
+                                    } else {
+                                        getChannelCache().put(key.getKey(), new ChannelCacheEntry(cbuffer, key.getKeyValidity()));
+                                        LogService.log(LogService.DEBUG, "ChannelRenderer.Worker::run() : recorded instance character cache based on a key \"" + key.getKey() + "\"");
+                                    }
+                                }
+                            } else {
+                                // need to render again and cache the output
+                                buffer = new SAX2BufferImpl ();
+                                buffer.startBuffering();
+                                channel.renderXML(buffer);
 
-                            // save cache
-                            if(key!=null) {
+                                // save cache
+                                if(key!=null) {
 
-                                if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                                    systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                    LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
-                                } else {
-                                    getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                    LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+                                    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                                        systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                        LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
+                                    } else {
+                                        getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                        LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+                                    }
                                 }
                             }
                         }
                     } else {
-                        buffer = new SAX2BufferImpl ();
-                        buffer.startBuffering();
-                        channel.renderXML(buffer);
+                        if (ccacheable && channel instanceof ICharacterChannel) {
+                            StringWriter sw = new StringWriter(100);
+                            PrintWriter pw = new PrintWriter(sw);
+                            ((ICharacterChannel)channel).renderCharacters(pw);
+                            pw.flush();
+                            cbuffer = sw.toString();
+                        } else {
+                            buffer = new SAX2BufferImpl ();
+                            buffer.startBuffering();
+                            channel.renderXML(buffer);
+                        }
                     }
                 } else  {
                     // in the case when channel cache is not enabled
