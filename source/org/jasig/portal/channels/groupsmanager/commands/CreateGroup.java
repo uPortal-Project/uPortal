@@ -104,7 +104,8 @@ import  javax.xml.parsers.*;
       //parentEntityType = (Class) GroupsManagerXML.getEntityTypes().get("Person");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
             + newGrpName + " Type: " + parentEntityType.getName());
-      String userID = getUserID(sessionData);
+      String userID = sessionData.user.getEntityIdentifier().getKey();
+      Utility.logMessage("DEBUG", "CreateGroup::execute(): userID = " + userID);
       IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
       childEntGrp.setName(newGrpName);
       childEntGrp.setCreatorID(userID);

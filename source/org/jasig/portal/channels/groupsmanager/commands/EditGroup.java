@@ -74,8 +74,10 @@ public class EditGroup extends GroupsManagerCommand {
       // if not IPerson group, then set view root to root for requested type
 
       String userID = getUserID(sessionData);
-      String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
-      String lockKey = userID + "::" + userName;
+      //String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
+      String userKey = sessionData.user.getEntityIdentifier().getKey();
+      String lockKey = userID + "::" + userKey;
+      Utility.logMessage("DEBUG", "EditGroup::execute(): lockKey = " + lockKey);
       Element parentElem = GroupsManagerXML.getElementById(model, parentElemId);
       String parentKey = parentElem.getAttribute("key");
       ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
