@@ -36,7 +36,7 @@ public class LayoutBean extends GenericPortalBean
     {
       if (!bPropsLoaded)
       {
-        File layoutPropsFile = new File (getPortalBaseDir () + "properties\\layout.properties");
+        File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
         Properties layoutProps = new Properties ();
         layoutProps.load (new FileInputStream (layoutPropsFile));
         sPathToLayoutDtd = layoutProps.getProperty ("pathToLayoutDtd");

@@ -6,16 +6,12 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
 import java.sql.*;
-import java.net.*;
-import com.objectspace.xml.*;
-import org.jasig.portal.layout.*;
 
 /**
  * Provides database access
  * @author Ken Weiner
- * @version %I%, %G%
+ * @version $Revision$
  */
 public class RdbmServices extends GenericPortalBean
 {
@@ -35,7 +31,7 @@ public class RdbmServices extends GenericPortalBean
     {    
       if (!bPropsLoaded)
       {
-        File jdbcPropsFile = new File (getPortalBaseDir () + "properties\\rdbm.properties");
+        File jdbcPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "rdbm.properties");
         Properties jdbcProps = new Properties ();
         jdbcProps.load (new FileInputStream (jdbcPropsFile));
         
@@ -49,7 +45,7 @@ public class RdbmServices extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
   }    
   
@@ -68,7 +64,7 @@ public class RdbmServices extends GenericPortalBean
 		}
 		catch ( Exception e )
 		{
-			e.printStackTrace();
+      Logger.log (Logger.ERROR, e);
 		}
 
 		return conn;
@@ -87,7 +83,7 @@ public class RdbmServices extends GenericPortalBean
 		}
 		catch ( Exception e )
 		{
-			e.printStackTrace();
+      Logger.log (Logger.ERROR, e);
 		}
 	}
 }
