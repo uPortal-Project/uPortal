@@ -410,18 +410,21 @@ public class LayoutBean extends GenericPortalBean
             
             // Channel control buttons
             if (channels[iChan].getAttribute ("minimized").equals ("true"))
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
-            else if (ch.isMinimizable())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
+              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
+            else if (ch.isMinimizable ())
+              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
             
-            if (ch.isDetachable())
-              out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', 200, 350)\"><img border=0 src=\"images/detach.gif\" alt=\"Detach\"></a>");
+            if (ch.isDetachable ())
+              out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
             
-            if (ch.isRemovable())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 src=\"images/remove.gif\" alt=\"Remove\"></a>");
+            if (ch.isRemovable ())
+              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
             
-            if (ch.isEditable())
-              out.println ("<a href=\"edit.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 src=\"images/edit.gif\" alt=\"Edit\"></a>");
+            if (ch.isEditable ())
+              out.println ("<a href=\"edit.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+            
+            if (ch.hasHelp ())
+              out.println ("<a href=\"dispatch.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
             
             out.println ("            &nbsp;");
             out.println ("          </td>");            
@@ -935,7 +938,6 @@ public class LayoutBean extends GenericPortalBean
         
         // Store an instance of this channel for later use
         htChannelInstances.put (sKey, ch);
-System.out.println ("Putting " + sKey + " in htChannelInstances.");
       }
       
       return ch;
