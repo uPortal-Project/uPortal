@@ -91,8 +91,16 @@ public interface IDBImpl {
   public void addUserRoles(int userId, Vector roles) throws Exception;
   public void removeUserRoles(int userId, Vector roles) throws Exception;
 
-  /* Authorization */
+  /* ReferenceAuthentication */
   public String[] getUserAccountInformation(String username) throws Exception;
+
+  /* ReferenceDirectoryInfo
+  Normally directory information would come from a real directory server using
+  for example, LDAP.  The reference inplementation uses the database for
+  directory information.
+  */
+
+  public String[] getUserDirectoryInformation(String username) throws Exception;
 
   /* Counters */
   public int getIncrementIntegerId(String tableName) throws Exception;
