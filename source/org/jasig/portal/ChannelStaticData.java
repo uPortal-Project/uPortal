@@ -39,7 +39,6 @@
 package  org.jasig.portal;
 
 import  java.util.Map;
-import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
 import  javax.naming.InitialContext;
@@ -85,7 +84,7 @@ public class ChannelStaticData extends java.util.Hashtable {
    * Similar to the {@link #setParameter(String,String)}, but can be used to pass things other then strings.
    * @param key
    * @param value
-   * @return 
+   * @return
    */
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);
@@ -94,7 +93,7 @@ public class ChannelStaticData extends java.util.Hashtable {
   /**
    * Similar to the {@link #getParameter(String)}, but can be used to pass things other then strings.
    * @param key
-   * @return 
+   * @return
    */
   public synchronized Object get (Object key) {
     return  super.get(key);
@@ -150,7 +149,7 @@ public class ChannelStaticData extends java.util.Hashtable {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public long getTimeout () {
     return  (m_timeout);
@@ -158,7 +157,7 @@ public class ChannelStaticData extends java.util.Hashtable {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public IPerson getPerson () {
     return  (m_person);
@@ -174,7 +173,7 @@ public class ChannelStaticData extends java.util.Hashtable {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public ISecurityContext getSecurityContext () {
     return  (m_securityContext);
@@ -190,12 +189,12 @@ public class ChannelStaticData extends java.util.Hashtable {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public InitialContext getPortalContext () {
     if (m_portalContext != null) {
       return  (m_portalContext);
-    } 
+    }
     else {
       Hashtable environment = new Hashtable(1);
       // Set up the path
