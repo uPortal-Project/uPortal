@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.HashSet;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -121,27 +122,27 @@ public class ALNodeProperties implements IALNodeProperties {
      }
 
      /**
-     * Gets a restriction by the name and the restriction path.
-     * @param restrictionName a <code>String</code>  name of the restriction
+     * Gets a restriction by the type and the restriction path.
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-     public IUserLayoutRestriction getRestriction( String restrictionName, RestrictionPath restrictionPath ) {
+     public IUserLayoutRestriction getRestriction( RestrictionType restrictionType, RestrictionPath restrictionPath ) {
      	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-            if ( restrictionName.equals(restriction.getName()) && restrictionPath.equals(restriction.getRestrictionPath()) )
+            if ( restriction.is(restrictionType) && restrictionPath.equals(restriction.getRestrictionPath()) )
                  return restriction;
         }
      	         return null;
      }
      
      /**
-      * Gets a local restriction by the given name.
-      * @param restrictionName a <code>String</code>  name of the restriction
+      * Gets a local restriction by the given type.
+      * @param restrictionType a <code>RestrictionType</code> restriction type
       * @return a IUserLayoutRestriction
       */
-      public IUserLayoutRestriction getLocalRestriction( String restrictionName ) {
-      	return getRestriction(restrictionName,RestrictionPath.LOCAL_RESTRICTION_PATH);
+      public IUserLayoutRestriction getLocalRestriction( RestrictionType restrictionType ) {
+      	return getRestriction(restrictionType,RestrictionPath.LOCAL_RESTRICTION_PATH);
       }
 
      /**

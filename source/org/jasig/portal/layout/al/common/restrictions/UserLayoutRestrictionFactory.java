@@ -56,21 +56,25 @@ public class UserLayoutRestrictionFactory {
  }
  
  
- public static IUserLayoutRestriction createRestriction( String restrictionName ) throws PortalException {
- 	if ( !activeRestrictions.containsKey(restrictionName) )
- 	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + restrictionName +"'" );	
- 	return getRestriction(activeRestrictions.getProperty(restrictionName));
+ public static IUserLayoutRestriction createRestriction( String restrictionType ) throws PortalException {
+ 	if ( !activeRestrictions.containsKey(restrictionType) )
+ 	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + restrictionType +"'" );	
+ 	return getRestriction(activeRestrictions.getProperty(restrictionType));
  }
  
- public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue, RestrictionPath restrictionPath ) throws PortalException {
- 	IUserLayoutRestriction restriction = createRestriction ( restrictionName );
+ public static IUserLayoutRestriction createRestriction( RestrictionType restrictionType ) throws PortalException {
+ 	return createRestriction(restrictionType.getType());
+ }
+ 
+ public static IUserLayoutRestriction createRestriction( RestrictionType restrictionType, String restrictionValue, RestrictionPath restrictionPath ) throws PortalException {
+ 	IUserLayoutRestriction restriction = createRestriction ( restrictionType );
  	restriction.setRestrictionExpression(restrictionValue);
  	restriction.setRestrictionPath(restrictionPath);
  	return restriction;
  }
  
- public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue ) throws PortalException {
-        return createRestriction(restrictionName,restrictionValue,RestrictionPath.LOCAL_RESTRICTION_PATH);     
+ public static IUserLayoutRestriction createRestriction( RestrictionType restrictionType, String restrictionValue ) throws PortalException {
+        return createRestriction(restrictionType,restrictionValue,RestrictionPath.LOCAL_RESTRICTION_PATH);     
  }
  
 

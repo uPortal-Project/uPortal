@@ -31,23 +31,23 @@ public interface IRestrictionManager {
    /**
      * Checks the restriction specified by the parameters below.
      * @param nodeId a node id
-     * @param restrictionName a restriction name
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(INodeId nodeId, String restrictionName, RestrictionPath restrictionPath, String propertyValue) throws PortalException;
+  public boolean checkRestriction(INodeId nodeId, RestrictionType restrictionType, RestrictionPath restrictionPath, String propertyValue) throws PortalException;
 
   /**
      * Checks the local restriction specified by the parameters below.
      * @param nodeId a node id
-     * @param restrictionName a restriction name
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(INodeId nodeId, String restrictionName, String propertyValue ) throws PortalException;
+  public boolean checkRestriction(INodeId nodeId, RestrictionType restrictionType, String propertyValue ) throws PortalException;
   
   /**
    * Checks the necessary restrictions while adding a new node

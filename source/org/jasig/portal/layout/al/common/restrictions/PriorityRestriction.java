@@ -35,8 +35,17 @@ public class PriorityRestriction extends ALRestriction {
          
          public PriorityRestriction() {
             super();
-          }
+         }
+         
+         /**
+          * Returns the type of the current restriction.
+          * @return a <code>RestrictionType</code> type
+          */
+         protected RestrictionType getType() {
+           return RestrictionType.PRIORITY_RESTRICTION;
+         }
 
+         
          /**
            * Returns the maximum value of the given restriction
            * @return a maxPriority
@@ -110,7 +119,7 @@ public class PriorityRestriction extends ALRestriction {
 
           // if we have a related priority restriction we should check the priority ranges
           if ( restrictionPath != null && !restrictionPath.equals(RestrictionPath.LOCAL_RESTRICTION_PATH) ) {
-             PriorityRestriction restriction = (PriorityRestriction) alNode.getLocalRestriction(RestrictionTypes.PRIORITY_RESTRICTION);
+             PriorityRestriction restriction = (PriorityRestriction) alNode.getLocalRestriction(RestrictionType.PRIORITY_RESTRICTION);
              if ( restriction != null ) {
               int[] range = restriction.getRange();
               if ( minPriority > range[1] || maxPriority < range[0] )

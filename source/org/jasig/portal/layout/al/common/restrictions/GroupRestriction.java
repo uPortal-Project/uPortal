@@ -57,6 +57,14 @@ public class GroupRestriction extends ALRestriction {
          public GroupRestriction() throws PortalException {
             super();
          }
+         
+         /**
+          * Returns the type of the current restriction.
+          * @return a <code>RestrictionType</code> type
+          */
+         protected RestrictionType getType() {
+           return RestrictionType.GROUP_RESTRICTION;
+         }
 
           /**
             * Parses the restriction expression of the current node

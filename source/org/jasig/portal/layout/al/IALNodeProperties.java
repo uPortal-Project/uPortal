@@ -8,6 +8,7 @@ package org.jasig.portal.layout.al;
 import java.util.Collection;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -96,18 +97,18 @@ public interface IALNodeProperties {
 
     /**
      * Gets a restriction by the name and the restriction path.
-     * @param restrictionName a <code>String</code>  name of the restriction
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction( String restrictionName, RestrictionPath restrictionPath );
+    public IUserLayoutRestriction getRestriction( RestrictionType restrictionType, RestrictionPath restrictionPath );
     
     /**
      * Gets a local restriction by the given name.
-     * @param restrictionName a <code>String</code>  name of the restriction
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getLocalRestriction( String restrictionName );
+    public IUserLayoutRestriction getLocalRestriction( RestrictionType restrictionType );
 
     /**
      * Gets a restrictions list by a restriction path.

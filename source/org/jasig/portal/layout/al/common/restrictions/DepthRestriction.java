@@ -29,6 +29,16 @@ public class DepthRestriction extends ALRestriction {
     public DepthRestriction() {
         super();
     }
+    
+    /**
+     * Returns the type of the current restriction.
+     * @return a <code>RestrictionType</code> type
+     */
+    protected RestrictionType getType() {
+      return RestrictionType.DEPTH_RESTRICTION;
+    }
+    
+    
     /**
      * Parses the restriction expression of the current node
      * @exception PortalException

@@ -50,6 +50,14 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   	return name;
   }
   
+  /**
+   * Returns true if the current restriction is of the given type
+   * @param a <code>RestrictionType</code> type
+   * @return a boolean value
+   */
+  public boolean is( RestrictionType type) {
+  	return type.equals(getType());
+  }
   
   /**
    * Sets the restriction path
@@ -59,7 +67,12 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   	this.restrictionPath = restrictionPath;
   }
   
-
+  /**
+   * Returns the type of the current restriction.
+   * @return a <code>RestrictionType</code> type
+   */
+  protected abstract RestrictionType getType();
+  
   /**
      * Parses the restriction expression of the current node
      * @exception PortalException

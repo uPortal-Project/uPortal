@@ -30,6 +30,13 @@ public interface IUserLayoutRestriction {
    * @param a <code>String</code> name
    */
   public void setName( String name );
+  
+  /**
+   * Returns true if the current restriction is of the given type
+   * @param a <code>RestrictionType</code> type
+   * @return a boolean value
+   */
+  public boolean is( RestrictionType type);
 
   /**
      * Checks the restriction for the given property value

@@ -11,6 +11,7 @@ import org.jasig.portal.layout.al.common.node.ChannelDescriptionImpl;
 import org.jasig.portal.layout.al.common.node.IChannelDescription;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -121,21 +122,21 @@ public class ALChannelDescription extends ChannelDescriptionImpl implements IALC
     }
 
     /**
-     * Gets a restriction by the given name and path.
-     * @param restrictionName a <code>String</code>  name of the restriction
+     * Gets a restriction by the given type and path.
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @param restrictionPath a <code>RestrictionPath</code>  restriction path
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction(String restrictionName,RestrictionPath restrictionPath) {
-            return this.alproperties.getRestriction(restrictionName,restrictionPath);
+    public IUserLayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
+            return this.alproperties.getRestriction(restrictionType,restrictionPath);
     }
     /**
-     * Gets a restriction by the name.
-     * @param restrictionName a <code>String</code>  name of the restriction
+     * Gets a restriction by the type.
+     * @param restrictionType a <code>RestrictionType</code> restriction type
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getLocalRestriction(String restrictionName) {
-            return this.alproperties.getLocalRestriction(restrictionName);
+    public IUserLayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
+            return this.alproperties.getLocalRestriction(restrictionType);
     }
     /**
      * Gets a restrictions list by a restriction path.

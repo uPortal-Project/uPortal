@@ -32,6 +32,14 @@ public class UnremovableRestriction extends BooleanRestriction {
          }
 
          /**
+          * Returns the type of the current restriction.
+          * @return a <code>RestrictionType</code> type
+          */
+         protected RestrictionType getType() {
+           return RestrictionType.UNREMOVABLE_RESTRICTION;
+         }
+         
+         /**
            * Gets the boolean property value for the specified node
          */
          protected boolean getBooleanPropertyValue( ILayoutNode node ) {

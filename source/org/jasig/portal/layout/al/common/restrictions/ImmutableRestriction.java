@@ -30,6 +30,13 @@ public class ImmutableRestriction extends BooleanRestriction {
             super();
          }
 
+         /**
+          * Returns the type of the current restriction.
+          * @return a <code>RestrictionType</code> type
+          */
+         protected RestrictionType getType() {
+           return RestrictionType.IMMUTABLE_RESTRICTION;
+         }
 
          /**
            * Gets the boolean property value for the specified node
