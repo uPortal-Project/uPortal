@@ -14,7 +14,8 @@
 
   <xsl:template match="/">
     <!-- form begin -->
-    <form name="workflow" method="post" action="{$baseActionURL}">
+    <form name="parameters" method="post" action="{$baseActionURL}">
+      <input type="hidden" name="uPTCUP_action" value="changeMe"/>
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
@@ -80,9 +81,10 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="Back" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Finished" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button"/> </td>
+            <input type="submit" name="uPTCUP_submit" value="Back" onclick="document.parameters.uPTCUP_action.value='back'" class="uportal-button"/>
+            <input type="submit" name="uPTCUP_submit" value="Finished" onclick="document.parameters.uPTCUP_action.value='finished'" class="uportal-button"/>
+            <input type="submit" name="uPTCUP_submit" value="Cancel" onclick="document.parameters.uPTCUP_action.value='cancel'" class="uportal-button"/> 
+           </td>
         </tr>
       </table>
     </form>
@@ -433,4 +435,5 @@
       <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+
+</xsl:stylesheet>
