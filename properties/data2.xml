@@ -987,7 +987,7 @@
   <table>
     <name>UP_LAYOUT_STRUCT</name>
     <rows>
-      <!-- Guest layout -->
+      <!-- Guest layout on  -->
 
       <!-- Header -->
       <row>
@@ -1449,54 +1449,60 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Internet Explorer Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>3</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>        
         <column><name>STRUCTURE_SS_NAME</name><value>Nested categories</value></column>
         <column><name>THEME_SS_NAME</name><value>Deck of cards</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Nokia cell phone browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>PROFILE_NAME</name><value>My Netscape Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>        
         <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
         <column><name>PROFILE_NAME</name><value>My Internet Explorer Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>        
         <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>3</value></column>
         <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>        
         <column><name>STRUCTURE_SS_NAME</name><value>Nested categories</value></column>
         <column><name>THEME_SS_NAME</name><value>Deck of cards</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Nokia cell phone browsers</value></column>
       </row>
 
     </rows>
