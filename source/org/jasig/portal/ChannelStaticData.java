@@ -41,6 +41,7 @@ package  org.jasig.portal;
 import  java.util.Map;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
+import  org.jasig.portal.security.PermissionManager;
 import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  java.util.Hashtable;
@@ -52,13 +53,20 @@ import  java.util.Hashtable;
  * @version $Revision$
  * @author Peter Kharchenko
  */
-public class ChannelStaticData extends java.util.Hashtable {
-  private InitialContext m_portalContext = null;
-  private String m_channelGlobalID = null;
-  private String m_channelInstanceID = null;
+public class ChannelStaticData extends Hashtable {
   private long m_timeout = java.lang.Long.MAX_VALUE;
+  // Cache a reference to the portal's JNDI context
+  private InitialContext m_portalContext = null;
+  // This is the ID that globally identifies the channel
+  private String m_channelGlobalID = null;
+  // This is the ID that locally identifies the channel in the user's layout
+  private String m_channelInstanceID = null;
+  // Cache the IPerson
   private IPerson m_person = null;
+  // Cache the security context
   private ISecurityContext m_securityContext = null;
+  // Cache the PermissionManager for this channel
+  private PermissionManager m_permissionManager = null;
 
   /**
    * Set information contained in a channel <param> element
@@ -104,8 +112,8 @@ public class ChannelStaticData extends java.util.Hashtable {
    * @param params a map of params
    */
   public void setParameters (Map params) {
-    // copy a Map
-    this.putAll(params);
+    // Copy the map
+    putAll(params);
   }
 
   /**
@@ -194,7 +202,7 @@ public class ChannelStaticData extends java.util.Hashtable {
   public InitialContext getPortalContext () {
     if (m_portalContext != null) {
       return  (m_portalContext);
-    }
+    } 
     else {
       Hashtable environment = new Hashtable(1);
       // Set up the path
@@ -207,6 +215,22 @@ public class ChannelStaticData extends java.util.Hashtable {
         return  (null);
       }
     }
+  }
+
+  /**
+   * Returns an instance of the PermissionManager for this channel
+   * @return 
+   */
+  public PermissionManager getPermissionManager () {
+    return  (m_permissionManager);
+  }
+
+  /**
+   * Sets the PermissionManager that belongs to this channel
+   * @param permissionManager
+   */
+  public void setPermissionManager (PermissionManager permissionManager) {
+    m_permissionManager = permissionManager;
   }
 }
 
