@@ -35,9 +35,6 @@
 
 package org.jasig.portal.container.om.common;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.apache.pluto.om.common.ObjectID;
