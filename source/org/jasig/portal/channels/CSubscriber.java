@@ -40,7 +40,8 @@ package  org.jasig.portal.channels;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.utils.XSLT;
-import org.apache.xerces.dom.*;
+import  org.jasig.portal.services.LogService;
+import  org.apache.xerces.dom.*;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
@@ -162,7 +163,7 @@ public class CSubscriber
           prepareSaveChanges();
         }
       } catch (Exception e) {
-        Logger.log(Logger.ERROR, e);
+        LogService.instance().log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
     }
@@ -191,7 +192,7 @@ public class CSubscriber
           break;
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -214,9 +215,9 @@ public class CSubscriber
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
       }
       else
-        Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
+        LogService.instance().log(LogService.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -247,7 +248,7 @@ public class CSubscriber
     String destinationID = runtimeData.getParameter("destination");
     Node destination = null;
     if (destinationID == null) {
-      Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : received a null destinationID !");
+      LogService.instance().log(LogService.ERROR, "CSubscriber::prepareSubscribeTo() : received a null destinationID !");
     }
     else {
       if (destinationID.equals(this.regID))
@@ -255,7 +256,7 @@ public class CSubscriber
       else
         destination = userLayoutXML.getElementById(destinationID);
       if (destination == null) {
-        Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : destinationID=\"" + destinationID + "\" results in an empty node !");
+        LogService.instance().log(LogService.ERROR, "CSubscriber::prepareSubscribeTo() : destinationID=\"" + destinationID + "\" results in an empty node !");
       }
       else {
         for (int i = 0; i < subIDs.length; i++) {
