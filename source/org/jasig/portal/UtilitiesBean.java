@@ -8,7 +8,7 @@ import java.text.*;
  * to create an org.jasig.portal.util package
  * and several utilities classes.
  * @author Ken Weiner
- * @version %I%, %G%
+ * @version $Revision$
  */
 public class UtilitiesBean extends GenericPortalBean
 {  
@@ -27,18 +27,18 @@ public class UtilitiesBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
   } 
   
   /**
    * Gets the current date/time
-   * @param the servlet response object
+   * @return a formatted date and time string
    */
-  public static String getDate (HttpServletRequest req)
+  public static String getDate ()
   {    
     try 
-    {   
+    {         
       // Format the current time.
       SimpleDateFormat formatter = new SimpleDateFormat ("EEEE, MMM d, yyyy 'at' hh:mm a");
       java.util.Date currentTime = new java.util.Date();
@@ -46,10 +46,9 @@ public class UtilitiesBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "&nbsp;";
   }
-  
 }
