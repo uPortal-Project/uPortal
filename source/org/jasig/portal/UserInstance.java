@@ -61,7 +61,6 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -549,7 +548,6 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
-                        tst.setParameter("uP_productAndVersion", Version.getProductAndVersion());
                         // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
 
                         // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
@@ -673,20 +671,21 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-     if( channelManager != null)
-         channelManager.finishedSession();
-     if( uPreferencesManager != null ) {
-       uPreferencesManager.finishedSession(bindingEvent);
-       try {      
+        if(channelManager!=null)
+            channelManager.finishedSession();
+    if(uPreferencesManager!=null) {
+      uPreferencesManager.finishedSession(bindingEvent);
+      try {      
         IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager(); 
 		if ( ulm instanceof TransientUserLayoutManagerWrapper )
 		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();   
         if ( !(ulm instanceof IAggregatedUserLayoutManager) )
           ulm.saveUserLayout();    
-       } catch ( Exception e ) {
+      } catch ( Exception e ) {
 		  LogService.log(LogService.ERROR, "UserInstance::valueUnbound(): Error occured while saving the user layout "+e);    
-         }
-     } 
+      }
+    }
+
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
         GroupService.finishedSession(person);
@@ -718,7 +717,6 @@ public class UserInstance implements HttpSessionBindingListener {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-	   IAggregatedUserLayoutManager alm = getAggregatedLayoutManager(ulm);
        String newNodeId = null;
 
         // Sending the theme stylesheets parameters based on the user security context
@@ -737,7 +735,6 @@ public class UserInstance implements HttpSessionBindingListener {
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
-        	e.printStackTrace();
             LogService.log(LogService.ERROR, e);
         }
         
@@ -869,7 +866,10 @@ public class UserInstance implements HttpSessionBindingListener {
         
 		param = req.getParameter("uPcFM_action");
 		if ( param != null ) { 
-		  if ( alm != null ) {		
+		  if ( ulm instanceof TransientUserLayoutManagerWrapper )
+		    ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+		  if ( ulm instanceof IAggregatedUserLayoutManager ) {		
+			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
 			String fragmentId = req.getParameter("uP_fragmentID"); 
 			if ( param.equals("edit") && fragmentId != null ) {
 		         if ( CommonUtils.parseInt(fragmentId) > 0 ) 
@@ -884,22 +884,12 @@ public class UserInstance implements HttpSessionBindingListener {
 		
 		// If we have created a new node we need to let the structure XSL know about it
 		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
-		// Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
-		if ( alm != null )
-		  structPrefs.putParameterValue("current_structure",alm.isFragmentLoaded()?"fragment":"layout");
 
 
       } catch ( Exception e ) {
+          e.printStackTrace();
           throw new PortalException(e);
         }
-    }
-    
-    private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
-		if ( ulm instanceof TransientUserLayoutManagerWrapper )
-			 ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-		if ( ulm instanceof IAggregatedUserLayoutManager )	
-			 return (IAggregatedUserLayoutManager) ulm;
-		     return null;	 
     }
 
     /**
