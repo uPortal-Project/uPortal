@@ -73,9 +73,10 @@ public class RDBMCachedEntityInvalidationStore {
 /**
  * RDBMEntityGroupStore constructor.
  */
-public RDBMCachedEntityInvalidationStore()
+public RDBMCachedEntityInvalidationStore() throws CachingException
 {
     super();
+    initialize();
 }
 /**
  * Adds/updates the row corresponding to this entity in the underlying store.
@@ -280,8 +281,7 @@ throws  SQLException, CachingException
     Class entityType = EntityTypes.getEntityType(entityTypeID);
     String key = rs.getString(2);
     Timestamp ts = rs.getTimestamp(3);
-    int nanos  = ts.getNanos() / 1000000;
-    Date dt = new Date(ts.getTime()+nanos);
+    Date dt = new Date(getTimestampMillis(ts));
 
     return newInstance(entityType, key, dt);
 }
@@ -485,7 +485,7 @@ throws CachingException
     if ( invalidation != null )
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + sqlQuote(ts));
+        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + printTimestamp(ts));
     }
 
     return primSelect(sqlQuery.toString(), conn);
@@ -522,44 +522,7 @@ throws CachingException
     if ( invalidation != null )
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
-    }
-
-    return primSelect(sqlQuery.toString(), conn);
-}
- /**
- * Retrieve CachedEntityInvalidations from the underlying store.  Params
- * <code>entityType</code> and <code>entityKey</code> may be null.
- * @param invalidation Date
- * @param entityType Class
- * @param entityKey String
- * @param conn Connection
- * @exception CachingException - wraps an Exception specific to the store.
- */
-private CachedEntityInvalidation[] selectAfter
-    (Date invalidation,
-     Class entityType,
-     String entityKey,
-     Connection conn)
-throws CachingException
-{
-    StringBuffer sqlQuery = new StringBuffer( getSelectSql() + " WHERE ");
-
-    if ( entityType != null )
-    {
-        Integer typeID = EntityTypes.getEntityTypeID(entityType);
-        sqlQuery.append(ENTITY_TYPE_COLUMN + EQ + typeID);
-    }
-
-    if ( entityKey != null )
-    {
-        sqlQuery.append(" AND " + ENTITY_KEY_COLUMN + EQ + sqlQuote(entityKey));
-    }
-
-    if ( invalidation != null )
-    {
-        Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
+        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + printTimestamp(ts));
     }
 
     return primSelect(sqlQuery.toString(), conn);
@@ -568,6 +531,7 @@ throws CachingException
  * @return org.jasig.portal.concurrency.caching.RDBMCachedEntityInvalidationStore
  */
 public static synchronized RDBMCachedEntityInvalidationStore singleton()
+throws CachingException
 {
     if ( singleton == null )
         { singleton = new RDBMCachedEntityInvalidationStore(); }
@@ -579,5 +543,32 @@ public static synchronized RDBMCachedEntityInvalidationStore singleton()
 private static java.lang.String sqlQuote(Object o)
 {
     return QUOTE + o + QUOTE;
+}
+
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+    long tsMillis = ts.getTime();
+    long tsNanos = ts.getNanos() / 1000000;
+    return (tsMillis + tsNanos);
+}
+
+/**
+ * Clear invalidations more than 1 hour old.
+ */
+private void initialize() throws CachingException
+{
+    Date anHourAgo = new Date( System.currentTimeMillis() - 60 * 60 * 1000 );
+    deleteBefore(anHourAgo);
+}
+
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String printTimestamp(Timestamp ts)
+{
+    return RDBMServices.sqlTimeStamp(getTimestampMillis(ts));
 }
 }
