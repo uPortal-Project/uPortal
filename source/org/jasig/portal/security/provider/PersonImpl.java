@@ -42,31 +42,27 @@ import java.util.Hashtable;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PersonFactory;
 
 
 /**
- * <p>This is an implementation of an AdditionalDescriptor that contains a user's
- * record from the LDAP server.
- *
+ * This is a reference IPerson implementation.
  * @author Adam Rybicki, arybicki@interactivebusiness.com
  * @version $Revision$
  */
-public class PersonImpl
-    implements IPerson {
+public class PersonImpl implements IPerson {
   protected Hashtable m_Attributes = null;
   protected String m_FullName = null;
   protected int m_ID = -1;
   protected ISecurityContext m_securityContext = null;
   protected EntityIdentifier m_eid= new EntityIdentifier(null,IPerson.class);
-
+  
+  public ISecurityContext getSecurityContext () {
+    return m_securityContext;
+  }
 
   public void setSecurityContext (ISecurityContext securityContext) {
     m_securityContext = securityContext;
-  }
-
-
-  public ISecurityContext getSecurityContext () {
-    return  (m_securityContext);
   }
 
   /**
@@ -167,18 +163,24 @@ public class PersonImpl
   }
 
   /**
-   * This implementation of a person object is considered a guest if:
-   *   UID = 1
-   *   Unauthenticated
-   * @return true if person is a guest
+   * Determines whether or not this person is a "guest" user.
+   * <p>
+   * This person is a "guest" if both of the following are true:
+   * <ol>
+   *   <li>This person has not successfully authenticated with the portal.</li>
+   *   <li>This person's user name matches the value of the property
+   *       <code>org.jasig.portal.security.PersonImpl.guest_user_name</code>
+   *       in <code>portal.properties</code>.</li>
+   * </ol>
+   * @return <code>true</code> if person is a guest, otherwise <code>false</code>
    */
-  public boolean isGuest () {
-    if (getID() == 1 && !m_securityContext.isAuthenticated()) {
-      return  (true);
+  public boolean isGuest() {
+    boolean isGuest = false;
+    String userName = (String)getAttribute(IPerson.USERNAME);
+    if (userName.equals(PersonFactory.GUEST_USERNAME) && !m_securityContext.isAuthenticated()) {
+      isGuest = true;
     }
-    else {
-      return  (false);
-    }
+    return isGuest;
   }
   
   /**

@@ -8,6 +8,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.layout.*;
 
 import java.io.*;
@@ -50,7 +51,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         parser.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
         this.sampleUserLayout=parser.parse (new org.xml.sax.InputSource(this.getClass().getResourceAsStream(SAMPLE_LAYOUT_FILENAME)));
 
-        p=new org.jasig.portal.security.provider.PersonImpl();
+        p=new PersonFactory.createPerson();
 
         assertTrue(sampleUserLayout!=null);
         uls=new SingleDocumentUserLayoutStoreMock(sampleUserLayout);

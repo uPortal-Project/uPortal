@@ -70,9 +70,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.InitialSecurityContextFactory;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.utils.AbsoluteURLFilter;
@@ -332,10 +331,7 @@ public class RemoteChannel implements IRemoteChannel {
    * @throws org.jasig.portal.PortalException
    */
   protected IPerson getGuestPerson() throws PortalException {
-    IPerson person = new PersonImpl();
-    person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
-    person.setID(1); // Guest users have a UID of 1
-    person.setAttribute(IPerson.USERNAME,"guest");
+    IPerson person = PersonFactory.createGuestPerson();
     return person;
   }
   

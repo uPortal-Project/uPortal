@@ -40,7 +40,7 @@ import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.InitialSecurityContextFactory;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
 
@@ -61,21 +61,15 @@ public class SimplePersonManager implements IPersonManager {
     if (session != null)
       person = (IPerson)session.getAttribute(PERSON_SESSION_KEY);
     if (person == null) {
-      // Create a new instance of a person
-      person = new PersonImpl();
       try {
-        // Add the initial security context to the person
-        person.setSecurityContext(
-          InitialSecurityContextFactory.getInitialContext("root"));
+        // Create a guest person
+        person = PersonFactory.createGuestPerson();
       } catch (Exception e) {
         // Log the exception
         LogService.log(LogService.ERROR, e);
       }
-      // By default new user's have the UID of 1
-      person.setID(1);
-      person.setAttribute(IPerson.USERNAME,"guest");
       // Add this person object to the user's session
-      if (session != null)
+      if (person != null && session != null)
         session.setAttribute(PERSON_SESSION_KEY, person);
     }
     return person;

@@ -64,8 +64,7 @@ import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.InitialSecurityContextFactory;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
@@ -264,20 +263,7 @@ public class ChannelInstanceManager {
      * @throws org.jasig.portal.PortalException  
      */
     protected IPerson getPerson(UserContext userContext) throws PortalException {
-        return getGuestPerson();
-    }
-
-    /**
-     * Returns a person object that is a "guest" user.
-     * @return person a person object that is a "guest" user
-     * @throws org.jasig.portal.PortalException
-     */
-    protected IPerson getGuestPerson() throws PortalException {
-        IPerson person = new PersonImpl();
-        person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
-        person.setID(1); // Guest users have a UID of 1
-        person.setAttribute(IPerson.USERNAME, "guest");
-        return person;
+        return PersonFactory.createGuestPerson();
     }
 
     /**

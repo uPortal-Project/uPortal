@@ -62,6 +62,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
@@ -122,11 +123,7 @@ public class ChannelServlet extends HttpServlet {
         sd.setChannelSubscribeId("singlet");
         sd.setTimeout(timeOut);
         // determine the IPerson object
-        int guestUserId = 1;
-        IPerson person = new org.jasig.portal.security.provider.PersonImpl();
-        person.setID(guestUserId);
-        person.setAttribute(IPerson.USERNAME,"guest");
-        person.setFullName("Guest");
+        IPerson person = PersonFactory.createGuestPerson();
         sd.setPerson(person);
         // todo: determine and pass channel publish/subscribe parameters.
         //		    sd.setParameters (params);

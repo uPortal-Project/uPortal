@@ -45,7 +45,7 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.security.PersonFactory;
 
 /**
  * Title:        Delete Portal User
@@ -64,7 +64,7 @@ public class DeleteUser {
         return;
     }
     int portalUID=-1;
-    IPerson per= new PersonImpl();
+    IPerson per= PersonFactory.createPerson();
     per.setAttribute(IPerson.USERNAME,args[0]);
 
     IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();

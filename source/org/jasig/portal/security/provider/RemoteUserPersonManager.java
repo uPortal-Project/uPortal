@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
 
@@ -74,8 +75,8 @@ public class RemoteUserPersonManager
 			return person;
 		}
 		// Create a new instance of a person
-		person = new PersonImpl();
-        String user = "guest";
+		person = PersonFactory.createPerson();
+        String user = PersonFactory.GUEST_USERNAME;
 		try {
 			// If the user has authenticated with the server which has implemented web authentication,
 			// the REMOTEUSER environment variable will be set.

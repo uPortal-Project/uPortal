@@ -55,7 +55,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
@@ -200,8 +200,7 @@ public class ChannelPublisher {
 
 
   private static void setupSystemUser() {
-        systemUser = new PersonImpl();
-        systemUser.setID(0);
+        systemUser = PersonFactory.createSystemPerson();
   }
 
   private static void loadProps() throws Exception {
