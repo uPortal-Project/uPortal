@@ -116,8 +116,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             // just create and transform
             ChannelDefinition chanDef = getChannelDefinition(nodeId);
 
-            System.out.println("nodeId: " + nodeId);
-
             Element tChannel = emptyDoc.createElement("channel");
             tChannel.setAttribute("ID",nodeId);
             tChannel.setAttribute("hidden","false");
