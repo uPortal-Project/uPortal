@@ -7,8 +7,6 @@ package org.jasig.portal.channels;
 
 import java.io.PrintWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
@@ -35,8 +33,6 @@ import org.xml.sax.ContentHandler;
  */
 public class CError
     implements IPrivilegedChannel, ICacheable, ICharacterChannel {
-    
-    private final Log log = LogFactory.getLog(getClass());
     
     /** Generic error code */
     public static final int GENERAL_ERROR = 0;
