@@ -17,7 +17,8 @@
   editable (true|false) "true"
   hasHelp (true|false) "true"
   removable (true|false) "true"
-  class CDATA #REQUIRED>
+  class CDATA #REQUIRED
+  fname CDATA #IMPLIED>
 
 
 <!ELEMENT parameter EMPTY>
