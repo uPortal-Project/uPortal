@@ -634,7 +634,6 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
     protected void startDocument( String rootTagName )
         throws IOException
     {
-        StringBuffer buffer;
 
         // Not supported in HTML/XHTML, but we still have to switch
         // out of DTD mode.
@@ -841,10 +840,8 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
     protected void characters( String text )
         throws IOException
     {
-        ElementState state;
-
         // HTML: no CDATA section
-        state = content();
+        content();
         super.characters( text );
     }
 

@@ -109,7 +109,6 @@ public class GroupWrapper extends GroupMemberWrapper {
     * @return Element
     */
    private Element expandElement (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) {
-      Document aDoc = sessionData.model;
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): START");
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Group Member: " + gm);
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Element: " + anElem);
@@ -121,7 +120,6 @@ public class GroupWrapper extends GroupMemberWrapper {
       try {
          Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  HERE COME THE KIDS");
          gmItr = gm.getMembers();
-         String aKey = gm.getKey();
          // add new elements for new group members
          int gmCount = 0;
          while (gmItr.hasNext()) {

@@ -50,8 +50,6 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 
       try {
-          boolean isAuthenticated = false;
-
           // JAAS Stuff
 
           LoginContext lc = null;
