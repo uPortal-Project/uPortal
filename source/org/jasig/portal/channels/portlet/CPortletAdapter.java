@@ -278,33 +278,35 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             cd.setReceivedEvent(true);
             DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
-            PortletActionProvider pap = dip.getPortletActionProvider(cd.getPortletWindow());
             
             switch (ev.getEventNumber()) {
                 
-                // Detect portlet mode changes   
-                     
+                // Detect portlet mode changes  
+                
+                // Cannot use the PortletActionProvider to change modes here. It uses
+                // PortletWindow information to store the changes and the window is
+                // not current at this point.
+                
                 case PortalEvent.EDIT_BUTTON_EVENT:
-                    pap.changePortletMode(PortletMode.EDIT);
+                    channelState.put(uid + PortletStateManager.MODE, PortletMode.EDIT);
                     break;
                 case PortalEvent.HELP_BUTTON_EVENT:
-                    pap.changePortletMode(PortletMode.HELP);
+                    channelState.put(uid + PortletStateManager.MODE, PortletMode.HELP);
                     break;
                 case PortalEvent.ABOUT_BUTTON_EVENT:
                     // We might want to consider a custom ABOUT mode here
-                    //pap.changePortletMode(new PortletMode("ABOUT"));
                     break;
                     
                 // Detect portlet window state changes
-                
                 case PortalEvent.DETACH_BUTTON_EVENT:
                     // Maybe we want to consider a custom window state here or used MAXIMIZED
-                    //pap.changePortletWindowState(new WindowState("DETACHED"));
                     break;
                 
                 // Detect end of session or portlet removed from layout
                 
                 case PortalEvent.UNSUBSCRIBE:
+                    //User is removing this portlet from their layout, remove all
+                    //the preferences they have stored for it.
                     PortletEntityImpl pe = (PortletEntityImpl)cd.getPortletWindow().getPortletEntity();
                     try {
                         pe.removePreferences();
@@ -396,6 +398,11 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     pap.changePortletWindowState(WindowState.MAXIMIZED);
                 } else {
                     pap.changePortletWindowState(WindowState.NORMAL);
+                }
+                
+                PortletMode newMode = (PortletMode)channelState.remove(uid + PortletStateManager.MODE);
+                if (newMode != null) {
+                    pap.changePortletMode(newMode);
                 }
                 
                 // Process action if this is the targeted channel and the URL is an action URL
