@@ -353,6 +353,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                     if(v!=null) {
                         Element timeoutEl=doc.createElement("timeout");
                         timeoutEl.setAttribute("value",v.toString());
+                        excEl.appendChild(timeoutEl);
                     }
                 } else if(pe instanceof AuthorizationException) {
                     excEl.setAttribute("code",Integer.toString(AUTHORIZATION_EXCEPTION));
