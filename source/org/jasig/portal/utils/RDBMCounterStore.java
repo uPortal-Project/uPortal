@@ -38,7 +38,6 @@ package org.jasig.portal.utils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
@@ -102,44 +101,46 @@ public class RDBMCounterStore implements ICounterStore {
      */
     public synchronized int getIncrementIntegerId (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
+            stmt = con.createStatement();
             try {
                 String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + counterName + "'";
-                for (int i = 0; i < 25; i++) {
-                    try {
+                for (int i = 0; i < 25; i++) 
+                {
+                    try 
+                    {
                         LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sQuery);
-                        ResultSet rs = stmt.executeQuery(sQuery);
+                        rs = stmt.executeQuery(sQuery);
                         int origId;
                         int nextId;
-                        try {
-                            rs.next();
-                            origId = rs.getInt(1);
-                            nextId = origId + 1;
-                        } catch (SQLException e) { // If the query fails, there is no hope in h**l
-                            throw new Exception("RDBMCounterStore::getIncrementInteger():" + e);
-                        } finally {
-                            rs.close();
-                        }
+                        rs.next();
+                        origId = rs.getInt(1);
+                        nextId = origId + 1;
                         String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
                             " AND SEQUENCE_VALUE=" + origId;
                         LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sUpdate);
                         int rowsUpdated = stmt.executeUpdate(sUpdate);
-                        if (rowsUpdated > 0) {
-                          RDBMServices.commit(con);
-                          return nextId;
+                        if (rowsUpdated > 0) 
+                            { return nextId; }
+                        else 
+                        {
+                            // Assume concurrent update (from other server). Try again after some random amount of milliseconds. 
+                            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
                         }
-                    } catch (SQLException e) {
-                        RDBMServices.rollback(con);
-                        /**
-                         * Assume a concurrent update. Try again after some random amount of milliseconds.
-                         */
-                        Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
+                    }  // end try
+                    finally
+                    {
+                        if ( rs != null )
+                            { rs.close(); } 
                     }
-                }
-            } finally {
-                stmt.close();
+                }      // end for
+            }          // end try 
+            finally 
+            {
+                if (stmt != null)
+                    { stmt.close(); } 
             }
         } catch (Exception e) {
             LogService.log(LogService.ERROR, e);
@@ -148,4 +149,5 @@ public class RDBMCounterStore implements ICounterStore {
         }
         throw new Exception("Unable to increment counter for " + counterName);
     }
+
 }
