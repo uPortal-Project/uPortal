@@ -33,6 +33,12 @@ public class ReferenceGroupService implements ILockableGroupService
 {
     private static final Log log = LogFactory.getLog(ReferenceGroupService.class);
     
+    /**
+     * Default value for cacheInUse.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_USE_CACHE = false;
+    
     
     // Singleton instance:
     protected static IGroupService singleton = null;
@@ -234,12 +240,13 @@ public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
      * <code>IEntityGroup</code>.
      */
     public IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
-      String key = PropertiesManager.getProperty("org.jasig.portal.groups.ReferenceGroupService.key_"+name);
+        
+      String key = PropertiesManager.getProperty("org.jasig.portal.groups.ReferenceGroupService.key_"+name, null);
       if (key != null){
         return findGroup(key);
       }
       else {
-        throw new GroupsException("ReferenceGroupService.getDistinguishedGroup(): no key found to match requested name");
+        throw new GroupsException("ReferenceGroupService.getDistinguishedGroup(): no key found to match requested name [" + name + "]");
       }
     }
     
@@ -315,7 +322,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       entityFactory = new RDBMEntityStore();
 
       String groupFactoryName = PropertiesManager.getProperty
-          ("org.jasig.portal.groups.EntityGroupFactory.implementation");
+          ("org.jasig.portal.groups.EntityGroupFactory.implementation", null);
 
       if ( groupFactoryName == null )
       {
@@ -336,7 +343,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       }
 
     cacheInUse = PropertiesManager.getPropertyAsBoolean
-          ("org.jasig.portal.groups.IEntityGroupService.useCache");
+          ("org.jasig.portal.groups.IEntityGroupService.useCache", DEFAULT_USE_CACHE);
 
       ITypedEntitySearcher[] tes = new ITypedEntitySearcher[2];
       tes[0]=new RDBMChannelDefSearcher();
