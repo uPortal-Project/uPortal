@@ -428,38 +428,41 @@ public void testStoreUpdate() throws Exception
     long now = System.currentTimeMillis();
     String msg = null;
 
-    print("Update expiration and lock type of lock1.");
+    print("Update expiration and lock type of testLocks[1].");
 
     java.util.Date newExpiration = new java.util.Date(now + fiveMinutes);
     int newType = IEntityLockService.WRITE_LOCK;
 
+    // Copy testLocks[1] to lock1.
     IEntityLock lock1 = new EntityLockImpl
         (testLocks[1].getEntityType(), testLocks[1].getEntityKey(),
          testLocks[1].getLockType(), testLocks[1].getExpirationTime(), testLocks[1].getLockOwner());
+
+    // Update testLocks[1].
     getLockStore().update(testLocks[1], newExpiration, new Integer(newType));
     ((EntityLockImpl)testLocks[1]).setExpirationTime(newExpiration);
     ((EntityLockImpl)testLocks[1]).setLockType(newType);
 
-    msg = "Check if the old version of lock1 still exists in store.";
+    msg = "Check if the old version (lock1) still exists in store.";
     print(msg);
     assertTrue(msg, ! getService().existsInStore(lock1) );
 
-    msg = "Check if lock2 exists in store.";
+    msg = "Check if new version exists in store.";
     print(msg);
     IEntityLock lock2 = new EntityLockImpl
         (lock1.getEntityType(), lock1.getEntityKey(), newType, newExpiration, lock1.getLockOwner());
     assertTrue( msg, getService().existsInStore(lock2) );
 
-    print("Update only expiration on lock2.");
+    print("Update only expiration on (updated) lock.");
     newExpiration = new java.util.Date(now + tenMinutes);
     getLockStore().update(lock2, newExpiration, null);
-    ((EntityLockImpl)testLocks[1]).setExpirationTime(newExpiration);
+    ((EntityLockImpl)lock2).setExpirationTime(newExpiration);
 
-    msg = "Check if lock2 still exists in store.";
+    msg = "Check if un-updated lock still exists in store.";
     print(msg);
-    assertTrue( msg, ! getService().existsInStore(lock2) );
+    assertTrue( msg, ! getService().existsInStore(testLocks[1]) );
 
-    msg = "Check if lock3 exists in store.";
+    msg = "Check if the doubly-updated lock exists in store.";
     print(msg);
     IEntityLock lock3 = new EntityLockImpl
         (lock2.getEntityType(), lock2.getEntityKey(), lock2.getLockType(), newExpiration, lock2.getLockOwner());
