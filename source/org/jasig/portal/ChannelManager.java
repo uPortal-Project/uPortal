@@ -285,6 +285,15 @@ public class ChannelManager {
 	    String reqURI = req.getRequestURI ();
 	    reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
 	    rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+	} else {
+	    if(!(ch instanceof ISpecialChannel)) {
+		rd = new ChannelRuntimeData ();
+		rd.setParameters(targetParams);
+		rd.setHttpRequest (req);
+		String reqURI = req.getRequestURI ();
+		reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
+		rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+	    }
 	}
 	ChannelRenderer cr = new ChannelRenderer (ch,rd);
 	cr.setTimeout (timeOut);
