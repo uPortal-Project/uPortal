@@ -44,7 +44,7 @@ import java.net.URL;
 /**
  * This class checks a URL or a webserver hosting a URL. It only allows a specific time allocated for
  * connecting to the URL rather than waiting for a timeout.
- * This class user the java.util.timer to schedule a task which is cancelling the attempt of calling
+ * This class uses the <code>java.util.Timer</code> to schedule a task which is cancelling the attempt of calling
  * httpURLConnection.
  *
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
