@@ -72,13 +72,20 @@ public class UserLayoutNode {
      }
 
 
-
      /**
      * Sets the hashtable of restrictions bound to this node
      * @param restrictions a <code>Hashtable</code> hashtable of restriction expressions
      */
      public void setRestrictions ( Hashtable restrictions ) {
        this.restrictions = restrictions;
+     }
+
+     /**
+     * Gets the hashtable of restrictions bound to this node
+     * @return a hashtable of restriction expressions
+     */
+     public Hashtable getRestrictions () {
+       return restrictions;
      }
 
      /**

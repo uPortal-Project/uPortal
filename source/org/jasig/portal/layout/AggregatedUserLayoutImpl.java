@@ -129,7 +129,6 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     return (bool)?"true":"false";
   }
 
-
   public void getUserLayout(ContentHandler contentHandler) throws PortalException {
     getUserLayout(rootNodeId,contentHandler);
   }
@@ -145,8 +144,8 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
      */
   public void getUserLayout(String nodeId,ContentHandler contentHandler) throws PortalException {
 
-    UserLayoutFolder folder = null; UserLayoutFolderDescription folderDescription = null;
-    UserLayoutNode channel = null;  UserLayoutChannelDescription channelDescription = null;
+    UserLayoutFolderDescription folderDescription = null;
+    UserLayoutChannelDescription channelDescription = null;
 
     if ( contentHandler != null && nodeId != null ) {
       try {
@@ -161,7 +160,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
            if (nodeId.equals(rootNodeId)) contentHandler.startDocument();
            if (nodeId.equals(rootNodeId)) contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
 
-             folder = (UserLayoutFolder) node;
+             UserLayoutFolder folder = (UserLayoutFolder) node;
              folderDescription = (UserLayoutFolderDescription) folder.getNodeDescription();
              attributes.addAttribute("","ID","ID","ID",folderDescription.getId());
              attributes.addAttribute("","type","type","CDATA",
@@ -191,8 +190,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
           // If we have a channel
          } else {
 
-              channel = node;
-              channelDescription = (UserLayoutChannelDescription) channel.getNodeDescription();
+              channelDescription = (UserLayoutChannelDescription) node.getNodeDescription();
 
               attributes.addAttribute("","ID","ID","ID",channelDescription.getId());
               attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
@@ -213,19 +211,19 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
 
               if ( channelDescription.hasParameters() ) {
-                Set paramNames = channelDescription.getParameterNames();
-                Iterator iterator = paramNames.iterator();
-                AttributesImpl paramAttrs = new AttributesImpl();
-                while ( iterator.hasNext() ) {
-                  String name = (String) iterator.next();
+                Enumeration paramNames = channelDescription.getParameterNames();
+                while ( paramNames.hasMoreElements() ) {
+                  String name = (String) paramNames.nextElement();
                   String value = channelDescription.getParameterValue(name);
-                  attributes.addAttribute("","name","name","CDATA",name);
-                  attributes.addAttribute("","value","value","CDATA",value);
-                  attributes.addAttribute("","override","override","CDATA",
+                  AttributesImpl paramAttrs = new AttributesImpl();
+                  paramAttrs.addAttribute("","name","name","CDATA",name);
+                  paramAttrs.addAttribute("","value","value","CDATA",value);
+                  paramAttrs.addAttribute("","override","override","CDATA",
                              channelDescription.canOverrideParameter(name)?"yes":"no");
+                  contentHandler.startElement("",PARAMETER,PARAMETER,paramAttrs);
+                  contentHandler.endElement("",PARAMETER,PARAMETER);
                 }
-                contentHandler.startElement("",PARAMETER,PARAMETER,paramAttrs);
-                contentHandler.endElement("",PARAMETER,PARAMETER);
+
               }
 
               contentHandler.endElement("",CHANNEL,CHANNEL);
@@ -304,10 +302,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
       Element node = (Element) n;
 
-      System.out.println( "XML node name: " + node.getNodeName() );
-
       NodeList childNodes = node.getChildNodes();
-
 
       UserLayoutNodeDescription nodeDesc = UserLayoutNodeDescription.createUserLayoutNodeDescription(node);
 
@@ -339,16 +334,21 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
           NamedNodeMap attributes = parameter.getAttributes();
 
           Node paramNameNode = attributes.getNamedItem("name");
+
           String paramName = (paramNameNode!=null)?paramNameNode.getNodeValue():null;
+
           Node paramValueNode = attributes.getNamedItem("value");
+
           String paramValue = (paramValueNode!=null)?paramValueNode.getNodeValue():null;
+
           Node overParamNode = attributes.getNamedItem("override");
+
           String overParam = (overParamNode!=null)?overParamNode.getNodeValue():null;
 
-          if ( paramName != null && paramValue != null )
+          if ( paramName != null ) {
             channelDesc.setParameterValue(paramName, paramValue);
-          if ( paramName != null && overParam != null )
-           channelDesc.setParameterOverride(paramName, (overParam.equalsIgnoreCase("yes"))?true:false);
+            channelDesc.setParameterOverride(paramName, "yes".equalsIgnoreCase(overParam)?true:false);
+          }
         }
           // Adding to the layout
           layoutNode = new UserLayoutNode(channelDesc);

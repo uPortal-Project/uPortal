@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 import java.util.Iterator;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.Enumeration;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Collections;
@@ -21,8 +21,8 @@ import java.util.Collections;
  */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
 
-    Map parameters;
-    Map override;
+    Hashtable parameters;
+    Hashtable override;
 
     String title=null;
     String description=null;
@@ -39,7 +39,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         parameters=new Hashtable();
         override=new Hashtable();
     }
-    
+
     /**
      * Reconstruct channel information from an xml <code>Element</code>
      *
@@ -51,7 +51,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         if(!xmlNode.getNodeName().equals("channel")) {
             throw new PortalException("Given XML Element is not a channel!");
         }
-        
+
         // could do some validation here, but this code will probably go away anyhow
 
         // standard Node attributes
@@ -86,7 +86,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
                     if(str_override!=null && str_override.equals("no")) {
                         canOverride=new Boolean(false);
                     }
-                    
+
                     if(pName!=null && pValue!=null) {
                         this.setParameterValue(pName,pValue);
                         this.setParameterOverride(pName,canOverride.booleanValue());
@@ -103,7 +103,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public boolean hasAbout() {
         return hasAbout;
     }
-    
+
     /**
      * Specify whether the channel supports "about" action.
      * @param v  Value to assign to hasAbout.
@@ -111,7 +111,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setHasAbout(boolean  v) {
         this.hasAbout = v;
     }
-    
+
     /**
      * Determine if the channel supports "help" action.
      * @return value of hasHelp.
@@ -119,7 +119,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public boolean hasHelp() {
         return hasHelp;
     }
-    
+
     /**
      * Specify whether the channel supports "help" action.
      * @param v  Value to assign to hasHelp.
@@ -127,7 +127,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setHasHelp(boolean  v) {
         this.hasHelp = v;
     }
-    
+
     /**
      * Determine if the channel is editable.
      * @return value of editable.
@@ -135,7 +135,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public boolean isEditable() {
         return editable;
     }
-    
+
     /**
      * Specify whether the channel is editable.
      * @param v  Value to assign to editable.
@@ -143,7 +143,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setEditable(boolean  v) {
         this.editable = v;
     }
-    
+
     /**
      * Get the value of channel timeout in milliseconds.
      * @return value of timeout.
@@ -151,7 +151,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public long getTimeout() {
         return timeout;
     }
-    
+
     /**
      * Set the value of channel timeout in milliseconds.
      * @param v  Value to assign to timeout.
@@ -159,8 +159,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setTimeout(long  v) {
         this.timeout = v;
     }
-    
-    
+
+
     /**
      * Get the value of functionalName.
      * @return value of functionalName.
@@ -168,7 +168,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getFunctionalName() {
         return functionalName;
     }
-    
+
     /**
      * Set the value of functionalName.
      * @param v  Value to assign to functionalName.
@@ -176,7 +176,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setFunctionalName(String  v) {
         this.functionalName = v;
     }
-    
+
     /**
      * Get the value of channelSubscribeId.
      * @return value of channelSubscribeId.
@@ -184,7 +184,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getChannelSubscribeId() {
         return super.getId();
     }
-    
+
     /**
      * Set the value of channelSubscribeId.
      * @param v  Value to assign to channelSubscribeId.
@@ -192,7 +192,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setChannelSubscribeId(String  v) {
         super.setId(v);
     }
-    
+
     /**
      * Get the value of channelTypeId.
      * @return value of channelTypeId.
@@ -200,7 +200,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getChannelTypeId() {
         return channelTypeId;
     }
-    
+
     /**
      * Set the value of channelTypeId.
      * @param v  Value to assign to channelTypeId.
@@ -208,7 +208,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setChannelTypeId(String  v) {
         this.channelTypeId = v;
     }
-    
+
     /**
      * Get the value of channelPublishId for this channel.
      * @return value of channelPublishId.
@@ -216,7 +216,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getChannelPublishId() {
         return channelPublishId;
     }
-    
+
     /**
      * Set the value of channelPublishId for this channel.
      * @param v  Value to assign to channelPublishId.
@@ -224,7 +224,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setChannelPublishId(String  v) {
         this.channelPublishId = v;
     }
-    
+
     /**
      * Get the value of className implementing this channel.
      * @return value of className.
@@ -232,7 +232,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getClassName() {
         return className;
     }
-    
+
     /**
      * Set the value of className implementing this channel.
      * @param v  Value to assign to className.
@@ -240,7 +240,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public void setClassName(String  v) {
         this.className = v;
     }
-    
+
     /**
      * Get the value of title.
      * @return value of title.
@@ -248,7 +248,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Set the value of title.
      * @param v  Value to assign to title.
@@ -258,7 +258,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     }
 
 
-    
+
     /**
      * Get the value of description.
      * @return value of description.
@@ -266,7 +266,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Set the value of description.
      * @param v  Value to assign to description.
@@ -286,7 +286,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      * @return a <code>String</code> value that was set.
      */
     public String setParameterValue(String parameterName, String parameterValue) {
-        return (String) parameters.put(parameterName,parameterValue);;
+        return (String) parameters.put(parameterName,parameterValue);
     }
 
 
@@ -298,6 +298,16 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      */
     public String getParameterValue(String parameterName) {
         return (String) parameters.get(parameterName);
+    }
+
+     /**
+     * Obtain a channel parameter override value.
+     *
+     * @param parameterName a <code>String</code> value
+     * @return a <code>String</code> value
+     */
+    public String getParameterOverrideValue(String parameterName) {
+        return (String) override.get(parameterName);
     }
 
     /**
@@ -340,7 +350,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         if(ov!=null) {
             return ov.booleanValue();
         } else {
-            return true;
+            return false;
         }
     }
 
@@ -372,8 +382,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      *
      * @return a <code>Set</code> of <code>String</code> parameter names.
      */
-    public Set getParameterNames() {
-        return parameters.keySet();
+    public Enumeration getParameterNames() {
+        return parameters.keys();
     }
 
     /**
@@ -391,7 +401,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      * @return a <code>boolean</code> value
      */
     public boolean hasParameters() {
-        return parameters.isEmpty();
+        return !parameters.isEmpty();
     }
 
     /**
@@ -416,11 +426,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         this.addParameterChildren(node,root);
         return node;
     }
-    
+
     protected void addParameterChildren(Element node, Document root) {
-        for(Iterator i=this.getParameterNames().iterator();i.hasNext();) {
+
+        for(Enumeration enum = this.getParameterNames(); enum.hasMoreElements();) {
             Element pElement=root.createElement("parameter");
-            String pName=(String)i.next();
+            String pName=(String)enum.nextElement();
             pElement.setAttribute("name",pName);
             pElement.setAttribute("value",getParameterValue(pName));
             node.appendChild(pElement);
@@ -440,5 +451,5 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         node.setAttribute("hasHelp",(new Boolean(this.hasHelp())).toString());
         node.setAttribute("hasAbout",(new Boolean(this.hasAbout())).toString());
     }
-    
+
 }
