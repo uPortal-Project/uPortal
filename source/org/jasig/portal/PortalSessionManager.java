@@ -77,6 +77,13 @@ public class PortalSessionManager extends HttpServlet {
     }
     // Get the portal base directory
     String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
+    // Make sure the directory is a properly formatted string
+    sPortalBaseDir.replace('/', File.separatorChar);
+    sPortalBaseDir.replace('\\', File.separatorChar);
+    // Add a seperator on the end of the path if it's missing
+    if (!sPortalBaseDir.endsWith(File.separator)) {
+      sPortalBaseDir += File.separator;
+    }
     // Make sure the portal base directory is properly set
     if (sPortalBaseDir == null) {
       throw  new ServletException("PortalSessionManager.init(): portalBaseDir not found, check web.xml file");
