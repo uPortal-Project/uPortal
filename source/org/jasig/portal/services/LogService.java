@@ -27,8 +27,9 @@
 
 package  org.jasig.portal.services;
 
-import  java.io.*;
-import  org.apache.log4j.*;
+import org.jasig.portal.utils.ResourceLoader;
+import java.io.*;
+import org.apache.log4j.*;
 
 
 /**
@@ -110,7 +111,8 @@ public final class LogService {
       return;
     }
     try {
-      PropertyConfigurator.configureAndWatch(LogService.class.getResource("/properties/Logger.properties").getFile());
+      String loggerPropsFileName = ResourceLoader.getResourceAsFileString(LogService.class, "/properties/Logger.properties");
+      PropertyConfigurator.configureAndWatch(loggerPropsFileName);
     } catch (Exception e) {
       e.printStackTrace();
     }
