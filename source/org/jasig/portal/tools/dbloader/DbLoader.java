@@ -131,6 +131,8 @@ public class DbLoader
   private static boolean createTables;
   private static boolean populateTables;
   private static PrintWriter scriptOut;
+  private static String admin_locale;
+  private static boolean localeAware;
 
   public static void main(String[] args)
   {
@@ -194,6 +196,16 @@ public class DbLoader
               populateTables = true;
            } else if (args[i].equals("-nP")) {
               populateTables = false;
+           } else if (args[i].equals("-l")) {
+	      localeAware = true;
+	      try {
+		  admin_locale=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.admin_locale");
+		  System.out.println("Using " + admin_locale + " based on admin_locale of 'properties/portal.properties'.");
+	      } catch (RuntimeException e) {
+		  System.out.println("DbLoader: " + e.getMessage());
+		  System.out.println("DbLoader: use en_US as admin_locale.");
+		  admin_locale = "en_US";
+	      }
            } else {
            }
         }
@@ -690,7 +702,13 @@ public class DbLoader
       public String getPopulateTables() { return populateTables; }
       public String getTablesUri() { return tablesUri; }
       public String getTablesXslUri() { return tablesXslUri; }
-      public String getDataUri() { return dataUri; }
+      public String getDataUri() {
+	  String ret=dataUri;
+	  if (localeAware == true && admin_locale != null) {
+	      ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
+	  }
+	  return ret;
+      }
       public String getDataXslUri() { return dataXslUri; }
       public String getCreateScript() { return createScript; }
       public String getScriptFileName() { return scriptFileName; }
