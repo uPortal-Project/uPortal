@@ -153,7 +153,7 @@ public class ChannelRegistryManager {
     String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
     Document channelDoc = DocumentFactory.getNewDocument();
     channelDoc.appendChild(channelDoc.importNode(channel, true));
-    chanRegStore.addChannel(ID, publisherID, "Channel Title", channelDoc, catIDs);
+    chanRegStore.addChannel(ID, publisherID, channelDoc, catIDs);
 
     // Set roles
     java.util.Vector vRoles = new java.util.Vector(roles);

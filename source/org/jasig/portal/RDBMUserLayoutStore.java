@@ -154,8 +154,8 @@ public class RDBMUserLayoutStore
     int chanTypeId = rs.getInt("CHAN_TYPE_ID");
     int chanPupblUsrId = rs.getInt("CHAN_PUBL_ID");
     int chanApvlId = rs.getInt("CHAN_APVL_ID");
-    java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
-    java.sql.Timestamp chanApvlDt = rs.getTimestamp("CHAN_APVL_DT");
+    Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
+    Timestamp chanApvlDt = rs.getTimestamp("CHAN_APVL_DT");
     int chanTimeout = rs.getInt("CHAN_TIMEOUT");
     String chanMinimizable = rs.getString("CHAN_MINIMIZABLE");
     String chanEditable = rs.getString("CHAN_EDITABLE");
@@ -173,6 +173,7 @@ public class RDBMUserLayoutStore
     }
     addChannelHeaderAttribute("name", chanName, channel);
     addChannelHeaderAttribute("description", chanDesc, channel);
+    addChannelHeaderAttribute("title", chanTitle, channel);
     addChannelHeaderAttribute("fname", chanFName, channel);
     addChannelHeaderAttribute("class", chanClass, channel);
     addChannelHeaderAttribute("typeID", chanTypeId, channel);
@@ -671,10 +672,10 @@ public class RDBMUserLayoutStore
    *   ChannelRegistry
    *
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws SQLException {
+  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, publisherId, title, doc, con);
+      addChannel(id, publisherId, chanXML, con);
       // Set autocommit false for the connection
       setAutoCommit(con, false);
       Statement stmt = con.createStatement();
@@ -708,16 +709,16 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Publishes a channel.
    * @param id
-   * @param title
-   * @param doc
+   * @param publisherId
+   * @param chanXML
    * @exception java.sql.SQLException
    */
-  public void addChannel (int id, int publisherId, String title, Document doc) throws SQLException {
+  public void addChannel (int id, int publisherId, Document chanXML) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, publisherId, title, doc, con);
+      addChannel(id, publisherId, chanXML, con);
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -823,21 +824,21 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Publishes a channel.
    * @param id
-   * @param title
+   * @param publisherId
    * @param doc
    * @param con
    * @exception Exception
    */
-  protected void addChannel (int id, int publisherId, String title, Document doc, Connection con) throws SQLException {
+  protected void addChannel (int id, int publisherId, Document doc, Connection con) throws SQLException {
     Element channel = (Element)doc.getFirstChild();
     // Set autocommit false for the connection
     setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
-      String sqlTitle = sqlEscape(title);
-      String sqlDescription = sqlTitle + " Channel";
+      String sqlTitle = channel.getAttribute("title");
+      String sqlDescription = channel.getAttribute("description");
       String sqlClass = channel.getAttribute("class");
       String sqlTypeID = channel.getAttribute("typeID");
       String sysdate = "{ts '" + new Timestamp(System.currentTimeMillis()).toString() + "'}";

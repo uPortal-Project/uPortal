@@ -104,17 +104,17 @@ public interface IChannelRegistryStore {
 
 
   /**
-   * put your documentation comment here
-   * @param id
-   * @param title
-   * @param doc
-   * @param catID[]
+   * Publishes a channel.
+   * @param id the identifier for the channel
+   * @param publisherId the identifier for the user who is publishing this channel
+   * @param chanXML XML that describes the channel
+   * @param catID an array of category IDs
    * @exception Exception
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception;
+  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws Exception;
 
   /**
-   * put your documentation comment here
+   * Approves a channel.
    * @param chanId
    * @param approverId
    * @param approveDate

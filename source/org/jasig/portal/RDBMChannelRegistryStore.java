@@ -93,25 +93,27 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
-   * @param catID an array of category IDs
+   * @param id the identifier for the channel
+   * @param publisherId the identifier for the user who is publishing this channel
    * @param chanXML XML that describes the channel
-   * @param role an array of roles
+   * @param catID an array of category IDs
    * @throws java.lang.Exception
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception {
-    GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc, catID);
+  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws Exception {
+    GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, chanXML, catID);
   }
 
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
+   * @param id the identifier for the channel
+   * @param publisherId the identifier for the user who is publishing this channel
    * @param chanXML XML that describes the channel
    */
-  public void addChannel (int id, int publisherId, String title, Document doc) {
+  public void addChannel (int id, int publisherId, Document chanXML) {
     try {
-      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc);
+      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, chanXML);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
-      //return status;
     }
   }
 

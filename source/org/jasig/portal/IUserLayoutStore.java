@@ -67,8 +67,8 @@ public interface IUserLayoutStore {
   public void deleteUserProfile(int userId,int profileId) throws Exception;
 
   /* ChannelRegistry */
-  public void addChannel(int id, int publisherId, String title, Document doc) throws Exception;
-  public void addChannel(int id, int publisherId, String title, Document doc, String catID[]) throws Exception;
+  public void addChannel(int id, int publisherId, Document doc) throws Exception;
+  public void addChannel(int id, int publisherId, Document doc, String catID[]) throws Exception;
   public void removeChannel(String chanID) throws Exception;
   public Document getChannelRegistryXML() throws Exception;
   public Document getChannelTypesXML() throws Exception;
