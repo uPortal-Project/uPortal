@@ -47,14 +47,16 @@ public interface Constants {
     public static final String WSRP_CERTIFICATE = "wsrp:certificate";
 
     // WSRP Spec 6.1.4: User scopes
-    public static final String PER_USER = "wsrp:perUser";
-    public static final String FOR_ALL = "wsrp:forAll";
+    public static final String WSRP_PER_USER = "wsrp:perUser";
+    public static final String WSRP_FOR_ALL = "wsrp:forAll";
 
-    // WSRP Spec 6.8.x: Window states
+    // WSRP Spec 6.8.x: Modes
     public static final String WSRP_VIEW = "wsrp:view";
     public static final String WSRP_EDIT = "wsrp:edit";
     public static final String WSRP_HELP = "wsrp:help";
     public static final String WSRP_PREVIEW = "wsrp:preview";
+    
+    public static final String UP_ABOUT = "up_about";
 
     // WSRP Spec 6.9.x: Window states
     public static final String WSRP_NORMAL = "wsrp:normal";

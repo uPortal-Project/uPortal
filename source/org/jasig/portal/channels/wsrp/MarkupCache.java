@@ -66,9 +66,9 @@ public class MarkupCache {
         if (cacheControl != null) {
             int expires = cacheControl.getExpires();
             String userScope = cacheControl.getUserScope();
-            if (userScope.equals(Constants.FOR_ALL)) {
+            if (userScope.equals(Constants.WSRP_FOR_ALL)) {
                 cacheForAll.put(key, markupWrapper);
-            } else if (userScope.equals(Constants.PER_USER)) {
+            } else if (userScope.equals(Constants.WSRP_PER_USER)) {
                 cachePerUser.put(key, markupWrapper);
             }
         }
@@ -82,9 +82,9 @@ public class MarkupCache {
      */
     public MarkupWrapper get(String key, String userScope) {
         MarkupWrapper markupWrapper = null;
-        if (userScope.equals(Constants.FOR_ALL)) {
+        if (userScope.equals(Constants.WSRP_FOR_ALL)) {
             markupWrapper = (MarkupWrapper)cacheForAll.get(key);
-        } else if (userScope.equals(Constants.PER_USER)) {
+        } else if (userScope.equals(Constants.WSRP_PER_USER)) {
             markupWrapper = (MarkupWrapper)cachePerUser.get(key);
         }
         return markupWrapper;
@@ -96,9 +96,9 @@ public class MarkupCache {
      * @param userScope the user scope
      */
     public void remove(String key, String userScope) {
-        if (userScope.equals(Constants.FOR_ALL)) {
+        if (userScope.equals(Constants.WSRP_FOR_ALL)) {
             cacheForAll.remove(key);
-        } else if (userScope.equals(Constants.PER_USER)) {
+        } else if (userScope.equals(Constants.WSRP_PER_USER)) {
             cachePerUser.remove(key);
         }
     }
