@@ -1856,8 +1856,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sqlLayout += " ULS.USER_ID=? AND ULS.LAYOUT_ID=?";
 
-        System.out.println( "SQL LAYOUT QUERY: " + sqlLayout );
-
+        LogService.log(LogService.DEBUG, "sqlLayout");
         PreparedStatement psLayout = con.prepareStatement(sqlLayout);
         psLayout.setInt(1,userId);
         psLayout.setInt(2,layoutId);
@@ -1871,7 +1870,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
         sqlFragment += " UF.FRAGMENT_ID=ULS.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
-        System.out.println( "SQL FRAGMENT QUERY: " + sqlFragment );
+
+        LogService.log(LogService.DEBUG, sqlFragment);
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
         //psFragment.setInt(1,userId);
         //psFragment.setInt(2,layoutId);
@@ -2386,7 +2386,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
         }
         sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.OWNER_ID=? AND UOF.FRAGMENT_ID=?";
-        System.out.println( "SQL FRAGMENT QUERY: " + sqlFragment );
+        LogService.log(LogService.DEBUG, sqlFragment);
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
         psFragment.setInt(1,userId);
         psFragment.setInt(2,fragmentId);
@@ -2672,7 +2672,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           RDBMServices.releaseConnection(con);
     }
 
-           System.out.println ( "fragment (hashtable): \n" + layout );
+           //System.out.println ( "fragment (hashtable): \n" + layout );
 
            return layout;
   }

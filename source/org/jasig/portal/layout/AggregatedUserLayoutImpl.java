@@ -61,6 +61,7 @@ import org.jasig.portal.layout.restrictions.RestrictionTypes;
 import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
@@ -587,10 +588,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     lostFolder = ALFolder.createLostFolder();
    }
 
-    System.out.println ( "LOST FOLDER node id: " + nodeId );
-    System.out.println ( "LOST FOLDER parent id: " + getLayoutNode(nodeId).getParentNodeId() );
-    System.out.println ( "LOST FOLDER next id: " + getLayoutNode(nodeId).getNextNodeId() );
-    System.out.println ( "LOST FOLDER prev id: " + getLayoutNode(nodeId).getPreviousNodeId() );
+    LogService.log(LogService.DEBUG, "LOST FOLDER node id: " + nodeId);
+    LogService.log(LogService.DEBUG, "LOST FOLDER parent id: " + getLayoutNode(nodeId).getParentNodeId());
+    LogService.log(LogService.DEBUG, "LOST FOLDER next id: " + getLayoutNode(nodeId).getNextNodeId());
+    LogService.log(LogService.DEBUG, "LOST FOLDER prev id: " + getLayoutNode(nodeId).getPreviousNodeId());
     // Moving the node to the lost folder
     return moveNode(nodeId,lostFolder.getId(),null);
   }
@@ -1537,8 +1538,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
        // Checking restrictions
        if ( !canDeleteNode(nodeId) ) {
-             System.out.println ( "The node with ID = '" + nodeId + "' cannot be deleted" );
-             return false;
+           LogService.log(LogService.DEBUG, "The node with ID = '" + nodeId + "' cannot be deleted");
+           return false;
        }
 
 
