@@ -1596,13 +1596,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId;
+        int layoutId = 0;
         rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
-            layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
+            if (rs.next()) {
+              layoutId = rs.getInt(1);
+              if (rs.wasNull()) {
+                  layoutId = 0;
+              }
             }
         } finally {
             rs.close();
@@ -1674,8 +1675,11 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
-          rs.next();
-          firstStructId = rs.getInt(1);
+          if (rs.next()) {
+            firstStructId = rs.getInt(1);
+          } else {
+            throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for " + userId + " and LAYOUT_ID " + layoutId);
+          }
         } finally {
           rs.close();
         }
@@ -2896,7 +2900,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
       public ISecurityContext getSecurityContext() { return(null); }
       public void setSecurityContext(ISecurityContext context) {}
-      
+
       public EntityIdentifier getEntityIdentifier() {return null;}
     }
 
