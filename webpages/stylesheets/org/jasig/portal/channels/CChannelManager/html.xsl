@@ -2,10 +2,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">selectModifyChannel</xsl:param>
+  <xsl:param name="action">selectGeneralSettings</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <xsl:param name="mediaPath">\media\org\jasig\portal\channels\CChannelManager</xsl:param>
+  <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
@@ -14,6 +14,14 @@
 
 
   <xsl:template match="/">
+    <html>
+      <head>
+        <title>Untitled Document</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+        <link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>
+      <xsl:comment></xsl:comment>
+      </head>
+      <body>
 
         <xsl:choose>
           <xsl:when test="$action='selectChannelType'">
@@ -47,7 +55,8 @@
             <xsl:call-template name="defaultView"/>
           </xsl:otherwise>
         </xsl:choose>
-
+      </body>
+    </html>
   </xsl:template>
   <xsl:template name="defaultView">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -576,13 +585,21 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
                 <!--<td align="center" nowrap="nowrap">User can<br/> Modify?</td>-->
+                
+<td align="center" nowrap="nowrap">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>                
+
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td width="100%">General Settings</td>
               </tr>
+
+
+
               <tr class="uportal-channel-table-header">
-                <td align="center" colspan="2">
+                <td align="center" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -593,9 +610,36 @@
                 </td>
               </tr>
               <tr>
-                <!--<td align="center" valign="top">
-                  <input type="checkbox" name="modifyName" value="checkbox"/>
-                </td>-->
+<tr>
+
+                <td align="center" valign="top">
+    <a href="javascript:alert('Name: Channel Name\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Title:</span> <span class="uportal-text-small">[example - StockCharts]<br/>
+                  <input type="text" name="title" size="50" class="uportal-input-text">
+                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@title">
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
+                  </span> </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+                <td align="center" valign="top">
+    <a href="javascript:alert('Name: Channel Name\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a></td>
                 <td>
                 </td>
                 <td>
@@ -606,7 +650,7 @@
                   </span> </td>
               </tr>
               <tr class="uportal-channel-text">
-                <td align="center" valign="top" colspan="2">
+                <td align="center" valign="top" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -616,10 +660,41 @@
                   </table>
                 </td>
               </tr>
+              <tr>
+
+                <td align="center" valign="top">
+    <a href="javascript:alert('Name: Channel Description\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Description:</span><br/>
+                  <textarea name="description" cols="50" rows="3" class="uportal-input-text">
+                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/></xsl:attribute></xsl:if></textarea>
+                   </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
               <tr class="uportal-channel-text">
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
+                 <td align="center" valign="top">
+    <a href="javascript:alert('Name: Channel Timeout\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a></td>
                 <td>
                 </td>
                 <td>
@@ -630,7 +705,7 @@
                    milliseconds (1000 = 1 second)</td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -2594,3 +2669,11 @@ Detachable<br/>
 
 </xsl:stylesheet>
 
+
+
+
+
+
+
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
