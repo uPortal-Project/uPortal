@@ -76,11 +76,14 @@ import java.net.MalformedURLException;
  * passed in turn to the XSLT stylesheet as stylesheet parameters. They can be
  * read in the stylesheet as follows:
  * <code>&lt;xsl:param name="yourParamName"&gt;aDefaultValue&lt;/xsl:param&gt;</code></p>
+ * <p>CGenericXSLT is also useful for channels that have no dynamic data.  In these types
+ * of channels, all the markup comes from the XSLT stylesheets.  An empty XML document
+ * can be used and is included with CGenericXSLT.  Just set the xml parameter</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CGenericXSLT implements org.jasig.portal.IChannel
+public class CGenericXSLT implements IChannel
 {
   protected String xmlUri;
   protected String sslUri;
@@ -96,24 +99,22 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   // Cache transformed content in this smartcache - should be moved out of the channel
   protected static SmartCache bufferCache = new SmartCache(15 * 60); // 15 mins
 
-  // developmentMode flag should be set to false for production to
+  // cacheEnabled flag should be set to true for production to
   // ensure that this channel's output is cached
   // I'm hoping that this setting can come from some globally-set
   // property.  I'll leave this for later.
-  // Until then, it'll stay checked in set to false.
-  // Change to true if you want to simply reload the page to see
+  // Until then, it'll stay checked in set to true.
+  // Change to false if you want to simply reload the page to see
   // the effect of a modified XML document or XSLT stylesheet
-  private static boolean developmentMode = false;
-
-  public CGenericXSLT ()
-  {
-  }
+  private static boolean cacheEnabled = true;
 
   // Get channel parameters.
   public void setStaticData (ChannelStaticData sd)
   {
-    this.xmlUri = sd.getParameter("xml");
-    this.sslUri = sd.getParameter("ssl");
+    this.xmlUri = sd.getParameter("xmlUri");
+    this.sslUri = sd.getParameter("sslUri");
+    this.xslTitle = sd.getParameter("xslTitle");
+    this.xslUri = sd.getParameter("xslUri");
   }
 
   public void setRuntimeData (ChannelRuntimeData rd)
@@ -200,7 +201,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
             XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
         }
 
-        if (!developmentMode)
+        if (cacheEnabled)
         {
           Logger.log(Logger.INFO, "Caching output of CGenericXSLT for: " + key);
           bufferCache.put(key, cache);
