@@ -299,7 +299,7 @@ public class IndentPrinter
      * to accumulate the next line. This method is called by {@link
      * #printText} and {@link #printSpace} when the accumulated line plus
      * accumulated text are two long to fit on a given line. At the end of
-     * this method {@link #_line} is empty and {@link #_spaces} is zero.
+     * this method <code>_line</code> is empty and <code>_spaces</code> is zero.
      */
     public void flushLine( boolean preserveSpace )
     {

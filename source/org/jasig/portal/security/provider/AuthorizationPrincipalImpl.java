@@ -153,8 +153,8 @@ IAuthorizationService getAuthorizationService()
     return authorizationService;
 }
 /**
- * Return a Vector of (?) IChannels.
- * @return java.util.Vector
+ * Return a Vector of IChannels.
+ * @return a <code>java.util.Vector</code> of IChannels
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 public java.util.Vector getAuthorizedChannels() throws org.jasig.portal.AuthorizationException {
@@ -247,7 +247,7 @@ throws org.jasig.portal.AuthorizationException
 void setAuthorizationService(IAuthorizationService newAuthorizationService) {
     authorizationService = newAuthorizationService;
 }
-/*
+/**
  * @param newPrincipalString java.lang.String
  */
 private void setPrincipalString(java.lang.String newPrincipalString) {

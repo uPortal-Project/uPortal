@@ -115,7 +115,7 @@ import org.xml.sax.ext.LexicalHandler;
  * serializing mechanisms.
  * <p>
  * The serializer must be initialized with the proper writer and
- * output format before it can be used by calling {@link #init}.
+ * output format before it can be used by calling <code>init</code>.
  * The serializer can be reused any number of times, but cannot
  * be used concurrently by two threads.
  * <p>

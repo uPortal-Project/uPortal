@@ -72,24 +72,24 @@ import org.xml.sax.DocumentHandler;
  * serializers, and static methods for serializing DOM documents.
  * <p>
  * To serialize a document using SAX events, create a compatible serializer
- * using {@link #makeSAXSerializer} and pass it around as a {@link
- * DocumentHandler}. If an I/O error occurs while serializing, it will
- * be thrown by {@link DocumentHandler#endDocument}. The SAX serializer
- * may also be used as {@link DTDHandler}, {@link DeclHandler} and
- * {@link LexicalHandler}.
+ * using <code>makeSAXSerializer</code> and pass it around as a <code>
+ * DocumentHandler</code>. If an I/O error occurs while serializing, it will
+ * be thrown by <code>DocumentHandler.endDocument()</code>. The SAX serializer
+ * may also be used as <code>DTDHandler</code>, <code>DeclHandler</code> and
+ * <code>LexicalHandler</code>.
  * <p>
  * To serialize a DOM document or DOM element, create a compatible
- * serializer using {@link #makeSerializer} and call it's {@link
- * #serialize(Document)} or {@link #serialize(Element)} methods.
+ * serializer using <code>makeSerializer</code> and call it's <code>
+ * serialize(Document)</code> or <code>serialize(Element)</code> methods.
  * Both methods would produce a full XML document, to serizlie only
- * the portion of the document use {@link OutputFormat#setOmitXMLDeclaration}
+ * the portion of the document use <code>OutputFormat.setOmitXMLDeclaration()</code>
  * and specify no document type.
  * <p>
- * The convenience method {@link #serialize(Document,Writer,OutputFormat)}
- * creates a serializer and calls {@link #serizlie(Document)} on that
+ * The convenience method <code>serialize(Document,Writer,OutputFormat)</code>
+ * creates a serializer and calls <code>serizlie(Document)</code> on that
  * serialized.
  * <p>
- * The {@link OutputFormat} dictates what underlying serialized is used
+ * The <code>OutputFormat</code> dictates what underlying serialized is used
  * to serialize the document based on the specified method. If the output
  * format or method are missing, the default is an XML serializer with
  * UTF-8 encoding and now indentation.

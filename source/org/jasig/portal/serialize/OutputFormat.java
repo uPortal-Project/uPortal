@@ -436,7 +436,7 @@ public class OutputFormat
     /**
      * Sets the indentation on and off. When set on, the default
      * indentation level and default line wrapping is used
-     * (see {@link #DEFAULT_INDENT} and {@link #DEFAULT_LINE_WIDTH}).
+     * (see <code>Defaults.Indent</code> and <code>Defaults.LineWidth</code>).
      * To specify a different indentation level or line wrapping,
      * use {@link #setIndent} and {@link #setLineWidth}.
      *
@@ -493,7 +493,7 @@ public class OutputFormat
     /**
      * Returns an <code>EncodingInfo<code> instance for the encoding.
      *
-     * @see setEncoding
+     * @see #setEncoding
      */
     public EncodingInfo getEncodingInfo() {
         if (_encodingInfo == null)
