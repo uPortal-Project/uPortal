@@ -158,6 +158,68 @@
 			</row>
 		</rows>
 	</table>
+
+        <table>
+            <name>UP_ROLES</name>
+            <rows>
+                <row>
+                    <column>
+                        <name>ROLE</name>
+                        <value>channelPublisher</value>
+                    </column>
+                    <column>
+                        <name>DESCR</name>
+                        <value>This user is able to publish new channels.</value>
+                    </column>
+                </row>
+                <row>
+                    <column>
+                        <name>ROLE</name>
+                        <value>channelDeveloper</value>
+                    </column>
+                    <column>
+                        <name>DESCR</name>
+                        <value>This user is a uPortal channel developer.</value>
+                    </column>
+                </row>
+                <row>
+                    <column>
+                        <name>ROLE</name>
+                        <value>student</value>
+                    </column>
+                    <column>
+                        <name>DESCR</name>
+                        <value>This user is a student of the college.</value>
+                    </column>
+                </row>
+                <row>
+                    <column>
+                        <name>ROLE</name>
+                        <value>portalAdmin</value>
+                    </column>
+                    <column>
+                        <name>DESCR</name>
+                        <value>This user is an authorized uPortal administrator.</value>
+                    </column>
+                </row>
+            </rows>
+        </table>
+
+        <table>
+            <name>UP_USER_ROLES</name>
+            <rows>
+                <row>
+                    <column>
+                        <name>USER_ID</name>
+                        <value>0</value>
+                    </column>
+                    <column>
+                        <name>ROLE</name>
+                        <value>channelPublisher</value>
+                    </column>
+                </row>
+            </rows>
+        </table>
 	
 	<table>
 		<name>UP_CHANNELS</name>
@@ -361,6 +423,33 @@
 			</row>
 		</rows>
 	</table>
+
+        <table>
+            <name>UP_CHAN_ROLES</name>
+            <rows>
+                <row>
+                    <column>
+                        <name>CHAN_ID</name>
+                        <value>1</value>
+                    </column>
+                    <column>
+                        <name>ROLE</name>
+                        <value>channelPublisher</value>
+                    </column>
+                </row>
+                <row>
+                    <column>
+                        <name>CHAN_ID</name>
+                        <value>1</value>
+                    </column>
+                    <column>
+                        <name>ROLE</name>
+                        <value>student</value>
+                    </column>
+                </row>
+            </rows>
+        </table>
+
 	<table>
 		<name>UP_CHAN_TYPES</name>
 		<rows>
@@ -404,6 +493,7 @@
 			</row>
 		</rows>
 	</table>
+
 	<table>
 		<name>UP_CLASS</name>
 		<rows>
