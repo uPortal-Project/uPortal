@@ -44,6 +44,7 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.GroupService;
 import  java.sql.*;
 import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.utils.CounterStoreFactory;
@@ -295,9 +296,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           while (templateGroups.hasNext())
           {
                 IEntityGroup eg = (IEntityGroup) templateGroups.next();
-                eg.addMember(me);
-                eg.updateMembers();
-          }
+                ILockableEntityGroup leg = GroupService.findLockableGroup(eg.getKey(), "UP_FRAMEWORK");
+                leg.addMember(me);
+                leg.updateMembers();          }
         }
         catch (Exception e) {
           LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
