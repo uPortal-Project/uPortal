@@ -63,6 +63,7 @@ Version $Revision$
       <parameter name="wsdlTargetNamespace" value="urn:oasis:names:tc:wsrp:v1:wsdl"/>
       <parameter name="wsdlServiceElement" value="WSRPService"/>
       <parameter name="wsdlServicePort" value="WSRPPortletManagementService"/>
+      <parameter name="scope" value="application"/>
       <parameter name="className" value="org.jasig.portal.wsrp.bind.WSRP_v1_PortletManagement_Binding_SOAPSkeleton"/>
       <parameter name="wsdlPortType" value="WSRP_v1_PortletManagement_PortType"/>
       <parameter name="allowedMethods" value="*"/>
@@ -704,6 +705,7 @@ Version $Revision$
       <parameter name="wsdlTargetNamespace" value="urn:oasis:names:tc:wsrp:v1:wsdl"/>
       <parameter name="wsdlServiceElement" value="WSRPService"/>
       <parameter name="wsdlServicePort" value="WSRPRegistrationService"/>
+      <parameter name="scope" value="application"/>
       <parameter name="className" value="org.jasig.portal.wsrp.bind.WSRP_v1_Registration_Binding_SOAPSkeleton"/>
       <parameter name="wsdlPortType" value="WSRP_v1_Registration_PortType"/>
       <parameter name="allowedMethods" value="*"/>
@@ -1345,6 +1347,7 @@ Version $Revision$
       <parameter name="wsdlTargetNamespace" value="urn:oasis:names:tc:wsrp:v1:wsdl"/>
       <parameter name="wsdlServiceElement" value="WSRPService"/>
       <parameter name="wsdlServicePort" value="WSRPBaseService"/>
+      <parameter name="scope" value="application"/>
       <parameter name="className" value="org.jasig.portal.wsrp.bind.WSRP_v1_Markup_Binding_SOAPSkeleton"/>
       <parameter name="wsdlPortType" value="WSRP_v1_Markup_PortType"/>
       <parameter name="allowedMethods" value="*"/>
@@ -1986,6 +1989,7 @@ Version $Revision$
       <parameter name="wsdlTargetNamespace" value="urn:oasis:names:tc:wsrp:v1:wsdl"/>
       <parameter name="wsdlServiceElement" value="WSRPService"/>
       <parameter name="wsdlServicePort" value="WSRPServiceDescriptionService"/>
+      <parameter name="scope" value="application"/>
       <parameter name="className" value="org.jasig.portal.wsrp.bind.WSRP_v1_ServiceDescription_Binding_SOAPSkeleton"/>
       <parameter name="wsdlPortType" value="WSRP_v1_ServiceDescription_PortType"/>
       <parameter name="allowedMethods" value="*"/>
@@ -2622,44 +2626,6 @@ Version $Revision$
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
       />
-  </service>
-
- <service name="RemoteChannel" provider="java:RPC">
-  <requestFlow><handler type="SessionHandler"/></requestFlow>
-  <responseFlow><handler type="SessionHandler"/></responseFlow>
-  <parameter name="scope" value="session"/>
-  <parameter name="className" value="org.jasig.portal.webservices.RemoteChannel"/>
-  <parameter name="methodName" value="*"/>
-  <typeMapping xmlns:ns="http://http.servlet.javax" qname="ns:Cookie"
-    type="java:javax.servlet.http.Cookie"
-    serializer="org.jasig.portal.webservices.ser.CookieSerializerFactory"
-    deserializer="org.jasig.portal.webservices.ser.CookieDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:ChannelRuntimeData"
-    type="java:org.jasig.portal.ChannelRuntimeData"
-    serializer="org.jasig.portal.webservices.ser.ChannelRuntimeDataSerializerFactory"
-    deserializer="org.jasig.portal.webservices.ser.ChannelRuntimeDataDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:BrowserInfo"
-    type="java:org.jasig.portal.BrowserInfo"
-    serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-    deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:Locale"
-    type="java:java.util.Locale"
-    serializer="org.jasig.portal.webservices.ser.LocaleSerializerFactory"
-    deserializer="org.jasig.portal.webservices.ser.LocaleDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:UPFileSpec"
-    type="java:org.jasig.portal.UPFileSpec"
-    serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-    deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:PortalEvent"
-    type="java:org.jasig.portal.PortalEvent"
-    serializer="org.jasig.portal.webservices.ser.PortalEventSerializerFactory"
-    deserializer="org.jasig.portal.webservices.ser.PortalEventDeserializerFactory"
-    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
   </service>
 
  <service name="AdminService" provider="java:MSG">
