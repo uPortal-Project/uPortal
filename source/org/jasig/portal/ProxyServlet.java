@@ -31,30 +31,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
+package  org.jasig.portal;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import  javax.servlet.http.HttpServlet;
+import  javax.servlet.http.HttpServletRequest;
+import  javax.servlet.http.HttpServletResponse;
+import  javax.servlet.ServletException;
+import  java.net.HttpURLConnection;
+import  java.net.URL;
+import  java.net.URLConnection;
+import  java.io.InputStream;
+import  java.io.PrintWriter;
+import  java.io.OutputStream;
+import  java.io.BufferedInputStream;
+import  java.io.BufferedOutputStream;
+import  java.io.File;
+import  java.io.FileInputStream;
+import  java.io.IOException;
+import  java.util.Properties;
+import  org.jasig.portal.Logger;
+import  org.jasig.portal.utils.SmartCache;
 
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.OutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
-import org.jasig.portal.Logger;
 
 /**
  *  This servlet will take request parameters in the form url=(SomeURL) and will pipe the
@@ -74,84 +76,68 @@ import org.jasig.portal.Logger;
  * @author Adam Rybicki
  * @version $Revision$
  */
-public class ProxyServlet extends HttpServlet
-{
+public class ProxyServlet extends HttpServlet {
   // Cache for incoming objects
-  protected SmartCache cache = new SmartCache (300); 
-  
+  protected SmartCache cache = new SmartCache(300);
   protected int maxCachedObjectSize;
-  
   // Number of times to attempt a read from the input stream
   protected int maxReadAttempts = 100;
 
-  public void init () throws ServletException
-  {
-    File secprops = new File (GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "portal.properties");
-    Properties props = new Properties ();
-
-    try
-    {
-      props.load (new FileInputStream (secprops));
+  /**
+   * put your documentation comment here
+   * @exception ServletException
+   */
+  public void init () throws ServletException {
+    File secprops = new File(GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "portal.properties");
+    Properties props = new Properties();
+    try {
+      props.load(new FileInputStream(secprops));
+    } catch (IOException e) {
+      Logger.log(Logger.ERROR, e);
     }
-    catch (IOException e)
-    {
-      Logger.log (Logger.ERROR, e);
+    try {
+      String stringValue = (String)props.get("proxy.CacheTimeout");
+      int intValue = new Integer(stringValue).intValue();
+      cache = new SmartCache(intValue);
+    } catch (Exception e) {
+    // throw this away because we are accepting the default if the entry
+    // in portal.properties was not present
     }
-    
-    try
-    {
-      String stringValue = (String)props.get ("proxy.CacheTimeout");
-      int intValue = new Integer (stringValue).intValue();
-      cache = new SmartCache (intValue);
+    try {
+      String stringValue = (String)props.get("proxy.MaximumCachedContentSize");
+      maxCachedObjectSize = new Integer(stringValue).intValue();
+    } catch (Exception e) {
+    // throw this away because we are accepting the default if the entry
+    // in portal.properties was not present
     }
-    catch (Exception e)
-    {
-      // throw this away because we are accepting the default if the entry
-      // in portal.properties was not present
-    }
-    
-    try
-    {
-      String stringValue = (String)props.get ("proxy.MaximumCachedContentSize");
-      maxCachedObjectSize = new Integer (stringValue).intValue();
-    }
-    catch (Exception e)
-    {
-      // throw this away because we are accepting the default if the entry
-      // in portal.properties was not present
-    }
-    
-    try
-    {
+    try {
       maxReadAttempts = Integer.parseInt((String)props.get("proxy.MaximumReadAttempts"));
+    } catch (Exception e) {
+    // throw this away because we are accepting the default if the entry
+    // in portal.properties was not present
     }
-    catch(Exception e)
-    {
-      // throw this away because we are accepting the default if the entry
-      // in portal.properties was not present
-    }  
-  }
-  
-  public ProxyServlet()
-  {
   }
 
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-  {
+  /**
+   * put your documentation comment here
+   */
+  public ProxyServlet () {
+  }
+
+  /**
+   * put your documentation comment here
+   * @param request
+   * @param response
+   */
+  protected void doGet (HttpServletRequest request, HttpServletResponse response) {
     String urlParameter = request.getParameter("url");
-
-    if(urlParameter == null)
-    {
+    if (urlParameter == null) {
       return;
     }
-    
     // Check for cache hits
     CacheItem item = (CacheItem)cache.get(urlParameter);
-    
-    if (item == null)
-    {
-      try
-      {
+    if (item == null) {
+      try {
         Logger.log(Logger.INFO, "ProxyServlet - Proxying object from url: " + urlParameter);
         URL url = new URL(urlParameter);
         URLConnection connection = url.openConnection();
@@ -159,106 +145,88 @@ public class ProxyServlet extends HttpServlet
         OutputStream outStream = response.getOutputStream();
         int contentLength = connection.getContentLength();
         String contentType = connection.getContentType();
-  
         response.setContentType(contentType);
-        
         // Don't bother with bad data
-        if(contentLength < 1)
-        {
+        if (contentLength < 1) {
           return;
         }
-        
         // Create a buffer for the incoming stream
-        byte [] byteBuffer = new byte [maxCachedObjectSize];
-
+        byte[] byteBuffer = new byte[maxCachedObjectSize];
         // Only cache items under the set limit
-        if(contentLength < maxCachedObjectSize)
-        { 
+        if (contentLength < maxCachedObjectSize) {
           int i = 0;
-          int totalBytesRead = 1;  // Start counting at 1 because arrays start at 0
-          
+          int totalBytesRead = 1;               // Start counting at 1 because arrays start at 0
           // Make multiple attempts read the object in up to it's total content length
-          while(i < maxReadAttempts && totalBytesRead < contentLength)
-          {
+          while (i < maxReadAttempts && totalBytesRead < contentLength) {
             // Read in a chunk from data
             totalBytesRead += inStream.read(byteBuffer, totalBytesRead - 1, contentLength - totalBytesRead);
             i++;
           }
-          
           // Put the object into the cache only if we managed to get the whole thing
-          if(totalBytesRead == contentLength)
-          {
-            Logger.log(Logger.INFO, "ProxyServlet - Object being cached: " + urlParameter + " contentLength: " + contentLength + " totalBytesRead: " + totalBytesRead);
+          if (totalBytesRead == contentLength) {
+            Logger.log(Logger.INFO, "ProxyServlet - Object being cached: " + urlParameter + " contentLength: " + contentLength
+                + " totalBytesRead: " + totalBytesRead);
             cache.put(urlParameter, new CacheItem(contentType, totalBytesRead, byteBuffer));
+          } 
+          else {
+            Logger.log(Logger.WARN, "ProxyServlet - Object not fully retrieved: " + urlParameter + " contentLength: " + 
+                contentLength + " totalBytesRead: " + totalBytesRead);
           }
-          else
-          {
-            Logger.log(Logger.WARN, "ProxyServlet - Object not fully retrieved: " + urlParameter + " contentLength: " + contentLength + " totalBytesRead: " + totalBytesRead);
-          }
-          
           // Send the object to the browser
           response.setContentLength(totalBytesRead);
           outStream.write(byteBuffer, 0, totalBytesRead);
-        }
-        else
-        {
+        } 
+        else {
           // Just assume that the content length is correct
           response.setContentLength(contentLength);
-          
           // Read in a chunk of the object
           int readCount = inStream.read(byteBuffer);
-          
-          while(readCount > 0)
-          {
+          while (readCount > 0) {
             Logger.log(Logger.INFO, "ProxyServlet - Object too big to cache: " + urlParameter);
-            
             // Write a chunk of data
             outStream.write(byteBuffer, 0, readCount);
-            
             // Read in another chunk of data
             readCount = inStream.read(byteBuffer);
           }
         }
-        
         inStream.close();
-  
         return;
-      }
-      catch(Exception e)
-      {
+      } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
       }
-    }
-    else
-    {
+    } 
+    else {
       // Just send the cached item
       Logger.log(Logger.INFO, "ProxyServlet - Found object in cache from url: " + urlParameter);
       response.setContentLength(item.contentLength);
       response.setContentType(item.contentType);
-
-      try
-      {
+      try {
         OutputStream outStream = response.getOutputStream();
-        outStream.write (item.byteBuffer, 0, item.contentLength);
-      }
-      catch(Exception e)
-      {
+        outStream.write(item.byteBuffer, 0, item.contentLength);
+      } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
       }
     }
   }
-  
-  protected class CacheItem
-  {
+
+  protected class CacheItem {
     protected String contentType;
     protected int contentLength;
     protected byte[] byteBuffer;
-    
-    protected CacheItem (String type, int totalBytesRead, byte buffer[])
-    {
+
+    /**
+     * put your documentation comment here
+     * @param     String type
+     * @param     int totalBytesRead
+     * @param     byte buffer[]
+     */
+    protected CacheItem (String type, int totalBytesRead, byte buffer[]) {
       contentType = type;
       contentLength = totalBytesRead;
       byteBuffer = buffer;
     }
   }
 }
+
+
+

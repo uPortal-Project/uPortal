@@ -46,7 +46,7 @@ import  java.io.FileInputStream;
 import  java.sql.Connection;
 import  java.sql.Statement;
 import  java.sql.ResultSet;
-import  org.jasig.portal.SmartCache;
+import  org.jasig.portal.utils.SmartCache;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.IRole;
 import  org.jasig.portal.security.RoleImpl;
