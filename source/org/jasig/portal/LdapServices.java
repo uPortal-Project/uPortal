@@ -35,6 +35,8 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.services.LogService;
+
 import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
@@ -68,9 +70,9 @@ public class LdapServices
   public LdapServices () {
     try {
       if (!bPropsLoaded) {
-        File ldapPropsFile = new File (PortalSessionManager.getPortalBaseDir () + "properties" + File.separator + "ldap.properties");
+        InputStream ins = this.getClass().getResourceAsStream("/properties/ldap.properties");
         Properties ldapProps = new Properties ();
-        ldapProps.load (new FileInputStream (ldapPropsFile));
+        ldapProps.load (ins);
 
 
         sLdapHost         = ldapProps.getProperty ("ldap.host",         "");
@@ -80,18 +82,18 @@ public class LdapServices
         sLdapManagerDN    = ldapProps.getProperty ("ldap.managerDN",    "");
         sLdapManagerPW    = ldapProps.getProperty ("ldap.managerPW",    "");
 
-        Logger.log (Logger.DEBUG, "ldap.host = "         + sLdapHost);
-        Logger.log (Logger.DEBUG, "ldap.port = "         + sLdapPort);
-        Logger.log (Logger.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
-        Logger.log (Logger.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
-        Logger.log (Logger.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
-        Logger.log (Logger.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
+        LogService.instance().log(LogService.DEBUG, "ldap.host = "         + sLdapHost);
+        LogService.instance().log(LogService.DEBUG, "ldap.port = "         + sLdapPort);
+        LogService.instance().log(LogService.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
+        LogService.instance().log(LogService.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
+        LogService.instance().log(LogService.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
+        LogService.instance().log(LogService.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
 
         bPropsLoaded = true;
       }
     }
     catch (Exception e) {
-      Logger.log (Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -116,7 +118,7 @@ public class LdapServices
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
-      Logger.log (Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
 
     return conn;
@@ -149,7 +151,7 @@ public class LdapServices
       conn.close();
     }
     catch (Exception e) {
-      Logger.log (Logger.DEBUG, e);
+      LogService.instance().log(LogService.DEBUG, e);
     }
   }
 }
