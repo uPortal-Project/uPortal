@@ -4,6 +4,8 @@
 <%@ page import="java.util.*" %>
 <%@ page import = "java.sql.*" %>
 <%@ page errorPage="error.jsp" %>
+<%@ include file="checkinit.jsp" %>
+<%@ include file="checkGuest.jsp" %>
 
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" type="org.jasig.portal.ILayoutBean" scope="session" />
 <jsp:useBean id="rdbmService" class="org.jasig.portal.RdbmServices" scope="session" />
