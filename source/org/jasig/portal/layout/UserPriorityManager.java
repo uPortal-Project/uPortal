@@ -54,7 +54,7 @@ import org.jasig.portal.services.GroupService;
 
 
 /**
- * The user priority manager implementation, manages user priority ranges for aggregated layouts
+ * The user priority manager implementation, manages user priority ranges for aggregated layouts.
  * <p>
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>

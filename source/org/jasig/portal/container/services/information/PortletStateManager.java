@@ -233,8 +233,8 @@ public class PortletStateManager {
 	
 	
 	/**
-	  * Clears the states/modes of the given PortletWindow
-	  * @param window a portlet window
+	  * Clears the states/modes of the given PortletWindow.
+	  * @param portletWindow a portlet window
 	  */  
 	public static void clearState(PortletWindow portletWindow) {
 	  Map map = windowStates;	
