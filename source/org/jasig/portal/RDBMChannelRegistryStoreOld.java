@@ -257,7 +257,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
             } else if (nodeName.equals("value")) {
               paramValue = nodeValue;
             } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
-              paramOverride = "'Y'";
+              paramOverride = "Y";
             }
           }
 
