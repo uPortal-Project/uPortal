@@ -50,23 +50,23 @@ import org.jasig.portal.IBasicEntity;
 public class CachedEntityInvalidation implements IBasicEntity {
     private final EntityIdentifier entityIdentifier;
     private final Date invalidationTime;
+    private final int cacheID;
 /**
  * CachedEntityInvalidation constructor.
  */
-public CachedEntityInvalidation(Class eType, String eKey, Date time)
+public CachedEntityInvalidation(Class eType, String eKey, Date time, int cache)
 {
-    super();
-    entityIdentifier = new EntityIdentifier(eKey, eType);
-    invalidationTime = time;
+    this( new EntityIdentifier(eKey, eType), time, cache );
 }
 /**
  * CachedEntityInvalidation constructor.
  */
-public CachedEntityInvalidation(EntityIdentifier newEntityIdentifier, Date time)
+public CachedEntityInvalidation(EntityIdentifier newEntityIdentifier, Date time, int cache)
 {
     super();
     entityIdentifier = newEntityIdentifier;
     invalidationTime = time;
+    cacheID = cache;
 }
 /**
  * @return EntityIdentifier
@@ -97,6 +97,14 @@ public final Class getType() {
  */
 public String toString() {
     return "CachedEntityInvalidation: " + getType().getName() +
-      "(" + getKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime());
+      "(" + getKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime()) +
+      " from cache " + cacheID;
 }
+/**
+ * @return int
+ */
+public int getCacheID() {
+    return cacheID;
+}
+
 }

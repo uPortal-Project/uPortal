@@ -41,20 +41,24 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.SequenceGenerator;
 /**
  * Reference implementation of <code>IEntityCache</code> that is meant
  * for a multi-server environment in which updates to cached entities may
- * occur on remote servers, making the local copy of the entity invalid.
+ * occur on peer caches on other JVMs, invalidating the local copy of the
+ * entity.  
  * <p>
  * Cache entries are wrapped in a <code>CacheEntry</code> that records
  * their creation time.  At intervals, cleanupCache() is called by the
  * cache's cleanup thread.  When this happens, the class retrieves
  * invalidation notices from its invalidation store and purges stale entries.
  * <p>
- * When we update a cache entry, we invalidate first and replace second
- * to ensure that the cache entry creation time is no earlier than the
- * invalidation timestamp.  This prevents the cache entry from being purged
- * by its own invalidation notice.
+ * A fudge factor (clockTolerance) is employed to account for differences
+ * in system clocks among servers.  This may cause a valid entry to be 
+ * removed from the cache if it is newer than the corresponding 
+ * invalidation by less than the fudge factor.  However, this should
+ * not be to frequent, and assuming the factor is appropriately set,
+ * all relevant invalidations should occur. 
  * <p>
  * @author Dan Ellentuck
  * @version $Revision$
@@ -63,6 +67,9 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
     private static RDBMCachedEntityInvalidationStore invalidationStore;
     private long lastUpdateMillis = 0;
+    private long clockTolerance = 5000;
+    private int cacheID = -1;
+    private static final String CACHE_ID_SEQUENCE = "UP_ENTITY_CACHE";
 
     // Wrapper records the time a cache entry was created.
     class CacheEntry implements IBasicEntity
@@ -90,6 +97,16 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
             return creationTime;
         }
     }
+/**
+ * ReferenceInvalidatingEntityCache constructor comment.
+ */
+public ReferenceInvalidatingEntityCache(Class type, int maxSize, int maxUnusedTime, int sweepInterval, int clock)
+throws CachingException
+{
+    super(type, maxSize, maxUnusedTime, sweepInterval);
+    clockTolerance = clock;
+    initializeCacheID();
+}
 /**
  * ReferenceInvalidatingEntityCache constructor comment.
  */
@@ -160,7 +177,9 @@ throws CachingException
  */
 public void invalidate(IBasicEntity entity) throws CachingException
 {
-    getInvalidationStore().add(entity);
+    CachedEntityInvalidation cei = 
+        new CachedEntityInvalidation(entity.getEntityIdentifier(), new Date(), getCacheID());
+    getInvalidationStore().add(cei);
 }
 /**
  * Returns the WRAPPED cached entity.
@@ -190,47 +209,59 @@ public void remove(String key) throws CachingException
     }
 }
 /**
- * Retrieves invalidations that were added to the store since the last
- * time we checked, and removes corresponding entries from the cache
- * if they were added before the invalidation timestamp.
+ * Retrieves invalidations that were added to the store by other caches 
+ * since the last time we checked (fudged with the clockTolerance).  
+ * If a cache entry exists for the invalidation, and the entry is older
+ * than the invalidation (again, fudged with the clockTolerance), then
+ * the entry is removed.  
+ * 
+ * This may drop a few perfectly valid entries from the cache that   
+ * are newer than the corresponding invalidation by less than the
+ * fudge factor.  However, assuming the factor is appropriately set,
+ * all relevant invalidations should occur. 
+ * 
  */
 public void removeInvalidEntities()
 {
     CachedEntityInvalidation[] invalidations = null;
     long nowMillis = System.currentTimeMillis();
-    Date lastUpdate = new Date(lastUpdateMillis);
+    Date lastUpdate = new Date(lastUpdateMillis - clockTolerance);
     int removed = 0;
 
     debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
           " checking for cache invalidations added since: " + lastUpdate);
     try
     {
-        invalidations = getInvalidationStore().findAfter(lastUpdate, getEntityType(), null);
+        Integer cID = new Integer(getCacheID());
+        invalidations = getInvalidationStore().findAfter(lastUpdate, getEntityType(), null, cID);
 
         debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
               " retrieved " + invalidations.length + " invalidations.");
 
         for ( int i=0; i<invalidations.length; i++ )
         {
-            String key = invalidations[i].getKey();
-
+            String key = invalidations[i].getKey();  
             CacheEntry entry = (CacheEntry)primGet(key);
-
-            if ( entry != null &&
-                entry.getCreationTime().before(invalidations[i].getInvalidationTime()) )
-            {
-                primRemove( key );
-                removed++;
-            }
+            if ( entry != null )
+            {       
+                long entryCreationTime = entry.getCreationTime().getTime();
+                long invalidationTime = invalidations[i].getInvalidationTime().getTime();
+                
+                  if ( entryCreationTime < invalidationTime + clockTolerance )
+                {
+                    primRemove( key );
+                    removed++;
+                }
+            }          
         }
 
         debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
               " removed " + removed + " cache entries.");
     }
-    catch (CachingException ce)
+    catch (Exception ex)
     {
         LogService.log(LogService.ERROR,
-            "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ce.getMessage());
+            "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ex.getMessage());
     }
 
     lastUpdateMillis = nowMillis;
@@ -250,5 +281,26 @@ public void update(IBasicEntity entity) throws CachingException
 {
     invalidate(entity);
     add(entity);
+}
+/**
+ * @return int
+ */
+public int getCacheID() 
+{
+    return cacheID;
+}
+private void initializeCacheID() throws CachingException
+{
+    try
+    {
+        cacheID = 
+          SequenceGenerator.instance().getNextInt(CACHE_ID_SEQUENCE);
+    }
+    catch (Exception ex)
+    {
+        LogService.log(LogService.ERROR,
+            "ReferenceInvalidatingEntityCache.initializeCacheID(): " + ex.getMessage());
+        throw new CachingException(ex.getMessage());
+    }
 }
 }

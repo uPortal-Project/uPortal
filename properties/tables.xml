@@ -995,10 +995,14 @@
       <column> <name>INVALIDATION_TIME</name>  <type>TIMESTAMP</type>
         <desc>The time the entity was invalidated.</desc>
       </column>
+      <column> <name>ENTITY_CACHE_ID</name>  <type>INTEGER</type>
+        <desc>The unique ID of the cache instance that wrote this invalidation.</desc>
+      </column>
      </columns>
     <primary-key>ENTITY_TYPE_ID</primary-key>
     <primary-key>ENTITY_KEY</primary-key>
     <not-null>INVALIDATION_TIME</not-null>
+    <not-null>ENTITY_CACHE_ID</not-null>
   </table>
 
   <!-- Used by the EntityLockService to share locks among multiple servers. -->

@@ -65,7 +65,9 @@ public class RDBMCachedEntityInvalidationStore {
     private static String ENTITY_TYPE_COLUMN = "ENTITY_TYPE_ID";
     private static String ENTITY_KEY_COLUMN = "ENTITY_KEY";
     private static String INVALIDATION_TIME_COLUMN = "INVALIDATION_TIME";
+    private static String ENTITY_CACHE_ID_COLUMN = "ENTITY_CACHE_ID";
     private static String EQ = " = ";
+    private static String NE = " != ";
     private static String GT = " > ";
     private static String LT = " < ";
     private static String QUOTE = "'";
@@ -86,14 +88,12 @@ public RDBMCachedEntityInvalidationStore() throws CachingException
     initialize();
 }
 /**
- * Adds/updates the row corresponding to this entity in the underlying store.
- * @param entity org.jasig.portal.concurrency.IBasicEntity entity
+ * Adds/updates the row corresponding to this invalidation in the underlying store.
+ * @param cachedEnt org.jasig.portal.concurrency.caching.CachedEntityInvalidation
  */
-public void add(IBasicEntity entity) throws CachingException
+public void add(CachedEntityInvalidation cachedEnt) throws CachingException
 {
     Connection conn = null;
-    CachedEntityInvalidation cachedEnt =
-      newInstance(entity.getEntityIdentifier().getType(), entity.getEntityIdentifier().getKey(), new Date());
     try
     {
         conn = RDBMServices.getConnection();
@@ -104,10 +104,20 @@ public void add(IBasicEntity entity) throws CachingException
     }
 
     catch (SQLException sqle)
-        { throw new CachingException("Problem adding " + entity + ": " + sqle.getMessage()); }
+        { throw new CachingException("Problem adding " + cachedEnt + ": " + sqle.getMessage()); }
 
     finally
         { RDBMServices.releaseConnection(conn); }
+}
+/**
+ * Adds/updates the row corresponding to this entity in the underlying store.
+ * @param entity org.jasig.portal.IBasicEntity entity
+ */
+public void add(IBasicEntity entity, int cacheID) throws CachingException
+{
+    CachedEntityInvalidation cachedEnt =
+      newInstance(entity.getEntityIdentifier().getType(), entity.getEntityIdentifier().getKey(), new Date(), cacheID);
+    add(cachedEnt);
 }
 /**
  * Delete all invalidations from the underlying store.
@@ -165,7 +175,7 @@ public void deleteBefore(Date expiration) throws CachingException
 private boolean existsInStore(CachedEntityInvalidation ent, Connection conn)
 throws CachingException
 {
-    return ( select(ent.getType(), ent.getKey(), null, conn).length > 0 );
+    return ( select(ent.getType(), ent.getKey(), null, null, conn).length > 0 );
 }
  /**
  * Retrieve CachedEntityInvalidations from the underlying entity invalidation store.
@@ -181,7 +191,7 @@ throws CachingException
     try
     {
         conn = RDBMServices.getConnection();
-        return select(entityType, entityKey, null, conn);
+        return select(entityType, entityKey, null, null, conn);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -192,16 +202,17 @@ throws CachingException
  * @param invalidation Date
  * @param entityType Class
  * @param entityKey String
+ * @param cacheID Integer - the cache ID we do NOT want to retrieve.
  * @exception CachingException - wraps an Exception specific to the store.
  */
-public CachedEntityInvalidation[] findAfter (Date invalidation, Class entityType, String entityKey)
+public CachedEntityInvalidation[] findAfter (Date invalidation, Class entityType, String entityKey, Integer cacheID)
 throws CachingException
 {
     Connection conn = null;
     try
     {
         conn = RDBMServices.getConnection();
-        return selectAfter(entityType, entityKey, invalidation, conn);
+        return selectAfter(entityType, entityKey, invalidation, cacheID, conn);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -214,7 +225,7 @@ private static String getAddSql()
     if ( addSql == null )
     {
         addSql = "INSERT INTO " + ENTITY_INVALIDATION_TABLE +
-          "(" + getAllTableColumns() + ") VALUES (?, ?, ?)";
+          "(" + getAllTableColumns() + ") VALUES (?, ?, ?, ?)";
     }
     return addSql;
 }
@@ -231,6 +242,8 @@ private static java.lang.String getAllTableColumns()
         buff.append(ENTITY_KEY_COLUMN);
         buff.append(", ");
         buff.append(INVALIDATION_TIME_COLUMN);
+        buff.append(", ");
+        buff.append(ENTITY_CACHE_ID_COLUMN);
 
         allTableColumns = buff.toString();
     }
@@ -268,7 +281,8 @@ private static String getUpdateSql()
     if ( updateSql == null )
     {
         updateSql = "UPDATE " + ENTITY_INVALIDATION_TABLE +
-        " SET " + INVALIDATION_TIME_COLUMN + EQ + "?" +
+        " SET " + INVALIDATION_TIME_COLUMN + EQ + "?," +
+                  ENTITY_CACHE_ID_COLUMN + EQ + "?" +
           " WHERE " + ENTITY_TYPE_COLUMN + EQ + "?" +
             " AND " + ENTITY_KEY_COLUMN + EQ  + "?" ;
     }
@@ -289,15 +303,16 @@ throws  SQLException, CachingException
     String key = rs.getString(2);
     Timestamp ts = rs.getTimestamp(3);
     Date dt = new Date(getTimestampMillis(ts));
+    int cacheID = rs.getInt(4);
 
-    return newInstance(entityType, key, dt);
+    return newInstance(entityType, key, dt, cacheID);
 }
 /**
  * @return org.jasig.portal.concurrency.caching.CachedEntityInvalidation
  */
-private CachedEntityInvalidation newInstance (Class type, String key, Date expiration)
+private CachedEntityInvalidation newInstance (Class type, String key, Date expiration, int cacheID)
 {
-    return new CachedEntityInvalidation(type, key, expiration);
+    return new CachedEntityInvalidation(type, key, expiration, cacheID);
 }
 /**
  * Add the invalid entity to the underlying store.
@@ -310,6 +325,7 @@ throws SQLException, CachingException
     Integer typeID = EntityTypes.getEntityTypeID(ent.getType());
     String key = ent.getKey();
     Timestamp ts = new Timestamp(ent.getInvalidationTime().getTime());
+    int cacheID = ent.getCacheID();
 
     try
     {
@@ -320,6 +336,7 @@ throws SQLException, CachingException
             ps.setInt(1, typeID.intValue()); // entity type
             ps.setString(2, key);            // entity key
             ps.setTimestamp(3, ts);          // invalidation time
+            ps.setInt(4, cacheID);           // entity cache ID
 
             LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
@@ -428,6 +445,7 @@ throws SQLException, CachingException
     Integer typeID = EntityTypes.getEntityTypeID(ent.getType());
     String key = ent.getKey();
     java.sql.Timestamp ts = new java.sql.Timestamp(ent.getInvalidationTime().getTime());
+    int cacheID = ent.getCacheID();
 
     try
     {
@@ -435,9 +453,10 @@ throws SQLException, CachingException
             new RDBMServices.PreparedStatement(conn, getUpdateSql());
         try
         {
-            ps.setTimestamp(1, ts);           // new invalidation
-            ps.setInt(2, typeID.intValue());  // entity type
-            ps.setString(3, key);             // entity key
+            ps.setTimestamp(1, ts);           // updated invalidation
+            ps.setInt(2, cacheID);            // updated entity cache ID
+            ps.setInt(3, typeID.intValue());  // entity type
+            ps.setString(4, key);             // entity key
 
             LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
@@ -473,6 +492,7 @@ private CachedEntityInvalidation[] select
     (Class entityType,
      String entityKey,
      Date invalidation,
+     Integer cacheID,
      Connection conn)
 throws CachingException
 {
@@ -494,6 +514,11 @@ throws CachingException
         Timestamp ts = new Timestamp(invalidation.getTime());
         sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + printTimestamp(ts));
     }
+    
+    if ( cacheID != null )
+    {
+        sqlQuery.append(" AND " + ENTITY_CACHE_ID_COLUMN + EQ + cacheID);
+    }
 
     return primSelect(sqlQuery.toString(), conn);
 }
@@ -503,6 +528,7 @@ throws CachingException
  * @param entityType Class
  * @param entityKey String
  * @param invalidation Date
+ * @param cacheID Integer - the cache ID we do NOT want to retrieve.
  * @param conn Connection
  * @exception CachingException - wraps an Exception specific to the store.
  */
@@ -510,6 +536,7 @@ private CachedEntityInvalidation[] selectAfter
     (Class entityType,
      String entityKey,
      Date invalidation,
+     Integer cacheID,
      Connection conn)
 throws CachingException
 {
@@ -530,6 +557,11 @@ throws CachingException
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
         sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + printTimestamp(ts));
+    }
+    
+    if ( cacheID != null )
+    {
+        sqlQuery.append(" AND " + ENTITY_CACHE_ID_COLUMN + NE + cacheID);
     }
 
     return primSelect(sqlQuery.toString(), conn);

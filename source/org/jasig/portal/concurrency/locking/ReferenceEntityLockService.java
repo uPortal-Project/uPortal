@@ -68,9 +68,9 @@ public class ReferenceEntityLockService implements IEntityLockService
     /* Fudge factor in milliseconds, extends the apparent expiration times
      * of potentially conflicting locks beyond their actual expirations.
      * We only use it when checking for locking conflicts and then only if
-     * inMemory == false.  Defaults to 0.
+     * inMemory == false.  Defaults to 5000.
      */
-    private int lockToleranceMillis = 0;
+    private int lockToleranceMillis = 5000;
 /**
  * ReferenceEntityLockingService constructor comment.
  */
@@ -193,8 +193,8 @@ private void initialize() throws LockingException
         try
         {
             int lockTolerance = PropertiesManager.getPropertyAsInt
-                ("org.jasig.portal.concurrency.IEntityLockService.lockTolerance");
-            setLockToleranceMillis(lockTolerance * 1000);
+                ("org.jasig.portal.concurrency.clockTolerance");
+            setLockToleranceMillis(lockTolerance);
         }
         catch ( Exception ex ) { /* defaults to 0. */ }
     }

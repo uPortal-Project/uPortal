@@ -73,6 +73,13 @@ public class ReferenceEntityCachingService implements IEntityCachingService
     // The interval after which a cache entry may be purged if it has not
     // been touched.  Defaults to 30 minutes.
     int defaultMaxIdleTimeMillis = 30 * 60 * 1000;
+    
+    /* Fudge factor in milliseconds, for reconciling system clocks on 
+     * different hosts.  We retrieve invalidations between now and
+     * the time of our last retrieval -- plus the fudge factor.  
+     * Only used when inMemory == false.  Defaults to 5000.
+     */
+    int clockToleranceMillis = 5000;
 /**
  * ReferenceEntityCachingService constructor comment.
  */
@@ -208,6 +215,16 @@ private void loadDefaultProperties()
         defaultMaxIdleTimeMillis = defaultMaxIdleTimeSecs * 1000;
     }
     catch ( Exception ex ) { /* defaults to 30 minutes */ }
+    
+    if ( multiServer ) {
+        try
+        {
+            int clockTolerance = PropertiesManager.getPropertyAsInt
+                ("org.jasig.portal.concurrency.clockTolerance");
+            clockToleranceMillis = clockTolerance;
+        }
+        catch ( Exception ex ) { /* defaults to 5000. */ }
+    }
 
 }
 /**

@@ -1,18 +1,43 @@
 package org.jasig.portal.concurrency.caching;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Date;
-import junit.framework.*;
-import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.EntityCachingService;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCache;
+import org.jasig.portal.services.EntityCachingService;
 
 /**
  * Tests the entity caching framework.
  * @author: Dan Ellentuck
+ * 
+ * TESTS:
+ *  (1) testEntityServiceAddsAndDeletes() -- Add, retrieve and remove entities 
+ *      via the service facade.
+ *  (2) testEntityCacheAddsAndDeletes() -- Add, retrieve and remove entries
+ *      from an IEntityCache.
+ *  (3) testEntityCacheSweep() -- Sweep must remove correct number of entries 
+ *      from cache, based on time of last use.
+ *  (4) testInvalidatingCacheAddsAndDeletes() -- Add, retrieve and remove 
+ *      entries from an invalidating IEntityCache.
+ *  (5) testInvalidatingCacheInvalidation() -- Invalidating IEntityCaches must 
+ *      invalidate each others' entries when their own entries are either 
+ *      updated or deleted.
+ *  (6) testStoreAddsAndDeletes() -- Add and delete invalidations via the 
+ *      invalidation store.
+ *  (7) testStoreBeforeAndAfter() -- Retrieve invalidations from the store 
+ *      that were added after some point in time.
+ *  (8) testStoreUpdates() -- Retrieve invalidations from the store that
+ *      were updated after some point in time.
+ *  (9) testFudgeFactor() -- An earlier invalidation from one invalidating cache
+ *      should invalidate its corresponding entity in another cache IF the
+ *      interval is no greater than the fudge factor.  But a cache must not
+ *      clobber its own entries.
+ *
  */
 public class EntityCacheTester extends TestCase {
     private static Class GROUP_CLASS;
@@ -26,6 +51,7 @@ public class EntityCacheTester extends TestCase {
     private int cacheSize = 1000;
     private int cacheIdleTimeSecs = 5*60;
     private int cacheSweepIntervalSecs = 30;
+    private int clockTolerance = 5000;
 
 
     private class MinimalEntity implements IBasicEntity
@@ -104,15 +130,15 @@ throws CachingException
  */
 private IEntityCache getInvalidatingEntityCache() throws CachingException
 {
-    return getInvalidatingEntityCache(cacheSize, cacheIdleTimeSecs*1000, cacheSweepIntervalSecs*1000);
+    return getInvalidatingEntityCache(cacheSize, cacheIdleTimeSecs*1000, cacheSweepIntervalSecs*1000, clockTolerance);
 }
 /**
  * @return org.jasig.portal.concurrency.IEntityCache
  */
-private IEntityCache getInvalidatingEntityCache(int size, int idleTime, int sweepInterval)
+private IEntityCache getInvalidatingEntityCache(int size, int idleTime, int sweepInterval, int tolerance)
 throws CachingException
 {
-    return new ReferenceInvalidatingEntityCache(MINIMAL_ENTITY_CLASS, size, idleTime, sweepInterval);
+    return new ReferenceInvalidatingEntityCache(MINIMAL_ENTITY_CLASS, size, idleTime, sweepInterval, tolerance);
 }
 /**
 *  @return java.lang.String
@@ -221,7 +247,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new EntityCacheTester("testInvalidatingCacheAddsAndDeletes"));
   suite.addTest(new EntityCacheTester("testInvalidatingCacheInvalidation"));
   suite.addTest(new EntityCacheTester("testIEntityCacheSweep"));
-    suite.addTest(new EntityCacheTester("testEntityCachingServiceAddsAndDeletes"));
+  suite.addTest(new EntityCacheTester("testEntityCachingServiceAddsAndDeletes"));
+  suite.addTest(new EntityCacheTester("testFudgeFactor"));
 
 
 //  suite.addTest(new EntityCacheTester("testStoreDeleteBefore"));
@@ -245,6 +272,10 @@ protected void tearDown()
     catch (Exception ex) { print("EntityCacheTester.tearDown(): " + ex.getMessage());}
 }
 /**
+ * Adds, retrieves and removes entities via the service facade,
+ * org.jasig.portal.services.EntityCachingServices.
+ *  - Adds must be found.
+ *  - Removes must not be found.
  */
 public void testEntityCachingServiceAddsAndDeletes() throws Exception
 {
@@ -283,6 +314,13 @@ public void testEntityCachingServiceAddsAndDeletes() throws Exception
 
 }
 /**
+ * Gets an instance of IEntityCache and adds, retrieves and removes 
+ * entities directly from the cache.  
+ * 
+ *  - After adds, cache size must equal number of adds.
+ *  - Adds must be correctly retrieved.
+ *  - Removes must not be found.
+ *  - After removes, cache size must be 0.
  */
 public void testIEntityCacheAddsAndDeletes() throws Exception
 {
@@ -324,6 +362,13 @@ public void testIEntityCacheAddsAndDeletes() throws Exception
 
 }
 /**
+ * Creates an IEntityCache and adds [firstAdded] number of entities.
+ *  - Size of cache must equal number of adds.
+ * Sleeps for 1/2 of (sweep interval + max age), then touches [touched] number 
+ * of entities. Now adds [secondAdded] number of entities and sleeps for
+ * 1/2 of sweep interval. Sweep should remove all firstAdded entities except those 
+ * that were touched.
+ *  - Size of cache must = secondAdded + touched - firstAdded. 
  */
 public void testIEntityCacheSweep() throws Exception
 {
@@ -365,12 +410,19 @@ public void testIEntityCacheSweep() throws Exception
 
     msg = "Sweep should have purged " + (firstAdded - touched) + " entries.";
     print(msg);
-    assertEquals(msg, (firstAdded + secondAdded - touched), c.size());
+    assertEquals(msg, (touched + secondAdded), c.size());
 
     print("***** LEAVING EntityCacheTester.testIEntityCacheSweep() *****");
 
 }
 /**
+ * Gets an INVALIDATING instance of IEntityCache and adds, retrieves and removes 
+ * entities directly from the cache.  
+ * 
+ *  - After adds, cache size must equal number of adds.
+ *  - Adds must be correctly retrieved.
+ *  - Removes must not be found.
+ *  - After removes, cache size must be 0.
  */
 public void testInvalidatingCacheAddsAndDeletes() throws Exception
 {
@@ -413,6 +465,12 @@ public void testInvalidatingCacheAddsAndDeletes() throws Exception
 
 }
 /**
+ * Get 2 INVALIDATING IEntityCaches and add the same entities to each.
+ *  - Size of each cache must = number entities added.
+ * Update some entities from the first and remove other entities from the second,
+ * then sleep for the sweep interval.
+ *  - First cache must have number entities added - number of deletes from second.
+ *  - Second cache must have number entities added - number of deletes - number updates.
  */
 public void testInvalidatingCacheInvalidation() throws Exception
 {
@@ -470,6 +528,9 @@ public void testInvalidatingCacheInvalidation() throws Exception
 
 }
 /**
+ * Adds and deletes invalidations directly via RDBMCachedEntityInvalidationStore.
+ *  - Must be able to retrieve number of invalidations added from the store.
+ *  - After deletions, must retrieve 0 invalidations from the store.
  */
 public void testStoreAddsAndDeletes() throws Exception
 {
@@ -482,7 +543,7 @@ public void testStoreAddsAndDeletes() throws Exception
     msg = "Adding " + numAdds + " invalidations to the store.";
     print(msg);
     for(idx=0; idx<numAdds; idx++)
-        { getStore().add(testEntities[idx]); }
+        { getStore().add(testEntities[idx], 0); }
 
     msg = "Retrieving invalidations from the store.";
     print(msg);
@@ -504,6 +565,8 @@ public void testStoreAddsAndDeletes() throws Exception
 
 }
 /**
+ * Adds invalidations directly to the store in 2 batches.  
+ * - Must be able to correctly findAfter(). 
  */
 public void testStoreBeforeAndAfter() throws Exception
 {
@@ -513,11 +576,12 @@ public void testStoreBeforeAndAfter() throws Exception
     CachedEntityInvalidation[] invalidations = null;
     int numBeforeAdds = 3;
     int numAfterAdds = 2;
+    int cacheID = 0;
 
     msg = "Adding " + numBeforeAdds + " invalidations to the store.";
     print(msg);
     for(idx=0; idx<numBeforeAdds; idx++)
-        { getStore().add(testEntities[idx]); }
+        { getStore().add(testEntities[idx], cacheID); }
 
     msg = "Retrieving invalidations from the store.";
     print(msg);
@@ -531,7 +595,7 @@ public void testStoreBeforeAndAfter() throws Exception
     msg = "Adding " + numAfterAdds + " invalidations to the store.";
     print(msg);
     for(idx=numBeforeAdds; idx<(numAfterAdds + numBeforeAdds); idx++)
-        { getStore().add(testEntities[idx]); }
+        { getStore().add(testEntities[idx], cacheID); }
 
     msg = "Retrieving invalidations from the store.";
     print(msg);
@@ -541,7 +605,7 @@ public void testStoreBeforeAndAfter() throws Exception
 
     msg = "Retrieving invalidations inserted AFTER first batch from the store.";
     print(msg);
-    invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, null);
+    invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, null, null);
 
     assertEquals(msg, invalidations.length, numAfterAdds);
 
@@ -560,6 +624,8 @@ public void testStoreBeforeAndAfter() throws Exception
 
 }
 /**
+ * Add some invalidations to the store and then update some of them.  
+ * - Test findAfter() to retrieve only the updated ones.
  */
 public void testStoreUpdates() throws Exception
 {
@@ -573,7 +639,7 @@ public void testStoreUpdates() throws Exception
     msg = "Adding " + numAdds + " invalidations to the store.";
     print(msg);
     for(idx=0; idx<numAdds; idx++)
-        { getStore().add(testEntities[idx]); }
+        { getStore().add(testEntities[idx], 0); }
 
     msg = "Retrieving invalidations from the store.";
     print(msg);
@@ -587,18 +653,75 @@ public void testStoreUpdates() throws Exception
     msg = "Updating " + numUpdates + " invalidations in the store.";
     print(msg);
     for(idx=0; idx<numUpdates; idx++)
-        { getStore().add(testEntities[idx]); }
+        { getStore().add(testEntities[idx], 0); }
 
     msg = "Retrieving only updated invalidations from the store.";
     print(msg);
     for(idx=0; idx<numUpdates; idx++)
     {
         String key = testEntities[idx].getEntityIdentifier().getKey();
-        invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, key);
+        invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, key, null);
         assertEquals(msg, 1, invalidations.length);
     }
 
     print("***** LEAVING EntityCacheTester.testStoreUpdates() *****");
 
+}
+/*
+ * 
+ */
+public void testFudgeFactor() throws Exception 
+{
+    print("***** ENTERING EntityCacheTester.testFudgeFactor() *****");
+
+    String msg = null;
+    int idx = 0;
+    int numEntitiesToBeAdded = 10;
+    int numEntitiesToBeUpdated = 5;
+    int numEntitiesToBeDeleted = 2;
+
+    IEntityCache cacheA = getInvalidatingEntityCache();
+    ReferenceInvalidatingEntityCache recA = (ReferenceInvalidatingEntityCache) cacheA;
+    IEntityCache cacheB = getInvalidatingEntityCache();
+    ReferenceInvalidatingEntityCache recB = (ReferenceInvalidatingEntityCache) cacheB;
+
+    msg = "Adding " + numEntitiesToBeAdded + " entities to FIRST cache.";
+    print(msg);
+    for(idx=0; idx<numEntitiesToBeAdded; idx++)
+        { cacheA.add(testEntities[idx]); }
+    assertEquals(msg, recA.size(), numEntitiesToBeAdded);
+
+    Thread.sleep(100);
+
+    msg = "Updating " + numEntitiesToBeUpdated + " in first cache.";
+    print(msg);
+    for(idx=0; idx<numEntitiesToBeUpdated; idx++)
+        { cacheA.update( testEntities[idx] ); }
+
+    msg = "Adding " + numEntitiesToBeAdded + " entities to SECOND cache.";
+    print(msg);
+    for(idx=0; idx<numEntitiesToBeAdded; idx++)
+        { cacheB.add(testEntities[idx]); }
+    assertEquals(msg, recB.size(), numEntitiesToBeAdded);
+    
+    msg = "Removing " + numEntitiesToBeDeleted + " from second cache.";
+     print(msg);
+     for(idx=numEntitiesToBeUpdated; idx<numEntitiesToBeUpdated + numEntitiesToBeDeleted; idx++)
+         { cacheB.remove( testEntityKeys[idx] ); }
+   
+    print("Will now sleep for " + (cacheSweepIntervalSecs + 5) + " seconds.");
+    Thread.sleep( (cacheSweepIntervalSecs + 5) * 1000);
+
+    // Check the caches.
+    msg = "Checking second cache for invalidations";
+    print(msg);
+    assertEquals(msg, (numEntitiesToBeAdded - numEntitiesToBeUpdated - numEntitiesToBeDeleted), recB.size());
+    
+    msg = "Checking first cache for invalidations";
+    print(msg);
+    for(idx=numEntitiesToBeUpdated; idx<numEntitiesToBeUpdated + numEntitiesToBeDeleted; idx++)
+        { assertNull(msg, cacheA.get( testEntityKeys[idx] )); }
+
+    print("***** LEAVING EntityCacheTester.testFudgeFactor() *****");
 }
 }
