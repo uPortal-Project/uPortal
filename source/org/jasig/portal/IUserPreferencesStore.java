@@ -33,8 +33,10 @@
  *
  */
 
- package org.jasig.portal;
+package org.jasig.portal;
+
 import java.util.Hashtable;
+import org.w3c.dom.Document;
 
 
 /**
@@ -201,5 +203,9 @@ public interface IUserPreferencesStore {
      */
     public void setThemeStylesheetUserPreferences(int userId,int profileId, ThemeStylesheetUserPreferences ssup);
 
+    /** Get all the skins info in a Document object
+     *
+     */
+    public Document getSkins() throws Exception;
 
 }

@@ -45,10 +45,13 @@ import org.w3c.dom.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
+import org.w3c.dom.Document;
+
 public interface IUserLayoutStore {
   /* UserLayout  */
   public Document getUserLayout(int userId,int profileId) throws Exception;
   public void setUserLayout(int userId,int profileId,Document layoutXML) throws Exception;
+  public Document getSkins() throws Exception;
 
   /* UserPreferences */
   public int getUserBrowserMapping(int userId,String userAgent) throws Exception;

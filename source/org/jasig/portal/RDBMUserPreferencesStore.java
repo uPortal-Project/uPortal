@@ -40,6 +40,7 @@ package  org.jasig.portal;
 
 import  java.util.*;
 import  java.io.*;
+import org.w3c.dom.Document;
 
 
 /**
@@ -55,7 +56,7 @@ public class RDBMUserPreferencesStore
    * put your documentation comment here
    * @param userId
    * @param profile
-   * @return 
+   * @return
    */
   public UserPreferences getUserPreferences (int userId, UserProfile profile) {
     int profileId = profile.getProfileId();
@@ -69,7 +70,7 @@ public class RDBMUserPreferencesStore
    * put your documentation comment here
    * @param userId
    * @param profileId
-   * @return 
+   * @return
    */
   public UserPreferences getUserPreferences (int userId, int profileId) {
     UserPreferences up = null;
@@ -84,7 +85,7 @@ public class RDBMUserPreferencesStore
    * put your documentation comment here
    * @param userId
    * @param userAgent
-   * @return 
+   * @return
    */
   public int getUserBrowserMapping (int userId, String userAgent) {
     try {
@@ -121,7 +122,7 @@ public class RDBMUserPreferencesStore
   /**
    * put your documentation comment here
    * @param userAgent
-   * @return 
+   * @return
    */
   public int getSystemBrowserMapping (String userAgent) {
     return  getUserBrowserMapping(systemUserId, userAgent);
@@ -131,7 +132,7 @@ public class RDBMUserPreferencesStore
    * put your documentation comment here
    * @param userId
    * @param userAgent
-   * @return 
+   * @return
    */
   public UserProfile getUserProfile (int userId, String userAgent) {
     int profileId = getUserBrowserMapping(userId, userAgent);
@@ -143,7 +144,7 @@ public class RDBMUserPreferencesStore
   /**
    * put your documentation comment here
    * @param userAgent
-   * @return 
+   * @return
    */
   public UserProfile getSystemProfile (String userAgent) {
     int profileId = getSystemBrowserMapping(userAgent);
@@ -157,7 +158,7 @@ public class RDBMUserPreferencesStore
   /**
    * put your documentation comment here
    * @param profileId
-   * @return 
+   * @return
    */
   public UserProfile getSystemProfileById (int profileId) {
     UserProfile up = this.getUserProfileById(systemUserId, profileId);
@@ -166,10 +167,25 @@ public class RDBMUserPreferencesStore
   }
 
   /**
+   * Calls the getSkins method in RDBMUserLayoutStore
+   * Can't find anyplace better for the method right now
+   * @return Document object that contains all the info about the skins
+   */
+  public Document getSkins () {
+    Document doc = null;
+    try {
+      doc = GenericPortalBean.getUserLayoutStore().getSkins();
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+    }
+    return  doc;
+  }
+
+  /**
    * put your documentation comment here
    * @param userId
    * @param profileId
-   * @return 
+   * @return
    */
   public UserProfile getUserProfileById (int userId, int profileId) {
     UserProfile upl = null;
@@ -184,7 +200,7 @@ public class RDBMUserPreferencesStore
   /**
    * put your documentation comment here
    * @param userId
-   * @return 
+   * @return
    */
   public Hashtable getUserProfileList (int userId) {
     Hashtable pv = null;
@@ -198,7 +214,7 @@ public class RDBMUserPreferencesStore
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Hashtable getSystemProfileList () {
     Hashtable pl = this.getUserProfileList(0);
@@ -234,7 +250,7 @@ public class RDBMUserPreferencesStore
    * put your documentation comment here
    * @param userId
    * @param profile
-   * @return 
+   * @return
    */
   public UserProfile addUserProfile (int userId, UserProfile profile) {
     try {
@@ -248,7 +264,7 @@ public class RDBMUserPreferencesStore
   /**
    * put your documentation comment here
    * @param profile
-   * @return 
+   * @return
    */
   public UserProfile addSystemProfile (UserProfile profile) {
     return  addUserProfile(0, profile);
@@ -293,7 +309,7 @@ public class RDBMUserPreferencesStore
    * @param userId
    * @param profileId
    * @param stylesheetId
-   * @return 
+   * @return
    */
   public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (int userId, int profileId, int stylesheetId) {
     try {
@@ -309,7 +325,7 @@ public class RDBMUserPreferencesStore
    * @param userId
    * @param profileId
    * @param stylesheetId
-   * @return 
+   * @return
    */
   public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (int userId, int profileId, int stylesheetId) {
     try {
