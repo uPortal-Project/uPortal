@@ -94,8 +94,8 @@ public class UserInstance implements HttpSessionBindingListener {
 
     // To debug structure and/or theme transformations, set these to true
     // and the XML fed to those transformations will be printed to the log.
-    private static final boolean printXMLBeforeStructureTransformation = false;
-    private static final boolean printXMLBeforeThemeTransformation = false;
+    private static final boolean logXMLBeforeStructureTransformation = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".log_xml_before_structure_transformation");
+    private static final boolean logXMLBeforeThemeTransformation = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".log_xml_before_theme_transformation");;
 
     // manages layout and preferences
     UserPreferencesManager uPreferencesManager;
@@ -455,7 +455,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // structure transformation to a log file serializer to a printstream
                         StringWriter dbwr1 = null;
                         OutputFormat outputFormat = null;
-                        if (printXMLBeforeStructureTransformation) {
+                        if (logXMLBeforeStructureTransformation) {
                             dbwr1 = new StringWriter();
                             outputFormat = new OutputFormat();
                             outputFormat.setIndenting(true);
@@ -491,7 +491,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // all channels should be rendering now
 
                         // Debug piece to print out the recorded pre-structure transformation XML
-                        if (printXMLBeforeStructureTransformation) {
+                        if (logXMLBeforeStructureTransformation) {
                             LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
                         }
 
@@ -517,7 +517,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // This is a debug statement that will print out XML incoming to the
                         // theme transformation to a log file serializer to a printstream
                         StringWriter dbwr2 = null;
-                        if (printXMLBeforeThemeTransformation) {
+                        if (logXMLBeforeThemeTransformation) {
                             dbwr2 = new StringWriter();
                             XMLSerializer dbser2 = new XMLSerializer(dbwr2, outputFormat);
                             SAX2DuplicatingFilterImpl dupl2 = new SAX2DuplicatingFilterImpl(tsth, dbser2);
@@ -546,7 +546,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         crb.clearBuffer();
 
                         // Debug piece to print out the recorded pre-theme transformation XML
-                        if (printXMLBeforeThemeTransformation) {
+                        if (logXMLBeforeThemeTransformation) {
                             LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the theme transformation :\n\n" + dbwr2.toString() + "\n\n");
                         }
 
