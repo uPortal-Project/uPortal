@@ -160,10 +160,15 @@
                        Version: (depends on Xalan version)
                        URL: http://oss.software.ibm.com/developerworks/projects/bsf/
 
-  tidy.jar             Turns HTML into well formed XHTML.
+  tidy.jar             Turns HTML into well formed XHTML. There is a problem with
+                       the current release that shows up when uPortal is deployed
+                       in certain web containers including Tomcat 4.0.1.
+                       For information, see http://port.mun.ca/port/cw/#depend or
+                       download tidy.jar directly from http://port.mun.ca/port/cw/tidy.jar
                        Used by the CWebProxy channel.
-                       Version: 04aug2000r6
+                       Version: 04aug2000r6 or fixed version    <-- (see above)
                        URL: http://lempinen.net/sami/jtidy/
+                            http://port.mun.ca/port/cw/#depend  <-- (see above)
 
   tyrex.jar            An in-memory JNDI implementation.
                        Version: 0.9.7.0
