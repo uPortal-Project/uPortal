@@ -42,54 +42,26 @@ import java.security.SecureRandom;
  * An implementation of DEC UUID recommendation.
  */
 
-public class UUID {
+public class UUID extends PortalID {
     private static SecureRandom sr=new SecureRandom();
-    private byte[] id;
-    private boolean dce=false;
-
-    private static final char[] hexChars = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
     public UUID(byte[] id) {
-	this.id=id;
+	super(id);
     }
 
-    /*
-     * Constructor allows to specify if 
-     * current UUID follows DCE recommendation
-     */
-    public UUID(byte[] id,boolean dce) {
-	this(id);
-	this.dce=dce;
-    }
-
-    public int getLength() {
-	if(id==null) {
-	    return -1;
-	} else {
-	    return id.length;
-	}
+    public UUID(String id) {
+	// rip out the '-' chars
+	String clean=id.substring(0,8)+id.substring(9,13)+id.substring(14,18)+id.substring(19,23)+id.substring(24,36);
+	this.id=hexStringToByteArr(clean);
     }
 
     public String toString() {
-	return this.byteArrToHexString(id);
-    }
-
-
-    // DCE UUID spec-based output
-    public String toDCEString() {
-	if(!dce) return null;
-
 	String time_low=byteArrToHexString(id,0,4);
 	String time_mid=byteArrToHexString(id,4,2);
 	String version_time_high=byteArrToHexString(id,6,2);
 	String variant_clock_seq=byteArrToHexString(id,8,2);
 	String node=byteArrToHexString(id,10,6);
 	return new String(time_low+"-"+time_mid+"-"+version_time_high+"-"+variant_clock_seq+"-"+node);
-    }
-
-
-    public byte[] getBytes() {
-	return id;
     }
 
     public static UUID generateUUID() {
@@ -114,29 +86,22 @@ public class UUID {
 	for (int i = 8; i < 16; i++) {
 	    leastSig = (leastSig << 8) | (bytes[i] & 0xff);
 	}
-	return new UUID(bytes,true);
+	return new UUID(bytes);
     };    
-
-    private static String byteArrToHexString(byte bytes[]) {
-	return byteArrToHexString(bytes,0,bytes.length);
-     }
-	
-    private static String byteArrToHexString(byte bytes[],int offset,int count) {
- 	char[] str=new char[count*2];
-	int end=offset+count;
-	if(end>bytes.length) end=bytes.length;
- 	for (int i=offset; i<end; i++) {
- 	    str[(i-offset)*2] = hexChars[(bytes[i] >> 4) & 0x0f];
- 	    str[(i-offset)*2+1] = hexChars[bytes[i] & 0x0f];
- 	}
- 	return new String(str);
-    }
 
     public static void main(String args[]) {
 	int times=Integer.parseInt(args[0]);
+	
+	/*	Byte.parseByte("10",10);
+	System.out.println(".");
+	Byte.parseByte("9f",16);
+	System.out.println("."); */
+	
 	for(int i=0;i<times;i++) {
 	    UUID id1=UUID.generateUUID();
-	    System.out.println(id1.toDCEString());
+	    System.out.println(id1.toString());
+	    UUID id2=new UUID(id1.toString());
+	    System.out.println(id2.toString());
 	}
     }
 }
