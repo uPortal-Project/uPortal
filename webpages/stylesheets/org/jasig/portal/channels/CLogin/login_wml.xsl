@@ -53,7 +53,7 @@ $Revision$
   </xsl:template>
   
   <xsl:template name="logged-in">
-    <do type="accept" label="Yes"><go href="logout.jsp"/></do>  
+    <do type="accept" label="Yes"><go href="Logout"/></do>  
     <do type="options" label="No"><prev/></do>  
     <p>Do you really want to logout?</p>
   </xsl:template>
