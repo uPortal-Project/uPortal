@@ -45,54 +45,173 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
+import java.util.*;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.security.ISecurityContext;
 
 /**
  * Simple servlet to handle user logout. When a user
  * logs out, their session gets invalidated and they
  * are returned to the guest page.
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Don Fracapane, df7@columbia.edu
+ * Added feature where a logout redirect string can be read from the security
+ * properties file. Also removed static initializers to add maintenance and debugging.
  * @version $Revision$
  */
 public class LogoutServlet extends HttpServlet {
+   private static boolean INITIALIZED = false;
+   private static String DEFAULT_REDIRECT;
+   private static HashMap REDIRECT_MAP;
 
-    private static final String redirectString;
-
-    static {
-      String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
-      try {
-          upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
-      } catch(PortalException pe) { 
-          LogService.log(LogService.ERROR,"LogoutServlet::static "+pe);
+   /**
+    * Initialize the LogoutServlet
+    * @throws ServletException
+    */
+   public void init () {
+      if (!INITIALIZED) {
+         String upFile = UPFileSpec.RENDER_URL_ELEMENT + UPFileSpec.PORTAL_URL_SEPARATOR
+               + UserInstance.USER_LAYOUT_ROOT_NODE + UPFileSpec.PORTAL_URL_SEPARATOR
+               + UPFileSpec.PORTAL_URL_SUFFIX;
+         HashMap rdHash = new HashMap(1);
+         try {
+            upFile = UPFileSpec.buildUPFile(null, UPFileSpec.RENDER_METHOD, UserInstance.USER_LAYOUT_ROOT_NODE,
+                  null, null);
+            // We retrieve the redirect strings for each context
+            // from the security properties file.
+            String key;
+            Properties props = ResourceLoader.getResourceAsProperties(AuthenticationServlet.class,
+                  "/properties/security.properties");
+            Enumeration propNames = props.propertyNames();
+            while (propNames.hasMoreElements()) {
+               String propName = (String)propNames.nextElement();
+               String propValue = props.getProperty(propName);
+               if (propName.startsWith("logoutRedirect.")) {
+                  key = propName.substring(15);
+                  key = (key.startsWith("root.") ? key.substring(5) : key);
+                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                     " Redirect key = " + key);
+                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                     " Redirect value = " + propValue);
+                  rdHash.put(key, propValue);
+               }
+            }
+         } catch (PortalException pe) {
+            LogService.log(LogService.ERROR, "LogoutServlet::static " + pe);
+            LogService.log(LogService.ERROR, pe);
+         } catch (IOException ioe) {
+            LogService.log(LogService.ERROR, "AuthenticationServlet::static " + ioe);
+            LogService.log(LogService.ERROR, ioe);
+         }
+         REDIRECT_MAP = rdHash;
+         DEFAULT_REDIRECT = upFile;
+         INITIALIZED = true;
       }
-      redirectString=upFile;
-    }
+   }
 
   /**
    * Process the incoming request and response.
-   * @param req, the servlet request object
-   * @param res, the servlet response object
+   * @param request HttpServletRequest object
+   * @param response HttpServletResponse object
    * @throws ServletException
    * @throws IOException
    */
-  public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet (HttpServletRequest request, HttpServletResponse response)
+         throws ServletException, IOException {
+    init();
+    String redirect = getRedirectionUrl(request);
     HttpSession session = request.getSession(false);
 
     // Record that the user is requesting to log out
     try {
       IPerson person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      StatsRecorder.recordLogout(person);    
+      StatsRecorder.recordLogout(person);
     } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
     }
-    
+
     // Clear out the existing session for the user
     if (session != null)
       session.invalidate();
-      
+
     // Send the user back to the guest page
-    response.sendRedirect(request.getContextPath() + '/' + redirectString);
+    //response.sendRedirect(request.getContextPath() + '/' + DEFAULT_REDIRECT);
+    response.sendRedirect(redirect);
   }
+
+  /**
+   * The redirect is determined based upon the context that passed authentication
+   * The LogoutServlet looks at each authenticated context and determines if a
+   * redirect exists for that context in the REDIRECT_MAP variable (loaded from
+   * security.properties file). The redirect is returned for the first authenticated
+   * context that has an associated redirect string. If such a context is not found,
+   * we use the default DEFAULT_REDIRECT that was originally setup.
+   *
+   * NOTE:
+   * This will work or not work based upon the logic in the root context. At this time,
+   * all known security contexts extend the ChainingSecurityContext class. If a context
+   * has the variable stopWhenAuthenticated set to false, the user may be logged into
+   * multiple security contexts. If this is the case, the logout process currently
+   * implemented does not accommodate multiple logouts. As a reference implemention,
+   * the current implementation assumes only one security context has been authenticated.
+   * Modifications to perform multiple logouts should be considered when a concrete
+   * need arises and can be handled by this class or through a change in the
+   * ISecurityConext API where a context knows how to perform it's own logout.
+   *
+   * @param request
+   * @return String representing the redirection URL
+   */
+
+   private String getRedirectionUrl (HttpServletRequest request) {
+      String redirect = null;
+      String defaultRedirect = request.getContextPath() + '/' + DEFAULT_REDIRECT;
+      IPerson person = null;
+      if (REDIRECT_MAP == null) {
+         return  defaultRedirect;
+      }
+      try {
+         // Get the person object associated with the request
+         person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+         // Retrieve the security context for the user
+         ISecurityContext securityContext = person.getSecurityContext();
+         if (securityContext.isAuthenticated()) {
+            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+               " Looking for redirect string for the root context");
+            redirect = (String)REDIRECT_MAP.get("root");
+            if (redirect != null && !redirect.equals("")) {
+               return redirect;
+            }
+         }
+         Enumeration subCtxNames = securityContext.getSubContextNames();
+         while (subCtxNames.hasMoreElements()) {
+            String subCtxName = (String)subCtxNames.nextElement();
+            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl() " +
+               " subCtxName = " + subCtxName);
+            // strip off "root." part of name
+            ISecurityContext sc = securityContext.getSubContext(subCtxName);
+            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+               " subCtxName isAuth = " + sc.isAuthenticated());
+            if (sc.isAuthenticated()) {
+               LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+                  " Looking for redirect string for subCtxName = " + subCtxName);
+               redirect = (String)REDIRECT_MAP.get(subCtxName);
+               if (redirect != null && !redirect.equals("")) {
+                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+                     " subCtxName redirect = " + redirect);
+                  break;
+               }
+            }
+         }
+      } catch (Exception e) {
+         // Log the exception
+         LogService.log(LogService.ERROR, "LogoutServlet::getRedirectionUrl() Error: " + e);
+         LogService.log(LogService.ERROR, e);
+      }
+      if (redirect == null) {
+         redirect = defaultRedirect;
+      }
+      LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+         " redirectionURL = " + redirect);
+      return  redirect;
+   }
 }
-
-
-
