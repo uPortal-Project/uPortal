@@ -82,5 +82,11 @@ public class ServletDefinitionListImpl implements ServletDefinitionList, Servlet
     public void remove(ServletDefinition servletDefinition) {
         servletDefinitions.remove(servletDefinition.getServletName());
     }
+    
+    // Additional methods
+    
+    public void add(ServletDefinition servletDefinition) {
+        servletDefinitions.put(servletDefinition.getServletName(), servletDefinition);
+    }
 
 }
