@@ -183,7 +183,10 @@ public class StandaloneChannelRenderer
     private ChannelRuntimeData getRuntimeData(HttpServletRequest req) {
         // construct runtime data
         this.binfo=new BrowserInfo(req);
-        this.lm=new LocaleManager(req);
+        String acceptLanguage = req.getHeader("Accept-Language");
+        String requestLocalesString = req.getParameter("locale");
+        this.lm=new LocaleManager(this.staticData.getPerson(), acceptLanguage);
+        this.lm.setSessionLocales(LocaleManager.parseLocales(requestLocalesString));
 
         Hashtable targetParams = new Hashtable();
         UPFileSpec upfs=new UPFileSpec(req);

@@ -40,11 +40,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -65,9 +62,11 @@ public class LocaleManager  {
     private Locale[] userLocales;
 
     /**
-     * Constructor.
+     * Constructor that associates a locale manager with a user.
+     * @param person the user
      */
     public LocaleManager(IPerson person) {
+        System.out.println("Making new LocaleManager for user: " + person.getID() + " " + new java.util.Date());
         this.person = person;
         if (localeAware) {
             jvmLocale = Locale.getDefault();
@@ -79,25 +78,19 @@ public class LocaleManager  {
             }
         }
     }
-
+    
     /**
-     * Constructor which uses servlet request to determine locale.
-     * @param request
+     * Constructor that sets up locales according to
+     * the <code>Accept-Language</code> request header
+     * from a user's browser.
+     * @param person the user
+     * @param acceptLanguage the Accept-Language request header from a user's browser
      */
-    public LocaleManager(HttpServletRequest request) {
-        this((IPerson)request.getSession().getAttribute(IPersonManager.PERSON_SESSION_KEY));
-        
-        // Set user-preferred languages from accept-language http header
-        setLocalesFromBrowserSetting(request);
-        
-        // set the current locale from locale session parameter
-        setLocaleFromSessionParameter(request);
-    
-        if (isLocaleAware()) {
-            LogService.log(LogService.INFO, "LocaleManager - yes, locale aware!");
-        }  
+    public LocaleManager(IPerson person, String acceptLanguage) {
+        this(person);
+        this.browserLocales = parseLocales(acceptLanguage);
     }
-    
+
     // Getters
     public boolean isLocaleAware() { return localeAware; }
     public Locale getJvmLocale() { return jvmLocale; }
@@ -112,17 +105,6 @@ public class LocaleManager  {
     public void setBrowserLocales(Locale[] browserLocales) { this.browserLocales = browserLocales; }
     public void setUserLocales(Locale[] userLocales) { this.userLocales = userLocales; }
     public void setSessionLocales(Locale[] sessionLocales) { this.sessionLocales = sessionLocales; }
-
-    public void setLocaleFromSessionParameter(HttpServletRequest request) {
-        String locale = request.getParameter("locale");
-        if (locale != null) {
-            sessionLocales = parseLocales(locale);
-        }  else {
-            // the same locale 
-            sessionLocales = parseLocales((String)request.getSession().getAttribute("locale"));
-        }        
-        LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: sessionLocales = " + sessionLocales);
-    }
     
     /**
      * Read and parse portal_locales from portal.properties.
@@ -134,6 +116,11 @@ public class LocaleManager  {
         return parseLocales(portalLocalesString);
     }    
 
+    /**
+     * This needs to be removed as soon as DbLoader is modified to
+     * depend on a parameter rather than the LocaleManager.localeForAdmin
+     * @return the admin locale
+     */
     public Locale getLocaleForAdmin() {
         if (localeForAdmin == null) {
             String admin_locale = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.admin_locale");
@@ -142,6 +129,12 @@ public class LocaleManager  {
         return localeForAdmin;
     }
 
+    /**
+     * Produces a sorted list of locales according to locale preferences
+     * obtained from several places.  The following priority is given:
+     * session, user, browser, portal, and jvm.
+     * @return the sorted list of locales
+     */
     public Locale[] getLocales() {
         // Need logic to construct ordered locale list.
         // Consider creating a separate ILocaleResolver 
@@ -156,7 +149,6 @@ public class LocaleManager  {
         return (Locale[])locales.toArray(new Locale[0]);
     }
     
-        
     /**
      * Add locales to the locale list if they aren't in there already
      */
@@ -169,72 +161,8 @@ public class LocaleManager  {
         }
     }
     
-    public Locale getLocale() {
-        Locale[] locales=getLocales();         
-        if (locales == null)  return null;        
-        LogService.log(LogService.DEBUG, "LocaleManager.getLocale() - the current locale is " + locales[0]);       
-        return locales[0];
-    }
-    
-    public String getLocale(String loc) {
-        Locale[] locales=getLocales(); 
-        if (locales == null)  return null;
-        LogService.log(LogService.DEBUG, "LocaleManager.getLocale() - the current locale is " + locales[0]);
-        return locales[0].toString();    
-    }
-    
-    public Locale[] getLocales(int chanId) {
-        return getLocales();
-    }
-
-    public Locale getLocale(int chanId, String requestedLocale) {
-        return getLocale();  // for the time being by Shoji
-    }
-
-    public void setLocalesFromBrowserSetting(HttpServletRequest request) {
-    
-    String language = request.getHeader("Accept-Language");
-    
-        if (language != null) {
-            StringTokenizer  tokens = new StringTokenizer(language, ",");
-            Locale[] locales = new Locale[tokens.countTokens()];
-            int index;
-    
-            LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: Accept-Language = " + language);
-    
-            for (int i=0; tokens.hasMoreTokens(); i++) {
-                String lang = tokens.nextToken();
-                if ((index = lang.indexOf(';')) != -1) {
-                    lang = lang.substring(0, index);
-                }
-                lang = lang.trim();
-                locales[i] = parseLocale(lang);
-                LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: localesFromBrowserSetting #" + i + " = " + locales[i]);
-            }
-            browserLocales = locales;
-        }  else {
-            browserLocales = null;
-        }
-    }
-
-    public boolean isLocaleChanged(HttpServletRequest req) {
-    
-        Locale previous_locale=getLocale();
-        
-        setLocaleFromSessionParameter(req);
-        setLocalesFromBrowserSetting(req);
-        
-        Locale current_locale=getLocale();
-        
-        LogService.log(LogService.DEBUG, "LocaleManager.isLocaleChanged: previous=" + previous_locale + ", current_locale=" + current_locale);
-        if (previous_locale != current_locale) {
-            return false;
-        }
-        return false;
-    }
-    
     /**
-     * Helper method to produce a java.util.Locale array from
+     * Helper method to produce a <code>java.util.Locale</code> array from
      * a comma-delimited locale string list, e.g. "en_US,ja_JP"
      * @param localeStringList the locales to parse
      * @return an array of locales representing the locale string list
@@ -288,8 +216,71 @@ public class LocaleManager  {
         return locale;
     }
     
-    public void updateUserLocales(Locale[] userLocales) throws Exception {
+    /**
+     * Constructs a comma-delimited list of locales.
+     * This string could be parsed back into a Locale
+     * array with parseLocales(String localeStringList).
+     * @param locales the list of locales
+     * @return a string representing the list of locales
+     */
+    public String toString(Locale[] locales) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < locales.length; i++) {
+            Locale locale = locales[i];
+            sb.append(locale.toString());
+            if (i < locales.length - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Stores the user locales persistantly.
+     * @param userLocales the user locales preference
+     * @throws Exception
+     */
+    public void persistUserLocales(Locale[] userLocales) throws Exception {
         setUserLocales(userLocales);
         LocaleStoreFactory.getLocaleStoreImpl().updateUserLocales(person, userLocales);
     }
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("LocaleManager's locales").append("\n");
+        sb.append("-----------------------").append("\n");
+        sb.append("Session locales: ");
+        if (sessionLocales != null) {
+            sb.append(toString(sessionLocales));
+        }
+        sb.append("\n");
+        sb.append("User locales: ");
+        if (userLocales != null) {
+            sb.append(toString(userLocales));
+        }
+        sb.append("\n");
+        sb.append("Browser locales: ");
+        if (browserLocales != null) {
+            sb.append(toString(browserLocales));
+        }
+        sb.append("\n");
+        sb.append("Portal locales: ");
+        if (portalLocales != null) {
+            sb.append(toString(portalLocales));
+        }
+        sb.append("\n");
+        sb.append("JVM locale: ");
+        if (jvmLocale != null) {
+            sb.append(jvmLocale.toString());
+        }
+        sb.append("\n");
+        sb.append("Sorted locales: ");
+        Locale[] sortedLocales = getLocales();
+        if (sortedLocales != null) {
+            sb.append(toString(sortedLocales));
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
 }

@@ -80,7 +80,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
         if (localeString != null) {
             userLocale = LocaleManager.parseLocale(localeString);
             try {
-                lm.updateUserLocales(new Locale[] { userLocale });
+                lm.persistUserLocales(new Locale[] { userLocale });
                 upm.getUserLayoutManager().loadUserLayout();
             } catch (Exception e) {
                 throw new PortalException(e);

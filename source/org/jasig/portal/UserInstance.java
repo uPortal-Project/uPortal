@@ -160,18 +160,18 @@ public class UserInstance implements HttpSessionBindingListener {
                 throw new PortalException(e);
             }
         }
-	// instantiate locale manager (uPortal i18n)
-	if (localeManager == null) {
-	    LogService.log(LogService.DEBUG, "UserInstance::writeContent(): new LocaleManager(req) called.");
-	    localeManager = new LocaleManager(req);
-	}
+        
+        // instantiate locale manager (uPortal i18n)
+        if (localeManager == null) {
+            localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));
+        }
 
-	if (uPreferencesManager==null || uPreferencesManager.isUserAgentUnmapped() || localeManager.isLocaleChanged(req)) {
-	    uPreferencesManager = new UserPreferencesManager(req, this.getPerson(),localeManager);
-	} else {
-	    // p_browserMapper is no longer needed
-	    p_browserMapper = null;
-	}
+        if (uPreferencesManager == null || uPreferencesManager.isUserAgentUnmapped()) {
+            uPreferencesManager = new UserPreferencesManager(req, this.getPerson(), localeManager);
+        } else {
+            // p_browserMapper is no longer needed
+            p_browserMapper = null;
+        }
 
         if (uPreferencesManager.isUserAgentUnmapped()) {
             // unmapped browser
@@ -258,12 +258,9 @@ public class UserInstance implements HttpSessionBindingListener {
                         rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
 
-		    // set up the locale manager for i18n
-		    // locale setting affects both user layout and channel
-		    localeManager.setLocaleFromSessionParameter(req);
-		    localeManager.setLocalesFromBrowserSetting(req);
-		    channelManager.setLocaleManager(localeManager);
-
+                    // give channels the current locale manager
+                    channelManager.setLocaleManager(localeManager);
+            
                     // see if a new root target has been specified
                     String newRootNodeId = req.getParameter("uP_detach_target");
 
@@ -487,7 +484,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
                         }
-                        // sst.setParameter("locale", localeManager.getLocaleFromSessSessionParameter());
+
                         // all the parameters are set up, fire up structure transformation
 
                         // filter to fill in channel/folder attributes for the "structure" transformation.

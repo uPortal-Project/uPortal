@@ -1786,7 +1786,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               // uPortal i18n 
               int name_index, value_index;
               if (localeAware) {
-                  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocale(rs.getString(10)));
+                  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocales()[0].toString());
                   name_index=11;
                   value_index=12;
               }  else {
