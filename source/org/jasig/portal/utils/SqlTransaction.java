@@ -30,7 +30,7 @@ public static void begin(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.instance().log(LogService.ERROR, sqle);
+		LogService.log(LogService.ERROR, sqle);
 		throw sqle;
 	}
 }
@@ -48,7 +48,7 @@ public static void commit(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.instance().log(LogService.ERROR, sqle);
+		LogService.log(LogService.ERROR, sqle);
 		throw sqle;
 	}
 }
@@ -60,7 +60,7 @@ protected static void logNoTransactionWarning()
 	String msg = "You are running the portal on a database that does not support transactions.  " +
 				 "This is not a supported production environment for uPortal.  " +
 				 "Sooner or later, your database will become corrupt.";
-	LogService.instance().log(LogService.WARN, msg);
+	LogService.log(LogService.WARN, msg);
 }
 /**
  * @param conn java.sql.Connection
@@ -75,7 +75,7 @@ public static void rollback(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.instance().log(LogService.ERROR, sqle);
+		LogService.log(LogService.ERROR, sqle);
 		throw sqle;
 	}
 }
@@ -92,7 +92,7 @@ public static void setAutoCommit(Connection conn, boolean newValue) throws java.
 	}
 	catch (SQLException sqle)
 	{
-		LogService.instance().log(LogService.ERROR, sqle);
+		LogService.log(LogService.ERROR, sqle);
 		throw sqle;
 	}
 }

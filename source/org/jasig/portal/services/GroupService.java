@@ -291,7 +291,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       if ( factoryName == null )
       {
           eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-          LogService.instance().log(LogService.ERROR, eMsg);
+          LogService.log(LogService.ERROR, eMsg);
           throw new GroupsException(eMsg);
       }
 
@@ -304,7 +304,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       catch (Exception e)
       {
           eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-          LogService.instance().log(LogService.ERROR, eMsg);
+          LogService.log(LogService.ERROR, eMsg);
           throw new GroupsException(eMsg);
       }
     }
@@ -322,7 +322,7 @@ private void initializeCompositeService() throws GroupsException
         if ( factoryName == null )
         {
             eMsg = "GroupService.initialize(): No entry for CompositeServiceFactory in configuration";
-            LogService.instance().log(LogService.ERROR, eMsg);
+            LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
 
@@ -333,7 +333,7 @@ private void initializeCompositeService() throws GroupsException
     catch (Exception e)
     {
         eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new GroupsException(eMsg);
     }
 }

@@ -88,7 +88,7 @@ public class PersonDirPropertyFinder
             try {
                 ht = pd.getUserDirectoryInformation(entityID.getKey());
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
             cache.put(entityID.getKey(), ht);
         }

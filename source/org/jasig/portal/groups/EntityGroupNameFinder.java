@@ -59,7 +59,7 @@ public class EntityGroupNameFinder
         try {
             type = Class.forName("org.jasig.portal.groups.IEntityGroup");
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 

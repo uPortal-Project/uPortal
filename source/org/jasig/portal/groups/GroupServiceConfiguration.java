@@ -145,14 +145,14 @@ public List getServiceDescriptors()
  */
 protected void debugMessage(String msg)
 {
-    LogService.instance().log(LogService.DEBUG, "Group services: " + msg);
+    LogService.log(LogService.DEBUG, "Group services: " + msg);
 }
 /**
  *
  */
 protected void infoMessage(String msg)
 {
-    LogService.instance().log(LogService.INFO, "Group services: " + msg);
+    LogService.log(LogService.INFO, "Group services: " + msg);
 }
 /**
  *

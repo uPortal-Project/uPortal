@@ -151,7 +151,7 @@ throws GroupsException
             }
             catch (LockingException le)
             {
-                LogService.instance().log(LogService.ERROR,
+                LogService.log(LogService.ERROR,
                     "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
                     "Problem unlocking parent group: " + le.getMessage());
             }

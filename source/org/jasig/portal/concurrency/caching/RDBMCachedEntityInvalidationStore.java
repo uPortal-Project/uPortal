@@ -119,7 +119,7 @@ public void deleteAll() throws CachingException
     try
     {
         String sql = "DELETE FROM " + ENTITY_INVALIDATION_TABLE;
-        LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
+        LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -127,7 +127,7 @@ public void deleteAll() throws CachingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " rows.";
-            LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
+            LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -321,7 +321,7 @@ throws SQLException, CachingException
             ps.setString(2, key);            // entity key
             ps.setTimestamp(3, ts);          // invalidation time
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -329,7 +329,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem adding " + ent;
-                LogService.instance().log (LogService.ERROR, errString);
+                LogService.log(LogService.ERROR, errString);
                 throw new CachingException(errString);
             }
         }
@@ -338,7 +338,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }
@@ -362,11 +362,11 @@ throws CachingException, SQLException
         {
             ps.setTimestamp(1, ts);
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + ps + " (" + ts + ")");
 
             int rc = ps.executeUpdate();
-            LogService.instance().log(LogService.DEBUG, "Rows deleted: " + rc);
+            LogService.log(LogService.DEBUG, "Rows deleted: " + rc);
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -374,7 +374,7 @@ throws CachingException, SQLException
 
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }
@@ -390,7 +390,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     ResultSet rs = null;
     List entities = new ArrayList();
 
-    LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
+    LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
 
     try
     {
@@ -411,7 +411,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     }
     catch (SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw new CachingException("Problem retrieving Invalid Entities " + sqle.getMessage());
     }
 
@@ -439,7 +439,7 @@ throws SQLException, CachingException
             ps.setInt(2, typeID.intValue());  // entity type
             ps.setString(3, key);             // entity key
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
                                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -447,7 +447,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem updating " + ent;
-                LogService.instance().log (LogService.ERROR, errString);
+                LogService.log(LogService.ERROR, errString);
                 throw new CachingException(errString);
             }
         }
@@ -456,7 +456,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }

@@ -309,7 +309,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.ERROR, "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
+        LogService.log(LogService.ERROR, "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
       }
     }
 
@@ -326,7 +326,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
      ChannelState state = (ChannelState)stateTable.get(uid);
      if (state == null)
-       LogService.instance().log(LogService.ERROR,"CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+       LogService.log(LogService.ERROR,"CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
      else
      {
        state.runtimeData = rd;
@@ -428,7 +428,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                 state.passThrough.equalsIgnoreCase("application") ||
                 rd.getParameter("cw_inChannelLink") != null ) )
            {
-             //LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
+             //LogService.log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
 
              StringBuffer newXML = new StringBuffer();
              String appendchar = "";
@@ -457,7 +457,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                            if (pVal != null)
                              newXML.append(URLEncoder.encode(pVal));
 			 } else {
-			   LogService.instance().log(LogService.INFO,
+			   LogService.log(LogService.INFO,
 			     "CWebProxy: request to pass " + pName + " denied.");
 			 }
                        }
@@ -510,7 +510,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                 }
                 state.reqParameters = null;
              }
-             //LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
+             //LogService.log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
           }
        }
        state.key = state.fullxmlUri;
@@ -530,7 +530,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     ChannelState state = (ChannelState)stateTable.get(uid);
     if (state == null)
-       LogService.instance().log(LogService.ERROR,"CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+       LogService.log(LogService.ERROR,"CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     else {
       int evnum = ev.getEventNumber();
 
@@ -571,7 +571,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      LogService.instance().log(LogService.ERROR,"CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -584,7 +584,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     ChannelState state=(ChannelState)stateTable.get(uid);
     if (state == null)
-      LogService.instance().log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     else
       {
       Document xml = null;
@@ -780,7 +780,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             }
             catch (Exception e)
             {
-              LogService.instance().log(LogService.ERROR, "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+              LogService.log(LogService.ERROR, "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
             }
           }
 
@@ -865,7 +865,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
       return null;
     }
 
@@ -906,7 +906,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     sbKey.append("person:").append(state.person);
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));
-    //LogService.instance().log(LogService.DEBUG,"CWebProxy:generateKey("
+    //LogService.log(LogService.DEBUG,"CWebProxy:generateKey("
     //		+ uid + ") : cachekey=\"" + sbKey.toString() + "\"");
     return k;
   }
@@ -920,7 +920,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
       return false;
     }
     else
@@ -954,7 +954,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       state.connHolder= getConnection(state.fullxmlUri, state);
     }
     catch (Exception e){
-      LogService.instance().log(LogService.ERROR,e);
+      LogService.log(LogService.ERROR,e);
     }
     Map rhdrs = new HashMap();
     int i = 0;

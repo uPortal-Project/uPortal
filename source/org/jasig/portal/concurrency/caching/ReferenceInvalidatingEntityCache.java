@@ -229,7 +229,7 @@ public void removeInvalidEntities()
     }
     catch (CachingException ce)
     {
-        LogService.instance().log(LogService.ERROR,
+        LogService.log(LogService.ERROR,
             "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ce.getMessage());
     }
 

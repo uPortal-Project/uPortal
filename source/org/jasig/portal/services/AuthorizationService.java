@@ -71,17 +71,17 @@ public class AuthorizationService
 		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
+        LogService.log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
       }
       else {
         try {
           m_Factory = (IAuthorizationServiceFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          LogService.instance().log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          LogService.log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
         }
       }
     } catch (IOException e) {
-      LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
+      LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
     }
   }
 

@@ -93,9 +93,9 @@ public class RDBMPropertyStore
             rs.close();
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "RDBMPropertyStore.getPropertyNames: "
+            LogService.log(LogService.ERROR, "RDBMPropertyStore.getPropertyNames: "
                     + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         } finally {
             this.releaseConnection(conn);
         }
@@ -120,9 +120,9 @@ public class RDBMPropertyStore
             rs.close();
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "RDBMPropertyStore.getProperty "
+            LogService.log(LogService.ERROR, "RDBMPropertyStore.getProperty "
                     + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         } finally {
             this.releaseConnection(conn);
         }
@@ -146,9 +146,9 @@ public class RDBMPropertyStore
             //System.out.println(i+" "+ps.toString());
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "RDBMPropertyStore.storeProperty "
+            LogService.log(LogService.ERROR, "RDBMPropertyStore.storeProperty "
                     + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         } finally {
             this.releaseConnection(conn);
         }
@@ -168,9 +168,9 @@ public class RDBMPropertyStore
             //System.out.println(i+" "+ps.toString());
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "RDBMPropertyStore.unStoreProperty "
+            LogService.log(LogService.ERROR, "RDBMPropertyStore.unStoreProperty "
                     + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         } finally {
             this.releaseConnection(conn);
         }

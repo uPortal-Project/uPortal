@@ -66,8 +66,8 @@ public class ChannelRegistryPropertyFinder
         try {
             chan = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder - static:");
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder - static:");
+            LogService.log(LogService.ERROR, e);
         }
     }
 
@@ -101,8 +101,8 @@ public class ChannelRegistryPropertyFinder
                   r = String.valueOf(cd.getTimeout()); 
                 }
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
+                LogService.log(LogService.ERROR, e);
             }
         }
         return  r;

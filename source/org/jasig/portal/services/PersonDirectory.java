@@ -232,7 +232,7 @@ public class PersonDirectory {
               }
             }
           } else {
-      	    LogService.instance().log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
+      	    LogService.log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         for (int ii=0;ii<pdi.attributealiases.length;ii++) {
@@ -244,7 +244,7 @@ public class PersonDirectory {
      }
     catch(Exception e)
     {
-      LogService.instance().log(LogService.WARN,"PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.");
+      LogService.log(LogService.WARN,"PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.");
       return false;
     }
     return true;
@@ -398,7 +398,7 @@ public class PersonDirectory {
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
           RDBMServices rdbmServices = new RDBMServices();
           conn = rdbmServices.getConnection(pdi.ResRefName);
-          LogService.instance().log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
+          LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
             " for person attributes of "+username);
         }
 
@@ -415,13 +415,13 @@ public class PersonDirectory {
             } catch (Exception driverproblem) {
               pdi.disabled=true;
               pdi.logged=true;
-              LogService.instance().log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
+              LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
               return;
             }
           }
         }
       conn = DriverManager.getConnection(pdi.url,pdi.logonid,pdi.logonpassword);
-      LogService.instance().log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.url+
+      LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.url+
         " for person attributes of "+username);
       }
 

@@ -179,7 +179,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId;
         rs = stmt.executeQuery(subSelectString);
         try {
@@ -194,7 +194,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
        if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -206,7 +206,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
           // Make sure the next struct id is set in case the user adds a channel
           sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           int nextStructId;
           rs = stmt.executeQuery(sQuery);
           try {
@@ -216,11 +216,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             rs.close();
           }
           sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
           sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
           // modifed INSERT INTO SELECT statement for MySQL support
@@ -255,7 +255,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         int firstStructId = -1;
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
@@ -280,7 +280,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
         List chanIds = Collections.synchronizedList(new ArrayList());
-        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+        //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
         StringBuffer structParms = new StringBuffer();
         rs = stmt.executeQuery(sql);
         try {
@@ -516,7 +516,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
           sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
           rs = stmt.executeQuery(sql);
           try {
             if (rs.next()) {
@@ -550,7 +550,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         */
 
           long stopTime = System.currentTimeMillis();
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
           //doc.appendChild(root);
 

@@ -280,7 +280,7 @@ class GPreferencesState extends BaseState {
           this.internalState.renderXML(out);
       }
       else {
-          LogService.instance().log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
+          LogService.log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
       }
   }
 
@@ -462,9 +462,9 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {
@@ -570,9 +570,9 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {
@@ -600,7 +600,7 @@ class GPreferencesState extends BaseState {
           ssup.putParameterValue(parName, context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(parName));
         } else {
           ssup.putParameterValue(parName, value);
-          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
+          //		    LogService.log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
         }
       }
       ThemeStylesheetUserPreferences tsup = context.getUserPreferences().getThemeStylesheetUserPreferences();
@@ -611,7 +611,7 @@ class GPreferencesState extends BaseState {
           tsup.putParameterValue(parName, context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(parName));
         } else {
           tsup.putParameterValue(parName, value);
-          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
+          //		    LogService.log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
         }
       }
       context.setModified(true);

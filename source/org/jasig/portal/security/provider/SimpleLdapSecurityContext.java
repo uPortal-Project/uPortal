@@ -110,7 +110,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       String last_name = null;
       user.append(ldapservices.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      LogService.instance().log(LogService.DEBUG, "Looking for " + user.toString());
+      LogService.log(LogService.DEBUG, "Looking for " + user.toString());
       conn = ldapservices.getConnection();
       // set up search controls
       SearchControls searchCtls = new SearchControls();
@@ -140,7 +140,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.instance().log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+            LogService.log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
 
             // Since LDAP is case-insensitive with respect to uid, force
             // user name to lower case for use by the portal
@@ -149,18 +149,18 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
           } // while (results != null && results.hasMore())
         }
         else {
-          LogService.instance().log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
+        LogService.log(LogService.ERROR, e);
         throw new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
         ldapservices.releaseConnection(conn);
       }
     }
     else {
-      LogService.instance().log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();

@@ -109,8 +109,8 @@ public class EntityPropertyRegistry {
                 _instance.init();
             } catch (Exception e) {
                 _instance = null;
-                LogService.instance().log(LogService.ERROR, "Could not initialize EntityPropertyRegistry");
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, "Could not initialize EntityPropertyRegistry");
+                LogService.log(LogService.ERROR, e);
             }
         }
         return  _instance;
@@ -138,10 +138,10 @@ public class EntityPropertyRegistry {
         try {
             EntityCachingService.instance().remove(propsType, getPropKey(entityID));
         } catch (CachingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
             if (ee != null) {
-                LogService.instance().log(LogService.ERROR, ee);
+                LogService.log(LogService.ERROR, ee);
             }
         }
     }
@@ -157,10 +157,10 @@ public class EntityPropertyRegistry {
             ep = (EntityProperties)EntityCachingService.instance().get(propsType,
                     getPropKey(entityID));
         } catch (CachingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
             if (ee != null) {
-                LogService.instance().log(LogService.ERROR, ee);
+                LogService.log(LogService.ERROR, ee);
             }
         }
         if (ep == null) {
@@ -189,10 +189,10 @@ public class EntityPropertyRegistry {
             try {
                 EntityCachingService.instance().add(ep);
             } catch (CachingException e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
                 Exception ee = e.getRecordedException();
                 if (ee != null) {
-                    LogService.instance().log(LogService.ERROR, ee);
+                    LogService.log(LogService.ERROR, ee);
                 }
             }
         }

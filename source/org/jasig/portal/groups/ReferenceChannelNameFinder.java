@@ -60,7 +60,7 @@ public class ReferenceChannelNameFinder
         try {
             type = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
