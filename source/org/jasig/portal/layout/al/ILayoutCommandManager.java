@@ -5,6 +5,10 @@
 
 package org.jasig.portal.layout.al;
 
+import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.ILayoutManagerCommands;
+
 
 /**
  * An interface describing layout command manager.
@@ -12,7 +16,7 @@ package org.jasig.portal.layout.al;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @author Peter Kharchenko: mvi at immagic.com
  */
-public interface ILayoutCommandManager {
+public interface ILayoutCommandManager extends ILayoutManagerCommands {
     
     /**
      * Specify the layout manager
@@ -24,15 +28,7 @@ public interface ILayoutCommandManager {
      * Execute a sequence of the recorded commands.
      * @param manager - the manager on which to execute the commands
      */
-    public void executeLayoutCommands();
-    
-    /**
-     * Record the layout command
-     * @param nodeId id of the node being attached
-     * @param parentId parent
-     * @param nextId next node id
-     */
-    public void recordLayoutCommand(ILayoutCommand layoutCommand);
+    public void executeLayoutCommands() throws PortalException;
     
     /**
      * Clear all user modification commands
