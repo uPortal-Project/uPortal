@@ -3235,11 +3235,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	   int fragmentId = rs.getInt(1);
 	   String groupKey = rs.getString(2);
 	   if ( groupKeys.contains(groupKey) )
-		  fragmentIds.add(fragmentId+"");
+		  fragmentIds.add(Integer.toString(fragmentId));
 	   else {
 		 IEntityGroup group = GroupService.findGroup(groupKey);
 		 if ( group != null && groupPerson.isDeepMemberOf(group) ) {
-		  fragmentIds.add(fragmentId+"");
+		  fragmentIds.add(Integer.toString(fragmentId));
 		  groupKeys.add(groupKey);
 		 }
 	   }

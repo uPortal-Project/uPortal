@@ -316,7 +316,7 @@ public class AggregatedLayout implements IAggregatedLayout {
          if ( fragmentId != null && !fragmentIds.contains(fragmentId))
           fragmentIds.add(fragmentId);
       } 	
-      return null;
+      return fragmentIds;
     }
 
     /**

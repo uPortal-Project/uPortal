@@ -253,6 +253,7 @@ public class CFragmentManager extends FragmentManager {
 	    super.setPortalControlStructures(pcs);
 	    if ( alm == null )  
 		  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!"); 
+		refreshFragmentMap();  
 	}
 
 	private Document getFragmentList() throws PortalException {

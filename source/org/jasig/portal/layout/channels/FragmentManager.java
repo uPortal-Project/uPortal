@@ -92,9 +92,6 @@ public abstract class FragmentManager extends BaseChannel implements IPrivileged
 		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
 	    if (ulm instanceof IAggregatedUserLayoutManager)
 		  alm = (IAggregatedUserLayoutManager) ulm;	
-		// Refresh the fragment list
-		if ( alm != null )
-		 refreshFragmentMap();
 	}
 
     protected void getFragmentList ( Document document ) throws PortalException {

@@ -91,7 +91,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   private String fragmentId;
 
   // The IDs and names of the fragments which a user is owner of
-  private Hashtable fragments;
+  //private Hashtable fragments;
 
   // GUID generator
   private static GuidGenerator guid = null;
@@ -1259,7 +1259,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	}
 
     private boolean isLayoutFragment() {
-      return ( fragmentId != null );
+      return ( fragmentId != null && layout != null );
     }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {

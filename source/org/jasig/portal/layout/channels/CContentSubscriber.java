@@ -38,9 +38,11 @@ package org.jasig.portal.layout.channels;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.layout.IAggregatedLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 //import org.w3c.dom.Node;
@@ -48,10 +50,8 @@ import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
-import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.Collection;
 
@@ -65,24 +65,53 @@ public class CContentSubscriber extends FragmentManager {
     private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
     private static Document channelRegistry;
 	private Document registry;
-    private Map expandedCategories, condensedCategories;
-    private Map expandedChannels, condensedChannels;
-    private Map expandedFragments, condensedFragments;
-    private Map[] expandedItems;
-	private Map[] condensedItems;
-	private boolean initRegistry = true;
+    private Vector expandedItems;
+	private Vector condensedItems;
 	
+	private final static String CHANNEL = "channel";
+	private final static String FRAGMENT = "fragment";
+	private final static String CATEGORY = "category";	 
+
+
+    private class ListItem {
+      
+      private String itemId;
+      private String name;
+      private String categoryId;
+      
+      public ListItem ( String categoryId, String itemId, String name ) {
+      	this.categoryId = categoryId;
+      	this.itemId = itemId; 		
+      	this.name = name;
+      }
+      
+      public String getItemId() {
+      	return itemId;
+      }
+      
+      public String getCategoryId() {
+      	return categoryId;
+      }
+      
+      public String getName() {
+      	return name;
+      }
+      
+      public boolean equals ( Object obj ) {
+      	if ( obj == null || !(obj instanceof ListItem) )
+      	  return false; 
+      	  ListItem item = (ListItem) obj;	
+      	  return ( categoryId.equals(item.getCategoryId()) 
+      	           && itemId.equals(item.getItemId()) 
+      	           && name.equals(item.getName()) ); 	
+      }
+      
+    }
 
     public CContentSubscriber() {
        super();
-	   expandedCategories = new HashMap();
-	   expandedChannels = new HashMap();
-	   expandedFragments = new HashMap();
-	   condensedCategories = new HashMap();
-	   condensedChannels = new HashMap();
-	   condensedFragments = new HashMap();
-	   expandedItems = new Map[] { expandedFragments, expandedChannels, expandedCategories }; 
-	   condensedItems = new Map[] { condensedFragments, condensedChannels, condensedCategories }; 
+	   expandedItems = new Vector();
+	   condensedItems = new Vector();
     }
 
 	protected void analyzeParameters( XSLT xslt ) throws PortalException {
@@ -95,114 +124,112 @@ public class CContentSubscriber extends FragmentManager {
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
-			boolean allFragments = false, 
-			        allChannels = false, 
-			        allCategories = false;          
+			boolean all = false,
+			        expand = action.equals("expand"),
+			        condense = action.equals("condense");    
+	  	     
+	  	     Vector tagNames = new Vector();         
 		           
-			 if (action.equals("expand")) {
-			 	
+			 if ( expand || condense ) {
+			 		 	
 				if ( fragmentId.equals("all") ) {
-				   allFragments = true;
-				   condensedFragments.clear(); 		    
-				} else if ( fragmentId.trim().length() > 0 ) {
-				   expandedFragments.put(categoryId+fragmentId,fragmentId);
-				   condensedFragments.remove(categoryId+fragmentId); 
-				}  
+				   all = true;
+				   tagNames.add(FRAGMENT); 		 
+				}      
 				
-				
-				if ( channelId.equals("all") ) {
-				   allChannels = true;
-				   condensedChannels.clear();
-				} else if ( channelId.trim().length() > 0 ) {
-				   expandedChannels.put(categoryId+channelId,channelId);
-				   condensedChannels.remove(categoryId+channelId);
-				}  
-				   
-				
-				if ( categoryId.equals("all") ) {
-				   allCategories = true; 	
-				   condensedCategories.remove(categoryId);
-				} else if ( categoryId.trim().length() > 0 && channelId.trim().length() == 0 && fragmentId.trim().length() == 0 ) {
-		           expandedCategories.put(categoryId,categoryId);
-		           condensedCategories.remove(categoryId);
+				if ( channelId.equals("all") ) { 
+				   all = true;
+				   tagNames.add(CHANNEL);
 				}   
-				  	  		 	
-			 } else if ( action.equals("condense") ) {
-				
-				
-				if ( fragmentId.equals("all") ) {
-				   allFragments = true;	
-				   expandedFragments.clear();
-				} else if ( fragmentId.trim().length() > 0 ) {
-				   condensedFragments.put(categoryId+fragmentId,fragmentId); 
-				   expandedFragments.remove(categoryId+fragmentId);  
-				}    		    
-				
-				
-				if ( channelId.equals("all") ) {
-				   allChannels = true;	
-				   expandedChannels.clear();
-				} else if ( channelId.trim().length() > 0 ) {
-		           condensedChannels.put(categoryId+channelId,channelId);
-		           expandedChannels.remove(categoryId+channelId);
-			    }   
-				   
 				
 				if ( categoryId.equals("all") ) {
-				   allCategories = true;	
-				   expandedCategories.clear();
-				} else if ( categoryId.trim().length() > 0 && channelId.trim().length() == 0 && fragmentId.trim().length() == 0 ) {
-		           condensedCategories.put(categoryId,categoryId);	
-		           expandedCategories.remove(categoryId); 
-				} 		 
-			 }	
+				   all = true;
+				   tagNames.add(CATEGORY);
+				}   
+				   	 
+				   
+				if ( !all  ) {
+				  String itemName = CHANNEL;
+				  String itemId = channelId;
+				  if ( fragmentId.length() > 0 ) {
+			          itemId = fragmentId;
+					  itemName = FRAGMENT;
+				  } else if ( categoryId.length() > 0 && channelId.length() == 0 ) {
+				      itemId = categoryId;
+					  itemName = CATEGORY;
+				  }	  	
+
+				  ListItem item = new ListItem(categoryId,itemId,itemName);
+			
+				  if ( expand ) {
+				    expandedItems.add(item);
+				    condensedItems.remove(item);
+				  } else {
+				    condensedItems.add(item);  
+				    expandedItems.remove(item);
+				  }           
+				}
+				 
+			
+			 } else if ( action.equals("init") ) {
+			 	//if ( alm.isFragmentLoaded() )
+			 	alm.loadUserLayout();	
+			 	refreshFragmentMap(); 
+			 	initRegistry();
+			 }
 			 
 						 
-		     Vector tagNames = new Vector();
-			 
-			 if ( allFragments )
-			 	tagNames.add("fragment");
-			 if ( allChannels )
-			    tagNames.add("channel");
-			 if ( allCategories )
-			    tagNames.add("category");
-			    
-			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
-			   Set list = expandedItems[i].keySet();
-			   for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
-			    //registry.getElementById((String)list.get(j)).setAttribute("view","expanded");
-				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)expandedItems[i].get(iter.next())+"']");
-				elem.setAttribute("view","expanded");
+			if ( !all ) {   
+				
+		     Vector removedItems = new Vector();
+		     Vector items = expandedItems;		
+		     for ( int k = 0; k < 2; items = condensedItems, k++ ) {		 
+			  for ( int i = 0; i < items.size(); i++ ) {	 
+			   for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
+			    ListItem item = (ListItem) iter.next();
+			    String xPathQuery = null;
+			    if ( CHANNEL.equals(item.getName()) )
+			     xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
+			    else 
+			     xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
+				Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
+				if ( elem != null ) 
+				 elem.setAttribute("view",(k==0)?"expanded":"condensed");
+				else
+				 removedItems.add(item);
 			   } 
-			 }  
+			  }
+			    items.removeAll(removedItems);
+		     }	           
 			  
-			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
-			   Set list = condensedItems[i].keySet();
-			   for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
-				//registry.getElementById((String)list.get(j)).setAttribute("view","condensed");
-				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)condensedItems[i].get(iter.next())+"']");
-				elem.setAttribute("view","condensed");
-			   }	
-			 }    
-			 
-		     for ( int i = 0; i < tagNames.size(); i++ ) {
-			  NodeList nodeList = registry.getElementsByTagName((String)tagNames.get(i));
-			  for ( int k = 0; k < nodeList.getLength(); k++ ) {
-				Element node = (Element) nodeList.item(k);
-				node.setAttribute("view",(action.equals("expand"))?"expanded":"condensed");
-			  } 
-		     } 
+			} else { 
+		    
+		      Vector removedItems = new Vector(); 
+		      for ( int i = 0; i < tagNames.size(); i++ ) {
+		        String tagName = (String) tagNames.get(i);	
+			    for ( Iterator iter = expandedItems.iterator(); iter.hasNext(); ) {
+			   	 ListItem item = (ListItem)iter.next();
+			  	 if ( tagName.equals(item.getName()) )
+			  	  removedItems.add(item);
+			    }		
+			      expandedItems.removeAll(removedItems);
+			    for ( Iterator iter = condensedItems.iterator(); iter.hasNext(); ) {
+				 ListItem item = (ListItem)iter.next();
+				 if ( tagName.equals(item.getName()) )
+				  removedItems.add(item);
+			    }	
+				  condensedItems.removeAll(removedItems);
+			    NodeList nodeList = registry.getElementsByTagName(tagName);
+			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
+				 Element node = (Element) nodeList.item(k);
+				 node.setAttribute("view",(action.equals("expand"))?"expanded":"condensed");
+			   } 
+		      }
+		     
+			}  
 		     
 		    
-		    
 		     passAllParameters(xslt);
-		      
-		     /*xslt.setStylesheetParameter("channelState", channelState );
-		     xslt.setStylesheetParameter("uPcCS_action", action );
-		     xslt.setStylesheetParameter("channelState", channelState );
-		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
-		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );
-		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );*/
 		     
 	  } catch ( Exception e ) {
 	  	  e.printStackTrace();
@@ -218,18 +245,29 @@ public class CContentSubscriber extends FragmentManager {
        }  	 
     }
 
+    // Returns only subscribable pulled fragments that do not exist the current user layout
 	protected Collection getFragments() throws PortalException {
-		 return alm.getSubscribableFragments();
+		 Collection pulledFragments = alm.getSubscribableFragments();
+		 Set layoutFragments = ((IAggregatedLayout)alm.getUserLayout()).getFragmentIds();
+		 pulledFragments.removeAll(layoutFragments); 
+		 return pulledFragments;    
 	}
 
     public void initRegistry() throws PortalException {
-      if ( initRegistry ) {
       	registry = DocumentFactory.getNewDocument();
       	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));	
         getFragmentList(registry,registry.getDocumentElement());
-        initRegistry = false;
-      }  	        	
     }
+
+	/**
+		 * Passes portal control structure to the channel.
+		 * @see PortalControlStructures
+		 */
+	public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
+			super.setPortalControlStructures(pcs);
+			if ( alm == null )  
+			  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!");  
+	}
 
     public void setStaticData (ChannelStaticData sd) throws PortalException {
        super.setStaticData(sd);
@@ -239,8 +277,7 @@ public class CContentSubscriber extends FragmentManager {
 
     public void renderXML (ContentHandler out) throws PortalException {
     	
-      initRegistry();
-
+      
       XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       analyzeParameters(xslt);
 	  //System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(registry));    
