@@ -116,7 +116,7 @@ public class RDBMUserLayoutStore
             pstmt.clearParameters ();
             pstmt.setInt(1, 0);
             pstmt.executeQuery();
-            //supportsPreparedStatements = true;
+            supportsPreparedStatements = true;
           } finally {
             pstmt.close();
           }
