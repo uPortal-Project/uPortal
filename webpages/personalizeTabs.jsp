@@ -111,12 +111,6 @@ for (int iTab = 0; iTab < tabs.length; iTab++)
 </select>
 </form>
 
-<%-- Revert to default layout xml --%>
-<form action="personalizeTabs.jsp" method=post>
-<input type=hidden name="action" value="revertToDefaultLayoutXml">
-<input type=submit name=revert value="Revert to default layout">
-</form>
-
 <form name="tabs" action="personalizeTabs.jsp" method=post>
 <input type=hidden name="action" value="none">
 <table border=0 cellspacing=2 cellpadding=3>
@@ -153,6 +147,9 @@ for (int iTab = 0; iTab < tabs.length; iTab++)
   </tr>
 </table>
 </form>
+
+<%-- Revert to default layout xml --%>
+[<a href="personalizeTabs.jsp?action=revertToDefaultLayoutXml">Revert to default layout</a>]
 
 <%-- Finished and Cancel Changes buttons --%>
 <form>
