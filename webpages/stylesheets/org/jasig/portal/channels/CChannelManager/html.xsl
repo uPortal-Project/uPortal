@@ -536,7 +536,7 @@
               <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr>
                   <td class="uportal-text-small" align="center">
-                    <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="{$stepID}"/>';document.workflow.submit()</xsl:attribute>
+                    <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) != ''"><xsl:value-of select="name"/></xsl:when>
                           <xsl:otherwise>Channel Parameters</xsl:otherwise>
