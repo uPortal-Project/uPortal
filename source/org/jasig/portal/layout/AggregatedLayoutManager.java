@@ -40,6 +40,8 @@ import java.util.Hashtable;
 import java.util.Collection;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IUserLayoutStore;
@@ -352,17 +354,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         if ( isFolder ) {
             ++depth;
-            String firstChildId = ((ALFolder)node).getFirstChildNodeId();
-            for ( String nextId = firstChildId; nextId != null; ) {
-                ALNode tmpNode = getLayoutNode(nextId);
-                String tmpNodeId = tmpNode.getNextNodeId();
-                if ( nextId.equals(firstChildId) ) {
-                    while ( !changeSiblingNodesOrder(firstChildId) )
-                     moveNodeToLostFolder(getLastSiblingNode(firstChildId).getId());
-                }
-                moveWrongNodesToLostFolder(nextId,depth);
-                nextId = tmpNodeId;
-            }
+            ALFolder folder = (ALFolder) node;
+            String id = getLastSiblingNode(folder.getFirstChildNodeId()).getId();
+            while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
+			  String lastNodeId = getLastSiblingNode(id).getId();
+			  id = getLayoutNode(lastNodeId).getPreviousNodeId();
+			  moveNodeToLostFolder(lastNodeId);
+            }  
+            for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
+                  nextId = getLayoutNode(nextId).getNextNodeId() )
+              moveWrongNodesToLostFolder(nextId,depth);
         }
 
   }
@@ -626,26 +627,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
   /**
-     * Change if it's possible priority values for all the sibling nodes
-     * @param node a <code>String</code> a node from the sibling line
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  /*protected boolean changeSiblingNodesPriorities ( String nodeId ) throws PortalException {
-     ALNode firstNode = getFirstSiblingNode(nodeId);
-     String parentId = firstNode.getParentNodeId();
-     for ( String id = firstNode.getId(); id != null; ) {
-       ALNode node = getLayoutNode(id);
-       String nextId = node.getNextNodeId();
-       if ( !changeSiblingNodesPriorities(node,parentId,nextId,false) )
-            return false;
-        id = nextId;
-     }
-        return true;
-  }*/
-
-
-  /**
 	   * Change if it's possible priority values for all the sibling nodes
 	   * @param nodeId a <code>String</code> any node ID from the sibling line to be checked
 	   * @return a boolean value
@@ -653,7 +634,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   */
   protected boolean changeSiblingNodesPriorities( String nodeId ) throws PortalException {
          
-	Vector priorities = new Vector();
 	int tmpPriority = Integer.MAX_VALUE;
 	String firstNodeId = getFirstSiblingNode(nodeId).getId();
 
@@ -663,55 +643,40 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	  int[] nextRange = getPriorityRestriction(nextNode).getRange();
 	  int value = Math.min(nextRange[1],tmpPriority-1);
 	  if ( value < tmpPriority && value >= nextRange[0] ) {
-		priorities.add(new Integer(value));
+		nextNode.setPriority(value);
 		tmpPriority = value;
 	  } else
 		  return false;
 	  nextId = nextNode.getNextNodeId();
 	}
-
-	// Setting priority values to the sibling nodes
-	int i = 0;
-	for ( String nextId = firstNodeId; nextId != null; i++ ) {
-	  ALNode nextNode = getLayoutNode(nextId);
-	  int prior = ((Integer)priorities.get(i)).intValue();
-	  nextNode.setPriority(prior);
-	  nextId = nextNode.getNextNodeId();
-	}
+	
      return true;  	
   }	
 
   /**
 		 * Change if it's possible priority values for all the sibling nodes defined by the collection
-		 * @param nodes a <code>Collection</code> instance with ALNode objects
+		 * @param nodes a <code>Vector</code> instance with ALNode objects
 		 * @return a boolean value
 		 * @exception PortalException if an error occurs
 		 */
-	protected boolean changeSiblingNodesPriorities( Collection nodes ) throws PortalException {
+	protected boolean changeSiblingNodesPriorities( Vector nodes ) throws PortalException {
          
-	  int[] priorities = new int[nodes.size()];
 	  int tmpPriority = Integer.MAX_VALUE;
 
 	  // Fill out the vector by priority values
-	  Iterator i;
-	  int j = 0;
-	  for ( i = nodes.iterator(); i.hasNext(); ) {
-		ALNode nextNode = (ALNode)i.next();
+	  int size = nodes.size();
+	  for ( int i = 0; i < size; i++ ) {
+		ALNode nextNode = (ALNode) nodes.get(i);
 		if ( nextNode == null ) return false;
 		int[] nextRange = getPriorityRestriction(nextNode).getRange();
 		int value = Math.min(nextRange[1],tmpPriority-1);
 		if ( value < tmpPriority && value >= nextRange[0] ) {
-		  priorities[j++] = value;
+		  nextNode.setPriority(value);
 		  tmpPriority = value;
 		} else
 			return false;
 	  }
-
-	  // Setting priority values to the sibling nodes
-	  for ( j = 0, i = nodes.iterator(); i.hasNext(); ) {
-		ALNode nextNode = (ALNode)i.next();
-		nextNode.setPriority(priorities[j++]);
-	  }
+	  
 	   return true;  	
    }	
 
@@ -725,7 +690,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   * @return a boolean value
 	   * @exception PortalException if an error occurs
 	   */
-	protected boolean changeSiblingNodesPriorities(ALNode node, String parentNodeId, String nextNodeId ) throws PortalException {
+	protected synchronized boolean changeSiblingNodesPriorities(ALNode node, String parentNodeId, String nextNodeId ) throws PortalException {
 		ALNode firstNode = null, nextNode = null;
 			String firstNodeId = null;
 			int priority = 0, nextPriority = 0, prevPriority = 0, range[] = null, prevRange[] = null, nextRange[] = null;
@@ -780,10 +745,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			  // Getting the last node
 			  ALNode lastNode = getLastSiblingNode(firstNodeId);
 
-			  // if the node to be added is equal the last node in the sibling line
-			  if ( nodeId.equals(lastNode.getId()) )
-				  lastNode = getLayoutNode(lastNode.getPreviousNodeId());
-
 			  int lastPriority = lastNode.getPriority();
 			  PriorityRestriction lastPriorityRestriction = getPriorityRestriction(lastNode);
 			  int[] lastRange = lastPriorityRestriction.getRange();
@@ -791,7 +752,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 			  if ( range[0] >= lastRange[1] ) return false;
 
-			  if ( priority < lastPriority ) return true;
+			  if ( priority < lastPriority )  return true;
 
 			  if ( range[0] < lastPriority ) {
 				   node.setPriority(range[0]);
@@ -799,16 +760,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			  }
 
 			  if ( (lastPriority-1) <= range[1] && (lastPriority-1) >= range[0] ) {
-					 node.setPriority(lastPriority-1);
+					 node.setPriority(range[0]);
 					 return true;
 			  }
 
 			}
 
 
-
 			// If we add a new node in a general case
-			if ( nextNode != null && !nextNode.equals(firstNode) && !node.equals(nextNode) ) {
+			if ( nextNode != null && !nextNode.equals(firstNode) && !nodeId.equals(nextNodeId) ) {
 
 			  // Getting the last node
 			  ALNode prevNode = getLayoutNode(nextNode.getPreviousNodeId());
@@ -834,10 +794,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	 
 	  Vector nodes = new Vector();
 	  for ( String nextId = firstNodeId; nextId != null; ) {
+	  	if ( !nextId.equals(nodeId) ) {
 		  if ( nextId.equals(nextNodeId) )
 		   nodes.add(node);
-		  else
 		   nodes.add(getLayoutNode(nextId));
+	  	}   
 		  nextId = getLayoutNode(nextId).getNextNodeId();  
 	  }
     
@@ -880,25 +841,35 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     // Check if the current order is right
     if ( changeSiblingNodesPriorities(firstNodeId) ) return true;
     
+     Set movedNodes = new HashSet();
      //	Choosing more suitable order of the nodes in the sibling line
-	 for ( String lastNodeId = getLastSiblingNode(node.getId()).getId(); lastNodeId != null; ) {
+     for ( String lastNodeId = getLastSiblingNode(firstNodeId).getId(); lastNodeId != null; ) {
+       
 	   for ( String curNodeId = lastNodeId; curNodeId != null; ) {
-		if ( !lastNodeId.equals(curNodeId) ) {
-		 if ( moveNode(lastNodeId,parentNodeId,curNodeId) )
-		  if ( changeSiblingNodesPriorities(firstNodeId) )
+		if ( !lastNodeId.equals(curNodeId) && !movedNodes.contains(lastNodeId) ) {
+		 if ( moveNode(lastNodeId,parentNodeId,curNodeId) ) {
+		  if ( changeSiblingNodesPriorities(getLayoutFolder(parentNodeId).getFirstChildNodeId()) ) 	
 		   return true;
+		  movedNodes.add(lastNodeId);	 
+		  lastNodeId = getLastSiblingNode(curNodeId).getId();
+		  curNodeId = lastNodeId;
+		 }  
 		}
-		 curNodeId = getLayoutNode(curNodeId).getPreviousNodeId();
-	   }
+		curNodeId = getLayoutNode(curNodeId).getPreviousNodeId();
+		
+	  }
 	   
-      // Checking the last place in the sibling line
-	  if ( moveNode(lastNodeId,parentNodeId,null) )
-		if ( changeSiblingNodesPriorities(firstNodeId) )
-		  return true;
+	  if ( !movedNodes.contains(lastNodeId) ) {	
+		if ( moveNode(lastNodeId,parentNodeId,null) ) {
+		 if ( changeSiblingNodesPriorities(getLayoutFolder(parentNodeId).getFirstChildNodeId()) ) 	
+			return true;	
+		  movedNodes.add(lastNodeId);	
+		}
+	  }  
 	   
 	  lastNodeId = getLayoutNode(lastNodeId).getPreviousNodeId();
 	 }
-	 
+		  	 
         return false;
         
   }
@@ -1320,17 +1291,19 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      // if the node is being moved to itself that operation must be prevented	
      if ( nodeId.equals(nextSiblingId) )
             return false; 	
+      
             
-	 ALNode node = getLayoutNode(nodeId);       
-     // if the node is being moved to its current position - nothing should change	
-	 if ( CommonUtils.nvl(node.getNextNodeId()).equals(CommonUtils.nvl(nextSiblingId)) )
-		    return true;        
-
+	 ALNode node = getLayoutNode(nodeId);    
+	 
+	 // If the node is being moved to the same position
+	 if ( parentId.equals(node.getParentNodeId()) )
+	  if ( CommonUtils.nvl(nextSiblingId).equals(CommonUtils.nvl(node.getNextNodeId())))
+		  return true;    
+       
      // Checking restrictions if the parent is not the lost folder
      if ( !parentId.equals(IALFolderDescription.LOST_FOLDER_ID) )
       if ( !canMoveNode(nodeId,parentId,nextSiblingId) )
             return false;
-
      
      ALFolder targetFolder = getLayoutFolder(parentId);
      ALFolder sourceFolder = getLayoutFolder(node.getParentNodeId());
