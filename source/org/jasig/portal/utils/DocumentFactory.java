@@ -35,12 +35,15 @@
 
 package  org.jasig.portal.utils;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * Produces an empty Document implementation
@@ -48,6 +51,30 @@ import org.w3c.dom.Document;
  * @version $Revision$
  */
 public class DocumentFactory {
+    protected static DocumentFactory _instance;
+    protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
+    protected static javax.xml.parsers.DocumentBuilderFactory dbFactory = null;
+
+
+  protected static synchronized DocumentFactory instance(){
+      if (_instance==null){
+          _instance = new DocumentFactory();
+      }
+      return _instance;
+  }
+
+  protected DocumentFactory() {
+
+    try{
+      dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+      dbFactory.setNamespaceAware(true);
+      dbFactory.setValidating(false);
+    }
+    catch (Exception e){
+      LogService.log(LogService.ERROR,"DocumentFactory: unable to initialize DocumentBuilderFactory");
+      LogService.log(LogService.ERROR,e);
+    }
+  }
   /**
    * Returns a new copy of a Document implementation. This will
    * return an <code>IPortalDocument</code> implementation.
@@ -73,15 +100,40 @@ public class DocumentFactory {
    * @return an empty org.w3c.dom.Document implementation
    */
   static Document __getNewDocument() {
-    Document doc = null;
-    try {
-      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-      docBuilderFactory.setNamespaceAware(true);
-      doc = docBuilderFactory.newDocumentBuilder().newDocument();
-    } catch (ParserConfigurationException pce) {
-      LogService.log(LogService.ERROR, pce);
-      throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new Document: " + pce.getMessage());
-    }
+    Document doc = newDocumentBuilder().newDocument();
     return doc;
+  }
+
+     public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
+      try{
+        DocumentBuilder builder = newDocumentBuilder();
+        Document doc = builder.parse(stream);
+        return doc;
+      }
+      finally{
+          try {
+              stream.close();
+          }
+          catch(IOException e) {
+          }
+      }
+  }
+
+    public static javax.xml.parsers.DocumentBuilder newDocumentBuilder(){
+      DocumentBuilder builder = (DocumentBuilder) localDocBuilder.get();
+      return builder;
+    }
+
+    protected static class LocalDocumentBuilder extends ThreadLocal{
+      protected Object initialValue(){
+          Object r = null;
+          try{
+            r = instance().dbFactory.newDocumentBuilder();
+          }
+          catch(Exception e){
+              LogService.log(LogService.ERROR,e);
+          }
+          return r;
+      }
   }
 }
