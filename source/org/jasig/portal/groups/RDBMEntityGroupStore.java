@@ -1130,8 +1130,10 @@ private void primDelete(IEntityGroup group) throws SQLException
     }
     finally
     {
-        setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
+        try 
+            { setAutoCommit(conn, true); }
+        finally
+            { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -1476,8 +1478,7 @@ public void update(IEntityGroup group) throws GroupsException
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
             { throw new GroupsException(sqle.getMessage()); }
-
-        RDBMServices.releaseConnection(conn);
+        finally { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -1514,7 +1515,7 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
             { throw new GroupsException(sqle.getMessage()); }
-        RDBMServices.releaseConnection(conn);
+        finally { RDBMServices.releaseConnection(conn); }
     }
 }
 }
