@@ -58,6 +58,22 @@
     <driver-name>JDBC-ODBC Bridge (SQLSRV32.DLL)</driver-name>
     <driver-version>2.0001 (03.70.0820)</driver-version>
     <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+
+  <db-type-mapping>
+    <db-name>Microsoft SQL Server</db-name>
+    <db-version>Microsoft SQL Server  7.00 - 7.00.699 (Intel X86) 
+	May 21 1999 14:08:18 
+	Copyright (c) 1988-1998 Microsoft Corporation
+	Standard Edition on Windows NT 4.0 (Build 1381: Service Pack 4)
+</db-version>
+    <driver-name>weblogic.jdbc.mssqlserver4.Driver</driver-name>
+    <driver-version>3.1</driver-version>
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
     <!-- map more types here -->
   </db-type-mapping>
 
@@ -77,8 +93,21 @@
 PL/SQL Release 8.0.6.2.0 - Production</db-version>
     <driver-name>Oracle JDBC driver</driver-name>
     <driver-version>8.1.6.0.0</driver-version>
-    <type><generic>DATE</generic><local>DATE</local></type>
+    <type><generic>TIMESTAMP</generic><local>DATE</local></type>
     <!-- map more types here -->
   </db-type-mapping>
+
+  <db-type-mapping>
+    <db-name>Oracle</db-name>
+    <!-- Line breaks have to be here -->
+    <db-version>Oracle8i Enterprise Edition Release 8.1.7.0.0 - Production
+With the Partitioning option
+JServer Release 8.1.7.0.0 - Production</db-version>
+    <driver-name>Oracle JDBC driver</driver-name>
+    <driver-version>8.1.7.0.0</driver-version>
+    <type><generic>TIMESTAMP</generic><local>DATE</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
 </properties>
 
