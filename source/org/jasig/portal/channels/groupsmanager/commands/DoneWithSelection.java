@@ -92,8 +92,8 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
                + hasParentId);
          IGroupMember[] princResults = null;
-         Document xmlDoc = getXmlDoc(sessionData);
-         Element rootElem = xmlDoc.getDocumentElement();
+         Document model = getXmlDoc(sessionData);
+         Element rootElem = model.getDocumentElement();
          NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
          NodeList nEntityList = rootElem.getElementsByTagName(ENTITY_TAGNAME);
          Vector gmCollection = new Vector();
@@ -126,17 +126,17 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             parentId = getParentId(staticData);
             Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set to: "
                   + parentId);
-            parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentId);
+            parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, parentId);
             if (parentElem == null) {
                Utility.logMessage("ERROR", "DoneWithSelection::execute: Error parent element not found");
                return;
             }
             /** @todo refactor: */
             if (parentIsInitialGroupContext(staticData)) {
-               addChildrenToContext(gmCollection, sessionData, parentElem, xmlDoc);
+               addChildrenToContext(gmCollection, sessionData, parentElem, model);
             }
             else {
-               addChildrenToGroup(gmCollection, sessionData, parentElem, xmlDoc);
+               addChildrenToGroup(gmCollection, sessionData, parentElem, model);
             }
             clearSelected(sessionData);
             sessionData.mode=EDIT_MODE;
@@ -195,12 +195,12 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
    /**
     * This section adds the selected members to an IEntityGroup.
     * @param gmCollection
-    * @param runtimeData
+    * @param sessionData
     * @param parentElem
-    * @param xmlDoc
+    * @param model
     */
    public void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
-      Element parentElem, Document xmlDoc) {
+      Element parentElem, Document model) {
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
       IEntityGroup parentGroup = null;
@@ -226,12 +226,12 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             // update parent group
             parentGroup.updateMembers();
             // get parent element(s) and add element for child group member
-            Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+            Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
                   parentElem.getAttribute("key"));
             while (parentNodes.hasNext()) {
                parent = (Element)parentNodes.next();
 
-               childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, xmlDoc);
+               childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, model);
                parent.appendChild((Node)childElem);
                parent.setAttribute("hasMembers", "true");
             }
@@ -247,12 +247,12 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
    /**
     * This section adds the selected members to an IInitialContextGroup.
     * @param gmCollection
-    * @param runtimeData
+    * @param sessionData
     * @param parentElem
-    * @param xmlDoc
+    * @param model
     */
    public void addChildrenToContext (Vector gmCollection, CGroupsManagerSessionData sessionData,
-         Element parentElem, Document xmlDoc) {
+         Element parentElem, Document model) {
           ChannelRuntimeData runtimeData = sessionData.runtimeData;
       // Considerations:
       // The parent element is myGroups and there is only one.
@@ -291,7 +291,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                // add child to user's igc node
                IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(groupID);
                childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, false,
-                     null, xmlDoc);
+                     null, model);
                parentElem.appendChild((Node)childElem);
                parentElem.setAttribute("hasMembers", "true");
             } catch (Exception e) {

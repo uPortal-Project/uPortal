@@ -42,7 +42,7 @@ import org.jasig.portal.channels.groupsmanager.*;
 import org.w3c.dom.*;
 
 /**
- * A Groups Manager command to highlight a particular element.  Also 
+ * A Groups Manager command to highlight a particular element.  Also
  * releases any held locks on other groups, moves to BROWSE mode from EDIT
  *
  * @author Alex Vigdor
@@ -53,14 +53,15 @@ public class HighlightGroup extends org.jasig.portal.channels.groupsmanager.comm
   public HighlightGroup() {
   }
   public void execute(CGroupsManagerSessionData sessionData) {
+    Document model = getXmlDoc(sessionData);
     sessionData.highlightedGroupID = getCommandArg(sessionData.runtimeData);
     sessionData.currentPage = 1;
     GroupsManagerCommandFactory.get("Expand").execute(sessionData);
     // expand parent
     try{
-      Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(sessionData.model, GROUP_TAGNAME, getCommandArg(sessionData.runtimeData));
+      Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, getCommandArg(sessionData.runtimeData));
       if (expandedElem != null) {
-        GroupsManagerXML.expandGroupElementXML((Element) expandedElem.getParentNode(),sessionData.model);
+        GroupsManagerXML.expandGroupElementXML((Element) expandedElem.getParentNode(),model);
       }
     }
     catch(Exception e){}

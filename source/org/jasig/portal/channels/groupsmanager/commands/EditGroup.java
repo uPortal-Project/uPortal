@@ -74,6 +74,7 @@ public class EditGroup extends GroupsManagerCommand {
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
+      Document model = getXmlDoc(sessionData);
       Utility.logMessage("DEBUG", "EditGroup::execute(): Start");
       String parentElemId = getCommandArg(runtimeData);
       // if not IPerson group, then set view root to root for requested type
@@ -81,11 +82,11 @@ public class EditGroup extends GroupsManagerCommand {
          String userID = getUserID(sessionData);
          String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
          String lockKey = userID + "::" + userName;
-         Element parentElem = GroupsManagerXML.getElementById(this.getXmlDoc(sessionData),parentElemId);
+         Element parentElem = GroupsManagerXML.getElementById(model, parentElemId);
          String parentKey = parentElem.getAttribute("key");
          ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
          if (lockedGroup != null){
-            GroupsManagerXML.refreshAllNodesIfRequired(sessionData.model, parentElem);
+            GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
             // store in sessionData
             sessionData.lockedGroup=lockedGroup;
             sessionData.mode = EDIT_MODE;

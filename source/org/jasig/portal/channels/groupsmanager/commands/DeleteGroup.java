@@ -79,12 +79,11 @@ public class DeleteGroup extends GroupsManagerCommand {
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Start");
-      //Document xmlDoc = (Document)staticData.get("xmlDoc");
-      Document xmlDoc = (Document)sessionData.model;
+      Document model = getXmlDoc(sessionData);
       String userID = getUserID(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
       String delId = getCommandArg(runtimeData);
-      Element delElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, delId);
+      Element delElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, delId);
       Element pn = ((Element)delElem.getParentNode());
       if (pn !=null){
        sessionData.highlightedGroupID = pn.getAttribute("id");
@@ -120,7 +119,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete xml nodes for group: "
                + elemName);
          // remove all xml nodes for this group
-         Iterator deletedNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+         Iterator deletedNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
                delKey);
          IEntityGroup parentEntGrp = null;
          String hasMbrs = "duh";
@@ -145,8 +144,8 @@ public class DeleteGroup extends GroupsManagerCommand {
          }
 
          /** Remove the permission elements in the xmlDoc */
-         Node principalNode = (Node)xmlDoc.getDocumentElement().getElementsByTagName("principal").item(0);
-         NodeList permElems = xmlDoc.getElementsByTagName("permission");
+         Node principalNode = (Node)model.getDocumentElement().getElementsByTagName("principal").item(0);
+         NodeList permElems = model.getElementsByTagName("permission");
          /** If we delete from the bottom up, the NodeList elements shift down
           *  everytime we delete an element. Since the elements that we are looking
           *  for are sequential and because we increment the counter at the end of

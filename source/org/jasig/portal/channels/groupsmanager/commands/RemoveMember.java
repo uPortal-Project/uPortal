@@ -75,7 +75,7 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
      Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
-      Document xmlDoc = getXmlDoc(sessionData);
+      Document model = getXmlDoc(sessionData);
       String theCommand = getCommand(runtimeData);
       String cmdIds = getCommandArg(runtimeData);
       Object parentGroup = null;
@@ -88,7 +88,7 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Uid of parent element = "
             + parentID + " child element = " + childID);
       try {
-         Element parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
+         Element parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME,
                parentID);
          if (parentElem == null) {
             Utility.logMessage("ERROR", "RemoveMember::execute(): Unable to retrieve parent element!");
@@ -96,13 +96,13 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
          }
          Utility.logMessage("DEBUG", "RemoveMember::execute(): About to get child element = "
                + childID);
-         Element childElem = GroupsManagerXML.getElementById(xmlDoc, childID);
+         Element childElem = GroupsManagerXML.getElementById(model, childID);
          if (childElem == null) {
             Utility.logMessage("ERROR", "RemoveMember::execute(): Unable to retrieve Child element!");
             return;
          }
          // The child will always be an IGroupMember
-         childGm = GroupsManagerXML.retrieveGroupMemberForElementId(xmlDoc, childID);
+         childGm = GroupsManagerXML.retrieveGroupMemberForElementId(model, childID);
          // The parent could be an IGroupMember or an IInitialGroupContext.
          if (parentIsInitialGroupContext(parentID)) {
             // Put method in GroupsManagerXML and change render method to use it
@@ -113,13 +113,13 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
          }
          else {
             // check for null
-            parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(xmlDoc, parentID);
+            parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model, parentID);
             removeChildFromGroup(parentGroup, childGm);
             hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
             Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
          }
          Utility.logMessage("DEBUG", "RemoveMember::execute(): about to remove child elements");
-         Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+         Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
                parentElem.getAttribute("key"));
          Node parentNode;
          NodeList childNodes;

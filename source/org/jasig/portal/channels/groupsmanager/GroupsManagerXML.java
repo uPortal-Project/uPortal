@@ -98,8 +98,7 @@ public class GroupsManagerXML
       viewRoot.appendChild(etRoot);
       Element igcRoot = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
       igcRoot.setAttribute("expanded", "true");
-      Element rdfElem = createRdfElement(ROOT_GROUP_TITLE, ROOT_GROUP_DESCRIPTION, "0",
-            viewDoc);
+      Element rdfElem = createRdfElement(null, viewDoc);
       igcRoot.appendChild(rdfElem);
       //* Cut this section into a new method to create group xml without a groupmember object
       viewRoot.appendChild(igcRoot);
@@ -168,14 +167,26 @@ public class GroupsManagerXML
 
    /**
     * Returns an RDF element for the provided Document
-    * @param title
-    * @param description
-    * @param creator
-    * @param xmlDoc
+    * @param entGrp IEntityGroup
+    * @param xmlDoc Document
     * @return Element
     */
-   public static Element createRdfElement (String title, String description, String creator,
-         Document xmlDoc) {
+   public static Element createRdfElement (IEntityGroup entGrp, Document xmlDoc) {
+      String entName;
+      String entDesc;
+      String entCreator;
+      if (entGrp == null){
+         // use default values
+         entName = ROOT_GROUP_TITLE;
+         entDesc = ROOT_GROUP_DESCRIPTION;
+         entCreator = "Default";
+      }
+      else{
+         // get values from IEntityGroup
+         entName = entGrp.getName();
+         entDesc = entGrp.getDescription();
+         entCreator = GroupsManagerXML.getEntityName(entGrp.getLeafType(), entGrp.getCreatorID());
+      }
       //* Maybe I should have all parms in a java.util.HashMap
       Element rdfElem = (Element)xmlDoc.createElement("rdf:RDF");
       rdfElem.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
@@ -184,21 +195,63 @@ public class GroupsManagerXML
       Element rdfDesc = (Element)xmlDoc.createElement("rdf:Description");
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT DCTITLE");
       Element dcTitle = (Element)xmlDoc.createElement("dc:title");
-      dcTitle.appendChild(xmlDoc.createTextNode(title));
+      dcTitle.appendChild(xmlDoc.createTextNode(entName));
       rdfDesc.appendChild(dcTitle);
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT dcDESCRIPTION");
       Element dcDescription = (Element)xmlDoc.createElement("dc:description");
-      dcDescription.appendChild(xmlDoc.createTextNode(description));
+      dcDescription.appendChild(xmlDoc.createTextNode(entDesc));
       rdfDesc.appendChild(dcDescription);
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT dcCREATOR");
       Element dcCreator = (Element)xmlDoc.createElement("dc:creator");
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO dcCREATOR");
-      dcCreator.appendChild(xmlDoc.createTextNode(creator));
+      dcCreator.appendChild(xmlDoc.createTextNode(entCreator));
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO RDFDESC");
       rdfDesc.appendChild(dcCreator);
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO RDF");
       rdfElem.appendChild(rdfDesc);
       return  rdfElem;
+   }
+
+   /** @todo There's got to be a better day...not today...maybe Monday */
+   public static IEntityGroup dummyGroup(Element nonPersistentElement){
+      IEntityGroup entGrp = null;
+      try {
+         entGrp = new EntityGroupImpl(null,Class.forName(nonPersistentElement.getAttribute("type")));
+      }
+      catch (ClassNotFoundException cnfe){
+         Utility.logMessage("INFO", "gotcha again for search element...class not found");
+      }
+      catch (GroupsException ge){
+         Utility.logMessage("INFO", "gotcha again for search element...groups exception");
+      }
+      return entGrp;
+   }
+
+   /**
+    * Expands an element
+    * @param expandedElem Element
+    * @param xmlDoc Document
+    */
+   public static void expandGroupElementXML(Element expandedElem, Document xmlDoc){
+      //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
+      boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
+            == 0);
+      boolean hasEntitiesXML = !(expandedElem.getElementsByTagName(ENTITY_TAGNAME).getLength()
+            == 0);
+      boolean hasMembers = (expandedElem.getAttribute("hasMembers").equals("true"));
+      Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
+            + hasMembers);
+
+      if (hasMembers) {
+         expandedElem.setAttribute("expanded", "true");
+         Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
+         // Have to check for non persistent search element before doing retrieval
+         IGroupMember entGrp = (isNonPersistentElement(expandedElem) ?
+            dummyGroup(expandedElem) :
+            (IGroupMember)retrieveGroup(expandedElem.getAttribute("key")));
+         GroupsManagerXML.getGroupMemberXml(entGrp, true, expandedElem, xmlDoc);
+         //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
+      }
    }
 
    /**
@@ -211,9 +264,9 @@ public class GroupsManagerXML
     */
    public static Element getAuthorizationXml (ChannelStaticData sd, Element apRoot, Document xmlDoc) {
       IAuthorizationPrincipal ap = sd.getAuthorizationPrincipal();
-      String princTagName = "principal";
+      String princTagname = "principal";
       if (ap != null && apRoot == null) {
-         apRoot = xmlDoc.createElement(princTagName);
+         apRoot = xmlDoc.createElement(princTagname);
          apRoot.setAttribute("token", ap.getPrincipalString());
          apRoot.setAttribute("type", ap.getType().getName());
          String name = ap.getKey();
@@ -252,18 +305,18 @@ public class GroupsManagerXML
       Element elem = null;
       Element retElem = null;
       org.w3c.dom.NodeList nList;
-      String tagName = ENTITY_TAGNAME;
+      String tagname = ENTITY_TAGNAME;
       boolean isDone = false;
       while (!isDone) {
-         nList = aDoc.getElementsByTagName(tagName);
+         nList = aDoc.getElementsByTagName(tagname);
          for (i = 0; i < nList.getLength(); i++) {
             elem = (Element)nList.item(i);
             if (elem.getAttribute("id").equals(id)) {
                elems.add(elem);
             }
          }
-         if (tagName.equals(ENTITY_TAGNAME)) {
-            tagName = GROUP_TAGNAME;
+         if (tagname.equals(ENTITY_TAGNAME)) {
+            tagname = GROUP_TAGNAME;
          }
          else {
             isDone = true;
@@ -306,14 +359,13 @@ public class GroupsManagerXML
 
    /**
     * Returns the value of an element for a given name
-    * @param aDoc
-    * @param tagname
-    * @param id
-    * @return Element
+    * @param anElem Element
+    * @param tagname String
+    * @return String
     */
-   public static String getElementValueForTagname (Element anElem, String tagname) {
+   public static String getElementValueForTagName (Element anElem, String tagname) {
       NodeList nList = anElem.getElementsByTagName(tagname);
-      Utility.logMessage("DEBUG", "GroupsManagerXML:getElementValueForTagname(): retrieve element value for tagname: " + tagname);
+      Utility.logMessage("DEBUG", "GroupsManagerXML:getElementValueForTagName(): retrieve element value for tagname: " + tagname);
       if (nList.getLength() > 0) {
          return nList.item(0).getFirstChild().getNodeValue();
       }
@@ -602,10 +654,22 @@ public class GroupsManagerXML
    }
 
    /**
+    * Elements hold search results are non-persistent and should be treated differently.
+    * For example, they do not have a "key" attribute so code that attempts to retreive
+    * a GroupMember should not be attempted.
+    * @param anElem Element
+    * @return boolean
+    */
+   public static boolean isNonPersistentElement(Element anElem){
+      if (anElem.getAttribute("searchResults").equals("true")) {
+         return true;
+      }
+      return false;
+   }
+   /**
     * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
     * @param model  Document
     * @param entGrp  IEntityGroup
-    * @param compareElement Element
     * @throws GroupsException
     */
    public static void refreshAllNodes (Document model, IEntityGroup entGrp)
@@ -634,7 +698,13 @@ public class GroupsManagerXML
     * @param anElem Element
     */
    public static void refreshAllNodesIfRequired (Document model, Element anElem){
+      // A search element holds search results and should not be refreshed
+      // because it is not persistent.
+      if (isNonPersistentElement(anElem)) {
+         return;
+      }
       try{
+         // refresh nodes if the anElem is out of date
          if (refreshRequired(anElem, null)) {
             Utility.logMessage("Debug", "GroupsManagerXML::refreshAllNodesIfRequired(): Element needs refreshing : "
                + anElem);
@@ -649,25 +719,78 @@ public class GroupsManagerXML
    }
 
    /**
+    * Updates all nodes representing the same IEntityGroup that is represented by the
+    * anElem, if the anElem is out of date with the IEntityGroup. Additionally, we
+    * do the same for each child node (one level down at this time).
+    * @param model  Document
+    * @param parentElem Element
+    */
+   public static void refreshAllNodesRecursivelyIfRequired (Document model, Element parentElem){
+         /** @todo not really recursive, we only go one level down, reconcile this
+          *  in code or by changing name */
+         Element childElem;
+         Node childNode;
+         NodeList childNodes;
+         String childType;
+         refreshAllNodesIfRequired(model, parentElem);
+         String parentType = parentElem.getAttribute("type");
+         Node parentNode = (Node)parentElem;
+         childNodes = parentNode.getChildNodes();
+         for (int i = 0; i < childNodes.getLength(); i++) {
+            childNode = (org.w3c.dom.Node)childNodes.item(i);
+            childElem = (Element)childNode;
+            childType = childElem.getAttribute("type");
+            if (Utility.notEmpty(childType)){
+               refreshAllNodesIfRequired(model, childElem);
+            }
+            // Does parent have any new children
+            // The wrapper will automatically add new children if expanded attribute is set to "true"
+            // but we have to set it back to the original value.
+            String saveExpand = parentElem.getAttribute("expanded");
+            // Have to check for non persistent search element before doing retrieval
+            IGroupMember parentGM = ((isNonPersistentElement(parentElem) ?
+               dummyGroup(parentElem) :
+               (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
+            getGroupMemberXml (parentGM , true, parentElem, model);
+            parentElem.setAttribute("expanded", saveExpand);
+            /** @todo is this child still a child of parent */
+         }
+      return;
+   }
+
+   /**
     * Updates an Element with information about the IEntityGroup.
     * @param updElem  Element
     * @param entGrp  IEntityGroup
     */
    public static void refreshElement (Element updElem, IEntityGroup entGrp) {
+      // A search element holds search results and should not be refreshed
+      // because it is not persistent.
+      if (isNonPersistentElement(updElem)) {
+         return;
+      }
       IEntityGroup updEntGrp = (entGrp != null ? entGrp : retrieveGroup (updElem.getAttribute("key")));
-      Utility.logMessage("DEBUG", "GroupsManagerXML::refreshElement(): About to update xml for element id: "
-            + updElem.getAttribute("id") + " Key: " + updElem.getAttribute("key"));
+      //Utility.logMessage("DEBUG", "GroupsManagerXML::refreshElement(): About to update xml for element id: " + updElem.getAttribute("id") + " Key: " + updElem.getAttribute("key"));
+      Utility.printElement(updElem, "Element before update------");
       NodeList nList = updElem.getElementsByTagName("dc:title");
       if (nList.getLength() > 0) {
          Node titleNode = nList.item(0);
          titleNode.getFirstChild().setNodeValue(entGrp.getName());
       }
 
-      NodeList dList = updElem.getElementsByTagName("dc:description");
-      if (dList.getLength() > 0) {
-         Node descNode = dList.item(0);
+      nList = updElem.getElementsByTagName("dc:description");
+      if (nList.getLength() > 0) {
+         Node descNode = nList.item(0);
          descNode.getFirstChild().setNodeValue(entGrp.getDescription());
       }
+
+      nList = updElem.getElementsByTagName("dc:creator");
+      if (nList.getLength() > 0) {
+         Node descNode = nList.item(0);
+         String crtName = GroupsManagerXML.getEntityName(updEntGrp.getLeafType(), updEntGrp.getCreatorID());
+         descNode.getFirstChild().setNodeValue(crtName);
+      }
+      Utility.printElement(updElem, "Element after update++++++");
       return;
    }
 
@@ -679,17 +802,20 @@ public class GroupsManagerXML
     *
     */
    public static boolean refreshRequired (Element chkElem, IEntityGroup entGrp) {
+      // A search element holds search results and should not be refreshed
+      // because it is not persistent.
+      if (isNonPersistentElement(chkElem)) {
+         return false;
+      }
       IEntityGroup chkEntGrp = (entGrp != null ? entGrp : retrieveGroup (chkElem.getAttribute("key")));
       Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): About to check if element needs to be refreshed for Element ID: "
             + chkElem.getAttribute("id") + " Key: " + chkElem.getAttribute("key"));
-      String elemValue = getElementValueForTagname(chkElem, "dc:title");
-      /** @todo should check for nulls for both element and group values */
+      String elemValue = getElementValueForTagName(chkElem, "dc:title");
       if (!Utility.areEqual(elemValue, chkEntGrp.getName())){
          Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): Name has changed!!");
          return true;
       }
-      elemValue = getElementValueForTagname(chkElem, "dc:description");
-      /** @todo should check for nulls for both element and group values */
+      elemValue = getElementValueForTagName(chkElem, "dc:description");
       if (!Utility.areEqual(elemValue, chkEntGrp.getDescription())){
          Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): Description has changed!!");
          return true;
@@ -743,11 +869,10 @@ public class GroupsManagerXML
     * @return IGroupMember
     */
    public static IGroupMember retrieveGroupMemberForElementId (Document aDoc, String id) {
-
       Element gmElem = getElementById(aDoc, id);
       IGroupMember gm;
-      if (gmElem == null) {
-         Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroupMemberForElementId(): Unable to retrieve the element with id = "
+      if (gmElem == null || isNonPersistentElement(gmElem)) {
+         Utility.logMessage("INFO", "GroupsManagerXML::retrieveGroupMemberForElementId(): Unable to retrieve the element with id = "
                + id);
          return  null;
       }
@@ -765,26 +890,6 @@ public class GroupsManagerXML
          gm = (IGroupMember)GroupsManagerXML.retrieveEntity(gmKey,gmElem.getAttribute("type"));
       }
       return  gm;
-   }
-
-   public static void expandGroupElementXML(Element expandedElem, Document xmlDoc){
-      //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
-         boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
-               == 0);
-         boolean hasEntitiesXML = !(expandedElem.getElementsByTagName(ENTITY_TAGNAME).getLength()
-               == 0);
-         boolean hasMembers = (expandedElem.getAttribute("hasMembers").equals("true"));
-         Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
-               + hasMembers);
-
-         if (hasMembers) {
-            expandedElem.setAttribute("expanded", "true");
-            Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
-            IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(expandedElem.getAttribute("key"));
-            GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, true, expandedElem,
-                  xmlDoc);
-            //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
-         }
    }
 }
 

@@ -71,28 +71,26 @@ public class UpdateGroup extends GroupsManagerCommand {
     * @param sessionData
     */
    public void execute (CGroupsManagerSessionData sessionData) {
-      /** @todo check that the values were actually changed before updating.
-       *  This way we could avoid updating elements. */
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Start");
-      Document xmlDoc = (Document)sessionData.model;
+      Document model = getXmlDoc(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
       String newName = runtimeData.getParameter("grpName");
       String newDescription = runtimeData.getParameter("grpDescription");
       String updId = getCommandArg(runtimeData);
       Node titleNode;
-      Element updElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, updId);
+      Element updElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, updId);
       String updKey = updElem.getAttribute("key");
       String retMsg;
-      String curName = GroupsManagerXML.getElementValueForTagname(updElem, "dc:title");
+      String curName = GroupsManagerXML.getElementValueForTagName(updElem, "dc:title");
       if (curName == null || curName.equals("")) {
          Utility.logMessage("ERROR", "UpdateGroup::execute(): Cannot find dc:title element for: "
                + updElem.getAttribute("name"));
          return;
       }
-      String curDescription = GroupsManagerXML.getElementValueForTagname(updElem, "dc:description");
+      String curDescription = GroupsManagerXML.getElementValueForTagName(updElem, "dc:description");
       boolean hasChanged = false;
       if (!Utility.areEqual(curName, newName)){
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group name: '" + curName
@@ -105,6 +103,7 @@ public class UpdateGroup extends GroupsManagerCommand {
          hasChanged = true;
       }
 
+      // Notify user if nothing was changed
       if (!hasChanged){
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): Update was not applied because nothing has been changed.");
          retMsg = "Update was not applied. No changes were entered.";
@@ -127,7 +126,7 @@ public class UpdateGroup extends GroupsManagerCommand {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
                + curName);
          // update all xml nodes for this group
-         GroupsManagerXML.refreshAllNodes(xmlDoc, updGroup);
+         GroupsManagerXML.refreshAllNodes(model, updGroup);
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
          sessionData.feedback = retMsg;

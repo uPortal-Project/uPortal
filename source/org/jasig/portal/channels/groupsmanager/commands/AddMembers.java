@@ -75,15 +75,18 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
    public void execute (CGroupsManagerSessionData sessionData) {
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
-
+      Document model = getXmlDoc(sessionData);
       Utility.logMessage("DEBUG", "AddMembers::execute(): Start");
       String parentAddElemId = getCommandArg(runtimeData);
       try{
-        IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(this.getXmlDoc(sessionData),parentAddElemId);
-        sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),sessionData.model);
+         IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(model, parentAddElemId);
+         sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),getXmlDoc(sessionData));
+         //Parent was locked so no other thread or process could have changed it.
+         //Element parentElem = GroupsManagerXML.getElementById(model, pg.getKey());
+         //GroupsManagerXML.refreshAllNodesIfRequired(model, parentElem);
       }
       catch(Exception e){
-        LogService.instance().log(LogService.ERROR,e);
+         LogService.instance().log(LogService.ERROR,e);
       }
       sessionData.mode=SELECT_MODE;
       sessionData.highlightedGroupID = sessionData.rootViewGroupID;

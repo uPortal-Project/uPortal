@@ -48,6 +48,7 @@ import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
+import  org.w3c.dom.Node;
 import  org.w3c.dom.Document;
 
 /**
@@ -98,8 +99,7 @@ public class GroupWrapper extends GroupMemberWrapper {
          NodeList nList = rootElem.getElementsByTagName("rdf:RDF");
          if (nList.getLength() == 0) {
             Utility.logMessage("DEBUG", "GroupWrapper::getXml(): CREATING ELEMENT RDF");
-            Element rdf = GroupsManagerXML.createRdfElement(entGrp.getName(), entGrp.getDescription(),
-                  entGrp.getCreatorID(), aDoc);
+            Element rdf = GroupsManagerXML.createRdfElement(entGrp, aDoc);
             Utility.logMessage("DEBUG", "GroupWrapper::getXml(): APPENDING rdf element TO GRPROOT");
             rootElem.appendChild(rdf);
          }
@@ -146,8 +146,8 @@ public class GroupWrapper extends GroupMemberWrapper {
             } catch (Exception e) {
                Utility.logMessage("ERROR", "GroupWrapper::expandElement():  \n" + e.toString());
             }
-            NodeList nl = anElem.getChildNodes();
             String aKey = gm.getKey();
+            // add new elements for new group members
             while (gmItr.hasNext()) {
                aChildGm = (IGroupMember)gmItr.next();
                String childKey = aChildGm.getKey();
@@ -167,6 +167,22 @@ public class GroupWrapper extends GroupMemberWrapper {
                         + tempElem.getNodeName());
                   anElem.appendChild(tempElem);
                   Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING ACCOMPLISHED");
+               }
+            }
+            // remove elements for new groups that are no longer members
+            // Remember that getChildNodes does not only return IGroupMember elements
+            NodeList nList = anElem.getChildNodes();
+            for (int i = 0; i < nList.getLength(); i++) {
+               tempElem = (Element)nList.item(i);
+               if (Utility.notEmpty(tempElem.getAttribute("entityType"))){
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  Checking if child element (id = " + tempElem.getAttribute("id") + ") still a member");
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (key = " + tempElem.getAttribute("key") + ")");
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (entityType = " + tempElem.getAttribute("entityType") + ")");
+                  aChildGm = GroupsManagerXML.retrieveGroupMemberForElementId (aDoc, tempElem.getAttribute("id"));
+                  if (!gm.contains(aChildGm)){
+                     Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  About to remove child element");
+                     anElem.removeChild((Node)tempElem);
+                  }
                }
             }
          }

@@ -50,16 +50,17 @@ public class HideProperties extends GroupsManagerCommand {
 
   public HideProperties() {
   }
-  
+
   public void execute (CGroupsManagerSessionData sessionData) {
+    Document model = getXmlDoc(sessionData);
     String id = this.getCommandArg(sessionData.runtimeData);
-    Element e = GroupsManagerXML.getElementById(sessionData.model,id);
+    Element e = GroupsManagerXML.getElementById(model,id);
     if (e != null){
       NodeList nl = e.getChildNodes();
       for(int i=(nl.getLength()-1); i>=0;i--){
         if (nl.item(i).getNodeName().equals("properties")){
           e.removeChild(nl.item(i));
-        } 
+        }
       }
     }
   }

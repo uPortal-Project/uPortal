@@ -73,21 +73,21 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Start");
-      Document xmlDoc = getXmlDoc(sessionData);
+      Document model = getXmlDoc(sessionData);
       // Due to the networked relationship of groups, the next method has to return a list of elements.
       String elemUid = getCommandArg(runtimeData);
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Uid of expanded element = "
             + elemUid);
-      Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, elemUid);
+      Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, elemUid);
       String rootOwner;
       if (expandedElem != null) {
-        GroupsManagerXML.refreshAllNodesIfRequired(xmlDoc, expandedElem);
+        GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, expandedElem);
 
         if (expandedElem.getAttribute("searchResults").equals("true")){
           expandedElem.setAttribute("expanded","true");
         }
         else{
-          GroupsManagerXML.expandGroupElementXML(expandedElem,xmlDoc);
+          GroupsManagerXML.expandGroupElementXML(expandedElem,model);
         }
       }
    }

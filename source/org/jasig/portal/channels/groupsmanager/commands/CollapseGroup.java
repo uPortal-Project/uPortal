@@ -69,16 +69,17 @@ public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.comma
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "CollapseGroup::execute(): Start");
-      Document xmlDoc = getXmlDoc(sessionData);
-      Element collapseElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
+      Document model = getXmlDoc(sessionData);
+      Element collapseElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME,
             getCommandArg(runtimeData));
       Utility.logMessage("DEBUG", "CollapseGroup::execute(): collapseElem was found: "
             + collapseElem);
       if (collapseElem != null) {
          Utility.logMessage("DEBUG", "CollapseGroup::execute(): Element to be expanded: \n"
                + collapseElem);
-         GroupsManagerXML.refreshAllNodesIfRequired(xmlDoc, collapseElem);
+         GroupsManagerXML.refreshAllNodesIfRequired(model, collapseElem);
          collapseElem.setAttribute("expanded", "false");
+         GroupsManagerXML.refreshAllNodesIfRequired(model, collapseElem);
       }
       return;
    }

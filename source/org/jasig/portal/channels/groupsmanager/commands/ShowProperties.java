@@ -32,7 +32,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 package org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.channels.groupsmanager.*;
@@ -52,12 +52,13 @@ public class ShowProperties extends GroupsManagerCommand {
 
   public ShowProperties() {
   }
-  
+
   public void execute (CGroupsManagerSessionData sessionData) {
+    Document model = getXmlDoc(sessionData);
     String id = this.getCommandArg(sessionData.runtimeData);
-    Element e = GroupsManagerXML.getElementById(sessionData.model,id);
+    Element e = GroupsManagerXML.getElementById(model,id);
     if (e != null){
-      Element props = sessionData.model.createElement("properties");
+      Element props = model.createElement("properties");
       EntityIdentifier ei = null;
       try{
         ei = new EntityIdentifier(e.getAttribute("key"),Class.forName(e.getAttribute("type")));
@@ -68,7 +69,7 @@ public class ShowProperties extends GroupsManagerCommand {
       String[] names = EntityPropertyRegistry.getPropertyNames(ei);
       //System.out.println("Found "+names.length+" properties");
       for(int i=0; i<names.length;i++){
-          Element prop = sessionData.model.createElement("property");
+          Element prop = model.createElement("property");
           prop.setAttribute("name",names[i]);
           prop.setAttribute("value",EntityPropertyRegistry.getProperty(ei,names[i]));
           props.appendChild(prop);

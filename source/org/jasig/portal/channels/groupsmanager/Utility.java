@@ -81,6 +81,15 @@ public class Utility
    }
 
    /**
+    * Answers if testString has a value other that null and "".
+    * @param aString String
+    * @return boolean
+    */
+   public static boolean notEmpty (String aString) {
+      String testString = (aString==null ? "" : aString).trim();
+      return !testString.equals("");
+   }
+   /**
     *
     * @param ownerID The user/group ID that created this IInitialGroupContext
     * @param ownerType The entity that created this IInitialGroupContext could be either a person (p) or a group (g).

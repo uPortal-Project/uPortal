@@ -70,7 +70,7 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "SelectMembers::execute(): Start");
-      Document xmlDoc = getXmlDoc(sessionData);
+      Document model = getXmlDoc(sessionData);
       String theCommand = getCommand(runtimeData);
       Utility.logMessage("DEBUG", "SelectMembers::execute(): action = " + theCommand);
       Iterator itr = runtimeData.keySet().iterator();
@@ -78,18 +78,18 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
       while (itr.hasNext()) {
          String key = (String)itr.next();
          String thisPerm = null;
-         String tagName = theCommand + "//";
-         if (key.indexOf(tagName) > -1) {
+         String tagname = theCommand + "//";
+         if (key.indexOf(tagname) > -1) {
             thisPerm = key.substring(key.lastIndexOf("/") + 1);
-            if (!Utility.areEqual(thisPerm, "")) {
+            if (Utility.notEmpty(thisPerm)) {
                //Utility.logMessage("DEBUG","SelectMembers::renderXML(): Iterating over input");
                String princeKey = thisPerm.substring(0, thisPerm.lastIndexOf("|"));
                String princeType = thisPerm.substring(thisPerm.lastIndexOf("|") + 1);
                //String principal = princeType + "." + princeKey;
-               theElement = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, princeType, princeKey);
+               theElement = GroupsManagerXML.getElementByTagNameAndId(model, princeType, princeKey);
                // test first
                if (theElement != null) {
-                  GroupsManagerXML.refreshAllNodesIfRequired(xmlDoc, theElement);
+                  GroupsManagerXML.refreshAllNodesIfRequired(model, theElement);
                   theElement.setAttribute("selected", String.valueOf(theCommand.equals("Select")));
                   Utility.logMessage("DEBUG", "SelectMembers::execute(): " + theCommand
                         + "ed element " + princeType + " " + princeKey);

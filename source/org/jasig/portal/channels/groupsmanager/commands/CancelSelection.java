@@ -46,7 +46,8 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  */
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-
+import  org.w3c.dom.Element;
+import  org.w3c.dom.Document;
 
 /** A select cycle could be started in Servant mode or it could be started by
  *  the AddMembers command. The AddMembers command sets the id of the parent
@@ -74,15 +75,20 @@ public class CancelSelection extends GroupsManagerCommand {
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
+      Document model = getXmlDoc(sessionData);
       /** @todo move to GroupManagerCommand.cleanUp */
       Utility.logMessage("DEBUG", "CancelSelection::execute(): Start");
       clearSelected(sessionData);
-      if (getParentId(staticData) != null) {
+      String parentId = getParentId(staticData);
+      if (parentId != null) {
          // came from the edit screen, so go back
          sessionData.mode = EDIT_MODE;
-         sessionData.highlightedGroupID = getParentId(staticData);
+         sessionData.highlightedGroupID = parentId;
          sessionData.rootViewGroupID="0";
          staticData.remove("groupParentId");
+         //Parent was locked so no other thread or process could have changed it.
+         //Element parentElem = GroupsManagerXML.getElementById(model, parentId);
+         //GroupsManagerXML.refreshAllNodesIfRequired(model, parentElem);
       }
       else {
          staticData.setParameter("groupManagerFinished", "true");

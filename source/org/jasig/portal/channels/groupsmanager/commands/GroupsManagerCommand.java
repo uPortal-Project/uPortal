@@ -130,7 +130,7 @@ public abstract class GroupsManagerCommand
     */
    public Document getXmlDoc (CGroupsManagerSessionData sessionData) {
       //return  (Document)staticData.get("xmlDoc");sessionData.model
-      return  (Document)sessionData.model;
+      return  sessionData.model;
    }
 
    /**

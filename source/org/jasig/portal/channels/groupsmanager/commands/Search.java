@@ -59,13 +59,13 @@ import org.w3c.dom.Document;
 public class Search extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
   private static String grpPrefix = "IEntityGroup::";
   private static String[] methods;
-  
+
   static{
     methods = new String[5];
     methods[1]=" is ";
     methods[2]=" starts with ";
     methods[3]=" ends with ";
-    methods[4]=" contains "; 
+    methods[4]=" contains ";
   }
 
    /**
@@ -127,8 +127,7 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
                results = GroupService.searchForEntities(query, methodInt, type);
             }
          }
-         Document model = sessionData.model;
-
+         Document model = getXmlDoc(sessionData);
          IEntityGroup sr = new EntityGroupImpl(null,type);
          sr.setName("Search Results");
          sr.setDescription("Search for a "+label+" that"+methods[methodInt]+query);
@@ -138,10 +137,10 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
             IGroupMember resultGroup = GroupService.getGroupMember(entID);
             sr.addMember(resultGroup);
          }
-         Element searchElem = GroupsManagerXML.getGroupMemberXml(sr,true,null,sessionData.model);
+         Element searchElem = GroupsManagerXML.getGroupMemberXml(sr,true,null,model);
          searchElem.setAttribute("searchResults", "true");
          model.getDocumentElement().appendChild(searchElem);
-         
+
          this.setCommandArg(sessionData.runtimeData,searchElem.getAttribute("id"));
          GroupsManagerCommandFactory.get("Highlight").execute(sessionData);
       }
