@@ -12,7 +12,7 @@
   <xsl:param name="blockEntitySelect" select="false()"/>  
   <xsl:param name="grpServantMode">false </xsl:param>
   <xsl:param name="spacerIMG">media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif</xsl:param>
-  <xsl:param name="pageSize" select="number(3)"/>
+  <xsl:param name="pageSize" select="number(12)"/>
   <xsl:param name="page"/>
   <xsl:param name="mediaBase">media/org/jasig/portal/channels/groupsmanager</xsl:param>
   <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)" />
@@ -120,12 +120,12 @@
 						</xsl:if>
 					</xsl:for-each>
 				</select>
-				that 
+				whose name  
 				<select class="uportal-button" name="grpMethod">
 					<option value="1">is</option>
 					<option value="2">starts with</option>
 					<option value="3">ends with</option>
-					<option value="4">contains</option>
+					<option value="4" selected="selected">contains</option>
 				</select>
 				<input type="text" size="10" name="grpQuery"/>
 				<input type="submit" class="uportal-button" value="Go"/>
@@ -299,7 +299,7 @@
 					  
 					</xsl:when>
 					<xsl:otherwise>
-					  <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
+					  <img src="{$spacerIMG}" height="5" width="14" />
 					</xsl:otherwise>
 				</xsl:choose>
             </td>
@@ -351,7 +351,7 @@
 						<input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Update';" value="Update" class="uportal-button" />
 						<input type="reset" value="Reset Form"  class="uportal-button" />
 					  </xsl:if>
-					 <img src="$spacerIMG" width="15" height="1"/>
+					 <img src="{$spacerIMG}" width="15" height="1"/>
 					<xsl:if test="not($highlightedGroupID='0') and not($grpKey='null') and ($ignorePermissions or key('can',concat('ASSIGNPERMISSIONS','|',$grpKey)))">
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Assign Permissions" class="uportal-button" />
 					  </xsl:if>
@@ -398,7 +398,7 @@
     				<td align="left">
     					<xsl:choose>
 							<xsl:when test="$page &gt; 1">
-							<a href="{$baseActionURL}?grpPageBack={$page - 1}"><img width="16" height="16" src="{$mediaBase}/first.gif" border="0" hspace="1" vspace="0"/></a>
+							<a href="{$baseActionURL}?grpPageBack={$page - 1}"><img width="16" height="16" src="{$mediaBase}/first.gif" border="0" hspace="1" vspace="0" title="First Page" alt="First Page"/></a>
 							</xsl:when>
 							<xsl:otherwise>
 								<img src="{$spacerIMG}" width="16" height="16" border="0" hspace="1" vspace="0"/>
@@ -408,7 +408,7 @@
 					<td align="left">
 						<xsl:choose>
 							<xsl:when test="$page &gt; 1">
-							<a href="{$baseActionURL}?grpPageBack=1"><img width="16" height="16" src="{$mediaBase}/back.gif" border="0" hspace="1" vspace="0"/></a>
+							<a href="{$baseActionURL}?grpPageBack=1"><img width="16" height="16" src="{$mediaBase}/back.gif" border="0" hspace="1" vspace="0" title="Previous Page" alt="Previous Page"/></a>
 							</xsl:when>
 							<xsl:otherwise>
 								<img src="{$spacerIMG}" width="16" height="16" border="0" hspace="1" vspace="0"/>
@@ -427,7 +427,7 @@
 					<td align="right">
 						<xsl:choose>
 							<xsl:when test="($pageSize*$page) &lt; $siblingCount">
-							<a href="{$baseActionURL}?grpPageForward=1"><img width="16" height="16" src="{$mediaBase}/forward.gif" border="0" hspace="1" vspace="0"/></a>
+							<a href="{$baseActionURL}?grpPageForward=1"><img width="16" height="16" src="{$mediaBase}/forward.gif" border="0" hspace="1" vspace="0" title="Next Page" alt="Next Page"/></a>
 							</xsl:when>
 							<xsl:otherwise>
 								<img src="{$spacerIMG}" width="16" height="16" border="0" hspace="1" vspace="0"/>
@@ -437,7 +437,7 @@
 					<td align="right">
 						<xsl:choose>
 							<xsl:when test="($pageSize*$page) &lt; $siblingCount">
-							<a href="{$baseActionURL}?grpPageForward={ceiling($siblingCount div $pageSize) - $page}"><img width="16" height="16" src="{$mediaBase}/last.gif" border="0" hspace="1" vspace="0"/></a>
+							<a href="{$baseActionURL}?grpPageForward={ceiling($siblingCount div $pageSize) - $page}"><img width="16" height="16" src="{$mediaBase}/last.gif" border="0" hspace="1" vspace="0" title="Last Page" alt="Last Page"/></a>
 							</xsl:when>
 							<xsl:otherwise>
 								<img src="{$spacerIMG}" width="16" height="16" border="0" hspace="1" vspace="0"/>
@@ -484,7 +484,7 @@
 							  
 							</xsl:when>
 							<xsl:otherwise>
-							  <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
+							  <img src="{$spacerIMG}" height="5" width="14" />
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -496,15 +496,15 @@
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
 					  <xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
 						<a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
-						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" />
+						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 						</a>
 					  </xsl:if>
 					  <xsl:choose>
 						<xsl:when test="properties">
-							<a href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/hideinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top"/></a>
+							<a href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/hideinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Hide Info" title="Hide Info"/></a>
 						</xsl:when>
 						<xsl:otherwise>
-							<a href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/showinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top"/></a>
+							<a href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/showinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Show Info" title="Show Info"/></a>
 				  		</xsl:otherwise>
 				  	  </xsl:choose>
 				  	</td>
@@ -538,7 +538,7 @@
 						  </xsl:if>
 						</xsl:when>
 						<xsl:otherwise>
-							<img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
+							<img src="{$spacerIMG}" height="5" width="14" />
 						</xsl:otherwise>
 					</xsl:choose>
 				  </td>
@@ -550,15 +550,15 @@
 				  <td align="right" valign="top" class="uportal-channel-table-row-odd">
 					<xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
 					  <a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
-					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" />
+					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 					  </a>
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="properties">
-							<a href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/hideinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top"/></a>
+							<a href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/hideinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Hide Info" title="Hide Info"/></a>
 						</xsl:when>
 						<xsl:otherwise>
-							<a href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/showinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top"/></a>
+							<a href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/showinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Show Info" title="Show Info"/></a>
 				  		</xsl:otherwise>
 				  	</xsl:choose>
 				  </td>
@@ -633,7 +633,7 @@
   	<xsl:param name="width">3</xsl:param>
   	<tr><td colspan="3" align="center" height="1">
   		<table cellpadding="0" cellspacing="0" border="0" class="uportal-background-shadow" width="100%">
-  			<tr><td height="1"><img src="$spacerIMG" height="1" width="1"/></td></tr>
+  			<tr><td height="1"><img src="{$spacerIMG}" height="1" width="1"/></td></tr>
   		</table>	
   	</td>
   	</tr>
@@ -665,10 +665,10 @@
               <td>
               	<xsl:choose>
               		<xsl:when test="(@expanded='true') and (@hasMembers='true') and (count(key('members',@id)[name()='group']) &gt; 0) and not(@id=0)">
-					  <a href="{$baseActionURL}?grpCommand=Collapse&amp;grpCommandArg={@id}"> <img border="0" height="16" width="16" src="{$mediaBase}/expanded.gif" align="bottom" vspace="1" hspace="0" alt="Collapse Group"/> </a>
+					  <a href="{$baseActionURL}?grpCommand=Collapse&amp;grpCommandArg={@id}"> <img border="0" height="16" width="16" src="{$mediaBase}/expanded.gif" align="bottom" vspace="1" hspace="0" alt="Collapse Group" title="Collapse Group"/> </a>
 					</xsl:when>
               		<xsl:when test="(@expanded='false') and (@hasMembers='true') and not(@id=0)">
-					  <a href="{$baseActionURL}?grpCommand=Expand&amp;grpCommandArg={@id}"> <img border="0" height="16" width="16" src="{$mediaBase}/collapsed.gif" align="bottom" vspace="1" hspace="0" alt="Expand Group"/> </a>
+					  <a href="{$baseActionURL}?grpCommand=Expand&amp;grpCommandArg={@id}"> <img border="0" height="16" width="16" src="{$mediaBase}/collapsed.gif" align="bottom" vspace="1" hspace="0" alt="Expand Group" title="Expand Group"/> </a>
 					</xsl:when>
               		<xsl:otherwise>
               			<img border="0" height="16" width="16" src="{$mediaBase}/empty.gif" align="bottom" vspace="1" hspace="0"/>
@@ -696,7 +696,7 @@
               	<xsl:if test="$highlightedGroupID and $highlightedGroupID=@id">
             		<xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
             	</xsl:if>
-                <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="10"/>
+                <img src="{$spacerIMG}" height="5" width="10"/>
               </td>
             </tr>
           </table>
@@ -706,7 +706,7 @@
       <xsl:if test="(@expanded='true') and (count(key('members',@id)[name()='group']) &gt; 0)">
       	<tr>
       		<td background="{$mediaBase}/dot.gif">
-                <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="16"/>
+                <img src="{$spacerIMG}" height="5" width="16"/>
               </td>
       		<td width="100%">
         <xsl:apply-templates select="group[not(@searchResults='true')]">
