@@ -20,7 +20,7 @@
 			
 			<xsl:if test="$TreeMode='AddFolder' or $TreeMode='AddBookmark'">
 				<tr>
-					<td><input type="radio" name="FolderRadioButton" value="RootLevel"/></td>
+					<td><input type="radio" name="FolderRadioButton" value="RootLevel" checked="true"/></td>
 					<td>Root Level</td>
 				</tr>
 			</xsl:if>
