@@ -136,19 +136,15 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLayoutNode(String nodeId) {
-     try {
+     if ( nodeId != null )
         return (ALNode)layout.get(nodeId);
-     } catch ( Exception e ) {
         return null;
-       }
   }
 
   public ALFolder getLayoutFolder(String folderId) {
-     try {
+     if ( folderId != null )
         return (ALFolder)layout.get(folderId);
-     } catch (Exception e ) {
         return null;
-       }
   }
 
   public ALNode getLastSiblingNode ( String nodeId ) {
