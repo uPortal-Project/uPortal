@@ -173,8 +173,7 @@ public final class LogService {
   public final static void log (Priority pLogLevel, String sMessage, Throwable ex) {
     try {
       initialize();
-      m_category.log(pLogLevel, sMessage);
-      m_category.log(pLogLevel, "", ex);
+      m_category.log(pLogLevel, sMessage, ex);
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
