@@ -180,7 +180,7 @@ public class ChannelServlet extends HttpServlet {
       }
       rd.setHttpRequest(req);
       rd.setBrowserInfo(new BrowserInfo(req));
-      rd.setBaseActionURL(req.getServletPath());
+      rd.setBaseActionURL(req.getRequestURI());
       if (channel instanceof IPrivilegedChannel) {
         // provide as much of PCS as we can
         PortalControlStructures pcs = new PortalControlStructures();

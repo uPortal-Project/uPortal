@@ -61,11 +61,12 @@ import  org.apache.xml.serialize.*;
  * @version $Revision$
  */
 public class LayoutBean {
-  // all channel content/parameters/caches/etc are managed here
-  ChannelManager channelManager;
-  UserLayoutManager uLayoutManager;
-  // contains information relating client names to media and mime types
-  private MediaManager mediaM;
+    // all channel content/parameters/caches/etc are managed here
+    ChannelManager channelManager;
+    UserLayoutManager uLayoutManager;
+    // contains information relating client names to media and mime types
+    private MediaManager mediaM;
+    private StandaloneChannelRenderer browserMapper=null;
 
   /**
    * Constructor initializes media manager and stylesheet sets.
@@ -88,6 +89,12 @@ public class LayoutBean {
   public IPerson getPerson (HttpServletRequest req) {
     HttpSession session = req.getSession(false);
     IPerson person = (IPerson)session.getAttribute("up_person");
+    if (person == null) {
+	int guestUserId = 1;
+	person = new org.jasig.portal.security.provider.PersonImpl();
+	person.setID(guestUserId);            
+	person.setFullName("Guest");
+    }
     return  person;
   }
 
@@ -121,28 +128,43 @@ public class LayoutBean {
     //
     try {
       // get the layout manager
-      if (uLayoutManager == null) {
-        uLayoutManager = new UserLayoutManager(req, getPerson(req));
-      }
-      if (uLayoutManager.userAgentUnmapped()) {
-        // do the redirect
+	if(browserMapper!=null) {
+	    browserMapper.prepare(req);
+	}
+	
+	if (uLayoutManager == null || uLayoutManager.userAgentUnmapped()) {
+	    uLayoutManager = new UserLayoutManager(req, getPerson(req));
+	} else {
+	    browserMapper=null;
+	}
+
+	if (uLayoutManager.userAgentUnmapped()) {
+	    if(browserMapper==null) {
+		browserMapper=new org.jasig.portal.channels.CSelectSystemProfile();
+		browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true,true,false,10000,getPerson(req));
+	    }
+	    try {
+	      browserMapper.render(req,res);
+	      
+	    } catch (Exception e) {
+		// something went wrong trying to show CSelectSystemProfileChannel 
+		e.printStackTrace();
+	    }
+	    
+	    return;
+	  /*	  
         // for debug purposes, we do the fake mapping to the "netscape" layout
         // Should obtain implementation in a different way!!
         IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
         IPerson person = getPerson(req);
-        if (person == null) {
-          int guestUserId = 1;
-          person = new org.jasig.portal.security.provider.PersonImpl();
-          person.setID(guestUserId);
-        }
+
         // establish mapping
         updb.setUserBrowserMapping(person.getID(), req.getHeader("User-Agent"), 1);
         Logger.log(Logger.DEBUG, "LayoutBean::writeContent() : establishing UA mapping for user=\"" + person.getID() + "\" and UA=\""
             + req.getHeader("User-Agent") + "\".");
         uLayoutManager = new UserLayoutManager(req, getPerson(req));
-      }
-      // deal with parameters that are meant for the LayoutBean
-      HttpSession session = req.getSession(false);
+	  */
+	}
       // determine rendering root -start
       // In general transformations will start at the userLayoutRoot node, unless
       // we are rendering something in a detach mode.

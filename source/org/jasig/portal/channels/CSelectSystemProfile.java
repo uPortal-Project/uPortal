@@ -57,7 +57,7 @@ import  java.net.URL;
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
  */
-public class CSelectSystemProfile extends BaseChannel {
+public class CSelectSystemProfile extends StandaloneChannelRenderer {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
   IUserPreferencesStore updb;
   private Hashtable systemProfileList;
