@@ -366,7 +366,13 @@ public class CPublisher implements IPrivilegedChannel
     mode = NAME;
     int i = Integer.parseInt(currentStep);
     currentStep = Integer.toString(i+1);
-    vRoles = new Vector(Arrays.asList(runtimeData.getParameterValues("role")));
+    try{
+      vRoles = new Vector(Arrays.asList(runtimeData.getParameterValues("role")));
+    }
+    catch(Exception e){
+        vRoles = new Vector();
+        vRoles.add("student");
+    }
   }
 
   private void preparePublishName ()
