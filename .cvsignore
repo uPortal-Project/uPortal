@@ -11,3 +11,16 @@ work
 .cvspass
 jBuilderBackups
 *.jpx*
+classes
+doc
+docs
+01-logs
+02-logs
+03-logs
+04-logs
+05-logs
+06-logs
+07-logs
+08-logs
+09-logs
+portal.jpx
