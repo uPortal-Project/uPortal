@@ -2,7 +2,11 @@
 <HTML> 
   <HEAD> 
 	 <TITLE>uPortal Developers</TITLE> <LINK HREF="uportal.css"
-	 REL="stylesheet"> 
+	 REL="stylesheet">        <!-- Use the following script to do rollovers in the left column of the
+        page.  If you don't want to do rollovers, you can delete these script lines from this
+        html.  If you do use this .js file to do the rollovers, be sure to name your 
+        images using the format filename-on.gif and filename-off.gif.  -->
+	 <SCRIPT LANGUAGE="Javascript" SRC="SwapImage.js"></SCRIPT> 
   </HEAD> 
   <BODY BGCOLOR="#ffffff"> 
 	 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
@@ -18,56 +22,72 @@
 		  </TR> 
 		  <TR VALIGN="top"> 
 			 <TD WIDTH="150"> 
-				<TABLE CELLSPACING="0" CELLPADDING="5" WIDTH="100%"
-				 BGCOLOR="#ccccff" BORDER="0"> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0"> 
 				  <TBODY> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="index.html">Home</A></TD> 
+						<TD><A HREF="http://www.jasig.org/"
+						  ONMOUSEOVER="swapImage('jahome','on')" ONMOUSEOUT="swapImage('jahome','off')">
+						  <IMG NAME="jahome" SRC="images/jahome-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="index.html">About uPortal</A></TD> 
+						<TD><A HREF="index.html"
+						  ONMOUSEOVER="swapImage('about','on')" ONMOUSEOUT="swapImage('about','off')">
+						  <IMG NAME="about" SRC="images/about-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="faq.html">FAQ</A></TD> 
+						<TD><A HREF="faq.html" ONMOUSEOVER="swapImage('faq','on')"
+						  ONMOUSEOUT="swapImage('faq','off')">
+						  <IMG NAME="faq" SRC="images/faq-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="download.html">Download</A></TD> 
+						<TD><A HREF="download.html"
+						  ONMOUSEOVER="swapImage('downld','on')" ONMOUSEOUT="swapImage('downld','off')">
+						  <IMG NAME="downld" SRC="images/downld-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="docs.html">Documentation</A></TD> 
+						<TD><A HREF="docs.html" ONMOUSEOVER="swapImage('docs','on')"
+						  ONMOUSEOUT="swapImage('docs','off')">
+						  <IMG NAME="docs" SRC="images/docs-off.gif" ALT="" BORDER="0"
+						  WIDTH="145" HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="getinv.html">Getting Involved</A></TD> 
+						<TD><A HREF="getinv.html"
+						  ONMOUSEOVER="swapImage('getinv','on')" ONMOUSEOUT="swapImage('getinv','off')">
+						  <IMG NAME="getinv" SRC="images/getinv-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="cvs.html">Code Repository</A></TD> 
+						<TD><A HREF="cvs.html"
+						  ONMOUSEOVER="swapImage('coderep','on')"
+						  ONMOUSEOUT="swapImage('coderep','off')">
+						  <IMG NAME="coderep" SRC="images/coderep-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="bugs.html">Reporting Bugs</A></TD> 
+						<TD><A HREF="bugs.html" ONMOUSEOVER="swapImage('bug','on')"
+						  ONMOUSEOUT="swapImage('bug','off')">
+						  <IMG NAME="bug" SRC="images/bug-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD><A HREF="license.html">License</A></TD> 
-					 </TR> 
-					 <TR> 
-						<TD>&nbsp;</TD> 
-						<TD> <HR ALIGN="left" WIDTH="95">
-						  <A HREF="http://www.jasig.org/">JA-SIG Home</A></TD> 
+						<TD><A HREF="license.html"
+						  ONMOUSEOVER="swapImage('license','on')"
+						  ONMOUSEOUT="swapImage('license','off')">
+						  <IMG NAME="license" SRC="images/license-off.gif" ALT="" BORDER="0" WIDTH="145"
+						  HEIGHT="32"></A></TD> 
 					 </TR> 
 				  </TBODY> 
-				</TABLE><BR></TD> 
+				</TABLE><BR><BR>
+<!--nested table for mellon logo --><IMG SRC="images/mellon.gif" ALT=""
+				BORDER="0" WIDTH="145" HEIGHT="93"> </TD> 
 			 <TD WIDTH="10">&nbsp;</TD> 
-			 <TD> <BR>
+			 <TD> <BR> 
 				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000099"
-				  SIZE="3"><B>Accessing the uPortal Source Code</B></FONT></P>
+				  SIZE="3"><B>Accessing the uPortal Source Code</B></FONT></P> 
 				<TABLE> 
 				  <TR> 
 					 <TD> 
@@ -76,10 +96,10 @@
 						  uPortal can do so through our web front end to the uPortal CVS repository. This
 						  access is read-only. The URL for the the web front end to CVS is:<BR><BR>
 						  <A
-							HREF="http://www.mis3.udel.edu/servlet/JCVS/index.html">http://www.mis3.udel.edu/servlet/JCVS/index.html</A><BR><BR>
+						  HREF="http://www.mis3.udel.edu/servlet/JCVS/index.html">http://www.mis3.udel.edu/servlet/JCVS/index.html</A><BR><BR>
 						  or download a zip file of the latest distribution at:
 						  <A
-							HREF="http://www.yale.edu/tp/portal-dist/">http://www.yale.edu/tp/portal-dist/</A></P><BR></TD>
+						  HREF="http://www.yale.edu/tp/portal-dist/">http://www.yale.edu/tp/portal-dist/</A></P><BR></TD>
 					 
 				  </TR> 
 				  <TR> 
@@ -87,7 +107,7 @@
 						WIDTH="1" BORDER="0" ALT="."></TD> 
 				  </TR> 
 				  <TR> 
-					 <TD> <BR>
+					 <TD> <BR> 
 						<P><B>Contributing Developers</B></P> 
 						<P>All users wishing to contribute to the project must first
 						  register with the <A HREF="https://www.mis4.udel.edu/JasigCH/">JA-SIG
@@ -96,7 +116,7 @@
 						  account on our server for loging in and creating the SSH tunnel.<BR> The
 						  instructions for logging into this account will be sent to you upon
 						  <A
-							HREF="mailto:John%20Laker%3Cjlaker@udel.edu%3E?subject=CVS%20Access%20Request">request</A>.</P><BR></TD>
+						  HREF="mailto:John%20Laker%3Cjlaker@udel.edu%3E?subject=CVS%20Access%20Request">request</A>.</P><BR></TD>
 					 
 				  </TR> 
 				  <TR> 
@@ -104,8 +124,8 @@
 						WIDTH="1" BORDER="0" ALT="."></TD> 
 				  </TR> 
 				  <TR> 
-					 <TD> <BR>
-						<P><B>CVS Access on Windows </B></P>
+					 <TD> <BR> 
+						<P><B>CVS Access on Windows </B></P> 
 						<P> On Windows, you need one of the following software
 						  products for each category: </P> 
 						<UL> 
@@ -142,11 +162,10 @@
 						  don't need to understand why) as showed in the picture below: </P>
 						<IMG SRC="images/mindterm_tunnel.gif" WIDTH="587" HEIGHT="475"> 
 						<P> When this is done, go ahead and connect to SSH host
-						  <EM>mis105.mis.udel.edu</EM> by typing so at the <CODE>SSH-server:</CODE> prompt. Then your
-						  username will be requested and the password. Don't worry about transmitting
-						  your password since SSH is done exactly to allow you to transmit your password
-						  without worrying about sniffing and other security holes of normal remote
-						  shells. </P> 
+						  <EM>mis105.mis.udel.edu</EM> by typing so at the <CODE>SSH-server:</CODE> prompt. Then your username will be requested and the password. Don't
+						  worry about transmitting your password since SSH is done exactly to allow you
+						  to transmit your password without worrying about sniffing and other security
+						  holes of normal remote shells. </P> 
 						<P> When mis105 welcomes you and its prompt appears, you can
 						  safely minimize your mindterm window since, for plain WinCVS operation, you
 						  won't need to type anything in the ssh terminal. The WinCVS client will send
@@ -159,25 +178,21 @@
 						  </P> <IMG SRC="images/wincvs_config.gif" WIDTH="618" HEIGHT="390"> 
 						<P> At this point you software is setup and first thing to do
 						  is to authenticate yourself on the CVS repository. This is done by logging in
-						  the server with the menu <CODE>Admin -&gt; Login</CODE> and inserting your password. This action
-						  authenticates you into the CVS server and saves your password (in a crypted
-						  form) in the <CODE>.cvspass</CODE> file in the home directory you specify. Note that you need
-						  to do this only once per CVS repository, not everytime you connect to it, even
-						  if you disconnected from that server. </P> 
+						  the server with the menu <CODE>Admin -&gt; Login</CODE> and inserting your password. This action authenticates you into the CVS
+						  server and saves your password (in a crypted form) in the <CODE>.cvspass</CODE> file in the home directory you specify. Note that you need to do this
+						  only once per CVS repository, not everytime you connect to it, even if you
+						  disconnected from that server. </P> 
 						<P> Now your WinCVS client is ready to perform operations on
-						  the remote CVS repository. First action to take is to <CODE>checkout</CODE> the <B>portal</B>
-						  module. To do this, first select the directory where you want the files to be
-						  located. Note that the files will be automatically placed in the <CODE><B>portal</B></CODE>
-						  subdirectory of the indicated directory. Then select the menu item <CODE>Create -&gt; Checkout module...</CODE>.
-						  After this, place <CODE><B>portal</B></CODE> in the module name field and you're ready to go.
-						  </P><BR> </TD> 
+						  the remote CVS repository. First action to take is to <CODE>checkout</CODE> the <B>portal</B> module. To do this, first select the directory where
+						  you want the files to be located. Note that the files will be automatically
+						  placed in the <CODE><B>portal</B></CODE> subdirectory of the indicated directory. Then select the menu item <CODE>Create -&gt; Checkout module...</CODE>. After this, place <CODE><B>portal</B></CODE> in the module name field and you're ready to go. </P><BR> </TD> 
 				  </TR> 
 				  <TR> 
 					 <TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
 						WIDTH="1" BORDER="0" ALT="."></TD> 
 				  </TR> 
 				  <TR> 
-					 <TD> <BR>
+					 <TD> <BR> 
 						<P><B>CVS Access on Unix</B></P> 
 						<P>On Unix, you need the following software products: </P> 
 						<UL> 
@@ -228,7 +243,6 @@
 		  </TR> 
 		</TBODY> 
 	 </TABLE><!-- page footer -->
-	 <P> </P> 
 	 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
 		<TBODY> 
 		  <TR> 
@@ -241,21 +255,26 @@
 		  <TR> 
 			 <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="images/spacer.gif" WIDTH="1"
 				BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
-				SIZE="1"><A HREF="index.html">About uPortal</A>
+				SIZE="1"><A HREF="http://www.jasig.org/">JA-SIG Home</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="index.html"> About uPortal</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
 				<A HREF="faq.html">FAQ</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
-				<A HREF="download.html">Download</A><BR> <A HREF="docs.html">Documentation</A>
+				<A HREF="download.html">Download</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
-				<A HREF="getinv.html">Get Involved</A>
+				<A HREF="docs.html">Documentation</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
-				<A HREF="cvs.html">Code Repository</A><BR><A HREF="bugs.html">Bug Reporting</A>
+				<A HREF="getinv.html">Getting Involved</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
-				<A HREF="license.html">uPortal License</A>
+				<BR><A HREF="cvs.html">Code Repository</A>
 				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
-				<A HREF="http://www.jasig.org/">JA-SIG Home</A></FONT></TD> 
+				<A HREF="bugs.html">Reporting Bugs</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="license.html">License</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				</FONT></TD> 
 		  </TR> 
 		</TBODY> 
-	 </TABLE><!-- end page footer -->
-  </BODY>
+	 </TABLE><!-- end page footer --></BODY>
 </HTML>
