@@ -8,10 +8,12 @@
 <property name="classsrc" value="./source"/>
 <property name="htmlsrc" value="./webpages"/>
 <property name="props" value="properties/"/>
-<property name="scripts" value="./scripts/hypersonic"/>
+<property name="scripts" value="./scripts"/>
 
 
-<target name="all" depends="classes,html,support,javadoc,sql"/>
+<target name="all" depends="classes,javadoc,sql"/>
+<!-- these targets will be used once a directory structure is decided on -->
+<!-- <target name="all" depends="classes,html,support,javadoc,sql"/> -->
 
 <target name="classes" if="htmldest">
   <echo message="Building directories under ${htmldest}"/>
@@ -28,6 +30,7 @@
     />
 </target>
 
+<!-- this target will be re-activated once we start building to a different directory -->
 <target name="html" if="htmldest">
   <echo message="Copying JSPs and other files to ${htmldest}"/>
   <mkdir dir="${htmldest}" />
@@ -38,6 +41,8 @@
   </copy>
 </target>
 
+<!-- this target will be re-activated once we start building to a different directory -->
+<!-- this target is for copying properties and stylesheets -->
 <target name="support" if="upbasedir">
   <echo message="Copying properties and stylesheets to ${upbasedir}"/>
   <mkdir dir="${upbasedir}" />
@@ -73,9 +78,9 @@
         userid="${dblogin}"
         password="${dbpass}"
         onerror="continue">
-        <transaction  src="${scripts}/drop_tables.script" />
-        <transaction  src="${scripts}/create_tables.script" />
-        <transaction  src="${scripts}/populate_tables.script" />
+        <transaction  src="${scripts}/dropTables.script" />
+        <transaction  src="${scripts}/createTables-${dbtype}.script" />
+        <transaction  src="${scripts}/populateTables.script" />
     </sql>
 </target>
 	
