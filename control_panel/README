@@ -1,0 +1,41 @@
+YOU WILL DIE IF YOU DON'T READ THIS!!!!
+
+That's the warning I have to give you before you do anything with the control
+panel.  It is a dangerous piece of software that MUST be protected from
+all unauthorized access and should be completely tested before put on ANY
+application server.
+
+That deserve's repeating:
+
+The control panel is a dangerous piece of software that MUST be protected from
+all unauthorized access and should be completely tested before put on ANY
+application server.
+
+If you still want to use the control panel, then do this:
+
+1)  Create a directory in your document root called control_panel.
+2)  PROTECT THIS DIRECTORY!  YOU'VE BEEN WARNED.  I don't care how you
+do it.  Hordes of elves!  A .htaccess file.  Only allow from local host 
+and use SSH tunnels to get to it.  I don't care, just PROTECT IT!
+3)  Put all the jsp pages in this directory, in the control_panel directory
+you created.
+4)  MAKE SURE THAT ONLY AUTHORIZED PEOPLE CAN ACCESS THESE FILES!
+5)  Try the Kick Guests feature.  If it throws an exception, or kicks
+off ALL users, then DO NOT USE THIS FEATURE.  If this is the case, it would
+be smart to complete remove the jsp files beginning with kick_guest from the
+harddrive and take the links to them out of the other jsp pages.
+6)  Use it carefully.
+
+That's all.  Just thought everyone should be careful when using this thing. 
+It is tested, but each application server does different things to their
+sessions, so it isn't guaranteed to work.  The good thing is, when Sun 
+completely removes all session management code from the Servlet API, you'll
+still be able to use the Kick Users feature (although, not Kick Guests).
+
+One more thing:  You don't really need Kick Guests.  The guest users take
+up such a small amount of memory that it really isn't necessary to kick them
+off.
+
+Zed A. Shaw
+
+
