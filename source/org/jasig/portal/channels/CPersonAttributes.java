@@ -77,7 +77,9 @@ public class CPersonAttributes extends BaseMultithreadedChannel {
     // Grab all the name elements from eduPerson.xml
     NodeIterator ni = null;
     try {
-      ni = XPathAPI.selectNodeIterator(getEduPersonDoc(), "/PersonDirInfo/attributes/attribute/alias");
+      // There may be a problem with this XPath expression if more than one PersonDirInfo element
+      // is added to PersonDirs.xml.  Considering making a separate xml file to store the eduPerson attributes.
+      ni = XPathAPI.selectNodeIterator(getEduPersonDoc(), "/PersonDirs/PersonDirInfo/attributes/attribute/alias");
     } catch (TransformerException te) {
       LogService.log(LogService.ERROR, te);
       throw new PortalException(te);
