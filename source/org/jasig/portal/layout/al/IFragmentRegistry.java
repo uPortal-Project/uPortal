@@ -6,10 +6,11 @@
 package org.jasig.portal.layout.al;
 
 /**
- * An object responsible for supplying and maintaining fragments,
+ * An user-scoped registry responsible for supplying and maintaining fragments,
  * and permissions associated with these fragments.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
 public interface IFragmentRegistry {
 	/**
@@ -17,28 +18,27 @@ public interface IFragmentRegistry {
 	 * @param fragmentId fragment id
 	 * @return fragment
 	 */
-	IFragment getFragment(IFragmentId fragmentId);
+	public IFragment getFragment(IFragmentId fragmentId);
 	
 	/**
 	 * Delete a fragment 
 	 * 
 	 * @param fragmentId
 	 */
-	void deleteFragment(IFragmentId fragmentId);
+	public void deleteFragment(IFragmentId fragmentId);
 	
 	/**
 	 * Create a new, empty fragment
 	 * 
 	 * @return
 	 */
-	IFragment createNewFragment();
+	public IFragment createNewFragment();
 	
 	/**
 	 * Obtain a set of fragments that should be pushed to a user
 	 * 
-	 * @param userId
 	 * @return an array of fragment ids
 	 */
-	IFragmentId[] getPushedFragments(String userId);
+	public IFragmentId[] getPushedFragments();
 	
 }
