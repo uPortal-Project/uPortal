@@ -143,7 +143,7 @@ public class PortalSessionManager extends HttpServlet {
       }
       
       // turn off URL caching if it has been requested
-      if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.url_caching")) {
+      if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching")) {
          // strangely, we have to instantiate a URLConnection to turn off caching, so we'll get something we know is there
          try {
             URL url = ResourceLoader.getResourceAsURL(PortalSessionManager.class, "/properties/portal.properties");
