@@ -50,6 +50,15 @@
     <usercontext>cn=Users</usercontext>
     -->
 
+    <!-- DataSource from container -->
+    <!-- The PersonDirInfo may come from a container supplied DataSource by
+	 supplying the type="DataSource" attribute and a res-ref-name element.
+	 The name should not include the jdbc/ portion of the reference.  The resource 
+	 must correspond the container's DataSource configuration.
+    <PersonDirInfo type="DataSource">
+	<res-ref-name>PersonDb</res-ref-name>
+    -->
+
     <!-- JDBC Properties -->
     <driver>org.hsql.jdbcDriver</driver>
     <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
