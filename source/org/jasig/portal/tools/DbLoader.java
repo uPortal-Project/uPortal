@@ -99,7 +99,7 @@ public class DbLoader
   // CHANGE THIS OR SET portal.home SYSTEM PROPERTY!!!
   private static String portalBaseDir = "D:\\Projects\\JA-SIG\\uPortal2\\";
 
-  private static final String propertiesUri = portalBaseDir + "properties" + File.separator + "dbloader.xml";
+  private static String propertiesUri;
   private static final String indent = "  ";
   private static final String space = " ";
   private static Connection con = null;
@@ -116,6 +116,7 @@ public class DbLoader
     try
     {
       setPortalBaseDir();
+      propertiesUri = portalBaseDir + "properties" + File.separator + "dbloader.xml";
       con = rdbmService.getConnection ();
 
       if (con != null)
