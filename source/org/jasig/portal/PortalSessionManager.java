@@ -208,6 +208,17 @@ public class PortalSessionManager extends HttpServlet {
                 } catch(Exception e) {
                     // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
                     LogService.instance().log(LogService.ERROR, e);
+                    // invalidate session, throw exception
+                    if(session!=null) {
+                        session.invalidate();
+                    }
+                    if(e instanceof PortalException) {
+                        Exception ie=((PortalException) e).getRecordedException();
+                        if(ie!=null) {
+                            throw new ServletException(ie);
+                        }
+                    }
+                    throw new ServletException(e);
                 }
 
                 // generate and register a new tag

@@ -264,9 +264,12 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
         } catch (PortalException pe) {
             throw pe;
         } catch (Throwable t) {
-            LogService.instance().log(LogService.ERROR, t);
+            if(t instanceof Exception) {
+                throw new PortalException((Exception)t);
+            } else {
+                throw new PortalException(t.toString());
+            }
         }
-
         stateTable.put(req.getSession(false).getId(),newState);
     }
 
