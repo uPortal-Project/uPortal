@@ -105,13 +105,28 @@ public class CookieDeserializer extends DeserializerImpl {
     // constructing the cookie since the Cookie object doesn't have a no-argument
     // constructor.
     if (cookieInfo.size() == 8) {
-      Cookie cookie = new Cookie((String)cookieInfo.get(NAME_HINT), (String)cookieInfo.get(VALUE_HINT));
-      cookie.setComment((String)cookieInfo.get(COMMENT_HINT));
-      cookie.setDomain((String)cookieInfo.get(DOMAIN_HINT));
-      cookie.setMaxAge(((Integer)cookieInfo.get(MAXAGE_HINT)).intValue());
-      cookie.setPath((String)cookieInfo.get(PATH_HINT));
-      cookie.setSecure(((Boolean)cookieInfo.get(SECURE_HINT)).booleanValue());
-      cookie.setVersion(((Integer)cookieInfo.get(VERSION_HINT)).intValue());
+      // Gather cookie values stored in cookieInfo
+      String  cName    = (String)cookieInfo.get(NAME_HINT);
+      String  cValue   = (String)cookieInfo.get(VALUE_HINT);
+      String  cComment = (String)cookieInfo.get(COMMENT_HINT);
+      String  cDomain  = (String)cookieInfo.get(DOMAIN_HINT);
+      int     cMaxAge  = ((Integer)cookieInfo.get(MAXAGE_HINT)).intValue();
+      String  cPath    = (String)cookieInfo.get(PATH_HINT);
+      boolean cSecure  = ((Boolean)cookieInfo.get(SECURE_HINT)).booleanValue();
+      int     cVersion = ((Integer)cookieInfo.get(VERSION_HINT)).intValue();
+      
+      // Make the cookie object and set values avoiding null Strings
+      Cookie cookie = new Cookie(cName != null ? cName : "", cValue != null ? cValue : "");      
+      if (cComment != null)
+        cookie.setComment(cComment);
+      if (cDomain != null)
+        cookie.setDomain(cDomain);
+      cookie.setMaxAge(cMaxAge);
+      if (cPath != null)
+        cookie.setPath(cPath);
+      cookie.setSecure(cSecure);
+      cookie.setVersion(cVersion);
+      
       // Set the value of this deserializer to the cookie
       this.value = cookie;
     }
