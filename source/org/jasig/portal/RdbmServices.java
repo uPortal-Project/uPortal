@@ -117,8 +117,8 @@ public class RdbmServices extends GenericPortalBean {
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
-          Logger.log(Logger.WARN, "Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
-          Logger.log(Logger.INFO, SQLe);
+          LogService.instance().log(LogService.WARN, "Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
+          LogService.instance().log(LogService.INFO, SQLe);
           prevErrorMsg = errMsg;
         }
       }
