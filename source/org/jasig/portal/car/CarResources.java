@@ -205,7 +205,8 @@ public class CarResources {
 
         if ( ! carDir.exists() )
         {
-            log.info(
+            if (log.isInfoEnabled())
+                log.info(
                                        "Channel Archives can not be " +
                                        " loaded. CAR directory '" +
                                        carDirRealPath + "' does not exist." );
@@ -234,7 +235,8 @@ public class CarResources {
         }
         catch( RuntimeException re )
         {
-            log.info(
+            if (log.isInfoEnabled())
+                log.info(
                                        "CAR directory property '" +
                                        CAR_DIR_PROP_NAME +
                                        "' not specified. Defaulting to " +
@@ -272,7 +274,8 @@ public class CarResources {
         if ( carDir != null )
         {
             scanDir( carDir );
-            log.info(
+            if (log.isInfoEnabled())
+                log.info(
                                    "Channel Archives Loaded: " +
                                    carsByPath.size() +
                                        " from '" + this.carDirPath + "'" );
@@ -594,7 +597,8 @@ public class CarResources {
         if ( buff.toString().length() > 0 )
             entry = buff.toString();
 
-        log.debug(
+        if (log.isDebugEnabled())
+            log.debug(
                         "CarResources replace() - returned entry is: " +
                                    entry );
         return entry;
@@ -627,7 +631,8 @@ public class CarResources {
             String delim = "/";
             StringBuffer sb = new StringBuffer();
 
-            log.debug(
+            if (log.isDebugEnabled())
+                log.debug(
                                        "CarResources resolveRegExpr() - " +
                                        " Parsing resource name: " + entry );
 
@@ -641,7 +646,8 @@ public class CarResources {
                 // up a directory
                 String token = st.nextToken();
 
-                log.debug(
+                if (log.isDebugEnabled())
+                    log.debug(
                                            "CarResources resolveRegExpr() - " +
                                            "Token is now: " + token );
 
@@ -653,7 +659,8 @@ public class CarResources {
                 {
                     String childToken = st1.nextToken();
 
-                    log.debug(
+                    if (log.isDebugEnabled())
+                        log.debug(
                                                "CarResources resolveRegExpr() - " +
                                                "Child token is: " + childToken );
 
@@ -682,7 +689,8 @@ public class CarResources {
             entry = sb.toString();
         }
 
-        log.debug(
+        if (log.isDebugEnabled())
+            log.debug(
                                    "CarResources resolveRegExpr() - " +
                                    "resolved entry is: " + entry );
         return entry;

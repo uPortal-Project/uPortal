@@ -48,8 +48,9 @@ extends DefaultHandler
     public void error(SAXParseException exception)
         throws SAXException
     {
-        log.debug(
-            "A non-fatal parsing error occurred while parsing "
+        if (log.isDebugEnabled())
+            log.debug(
+                    "A non-fatal parsing error occurred while parsing "
                 + CarResources.DEPLOYMENT_DESCRIPTOR
                 + " in "
                 + ctx.getJarFile().getName()
@@ -66,8 +67,9 @@ extends DefaultHandler
     public void warning(SAXParseException exception)
         throws SAXException
     {
-        log.debug(
-            "A parsing warning occurred while parsing "
+        if (log.isDebugEnabled())
+            log.debug(
+                    "A parsing warning occurred while parsing "
                 + CarResources.DEPLOYMENT_DESCRIPTOR
                 + " in "
                 + ctx.getJarFile().getName()

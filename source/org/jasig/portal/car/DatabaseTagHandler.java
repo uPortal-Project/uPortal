@@ -222,7 +222,8 @@ public class DatabaseTagHandler
                 logWriter.flush();
                 if (config.getScriptWriter() != null )
                     config.getScriptWriter().flush();
-                log.info(
+                if (log.isInfoEnabled())
+                    log.info(
                     "***** Successfully processed *****\n"
                         + tablesURL.toString()
                         + " and \n"

@@ -85,10 +85,11 @@ public class DefaultChanPubInnerHandler
             {
                 byte[] bytes = buffer.toString().getBytes();
 
-                log.info(
-                    "CAR channel definition '"
-                        + buffer.toString()
-                        + "' ready to publish.");
+                if (log.isInfoEnabled())
+                    log.info(
+                            "CAR channel definition '"
+                            + buffer.toString()
+                            + "' ready to publish.");
 
                 final ByteArrayInputStream is = new ByteArrayInputStream(bytes);
                 final ChannelPublisher publisher =
@@ -98,7 +99,7 @@ public class DefaultChanPubInnerHandler
 
                 chanDef = publisher.publishChannel(is);
 
-                if (chanDef != null)
+                if (chanDef != null && log.isInfoEnabled())
                     log.info(
                         " Successfully published channel "
                             + chanDef.getTitle()
@@ -107,9 +108,10 @@ public class DefaultChanPubInnerHandler
             }
             catch (Exception e)
             {
-                log.info(
-                    "A problem occurred during auto publishing.",
-                    e);
+                if (log.isInfoEnabled())
+                    log.info(
+                            "A problem occurred during auto publishing.",
+                            e);
             }
         }
     }
