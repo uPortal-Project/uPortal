@@ -52,6 +52,8 @@ import org.apache.pluto.services.information.PortalContextProvider;
  */
 public class PortalContextProviderImpl implements PortalContextProvider {
     
+    protected static final WindowState EXCLUSIVE = new WindowState("exclusive");
+    
     private Map properties = null;
     private PortletMode[] supportedPortletModes = null;
     private WindowState[] supportedWindowStates = null;
@@ -60,8 +62,8 @@ public class PortalContextProviderImpl implements PortalContextProvider {
     public PortalContextProviderImpl() {
         properties = new HashMap();
         // Should read these from a properties file
-        supportedPortletModes = new PortletMode[] {new PortletMode("view"), new PortletMode("edit"), new PortletMode("help")};
-        supportedWindowStates = new WindowState[] {new WindowState("normal"), new WindowState("maximized"), new WindowState("minimized")};
+        supportedPortletModes = new PortletMode[] {PortletMode.VIEW, PortletMode.EDIT, PortletMode.HELP};
+        supportedWindowStates = new WindowState[] {WindowState.NORMAL, WindowState.MAXIMIZED, WindowState.MINIMIZED, EXCLUSIVE};
         portalInfo = "uPortal/2.4";
     }
 

@@ -69,6 +69,7 @@ import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedCharacterChannel;
+import org.jasig.portal.IMultithreadedDirectResponse;
 import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
@@ -105,7 +106,7 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable {
+public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse {
 
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
@@ -623,4 +624,72 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         return cacheValid;
     }
 
+    
+    //***************************************************************
+    // IDirectResponse methods
+    //***************************************************************  
+    
+    public synchronized void setResponse(String uid, HttpServletResponse response) {        
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelRuntimeData rd = channelState.getRuntimeData();
+        ChannelStaticData sd = channelState.getStaticData();
+        ChannelData cd = channelState.getChannelData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        
+        
+        try {
+            PortletContainerServices.prepare(uniqueContainerName);
+
+            PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
+            
+            // Get the portlet url manager which will analyze the request parameters
+            DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+            PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
+            
+            // If portlet is rendering as root, change mode to maximized, otherwise minimized
+            PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
+            pap.changePortletWindowState(new WindowState("exclusive"));
+        } finally {
+            PortletContainerServices.release();
+        }            
+
+        try {
+            PortletContainerServices.prepare(uniqueContainerName);
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
+           
+            // Check if this portlet has just processed an action during this request.
+            // If so, then we capture the changes that the portlet may have made during
+            // its processAction implementation (captured in the portlet's ActionResponse)
+            // and we pass them to the render request.
+            // Pluto's portlet container implementation does this by creating a new render URL 
+            // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
+            if (cd.hasProcessedAction()) {
+                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
+                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
+                // Change modes
+                if (actionResponse.getChangedPortletMode() != null) {
+                    pap.changePortletMode(actionResponse.getChangedPortletMode());
+                }
+                // Change window states
+                if (actionResponse.getChangedWindowState() != null) {
+                    pap.changePortletWindowState(actionResponse.getChangedWindowState());
+                }
+                // Change render parameters
+                Map renderParameters = actionResponse.getRenderParameters();
+                ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
+            }
+                
+            // Add the user information
+            wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
+
+            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, response);
+                        
+        } catch (Throwable t) {
+            t.printStackTrace();
+            LogService.log(LogService.ERROR, t);
+            //throw new PortalException(t.getMessage());
+        } finally {
+            PortletContainerServices.release();
+        }
+    }
 }

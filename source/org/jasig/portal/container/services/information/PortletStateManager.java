@@ -517,7 +517,14 @@ public class PortletStateManager {
 	} 
 	
 	public String getActionURL() {
-		String baseActionURL = runtimeData.getBaseActionURL();
+		String baseActionURL;
+		if ( nextState != null && nextState.equals(PortalContextProviderImpl.EXCLUSIVE) ) {
+		    baseActionURL = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+		}        
+		else {
+		    baseActionURL = runtimeData.getBaseActionURL();
+		}
+        
 		String encodedURLParams = encodeURLParameters(this.toString());
         StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
 				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+

@@ -142,6 +142,9 @@ public class ChannelFactory {
                 if (cobj instanceof IMultithreadedPrivileged) {
                     if (cobj instanceof IMultithreadedMimeResponse) {
                         ch = new MultithreadedPrivilegedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    } else if (cobj instanceof IMultithreadedDirectResponse) {
+                        // cacheable, privileged and direct response
+                        ch = new MultithreadedPrivilegedCacheableDirectResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);                        
                     } else {
                         // both cacheable and privileged
                         ch = new MultithreadedPrivilegedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);

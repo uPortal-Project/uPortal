@@ -105,9 +105,10 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 // just give a default baseActionURL
                 // this value should never really be used
                 rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,channelTarget,null));
-                ch.setRuntimeData(rd);
-
+                
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
+                  ch.setRuntimeData(rd);
+
                   org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
                   ServletOutputStream out = null;
                   InputStream ios = null;
@@ -158,6 +159,13 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             LogService.log(LogService.ERROR, "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream "+ ioe);
                         }
                     }
+                } else if (ch instanceof org.jasig.portal.IDirectResponse) {
+                    rd.setTargeted(true);
+                    ch.setRuntimeData(rd);
+                    
+                    org.jasig.portal.IDirectResponse dirResp = (org.jasig.portal.IDirectResponse)ch;
+                    
+                    dirResp.setResponse(res);                    
                 } else {
                     LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
                 }
