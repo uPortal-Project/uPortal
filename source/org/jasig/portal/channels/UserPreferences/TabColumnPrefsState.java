@@ -41,6 +41,7 @@ import org.jasig.portal.IUserLayoutManager;
 import org.jasig.portal.UserLayoutManager;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
@@ -88,12 +89,13 @@ import org.w3c.dom.traversal.NodeIterator;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-final class TabColumnPrefsState extends BaseState
+class TabColumnPrefsState extends BaseState
 {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl";
   private Document userLayout;
+  private PortalControlStructures pcs;
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
   private static IUserLayoutStore ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
@@ -184,6 +186,10 @@ final class TabColumnPrefsState extends BaseState
     {
       throw new GeneralRenderingException(e.getMessage());
     }
+  }
+  
+  public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException  {
+    this.pcs = pcs;
   }
 
   public void renderXML(ContentHandler out) throws PortalException
@@ -501,7 +507,7 @@ final class TabColumnPrefsState extends BaseState
       Node siblingChannel = position.equals("before") ? destinationElement : null;
       UserLayoutManager.moveNode(newChannel, targetColumn, siblingChannel);
     }
-
+    
     saveLayout(true);
   }
 
@@ -520,7 +526,18 @@ final class TabColumnPrefsState extends BaseState
   }
 
   /**
-   * Removes a tab, column, or channel element from the layout
+   * Removes a channel element from the layout
+   * @param channelSubscribeId the ID attribute of the channel to remove
+   */
+  private final void deleteChannel(String channelSubscribeId) throws Exception
+  {
+    pcs.getChannelManager().removeChannel(channelSubscribeId);
+    deleteElement(channelSubscribeId);
+  }  
+  
+  /**
+   * Removes a tab or column element from the layout.  To remove
+   * a channel element, call deleteChannel().
    * @param elementId the ID attribute of the element to remove
    */
   private final void deleteElement(String elementId) throws Exception
@@ -974,7 +991,7 @@ final class TabColumnPrefsState extends BaseState
           {
             String channelSubscribeId = runtimeData.getParameter("elementID");
 
-            deleteElement(channelSubscribeId);
+            deleteChannel(channelSubscribeId);
           }
           catch (Exception e)
           {
