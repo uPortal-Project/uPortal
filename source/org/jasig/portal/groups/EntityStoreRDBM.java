@@ -1,7 +1,7 @@
 package org.jasig.portal.groups;
 
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ import org.jasig.portal.services.LogService;
 /**
  * Reference implementation for IEntityStore.
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01  
+ * @version 1.0, 11/29/01
  */
 public class EntityStoreRDBM implements IEntityStore {
 	private static IEntityStore singleton;
@@ -69,27 +69,35 @@ public java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws Groups
 	{
 		conn = RdbmServices.getConnection();
 		java.sql.Statement stmnt = conn.createStatement();
+                try {
 
-		String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP" +
-					" WHERE GROUP_ID = " + "'" + groupID + "'" + 
+		  String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP" +
+					" WHERE GROUP_ID = " + "'" + groupID + "'" +
 					" AND MEMBER_IS_GROUP = 'F' ";
-		
-		java.sql.ResultSet rs = stmnt.executeQuery(query);
-		while (rs.next())
-		{ 
+
+		  java.sql.ResultSet rs = stmnt.executeQuery(query);
+                  try {
+		    while (rs.next())
+		    {
 			String key = rs.getString(1);
 			IEntity e = newInstance(key, cls);
 			entities.add(e);
-		}
+		    }
+                  } finally {
+                    rs.close();
+                  }
+                } finally {
+                  stmnt.close();
+                }
 	}
 	catch (java.sql.SQLException sqle)
-		{ 
+		{
 			LogService.log(LogService.ERROR, sqle);
-			throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());	
+			throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
 		}
 	finally
 		{ RdbmServices.releaseConnection(conn); }
-		
+
 	return entities.iterator();
 }
 /**
@@ -110,7 +118,7 @@ public IEntity newInstance(String key, Class type) throws GroupsException{
 /**
  * @return org.jasig.portal.groups.IEntityStore
  */
-public static synchronized IEntityStore singleton() 
+public static synchronized IEntityStore singleton()
 {
 	if (singleton == null)
 		{ singleton = new EntityStoreRDBM(); }
