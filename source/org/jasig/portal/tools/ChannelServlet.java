@@ -46,7 +46,6 @@ import  javax.naming.InitialContext;
 import  javax.servlet.*;
 import  javax.servlet.http.*;
 import  java.security.AccessController;
-import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.jndi.JNDIManager;
 import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.MediaManager;
@@ -61,6 +60,7 @@ import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.ChannelSAXStreamFilter;
 import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.utils.XSLT;
 import  org.xml.sax.*;
@@ -108,11 +108,14 @@ public class ChannelServlet extends HttpServlet {
           GenericPortalBean.setPortalBaseDir(baseDir);
           // once JNDI DB access is in place the following line can be removed
           GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
-          this.set = new StylesheetSet(baseDir + fs + relativeSSLLocation);
-          String propertiesDir = baseDir + fs + "properties" + fs;
-          this.set.setMediaProps(propertiesDir + "media.properties");
-          this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir
-              + "serializer.properties");
+          try {
+            this.set = new StylesheetSet(baseDir + fs + relativeSSLLocation);
+            String propertiesDir = baseDir + fs + "properties" + fs;
+            this.set.setMediaProps(propertiesDir + "media.properties");
+            this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
+          } catch (PortalException pe) {
+            throw new ServletException (pe);
+          }
           // determine the channel with its parameters
           String className = sc.getInitParameter("className");
           channelName = sc.getInitParameter("channelName");
@@ -210,9 +213,9 @@ public class ChannelServlet extends HttpServlet {
       {
         xslURI = set.getStylesheetURI(req);
       }
-      catch(GeneralRenderingException gre)
+      catch(PortalException pe)
       {
-        throw new ServletException(gre);
+        throw new ServletException(pe);
       }
       try {
         XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
