@@ -66,7 +66,8 @@ private Map getDirectoryNames() throws java.sql.SQLException
             stmnt = conn.createStatement();
 
             String sql = getSelectDirectoryNamesSql();
-            log.debug( "ReferencePersonNameFinder.getDirectoryNames(): " + sql);
+            if (log.isDebugEnabled())
+                log.debug( "ReferencePersonNameFinder.getDirectoryNames(): " + sql);
 
                 ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next())
@@ -156,7 +157,8 @@ private Map getUserNames() throws java.sql.SQLException
             stmnt = conn.createStatement();
 
             String sql = getSelectUserNamesSql();
-            log.debug( "ReferencePersonNameFinder.getUserNames(): " + sql);
+            if (log.isDebugEnabled())
+                log.debug( "ReferencePersonNameFinder.getUserNames(): " + sql);
 
             ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next())

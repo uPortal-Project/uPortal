@@ -96,31 +96,44 @@ public class LocaleAwareXSLT extends XSLT {
         if (!LocaleManager.isLocaleAware() || locales == null) {
             try {
                 xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);
-                log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+                if (log.isDebugEnabled())
+                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: " +
+                            "XSL file found as " + xslUri);
             } catch (ResourceMissingException e) {
-                log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + xslUri);
+                if (log.isDebugEnabled())
+                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: " +
+                            "XSL file NOT found as " + xslUri);
             }
         } else {
             for (i = 0; i < locales.length; i++) {
                 // localeAwareXslUri = xslUri.replaceAll("\\.xsl", "_" + locales[i] + ".xsl");
                 // replaceAll is introduced from JDK1.4
                 localeAwareXslUri = perl5Util.substitute("s/\\.xsl/_" + locales[i] + ".xsl" + "/g", xslUri);
-                log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: locale aware xslUri=" + localeAwareXslUri);
+                if (log.isDebugEnabled())
+                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: locale aware xslUri=" + localeAwareXslUri);
                 try {
                     xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), localeAwareXslUri);
-                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+                    if (log.isDebugEnabled())
+                        log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: " +
+                                "XSL file found as " + xslUri);
                     break;
                 } catch (ResourceMissingException e) {
-                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + localeAwareXslUri);
-                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: Fallbacking...");
+                    if (log.isDebugEnabled()) {
+                        log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + localeAwareXslUri);
+                        log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: Fallbacking...");
+                    }
                 }
             }
             if (i == locales.length) {
                 try {
                     xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);
-                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+                    if (log.isDebugEnabled())
+                        log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: " +
+                                "XSL file found as " + xslUri);
                 } catch (ResourceMissingException e) {
-                    log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + xslUri);
+                    if (log.isDebugEnabled())
+                        log.debug("LocaleAwareXSLT.getLocaleAwareXslUri: " +
+                                "XSL file NOT found as " + xslUri);
                 }
             }
         }

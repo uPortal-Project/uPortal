@@ -175,7 +175,9 @@ public class JNDIManager {
               // create layouts and sessions context
               layoutsContext=userIdContext.createSubcontext("layouts");
               sessionsContext=userIdContext.createSubcontext("sessions");
-              log.debug("JNDIManager.initializeSessionContext(): initialized context for a userId=\""+userId+"\".");
+              if (log.isDebugEnabled())
+                  log.debug("JNDIManager.initializeSessionContext(): " +
+                        "initialized context for a userId=\""+userId+"\".");
           } catch (NamingException ne2) {
               log.error( "JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts ! "+ne2.getMessage());
               throw new PortalException("JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts !",ne2);
@@ -219,7 +221,9 @@ public class JNDIManager {
                   Context lsessionsContext=(Context)userIdContext.lookup("layouts/"+layoutId+"/sessions");
                   lsessionsContext.createSubcontext(sessionId);
 
-                  log.debug("JNDIManager.initializeSessionContext(): created /users/"+userId+"/layouts/"+layoutId+"/sessions/"+sessionId);
+                  if (log.isDebugEnabled())
+                  log.debug("JNDIManager.initializeSessionContext(): " +
+                        "created /users/"+userId+"/layouts/"+layoutId+"/sessions/"+sessionId);
 
               } catch (Exception e) {
                   log.error( "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed ! "+e.getMessage());
@@ -233,7 +237,9 @@ public class JNDIManager {
               Context lsessionsContext=layoutIdContext.createSubcontext("sessions");
               lsessionsContext.createSubcontext(sessionId);
 
-              log.debug("JNDIManager.initializeSessionContext(): created context /users/"+userId+"/layouts/"+layoutId);
+              if (log.isDebugEnabled())
+                  log.debug("JNDIManager.initializeSessionContext(): " +
+                        "created context /users/"+userId+"/layouts/"+layoutId);
 
               try {
                   Context channel_idsContext = (Context)layoutIdContext.createSubcontext("channel-ids");
@@ -263,7 +269,11 @@ public class JNDIManager {
                                   nextContext = nextContext.createSubcontext(subContextName);
                               } else {
                                   //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
-                                  log.debug("JNDIManager.initializeSessionContext(): bound "+instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
+                                  if (log.isDebugEnabled())
+                                      log.debug("JNDIManager.initializeSessionContext(): " +
+                                            "bound "+instanceid.getNodeValue() + " to " + 
+                                            nextContext.getNameInNamespace() + "/" + 
+                                            subContextName);
 
                                   nextContext.rebind(subContextName, instanceid.getNodeValue());
                               }

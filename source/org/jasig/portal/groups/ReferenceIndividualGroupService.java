@@ -480,7 +480,8 @@ private void initialize() throws GroupsException
 {
     String eMsg = null;
     String svcName = getServiceDescriptor().getName();
-    log.debug("Service descriptor attributes: " + svcName);
+    if (log.isDebugEnabled())
+        log.debug("Service descriptor attributes: " + svcName);
 
     // print service descriptor attributes:
     for (Iterator i=getServiceDescriptor().keySet().iterator(); i.hasNext();)
@@ -488,7 +489,8 @@ private void initialize() throws GroupsException
         String descriptorKey = (String)i.next();
         Object descriptorValue = getServiceDescriptor().get(descriptorKey);
         if ( descriptorValue != null )
-            { log.debug("  " + descriptorKey + " : " + descriptorValue); }
+            { if (log.isDebugEnabled())
+                    log.debug("  " + descriptorKey + " : " + descriptorValue); }
     }
 
     String groupStoreFactoryName = getServiceDescriptor().getGroupStoreFactoryName();
@@ -497,8 +499,10 @@ private void initialize() throws GroupsException
 
     if ( groupStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): (" + svcName + ") No Group Store factory specified in service descriptor.";
-        log.info( eMsg);
+        if (log.isInfoEnabled()) {
+            log.info("ReferenceGroupService.initialize(): (" + svcName + 
+                    ") No Group Store factory specified in service descriptor.");
+        }
     }
 
     else
@@ -518,8 +522,9 @@ private void initialize() throws GroupsException
 
     if ( entityStoreFactoryName == null )
     {
-        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor (" + svcName + ")";
-        log.info( eMsg);
+        if (log.isInfoEnabled())
+            log.info("ReferenceIndividualGroupService.initialize(): " +
+                    "No Entity Store Factory specified in service descriptor (" + svcName + ")");
     }
 
     else
@@ -539,8 +544,9 @@ private void initialize() throws GroupsException
 
     if ( entitySearcherFactoryName == null )
     {
-        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
-        log.info( eMsg);
+        if (log.isInfoEnabled())
+            log.info("ReferenceIndividualGroupService.initialize(): " +
+                    "No Entity Searcher Factory specified in service descriptor.");
     }
 
     else
