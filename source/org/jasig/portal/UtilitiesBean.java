@@ -269,8 +269,8 @@ public class UtilitiesBean extends GenericPortalBean
 
         case DocumentImpl.DOCUMENT_NODE : // Document can't be child of Document
         default: {			 // Unknown node type
-            throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
-                                       "DOM006 Hierarchy request error");
+//            throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
+//                                       "DOM006 Hierarchy request error");
         }
         }
 
