@@ -36,6 +36,7 @@ Version $Revision$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" indent="no"/>
+	<!--  comment -->
 	<!--These variables and parameters are used in all modes-->
 	<xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
 	<!--modes: view (default), preferences, fragment-->
