@@ -114,9 +114,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
   protected Vector cookies;
   protected boolean supportSetCookie2;
 
-  protected static String fs = File.separator;
-  protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CWebProxy" + fs;
-
   public CWebProxy ()
   {
     this.cookies = new Vector();
@@ -308,27 +305,15 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if (editUri != null)
       runtimeData.put("cw_edit", editUri);
 
-    try
-    {
-      if (xslUri != null)
-        XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData);
-      else
-      {
-        if (xslTitle != null)
-          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, xslTitle, runtimeData.getBrowserInfo());
-        else
-          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, runtimeData.getBrowserInfo());
-      }
-    }
-    catch (org.xml.sax.SAXException e)
-    {
-      throw new GeneralRenderingException("problem performing the transformation");
-    } catch (IOException i) {
-      StringWriter sw = new StringWriter();
-      i.printStackTrace(new PrintWriter(sw));
-      sw.flush();
-      throw new GeneralRenderingException(sw.toString());
-    }
+    XSLT xslt = new XSLT();
+    xslt.setXML(xml);
+    if (xslUri != null)
+      xslt.setXSL(xslUri);
+    else 
+      xslt.setSSL(UtilitiesBean.fixURI(sslUri), xslTitle, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameters(runtimeData);
+    xslt.transform();
   }
 
   /**
