@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.remotechannel;
 
+import org.jasig.portal.PortalEvent;
 import org.apache.axis.client.Stub;
 import org.apache.axis.client.Call;
 import org.apache.axis.AxisFault;
@@ -231,6 +232,28 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
   }
 
+  public void receiveEvent(String instanceId, PortalEvent portalEvent) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception{
+    if (super.cachedEndpoint == null) {
+      throw new NoEndPointException();
+    }
+    Call call = getCall();
+    QName p0QName = new javax.xml.rpc.namespace.QName("", "instanceId");
+    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
+    QName p1QName = new QName("", "portalEvent");
+    call.addParameter(p1QName, new QName(methodNS, "PortalEvent"), ParameterMode.IN);
+    call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
+    call.setUseSOAPAction(true);
+    call.setSOAPActionURI("");
+    call.setOperationStyle("rpc");
+    call.setOperationName(new QName(methodNS, "receiveEvent"));
+
+    Object resp = call.invoke(new Object[] {instanceId, portalEvent});
+
+    if (resp instanceof RemoteException) {
+      throw (RemoteException)resp;
+    }
+  }  
+  
   public void freeChannel(String instanceId) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception{
     if (super.cachedEndpoint == null) {
       throw new NoEndPointException();
