@@ -228,7 +228,7 @@ Version $Revision$
 						</td>
 						<td nowrap="nowrap" class="uportal-background-selected">
 							<span class="uportal-channel-title">
-								<a name="{@title}"><xsl:value-of select="@name"/></a>
+								<a name="{@ID}"><xsl:value-of select="@name"/></a>
 								<xsl:text/>(selected)</span>
 						</td>
 						<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -265,7 +265,7 @@ Version $Revision$
 						</td>
 						<td nowrap="nowrap" class="uportal-background-semidark">
 							<span class="uportal-channel-title">
-								<a name="{@title}"><xsl:value-of select="@name"/></a>
+								<a name="{@ID}"><xsl:value-of select="@name"/></a>
 							</span>
 						</td>
 						<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborder.gif); background-repeat:repeat-y;">
@@ -439,12 +439,12 @@ Version $Revision$
 		</a>
 		<xsl:choose>
 			<xsl:when test="@minimized='true'">
-				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@title}">
+				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}">
 					<img alt="最大化" title="最大化" src="{$mediaPathIcons}/contentmaximize.gif" width="26" height="23" border="0"/>
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
-				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@title}">
+				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}">
 					<img alt="最�?化" title="最�?化" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
 				</a>
 			</xsl:otherwise>
