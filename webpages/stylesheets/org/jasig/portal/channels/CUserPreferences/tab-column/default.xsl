@@ -565,7 +565,13 @@ $Revision$
   </xsl:template>
   <xsl:template name="selectChannel">
     <!--Begin [select channel] Table -->
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" ALIGN="CENTER" WIDTH="100%">
+<tr><td ALIGN="CENTER">
+<xsl:if test="($action = 'selectChannel' or $action = 'moveChannel') and $elementID=@ID">
+        <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
+      </xsl:if>
 <TABLE CELLPADDING="5" CELLSPACING="0" BORDER="0" ALIGN="CENTER" WIDTH="100%">
+
            <TR><TD ALIGN="CENTER"><IMG SRC="{$mediaPath}/transparent.gif" WIDTH="1" HEIGHT="1"/></TD></TR>
            <TR>
                 <TD ALIGN="CENTER" CLASS="uportal-channel-text"><B>
@@ -578,6 +584,7 @@ $Revision$
            </TR>
         </TABLE>
 	<TABLE CELLPADDING="1" CELLSPACING="0" BORDER="0" WIDTH="120" HEIGHT="110">
+
 	   <TR>
 	        <TD VALIGN="TOP" style="background-image: url({$mediaPath}/channel/chan_box_bg.gif)">
 	        <DIV ALIGN="RIGHT">
@@ -693,7 +700,7 @@ $Revision$
 	        </DIV>
 	        </TD>
 	   </TR>
-	</TABLE>
+	</TABLE></td></tr></TABLE>
     <!--End [select channel] Table -->
   </xsl:template>
   <xsl:template name="closeContentColumn">
@@ -1366,5 +1373,5 @@ $Revision$
 </xsl:stylesheet>
 
 
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. --><!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
