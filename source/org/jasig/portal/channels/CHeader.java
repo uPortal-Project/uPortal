@@ -38,28 +38,28 @@
 
 package  org.jasig.portal.channels;
 
-import  java.net.URL;
-import  java.util.Hashtable;
-import  java.util.HashMap;
-import  javax.naming.InitialContext;
-import  javax.naming.Context;
-import  javax.naming.NamingException;
-import  org.jasig.portal.security.Permission;
-import  org.jasig.portal.security.PermissionManager;
-import  org.jasig.portal.ChannelRuntimeData;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.HashMap;
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import org.jasig.portal.security.Permission;
+import org.jasig.portal.security.PermissionManager;
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
-import  org.jasig.portal.MediaManager;
-import  org.jasig.portal.UtilitiesBean;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.GeneralRenderingException;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.utils.XSLT;
-import  org.jasig.portal.utils.SmartCache;
-import  org.jasig.portal.factories.DocumentFactory;
-import  org.xml.sax.ContentHandler;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Element;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.DocumentFactory;
+import org.xml.sax.ContentHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 /**
@@ -97,7 +97,7 @@ public class CHeader extends BaseChannel implements ICacheable {
   /**
    * Returns the DOM object associated with the user
    * NOTE: This should be made more effecient through caching
-   * @return 
+   * @return
    */
   private Document getUserXML () {
     // Get the fullname of the current user
@@ -125,10 +125,10 @@ public class CHeader extends BaseChannel implements ICacheable {
         // Get the context that holds the global IDs for this user
         globalIDContext = (Context)staticData.getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
         if (canUserPublish()) {
-          // Create <publish-chanid> element under <header>
-          Element publishChanidEl = doc.createElement("publish-chanid");
-          publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
-          headerEl.appendChild(publishChanidEl);
+          // Create <chan-mgr-chanid> element under <header>
+          Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
+          chanMgrChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/channelmanager/general")));
+          headerEl.appendChild(chanMgrChanidEl);
         }
       } catch (NamingException e) {
         LogService.instance().log(LogService.ERROR, e);
@@ -148,7 +148,7 @@ public class CHeader extends BaseChannel implements ICacheable {
 
   /**
    * Checks user permissions to see if the user is authorized to publish channels
-   * @return 
+   * @return
    */
   private boolean canUserPublish () {
     // Get the current user ID
@@ -158,7 +158,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       // Return the answer if it's in the cache
       if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
@@ -167,14 +167,14 @@ public class CHeader extends BaseChannel implements ICacheable {
     PermissionManager pm = staticData.getPermissionManager();
     try {
       // Check to see if the user or all user's are specifically denied access
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH", 
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH",
           "*", "DENY").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(false));
         return  (false);
       }
       // Check to see if the user or all users are granted permission by default
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH", 
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH",
           "*", "GRANT").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(true));
