@@ -504,7 +504,7 @@ Version $Revision$
                                             </a>
                                         </xsl:when>
                                         <xsl:when test="$targetAction='New Channel'">
-                                            <a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets=channel&amp;uP_sparam=contentPublishID&amp;contentPublishID={$contentPublishID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+                                            <a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets=channel&amp;uP_sparam=channelPublishID&amp;channelPublishID={$channelPublishID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
                                                 <xsl:value-of select="@name"/>
                                             </a>
                                         </xsl:when>
