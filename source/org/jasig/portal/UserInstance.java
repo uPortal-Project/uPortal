@@ -117,7 +117,7 @@ public class UserInstance implements HttpSessionBindingListener {
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     IPerson person;
-    
+
     public UserInstance (IPerson person) {
         this.person=person;
 
@@ -359,7 +359,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 if(cCache.channelIds.size()!=ccsize-1) {
                                     LogService.log(LogService.ERROR,"UserInstance::renderState() : channelIds character cache has invalid size !");
                                     LogService.log(LogService.ERROR,"UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
-                                    
+
                                 }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                                 cSerializer.setDocumentStarted(true);
@@ -463,7 +463,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             } else {
                                 ulm.getUserLayout(rElement.getId(),new ChannelSAXStreamFilter((ContentHandler)saif));
                             }
-                                
+
                             saif.endElement("","layout_fragment","layout_fragment");
                             saif.endDocument();
                         } else {
@@ -574,7 +574,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     throw new PortalException(e);
                 }
             }
-        }        
+        }
     }
 
     /**
@@ -615,11 +615,11 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-        if(channelManager!=null)  
+        if(channelManager!=null)
             channelManager.finishedSession();
-        if(uPreferencesManager!=null) 
+        if(uPreferencesManager!=null)
             uPreferencesManager.finishedSession(bindingEvent);
-        
+
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
     }
@@ -666,6 +666,29 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
             channelManager.passPortalEvent(values[0], new PortalEvent(PortalEvent.DETACH_BUTTON_EVENT));
         }
+
+        if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
+            ulm.markMoveTargets(values[0]);
+        }
+
+        if ((values = req.getParameterValues("uP_move_target")) != null) {
+         String[] values1, values2;
+         if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
+            ulm.moveNode(values[0],values2[0],values1[0]);
+         }
+        }
+
+        if ((values = req.getParameterValues("uP_rename_target")) != null) {
+         String[] values1;
+         if ( (values1 = req.getParameterValues("uP_target_name")) != null ) {
+            IUserLayoutNodeDescription nodeDesc = ulm.getNode(values[0]);
+            if ( nodeDesc != null ) {
+             nodeDesc.setName(values1[0]);
+             ulm.updateNode(nodeDesc);
+            }
+         }
+        }
+
         if ((values = req.getParameterValues("uP_remove_target")) != null) {
             for (int i = 0; i < values.length; i++) {
                 ulm.deleteNode(values[i]);
