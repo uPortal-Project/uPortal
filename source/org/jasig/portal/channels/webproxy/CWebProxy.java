@@ -591,15 +591,10 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       LogService.instance().log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     else
       {
-      String xml = null;
-      Document xmlDoc = null;
-
+      Document xml = null;
       try
       {
-        if (state.tidy != null && state.tidy.equals("on"))
-          xml = getXmlString (state.fullxmlUri, state);
-	else
-	  xmlDoc = getXmlDocument (state.fullxmlUri, state);
+	xml = getXml(state.fullxmlUri, state);
       }
       catch (Exception e)
       {
@@ -637,9 +632,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
       XSLT xslt = new XSLT(this);
-      if (xmlDoc != null)
-        xslt.setXML(xmlDoc);
-      else
+      if (xml != null)
         xslt.setXML(xml);
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);
@@ -668,30 +661,23 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @param uri the URI
    * @return the data pointed to by a URI as a Document object
    */
-  private Document getXmlDocument(String uri, ChannelState state) throws Exception
+  private Document getXml(String uri, ChannelState state) throws Exception
   {
     URLConnection urlConnect = getConnection(uri, state);
+  
+    // get character encoding from Content-Type header
+    String encoding = null;
+    String ct = urlConnect.getContentType();
+    int i;
+    if (ct!=null && (i=ct.indexOf("charset="))!=-1)
+    {
+      encoding = ct.substring(i+8).trim();
+      if ((i=encoding.indexOf(";"))!=-1)
+        encoding = encoding.substring(0,i);
+      if (encoding.indexOf("\"")!=-1)
+        encoding = encoding.substring(1,encoding.length()+1);
+    }
 
-    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    docBuilderFactory.setNamespaceAware(false);
-    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-    DTDResolver dtdResolver = new DTDResolver();
-    docBuilder.setEntityResolver(dtdResolver);
-
-    return  docBuilder.parse(urlConnect.getInputStream());
-  }
-
-  /**
-   * Get the contents of a URI as a String but send it through tidy first.
-   * Also includes support for cookies.
-   * @param uri the URI
-   * @return the data pointed to by a URI as a String
-   */
-  private String getXmlString (String uri, ChannelState state) throws Exception
-  {
-    URLConnection urlConnect = getConnection(uri, state);
-
-    String xml;
     if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
     {
       Tidy tidy = new Tidy ();
@@ -701,32 +687,31 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       tidy.setShowWarnings(false);
       tidy.setNumEntities(true);
       tidy.setWord2000(true);
+      // only ASCII (default) and UTF-8 encoding currently supported
+      if (encoding!=null && encoding.equalsIgnoreCase("utf-8"))
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
       if ( System.getProperty("os.name").indexOf("Windows") != -1 )
          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
       else
          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
       ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
 
-      tidy.parse (urlConnect.getInputStream(), new BufferedOutputStream (stream));
+      Document doc = tidy.parseDOM (urlConnect.getInputStream(), null);
       if ( tidy.getParseErrors() > 0 )
         throw new GeneralRenderingException("Unable to convert input document to XHTML");
-      xml = stream.toString();
+      return doc;
     }
     else
     {
-      String line = null;
-      BufferedReader in = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
-      StringBuffer sbText = new StringBuffer (1024);
-
-      while ((line = in.readLine()) != null)
-        sbText.append (line).append ("\n");
-
-      xml = sbText.toString ();
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      docBuilderFactory.setNamespaceAware(false);
+      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      DTDResolver dtdResolver = new DTDResolver();
+      docBuilder.setEntityResolver(dtdResolver);
+      return  docBuilder.parse(urlConnect.getInputStream());
     }
-
-    return xml;
   }
-  
+
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
   {
       URL url;
