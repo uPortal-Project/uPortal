@@ -12,9 +12,10 @@
 <!ATTLIST channel 
   ID ID #REQUIRED
   name CDATA #REQUIRED 
-  description CDATA #IMPLIED
+  description CDATA #REQUIRED
+  title CDATA #REQUIRED 
   timeout CDATA "10000"
-  minimized (true|false) "false"
+  minimizable (true|false) "false"
   detachable (true|false) "false"
   editable (true|false) "false"
   hasHelp (true|false) "false"
@@ -22,10 +23,12 @@
   removable (true|false) "true"
   printable (true| false) "false"
   class CDATA #REQUIRED
-  typeID CDATA #REQUIRED>
+  typeID CDATA #REQUIRED
+  fname CDATA #IMPLIED>
 
 
 <!ELEMENT parameter EMPTY>
 <!ATTLIST parameter 
   name CDATA #REQUIRED
-  value CDATA #REQUIRED>
+  value CDATA #REQUIRED
+  override (yes|no) "no">

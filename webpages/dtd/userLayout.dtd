@@ -14,12 +14,18 @@
 <!ATTLIST channel
   ID ID #REQUIRED
   name CDATA #REQUIRED
-  timeout CDATA "5000"
-  editable (true|false) "true"
-  hasHelp (true|false) "true"
-  hasAbout (true|false) "true"
+  description CDATA #REQUIRED
+  title CDATA #REQUIRED    
+  timeout CDATA "10000"
+  minimizable (true|false) "false"
+  detachable (true|false) "false"
+  editable (true|false) "false"
+  hasHelp (true|false) "false"
+  hasAbout (true|false) "false"
   removable (true|false) "true"
+  printable (true| false) "false"
   class CDATA #REQUIRED
+  typeID CDATA #REQUIRED
   fname CDATA #IMPLIED>
 
 
