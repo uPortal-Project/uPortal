@@ -103,7 +103,7 @@ Version $Revision$
 	<xsl:template match="layout">
 		<html>
 			<head>
-				<title>uPortal 2.2+</title>
+				<title>uPortal 2.2</title>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}_portlet.css"/>
 				<xsl:call-template name="scripts"/>
@@ -127,7 +127,7 @@ Version $Revision$
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-content">
 			<tr>
 				<td align="left" valign="top">
-					<img src="{$mediaPathHeader}/mainlogo.gif" width="426" height="102"/>
+					<img src="{$mediaPathHeader}/mainlogo.gif" alt="" title="" />
 				</td>
 				<td width="100%">
 					<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
