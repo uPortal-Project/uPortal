@@ -90,6 +90,9 @@ import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.xml.transform.Result;
+
+import org.jasig.portal.PropertiesManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -253,6 +256,15 @@ public abstract class BaseMarkupSerializer
     private OutputStream    _output;
 
 
+    /**
+     * A portal property indicating whether or not to allow the disabling
+     * of output escaping.  When allowed, XSLT stylesheets can request
+     * to disable output escaping, therefore enabling the direct pass-through
+     * of markup such as HTML.
+     */
+    private boolean         _allowDisableOutputEscaping;
+    
+
     //--------------------------------//
     // Constructor and initialization //
     //--------------------------------//
@@ -271,6 +283,8 @@ public abstract class BaseMarkupSerializer
         for ( i = 0 ; i < _elementStates.length ; ++i )
             _elementStates[ i ] = new ElementState();
         _format = format;
+        
+        _allowDisableOutputEscaping = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.BaseMarkupSerializer.allow_disable_output_escaping");
     }
 
 
@@ -600,6 +614,13 @@ public abstract class BaseMarkupSerializer
             if ( _indenting )
             state.afterElement = true;
         }
+        
+        if (_allowDisableOutputEscaping) {
+            if (target.equals(Result.PI_DISABLE_OUTPUT_ESCAPING))
+                startNonEscaping();
+            else if (target.equals(Result.PI_ENABLE_OUTPUT_ESCAPING))
+                endNonEscaping();
+        }        
     }
 
 
