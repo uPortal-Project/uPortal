@@ -74,6 +74,8 @@ import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
 
+import org.jasig.portal.i18n.LocaleManager;
+
 /**
  * ChannelManager shall have the burden of squeezing content out of channels.
  * <p>
@@ -95,7 +97,7 @@ public class ChannelManager implements LayoutEventListener {
     private String channelTarget;
     private Hashtable targetParams;
     private BrowserInfo binfo;
-    private Locale[] locales;
+    private LocaleManager lm;
 
     private Context portalContext;
     private Context channelContext;
@@ -522,7 +524,7 @@ public class ChannelManager implements LayoutEventListener {
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
-            rd.setLocales(locales);
+            rd.setLocales(lm.getLocales());
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -754,7 +756,7 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
-                rd.setLocales(locales);
+                rd.setLocales(lm.getLocales());
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
@@ -825,7 +827,6 @@ public class ChannelManager implements LayoutEventListener {
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
-        this.locales = new Locale[] { Locale.getDefault() }; // temporary: need to consult a LocaleManager which isn't written yet
         this.uPElement=uPElement;
         rendererTable.clear();
         processRequestChannelParameters(request);
@@ -955,7 +956,7 @@ public class ChannelManager implements LayoutEventListener {
             }
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
-            rd.setLocales(locales);
+            rd.setLocales(lm.getLocales());
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -971,7 +972,7 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
-                rd.setLocales(locales);
+                rd.setLocales(lm.getLocales());
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
                 UPFileSpec up=new UPFileSpec(uPElement);
@@ -1077,4 +1078,6 @@ public class ChannelManager implements LayoutEventListener {
 
     public void layoutLoaded() {}
     public void layoutSaved() {}
+
+    public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
 }
