@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.channels.CError;
+import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
@@ -545,6 +546,46 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
+     * A helper method to replace all occurences of a secure channel instance
+     * with that of a secure information channel.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @param setRuntimeData a <code>boolean</code> wether the method should also set the ChannelRuntimeData for the newly instantiated secure info channel
+     * @return an <code>IChannel</code> value of a secure info channel instance
+     */
+    private IChannel replaceWithSecureInfoChannel(String channelSubscribeId, boolean setRuntimeData) {
+        // get and delete old channel instance
+        IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
+        channelTable.remove(channelSubscribeId);
+        rendererTable.remove(channelSubscribeId);
+
+        CSecureInfo secureInfoChannel=new CSecureInfo(channelSubscribeId,oldInstance);
+        if(setRuntimeData) {
+            ChannelRuntimeData rd=new ChannelRuntimeData();
+            rd.setBrowserInfo(binfo);
+            if (lm != null)  {
+                rd.setLocales(lm.getLocales());
+            }
+            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
+            UPFileSpec up=new UPFileSpec(uPElement);
+            up.setTargetNodeId(channelSubscribeId);
+            rd.setUPFile(up);
+            try {
+                secureInfoChannel.setRuntimeData(rd);
+                secureInfoChannel.setPortalControlStructures(pcs);
+            } catch (Throwable e) {
+                // have to ignore this one, this is the last safety here
+                StringWriter sw=new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                sw.flush();
+                LogService.log(LogService.ERROR,"Encountered an exception while trying to set runtime data or portal control structures on the secure info channel!"+sw.toString());
+            }
+        }
+        channelTable.put(channelSubscribeId,secureInfoChannel);
+        return secureInfoChannel;
+    }
+    
+    /**
      * <code>getChannelContext</code> generates a JNDI context that
      * will be passed to the regular channels. The context is pieced
      * together from the parts of the global portal context.
@@ -925,11 +966,25 @@ public class ChannelManager implements LayoutEventListener {
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) node;
         timeOut=channel.getTimeout();
 
-        if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
-            try {
-                ch=instantiateChannel(channel);
-            } catch (Throwable e) {
-                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+        ch = (IChannel) channelTable.get(channelSubscribeId);
+        
+        // replace channels that are specified as needing to be
+        // rendered securely with CSecureInfo.        
+        if (!pcs.getHttpServletRequest().isSecure() && channel.isSecure()){
+            if (ch == null || !(ch instanceof CSecureInfo)){
+                ch = replaceWithSecureInfoChannel(channelSubscribeId,false);
+            }
+        }
+        else{
+            // A secure channel may not have been able to render at one
+            // time but now it can, create its instance to replace the
+            // cached CSecureInfo entry.
+            if (ch == null || ch instanceof CSecureInfo) {
+                try {
+                    ch=instantiateChannel(channel);
+                } catch (Throwable e) {
+                    ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                }
             }
         }
 
