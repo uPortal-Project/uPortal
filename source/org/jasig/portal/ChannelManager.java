@@ -35,11 +35,12 @@
 
 package org.jasig.portal;
 
-
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.security.*;
-import javax.servlet.http.*;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.services.LogService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
@@ -47,19 +48,24 @@ import java.util.WeakHashMap;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.security.provider.ReferencePermissionManager;
 import java.util.Collections;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-import java.io.*;
+import org.xml.sax.ContentHandler;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
-// this class shall have the burden of squeezing content
-// out of channels.
-
-//  - Validation and timeouts
-//      these two are needed for smooth operation of the portal
-//      sometimes channels will timeout with information retreival
-//      then the content should be skipped
-//
-
+/**
+ * This class shall have the burden of squeezing content
+ * out of channels.
+ *
+ * - Validation and timeouts
+ *    these two are needed for smooth operation of the portal
+ *    sometimes channels will timeout with information retreival
+ *    then the content should be skipped
+ *
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * @version $Revision$
+ */
 public class ChannelManager {
     private IUserLayoutManager ulm;
     private PortalControlStructures pcs;
@@ -122,7 +128,7 @@ public class ChannelManager {
     public void setUPElement(String uPElement) {
         this.uPElement=uPElement;
     }
-    
+
     public void removeChannel(String channelId) {
         IChannel ch=(IChannel)channelTable.get(channelId);
         if(ch!=null) {
@@ -134,7 +140,7 @@ public class ChannelManager {
                     channelTable.remove(ch);
                 }
             } catch (PortalException gre) {
-                Logger.log(Logger.ERROR,"ChannelManager::removeChannel(): exception raised when trying to remove a channel : "+gre);
+                LogService.instance().log(LogService.ERROR,"ChannelManager::removeChannel(): exception raised when trying to remove a channel : "+gre);
             }
         }
     }
@@ -159,10 +165,10 @@ public class ChannelManager {
                 if(si2!=-1) {
                     channelTarget=sp.substring(si1,si2);
                     if(channelTarget==null) {
-                        Logger.log(Logger.ERROR,"ChannelManager.processRequestChannelParameters() : malformed channel address. Null channel target Id.");
+                        LogService.instance().log(LogService.ERROR,"ChannelManager.processRequestChannelParameters() : malformed channel address. Null channel target Id.");
                         return;
                     }
-                    Logger.log(Logger.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
+                    LogService.instance().log(LogService.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
                     Enumeration en = req.getParameterNames ();
                     if (en != null) {
                         while (en.hasMoreElements ()) {
@@ -186,7 +192,7 @@ public class ChannelManager {
                             CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelTarget,null);
                             channelTable.put(channelTarget,errorChannel);
                             chObj=errorChannel;
-                            Logger.log(Logger.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+                            LogService.instance().log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
                         }
                     }
                     if(chObj!=null && (chObj instanceof IPrivilegedChannel)) {
@@ -207,7 +213,7 @@ public class ChannelManager {
                                 StringWriter sw=new StringWriter();
                                 e2.printStackTrace(new PrintWriter(sw));
                                 sw.flush();
-                                Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                             }
                         }
 
@@ -238,7 +244,7 @@ public class ChannelManager {
                                 StringWriter sw=new StringWriter();
                                 e2.printStackTrace(new PrintWriter(sw));
                                 sw.flush();
-                                Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                             }
                         }
                     }
@@ -267,7 +273,7 @@ public class ChannelManager {
             try {
                 return instantiateChannel(chanId,className,timeOut,params);
             } catch (Exception ex) {
-                Logger.log(Logger.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
+                LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
             }
         } else return null;
@@ -275,7 +281,7 @@ public class ChannelManager {
     }
     private IChannel instantiateChannel(String chanId, String className, long timeOut, Hashtable params) throws Exception {
         IChannel ch=null;
-	
+
 	boolean exists=false;
 	// this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
 	// channel more then once, but it's difficult to implement "instanceof" operation on
@@ -319,19 +325,20 @@ public class ChannelManager {
         sd.setChannelID (chanId);
         sd.setTimeout (timeOut);
         sd.setParameters (params);
-        // Set the Id of the channel that exists in UP_CHANNELS       
-        sd.setChannelGlobalID(ulm.getChannelGlobalId(chanId));       
-        // Set the PermissionManager for this channel       
+        // Set the Id of the channel that exists in UP_CHANNELS
+        sd.setChannelGlobalID(ulm.getChannelGlobalId(chanId));
+        // Set the PermissionManager for this channel
         sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelGlobalId(chanId)));
 
-        ch.setStaticData (sd);
-        channelTable.put (chanId,ch);
-	
         // get person object from UsreLayoutManager
         sd.setPerson(ulm.getPerson());
         // security context is saved in the session as well
         // Eventually it should be retrieved from authenticationService (?)
         sd.setSecurityContext((ISecurityContext) this.pcs.getHttpServletRequest().getSession(false).getAttribute("up_SecurityContext"));
+
+        ch.setStaticData (sd);
+        channelTable.put (chanId,ch);
+
         return ch;
     }
 
@@ -379,7 +386,7 @@ public class ChannelManager {
                         StringWriter sw=new StringWriter();
                         e2.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
                 }
             }
@@ -465,7 +472,7 @@ public class ChannelManager {
                         StringWriter sw=new StringWriter();
                         e.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
                 }
 
@@ -495,11 +502,11 @@ public class ChannelManager {
                         StringWriter sw=new StringWriter();
                         e.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
 
                 } else {
-                    Logger.log(Logger.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
+                    LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
                 }
             }
             catch (Exception e) {
@@ -507,11 +514,11 @@ public class ChannelManager {
                 // method, but somewhere down the line things went wrong. Most likely,
                 // a buffer output routine threw. This means that we are likely to have partial
                 // output in the document handler. Really bad !
-                Logger.log(Logger.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
+                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
             }
         }
         else {
-            Logger.log (Logger.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
         }
     }
 
@@ -520,7 +527,7 @@ public class ChannelManager {
         if ((cr=(ChannelRenderer)rendererTable.get(chanId)) != null) {
             cr.setCharacterCache(ccache);
         } else {
-            Logger.log(Logger.ERROR,"ChannelManager::setChannelCharacterCache() : channel with chanId=\""+chanId+"\" is not present in the renderer cache!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::setChannelCharacterCache() : channel with chanId=\""+chanId+"\" is not present in the renderer cache!");
         }
     }
 
@@ -537,16 +544,16 @@ public class ChannelManager {
      */
     public Object getChannelCharacters (String chanId, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
-        
+
         if (rendererTable.get(chanId) == null) {
             if(className!=null && params!=null) {
                 this.startChannelRendering(chanId, className, timeOut, params,true);
             } else {
-                Logger.log(Logger.ERROR,"ChannelManager::getChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
+                LogService.instance().log(LogService.ERROR,"ChannelManager::getChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
             }
         }
         if ((cr = (ChannelRenderer) rendererTable.get(chanId)) != null) {
-            
+
             SAX2BufferImpl dh=new SAX2BufferImpl();
             // in case there isn't a character cache
             ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter((ContentHandler)dh);
@@ -560,7 +567,7 @@ public class ChannelManager {
                     }
                     dh=cr.getBuffer();
                 }
-                    
+
                 if(out==cr.RENDERING_TIMED_OUT) {
                     // rendering has timed out
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
@@ -581,7 +588,7 @@ public class ChannelManager {
                         StringWriter sw=new StringWriter();
                         e.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
                 }
 
@@ -611,11 +618,11 @@ public class ChannelManager {
                         StringWriter sw=new StringWriter();
                         e.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
 
                 } else {
-                    Logger.log(Logger.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
+                    LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
                 }
             }
             catch (Exception e) {
@@ -623,11 +630,11 @@ public class ChannelManager {
                 // method, but somewhere down the line things went wrong. Most likely,
                 // a buffer output routine threw. This means that we are likely to have partial
                 // output in the document handler. Really bad !
-                Logger.log(Logger.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
+                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
             }
             return dh;
         } else {
-            Logger.log (Logger.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
         }
 
         return null;
@@ -645,7 +652,7 @@ public class ChannelManager {
             ch.receiveEvent (le);
         }
         else
-            Logger.log (Logger.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + chanId + "\")");
+            LogService.instance().log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + chanId + "\")");
     }
 
     /**
