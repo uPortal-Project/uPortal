@@ -37,6 +37,7 @@
 package  org.jasig.portal;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
@@ -185,7 +186,14 @@ public class PortalSessionManager extends HttpServlet {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
             }
             return;
-        } 
+        }
+
+        // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LogService.log(LogService.ERROR, "Unable to set UTF-8 character encoding!", uee);
+        }
         
         HttpSession session = req.getSession();
 

@@ -35,7 +35,6 @@
 
 package org.jasig.portal;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
@@ -147,11 +146,6 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                 }
             }
             // regular params
-            try {
-                source.setCharacterEncoding("UTF-8");
-            } catch (UnsupportedEncodingException uee) {
-                LogService.log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! " + uee);
-            }
             Enumeration en = source.getParameterNames();
             if (en != null) {
                 while (en.hasMoreElements()) {
