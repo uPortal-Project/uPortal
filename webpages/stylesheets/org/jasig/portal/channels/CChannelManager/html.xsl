@@ -585,10 +585,10 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
                 <!--<td align="center" nowrap="nowrap">User can<br/> Modify?</td>-->
-                
+
 <td align="center" nowrap="nowrap">
                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>                
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
@@ -672,8 +672,10 @@
                   <span class="uportal-label">Channel Description:</span><br/>
                   <textarea name="description" cols="50" rows="3" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
-                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/></xsl:attribute></xsl:if></textarea>
-                   </td>
+                      <xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/>
+                    </xsl:if>
+                  </textarea>
+                </td>
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
@@ -686,7 +688,7 @@
                   </table>
                 </td>
               </tr>
-              
+
               <tr class="uportal-channel-text">
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
