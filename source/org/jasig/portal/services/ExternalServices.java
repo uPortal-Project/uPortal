@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.reflect.Method;
+import java.lang.reflect.Array;
 
 import org.xml.sax.Attributes;
 import javax.xml.parsers.SAXParserFactory;
@@ -89,6 +90,37 @@ public class ExternalServices {
     LogService.instance().log(LogService.INFO, "External services: " + msg);
   }
 
+  /**
+   * Returns the appropriate class for the given class name.  Checks to see
+   * whether the class belongs to a primitive data type or a Java Object.
+   * @param className - Name of the class. Primitive datatypes must be specified
+   *                    as xxx.class or Xxxx.TYPE. (e.g. int.class or Integer.TYPE).
+   */
+  public static Class getClassObject (String className) throws Exception {
+    if ((className.indexOf("TYPE") != -1) || (className.indexOf("class") != -1)) {
+      if (className.equals("boolean.class") || className.equals("Boolean.TYPE")) {
+        return Boolean.TYPE;
+      } else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
+        return Byte.TYPE;
+      } else if (className.equals("short.class") || className.equals("Short.TYPE")) {
+        return Short.TYPE;
+      } else if (className.equals("char.class") || className.equals("Char.TYPE")) {
+        return java.lang.Character.TYPE;
+      } else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
+        return Integer.TYPE;
+      } else if (className.equals("long.class") || className.equals("Long.TYPE")) {
+        return Long.TYPE;
+      } else if (className.equals("float.class") || className.equals("Float.TYPE")) {
+        return Float.TYPE;
+      } else if (className.equals("double.class") || className.equals("Double.TYPE")) {
+        return Double.TYPE;
+      }
+    } else {
+     return Class.forName(className);
+    }
+    return null;
+  }
+
   class ServiceItem {
     String name;
     String javaClass;
@@ -132,7 +164,7 @@ public class ExternalServices {
      return args;
     }
 
-    public Class[] getArgumentClass() throws Exception {
+    public Class[] getArgumentClasses() throws Exception {
      Class[] classNames = null;
 
      if (argList != null) {
@@ -141,58 +173,44 @@ public class ExternalServices {
        for (int i=0; i < argList.size(); i++) {
          Argument argItem = (Argument)argList.get(i);
          String className = argItem.getDataType();
-         classNames[i] = getClassObject(className);
+
+         if (argItem.getArray()) {
+           classNames[i] = Array.newInstance(getClassObject(className), 1).getClass();
+         } else {
+           classNames[i] = getClassObject(className);
+         }
        }
      }
 
      return classNames;
     }
-
-    /**
-     * Returns the appropriate class for the given class name.  Checks to see
-     * whether the class belongs to a primitive data type or a Java Object.
-     * @param className - Name of the class. Primitive datatypes must be specified
-     *                    as xxx.class or Xxxx.TYPE. (e.g. int.class or Integer.TYPE).
-     */
-    private Class getClassObject (String className) throws Exception {
-      if ((className.indexOf("TYPE") != -1) || (className.indexOf("class") != -1)) {
-        if (className.equals("boolean.class") || className.equals("Boolean.TYPE")) {
-          return Boolean.TYPE;
-        } else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
-          return Byte.TYPE;
-        } else if (className.equals("short.class") || className.equals("Short.TYPE")) {
-          return Short.TYPE;
-        } else if (className.equals("char.class") || className.equals("Char.TYPE")) {
-          return java.lang.Character.TYPE;
-        } else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
-          return Integer.TYPE;
-        } else if (className.equals("long.class") || className.equals("Long.TYPE")) {
-          return Long.TYPE;
-        } else if (className.equals("float.class") || className.equals("Float.TYPE")) {
-          return Float.TYPE;
-        } else if (className.equals("double.class") || className.equals("Double.TYPE")) {
-          return Double.TYPE;
-        }
-      } else {
-       return Class.forName(className);
-      }
-      return null;
-    }
   }
 
   class Argument {
     String datatype;
-    String value;
+    boolean array;
+    ArrayList values = new ArrayList(); // when array=true, there may be more than one value
 
-    public void setValue (String argValue) { value = argValue; }
+    public void addValue (String argValue) { values.add(argValue); }
     public String getDataType() { return datatype; }
     public void setDataType(String argDataType) { datatype = argDataType; }
+    public boolean getArray() { return array; }
+    public void setArray(boolean b) {array = b; }
 
     public Object getValue() throws Exception {
-      return getValue (datatype, value);
+      Object value = null;
+      if (array) {
+        value = Array.newInstance(getClassObject(datatype), values.size());
+        for (int i = 0; i < values.size(); i++) {
+          Array.set(value, i, values.get(i));
+        }
+      } else {
+        value = getValue (datatype, (String)values.get(0));
+      }
+      return value;
     }
 
-    public Object getValue (String className, String value) throws Exception {
+    private Object getValue (String className, String value) throws Exception {
       if ((className.indexOf("TYPE") != -1) || (className.indexOf("class") != -1)) {
         try {
           if (className.equals("boolean.class") || className.equals("BOOLEAN.TYPE")) {
@@ -238,6 +256,9 @@ public class ExternalServices {
         argProcessing = true;
       } else if (qName.equals("argitem")) {
         argItem = new Argument();
+      } else if (qName.equals("datatype")) {
+        String array = atts.getValue("array");
+        argItem.setArray(array != null && array.equals("true"));
       }
     }
 
@@ -254,7 +275,7 @@ public class ExternalServices {
         try {
           svcClass   = Class.forName(javaClass);
           args       = svcItem.getArguments();
-          classNames = svcItem.getArgumentClass();
+          classNames = svcItem.getArgumentClasses();
         } catch (java.lang.ClassNotFoundException cnfe) {
           outputMessage("Class not found - " + cnfe.getMessage());
           return;
@@ -301,7 +322,7 @@ public class ExternalServices {
           argItem.setDataType(chValue);
       } else if (elementName.equals("value")) {
         if (argProcessing) {
-          argItem.setValue(chValue);
+          argItem.addValue(chValue);
         }
       }
     }
