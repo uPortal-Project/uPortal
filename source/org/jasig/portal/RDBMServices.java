@@ -46,7 +46,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public class RDBMServices {
     public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
