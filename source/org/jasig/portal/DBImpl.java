@@ -950,41 +950,6 @@ public class DBImpl
     }
   }
 
-  /**
-   *
-   * CBookmarks
-   *
-   *
-   */
-  public Document getBookmarkXML (int userId) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
-    Connection con = rdbmService.getConnection();
-    try {
-      String sQuery = "SELECT PORTAL_USER_ID, BOOKMARK_XML FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userId;
-      Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
-      ResultSet statem = con.createStatement().executeQuery(sQuery);
-      DOMParser domP = new DOMParser();
-      String inputXML;
-      if (statem.next()) {
-        inputXML = statem.getString("BOOKMARK_XML");
-      }
-      else {
-        sQuery = "SELECT UP_USERS.USER_NAME, UPC_BOOKMARKS.BOOKMARK_XML FROM UPC_BOOKMARKS, UP_USERS WHERE UP_USERS.USER_NAME = 'system' AND UP_USERS.ID = UPC_BOOKMARKS.PORTAL_USER_ID";
-        Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
-        statem = con.createStatement().executeQuery(sQuery);
-        statem.next();
-        inputXML = statem.getString("BOOKMARK_XML");
-        Statement cstate = con.createStatement();
-        sQuery = "INSERT INTO UPC_BOOKMARKS VALUES ('" + userId + "','" + userId + "','" + inputXML + "')";
-        Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
-        cstate.executeQuery(sQuery);
-      }
-      domP.parse(new InputSource(new StringReader(inputXML)));
-      return  domP.getDocument();
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
 
   /**
    * put your documentation comment here

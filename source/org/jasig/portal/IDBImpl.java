@@ -82,10 +82,6 @@ public interface IDBImpl {
   public void addStructureStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText) throws Exception;
   public void addThemeStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception;
 
-  /* CBookmarks */
-  public Document getBookmarkXML(int userId) throws Exception;
-  public void saveBookmarkXML(int userId, Document doc) throws Exception;
-
   /* ReferenceAuthorization */
   public boolean isUserInRole(int userId, String role) throws Exception;
   public Vector getAllRoles() throws Exception;
