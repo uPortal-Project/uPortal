@@ -63,7 +63,7 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
    * @param doc
    * @param chanId
    * @param idTag
-   * @return 
+   * @return
    * @exception java.sql.SQLException
    */
   protected Element createChannelNode (Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException {
@@ -78,9 +78,9 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
         if (rs.next()) {
           channel = doc.createElement("channel");
           Element system = doc.createElement("system");
-          createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
+          createChannelNodeHeaders(doc, chanId, idTag, rs, channel);
           do {
-            createChannelNodeParameters(doc, rs, channel, system);
+            createChannelNodeParameters(doc, rs, channel);
           } while (rs.next());
           rs.close();
           channel.appendChild(system);
@@ -106,7 +106,7 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
    * @param structId
    * @exception java.sql.SQLException
    */
-  protected void createLayout (Connection con, DocumentImpl doc, Statement stmt, Element root, int userId, int profileId, 
+  protected void createLayout (Connection con, DocumentImpl doc, Statement stmt, Element root, int userId, int profileId,
       int layoutId, int structId) throws java.sql.SQLException {
     if (structId == 0) {        // End of line
       return;
@@ -127,12 +127,11 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
       chldStructId = rs.getInt("CHLD_STRUCT_ID");
       chanId = rs.getInt("CHAN_ID");
       structure = createLayoutStructure(rs, chanId, userId, stmt, doc);
-      system = (Element)structure.getElementsByTagName("system").item(0);
       if (chanId != 0) {        // Channel
         parameter = (Element)structure.getElementsByTagName("parameter").item(0);
       }
       do {
-        createLayoutStructureParameter(chanId, rs, structure, parameter, system);
+        createLayoutStructureParameter(chanId, rs, structure, parameter);
       } while (rs.next());
     } finally {
       rs.close();

@@ -64,7 +64,7 @@ import  org.jasig.portal.security.provider.RoleImpl;
 public class RDBMUserLayoutStore
     implements IUserLayoutStore {
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
-  static int DEBUG = 0;
+  static int DEBUG = 1;
   protected RdbmServices rdbmService = null;
 
   /**
@@ -111,10 +111,8 @@ public class RDBMUserLayoutStore
    * @param name
    * @param value
    * @param channel
-   * @param system
-   */
-  protected static final void addChannelHeaderAttribute (String name, int value, Element channel, Element system) {
-    addChannelHeaderAttribute(name, value + "", channel, system);
+   */  protected static final void addChannelHeaderAttribute (String name, int value, Element channel) {
+    addChannelHeaderAttribute(name, value + "", channel);
   }
 
   /**
@@ -122,9 +120,8 @@ public class RDBMUserLayoutStore
    * @param name
    * @param value
    * @param channel
-   * @param system
    */
-  protected static final void addChannelHeaderAttribute (String name, String value, Element channel, Element system) {
+  protected static final void addChannelHeaderAttribute (String name, String value, Element channel) {
     channel.setAttribute(name, value);
   }
 
@@ -133,10 +130,9 @@ public class RDBMUserLayoutStore
    * @param name
    * @param value
    * @param channel
-   * @param system
    */
-  protected static final void addChannelHeaderAttributeFlag (String name, String value, Element channel, Element system) {
-    addChannelHeaderAttribute(name, (value != null && value.equals("Y") ? "true" : "false"), channel, system);
+  protected static final void addChannelHeaderAttributeFlag (String name, String value, Element channel) {
+    addChannelHeaderAttribute(name, (value != null && value.equals("Y") ? "true" : "false"), channel);
   }
 
   /**
@@ -146,11 +142,9 @@ public class RDBMUserLayoutStore
    * @param idTag
    * @param rs
    * @param channel
-   * @param system
    * @exception java.sql.SQLException
    */
-  protected static final void createChannelNodeHeaders (DocumentImpl doc, int chanId, String idTag, ResultSet rs, Element channel,
-      Element system) throws java.sql.SQLException {
+  protected static final void createChannelNodeHeaders (DocumentImpl doc, int chanId, String idTag, ResultSet rs, Element channel) throws java.sql.SQLException {
     String chanTitle = rs.getString("CHAN_TITLE");
     String chanDesc = rs.getString("CHAN_DESC");
     String chanClass = rs.getString("CHAN_CLASS");
@@ -168,20 +162,21 @@ public class RDBMUserLayoutStore
     String chanName = rs.getString("CHAN_NAME");
     String chanFName = rs.getString("CHAN_FNAME");
     doc.putIdentifier(idTag, channel);
-    addChannelHeaderAttribute("ID", idTag, channel, system);
+    addChannelHeaderAttribute("ID", idTag, channel);
     channel.setAttribute("chanID", chanId + "");
-    if (DEBUG > 1)
+    if (DEBUG > 1) {
       System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
-    addChannelHeaderAttribute("name", chanName, channel, system);
-    addChannelHeaderAttribute("fname", chanFName, channel, system);
-    addChannelHeaderAttribute("class", chanClass, channel, system);
-    addChannelHeaderAttribute("timeout", chanTimeout, channel, system);
-    addChannelHeaderAttributeFlag("minimizable", chanMinimizable, channel, system);
-    addChannelHeaderAttributeFlag("editable", chanEditable, channel, system);
-    addChannelHeaderAttributeFlag("hasHelp", chanHasHelp, channel, system);
-    addChannelHeaderAttributeFlag("hasAbout", chanHasAbout, channel, system);
-    addChannelHeaderAttributeFlag("unremovable", chanUnremovable, channel, system);
-    addChannelHeaderAttributeFlag("detachable", chanDetachable, channel, system);
+    }
+    addChannelHeaderAttribute("name", chanName, channel);
+    addChannelHeaderAttribute("fname", chanFName, channel);
+    addChannelHeaderAttribute("class", chanClass, channel);
+    addChannelHeaderAttribute("timeout", chanTimeout, channel);
+    addChannelHeaderAttributeFlag("minimizable", chanMinimizable, channel);
+    addChannelHeaderAttributeFlag("editable", chanEditable, channel);
+    addChannelHeaderAttributeFlag("hasHelp", chanHasHelp, channel);
+    addChannelHeaderAttributeFlag("hasAbout", chanHasAbout, channel);
+    addChannelHeaderAttributeFlag("unremovable", chanUnremovable, channel);
+    addChannelHeaderAttributeFlag("detachable", chanDetachable, channel);
   }
 
   /**
@@ -189,10 +184,9 @@ public class RDBMUserLayoutStore
    * @param doc
    * @param rs
    * @param channel
-   * @param system
    * @exception java.sql.SQLException
    */
-  protected static final void createChannelNodeParameters (DocumentImpl doc, ResultSet rs, Element channel, Element system) throws java.sql.SQLException {
+  protected static final void createChannelNodeParameters (DocumentImpl doc, ResultSet rs, Element channel) throws java.sql.SQLException {
     String chanParmNM = rs.getString("CHAN_PARM_NM");
     if (rs.wasNull()) {
       return;
@@ -202,8 +196,8 @@ public class RDBMUserLayoutStore
     parameter.setAttribute("name", chanParmNM);
     parameter.setAttribute("value", chanParmVal);
     String override = rs.getString("CHAN_PARM_OVRD");
-    if (override != null && override.equals("N")) {
-      system.setAttribute("D" + chanParmNM, "");
+    if (override != null && override.equals("Y")) {
+      parameter.setAttribute("override", "yes");
     }
     channel.appendChild(parameter);
   }
@@ -227,16 +221,14 @@ public class RDBMUserLayoutStore
       try {
         if (rs.next()) {
           channel = doc.createElement("channel");
-          Element system = doc.createElement("system");
-          createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
+          createChannelNodeHeaders(doc, chanId, idTag, rs, channel);
           rs.close();
           sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
           Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           while (rs.next()) {
-            createChannelNodeParameters(doc, rs, channel, system);
+            createChannelNodeParameters(doc, rs, channel);
           }
-          channel.appendChild(system);
         }
       } finally {
         rs.close();
@@ -265,21 +257,6 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param node
-   * @return
-   */
-  protected static final Element findSystemNode (Node node) {
-    NodeList nl = node.getChildNodes();
-    for (int i = 0; i < nl.getLength(); i++) {
-      if (nl.item(i).getNodeName().equals("system")) {
-        return  (Element)nl.item(i);
-      }
-    }
-    return  null;
-  }
-
-  /**
-   * put your documentation comment here
    * @param con
    * @param doc
    * @param stmt
@@ -298,12 +275,11 @@ public class RDBMUserLayoutStore
     int nextStructId;
     int chldStructId;
     int chanId;
-    Element system = null;
     Element parameter = null;
     Element structure;
     String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
         + structId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout()" + sQuery);
+    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
     ResultSet rs = stmt.executeQuery(sQuery);
     try {
       rs.next();
@@ -314,17 +290,16 @@ public class RDBMUserLayoutStore
     } finally {
       rs.close();
     }
-    system = (Element)structure.getElementsByTagName("system").item(0);
     if (chanId != 0) {          // Channel
       parameter = (Element)structure.getElementsByTagName("parameter").item(0);
     }
     sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
         + structId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout()" + sQuery);
+    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): b" + sQuery);
     rs = stmt.executeQuery(sQuery);
     try {
       while (rs.next()) {
-        createLayoutStructureParameter(chanId, rs, structure, parameter, system);
+        createLayoutStructureParameter(chanId, rs, structure, parameter);
       }
     } finally {
       rs.close();
@@ -342,11 +317,9 @@ public class RDBMUserLayoutStore
    * @param rs
    * @param structure
    * @param parameter
-   * @param system
    * @exception java.sql.SQLException
    */
-  protected static final void createLayoutStructureParameter (int chanId, ResultSet rs, Element structure, Element parameter,
-      Element system) throws java.sql.SQLException {
+  protected static final void createLayoutStructureParameter (int chanId, ResultSet rs, Element structure, Element parameter) throws java.sql.SQLException {
     String paramName = rs.getString("STRUCT_PARM_NM");
     if (paramName != null) {
       String paramValue = rs.getString("STRUCT_PARM_VAL");
@@ -354,8 +327,20 @@ public class RDBMUserLayoutStore
         structure.setAttribute(paramName, paramValue);
       }
       else {                    // Channel
-        if (!system.hasAttribute("D" + paramName)) {
-          parameter.setAttribute(paramName, paramValue);
+        NodeList parameters = structure.getElementsByTagName("parameter");
+        for (int i = 0; i < parameters.getLength(); i++) {
+          Element parmElement = (Element)parameters.item(i);
+          NamedNodeMap nm = parmElement.getAttributes();
+
+          String nodeName = nm.getNamedItem("name").getNodeValue();
+          if (nodeName.equals(paramName)) {
+            Node override = nm.getNamedItem("override");
+            if (override != null && override.getNodeValue().equals("yes")) {
+              Node valueNode = nm.getNamedItem("value");
+              valueNode.setNodeValue(paramValue);
+            }
+            return;
+          }
         }
       }
     }
@@ -421,16 +406,13 @@ public class RDBMUserLayoutStore
       String unremovable = rs.getString("UNREMOVABLE");
       String immutable = rs.getString("IMMUTABLE");
       Element folder = doc.createElement("folder");
-      Element system = doc.createElement("system");
       doc.putIdentifier("s" + idTag, folder);
-      addChannelHeaderAttribute("ID", "s" + idTag, folder, system);
-      addChannelHeaderAttribute("name", name, folder, system);
-      addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder, system);
-      addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
-      addChannelHeaderAttribute("immutable", (immutable != null && immutable.equals("Y") ? "true" : "false"), folder, system);
-      addChannelHeaderAttribute("unremovable", (unremovable != null && unremovable.equals("Y") ? "true" : "false"), folder,
-          system);
-      folder.appendChild(system);
+      addChannelHeaderAttribute("ID", "s" + idTag, folder);
+      addChannelHeaderAttribute("name", name, folder);
+      addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder);
+      addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder);
+      addChannelHeaderAttribute("immutable", (immutable != null && immutable.equals("Y") ? "true" : "false"), folder);
+      addChannelHeaderAttribute("unremovable", (unremovable != null && unremovable.equals("Y") ? "true" : "false"), folder);
       return  folder;
     }
   }
@@ -454,7 +436,7 @@ public class RDBMUserLayoutStore
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout()" + subSelectString);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -464,7 +446,7 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout()" + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -478,10 +460,10 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         long stopTime = System.currentTimeMillis();
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout() Layout document for user " + userId + " took " +
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
         doc.appendChild(root);
-        if (DEBUG > 0) {
+        if (DEBUG > 1) {
           System.err.println("--> created document");
           dumpDoc(doc, "");
           System.err.println("<--");
@@ -510,7 +492,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout()" + query);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -521,12 +503,12 @@ public class RDBMUserLayoutStore
         }
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
         String sQuery = "DELETE FROM UP_STRUCT_PARAM WHERE " + selectString;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout()" + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout()" + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
         stmt.executeUpdate(sQuery);
-        if (DEBUG > 0) {
+        if (DEBUG > 1) {
           System.err.println("--> saving document");
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
@@ -579,17 +561,14 @@ public class RDBMUserLayoutStore
     else if (node.getNodeName().equals("parameter")) {
       return  0;
     }
-    else if (node.getNodeName().equals("system")) {
-      return  saveStructure(node.getNextSibling(), stmt, userId, layoutId, structId);
-    }
     Element structure = (Element)node;
-    Element system = findSystemNode(node);
     int saveStructId = Integer.parseInt(structure.getAttribute("ID").substring(1));
     int nextStructId = 0;
     int childStructId = 0;
     String sQuery;
-    if (DEBUG > 0)
+    if (DEBUG > 0) {
       Logger.log(Logger.DEBUG, "-->" + node.getNodeName() + "@" + saveStructId);
+    }
     if (node.hasChildNodes()) {
       childStructId = saveStructure(node.getFirstChild(), stmt, userId, layoutId, structId);
     }
@@ -603,16 +582,17 @@ public class RDBMUserLayoutStore
       structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
     }
     String externalId = structure.getAttribute("external_id");
-    if (externalId != null && externalId.trim().length() > 0)
+    if (externalId != null && externalId.trim().length() > 0) {
       externalId = "'" + externalId + "'";
-    else
+    } else {
       externalId = "NULL";
+    }
     sQuery = "INSERT INTO UP_LAYOUT_STRUCT " + "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES ("
         + userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," + externalId + ","
         + chanId + "," + structName + ",'" + structure.getAttribute("type") + "'," + "'" + dbBool(structure.getAttribute("hidden"))
         + "','" + dbBool(structure.getAttribute("immutable")) + "'," + "'" + dbBool(structure.getAttribute("unremovable"))
         + "')";
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure()" + sQuery);
+    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
     stmt.executeUpdate(sQuery);
 
     NodeList parameters = node.getChildNodes();
@@ -623,17 +603,19 @@ public class RDBMUserLayoutStore
           NamedNodeMap nm = parmElement.getAttributes();
           String nodeName = nm.getNamedItem("name").getNodeValue();
           String nodeValue = nm.getNamedItem("value").getNodeValue();
-          String structHDInd = "D";
-          if (DEBUG > 1)
-            System.err.println(structHDInd + nodeName + "=" + nodeValue);
-          if (system.hasAttribute(structHDInd + nodeName)) {
-            if (DEBUG > 1)
+
+          Node override = nm.getNamedItem("override");
+          if (DEBUG > 0) {
+            System.err.println(nodeName + "=" + nodeValue);
+          }
+          if (override == null || !override.getNodeValue().equals("yes")) {
+            if (DEBUG > 0)
               System.err.println("Not saving channel defined parameter value " + nodeName);
           }
           else {
             sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) VALUES ("
                 + userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "')";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure()" + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -760,11 +742,12 @@ public class RDBMUserLayoutStore
             NamedNodeMap nm = parmElement.getAttributes();
             String nodeName = nm.item(0).getNodeName();
             String nodeValue = nm.item(0).getNodeValue();
-            if (DEBUG > 1)
-              System.err.println("D" + nodeName + "=" + nodeValue);
+            if (DEBUG > 1) {
+              System.err.println(nodeName + "=" + nodeValue);
+            }
             sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + nodeName + "','" + nodeValue + "','N')";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel()" + sInsert);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
             stmt.executeUpdate(sInsert);
           }
         }
@@ -819,8 +802,9 @@ public class RDBMUserLayoutStore
               chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
             }
             Element child = createChannelNode(con, chanDoc, chanId, "xchan" + chanId);
-            if (DEBUG > 3)
+            if (DEBUG > 3) {
               System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
+            }
             cat.appendChild(child);
           }
         } finally {
@@ -1238,7 +1222,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
             + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation()" + query);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1276,7 +1260,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR " + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
             + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserDirectoryInformation()" + query);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserDirectoryInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1307,7 +1291,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger()" + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
@@ -1316,7 +1300,7 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + id + " WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger()" + sInsert);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -1338,7 +1322,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + tableName + "',0)";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createCounter()" + sInsert);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -1360,7 +1344,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setCounter()" + sUpdate);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
       } finally {
         stmt.close();
@@ -1579,7 +1563,7 @@ public class RDBMUserLayoutStore
         } finally {
           rs.close();
         }
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserProfile() : " + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -2013,7 +1997,7 @@ public class RDBMUserLayoutStore
         String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
             + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserProfile() : " + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -2449,7 +2433,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2460,7 +2444,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2645,7 +2629,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2656,7 +2640,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
                 + "',2)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2667,7 +2651,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2702,7 +2686,7 @@ public class RDBMUserLayoutStore
         String sQuery = "INSERT INTO UP_STRUCT_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
             + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
             + "','" + ssd.getStylesheetWordDescription() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -2710,7 +2694,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all folder attributes
@@ -2719,7 +2703,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
               + "',2)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -2728,7 +2712,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
@@ -2757,7 +2741,7 @@ public class RDBMUserLayoutStore
     Statement stmt = con.createStatement();
     try {
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT FROM UP_STRUCT_SS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : " + sQuery);
+      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       if (rs.next()) {
         try {
@@ -2773,7 +2757,7 @@ public class RDBMUserLayoutStore
       }
       // retreive stylesheet params and attributes
       sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : " + sQuery);
+      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
       rs = stmt.executeQuery(sQuery);
       try {
         while (rs.next()) {
@@ -2817,7 +2801,7 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS FROM UP_THEME_SS WHERE SS_ID="
           + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : " + sQuery);
+      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
@@ -2840,7 +2824,7 @@ public class RDBMUserLayoutStore
       }
       // retreive stylesheet params and attributes
       sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : " + sQuery);
+      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       rs = stmt.executeQuery(sQuery);
       try {
         while (rs.next()) {
@@ -2892,7 +2876,7 @@ public class RDBMUserLayoutStore
             + "','" + tsd.getStylesheetWordDescription() + "'," + tsd.getStructureStylesheetId() + ",'" + tsd.getSamplePictureURI()
             + "','" + tsd.getSampleIconURI() + "','" + tsd.getMimeType() + "','" + tsd.getDeviceType() + "','" + tsd.getSerializerName()
             + "','" + tsd.getCustomUserPreferencesManagerClass() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -2900,7 +2884,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -2909,7 +2893,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
