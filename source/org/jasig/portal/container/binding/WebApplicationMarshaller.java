@@ -425,7 +425,7 @@ public class WebApplicationMarshaller {
     }
     
     private void addTextElement(Element parent, String elementName, String text) {
-        if (text != null) {
+        if (text != null && text.length() > 0) {
             Document doc = parent.getOwnerDocument();
             Element e = doc.createElement(elementName);
             e.appendChild(doc.createTextNode(text));
