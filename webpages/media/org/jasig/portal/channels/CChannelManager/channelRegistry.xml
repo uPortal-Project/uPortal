@@ -24,7 +24,7 @@
           <category ID="cat4" description="Serves as HTTP Proxy to HTML or XHTML web pages" name="CWebProxy">
             <channel ID="chan17" chanID="17" class="org.jasig.portal.channels.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat&apos;s NumGuess" timeout="10000">
               <parameter name="cw_xml" value="http://localhost:8080/examples/jsp/num/numguess.jsp"/>
-              <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl"/>
+              <parameter name="cw_ssl" value="CWebProxy/XHTML.ssl"/>
               <parameter name="cw_tidy" value="on"/>
               <parameter name="cw_passThrough" value="application"/>
               <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/num_help.html"/>
@@ -33,7 +33,7 @@
             </channel>
             <channel ID="chan18" chanID="18" class="org.jasig.portal.channels.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat&apos;s Servlet Examples" timeout="10000">
               <parameter name="cw_xml" value="http://localhost:8080/examples/servlets/index.html"/>
-              <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl"/>
+              <parameter name="cw_ssl" value="CWebProxy/XHTML.ssl"/>
               <parameter name="cw_tidy" value="on"/>
               <parameter name="cw_passThrough" value="all"/>
               <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/servlet_help.html"/>
@@ -61,32 +61,32 @@
             <category ID="cat7" description="Rich Site Summary, an XML standard for content feeds" name="RSS">
               <channel ID="chan5" chanID="5" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal-Powered Sites" timeout="10000">
                 <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
               <channel ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="IBS News" timeout="10000">
                 <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
               <channel ID="chan7" chanID="7" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Developers Reference" timeout="10000">
                 <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
               <channel ID="chan11" chanID="11" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Word of the Day" timeout="10000">
                 <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
               <channel ID="chan12" chanID="12" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Salon.com" timeout="10000">
                 <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
               <channel ID="chan13" chanID="13" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="The Motley Fool" timeout="10000">
                 <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
-                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
               </channel>
             </category>
             <channel ID="chan15" chanID="15" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="true" name="CSS Viewer" timeout="5000">
-              <parameter name="xmlUri" value="webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml"/>
-              <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+              <parameter name="xmlUri" value="CGenericXSLT/CSSViewer/cssViewer.xml"/>
+              <parameter name="sslUri" value="CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
             </channel>
           </category>
           <category ID="cat8" description="Renders an image with an optional cation and subcaption." name="CImage">
@@ -107,19 +107,19 @@
         </category>
         <channel ID="chan5" chanID="5" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal-Powered Sites" timeout="10000">
           <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss"/>
-          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+          <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
         </channel>
         <channel ID="chan7" chanID="7" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Developers Reference" timeout="10000">
           <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
-          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+          <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
         </channel>
         <channel ID="chan8" chanID="8" class="org.jasig.portal.channels.CInlineFrame" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Home Page" timeout="10000">
           <parameter name="height" value="600"/>
           <parameter name="url" value="http://www.udel.edu/uPortal"/>
         </channel>
         <channel ID="chan15" chanID="15" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="true" name="CSS Viewer" timeout="5000">
-          <parameter name="xmlUri" value="webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml"/>
-          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+          <parameter name="xmlUri" value="CGenericXSLT/CSSViewer/cssViewer.xml"/>
+          <parameter name="sslUri" value="CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
         </channel>
       </category>
       <channel ID="chan16" chanID="16" class="org.jasig.portal.channels.CSnoop" editable="false" fname="" hasAbout="false" hasHelp="true" name="Snooper" timeout="5000"/>
@@ -154,23 +154,23 @@
       </channel>
       <channel ID="chan11" chanID="11" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Word of the Day" timeout="10000">
         <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
-        <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
       </channel>
     </category>
     <category ID="cat10" description="News" name="News">
       <category ID="cat11" description="Business or company news" name="Business">
         <channel ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="IBS News" timeout="10000">
           <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
-          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+          <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
         </channel>
         <channel ID="chan13" chanID="13" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="The Motley Fool" timeout="10000">
           <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
-          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+          <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
         </channel>
       </category>
       <channel ID="chan12" chanID="12" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Salon.com" timeout="10000">
         <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
-        <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
       </channel>
     </category>
     <category ID="empty" description="This is an empty category" name="emptyCatgory"/>

@@ -15,7 +15,7 @@
             as the specification is adhered to and the file is stored on
             a publicly accessible web server. You will need to provide a
             URL for the RSS file.</description>
-            <definition>webpages/media/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</definition>
+            <definition>CGenericXSLT/RSS/RSS.cpd</definition>
           </channelType>
           <channelType ID="1">
             <class>org.jasig.portal.channels.CGenericXSLT</class>
@@ -26,7 +26,7 @@
             specification is adhered to and the file is stored on a
             publicly accessible web server. You will need to provide a
             URL or Path for the XML and XSL file.</description>
-            <definition>webpages/media/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</definition>
+            <definition>CGenericXSLT/CGenericXSLT.cpd</definition>
           </channelType>
           <channelType ID="2">
             <class>org.jasig.portal.channels.CInlineFrame</class>
@@ -35,20 +35,20 @@
             HTML page within a frame. This channel does not work
             correctly in browsers older than Internet Explorer 5 and
             Netscape 6.</description>
-            <definition>webpages/media/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</definition>
+            <definition>CInlineFrame/CInlineFrame.cpd</definition>
           </channelType>
           <channelType ID="3">
             <class>org.jasig.portal.channels.CImage</class>
             <name>Image</name>
             <description>Simple channel to display an image with optional
             caption and subcaption</description>
-            <definition>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</definition>
+            <definition>CImage/CImage.cpd</definition>
           </channelType>
           <channelType ID="4">
             <class>org.jasig.portal.channels.CWebProxy</class>
             <name>Web Proxy</name>
             <description>Incorporate a dynamic HTML or XML application</description>
-            <definition>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</definition>
+            <definition>CWebProxy/CWebProxy.cpd</definition>
           </channelType>
         </channelTypes>
         <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
