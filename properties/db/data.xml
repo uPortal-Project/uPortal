@@ -3,7 +3,7 @@
 
 <data>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_RESTRICTIONS</name>
     <rows>
       <row>
@@ -45,7 +45,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_OWNER_FRAGMENT</name>
     <rows>
       <row>
@@ -67,7 +67,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_USER_LAYOUT_AGGR</name>
     <rows>
       <row>
@@ -109,7 +109,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_LAYOUT_STRUCT_AGGR</name>
     <rows>
       <!-- Guest layout -->
@@ -139,7 +139,7 @@
       </rows>
    </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_FRAGMENTS</name>
     <rows>
       <!-- Fragment examples -->
@@ -305,7 +305,7 @@
       </rows>
    </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_GROUP_FRAGMENT</name>
     <rows>
       <!-- An example of fragment parameters -->
@@ -321,7 +321,7 @@
   </table>
 
 
-   <table>
+   <table sinceMajor="2" sinceMinor="2">
     <name>UP_FRAGMENT_RESTRICTIONS</name>
     <rows>
       <row>
@@ -348,7 +348,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_LAYOUT_RESTRICTIONS</name>
     <rows>
       <row>
@@ -378,7 +378,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="2">
     <name>UP_GROUP_PRIORITY_RANGE</name>
     <rows>
       <row>
@@ -409,7 +409,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SEQUENCE</name>
     <rows>
       <row>
@@ -448,14 +448,14 @@
         <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_CACHE</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>SEQUENCE_NAME</name><value>UP_FRAGMENT</value></column>
         <column><name>SEQUENCE_VALUE</name><value>10</value></column>
       </row>
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_USER</name>
     <rows>
       <row>
@@ -516,7 +516,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_PERSON_DIR</name>
       <rows>
         <!-- The row below will add the guest user to the UP_PERSON_DIR table with the password = 'demo' -->
@@ -577,7 +577,7 @@
       </rows>
     </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_CHANNEL</name>
     <rows>
       <row>
@@ -1120,7 +1120,7 @@
      </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_CHANNEL_PARAM</name>
     <rows>
       <!-- Daily Business Channel -->
@@ -1556,7 +1556,7 @@
   </table>
 
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_USER_LAYOUT</name>
     <rows>
       <row>
@@ -1598,7 +1598,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_LAYOUT_STRUCT</name>
     <rows>
       <!-- Guest layout -->
@@ -2816,7 +2816,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_LAYOUT_PARAM</name>
     <rows>
       <!-- An example of how a user can override the dafault value of a channel parameter -->
@@ -2847,7 +2847,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_CHAN_TYPE</name>
     <rows>
       <row>
@@ -2906,8 +2906,8 @@
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CApplet/CApplet.cpd</value></column>
       </row>
 
-      <row>
-        <column><name>TYPE_ID</name><value>7</value></column>
+      <row sinceMajor="2" sinceMinor="2">
+        <column><name>TYPE_ID</name><value><sequence id="UP_CHAN_TYPE">portlet</sequence></value></column>
         <column><name>TYPE_NAME</name><value>Portlet</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.portlet.CPortletAdapter</value></column>
         <column><name>TYPE_DESCR</name><value>Adapter for JSR-168 Portlets</value></column>
@@ -2917,7 +2917,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_USER_PROFILE</name>
     <rows>
       <row>
@@ -2927,7 +2927,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -2947,7 +2947,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -2967,7 +2967,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -2987,7 +2987,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -2997,7 +2997,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -3007,7 +3007,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
       <row>
@@ -3017,13 +3017,13 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_USER_PARM</name>
     <rows>
       <row>
@@ -3117,7 +3117,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_USER_ATTS</name>
     <rows>
       <row>
@@ -3525,7 +3525,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_STRUCT</name>
     <rows>
       <row>
@@ -3542,7 +3542,7 @@
         <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>SS_ID</name><value>3</value></column>
         <column><name>SS_NAME</name><value>AL Tabs and columns</value></column>
         <column><name>SS_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl</value></column>
@@ -3552,7 +3552,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_THEME</name>
     <rows>
       <row>
@@ -3584,8 +3584,8 @@
         <!-- Cell phone doesn't use tab-column structure stylesheet ! -->
         <!-- <column><name>UP_MODULE_CLASS</name><value> (none) </value></column> -->
       </row>
-      <row>
-        <column><name>SS_ID</name><value>3</value></column>
+      <row sinceMajor="2" sinceMinor="2">
+        <column><name>SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
         <column><name>SS_NAME</name><value>Integrated preferences</value></column>
         <column><name>SS_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.xsl</value></column>
         <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.sdf</value></column>
@@ -3601,7 +3601,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_THEME_PARM</name>
      <rows>
        <!-- For nested-tables theme -->
@@ -3621,15 +3621,15 @@
         </row>
 
         <!-- For integratedModes theme -->
-       <row>
-         <column><name>SS_ID</name><value>3</value></column>
+       <row sinceMajor="2" sinceMinor="2">
+         <column><name>SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
          <column><name>PARAM_NAME</name><value>skin</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>immII</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
          <column><name>TYPE</name><value>1</value></column>
         </row>
-       <row>
-         <column><name>SS_ID</name><value>3</value></column>
+       <row sinceMajor="2" sinceMinor="2">
+         <column><name>SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
          <column><name>PARAM_NAME</name><value>minimized</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
@@ -3638,7 +3638,7 @@
      </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_STRUCT_PAR</name>
      <rows>
        <!-- For tab-column structure -->
@@ -3676,7 +3676,7 @@
   </table>
 
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_MAP</name>
     <rows>
       <row>
@@ -3692,7 +3692,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_MIME_TYPE</name>
     <rows>
       <row>
@@ -3706,7 +3706,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_PERMISSION</name>
     <rows>
       <row>
@@ -4715,7 +4715,7 @@
   </table>
 
   <!-- IBasicEntity types -->
-<table>
+<table sinceMajor="2" sinceMinor="1">
     <name>UP_ENTITY_TYPE</name>
     <rows>
       <row>
@@ -4757,7 +4757,7 @@
   </table>
 
   <!-- Groups tables SAMPLE DATA -->
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_GROUP</name>
     <rows>
 
@@ -4867,7 +4867,7 @@
         <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
         <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>GROUP_ID</name><value>15</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
@@ -4985,7 +4985,7 @@
     </rows>
   </table>
 
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UP_GROUP_MEMBERSHIP</name>
     <rows>
       <row>
@@ -5422,7 +5422,7 @@
   <!-- END Groups tables SAMPLE DATA -->
 
   <!-- A table that is used by CPermissionsManager -->
-  <table>
+  <table sinceMajor="2" sinceMinor="1">
     <name>UPC_PERM_MGR</name>
     <rows>
       <row>
