@@ -20,7 +20,7 @@ import org.jasig.portal.services.persondir.IPersonAttributeDao;
  * following code is generally common between them.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonAttributeDao {
     
