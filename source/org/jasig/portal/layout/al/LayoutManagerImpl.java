@@ -5,13 +5,20 @@
 
 package org.jasig.portal.layout.al;
 
+import java.util.Enumeration;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.AggregatedLayout;
-import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.al.common.node.INodeId;
+import org.jasig.portal.layout.al.common.IUserLayout;
+import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.LayoutEventListener;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
+import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
+import org.jasig.portal.layout.al.common.node.INodeId;
+import org.jasig.portal.layout.al.common.node.NodeType;
 import org.jasig.portal.layout.restrictions.IRestrictionManager;
+import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 /**
  * Aggregated user layout manager implementation
@@ -21,7 +28,6 @@ import org.jasig.portal.layout.restrictions.IRestrictionManager;
  * @version $Revision$
  */
 public class LayoutManagerImpl implements  ILayoutManager {
-	
     private ILayoutCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;
     
@@ -163,7 +169,7 @@ public class LayoutManagerImpl implements  ILayoutManager {
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.layout.al.ILayoutManager#canUpdateNode(org.jasig.portal.layout.node.INodeDescription)
 	 */
-	public boolean canUpdateNode(INodeDescription node,INodeId nodeId)
+	public boolean canUpdateNode(INodeDescription node)
 			throws PortalException {
 		// TODO Auto-generated method stub
 		return false;
@@ -271,4 +277,154 @@ public class LayoutManagerImpl implements  ILayoutManager {
         this.restrictionManager = restrictionManager;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#addLayoutEventListener(org.jasig.portal.layout.al.common.LayoutEventListener)
+     */
+    public boolean addLayoutEventListener(LayoutEventListener l) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#addNode(org.jasig.portal.layout.al.common.node.INode, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public INodeDescription addNode(INode node, INodeId parentId, INodeId nextSiblingId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#canAddNode(org.jasig.portal.layout.al.common.node.INode, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public boolean canAddNode(INode node, INodeId parentId, INodeId nextSiblingId) throws PortalException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#canUpdateNode(org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeDescription)
+     */
+    public boolean canUpdateNode(INodeId nodeId, INodeDescription nodeDescription) throws PortalException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#createNodeDescription(org.jasig.portal.layout.al.common.node.NodeType)
+     */
+    public INodeDescription createNodeDescription(NodeType nodeType) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getCacheKey()
+     */
+    public String getCacheKey() throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getChildIds(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public Enumeration getChildIds(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getDepth(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public int getDepth(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getLayoutId()
+     */
+    public int getLayoutId() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getNextSiblingId(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public INodeId getNextSiblingId(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getNode(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public INodeDescription getNode(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getParentId(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public INodeId getParentId(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getPreviousSiblingId(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public INodeId getPreviousSiblingId(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getRootFolderId()
+     */
+    public INodeId getRootFolderId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getSubscribeId(java.lang.String)
+     */
+    public INodeId getSubscribeId(String fname) throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getUserLayout(org.xml.sax.ContentHandler)
+     */
+    public void getUserLayout(ContentHandler ch) throws PortalException {
+        // TODO Auto-generated method stub
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getUserLayout(org.jasig.portal.layout.al.common.node.INodeId, org.xml.sax.ContentHandler)
+     */
+    public void getUserLayout(INodeId nodeId, ContentHandler ch) throws PortalException {
+        // TODO Auto-generated method stub
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#getUserLayoutDOM()
+     */
+    public Document getUserLayoutDOM() throws PortalException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#markAddTargets(org.jasig.portal.layout.al.common.node.INode)
+     */
+    public void markAddTargets(INode node) throws PortalException {
+        // TODO Auto-generated method stub
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#markMoveTargets(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public void markMoveTargets(INodeId nodeId) throws PortalException {
+        // TODO Auto-generated method stub
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#removeLayoutEventListener(org.jasig.portal.layout.al.common.LayoutEventListener)
+     */
+    public boolean removeLayoutEventListener(LayoutEventListener l) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.common.ILayoutManager#updateNode(org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeDescription)
+     */
+    public boolean updateNode(INodeId nodeId, INodeDescription nodeDescription) throws PortalException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
