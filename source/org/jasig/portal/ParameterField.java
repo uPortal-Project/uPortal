@@ -105,4 +105,30 @@ public class ParameterField {
       return buf.toString();
   }
 
+  public String writeUserFields(int num)
+  {
+      StringBuffer buf = new StringBuffer();
+
+      buf.append("<input type=\"hidden\" name=\"numFields\" value=\""+num+"\"");
+      buf.append("Enter custom parameters below.<br>\n");
+
+      for(int i=1; i<num+1; i++) {
+              buf.append("<table width=\"40%\" border=\"0\">\n");
+              buf.append("<tr>\n");
+              buf.append("<td width=\"10%\">Name "+i+":</td>\n");
+              buf.append("<td width=\"20%\">\n");
+              buf.append("<input type=\"text\" name=\"usrParam_"+i+"\" size=\"10\" maxlength=\"20\" >\n");
+              buf.append("</td>\n");
+              buf.append("<td width=\"10%\">Value "+i+":</td>\n");
+              buf.append("<td width=\"60%\">\n");
+              buf.append("<input type=\"text\" name=\"usrValue_"+i+"\" size=\"50\" maxlength=\"70\" >\n");
+              buf.append("</td>\n");
+              buf.append("</tr>\n");
+              buf.append("</table>\n");
+              buf.append("<br>\n");
+      }
+
+      return buf.toString();
+  }
+
 }
