@@ -70,6 +70,9 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
@@ -567,6 +570,29 @@ final class TabColumnPrefsState extends BaseState
 
     return folder;
   }
+
+  /**
+   * Finds any parameters in a channel that are determined to be overridable
+   * by a user.
+   * @param selectedChannelId an identifier to find the channel within the channel registry
+   * @return a list of <parameter> elements whose override attribute is set to true
+   * @throws org.jasig.portal.PortalException
+   */
+  private final List getOverridableChannelParams(String selectedChannelId) throws PortalException {
+    Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
+    Element channel = (Element)channelRegistry.getElementById(selectedChannelId);
+    List overridableParams = new ArrayList();
+
+    NodeList params = channel.getElementsByTagName("parameter");
+    for (int i = 0; i < params.getLength(); i++) {
+      Element param = (Element)params.item(i);
+      String override = param.getAttribute("override");
+      if (override != null && override.equals("yes"))
+        overridableParams.add(param);
+    }
+    return overridableParams;
+  }
+
 
   private void saveLayout (boolean channelsAdded) throws PortalException
   {
@@ -1077,8 +1103,18 @@ final class TabColumnPrefsState extends BaseState
             String selectedChannel = runtimeData.getParameter("selectedChannel");
             if (selectedChannel != null) {
               try {
-                addChannel(selectedChannel, position, elementID);
-                returnToDefaultState();
+                // Determine whether channel has overridable parameters
+                List overridableChanParams = getOverridableChannelParams(selectedChannel);
+                if (true || overridableChanParams.isEmpty()) {
+                  addChannel(selectedChannel, position, elementID);
+                  returnToDefaultState();
+                } else { // present user with screen to specify subscribe-time params
+                  Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
+                  Element channel = (Element)channelRegistry.getElementById(selectedChannel);
+                  String chanTypeID = channel.getAttribute("typeID");
+                  context.internalState = new ParametersState(context, this, overridableChanParams, chanTypeID);
+                  context.internalState.setStaticData(staticData);
+                }
               } catch (Exception e) {
                 errorMessage = errorMessageNewChannel;
               }
@@ -1126,6 +1162,79 @@ final class TabColumnPrefsState extends BaseState
       BaseState defaultState = new DefaultState(context);
       defaultState.setStaticData(staticData);
       context.setState(defaultState);
+    }
+  }
+
+  /**
+   * A sub-state of TabColumnPrefsState for setting channel parameters
+   */
+  protected class ParametersState extends BaseState
+  {
+    protected TabColumnPrefsState context;
+    protected NewChannelState previousState;
+    private List overridableChanParams;
+    private String chanTypeID;
+
+    public ParametersState(TabColumnPrefsState context, NewChannelState previousState, List overridableChanParams, String chanTypeID) {
+        this.context = context;
+        this.previousState = previousState;
+        this.overridableChanParams = overridableChanParams;
+        this.chanTypeID = chanTypeID;
+    }
+
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+        runtimeData = rd;
+        String action = runtimeData.getParameter("uPTCUP_action");
+        if (action != null) {
+          if (action.equals("back")) {
+            context.setState(previousState);
+          } else if (action.equals("finished")) {
+            // process params
+          } else if (action.equals("cancel")) {
+            BaseState defaultState = new DefaultState(context);
+            //defaultState.setStaticData(staticData);
+            elementID = "none";
+            context.setState(defaultState);
+          }
+        }
+    }
+
+    public void renderXML (ContentHandler out) throws PortalException
+    {
+      XSLT xslt = new XSLT (this);
+      xslt.setXML(getParametersDoc());
+      xslt.setXSL(sslLocation, "parameters", runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+      xslt.transform();
+    }
+
+    private Document getParametersDoc() throws PortalException {
+      Document doc = DocumentFactory.getNewDocument();
+
+      // Top-level element
+      Element userPrefParamsE = doc.createElement("userPrefParams");
+
+      // List of parameter names
+      Element paramNamesE = doc.createElement("paramNames");
+      Iterator iter = overridableChanParams.iterator();
+      while (iter.hasNext()) {
+        Element param = (Element)iter.next();
+        String paramName = param.getAttribute("name");
+
+        Element paramNameE = doc.createElement("paramName");
+        paramNameE.appendChild(doc.createTextNode(paramName));
+        paramNamesE.appendChild(paramNameE);
+      }
+      userPrefParamsE.appendChild(paramNamesE);
+
+      // CPD
+      Document cpd = ChannelRegistryManager.getCPD(chanTypeID);
+      if (cpd != null)
+        userPrefParamsE.appendChild(doc.importNode(cpd.getDocumentElement(), true));
+
+      doc.appendChild(userPrefParamsE);
+      return doc;
     }
   }
 
