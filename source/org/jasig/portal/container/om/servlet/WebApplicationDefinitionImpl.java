@@ -291,6 +291,13 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
     }
 
     public void setContextRoot(String contextPath) {
+        // This is a small hack suggested by Russell Heywood that will allow
+        // Pluto to work in JBoss. We'll use it too until Pluto is improved.
+        // http://article.gmane.org/gmane.comp.jakarta.pluto.user/395
+        if (contextPath.endsWith(".war")) {
+            contextPath = contextPath.substring(0, contextPath.length() - 4);
+        }
+        
         this.contextPath = contextPath;
     }
     
