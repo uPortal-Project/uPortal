@@ -31,13 +31,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.IPerson;
-import java.util.Enumeration;
-import java.util.Hashtable;
+package  org.jasig.portal.security.provider;
+
+import  org.jasig.portal.security.IPerson;
+import  org.jasig.portal.security.ISecurityContext;
+import  java.util.Enumeration;
+import  java.util.Hashtable;
+
 
 /**
  * <p>This is an implementation of an AdditionalDescriptor that contains a user's
@@ -46,12 +51,28 @@ import java.util.Hashtable;
  * @author Adam Rybicki, arybicki@interactivebusiness.com
  * @version $Revision$
  */
-
-public class PersonImpl implements IPerson
-{
+public class PersonImpl
+    implements IPerson {
   protected Hashtable m_Attributes = null;
   protected String m_FullName = null;
-  protected int m_ID =-1;
+  protected int m_ID = -1;
+  protected ISecurityContext m_securityContext = null;
+
+  /**
+   * put your documentation comment here
+   * @param securityContext
+   */
+  public void setSecurityContext (ISecurityContext securityContext) {
+    m_securityContext = securityContext;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public ISecurityContext getSecurityContext () {
+    return  (m_securityContext);
+  }
 
   /**
    * Returns an attribute for a key.  For multivalue attributes, this will be
@@ -63,24 +84,20 @@ public class PersonImpl implements IPerson
    * @param key Attribute's name.
    * @return Value of an attribute identified by the key.
    */
-  public Object getAttribute (String key)
-  {
+  public Object getAttribute (String key) {
     if (m_Attributes == null)
-      return null;
-
-    return m_Attributes.get (key);
+      return  null;
+    return  m_Attributes.get(key);
   }
 
   /**
    * Returns a <code>java.util.Enumeration</code> of all the attribute values.
    * @return <code>java.util.Enumeration</code> of the attributes.
    */
-  public Enumeration getAttributes ()
-  {
+  public Enumeration getAttributes () {
     if (m_Attributes == null)
-      return null;
-
-    return m_Attributes.elements();
+      return  null;
+    return  m_Attributes.elements();
   }
 
   /**
@@ -90,12 +107,10 @@ public class PersonImpl implements IPerson
    * @param key Attribute's name
    * @param value Attribute's value
    */
-  public void setAttribute (String key, Object value)
-  {
+  public void setAttribute (String key, Object value) {
     if (m_Attributes == null)
-      m_Attributes = new Hashtable ();
-
-    m_Attributes.put (key, value);
+      m_Attributes = new Hashtable();
+    m_Attributes.put(key, value);
   }
 
   /**
@@ -104,9 +119,8 @@ public class PersonImpl implements IPerson
    * for user data in uPortal reference rdbms.
    * @return User's ID.
    */
-  public int getID ()
-  {
-    return m_ID;
+  public int getID () {
+    return  m_ID;
   }
 
   /**
@@ -115,8 +129,7 @@ public class PersonImpl implements IPerson
    * Does not correlate to any eduPerson attribute but is the key
    * for user data in uPortal reference rdbms.
    */
-  public void setID (int sID)
-  {
+  public void setID (int sID) {
     m_ID = sID;
   }
 
@@ -125,9 +138,8 @@ public class PersonImpl implements IPerson
    * Correlates to cn (common name) in the eduPerson 1.0 specification.
    * @return User's name.
    */
-  public String getFullName ()
-  {
-    return m_FullName;
+  public String getFullName () {
+    return  m_FullName;
   }
 
   /**
@@ -135,8 +147,23 @@ public class PersonImpl implements IPerson
    * @param sFullName User's name as established during authentication
    * Correlates to cn (common name) in the eduPerson 1.0 specification.
    */
-  public void setFullName (String sFullName)
-  {
+  public void setFullName (String sFullName) {
     m_FullName = sFullName;
   }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isGuest () {
+    if (getID() == 1) {
+      return  (true);
+    } 
+    else {
+      return  (false);
+    }
+  }
 }
+
+
+

@@ -31,11 +31,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security;
 
-import java.util.Enumeration;
+package  org.jasig.portal.security;
+
+import  java.util.Enumeration;
+
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -43,14 +47,87 @@ import java.util.Enumeration;
  */
 public interface IPerson extends IAdditionalDescriptor
 {
-  public void setID(int sID);
-  public int getID();
 
-  public void setFullName(String sFullName);
-  public String getFullName();
+  /**
+   * Sets the ID of the user
+   * @param sID
+   */
+  public void setID (int sID);
 
+
+
+  /**
+   * Gets the ID of the user
+   * @return 
+   */
+  public int getID ();
+
+
+
+  /**
+   * Sets the full name of the user
+   * @param sFullName
+   */
+  public void setFullName (String sFullName);
+
+
+
+  /**
+   * Gets the full name of the user
+   * @return 
+   */
+  public String getFullName ();
+
+
+
+  /**
+   * Gets an attribute associated with the user
+   * @param key
+   * @return 
+   */
   public Object getAttribute (String key);
+
+
+
+  /**
+   * Associates an attribute with the user
+   * @param key
+   * @param value
+   */
   public void setAttribute (String key, Object value);
 
+
+
+  /**
+   * Gets all of the attributes associated with the user
+   * @return 
+   */
   public Enumeration getAttributes ();
+
+
+
+  /**
+   * Associates a security context object with the user
+   * @param securityContext
+   */
+  public void setSecurityContext (ISecurityContext securityContext);
+
+
+
+  /**
+   * Gets the security context object associated with the user
+   * @return 
+   */
+  public ISecurityContext getSecurityContext ();
+
+
+
+  /**
+   * Checks to see if this user is considered a guest
+   * @return
+   */
+  public boolean isGuest ();
 }
+
+
+
