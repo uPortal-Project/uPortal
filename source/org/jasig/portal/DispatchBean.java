@@ -6,12 +6,13 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
-import com.objectspace.xml.*;
+import java.net.URLEncoder;
 import org.jasig.portal.layout.*;
 
 /**
  * Methods to accompany dispatch.jsp
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class DispatchBean extends GenericPortalBean
 {    
@@ -31,22 +32,24 @@ public class DispatchBean extends GenericPortalBean
     {
       HttpSession session = req.getSession (false);
       ILayoutBean layoutBean = (ILayoutBean) session.getAttribute ("layoutBean");
-      org.jasig.portal.layout.IChannel channel = (org.jasig.portal.layout.IChannel) session.getAttribute (sDispatchChannel);
+      ch = (org.jasig.portal.IChannel) session.getAttribute (sDispatchChannel);
 
-      if (channel == null)
+      if (ch == null)
       {
-        int iTab = Integer.parseInt (req.getParameter ("tab"));
-        int iCol = Integer.parseInt (req.getParameter ("column"));
-        int iChan = Integer.parseInt (req.getParameter ("channel"));
-        channel = layoutBean.getChannel (req, iTab, iCol, iChan);
-        session.setAttribute (sDispatchChannel, channel);
+        String sChannelID = req.getParameter ("channelID");
+        
+        if (sChannelID != null)
+        {
+          ch = layoutBean.getChannelInstance (sChannelID);
+          session.setAttribute (sDispatchChannel, ch);
+        }
+        else
+          Logger.log (Logger.ERROR, "To dispatch properly, a channel ID must be included in the query string in the form: \"...&channelID=...\"");
       }
-      
-      ch = layoutBean.getChannelInstance (channel);
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     return ch;
   }
@@ -56,7 +59,7 @@ public class DispatchBean extends GenericPortalBean
    * to return to layout.jsp
    * @param the servlet request object
    */
-  public void finish (HttpServletRequest req, HttpServletResponse res)
+  public static void finish (HttpServletRequest req, HttpServletResponse res)
   {
     try
     {
@@ -66,7 +69,53 @@ public class DispatchBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
-  }      
+  }    
+  
+  /**
+   * Builds a url used to send control back to a particular
+   * method of a channel
+   * @param the name of the channel's method to call
+   * @param the channel config object
+   * @return a url used to call a method in a channel
+   */
+  public static String buildURL (String sMethodName, ChannelConfig chConfig)
+  {
+    try
+    {
+      return buildURL (sMethodName, chConfig.getChannelID ());
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    return null;
+  } 
+  
+  /**
+   * Builds a url used to send control back to a particular
+   * method of a channel
+   * @param the name of the channel's method to call
+   * @param the channel's ID
+   * @return a url used to call a method in a channel
+   */
+  public static String buildURL (String sMethodName, String sChannelID)
+  {
+    try
+    {
+      StringBuffer sbURL = new StringBuffer ("dispatch.jsp");
+      sbURL.append ("?method=");
+      sbURL.append (URLEncoder.encode (sMethodName));
+      sbURL.append ("&channelID=");
+      sbURL.append (URLEncoder.encode (sChannelID));
+      return sbURL.toString ();
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    return null;
+  }   
+  
 }
