@@ -98,8 +98,10 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse {
-    private static final Log log = LogFactory.getLog(CPortletAdapter.class);
+public class CPortletAdapter 
+	implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse, IPortletAdaptor {
+    
+	private static final Log log = LogFactory.getLog(CPortletAdapter.class);
         
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
