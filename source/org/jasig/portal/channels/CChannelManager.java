@@ -44,6 +44,7 @@ import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.ResourceMissingException;
 import  org.jasig.portal.ChannelRegistryManager;
 import  org.jasig.portal.channels.BaseChannel;
+import  org.jasig.portal.utils.XML;
 import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.utils.DocumentFactory;
 import  org.jasig.portal.utils.ResourceLoader;
@@ -101,7 +102,7 @@ public class CChannelManager extends BaseChannel {
     protected String action;
     protected String stepID;
     protected Document channelManagerDoc;
-    protected ChannelDefinition channelDef = new ChannelDefinition();
+    protected ChannelDefinition channelDef;
     protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
     protected IPerson person;
     protected IServant categoryServant;
@@ -932,6 +933,8 @@ public class CChannelManager extends BaseChannel {
         {
             super();
             cpdDoc = ChannelRegistryManager.getCPD(chanTypeID);
+            // This doc will be modified so it must be cloned first!
+            cpdDoc = XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)cpdDoc);            
         }
 
         /**
