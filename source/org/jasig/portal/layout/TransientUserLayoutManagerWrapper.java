@@ -107,17 +107,22 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
         IUserLayoutNodeDescription node = this.getNode(nodeId);
-        if ( null != node ){
-            Document doc = DocumentFactory.getNewDocument();
-            try{
+        if ( null != node ) {
+          IUserLayoutNodeDescription layoutNode = man.getNode(nodeId);
+          if ( layoutNode != null )
+           man.getUserLayout(nodeId,ch);
+          else {
+             Document doc = DocumentFactory.getNewDocument();
+             try{
                 Element e = node.getXML(doc);
                 doc.appendChild(e);
                 Transformer trans=TransformerFactory.newInstance().newTransformer();
                 trans.transform(new DOMSource(doc), new SAXResult(ch));
-            }
-            catch( Exception e ){
+             }
+             catch( Exception e ){
                 throw new PortalException("Encountered an exception trying to output user layout",e);
-            }
+             }
+          }
         }
     }
 
@@ -301,7 +306,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
         if ( null == chanDef ){
             String fname = getFname(subId);
-            
+
             LogService.log(LogService.DEBUG,"TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
                            "attempting to get a channel definition using functional name: " + fname );
             try{
@@ -432,7 +437,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             ulnd.setHasHelp(chanDef.hasHelp());
             ulnd.setHasAbout(chanDef.hasAbout());
             ulnd.setIsSecure(chanDef.isSecure());
-            
+
             ChannelParameter[] parms = chanDef.getParameters();
             for ( int i=0; i<parms.length; i++ )
             {
