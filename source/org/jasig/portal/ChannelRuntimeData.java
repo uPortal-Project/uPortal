@@ -52,19 +52,18 @@ import  org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
-    private String baseActionURL;
-    private boolean renderingAsRoot;
+    private boolean renderingAsRoot=false;
     private static final String fs = File.separator;
-    private BrowserInfo binfo;
-    private String channelSubscribeId;
+    private BrowserInfo binfo=null;
+    private String channelSubscribeId=null;
+    private UPFileSpec channelUPFile;
 
   /**
    * default empty constructor
    */
   public ChannelRuntimeData() {
     super();
-    // set the default values for the parameters here
-    baseActionURL = null;
+    channelUPFile = new UPFileSpec();
   }
 
   /**
@@ -73,7 +72,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    */
   public Object clone() {
     ChannelRuntimeData crd = new ChannelRuntimeData();
-    crd.baseActionURL = baseActionURL;
+    crd.channelUPFile = channelUPFile;
     crd.binfo = binfo;
     crd.channelSubscribeId=channelSubscribeId;
     crd.renderingAsRoot=renderingAsRoot;
@@ -81,23 +80,24 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     return  crd;
   }
 
-
+    
     /**
-     * Setter method for baseActionURL
+     * Set a UPFileSpec which will be used to produce
+     * baseActionURL and workerActionURL.
      *
      * @param baURL a baseActionURL value.
      */
-    public void setBaseActionURL(String baURL) {
-        baseActionURL = baURL;
+    public void setUPFile(UPFileSpec upfs) {
+        channelUPFile = upfs;
     }
 
-  /**
-   * Sets whether or not the channel is rendering as the root of the layout.
-   * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
-   */
-  public void setRenderingAsRoot(boolean rar) {
-    renderingAsRoot = rar;
-  }
+    /**
+     * Sets whether or not the channel is rendering as the root of the layout.
+     * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+     */
+    public void setRenderingAsRoot(boolean rar) {
+        renderingAsRoot = rar;
+    }
 
     /**
      * Setter method for browser info object.
@@ -105,7 +105,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @param bi a browser info associated with the current request
      */
     public void setBrowserInfo(BrowserInfo bi) {
-    this.binfo = bi;
+        this.binfo = bi;
     }
 
     /**
@@ -163,11 +163,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
     }
 
-  public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
-    com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
-    valueArray[0] = value;
-    super.put(key, valueArray);
-  }
+    public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
+        com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
+        valueArray[0] = value;
+        super.put(key, valueArray);
+    }
 
 
     /**
@@ -177,7 +177,13 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        return  baseActionURL;
+        String url=null;
+        try {
+            url=channelUPFile.getUPFile();
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+        }
+        return url;
     }
 
   /**
@@ -188,9 +194,13 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * @return URL to invoke the worker.
    */
     public String getWorkerActionURL(String worker) {
+        // todo: propagate the exception
         String url=null;
         try {
-            url=UPFileSpec.buildUPFile(null,UPFileSpec.WORKER_METHOD,worker,this.channelSubscribeId,null);
+            UPFileSpec upfs=new UPFileSpec(channelUPFile);
+            upfs.setMethod(UPFileSpec.WORKER_METHOD);
+            upfs.setMethodNodeId(worker);
+            url=upfs.getUPFile();
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
