@@ -246,7 +246,7 @@ public class GroupsManagerXML
          expandedElem.setAttribute("expanded", "true");
          Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
          // Have to check for non persistent search element before doing retrieval
-         IGroupMember entGrp = (isNonPersistentElement(expandedElem) ?
+         IGroupMember entGrp = (!isPersistentGroup(expandedElem) ?
             dummyGroup(expandedElem) :
             (IGroupMember)retrieveGroup(expandedElem.getAttribute("key")));
          GroupsManagerXML.getGroupMemberXml(entGrp, true, expandedElem, xmlDoc);
@@ -654,17 +654,18 @@ public class GroupsManagerXML
    }
 
    /**
-    * Elements hold search results are non-persistent and should be treated differently.
+    * Group elements that hold search results are non-persistent and should be treated differently.
     * For example, they do not have a "key" attribute so code that attempts to retreive
     * a GroupMember should not be attempted.
     * @param anElem Element
     * @return boolean
     */
-   public static boolean isNonPersistentElement(Element anElem){
-      if (anElem.getAttribute("searchResults").equals("true")) {
-         return true;
+   public static boolean isPersistentGroup(Element anElem){
+      boolean rval = true;
+      if ((!anElem.getNodeName().equals(GROUP_TAGNAME)) || ((anElem.getAttribute("searchResults")!=null) && anElem.getAttribute("searchResults").equals("true"))) {
+         rval= false;
       }
-      return false;
+      return rval;
    }
    /**
     * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
@@ -700,7 +701,7 @@ public class GroupsManagerXML
    public static void refreshAllNodesIfRequired (Document model, Element anElem){
       // A search element holds search results and should not be refreshed
       // because it is not persistent.
-      if (isNonPersistentElement(anElem)) {
+      if (!isPersistentGroup(anElem)) {
          return;
       }
       try{
@@ -748,7 +749,7 @@ public class GroupsManagerXML
             // but we have to set it back to the original value.
             String saveExpand = parentElem.getAttribute("expanded");
             // Have to check for non persistent search element before doing retrieval
-            IGroupMember parentGM = ((isNonPersistentElement(parentElem) ?
+            IGroupMember parentGM = ((!isPersistentGroup(parentElem) ?
                dummyGroup(parentElem) :
                (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
             getGroupMemberXml (parentGM , true, parentElem, model);
@@ -766,7 +767,7 @@ public class GroupsManagerXML
    public static void refreshElement (Element updElem, IEntityGroup entGrp) {
       // A search element holds search results and should not be refreshed
       // because it is not persistent.
-      if (isNonPersistentElement(updElem)) {
+      if (!isPersistentGroup(updElem)) {
          return;
       }
       IEntityGroup updEntGrp = (entGrp != null ? entGrp : retrieveGroup (updElem.getAttribute("key")));
@@ -804,7 +805,7 @@ public class GroupsManagerXML
    public static boolean refreshRequired (Element chkElem, IEntityGroup entGrp) {
       // A search element holds search results and should not be refreshed
       // because it is not persistent.
-      if (isNonPersistentElement(chkElem)) {
+      if (!isPersistentGroup(chkElem)) {
          return false;
       }
       IEntityGroup chkEntGrp = (entGrp != null ? entGrp : retrieveGroup (chkElem.getAttribute("key")));
@@ -871,7 +872,7 @@ public class GroupsManagerXML
    public static IGroupMember retrieveGroupMemberForElementId (Document aDoc, String id) {
       Element gmElem = getElementById(aDoc, id);
       IGroupMember gm;
-      if (gmElem == null || isNonPersistentElement(gmElem)) {
+      if (gmElem == null || !isPersistentGroup(gmElem)) {
          Utility.logMessage("INFO", "GroupsManagerXML::retrieveGroupMemberForElementId(): Unable to retrieve the element with id = "
                + id);
          return  null;
