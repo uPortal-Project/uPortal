@@ -35,22 +35,18 @@
 
 package org.jasig.portal.channels.localechooser;
 
-import  java.io.*;
-import  java.util.*;
-
-import org.jasig.portal.IChannel;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.DocumentFactory;
-import org.xml.sax.ContentHandler;
-import  org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.jasig.portal.services.LogService;
-
 import org.jasig.portal.i18n.LocaleAwareXSLT;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /**
  * CLocaleChooser
@@ -107,10 +103,10 @@ public class CLocaleChooser implements IChannel
 
 	doc.appendChild(localeStatusElement);
 
-	LogService.instance().log(LogService.DEBUG, "LocaleChooser - render XML");
-	LogService.instance().log(LogService.DEBUG, "LocaleChooser -  locale: " + locale);
-	LogService.instance().log(LogService.DEBUG, "LocaleChooser -  sslLocation: " + sslLocation);
-	LogService.instance().log(LogService.DEBUG, "LocaleChooser -  XSL= " + locale + "/" + sslLocation);
+	LogService.log(LogService.DEBUG, "LocaleChooser - render XML");
+	LogService.log(LogService.DEBUG, "LocaleChooser -  locale: " + locale);
+	LogService.log(LogService.DEBUG, "LocaleChooser -  sslLocation: " + sslLocation);
+	LogService.log(LogService.DEBUG, "LocaleChooser -  XSL= " + locale + "/" + sslLocation);
 
 	LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
 	xslt.setXML(doc);
