@@ -9,7 +9,8 @@
   <deviceType>workstation</deviceType>
   <samplePictureURI></samplePictureURI>
   <sampleIconURI></sampleIconURI>
-
+  <UPManagerClass>org.jasig.portal.channels.UserPreferences.GPreferencesState</UPManagerClass> 
+ 
   <parameters>
   </parameters>                                        
 
