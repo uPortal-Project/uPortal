@@ -37,10 +37,10 @@ package org.jasig.portal;
 
 import java.util.*;
 import javax.servlet.jsp.*;
-import javax.servlet.http.*; 
+import javax.servlet.http.*;
 import org.xml.sax.DocumentHandler;
 
-/** 
+/**
  * An interface presented by a channel to a portal.
  * @author Peter Kharchenko
  * @version $Revision$
@@ -78,7 +78,7 @@ public interface IChannel
 
   /**
    * Acquires ChannelSubscriptionProperties from the channel.
-   * This function should be called at the Publishing/Subscription time. 
+   * This function should be called at the Publishing/Subscription time.
    * @see ChannelSubscriptionProperties
    */
   public ChannelSubscriptionProperties getSubscriptionProperties ();
@@ -96,5 +96,5 @@ public interface IChannel
    * Ask channel to render its content.
    * @param out the SAX DocumentHandler to output content to
    */
-  public void renderXML (DocumentHandler out);    
+  public void renderXML (DocumentHandler out) throws Exception;
 }
