@@ -19,7 +19,12 @@ profile the following command is used:
 In both cases Ant executes the Java class 
 org.jasig.portal.layout.utils.ALMigrationUtil
 
-2) When switching to AL in the portal.properties file
+2) There is the property file al.properties for setting up the stylesheet
+URIs/descriptions  and
+default system stylesheet ID in the $PORTAL_HOME/properties directory. The
+"alinstall" target uses these properties as well.
+
+3) When switching to AL in the portal.properties file
 the user layout manager and the layout store
 implementation need to be changed to the versions that
 support AL:
@@ -30,5 +35,5 @@ org.jasig.portal.UserLayoutStoreFactory.implementation
 org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation
 = org.jasig.portal.layout.AggregatedUserLayoutImpl
 
-3) restart the tomcat and get the new uPortal UI with
+4) restart the tomcat and get the new uPortal UI with
 integrated modes.
