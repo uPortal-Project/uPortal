@@ -45,8 +45,6 @@ import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
-//import org.jasig.portal.services.Authorization;
-//import org.jasig.portal.security.IAuthorization.RoleAuthorization;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.groups.IGroupMember;
@@ -84,7 +82,6 @@ public class CChannelManager extends BaseChannel {
   protected static final short CHANNEL_DEF_STATE = 4;
   protected static final short CHANNEL_CONTROLS_STATE = 5;
   protected static final short CHANNEL_CATEGORIES_STATE = 6;
-  //protected static final short CHANNEL_ROLES_STATE = 9999;
   protected static final short CHANNEL_GROUPS_STATE = 7;
   protected static final short CHANNEL_REVIEW_STATE = 8;
   protected static final short MODIFY_CHANNEL_STATE = 9;
@@ -93,7 +90,6 @@ public class CChannelManager extends BaseChannel {
   protected Document channelManagerDoc;
   protected ChannelDefinition channelDef = new ChannelDefinition();
   protected CategorySettings categorySettings = new CategorySettings();
-  //protected RoleSettings roleSettings = new RoleSettings();
   protected GroupSettings groupSettings = new GroupSettings();
   protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
   protected IPerson person;
@@ -145,11 +141,6 @@ public class CChannelManager extends BaseChannel {
       case CHANNEL_CATEGORIES_STATE:
         action = "selectCategories";
         break;
-      /*
-      case CHANNEL_ROLES_STATE:
-        action = "selectRoles";
-        break;
-      */
       case CHANNEL_GROUPS_STATE:
         action = "selectGroups";
         break;
@@ -264,18 +255,6 @@ public class CChannelManager extends BaseChannel {
         String removeCategory = runtimeData.getParameter("removeCategory");
         if (removeCategory != null)
           categorySettings.removeCategory(removeCategory);
-      // Roles
-      /*
-      } else if (capture.equals("selectRoles")) {
-        String[] roles = runtimeData.getParameterValues("selectedRoles");
-        roleSettings.removeRoles();
-        if (roles != null) {
-          for (int i = 0; i < roles.length; i++) {
-            RoleAuthorization ra = new RoleAuthorization(roles[i], true, new Date());
-            roleSettings.addSelectedRole(ra);
-          }
-        }
-      */
       // Groups
       } else if (capture.equals("selectGroups")) {
         String selectedGroup = runtimeData.getParameter("selectedGroup");
@@ -375,24 +354,6 @@ public class CChannelManager extends BaseChannel {
 
         channelManagerDoc = workflow.toXML();
 
-      /*
-      } else if (action.equals("selectRoles")) {
-
-        state = CHANNEL_ROLES_STATE;
-        Workflow workflow = new Workflow();
-
-        // Add roles
-        WorkflowSection roleSection = new WorkflowSection("selectRoles");
-        workflow.setRolesSection(roleSection);
-        WorkflowStep step = new WorkflowStep("1", "Roles");
-        step.addDataElement(getRoles().getDocumentElement());
-        // Add user settings with previously chosen roles
-        step.addDataElement(roleSettings.toXML());
-        roleSection.addStep(step);
-
-        channelManagerDoc = workflow.toXML();
-
-      */
       } else if (action.equals("selectGroups")) {
 
         state = CHANNEL_GROUPS_STATE;
@@ -402,7 +363,7 @@ public class CChannelManager extends BaseChannel {
         WorkflowSection groupSection = new WorkflowSection("selectGroups");
         workflow.setGroupsSection(groupSection);
         WorkflowStep step = new WorkflowStep("1", "Groups");
-        step.addDataElement(getGroups().getDocumentElement());
+        step.addDataElement(groupSettings.getGroups().getDocumentElement());
         // Add user settings with previously chosen groups
         step.addDataElement(groupSettings.toXML());
         groupSection.addStep(step);
@@ -429,19 +390,10 @@ public class CChannelManager extends BaseChannel {
         regSection.addStep(regStep);
         workflow.setCategoriesSection(regSection);
 
-        // Selected roles
-        /*
-        WorkflowSection roleSection = new WorkflowSection("selectRoles");
-        WorkflowStep rolesStep = new WorkflowStep("1", "Roles");
-        rolesStep.addDataElement(roleSettings.toXML());
-        roleSection.addStep(rolesStep);
-        workflow.setRolesSection(roleSection);
-        */
-
         // Selected groups
         WorkflowSection groupsSection = new WorkflowSection("selectGroups");
         WorkflowStep groupsStep = new WorkflowStep("1", "Groups");
-        groupsStep.addDataElement(getGroups().getDocumentElement());
+        groupsStep.addDataElement(groupSettings.getGroups().getDocumentElement());
         groupsStep.addDataElement(groupSettings.toXML());
         groupsSection.addStep(groupsStep);
         workflow.setGroupsSection(groupsSection);
@@ -458,14 +410,13 @@ public class CChannelManager extends BaseChannel {
       } else if (action.equals("finished")) {
 
         state = DEFAULT_STATE; // we need to add a confirmation and channel preview screen
-        Set catIDs = categorySettings.getSelectedCategories();
-        //Set roles = roleSettings.getSelectedRoles();
-        Set groups = groupSettings.getSelectedGroups();
+        String[] catIDs = (String[])(categorySettings.getSelectedCategories()).toArray(new String[0]);
+        IEntityGroup[] groups = groupSettings.getSelectedGroupsAsIEntityGroups();
         try {
           Element channelE = channelDef.toXML();
           ChannelRegistryManager.publishChannel(channelE, catIDs, groups, person);
         } catch (Exception e) {
-          // need to revisit this and handle the error!
+          // Need to revisit this and handle the error!
           throw new PortalException(e);
         }
 
@@ -494,23 +445,6 @@ public class CChannelManager extends BaseChannel {
         String chanID = runtimeData.getParameter("channelID");
         // Set the channel definition
         channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(chanID));
-
-        // Set the roles
-        /*
-        int channelID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
-        // This is a hack because the Roles vector used to contain Strings and now
-        // it needs to contain org.jasig.portal.security.IAuthorization.RoleAuthorization classes
-        // This should go away anyway when we switch to groups/permissions!
-        Set roleSet = new TreeSet(new Authorization().getChannelRoles(channelID));
-        Iterator iter = roleSet.iterator();
-        while (iter.hasNext()) {
-          // Replace each role string with its RoleAuthorization equivalent
-          String role = (String)iter.next();
-          roleSet.remove(role);
-          roleSet.add(new RoleAuthorization(role, true, new Date()));
-        }
-        roleSettings.setRoles(roleSet);
-        */
 
         // Set the categories
         Set categories = new TreeSet();
@@ -541,7 +475,6 @@ public class CChannelManager extends BaseChannel {
       channelManagerDoc = emptyDoc;
       channelDef = new ChannelDefinition();
       categorySettings = new CategorySettings();
-      //roleSettings = new RoleSettings();
       groupSettings = new GroupSettings();
     }
   }
@@ -587,70 +520,6 @@ public class CChannelManager extends BaseChannel {
     channelManager.appendChild(userSettingsE);
   }
 
-  /*
-  // This method needs some caching!!!
-  protected static Document getRoles() {
-    Document roleDoc = DocumentFactory.getNewDocument();
-    org.jasig.portal.security.IAuthorization authorization = new org.jasig.portal.security.provider.ReferenceAuthorizationFactory().getAuthorization();
-    java.util.Vector vRoles = authorization.getAllRoles();
-    Element rolesE = roleDoc.createElement("roles");
-    for (int i = 0; i < vRoles.size(); i++) {
-      Element roleE = roleDoc.createElement("role");
-      Element nameE = roleDoc.createElement("name");
-      nameE.appendChild(roleDoc.createTextNode(((org.jasig.portal.security.IRole)vRoles.elementAt(i)).getRoleTitle()));
-      roleE.appendChild(nameE);
-      Element descriptionE = roleDoc.createElement("description");
-      descriptionE.appendChild(roleDoc.createTextNode((String)((org.jasig.portal.security.IRole)vRoles.elementAt(i)).getAttribute("description")));
-      roleE.appendChild(descriptionE);
-      rolesE.appendChild(roleE);
-    }
-    roleDoc.appendChild(rolesE);
-    return  roleDoc;
-  }
-  */
-
-  // This method needs some caching!
-  protected static Document getGroups() throws GroupsException {
-    Document groupsDoc = DocumentFactory.getNewDocument();
-    Element groupsE = groupsDoc.createElement("groups");
-
-    String everyoneKey = org.jasig.portal.services.AuthorizationService.getEveryoneKey();
-    IEntityGroup everyoneGroup = GroupService.find(everyoneKey);
-
-    // Create a top-level group representing everyone
-    Element everyoneGroupE = groupsDoc.createElement("group");
-    everyoneGroupE.setAttribute("ID", "g" + everyoneGroup.getKey());
-    everyoneGroupE.setAttribute("name", everyoneGroup.getName());
-    everyoneGroupE.setAttribute("description", everyoneGroup.getDescription());
-    groupsE.appendChild(everyoneGroupE);
-
-    processGroupsRecursively(everyoneGroup, everyoneGroupE);
-    groupsDoc.appendChild(groupsE);
-    return groupsDoc;
-  }
-
-  protected static void processGroupsRecursively(IEntityGroup group, Element parentGroup) throws GroupsException {
-    Iterator iter = group.getMembers();
-    while (iter.hasNext()) {
-      IGroupMember member = (IGroupMember)iter.next();
-      if (member.isGroup()) {
-        IEntityGroup memberGroup = (IEntityGroup)member;
-        String key = memberGroup.getKey();
-        String name = memberGroup.getName();
-        String description = memberGroup.getDescription();
-
-        // Create group element and append it to its parent
-        Document groupsDoc = parentGroup.getOwnerDocument();
-        Element groupE = groupsDoc.createElement("group");
-        groupE.setAttribute("ID", "g" + key);
-        groupE.setAttribute("name", name);
-        groupE.setAttribute("description", description);
-        parentGroup.appendChild(groupE);
-        processGroupsRecursively(memberGroup, groupE);
-      }
-    }
-  }
-
   /**
    * Keeps track of page settings for MODIFY_CHANNEL_STATE
    */
@@ -690,7 +559,6 @@ public class CChannelManager extends BaseChannel {
     protected WorkflowSection channelParamsSection;
     protected WorkflowSection controlsSection;
     protected WorkflowSection categoriesSection;
-    //protected WorkflowSection rolesSection;
     protected WorkflowSection groupsSection;
     protected WorkflowSection reviewSection;
 
@@ -699,7 +567,6 @@ public class CChannelManager extends BaseChannel {
     protected void setChannelParamsSection(WorkflowSection channelParamsSection) { this.channelParamsSection = channelParamsSection; }
     protected void setControlsSection(WorkflowSection controlsSection) { this.controlsSection = controlsSection; }
     protected void setCategoriesSection(WorkflowSection categoriesSection) { this.categoriesSection = categoriesSection; }
-    //protected void setRolesSection(WorkflowSection rolesSection) { this.rolesSection = rolesSection; }
     protected void setGroupsSection(WorkflowSection groupsSection) { this.groupsSection = groupsSection; }
     protected void setReviewSection(WorkflowSection reviewSection) { this.reviewSection = reviewSection; }
 
@@ -716,7 +583,6 @@ public class CChannelManager extends BaseChannel {
       addChannelParamsSection(channelManagerE);
       addSection(controlsSection, "selectControls", "Channel Controls", channelManagerE);
       addSection(categoriesSection, "selectCategories", "Categories", channelManagerE);
-      //addSection(rolesSection, "selectRoles", "Roles", channelManagerE);
       addSection(groupsSection, "selectGroups", "Groups", channelManagerE);
       addSection(reviewSection, "reviewChannel", "Review", channelManagerE);
 
@@ -985,7 +851,7 @@ public class CChannelManager extends BaseChannel {
     protected Element toXML() {
       Element channelE = emptyDoc.createElement("channel");
       setAttribute(channelE, "ID", ID);
-      setAttribute(channelE, "typeID", typeID); // Need to officially make this part of channel def
+      setAttribute(channelE, "typeID", typeID);
       setAttribute(channelE, "name", name);
       setAttribute(channelE, "description", description);
       setAttribute(channelE, "title", title);
@@ -1048,53 +914,29 @@ public class CChannelManager extends BaseChannel {
     }
   }
 
-  /*
-  protected class RoleSettings {
-    protected Set selectedRoles;
-
-    protected RoleSettings() {
-      selectedRoles = new TreeSet();
-    }
-
-    protected Set getSelectedRoles() { return selectedRoles; }
-    protected void addSelectedRole(org.jasig.portal.security.IAuthorization.RoleAuthorization selectedRole) { selectedRoles.add(selectedRole); }
-    protected void removeRoles() { selectedRoles = new TreeSet(); }
-    protected void setRoles(Set roles) { selectedRoles = roles; }
-
-    protected Element toXML() {
-      Element userSettingsE = emptyDoc.createElement("userSettings");
-
-      // Add selected roles if there are any
-      if (selectedRoles.size() > 0) {
-        Element selectedRolesE = emptyDoc.createElement("selectedRoles");
-        Iterator iter = selectedRoles.iterator();
-        while (iter.hasNext()) {
-          Element selectedRoleE = emptyDoc.createElement("selectedRole");
-          org.jasig.portal.security.IAuthorization.RoleAuthorization ra = (org.jasig.portal.security.IAuthorization.RoleAuthorization)iter.next();
-          selectedRoleE.appendChild(emptyDoc.createTextNode(ra.getRoleName()));
-          selectedRolesE.appendChild(selectedRoleE);
-        }
-        userSettingsE.appendChild(selectedRolesE);
-      }
-
-      return userSettingsE;
-    }
-  }
-  */
-
   protected class GroupSettings {
     protected String browsingGroup;
-    protected Set selectedGroups; // need to change this to hold IEntityGroups rather than strings
+    protected Set selectedGroups; // a set of Strings, each String is a group ID
+    protected final String groupIDPrefix = "g"; // XML IDs have to start with a letter
 
     protected GroupSettings() {
       browsingGroup = "top";
       selectedGroups = new TreeSet();
     }
 
-    protected Set getSelectedGroups() { return selectedGroups; }
     protected void setBrowsingGroup(String browsingGroup) { this.browsingGroup = browsingGroup; }
-    protected void addSelectedGroup(String group) { selectedGroups.add(group); }
+    protected Set getSelectedGroups() { return selectedGroups; }
+    protected IEntityGroup[] getSelectedGroupsAsIEntityGroups() throws GroupsException {
+      IEntityGroup[] selectedEntityGroups = new IEntityGroup[selectedGroups.size()];
+      Iterator iter = selectedGroups.iterator();
+      for (int i = 0; iter.hasNext(); i++) {
+        String key = (String)iter.next();
+        selectedEntityGroups[i] = GroupService.find(key);
+      }
+      return selectedEntityGroups;
+    }
     protected void setSelectedGroups(Set selectedGroups) { this.selectedGroups = selectedGroups; }
+    protected void addSelectedGroup(String group) { selectedGroups.add(group); }
     protected void removeGroup(String group) { selectedGroups.remove(group); }
 
     protected Element toXML() {
@@ -1116,6 +958,48 @@ public class CChannelManager extends BaseChannel {
       }
 
       return userSettingsE;
+    }
+
+    // This method needs some caching!
+    protected Document getGroups() throws GroupsException {
+      Document groupsDoc = DocumentFactory.getNewDocument();
+      Element groupsE = groupsDoc.createElement("groups");
+
+      String everyoneKey = org.jasig.portal.services.AuthorizationService.getEveryoneKey();
+      IEntityGroup everyoneGroup = GroupService.find(everyoneKey);
+
+      // Create a top-level group representing everyone
+      Element everyoneGroupE = groupsDoc.createElement("group");
+      everyoneGroupE.setAttribute("ID", groupIDPrefix + everyoneGroup.getKey());
+      everyoneGroupE.setAttribute("name", everyoneGroup.getName());
+      everyoneGroupE.setAttribute("description", everyoneGroup.getDescription());
+      groupsE.appendChild(everyoneGroupE);
+
+      processGroupsRecursively(everyoneGroup, everyoneGroupE);
+      groupsDoc.appendChild(groupsE);
+      return groupsDoc;
+    }
+
+    protected void processGroupsRecursively(IEntityGroup group, Element parentGroup) throws GroupsException {
+      Iterator iter = group.getMembers();
+      while (iter.hasNext()) {
+        IGroupMember member = (IGroupMember)iter.next();
+        if (member.isGroup()) {
+          IEntityGroup memberGroup = (IEntityGroup)member;
+          String key = memberGroup.getKey();
+          String name = memberGroup.getName();
+          String description = memberGroup.getDescription();
+
+          // Create group element and append it to its parent
+          Document groupsDoc = parentGroup.getOwnerDocument();
+          Element groupE = groupsDoc.createElement("group");
+          groupE.setAttribute("ID", groupIDPrefix + key);
+          groupE.setAttribute("name", name);
+          groupE.setAttribute("description", description);
+          parentGroup.appendChild(groupE);
+          processGroupsRecursively(memberGroup, groupE);
+        }
+      }
     }
   }
 
