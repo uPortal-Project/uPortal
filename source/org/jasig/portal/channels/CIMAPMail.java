@@ -160,7 +160,7 @@ import org.w3c.tidy.Tidy;
 public final class CIMAPMail extends GenericPortalBean implements IChannel, HttpSessionBindingListener
 {
   private static String rcsVersion = "$Revision$"; // from rcs/cvs
-  private static String clientVersion = "2.00a";
+  private static String clientVersion = "2.00b";
   private static boolean DEBUG = false;
 
   // Configurable parameters
@@ -1957,7 +1957,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           }
         }
         for (int i = 0; i < attachments; i++) {
-          xml.write("<getattachment tag=\"bodypart" + i + "\"/>");
+          xml.write("<getattachment/>");
         }
         xml.write("</attachments>\n");
 
@@ -2001,11 +2001,12 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       msg.addHeader ("Organization", config.sOrganization);
 
       ArrayList attachments = new ArrayList(MAX_ATTACHMENTS);
-      for (int i = 0; i < MAX_ATTACHMENTS; i++) {
-        org.jasig.portal.MultipartDataSource filePart = (org.jasig.portal.MultipartDataSource) runtimeData.getObjectParameter("bodypart" + i);
-        if (filePart != null) {
-          if (DEBUG) System.err.println("found filepart " + filePart.getName() + " for bodypart" + i);
-          attachments.add(filePart);
+      org.jasig.portal.MultipartDataSource[] fileParts = (org.jasig.portal.MultipartDataSource[]) runtimeData.getObjectParameterValues("attachment");
+     for (int i = 0; i < fileParts.length; i++) {
+        if (DEBUG) System.err.println("attachment=" + fileParts[i]);
+        if (fileParts[i] != null) {
+          if (DEBUG) System.err.println("found filepart " + fileParts[i].getName());
+          attachments.add(fileParts[i]);
         }
       }
 
@@ -3560,6 +3561,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
             bodyText = part; // Choose html over plain text
           } else if ((part.getDisposition() != null && part.getDisposition().equals("attachment")) ||
                   !(bodyText != null && bodyText.isMimeType ("text/html") && part.isMimeType ("text/plain"))) {
+            if (DEBUG) System.err.println("Found attachment " + i + "=" + part.getFileName());
             attachments.add (part);
           }
         }

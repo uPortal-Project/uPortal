@@ -88,7 +88,7 @@ All Group<br/>
 
 <xsl:template match="attachments">
  <strong>Attachments:</strong><br/>
- <!--
+
  <xsl:for-each select="attachment">
    <input name="submit" type="submit">
    <xsl:attribute name="value">Remove <xsl:value-of select="."/></xsl:attribute>
@@ -97,8 +97,9 @@ All Group<br/>
  </xsl:for-each>
 
  <xsl:for-each select="getattachment">
-  <input type="file"><xsl:attribute name="name"><xsl:value-of select="@tag"/></xsl:attribute></input><br/> </xsl:for-each>
-   -->
+  <input type="file" name="attachment"/><br/>
+ </xsl:for-each>
+
 </xsl:template>
 
 <xsl:template match="controls">
