@@ -220,7 +220,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     try
     {
       // Retrieve the USER_ID that is mapped to their portal UID
-      String query = "SELECT USER_ID, USER_NAME FROM UP_USER WHERE USER_NAME = '" + person.getAttribute("username") + "'";
+      String query = "SELECT USER_ID, USER_NAME FROM UP_USER WHERE USER_NAME = '" + person.getAttribute(person.USERNAME) + "'";
 
       // DEBUG
       LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
@@ -235,7 +235,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // If no result and we're not creating new users then fail
       else if(!createPortalData)
       {
-        throw new AuthorizationException("No portal information exists for user " + person.getAttribute("username"));
+        throw new AuthorizationException("No portal information exists for user " + person.getAttribute(person.USERNAME));
       }
       else
       {
@@ -275,7 +275,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         else {
           if (templateName.equals(defaultTemplateUserName))
             throw new AuthorizationException("No information found for template user = " + templateName
-              + ". Cannot create new account for " + person.getAttribute("username"));
+              + ". Cannot create new account for " + person.getAttribute(person.USERNAME));
           else {
           templateName=defaultTemplateUserName;
           query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+
@@ -290,7 +290,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
             }
           else throw new AuthorizationException("No information found for template user = " + templateName
-              + ". Cannot create new account for " + person.getAttribute("username"));
+              + ". Cannot create new account for " + person.getAttribute(person.USERNAME));
           }
         }
 
@@ -341,7 +341,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
           " VALUES ("+
             newUID+", '"+
-            person.getAttribute("username")+ "',"+
+            person.getAttribute(person.USERNAME)+ "',"+
             templateUSER_DFLT_USR_ID+", "+
             templateUSER_DFLT_LAY_ID+", "+
             "null, "+

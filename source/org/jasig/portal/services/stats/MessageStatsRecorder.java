@@ -267,7 +267,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
   private String getDisplayName(IPerson person) {
     String name = null;
     if (person != null) {
-      String userName = (String)person.getAttribute("username");
+      String userName = (String)person.getAttribute(person.USERNAME);
       if (person.isGuest()) {
         name = "GUEST_USER (" + fixNull(userName) + ")";
       } else {

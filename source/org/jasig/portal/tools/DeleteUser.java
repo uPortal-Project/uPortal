@@ -64,7 +64,7 @@ public class DeleteUser {
     }
     int portalUID=-1;
     IPerson per= new PersonImpl();
-    per.setAttribute("username",args[0]);
+    per.setAttribute(per.USERNAME,args[0]);
 
     IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();
 

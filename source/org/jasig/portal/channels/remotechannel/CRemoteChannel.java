@@ -179,7 +179,7 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
    * @throws RemoteException
    */
   protected void authenticate() throws RemoteException {
-    String username = (String)staticData.getPerson().getAttribute("username");
+    String username = (String)staticData.getPerson().getAttribute(IPerson.USERNAME);
     String password = null;
     ISecurityContext ic = staticData.getPerson().getSecurityContext();
     IOpaqueCredentials oc = ic.getOpaqueCredentials();

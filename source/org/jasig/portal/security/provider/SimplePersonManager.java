@@ -71,6 +71,7 @@ public class SimplePersonManager implements IPersonManager {
       }
       // By default new user's have the UID of 1
       person.setID(1);
+      person.setAttribute(person.USERNAME,"guest");
       // Add this person object to the user's session
       request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
     }
