@@ -134,15 +134,29 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
   public synchronized ISecurityContext getSubContext(String name) {
-//    ISecurityContext c = (ISecurityContext)mySubContexts.get(name);
-    for (int i = 0; i < mySubContexts.size(); i++) {
-       Entry entry = (Entry) mySubContexts.get(i);
-       if (entry.getKey() != null && entry.getKey().equals(name))
-           return entry.getCtx();
+    for (int i = 0; i < mySubContexts.size(); i++)
+    {
+      Entry entry = (Entry) mySubContexts.get(i);
+      if (entry.getKey() != null && entry.getKey().equals(name))
+      {
+        return(entry.getCtx());
+      }
     }
-    PortalSecurityException ep=new PortalSecurityException("No such subcontext: " + name);
+    PortalSecurityException ep = new PortalSecurityException("No such subcontext: " + name);
     LogService.log(LogService.DEBUG,ep);
-    return null;
+    return(null);
+  }
+  
+  public synchronized boolean doesSubContextExist(String name) {
+    for (int i = 0; i < mySubContexts.size(); i++)
+    {
+      Entry entry = (Entry)mySubContexts.get(i);
+      if (entry.getKey() != null && entry.getKey().equals(name))
+      {
+        return(true);
+      }
+    }
+    return(false);
   }
 
   // return an enumeration of subcontexts by running the vector and
@@ -167,15 +181,17 @@ public abstract class ChainingSecurityContext implements ISecurityContext
 
   public synchronized void addSubContext(String name, ISecurityContext ctx)
     throws PortalSecurityException {
-    if (getSubContext(name) != null){
-      PortalSecurityException ep=new PortalSecurityException("Subcontext already exists: " + name);
+    // Make sure the subcontext does not already exist in the chain
+    if(doesSubContextExist(name))
+    {
+      PortalSecurityException ep = new PortalSecurityException("Subcontext already exists: " + name);
       LogService.log(LogService.ERROR,ep);
       throw(ep);
-      }
+    }
     else
-//      mySubContexts.put(name, ctx);
+    {
       mySubContexts.add(new Entry(name, ctx));
-    return;
+    }
   }
 
 
