@@ -124,15 +124,11 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             Element cat = null;
             while (rs.next ())
             {
-                //String catid = "";
                 String catnm = rs.getString(2);
-                //System.out.println("catnm: " + catnm);
                 String chxml = rs.getString(3);
-                //System.out.println("chxml: " +  chxml);
                 Node chan = null;
                 
                 String s = rs.getString(1);
-                //System.out.println("s: " + s);
                 if (!s.equals(catid)) {
                     if(catid.length() > 0) root.appendChild(cat);
                     catid = s;
@@ -141,15 +137,21 @@ public class ChannelRegistryImpl implements IChannelRegistry {
                     cat.setAttribute("name", catnm);
                 }
                 org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-                parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-                parser.setFeature ("http://apache.org/xml/features/dom/create-entity-ref-nodes", true);
-                //System.out.println("parser: "+ parser.getCreateEntityReferenceNodes());
                 parser.parse (new org.xml.sax.InputSource (new StringReader (chxml)));
-                chan = parser.getDocument().getDocumentElement();
-                cat.appendChild(chanDoc.importNode(chan, false));
+                Document doc = parser.getDocument();
+                //System.out.println("chan: "+ serializeDOM(doc));
+                chan = doc.getDocumentElement();
+                cat.appendChild(chanDoc.importNode(chan, true));
             }
             root.appendChild(cat);
             chanDoc.appendChild(root);
+            //System.out.println("chan: "+ serializeDOM(chanDoc));
+            DTDResolver dtdResolver = new DTDResolver(sRegDtd);
+            org.apache.xerces.parsers.DOMParser parser2 = new org.apache.xerces.parsers.DOMParser ();
+            parser2.setEntityResolver(dtdResolver);
+            parser2.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
+            parser2.parse (new org.xml.sax.InputSource (new StringReader (serializeDOM(chanDoc))));
+            chanDoc = parser2.getDocument();
             stmt.close();
          } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -166,7 +168,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getTypesXML(String role) {
-        //System.out.println("Enterering ChannelRegistryImpl::getTypesXML()");
         RdbmServices rdbmService = new RdbmServices ();
         Connection con = null;
         String chanXML = null;
@@ -218,6 +219,57 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         }
         return types;
     }
+    
+/** Returns a string of XML which describes the channel categories.
+  * @param role role of the current user
+ * @return Document
+ */
+    public Document getCategoryXML(String role) {
+        //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
+        RdbmServices rdbmService = new RdbmServices ();
+        Document catsDoc = null;
+        Connection con = null;
+        
+        try {
+            con = rdbmService.getConnection ();
+            Statement stmt = con.createStatement ();
+            
+            String sQuery = "SELECT CL.CLASS_ID, CL.NAME "+
+            "FROM UP_CLASS CL ";
+            
+            if(role!=null) sQuery += " AND ROLE=" + role;
+            
+            sQuery += " ORDER BY CL.NAME";
+            
+            Logger.log (Logger.DEBUG, sQuery);
+            
+            ResultSet rs = stmt.executeQuery (sQuery);
+            
+            catsDoc = new org.apache.xerces.dom.DocumentImpl();
+            Element root = chanDoc.createElement("channelCats");
+            Element cat = null;
+            while (rs.next ())
+            {
+                //String catid = "";
+                String catnm = rs.getString(2);
+                String id = rs.getString(1);
+                //System.out.println("s: " + s);
+                cat = catsDoc.createElement("category");
+                cat.setAttribute("ID", id);
+                cat.setAttribute("name", catnm);
+                root.appendChild(cat);
+            }
+            
+            catsDoc.appendChild(root);
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+        return catsDoc;
+    }        
+            
+            
     
 /** A method for adding a channel to the channel registry.
  * This would be called by a publish channel.
