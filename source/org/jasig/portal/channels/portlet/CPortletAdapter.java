@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.portlet.PortletMode;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +55,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.om.portlet.PortletDefinition;
+import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
+import org.apache.pluto.services.information.PortletActionProvider;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
@@ -243,16 +246,43 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     public void receiveEvent(PortalEvent ev, String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+        PortletActionProvider pap = dip.getPortletActionProvider(cd.getPortletWindow());
         
-        // For session done and unsubscribe events, 
-        // release session resources in remote portal
-        try {
-            if (ev.getEventNumber() == PortalEvent.SESSION_DONE ||
-                ev.getEventNumber() == PortalEvent.UNSUBSCRIBE) {
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // TODO: Take out printStackTrace for release
-            LogService.log(LogService.ERROR, e);      
+        switch (ev.getEventNumber()) {
+            
+            // Detect portlet mode changes   
+                 
+            case PortalEvent.EDIT_BUTTON_EVENT:
+                pap.changePortletMode(PortletMode.EDIT);
+                break;
+            case PortalEvent.HELP_BUTTON_EVENT:
+                pap.changePortletMode(PortletMode.HELP);
+                break;
+            case PortalEvent.ABOUT_BUTTON_EVENT:
+                // We might want to consider a custom ABOUT mode here
+                //pap.changePortletMode(new PortletMode("ABOUT"));
+                break;
+                
+            // Detect portlet window state changes
+            
+            case PortalEvent.DETACH_BUTTON_EVENT:
+                // Maybe we want to consider a custom window state here or used MAXIMIZED
+                //pap.changePortletWindowState(new WindowState("DETACHED"));
+                break;
+            
+            // Detect end of session or portlet removed from layout
+            
+            case PortalEvent.SESSION_DONE:
+            case PortalEvent.UNSUBSCRIBE:
+                // For both SESSION_DONE and UNSUBSCRIBE, we might want to
+                // release resources here if we need to
+                // 
+                break;
+                
+            default:
+                break;
         }
                
         if (channelState != null) {
@@ -391,7 +421,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
                         
-            // Clear the request parameters if this portlet isn't targeted
+            // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
                 wrappedRequest = new EmptyRequestImpl(wrappedRequest);
             }
