@@ -52,7 +52,7 @@ import  org.jasig.portal.GenericPortalBean;
  *@created    June 7, 2001
  *@version    $Revision$
  */
-public final class LogService extends GenericPortalBean {
+public final class LogService {
   // Log levels, create fake ones if they don't match the Log4J standard ones
   /**
    *  Description of the Field
@@ -93,7 +93,7 @@ public final class LogService extends GenericPortalBean {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public final static LogService instance () {
     return  (m_instance);
@@ -110,7 +110,7 @@ public final class LogService extends GenericPortalBean {
     if (bInitialized) {
       return;
     }
-    String sPortalBaseDir = getPortalBaseDir();
+    String sPortalBaseDir = org.jasig.portal.UtilitiesBean.getPortalBaseDir();
     if (sPortalBaseDir == null) {
       System.err.println("Portal base directory is not yet set. Will log to console until it gets set.");
       return;
