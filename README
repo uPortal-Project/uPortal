@@ -9,6 +9,12 @@ build.properties    o Contains configuration for the build file that needs to
                       be customized for your environment.
 build.xml           o Contains the ant build targets for working with uPortal.
 
+Ant Depdency
+----------------------------------------
+
+The build.xml needs to be run under Ant 1.6.2 or better.  Some of our Ant tasks
+have been reported to fail on Ant 1.6.1 and earlier.
+
 
 Library Dependencies
 ----------------------------------------
