@@ -43,6 +43,9 @@ import java.util.Enumeration;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 import org.jasig.portal.*;
+import org.w3c.dom.*;
+import org.apache.xalan.xslt.*;
+
 
 /**
  * This pseudo-channel provides header XML document fragment
@@ -50,68 +53,48 @@ import org.jasig.portal.*;
  * @author Peter Kharchenko
  * @version $Revision 1.1$
  */
-public class CHeader implements IChannel
+public class CHeader extends BaseChannel
 {
-  private ChannelRuntimeData runtimeData;
 
-  // most of these are empty
-  public void setStaticData (ChannelStaticData sd) 
-  {
-  }
+    String fs=File.separator;
+    StylesheetSet set;
+    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
 
-  public void setRuntimeData (ChannelRuntimeData rd) 
-  {
-    // need to save runtimedata so we can determine media from the
-    // request object contained in it
-    runtimeData = rd;
-  }
-
-  public void receiveEvent (LayoutEvent ev) 
-  {
-    // we have no events to process here
-  }
-
-  // report static channel properties to the portal
-  public ChannelSubscriptionProperties getSubscriptionProperties () 
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setName ("HeaderChannel");
-    return csb;
-  }
-
-  // report runtime channel properties to the portal
-  public ChannelRuntimeProperties getRuntimeProperties () 
-  {
-    // channel will always render, so the default values are ok
-    return new ChannelRuntimeProperties ();
-  }
-
-  public void renderXML (DocumentHandler out)
-  {
-    HttpSession session = (runtimeData.getHttpRequest ()).getSession (false);    
-    String userName = (String) session.getAttribute ("userName");
-    StringBuffer sbXML = new StringBuffer ();
-    sbXML.append ("<header>\n");
-    sbXML.append ("  <title>Welcome " + userName + "</title>\n");
-    sbXML.append ("  <description>XML version</description>\n");
-    sbXML.append ("  <image>\n");
-    sbXML.append ("    <link>http://localhost:8080/portal/</link>\n");
-    sbXML.append ("    <url>images/MyIBS.gif</url>\n");    
-    sbXML.append ("    <description>IBS logo</description>\n");    
-    sbXML.append ("    <width>100</width>\n");    
-    sbXML.append ("    <height>50</height>\n");    
-    sbXML.append ("  </image>\n");
-    sbXML.append ("</header>\n");
- 
-    try 
-    {
-      Parser documentParser = ParserFactory.makeParser ("org.apache.xerces.parsers.SAXParser");
-      documentParser.setDocumentHandler (out);
-      documentParser.parse (new org.xml.sax.InputSource (new StringReader (sbXML.toString ())));
-    } 
-    catch (Exception e) 
-    {
-      Logger.log (Logger.ERROR, e);
+    public CHeader() {
+	set = new StylesheetSet (stylesheetDir + "CHeader.ssl");
+	set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
     }
-  }
+    
+    public ChannelSubscriptionProperties getSubscriptionProperties () 
+    {
+	ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
+	csb.setName ("HeaderChannel");
+	return csb;
+    }
+    
+    public void renderXML (DocumentHandler out)
+    {
+	HttpSession session = (runtimeData.getHttpRequest ()).getSession (false);    
+	String userName = (String) session.getAttribute ("userName");
+
+	Document doc = new org.apache.xerces.dom.DocumentImpl();
+	Element headerEl=doc.createElement("header");
+	Element titleEl=doc.createElement("title");
+	titleEl.appendChild(doc.createTextNode("Welcome "+userName+" !"));
+	headerEl.appendChild(titleEl);
+	doc.appendChild(headerEl);
+
+	try {
+	    
+	    XSLTInputSource xmlSource = new XSLTInputSource (doc);
+	    XSLTInputSource xslSource = set.getStylesheet(runtimeData.getHttpRequest());
+	    if(xslSource==null) {
+	    Logger.log(Logger.ERROR,"CHeader::renderXML() : unable to locate a stylesheet");
+	    }
+	    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+	    
+	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
+	    processor.process (xmlSource, xslSource, xmlResult);
+	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
+    }
 }
