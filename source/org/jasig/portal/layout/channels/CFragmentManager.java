@@ -168,8 +168,6 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private String createFolder( ALFragment fragment ) throws PortalException {
 		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
 		folderDesc.setName("Fragment column");
-		//System.out.println ( "fragment root ID="+getFragmentRootId(fragment.getId()));
-		//System.out.println ( "fragment root type="+fragment.getNode(getFragmentRootId(fragment.getId())).getNodeType());
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
@@ -311,6 +309,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				fragmentNode.appendChild(id);
 				Element rootId = document.createElement("rootNodeID");
 				rootId.appendChild(document.createTextNode(fragmentRootId));
+				rootId.setAttribute("immutable",fragment.getNode(fragmentRootId).getNodeDescription().isImmutable()?"Y":"N");
 				fragmentNode.appendChild(rootId);
 				Element type = document.createElement("type");
 				type.appendChild(
@@ -333,7 +332,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				fragmentNode.appendChild(desc);
 			}
 		}
-		//System.out.println ( XML.serializeNode(document));
+		//System.out.println ( org.jasig.portal.utils.XML.serializeNode(document));
 		return document;
 	}
 
