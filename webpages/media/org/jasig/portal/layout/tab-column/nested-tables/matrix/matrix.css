@@ -1,5 +1,7 @@
 BODY {
+    background-color: Black;
 	background-image : url(background.gif);
+	
 }
 A {
 	text-decoration : none;
@@ -199,7 +201,7 @@ A.uportal-navigation-channel:hover{
 	background : #333333;
 }
 .uportal-background-content{
-	background : #333333;
+	background-color: #333333;
 	background-image : url(contentBackground.gif);
 }
 .uportal-background-highlight{
