@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">reviewChannel</xsl:param>
+  <xsl:param name="action">channelDef</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
@@ -905,10 +905,18 @@
   </xsl:template>
   <!-- displays checkbox for publisher to allow subscribe time modification-->
   <xsl:template name="subscribe">
+<xsl:param name="paramName"/>
+
     <td align="center" valign="top">
-      <!-- <xsl:value-of select="@modify"/>just for debug -->
       <xsl:choose>
-        <xsl:when test="@modify!='publish-only'">
+
+      <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name=$paramName]/@override = 'yes'">
+      <input type="checkbox" name="uPCM_{name}_sub" checked='checked'/></xsl:when>
+
+      <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name=$paramName]/@override = 'no'">
+      <input type="checkbox" name="uPCM_{name}_sub"/></xsl:when>
+
+      <xsl:when test="@modify!='publish-only'">
           <input type="checkbox" name="uPCM_{name}_sub">
             <xsl:if test="@modify='subscribe'">
               <xsl:attribute name="checked">checked</xsl:attribute>
@@ -926,7 +934,11 @@
   <xsl:template name="single-choice">
     <xsl:choose>
       <xsl:when test="type/@display='drop-down'">
-        <xsl:call-template name="subscribe"/>
+        <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -970,7 +982,11 @@
         </td>
       </xsl:when>
       <xsl:when test="type/@display='radio'">
-        <xsl:call-template name="subscribe"/>
+        <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -999,7 +1015,11 @@
           <br/>
           <select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
-              <xsl:call-template name="subscribe"/>
+                      <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
               <option value="{.}">
                 <xsl:if test=". = ../defaultValue[1]">
                   <xsl:attribute name="selected">selected</xsl:attribute>
@@ -1023,7 +1043,11 @@
   <xsl:template name="multi-choice">
     <xsl:choose>
       <xsl:when test="type/@display='select-list'">
-        <xsl:call-template name="subscribe"/>
+                <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -1048,7 +1072,11 @@
         </td>
       </xsl:when>
       <xsl:when test="type/@display='checkbox'">
-        <xsl:call-template name="subscribe"/>
+                <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -1071,7 +1099,11 @@
         </td>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="subscribe"/>
+                <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -1114,7 +1146,11 @@
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="type/@display='text'">
-        <xsl:call-template name="subscribe"/>
+          <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -1140,7 +1176,11 @@
         </td>
       </xsl:when>
       <xsl:when test="type/@display='textarea'">
-        <xsl:call-template name="subscribe"/>
+                <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -1162,7 +1202,11 @@
         <input type="hidden" name="{name}" value="{defaultValue}"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="subscribe"/>
+                <xsl:call-template name="subscribe">
+          <xsl:with-param name="paramName">
+          <xsl:value-of select="name"/>
+          </xsl:with-param>
+          </xsl:call-template>
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
@@ -2200,9 +2244,9 @@
             </xsl:choose></a>
             </td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectcustomSettings&amp;uPCM_capture=reviewChannel">Parameter: <xsl:value-of select="@name"/> = </a></strong></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectcustomSettings&amp;uPCM_capture=reviewChannel">Parameter:</a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@value"/></a></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
@@ -2975,4 +3019,5 @@ Printable<br/>
 
 </xsl:template>
 </xsl:stylesheet>
+
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
