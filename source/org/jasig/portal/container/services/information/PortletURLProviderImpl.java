@@ -53,30 +53,30 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private DynamicInformationProviderImpl provider;
     private PortletWindow portletWindow;
     private boolean secure;
-    private PortletStateManager urlManager;
+    private PortletStateManager portletStateManager;
 
     public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
-        urlManager = new PortletStateManager(portletWindow);
+        portletStateManager = new PortletStateManager(portletWindow);
     }
     
     // PortletURLProvider methods
 
     public void setPortletMode(PortletMode mode) {
 	  if ( mode != null ) {	
-		 urlManager.setNextMode(mode);
+		 portletStateManager.setNextMode(mode);
 	  }		 
     }
 
     public void setWindowState(WindowState state) {
       if ( state != null ) {	
-		 urlManager.setNextState(state);
+		 portletStateManager.setNextState(state);
       }		 
     }
 
     public void setAction() {
-		urlManager.setAction();
+		portletStateManager.setAction();
     }
 
     public void setSecure() {
@@ -84,15 +84,15 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public void clearParameters() {
-		urlManager.clearParameters();
+		portletStateManager.clearParameters();
     }
 
     public void setParameters(Map parameters) {
-		urlManager.setParameters(parameters);
+		portletStateManager.setParameters(parameters);
     }
 
     public String toString() {
-       return urlManager.getActionURL();
+       return portletStateManager.getActionURL();
     }
 
 }
