@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UCS-2"?>
-<!ELEMENT channelDef (description,class,params)>
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT channelDef (description,class,params, defaultControls)>
 <!ELEMENT description (#PCDATA)*>
 <!ELEMENT class (#PCDATA)*>
 <!ELEMENT params (step)+>
@@ -38,15 +38,15 @@
 
 
 
-<!ELEMENT controls EMPTY>
-<!ATTLIST controls 
-	timeout CDATA "10000"
-	minimized  (true|false) "false"
-	detachable  (true|false) "false"
+<!ELEMENT defaultControls EMPTY>
+<!ATTLIST defaultControls 
+	minimizable  (true|false) "false"
 	editable  (true|false) "false"
 	hasHelp  (true|false) "false"
 	hasAbout  (true|false) "false"
-	removable  (true|false) "true">
+	printable  (true|false) "false"
+	removable  (true|false) "true"
+	detachable  (true|false) "false">
 
 
 
