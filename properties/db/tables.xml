@@ -951,7 +951,7 @@
         <desc>Style sheet ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
         <key>PK</key>
       </column>
-      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>30</param>
+      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>255</param>
         <desc>Theme style sheet name, displayed to the user - (ex. Nested tables or Deck of cards)</desc>
       </column>
       <column> <name>SS_URI</name>              <type>VARCHAR</type>     <param>255</param>
@@ -1024,7 +1024,7 @@
         <desc>Style sheet ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
         <key>PK</key>
       </column>
-      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>30</param>
+      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>255</param>
         <desc>Structured style sheet name, displayed to the user - (ex. Tabs and columns, Nested categories)</desc>
       </column>
       <column> <name>SS_URI</name>              <type>VARCHAR</type>     <param>255</param>
