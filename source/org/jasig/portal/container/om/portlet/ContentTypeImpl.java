@@ -55,6 +55,10 @@ public class ContentTypeImpl implements ContentType {
 
     public ContentTypeImpl() {
         portletModes = new ArrayList();
+        // All portlets must support the VIEW mode
+        // The spec doesn't require a portlet's deployment
+        // descriptor to declare that is supports VIEW - see PLT.8.6
+        portletModes.add(PortletMode.VIEW);
     }
 
     public String getContentType() {
