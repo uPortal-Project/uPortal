@@ -96,6 +96,7 @@ $Revision$
                   </xsl:choose>
                   <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                   <xsl:value-of select="@name"/>
+                  <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                 </a>
               </td>
               <td class="uportal-background-dark">
