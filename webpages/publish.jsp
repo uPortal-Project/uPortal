@@ -14,7 +14,7 @@ String sAction = request.getParameter ("action");
 <META HTTP-EQUIV="expires" CONTENT="Tue, 20 Aug 1996 14:25:27 GMT">
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Publish Channel"); %>

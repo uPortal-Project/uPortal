@@ -31,7 +31,7 @@ if (sAction != null)
 
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Publish Channel"); %>
