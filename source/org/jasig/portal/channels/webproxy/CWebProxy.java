@@ -94,7 +94,6 @@ import org.jasig.portal.security.LocalConnectionContext;
  * <p>Static Channel Parameters:
  *    Except where indicated, static parameters can be updated by equivalent
  *    Runtime parameters.  Caching parameters can also be changed temporarily.
- *    Cache scope and mode can only be made more restrictive, not less.
  *    Cache defaults and IPerson restrictions are loaded first from properties,
  *    and overridden by static data if there.
  * </p>    
@@ -110,44 +109,35 @@ import org.jasig.portal.security.LocalConnectionContext;
  *  <li>"cw_passThrough" - indicates how RunTimeData is to be passed through.
  *                  <i>If <code>cw_passThrough</code> is supplied, and not set
  *		    to "all" or "application", additional RunTimeData
- *		    parameters not starting with "cw_" will be passed as
- *		    request parameters to the XML URI.  If
+ *		    parameters not starting with "cw_" or "upc_" will be
+ *		    passed as request parameters to the XML URI.  If
  *		    <code>cw_passThrough</code> is set to "marked", this will
  *		    happen only if there is also a RunTimeData parameter of
  *		    <code>cw_inChannelLink</code>.  "application" is intended
  *		    to keep application-specific links in the channel, while
  *		    "all" should keep all links in the channel.  This
- *		    distinction is handled entirely in the stylesheets.
+ *		    distinction is handled entirely in the URL Filters.
  *  <li>"cw_tidy" - output from <code>xmlUri</code> will be passed though Jtidy
  *  <li>"cw_info" - a URI to be called for the <code>info</code> event.
  *  <li>"cw_help" - a URI to be called for the <code>help</code> event.
  *  <li>"cw_edit" - a URI to be called for the <code>edit</code> event.
- *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
- *  <li>"cw_cacheDefaultScope" - Default cache scope.  <i>May be
- *		    <code>system</code> (one copy for all users), or
- *		    <code>user</code> (one copy per user), or
- *		    <code>instance</code> (cache for this channel instance
- *		    only).</i>
  *  <li>"cw_cacheDefaultMode" - Default caching mode.
- *		    <i>May be <code>none</code> (normally don't cache),
- *		    <code>http</code> (follow http caching directives), or
- *		    <code>all</code> (cache everything).  Http is not
- *		    currently implemented.</i>
- *  <li>"cw_cacheTimeout" - override default for this request only.
- *		    <i>Primarily intended as a runtime parameter, but can
- *	            user statically to override the first instance.</i>
- *  <li>"cw_cacheScope" - override default for this request only.
- *		    <i>Primarily intended as a runtime parameter, but can
- *	            user statically to override the first instance.</i>
+ *		    <i>May be <code>none</code> (normally don't cache), or
+ *		    <code>all</code> (cache everything).
+ *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
  *  <li>"cw_cacheMode" - override default for this request only.
  *		    <i>Primarily intended as a runtime parameter, but can
- *	            user statically to override the first instance.</i>
+ *	            used statically to override the first instance.</i>
+ *  <li>"cw_cacheTimeout" - override default for this request only.
+ *		    <i>Primarily intended as a runtime parameter, but can
+ *	            be used statically to override the first instance.</i>
  *  <li>"cw_person" - IPerson attributes to pass.
  *		    <i>A comma-separated list of IPerson attributes to
  *		    pass to the back end application.  The static data
  *		    value will be passed on </i>all<i> requests not
- *		    overridden by a runtime data cw_person.</i>
- *  <li>"cw_person_allow" - Restrict IPerson attribute passing to this list.
+ *		    overridden by a runtime data cw_person except some
+ *		    refresh requests.</i>
+ *  <li>"cw_personAllow" - Restrict IPerson attribute passing to this list.
  *		    <i>A comma-separated list of IPerson attributes that
  *		    may be passed via cw_person.  An empty or non-existent
  *		    value means use the default value from the corresponding
@@ -157,7 +147,7 @@ import org.jasig.portal.security.LocalConnectionContext;
  *  <li>"upc_localConnContext" - LocalConnectionContext implementation class.
  *                  <i>The name of a class to use when data sent to the
  *                  backend application needs to be modified or added
- *                  to suit local needs.</i>
+ *                  to suit local needs.  Static data only.</i>
  * </ol>
  * <p>Runtime Channel Parameters:</p>
  *    The following parameters are runtime-only.
@@ -196,17 +186,18 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   // to prepend to the system-wide cache key
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
 
-  // All state variables now stored here
+  // All state variables stored here
   private class ChannelState
   {
     private int id;
     private IPerson iperson;
     private String person;
-    private String person_allow;
-    private HashSet person_allow_set;
+    private String personAllow;
+    private HashSet personAllow_set;
     private String fullxmlUri;
     private String buttonxmlUri;
     private String xmlUri;
+    private String key;
     private String passThrough;
     private String tidy;
     private String sslUri;
@@ -215,8 +206,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private String infoUri;
     private String helpUri;
     private String editUri;
-    private String cacheDefaultScope;
-    private String cacheScope;
     private String cacheDefaultMode;
     private String cacheMode;
     private String reqParameters;
@@ -226,18 +215,19 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private CookieCutter cookieCutter;
     private URLConnection connHolder;
     private LocalConnectionContext localConnContext;
+    private int refresh;
 
     public ChannelState ()
     {
-      fullxmlUri = buttonxmlUri = xmlUri = passThrough = sslUri = null;
+      fullxmlUri = buttonxmlUri = xmlUri = key = passThrough = sslUri = null;
       xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
       id = 0;
-      cacheMode = cacheScope = null;
+      cacheMode = null;
       iperson = null;
+      refresh = -1;
       cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_timeout");
-      cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
-      cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_scope");
-      person_allow = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.person_allow");
+      cacheMode = cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
+      personAllow = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.person_allow");
       runtimeData = null;
       cookieCutter = new CookieCutter();
       localConnContext = null;
@@ -263,14 +253,14 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.id = sd.getPerson().getID();
     state.iperson = sd.getPerson();
     state.person = sd.getParameter("cw_person");
-    String person_allow = sd.getParameter ("cw_person_allow");
-    if ( person_allow != null && (!person_allow.trim().equals("")))
-      state.person_allow = person_allow;
-    // state.person_allow could have been set by a property or static data
-    if ( state.person_allow != null && (!state.person_allow.trim().equals("!*")) )
+    String personAllow = sd.getParameter ("cw_personAllow");
+    if ( personAllow != null && (!personAllow.trim().equals("")))
+      state.personAllow = personAllow;
+    // state.personAllow could have been set by a property or static data
+    if ( state.personAllow != null && (!state.personAllow.trim().equals("!*")) )
     {
-      state.person_allow_set = new HashSet();
-      StringTokenizer st = new StringTokenizer(state.person_allow,",");
+      state.personAllow_set = new HashSet();
+      StringTokenizer st = new StringTokenizer(state.personAllow,",");
       if (st != null)
       {
         while ( st.hasMoreElements () ) {
@@ -278,7 +268,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
           if (pName!=null) {
 	    pName = pName.trim();
 	    if (!pName.equals(""))
-	      state.person_allow_set.add(pName);
+	      state.personAllow_set.add(pName);
 	  }
         }
       }
@@ -293,24 +283,25 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.helpUri = sd.getParameter ("cw_help");
     state.editUri = sd.getParameter ("cw_edit");
 
-    String cacheScope = sd.getParameter ("cw_cacheDefaultScope");
-    if (cacheScope != null && !cacheScope.trim().equals(""))
-      state.cacheDefaultScope = cacheScope;
-    cacheScope = sd.getParameter ("cw_cacheScope");
-    if (cacheScope != null && !cacheScope.trim().equals(""))
-      state.cacheScope = cacheScope;
+    state.key = state.xmlUri;
+
     String cacheMode = sd.getParameter ("cw_cacheDefaultMode");
     if (cacheMode != null && !cacheMode.trim().equals(""))
       state.cacheDefaultMode = cacheMode;
     cacheMode = sd.getParameter ("cw_cacheMode");
     if (cacheMode != null && !cacheMode.trim().equals(""))
       state.cacheMode = cacheMode;
+    else
+      state.cacheMode = state.cacheDefaultMode;
+
     String cacheTimeout = sd.getParameter("cw_cacheDefaultTimeout");
     if (cacheTimeout != null && !cacheTimeout.trim().equals(""))
       state.cacheDefaultTimeout = Long.parseLong(cacheTimeout);
     cacheTimeout = sd.getParameter("cw_cacheTimeout");
     if (cacheTimeout != null && !cacheTimeout.trim().equals(""))
       state.cacheTimeout = Long.parseLong(cacheTimeout);
+    else
+      state.cacheTimeout = state.cacheDefaultTimeout;
 
     String connContext = sd.getParameter ("upc_localConnContext");
     if (connContext != null && !connContext.trim().equals(""))
@@ -343,6 +334,21 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
      else
      {
        state.runtimeData = rd;
+       if ( rd.isEmpty() && (state.refresh != -1) ) {
+         // A refresh-- State remains the same.
+         if ( state.buttonxmlUri != null ) {
+	   state.key = state.buttonxmlUri;
+           state.fullxmlUri = state.buttonxmlUri;
+	   state.refresh = 0;
+	 } else {
+	   if ( state.refresh == 0 )
+	     state.key = state.fullxmlUri;
+	   state.fullxmlUri = state.xmlUri;
+	   state.refresh = 1;
+	 }
+       } else {
+
+       state.refresh = 0;
 
        String xmlUri = state.runtimeData.getParameter("cw_xml");
        if (xmlUri != null) {
@@ -387,9 +393,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        if (helpUri != null)
           state.helpUri = helpUri;
 
-       // need a way to see if cacheScope, cacheMode, cacheTimeout were
-       // set in static data if this is the first time.
-
        String cacheTimeout = state.runtimeData.getParameter("cw_cacheDefaultTimeout");
        if (cacheTimeout != null)
           state.cacheDefaultTimeout = Long.parseLong(cacheTimeout);
@@ -400,45 +403,16 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        else
           state.cacheTimeout = state.cacheDefaultTimeout;
 
-       String cacheDefaultScope = state.runtimeData.getParameter("cw_cacheDefaultScope");
-       if (cacheDefaultScope != null) {
-          // PSEUDO see if it's a reduction fine, otherwise log error 
-          state.cacheDefaultScope = cacheDefaultScope;
-       }
-
-       String cacheScope = state.runtimeData.getParameter("cw_cacheScope");
-       if (cacheScope != null) {
-          // PSEUDO see if it's a reduction fine, otherwise a problem
-	  // for now all instance -> user
-          if ( state.cacheDefaultScope.equalsIgnoreCase("system") )
-             state.cacheScope = cacheScope;
-	  else {
-             state.cacheScope = state.cacheDefaultScope;
-             LogService.instance().log(LogService.INFO,
-	       "CWebProxy:setRuntimeData() : ignoring illegal scope reduction from "
-	       + state.cacheDefaultScope + " to " + cacheScope);
-	  }
-       } else
-          state.cacheScope = state.cacheDefaultScope;
-
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode was " + state.cacheDefaultMode);
        String cacheDefaultMode = state.runtimeData.getParameter("cw_cacheDefaultMode");
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheDefaultMode is " + cacheDefaultMode);
        if (cacheDefaultMode != null) {
-          // maybe don't allow if scope is system?
           state.cacheDefaultMode = cacheDefaultMode;
        }
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode is now " + state.cacheDefaultMode);
 
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode was " + state.cacheMode);
        String cacheMode = state.runtimeData.getParameter("cw_cacheMode");
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheMode is " + cacheMode);
        if (cacheMode != null) {
-          // maybe don't allow if scope is system?
           state.cacheMode = cacheMode;
        } else
           state.cacheMode = state.cacheDefaultMode;
-       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode is now " + state.cacheMode);
 
        // reset is a one-time thing.
        String reset = state.runtimeData.getParameter("cw_reset");
@@ -446,17 +420,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
           if (reset.equalsIgnoreCase("return")) {
              state.buttonxmlUri = null;
           }
-          // else if (reset.equalsIgnoreCase("reset")) {
-          //  call setStaticData with our cached copy.
-          // }
        }
 
-       if ( state.buttonxmlUri != null )
+       if ( state.buttonxmlUri != null )  // shouldn't happen here, but...
            state.fullxmlUri = state.buttonxmlUri;
        else {
-         //if (this.passThrough != null )
-         //  LogService.instance().log(LogService.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
-
          // Is this a case where we need to pass request parameters to the xmlURI?
          if ( state.passThrough != null &&
             !state.passThrough.equalsIgnoreCase("none") &&
@@ -464,14 +432,14 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                 state.passThrough.equalsIgnoreCase("application") ||
                 rd.getParameter("cw_inChannelLink") != null ) )
            {
-             LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
+             //LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
 
              StringBuffer newXML = new StringBuffer();
              String appendchar = "";
 
 	     // here add in attributes according to cw_person
 	     
-	     if (person != null && state.person_allow_set != null) {
+	     if (person != null && state.personAllow_set != null) {
                StringTokenizer st = new StringTokenizer(person,",");
                if (st != null)
                  {
@@ -480,8 +448,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                        String pName = st.nextToken();
                        if ((pName!=null)&&(!pName.trim().equals("")))
 		       {
-			 if ( state.person_allow.trim().equals("*") ||
-			   state.person_allow_set.contains(pName) )
+			 if ( state.personAllow.trim().equals("*") ||
+			   state.personAllow_set.contains(pName) )
 			 {
                            newXML.append(appendchar);
                            appendchar = "&";
@@ -500,7 +468,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                      }
                  }
 	       }
-	     // end new cw_person code
+	     // end cw_person code
 
              // keyword and parameter processing
              // NOTE: if both exist, only keywords are appended
@@ -524,43 +492,33 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                      if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
                                                    && !pName.trim().equals("")) {
                        String[] value_array = rd.getParameterValues(pName);
-                       if ( value_array == null || value_array.length == 0 ) {
-                           // keyword-style parameter
-                           newXML.append(appendchar);
-                           appendchar = "&";
-                           newXML.append(pName);
-                        } else {
-                          int i = 0;
-                          while ( i < value_array.length ) {
-LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime parameter: " + pName);
-                            newXML.append(appendchar);
-                            appendchar = "&";
-                            newXML.append(pName);
-                            newXML.append("=");
-                            newXML.append(URLEncoder.encode(value_array[i++]));
-                          }
-                        }
-
+                       int i = 0;
+                       while ( i < value_array.length ) {
+                         newXML.append(appendchar);
+                         appendchar = "&";
+                         newXML.append(pName);
+                         newXML.append("=");
+                         newXML.append(URLEncoder.encode(value_array[i++]));
+                       }
                      }
                    }
                }
              }
 
-             // to add: if not already set, make a copy of sd for
-	     // the "reset" command
              state.reqParameters = newXML.toString();
              state.fullxmlUri = state.xmlUri;
              if (!state.runtimeData.getHttpRequestMethod().equals("POST")){
                 if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
                   appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-                  // BUG 772 - this doesn't seem to catch all cases.
                   state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
                 }
                 state.reqParameters = null;
              }
-             LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
+             //LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
           }
        }
+       state.key = state.fullxmlUri;
+     }
      }
   }
 
@@ -597,7 +555,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
         case PortalEvent.SESSION_DONE:
 	  stateTable.remove(uid);
           break;
-        // case PortalEvent.UNSUBSCRIBE: // remove db entry for channel
+        // case PortalEvent.UNSUBSCRIBE:
         default:
           break;
       }
@@ -653,11 +611,12 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
 
       // Runtime data parameters are handed to the stylesheet.
       // Add any static data parameters so it gets a full set of variables.
-      // Possibly this should be a copy.
+      // We may wish to remove this feature since we don't need it for
+      // the default stylesheets now.
       if (state.xmlUri != null)
         state.runtimeData.put("cw_xml", state.xmlUri);
       if (state.sslUri != null)
-        state.runtimeData.put("cs_ssl", state.sslUri);
+        state.runtimeData.put("cw_ssl", state.sslUri);
       if (state.xslTitle != null)
         state.runtimeData.put("cw_xslTitle", state.xslTitle);
       if (state.xslUri != null)
@@ -672,6 +631,10 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
         state.runtimeData.put("cw_help", state.helpUri);
       if (state.editUri != null)
         state.runtimeData.put("cw_edit", state.editUri);
+      if (state.person != null)
+        state.runtimeData.put("cw_person", state.person);
+      if (state.personAllow != null)
+        state.runtimeData.put("cw_personAllow", state.personAllow);
 
       XSLT xslt = new XSLT(this);
       if (xmlDoc != null)
@@ -920,18 +883,8 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
     ChannelCacheKey k = new ChannelCacheKey();
     StringBuffer sbKey = new StringBuffer(1024);
 
-    if ( state.cacheScope.equalsIgnoreCase("instance") ) {
-      k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
-    } else {
-      k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-      sbKey.append(systemCacheId).append(": ");
-      if ( state.cacheScope.equalsIgnoreCase("user") ) {
-        sbKey.append("userId:").append(state.id).append(", ");
-      }
-    }
-    // Later:
-    // if scope==guest, do same as user, but use GUEST instead if isGuest()
-    // Scope descending order: system, guest, user, instance.
+    // Only INSTANCE scope is currently supported.
+    k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
 
     sbKey.append("sslUri:").append(state.sslUri).append(", ");
 
@@ -948,11 +901,14 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
     }
 
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
-    sbKey.append("fullxmlUri:").append(state.fullxmlUri).append(", ");
+    sbKey.append("key:").append(state.key).append(", ");
     sbKey.append("passThrough:").append(state.passThrough).append(", ");
-    sbKey.append("tidy:").append(state.tidy);
+    sbKey.append("tidy:").append(state.tidy).append(", ");
+    sbKey.append("person:").append(state.person);
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));
+    //LogService.instance().log(LogService.DEBUG,"CWebProxy:generateKey("
+    //		+ uid + ") : cachekey=\"" + sbKey.toString() + "\"");
     return k;
   }
 
@@ -1011,36 +967,3 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
   }
   
 }
-
-/*
- * Developer's notes for convenience.  Will be deleted later.
- * Cache control parameters:
- *  Static params
- *    cw_cacheDefaultTimeout	timeout in seconds.
- *    cw_cacheDefaultScope	"system" - one copy for all users
- *				"guest" - one copy for guest, others by user
- *				"user" - one copy per user
- *    				"instance" - cache for this instance only
- *    cw_cacheDefaultMode		"none" - normally don't cache
- *    				"init" - only cache initial view
- *    				"http" - follow http caching directives
- *				"all" - why not?  cache everything.
- *  Runtime only params:
- *    cw_cacheTimeout		override default for this request only
- *    cw_cacheScope		override default for this request only
- *    cw_cacheMode		override default for this request only
- *
- * Note: all static parameters can be replaced via equivalent runtime.
- *
- * The Scope can only be reduced, never increased.
- */
-/*
- * NOTE could cw_person be multi-valued instead of comma-sep?
- *      cw_restrict should work the same way.
- * NOTE Does IPerson contain multiple instances of attributes?
- * cw_restrict - a list of runtime parameters that cannot be changed.
- *               possibly allow multi-values, with params. indicating
- *               the param can only be changed to that?
- *	       - can we encode the scope restrictions with this
- *	         as a default?
- */
