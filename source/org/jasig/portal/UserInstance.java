@@ -39,6 +39,7 @@ package  org.jasig.portal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -72,6 +73,7 @@ import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.utils.URLUtil;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -117,6 +119,9 @@ public class UserInstance implements HttpSessionBindingListener {
 
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
     private static Properties workerProperties;
+
+    // string that defines which character set to use for content
+    private static final String CHARACTER_SET = "UTF-8";
 
     final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
@@ -287,9 +292,30 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         if (rElement != null) {
                             // valid new root id was specified. need to redirect
-                            // peterk: should we worry about forwarding parameters here ? or those passed with detach always get sacked ?
-                            uPElement.setMethodNodeId(newRootNodeId);
-                            res.sendRedirect(uPElement.getUPFile());
+                            // peterk: should we worry about forwarding
+                            // parameters here ? or those passed with detach
+                            // always get sacked ?
+                            // Andreas: Forwarding parameters with detach
+                            // are not lost anymore with the URLUtil class.
+
+                            // Skip the uP_detach_target parameter since
+                            // it has already been processed
+                            String[] skipParams = new String[]
+                                {"uP_detach_target"};
+                            
+                            try {
+                                URLUtil.redirect(req, res, newRootNodeId,
+                                    true, skipParams,
+                                    Charset.forName(CHARACTER_SET));
+                            } catch (PortalException pe) {
+                                StringBuffer sb = new StringBuffer(128);
+                                sb.append("UserInstance::renderState() : ");
+                                sb.append("PortalException occurred while ");
+                                sb.append("redirecting.");
+                                sb.append(pe.toString());
+                                LogService.log(LogService.ERROR,
+                                    sb.toString(), pe);
+                            }
                             return;
                         }
                     }
@@ -319,7 +345,8 @@ public class UserInstance implements HttpSessionBindingListener {
                     res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
                     res.setDateHeader("Expires", 0);
                     // set the response mime type
-                    res.setContentType(tsd.getMimeType() + "; charset=UTF-8");
+                    res.setContentType(tsd.getMimeType() + "; charset=" +
+                        CHARACTER_SET);
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
