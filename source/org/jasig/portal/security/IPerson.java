@@ -107,6 +107,14 @@ public interface IPerson extends IAdditionalDescriptor
 
 
   /**
+   * Returns the names of all of the attributes stored for the user
+   * @return 
+   */
+  public Enumeration getAttributeNames ();
+
+
+
+  /**
    * Associates a security context object with the user
    * @param securityContext
    */

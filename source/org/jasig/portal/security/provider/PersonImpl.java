@@ -101,6 +101,19 @@ public class PersonImpl
   }
 
   /**
+   * Returns an enumeration of all of the attribute names associated with the user
+   * @return 
+   */
+  public Enumeration getAttributeNames () {
+    if (m_Attributes == null) {
+      return  (null);
+    } 
+    else {
+      return  (m_Attributes.keys());
+    }
+  }
+
+  /**
    * Sets the specified attribute to a value.
    * This reference implementation supports the attribute: Email
    * corresponding to the eduPerson attribute: mail.
