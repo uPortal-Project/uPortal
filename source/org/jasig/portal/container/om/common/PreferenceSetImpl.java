@@ -78,11 +78,7 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
     // PreferenceSetCtrl methods
     
     public Preference add(String name, Collection values) {
-        PreferenceImpl preference = new PreferenceImpl();
-        preference.setName(name);
-        preference.setValues(values);
-        preferences.put(name, preference);
-        return preference;
+        return add(name, values, false);
     }
 
     public Preference remove(String name) {
@@ -108,7 +104,16 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
         preferences.clear();
     }
     
-    public void addAll(PreferenceSetImpl preferences) {
+    public Preference add(String name, Collection values, boolean readOnly) {
+        PreferenceImpl preference = new PreferenceImpl();
+        preference.setName(name);
+        preference.setValues(values);
+        preference.setReadOnly(readOnly);
+        preferences.put(name, preference);
+        return preference;
+    }
+
+    public void addAll(PreferenceSet preferences) {
         Iterator iter = preferences.iterator();
         while (iter.hasNext()) {
             Preference preference = (Preference)iter.next();

@@ -57,7 +57,14 @@ public class PreferenceImpl implements Preference, PreferenceCtrl, Serializable 
 
 	public PreferenceImpl() {
 		values = new ArrayList();
-	}	
+	}
+    
+    public PreferenceImpl(String name, Collection values, boolean readOnly) {
+        this();
+        this.name = name;
+        this.values.addAll(values);
+        this.readOnly = readOnly;	
+    }
     
     // Preference methods
     
