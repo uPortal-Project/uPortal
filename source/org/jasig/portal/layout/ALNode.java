@@ -176,7 +176,6 @@ public abstract class ALNode {
     public static IALNodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {
         // is this a folder or a channel ?
         String nodeName=xmlNode.getNodeName();
-        System.out.println( "Node name: " + nodeName );
         if(nodeName.equals("channel")) {
             return new ALChannelDescription(xmlNode);
         } else if(nodeName.equals("folder")) {
