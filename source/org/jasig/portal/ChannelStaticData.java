@@ -43,7 +43,6 @@ import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
 import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.services.LogService;
-import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  java.util.Hashtable;
 
@@ -57,7 +56,7 @@ import  java.util.Hashtable;
 public class ChannelStaticData extends Hashtable {
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
-  private InitialContext m_portalContext = null;
+  private Context m_portalContext = null;
   // This is the ID that globally identifies the channel
   private String m_channelGlobalID = null;
   // This is the ID that locally identifies the channel in the user's layout
@@ -181,27 +180,21 @@ public class ChannelStaticData extends Hashtable {
   }
 
   /**
-   * put your documentation comment here
-   * @return
+   * Obtain a channel JNDI context
+   * @return JNDI context
    */
-  public InitialContext getPortalContext () {
-    if (m_portalContext != null) {
-      return  (m_portalContext);
+    public Context getJNDIContext() {
+        return m_portalContext;
     }
-    else {
-      Hashtable environment = new Hashtable(1);
-      // Set up the path
-      environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-      try {
-        InitialContext ctx = new InitialContext(environment);
-        return  (ctx);
-      } catch (Exception e) {
-        // Log the exception
-        LogService.log(LogService.ERROR, e);
-        return  (null);
-      }
+
+    /**
+     * Set channel JNDI context.
+     *
+     * @param c a <code>Context</code> value
+     */
+    public void setJNDIContext(Context c) {
+        m_portalContext=c;
     }
-  }
 
   /**
    * Returns an instance of the PermissionManager for this channel

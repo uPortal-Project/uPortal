@@ -41,6 +41,9 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.services.LogService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
@@ -55,6 +58,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+
+import tyrex.naming.MemoryContext;
 
 /**
  * This class shall have the burden of squeezing content
@@ -79,6 +84,10 @@ public class ChannelManager {
     private String channelTarget;
     private Hashtable targetParams;
     private BrowserInfo binfo;
+
+    private Context portalContext;
+    private Context channelContext;
+
     public String uPElement;
 
     // global channel rendering cache
@@ -125,6 +134,23 @@ public class ChannelManager {
         this.uPElement=uPElement;
         rendererTable.clear ();
         processRequestChannelParameters (request);
+
+        // check portal JNDI context
+        if(portalContext==null) {
+            try {
+                portalContext=getPortalContext();
+            } catch (NamingException ne) {
+                LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain initial JNDI context : "+ne);
+            }
+        }
+        // construct a channel context
+        if(channelContext==null) {
+            try {
+                channelContext=getChannelContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()),Integer.toString(this.pcs.getUserLayoutManager().getCurrentProfile().getProfileId()));
+            } catch (NamingException ne) {
+                LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
+            }
+        }
     }
 
     public void setUPElement(String uPElement) {
@@ -334,6 +360,11 @@ public class ChannelManager {
 
         // get person object from UsreLayoutManager
         sd.setPerson(ulm.getPerson());
+
+        if(channelContext==null) {
+            LogService.instance().log(LogService.ERROR,"ChannelManager::startChannelRendering : channelContext is NULL !!!");
+        }
+        sd.setJNDIContext(channelContext);
 
         ch.setStaticData (sd);
         channelTable.put (chanId,ch);
@@ -719,4 +750,44 @@ public class ChannelManager {
       }
     }
 
+    /**
+     * Get the uPortal JNDI context
+     * @return uPortal initial JNDI context
+     * @exception NamingException
+     */
+    private static Context getPortalContext () throws NamingException {
+        Hashtable environment = new Hashtable(5);
+        // Set up the path
+        environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+        Context ctx = new InitialContext(environment);
+        return(ctx);
+    }
+
+    /**
+     * <code>getChannelContext</code> generates a JNDI context that
+     * will be passed to the regular channels. The context is pieced
+     * together from the parts of the global portal context.
+     *
+     * @param portalContext uPortal JNDI context
+     * @param sessionId current session id
+     * @param userId id of a current user
+     * @param layotId id of the layout used by the user
+     * @return a channel <code>InitialContext</code> value
+     */
+    private static Context getChannelContext(Context portalContext,String sessionId,String userId,String layoutId) throws NamingException {
+        // create a new InitialContext
+        Context cic=new MemoryContext(new Hashtable());
+        // get services context
+        Context servicesContext=(Context)portalContext.lookup("services");
+        // get channel-ids context
+        Context channel_idsContext=(Context)portalContext.lookup("users/"+userId+"/layouts/"+layoutId+"/channel-ids");
+        // get channel-obj context
+        Context channel_objContext=(Context)portalContext.lookup("users/"+userId+"/sessions/"+sessionId+"/channel-obj");
+
+        cic.bind("services",servicesContext);
+        cic.bind("channel-ids",channel_idsContext);
+        cic.bind("channel-obj",channel_objContext);
+        
+        return cic;
+    }
 }
