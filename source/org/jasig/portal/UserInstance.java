@@ -249,7 +249,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // set optimistic uPElement value
                     UPFileSpec uPElement=new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
-                    
+
                     if(newRootNodeId!=null) {
                         // set a new root
                         uPElement.setMethodNodeId(newRootNodeId);
@@ -600,7 +600,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                             }
                         }
-                        
+
                     }
                     // signal the end of the rendering round
                     channelManager.finishedRendering();
@@ -648,7 +648,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
-        channelManager.finishedSession();
+        if (channelManager!=null)   channelManager.finishedSession();
     }
 
     /**
@@ -725,7 +725,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 if(upfs.getMethod()!=null && upfs.getMethod().equals(UPFileSpec.WORKER_URL_ELEMENT)) {
                     // this is a worker dispatch, process it
                     // determine worker type
-                    
+
                     String workerName=upfs.getMethodNodeId();
 
                     if(workerName!=null) {
@@ -738,7 +738,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 LogService.instance().log(LogService.ERROR, "UserInstance::processWorkerDispatch() : Unable to load worker.properties file. "+ioe);
                             }
                         }
-                        
+
                         String dispatchClassName=UserInstance.workerProperties.getProperty(workerName);
                         if(dispatchClassName==null) {
                             throw new PortalException("UserInstance::processWorkerDispatch() : Unable to find processing class for the worker type \""+workerName+"\". Please check worker.properties");
@@ -766,10 +766,10 @@ public class UserInstance implements HttpSessionBindingListener {
                     } else {
                         throw new PortalException("UserInstance::processWorkerDispatch() : Unable to determine worker type.  uPFile=\""+upfs.getUPFile()+"\".");
                     }
-                    
+
                     return true;
                 } else {
-                    return false; 
+                    return false;
                 }
             } catch (IndexOutOfBoundsException iobe) {
                 // ill-constructed URL
@@ -778,7 +778,7 @@ public class UserInstance implements HttpSessionBindingListener {
         }
         // will never get here
         return false;
-    } 
+    }
 
 }
 
