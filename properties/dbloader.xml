@@ -9,13 +9,13 @@
   <populate-tables>true</populate-tables>
 
   <!-- Location of tables.xml file -->
-  <tables-uri>properties/tables.xml</tables-uri>
+  <tables-uri>/properties/tables.xml</tables-uri>
 
   <!-- Location of tables.xsl stylesheet -->
-  <tables-xsl-uri>webpages/stylesheets/org/jasig/portal/tools/DbLoader/tables.xsl</tables-xsl-uri>
+  <tables-xsl-uri>DbLoader/tables.xsl</tables-xsl-uri>
 
   <!-- Location of data.xml file -->
-  <data-uri>properties/data.xml</data-uri>
+  <data-uri>/properties/data.xml</data-uri>
 
   <!-- DbLoader can dump DROP, CREATE, and INSERT statements to a file. If <create-script> is
        set to true, the script file will be created in <portal base directory>/properties -->

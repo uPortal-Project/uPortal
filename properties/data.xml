@@ -563,7 +563,7 @@
         <column><name>CHAN_ID</name><value>2</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -579,7 +579,7 @@
         <column><name>CHAN_ID</name><value>5</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -595,7 +595,7 @@
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -611,7 +611,7 @@
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -627,7 +627,7 @@
         <column><name>CHAN_ID</name><value>8</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CWebProxy/XHTML.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -743,7 +743,7 @@
         <column><name>CHAN_ID</name><value>11</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -759,7 +759,7 @@
         <column><name>CHAN_ID</name><value>12</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -775,7 +775,7 @@
         <column><name>CHAN_ID</name><value>13</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -800,14 +800,14 @@
         <column><name>CHAN_ID</name><value>15</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/CSSViewer/cssViewer.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>15</value></column>
        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -823,7 +823,7 @@
         <column><name>CHAN_ID</name><value>17</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CWebProxy/XHTML.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -874,7 +874,7 @@
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CWebProxy/XHTML.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -918,14 +918,14 @@
         <column><name>CHAN_ID</name><value>19</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/emptyDocument.xml</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/emptyDocument.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>19</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/footer/footer.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/footer/footer.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -948,7 +948,7 @@
         <column><name>CHAN_ID</name><value>20</value></column>
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1692,7 +1692,7 @@
         <column><name>TYPE_NAME</name><value>RSS (Rich Site Summary)</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>TYPE_DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>CGenericXSLT/RSS/RSS.cpd</value></column>
       </row>
 
       <row>
@@ -1700,7 +1700,7 @@
         <column><name>TYPE_NAME</name><value>Simple XML Transformation</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>TYPE_DESCR</name><value>XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>CGenericXSLT/CGenericXSLT.cpd</value></column>
       </row>
 
       <row>
@@ -1708,7 +1708,7 @@
         <column><name>TYPE_NAME</name><value>Inline Frame</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
         <column><name>TYPE_DESCR</name><value>The Inline Frame channel can be used to render an HTML page within a frame. This channel does not work correctly in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>CInlineFrame/CInlineFrame.cpd</value></column>
       </row>
 
       <row>
@@ -1716,7 +1716,7 @@
         <column><name>TYPE_NAME</name><value>Image</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
         <column><name>TYPE_DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
-        <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>CImage/CImage.cpd</value></column>
       </row>
 
       <row>
@@ -1724,7 +1724,7 @@
         <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>TYPE_DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
-        <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>CWebProxy/CWebProxy.cpd</value></column>
       </row>
 
     </rows>
@@ -2217,15 +2217,15 @@
       <row>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_NAME</name><value>Tabs and columns</value></column>
-        <column><name>SS_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>
       </row>
       <row>
         <column><name>SS_ID</name><value>2</value></column>
         <column><name>SS_NAME</name><value>Nested categories</value></column>
-        <column><name>SS_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>
     </rows>
@@ -2237,8 +2237,8 @@
       <row>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_NAME</name><value>Nested tables</value></column>
-        <column><name>SS_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>
         <column><name>STRUCT_SS_ID</name><value>1</value></column>
         <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_icon.gif</value></column>
@@ -2251,8 +2251,8 @@
       <row>
         <column><name>SS_ID</name><value>2</value></column>
         <column><name>SS_NAME</name><value>Deck of cards</value></column>
-        <column><name>SS_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
         <column><name>STRUCT_SS_ID</name><value>1</value></column>
         <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_icon.gif</value></column>
