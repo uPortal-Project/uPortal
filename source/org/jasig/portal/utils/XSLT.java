@@ -398,7 +398,8 @@ public class XSLT {
         temp = thand.getTemplates();
         if (stylesheetRootCacheEnabled) {
           stylesheetRootCache.put(stylesheetURI, temp);
-          log.info( "Caching templates for: " + stylesheetURI);
+          if (log.isInfoEnabled())
+              log.info( "Caching templates for: " + stylesheetURI);
         }
       } catch (IOException ioe) {
         throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
@@ -502,7 +503,8 @@ public class XSLT {
       stylesheetSet = new StylesheetSet(stylesheetListURI);
       if (stylesheetSetCacheEnabled) {
         stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
-        log.info( "Caching StylesheetSet for: " + stylesheetListURI);
+        if (log.isInfoEnabled())
+            log.info( "Caching StylesheetSet for: " + stylesheetListURI);
       }
     }
     return stylesheetSet;
