@@ -980,69 +980,81 @@ $Revision$
               <span class="uportal-channel-subtitle-reversed">Options for modifying this column:</span>
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
-                </td>
-                <td width="100%" class="uportal-channel-text">
-                  <a href="#">Change the width of the columns (column widths should total 100%):</a>
-                </td>
-              </tr>
-              <tr>
-                <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                </td>
-                <td class="uportal-channel-text">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="2">
-                    <tr valign="top">
-                      <td nowrap="nowrap" align="center">
+                <tr>
+                    <td class="uportal-channel-text">
+                        <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" 
+                            border="0"/>
+                    </td>
+                    <td width="100%" class="uportal-channel-text">
+                        <a href="#">Change the width of the columns (column widths should total 100%):</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="uportal-channel-text">
                         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                      </td>
-                      <input type="hidden" name="action" value="columnWidth"/>
-                      <xsl:for-each select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
-                        <td nowrap="nowrap" align="center" class="uportal-text-small">
-                          <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" maxlength="" class="uportal-input-text"/>
-                          <br/>
-                          <xsl:choose>
-                            <xsl:when test="$elementID=@ID">
-                              <strong>Column</strong>
-                            </xsl:when>
-                            <xsl:otherwise>Column</xsl:otherwise>
-                          </xsl:choose>
+                    </td>
+                    <td class="uportal-channel-text">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                            <tr valign="top">
+                                <td nowrap="nowrap" align="center">
+                                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" 
+                                        height="16"/>
+                                </td>
+                                <input type="hidden" name="action" value="columnWidth"/>
+                                <xsl:for-each 
+                                    select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
+                                    <td nowrap="nowrap" align="center" class="uportal-text-small">
+                                        <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" 
+                                            maxlength="" class="uportal-input-text"/>
+                                        <br/>
+                                        <xsl:choose>
+                                            <xsl:when test="$elementID=@ID">
+                                                <strong>Column</strong>
+                                            </xsl:when>
+                                            <xsl:otherwise>Column</xsl:otherwise>
+                                        </xsl:choose>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <img alt="interface image" src="{$mediaPath}/transparent.gif" 
+                                            width="16" height="16"/>
+                                    </td>
+                                </xsl:for-each>
+                                <td width="100%" align="left" nowrap="nowrap">
+                                    <input type="submit" name="submitModifyColumn" value="Submit" 
+                                        class="uportal-button"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- If ancestor is immutable - the column cannot be moved-->
+                <xsl:if 
+                    test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])">
+                    <tr>
+                        <td class="uportal-channel-text">
+                            <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" 
+                                border="0"/>
                         </td>
-                        <td nowrap="nowrap">
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                        <td class="uportal-channel-text">
+                            <a href="{$baseActionURL}?action=moveColumn&amp;elementID={$elementID}">Move this 
+                                column to a different location</a>
                         </td>
-                      </xsl:for-each>
-                      <td width="100%" align="left" nowrap="nowrap">
-                        <input type="submit" name="submitModifyColumn" value="Submit" class="uportal-button"/>
-                      </td>
                     </tr>
-                  </table>
-                </td>
-              </tr>
-              <!-- If ancestor is immutable - the column cannot be moved-->
-              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])">
-                <tr>
-                  <td class="uportal-channel-text">
-                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
-                  </td>
-                  <td class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=moveColumn&amp;elementID={$elementID}">Move this column to a different location</a>
-                  </td>
-                </tr>
-              </xsl:if>
-              <!-- If ancestor or self is unremovable - the column cannot be deleted-->
-              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
-                <tr>
-                  <td class="uportal-channel-text">
-                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
-                  </td>
-                  <td class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=deleteColumn&amp;elementID={$elementID}">Delete this column</a>
-                  </td>
-                </tr>
-              </xsl:if>
+                </xsl:if>
+                <!-- If ancestor or self is unremovable - the column cannot be deleted-->
+                <!-- fix for 2.3 due to the layout having a new root attribute that is unremovable, hence this call will always not show the delete link -->
+                <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/self::*[@unremovable='true'])">
+                    <tr>
+                        <td class="uportal-channel-text">
+                            <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" 
+                                border="0"/>
+                        </td>
+                        <td class="uportal-channel-text">
+                            <a href="{$baseActionURL}?action=deleteColumn&amp;elementID={$elementID}">Delete 
+                                this column</a>
+                        </td>
+                    </tr>
+                </xsl:if>
               <tr>
                 <td colspan="2" class="uportal-channel-text">
                   <hr/>
@@ -1216,7 +1228,7 @@ $Revision$
     </form>
   </xsl:template>
   <xsl:template name="optionMenuNewColumn">
-    <form name="formNewColumn" method="post" action="">
+    <form name="formNewColumn" method="post" action="{$baseActionURL}">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
