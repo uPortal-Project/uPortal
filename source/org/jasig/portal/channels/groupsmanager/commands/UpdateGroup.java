@@ -79,7 +79,8 @@ public class UpdateGroup extends GroupsManagerCommand {
       Document xmlDoc = (Document)sessionData.model;
       String theCommand = runtimeData.getParameter("grpCommand");
       String newGrpName = runtimeData.getParameter("grpName");                  //?
-      String updId = getCommandIds(runtimeData);
+      String newDescription = runtimeData.getParameter("grpDescription");
+      String updId = getCommandArg(runtimeData);
       Node updNode;
       Node titleNode;
       Element updElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, updId);
@@ -103,13 +104,14 @@ public class UpdateGroup extends GroupsManagerCommand {
       IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
       if (updGroup == null) {
          retMsg = "Unable to retrieve Group!";
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          return;
       }
       try {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update group: "
                + curGrpName);
          updGroup.setName(newGrpName);
+         updGroup.setDescription(newDescription);
          updGroup.update();
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
                + curGrpName);
@@ -128,17 +130,20 @@ public class UpdateGroup extends GroupsManagerCommand {
                titleNode = nList.item(0);
                titleNode.getFirstChild().setNodeValue(newGrpName);
             }
+            
+            NodeList dList = updElem.getElementsByTagName("dc:description");
+            if (dList.getLength() > 0) {
+               Node descNode = dList.item(0);
+               descNode.getFirstChild().setNodeValue(newDescription);
+            }
          }
-         runtimeData.setParameter("grpMode", "browse");
-         runtimeData.setParameter("grpView", "tree");
-         runtimeData.setParameter("grpViewId", "0");
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ge);
       } catch (Exception e) {
          retMsg = "Unable to update group : " + curGrpName;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Finished");
