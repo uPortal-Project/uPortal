@@ -103,13 +103,12 @@ public class ChannelFactory {
      */
     public static IChannel instantiateChannel(String className, String uid) throws PortalException {
         IChannel ch=null;
-        String staticChannelKey = className + "_" + uid;
 
         boolean exists=false;
         // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
         // channel more then once, but it's difficult to implement "instanceof" operation on
         // the java.lang.Class. So, I just look into the staticChannels table.
-        Object cobj=staticChannels.get(staticChannelKey);
+        Object cobj=staticChannels.get(className);
         if(cobj!=null) {
             exists=true;
         } else {
@@ -139,7 +138,7 @@ public class ChannelFactory {
             }
             // see if we need to add the instance to the staticChannels
             if(!exists) {
-                staticChannels.put(staticChannelKey,cobj);
+                staticChannels.put(className,cobj);
             }
         } else {
             // vanilla IChannel
