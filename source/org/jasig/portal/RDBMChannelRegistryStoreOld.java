@@ -75,23 +75,6 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
 
   protected static IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
 
-  public RDBMChannelRegistryStoreOld() throws Exception {
-    if (RDBMServices.supportsOuterJoins) {
-      if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-        RDBMServices.joinQuery.addQuery("channel",
-          "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
-      } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-         RDBMServices.joinQuery.addQuery("channel",
-          "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
-     } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-        RDBMServices.joinQuery.addQuery("channel",
-          "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
-      } else {
-        throw new Exception("Unknown database driver");
-      }
-    }
-  }
-
   /**
    * Returns an XML document which describes the channel registry.
    * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
@@ -453,38 +436,6 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
       throw new SQLException(e.getMessage());
     }
   }
-
-  /**
-   * Get the channel node
-   * @param con
-   * @param doc
-   * @param chanId
-   * @param idTag
-   * @return the channel node as an XML Element
-   * @exception java.sql.SQLException
-   */
-   /*
-  public Element getChannelNode (int chanId, Connection con, Document doc, String idTag) throws java.sql.SQLException {
-    RDBMServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
-    try {
-      RDBMServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
-      try {
-        ChannelDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
-        if (cd != null) {
-          return cd.getDocument(doc, idTag);
-        } else {
-          return null;
-        }
-      } finally {
-        if (pstmtChannelParm != null) {
-          pstmtChannelParm.close();
-        }
-      }
-    } finally {
-      pstmtChannel.close();
-    }
-  }
-  */
 
   public final RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
     return RDBMChannelRegistryStore.getChannelParamPstmt();
