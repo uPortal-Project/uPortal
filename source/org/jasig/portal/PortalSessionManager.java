@@ -262,8 +262,8 @@ public class PortalSessionManager extends HttpServlet {
                     // need to decode before calling RequestParamWrapper due to potential portlet upload
                     Hashtable params = PortletStateManager.getURLDecodedParameters(req);
                     // do we have the uP_portlet_action parameter?
-                    boolean portletAction = (params.containsKey(PortletStateManager.ACTION) ? true : false);
-                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req,request_verified, portletAction);
+                    boolean isPortletAction = params.containsKey(PortletStateManager.ACTION);
+                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified, isPortletAction);
  			        wrappedRequest.getParameterMap().putAll(params);
 
                     userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
