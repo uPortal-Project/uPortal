@@ -39,17 +39,13 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.services.GroupService;
 
 /**
  * Title:        Delete Portal User
@@ -112,7 +108,7 @@ public class DeleteUser {
 
     /* remove from all groups */
     try
-        { removeUserFromLocalGroups(args[0]); }
+        { removeUserMemberships(args[0]); }
     catch (Exception e)
     {
         System.err.println("DeleteUser.main(): error removing user from groups: " +
@@ -137,42 +133,6 @@ public class DeleteUser {
       return;
   }
 
-  /**
-   * This method was always kind of funky, and maybe it still is.  It 
-   * used to go directly to the local group store to get memberships 
-   * for a user rather than through the group service.  For a number
-   * of reasons, including the fact that groups are cached in the JVM,
-   * the current group service design tries to frustrate that sort of
-   * guerilla activity by making you use the service facade.  In this 
-   * version, we get ALL of the user's memberships and remove the user 
-   * from those groups that are updatable, which will typically be the 
-   * groups from the local service.  The method is synchronized to 
-   * reduce the likelihood of concurrent updates to the same group, but 
-   * that only works if this program runs in the same process as the 
-   * portal, and not, e.g., as an ant task.  
-   * 
-   * @param userName String - the IPerson.USERNAME of the ex-user.
-   * @throws Exception
-   */
-    public synchronized static void removeUserFromLocalGroups(String userName) throws Exception
-    {
-        Class gmType = Class.forName("org.jasig.portal.security.IPerson");
-        IGroupMember user = GroupService.getGroupMember(userName, gmType);
-      
-        System.out.println("DeleteUser.removeUserFromLocalGroups() for " + userName + ": removing group memberships.");
-      
-        for (Iterator groups = user.getContainingGroups(); groups.hasNext();)
-        {
-            IEntityGroup eg = (IEntityGroup) groups.next();
-            if ( eg.isEditable() )
-            {
-                System.out.println( ">>Removing user from group " + eg.getName() );
-                eg.removeMember(user);
-                eg.updateMembers();
-            }
-        }
-    }
-    
       public static void deleteBookmarks(int uid) throws SQLException
   {
       DatabaseMetaData metadata = null;
@@ -220,4 +180,56 @@ public class DeleteUser {
       }
       return;
   }
+  /**
+   * This method operates directly on the local group store to get 
+   * and delete user memberships rather than through the group service.  
+   * Since groups are cached in the JVM, the portal may have to be 
+   * restarted for the changes to take effect.  
+   * 
+   * @param userName String - the IPerson.USERNAME of the ex-user.
+   * @throws SQLException
+   */
+  
+  public static void removeUserMemberships(String userName) throws SQLException
+  {
+    Connection con = null;
+    Statement stmt = null;
+
+    try
+    {
+        con = RDBMServices.getConnection ();
+        if (con == null)
+        {
+            throw new SQLException("DeleteUser.removeUserMemberships(): " +
+              "Unable to get a database connection.");
+        }
+        try 
+        {
+            stmt = con.createStatement();
+            String sql = 
+              "DELETE FROM UP_GROUP_MEMBERSHIP " +
+              "WHERE MEMBER_KEY = '" + userName + "' AND GROUP_ID IN " +
+              "(SELECT M.GROUP_ID " +
+                "FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
+                "WHERE M.GROUP_ID = G.GROUP_ID " + 
+                "  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
+                "  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
+                "  AND  M.MEMBER_KEY = '" + userName + "'" +
+                "  AND  M.MEMBER_IS_GROUP = 'F')";     
+            
+            int rows = stmt.executeUpdate(sql);
+            System.out.println("Deleted " + rows + " memberships for " + userName + " from UP_GROUP_MEMBERSHIP.");
+        }
+        finally 
+        {
+            try { stmt.close(); } catch (Exception e) {}
+        }
+    }
+    finally
+    {
+        try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
+    }
+    return;
+}
+  
 }
