@@ -85,11 +85,14 @@ import org.w3c.dom.Node;
  * <p>None of the method signatures in this class should contain
  * classes specific to a particular XSLT engine, e.g. Xalan, or
  * XML parser, e.g. Xerces.</p>
+ * <p>The constructor for XSLT takes an instance of whatever class is requesting
+ * the transformation.  XSLT uses this instance to locate resources relative
+ * to the classpath.</p>
  * <p>Typical usage:</p>
  * <p><code>
- * XSLT xslt = new XSLT();
- * xslt.setXML("/portal/docs/myXMLDoc.xml");
- * xslt.setSSL("/portal/stylesheets/myChannel.ssl", "aTitle", runtimeData.getBrowserInfo());
+ * XSLT xslt = new XSLT(this);
+ * xslt.setXML("myXMLDoc.xml");
+ * xslt.setSSL("myChannel.ssl", "aTitle", runtimeData.getBrowserInfo());
  * xslt.setTarget(out);
  * xslt.setStylesheetParameter("param1Name", "param1Value");
  * xslt.setStylesheetParameter("param2Name", "param2Value");
@@ -116,18 +119,12 @@ public class XSLT {
   private HashMap stylesheetParams;
   private String xslURI;
 
-  /**
-   * Constructs an XSLT object.
-   */
-  public XSLT () {
-    stylesheetParams = new HashMap();
-  }
 
   /**
    * Constructs an XSLT object.
    */
   public XSLT (Object instance) {
-    this();
+    this.stylesheetParams = new HashMap();
     this.caller = instance;
   }
 
