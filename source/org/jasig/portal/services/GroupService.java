@@ -58,7 +58,8 @@ public class GroupService implements IGroupConstants
         super();
         initializeCompositeService();
     }
-    /*
+    
+    /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
      * @param key String - the group key.
@@ -68,7 +69,8 @@ public class GroupService implements IGroupConstants
     {
         return instance().ifindGroup(key);
     }
-    /*
+    
+    /**
      * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
      * group is not found.
      * @param key String - the group key.
@@ -80,6 +82,7 @@ public class GroupService implements IGroupConstants
     {
         return instance().ifindLockableGroup(key, lockOwner);
     }
+    
     /**
      * Receives notice that the UserInstance has been unbound from
      * the HttpSession.  In response, we remove the corresponding group member
@@ -93,7 +96,8 @@ public class GroupService implements IGroupConstants
         catch (GroupsException ge)
             { log.error("Error upon session finishing for person [" + person + "]", ge); }
     }
-    /*
+    
+    /**
     * Returns the <code>ICompositeGroupService</code> implementation in use.
     * @return org.jasig.portal.groups.ICompositeGroupService
     */
@@ -101,13 +105,15 @@ public class GroupService implements IGroupConstants
     {
         return instance().compositeGroupService;
     }
-/**
- * @return java.lang.String
- */
-protected String getDefaultServiceName() throws GroupsException
-{
-    return (String)getServiceConfiguration().getAttributes().get("defaultService");
-}
+    
+
+    /**
+     * @return java.lang.String
+     */
+    protected String getDefaultServiceName() throws GroupsException {
+        return (String) getServiceConfiguration().getAttributes().get(
+                "defaultService");
+    }
     /**
      * Refers to the PropertiesManager to get the key for the group
      * associated with 'name' and asks the group store implementation for the corresponding
@@ -116,14 +122,15 @@ protected String getDefaultServiceName() throws GroupsException
     public static IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
       return instance().igetDistinguishedGroup(name);
     }
-/**
- * @return java.lang.String
- */
-public String getDistinguishedGroupKey(String name)
-{
-    return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name);
-}
-   /*
+
+    /**
+     * @return java.lang.String
+     */
+    public String getDistinguishedGroupKey(String name) {
+        return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name);
+    }
+
+   /**
     * Returns an <code>IEntity</code> representing a portal entity.  This does
     * not guarantee that the entity actually exists.
     * @param key String - the group key.
@@ -136,29 +143,35 @@ public String getDistinguishedGroupKey(String name)
         return getEntity(key, type, null);
    
     }
-    /*
-        * Returns an <code>IEntity</code> representing a portal entity.  This does
-        * not guarantee that the entity actually exists.
-        * @param key String - the group key.
-        * @param type Class - the Class of the underlying IGroupMember.
-        * @param service String - the name of the component service.
-        * @return org.jasig.portal.groups.IEntity
-        */
+    
+    /**
+     * Returns an <code>IEntity</code> representing a portal entity. This does
+     * not guarantee that the entity actually exists.
+     * 
+     * @param key
+     *                String - the group key.
+     * @param type
+     *                Class - the Class of the underlying IGroupMember.
+     * @param service
+     *                String - the name of the component service.
+     * @return org.jasig.portal.groups.IEntity
+     */
     public static IEntity getEntity(String key, Class type, String service)
-    throws GroupsException
-    {
+            throws GroupsException {
         return instance().igetEntity(key, type, service);
     }
-    /*
-     * Returns an <code>IGroupMember</code> representing either a group or a
-     * portal entity.  If the parm <code>type</code> is the group type,
-     * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
-     * an <code>IEntity</code>.
+    
+    /**
+     * Returns an <code> IGroupMember </code> representing either a group or a
+     * portal entity. If the parm <code> type </code> is the group type, the
+     * <code> IGroupMember </code> is an <code> IEntityGroup </code> else it is
+     * an <code> IEntity </code> .
      */
     public static IGroupMember getGroupMember(String key, Class type) throws GroupsException
     {
         return instance().igetGroupMember(key, type);
     }
+    
     /**
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity, based on the <code>EntityIdentifier</code>, which
@@ -170,7 +183,8 @@ public String getDistinguishedGroupKey(String name)
       return getGroupMember(underlyingEntityIdentifier.getKey(),
           underlyingEntityIdentifier.getType());
     }
-    /*
+    
+    /**
     * Returns the <code>IGroupService</code> implementation in use.
     * @return org.jasig.portal.groups.IGroupService
     */
@@ -178,6 +192,7 @@ public String getDistinguishedGroupKey(String name)
     {
         return instance().groupService;
     }
+    
     /**
      * Refers to the PropertiesManager to get the key for the root group
      * associated with 'type' and asks the group store implementation for the corresponding
@@ -186,6 +201,7 @@ public String getDistinguishedGroupKey(String name)
     public static IEntityGroup getRootGroup(Class type) throws GroupsException{
       return instance().igetRootGroup(type);
     }
+    
 /**
  * @return java.lang.String
  */
@@ -196,7 +212,8 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     catch (Exception ex)
         { throw new GroupsException("Problem retrieving service configuration", ex);}
 }
-    /*
+
+    /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
      * @param key String - the group key.
@@ -206,7 +223,8 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     {
         return compositeGroupService.findGroup(key);
     }
-    /*
+    
+    /**
      * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
      * group is not found.
      * @param key String - the group key.
@@ -218,6 +236,7 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     {
         return compositeGroupService.findGroupWithLock(key, lockOwner);
     }
+    
     /**
      * Receives notice that the UserInstance has been unbound from the
      * HttpSession.  In response, we remove the corresponding group member from
@@ -254,7 +273,10 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
     }
     catch (Exception ex)
         { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }}
-    /*
+
+
+
+    /**
      * Returns an <code>IEntity</code> representing a pre-existing portal entity.
      * @param key String - the group key.
      * @param type Class - the Class of the underlying IGroupMember.
@@ -264,7 +286,8 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
     {
         return compositeGroupService.getEntity(key, type, service);
     }    
-    /*
+    
+    /**
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,
      * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
@@ -274,6 +297,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
     {
         return compositeGroupService.getGroupMember(key, type);
     }
+    
     /**
      * Refers to the PropertiesManager to get the key for the root group
      * associated with 'type' and asks the group store implementation for the corresponding
@@ -370,7 +394,8 @@ private void initializeCompositeService() throws GroupsException
         }
         return instance;
     }
-    /*
+    
+    /**
      * Answer if the underlying group service is a composite service,
      * implementing ICompositeGroupService.
      */
@@ -378,6 +403,7 @@ private void initializeCompositeService() throws GroupsException
     {
         return composite;
     }
+    
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
