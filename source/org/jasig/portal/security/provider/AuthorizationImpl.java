@@ -110,7 +110,7 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int chan
 throws AuthorizationException
 {
     String owner = "CHAN_ID" + "." + channelID;
-    return primDoesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, null);
+    return doesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, null);
 }
 /**
  * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
