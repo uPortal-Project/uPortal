@@ -53,16 +53,18 @@ public abstract class ChainingSecurityContext implements ISecurityContext
    {
 
   protected boolean isauth = false;
-  protected Hashtable mySubContexts;
+//  protected Hashtable mySubContexts;
+  protected Vector mySubContexts;
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
   protected ChainingAdditionalDescriptor myAdditionalDescriptor;
+  protected Comparator myOrder;
 
   public ChainingSecurityContext() {
     myPrincipal = new ChainingPrincipal();
     myOpaqueCredentials = new ChainingOpaqueCredentials();
     myAdditionalDescriptor = new ChainingAdditionalDescriptor();
-    mySubContexts = new Hashtable();
+    mySubContexts = new Vector();
   }
 
   public IPrincipal getPrincipalInstance() {
@@ -91,7 +93,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     Enumeration e = mySubContexts.elements();
 
     while (e.hasMoreElements()) {
-      ISecurityContext sctx = (ISecurityContext)e.nextElement();
+      ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
       IPrincipal sp = sctx.getPrincipalInstance();
       IOpaqueCredentials op = sctx.getOpaqueCredentialsInstance();
       sp.setUID(this.myPrincipal.UID);
@@ -132,31 +134,48 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     return this.isauth;
   }
 
-  public synchronized ISecurityContext getSubContext(String name)
-    throws PortalSecurityException {
-    ISecurityContext c = (ISecurityContext)mySubContexts.get(name);
-    if (c == null) {
-      PortalSecurityException ep=new PortalSecurityException("No such subcontext: " + name);
-      Logger.log(Logger.ERROR,ep);
-      throw(ep);
-      }
-    return c;
+  public synchronized ISecurityContext getSubContext(String name) {
+//    ISecurityContext c = (ISecurityContext)mySubContexts.get(name);
+    for (int i = 0; i < mySubContexts.size(); i++) {
+       Entry entry = (Entry) mySubContexts.get(i);
+       if (entry.getKey() != null && entry.getKey().equals(name))
+           return entry.getCtx();
+    }
+    PortalSecurityException ep=new PortalSecurityException("No such subcontext: " + name);
+    Logger.log(Logger.ERROR,ep);
+    return null;
   }
 
+  // return an enumeration of subcontexts by running the vector and
+  // creating the enumeration.  All this so the subcontexts will
+  // be returned in the order they appeared in the properties file.
   public synchronized Enumeration getSubContexts() {
     Enumeration e = mySubContexts.elements();
-    return e;
+    class Adapter implements Enumeration {
+        Enumeration base;
+        public Adapter(Enumeration e) {
+            this.base = e;
+        }
+        public boolean hasMoreElements() {
+           return base.hasMoreElements();
+        }
+        public Object nextElement() {
+           return ((Entry) base.nextElement()).getCtx();
+        }
+    }
+    return new Adapter(e);
   }
 
   public synchronized void addSubContext(String name, ISecurityContext ctx)
     throws PortalSecurityException {
-    if (mySubContexts.get(name) != null){
+    if (getSubContext(name) != null){
       PortalSecurityException ep=new PortalSecurityException("Subcontext already exists: " + name);
       Logger.log(Logger.ERROR,ep);
       throw(ep);
       }
     else
-      mySubContexts.put(name, ctx);
+//      mySubContexts.put(name, ctx);
+      mySubContexts.add(new Entry(name, ctx));
     return;
   }
 
@@ -217,4 +236,19 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   protected class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
   }
 
+// entries in our subcontext list
+  private static class Entry {
+    String key;
+    ISecurityContext ctx;
+    public Entry(String key, ISecurityContext ctx) {
+        this.key = key;
+        this.ctx = ctx;
+    }
+    public ISecurityContext getCtx() {
+        return this.ctx;
+    }
+    public String getKey() {
+        return this.key;
+    }
+  }
 }
