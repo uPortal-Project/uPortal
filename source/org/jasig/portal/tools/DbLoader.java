@@ -37,6 +37,12 @@ package org.jasig.portal.tools;
 
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.utils.DTDResolver;
+import java.io.File;
+import java.io.StringReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -44,19 +50,24 @@ import java.sql.Types;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
+import org.xml.sax.AttributeList;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-//import javax.xml.parsers.SAXParserFactory;
-//import javax.xml.parsers.SAXParser;
-
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.DocumentHandler;
+import org.apache.xalan.xslt.XSLTProcessorFactory;
+import org.apache.xalan.xslt.XSLTProcessor;
+import org.apache.xalan.xslt.XSLTInputSource;
+import org.apache.xalan.xslt.XSLTResultTarget;
+import org.apache.xerces.parsers.DOMParser;
+import org.apache.xerces.dom.DocumentImpl;
 
 /**
  * <p>A tool to set up a uPortal database. This tool was created so that uPortal
@@ -68,7 +79,10 @@ import java.util.Iterator;
  * tries to map them to local types by querying the database metadata via methods
  * implemented by the JDBC driver.  Fallback mappings can be supplied in
  * dbloader.xml for cases where the JDBC driver is not able to determine the
- * appropriate mapping.</p>
+ * appropriate mapping.  Such cases will be reported to standard out.</p>
+ *
+ * <p>An xsl transformation is used to produce the DROP TABLE and CREATE TABLE
+ * SQL statements. These statements can be altered by modifying tables.xsl</p>
  *
  * <p>Generic data types (as defined in java.sql.Types) which may be specified
  * in tables.xml include:
@@ -82,12 +96,14 @@ import java.util.Iterator;
  * <p>DbLoader will perform the following steps:
  * <ol>
  * <li>Read configurable properties from <portal.home>/properties/dbloader.xml</li>
+ * <li>Get database connection from RdbmServices
+ *     (reads JDBC database settings from <portal.home>/properties/rdbm.properties).</li>
  * <li>Read tables.xml and issue corresponding DROP TABLE and CREATE TABLE SQL statements.</li>
  * <li>Read data.xml and issue corresponding INSERT SQL statements.</li>
  * </ol></p>
  *
- * <p>You will either need to change the <code>portalBaseDir</code> member variable
- * below and re-compile, or alternatively set the system property "portal.home"</p>
+ * <p>You will need to set the system property "portal.home"  For example,
+ * java -Dportal.home=/usr/local/uPortal</p>
  *
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
@@ -96,20 +112,14 @@ import java.util.Iterator;
  */
 public class DbLoader
 {
-  // CHANGE THIS OR SET portal.home SYSTEM PROPERTY!!!
-  private static String portalBaseDir = "D:\\Projects\\JA-SIG\\uPortal2\\";
-
+  private static String portalBaseDir = null;
   private static String propertiesUri;
-  private static final String indent = "  ";
-  private static final String space = " ";
   private static Connection con = null;
   private static Statement stmt = null;
   private static PreparedStatement pstmt = null;
   private static RdbmServices rdbmService = null;
-
-  public DbLoader()
-  {
-  }
+  private static Document tablesDoc = null;
+  private static Document tablesDocGeneric = null;
 
   public static void main(String[] args)
   {
@@ -123,12 +133,34 @@ public class DbLoader
       {
         long startTime = System.currentTimeMillis();
 
+        // Read in the properties
         XMLReader parser = getXMLReader();
-        doInfo();
-        doProperties(parser);
-        //doScriptFile();
-        doTables(parser);
-        doData(parser);
+        printInfo();
+        readProperties(parser);
+
+        // Read tables.xml
+        DOMParser domParser = new DOMParser();
+        // Eventually, write and validate against a DTD
+        //domParser.setFeature ("http://xml.org/sax/features/validation", true);
+        //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
+        domParser.parse(PropertiesHandler.properties.getTablesUri());
+        tablesDoc = domParser.getDocument();
+
+        // Hold on to tables xml with generic types
+        tablesDocGeneric = (Document)tablesDoc.cloneNode(true);
+
+        // Replace all generic data types with local data types
+        replaceDataTypes(tablesDoc);
+
+        // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
+        XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
+        XSLTInputSource tablesInputSource = new XSLTInputSource(tablesDoc);
+        XSLTInputSource tablesXslInputSource = new XSLTInputSource(PropertiesHandler.properties.getTablesXslUri());
+        XSLTResultTarget tablesTarget = new XSLTResultTarget(new TableHandler());
+        processor.process (tablesInputSource, tablesXslInputSource, tablesTarget);
+
+        // data.xml --> INSERT sql statements
+        readData(parser);
 
         System.out.println("Done!");
         long endTime = System.currentTimeMillis();
@@ -136,6 +168,7 @@ public class DbLoader
       }
       else
         System.out.println("DbLoader couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
+
     }
     catch (Exception e)
     {
@@ -143,7 +176,7 @@ public class DbLoader
     }
     finally
     {
-      rdbmService.releaseConnection(con);
+      exit();
     }
   }
 
@@ -152,12 +185,19 @@ public class DbLoader
     String portalBaseDirParam = System.getProperty("portal.home");
 
     if (portalBaseDirParam != null)
+    {
       portalBaseDir = portalBaseDirParam;
 
-    if (!portalBaseDir.endsWith(File.separator))
-      portalBaseDir += File.separator;
+      if (!portalBaseDir.endsWith(File.separator))
+         portalBaseDir += File.separator;
 
-    UtilitiesBean.setPortalBaseDir(portalBaseDir);
+      UtilitiesBean.setPortalBaseDir(portalBaseDir);
+    }
+    else
+    {
+      System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
+      exit();
+    }
   }
 
   private static XMLReader getXMLReader()
@@ -174,7 +214,7 @@ public class DbLoader
     return xr;
   }
 
-  private static void doInfo () throws SQLException
+  private static void printInfo () throws SQLException
   {
     DatabaseMetaData dbMetaData = con.getMetaData();
     String dbName = dbMetaData.getDatabaseProductName();
@@ -182,32 +222,11 @@ public class DbLoader
     String driverName = dbMetaData.getDriverName();
     String driverVersion = dbMetaData.getDriverVersion();
     System.out.println("Starting DbLoader...");
-    System.out.println("Database: " + dbName + ", version: " + dbVersion);
-    System.out.println("Driver: " + driverName + ", version: " + driverVersion);
+    System.out.println("Database: '" + dbName + "', version: '" + dbVersion + "'");
+    System.out.println("Driver: '" + driverName + "', version: '" + driverVersion + "'");
   }
 
-  private static void doProperties (XMLReader parser) throws SAXException, IOException
-  {
-    PropertiesHandler propertiesHandler = new PropertiesHandler();
-    parser.setContentHandler(propertiesHandler);
-    parser.setErrorHandler(propertiesHandler);
-    parser.parse(propertiesUri);
-  }
-
-  private static void doScriptFile()
-  {
-    // Create or replace file
-  }
-
-  private static void doTables (XMLReader parser) throws SAXException, IOException
-  {
-    TableHandler tableHandler = new TableHandler();
-    parser.setContentHandler(tableHandler);
-    parser.setErrorHandler(tableHandler);
-    parser.parse(UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri()));
-  }
-
-  private static void doData (XMLReader parser) throws SAXException, IOException
+  private static void readData (XMLReader parser) throws SAXException, IOException
   {
     DataHandler dataHandler = new DataHandler();
     parser.setContentHandler(dataHandler);
@@ -215,11 +234,293 @@ public class DbLoader
     parser.parse(UtilitiesBean.fixURI(PropertiesHandler.properties.getDataUri()));
   }
 
+  private static void replaceDataTypes (Document tablesDoc)
+  {
+    Element tables = tablesDoc.getDocumentElement();
+    NodeList types = tables.getElementsByTagName("type");
+
+    for (int i = 0; i < types.getLength(); i++)
+    {
+      Node type = (Node)types.item(i);
+      NodeList typeChildren = type.getChildNodes();
+
+      for (int j = 0; j < typeChildren.getLength(); j++)
+      {
+        Node text = (Node)typeChildren.item(j);
+        String genericType = text.getNodeValue();
+
+        // Replace generic type with mapped local type
+        text.setNodeValue(getLocalDataTypeName(genericType));
+      }
+    }
+  }
+
+  private static int getJavaSqlDataTypeOfColumn(Document tablesDocGeneric, String tableName, String columnName)
+  {
+    int dataType = 0;
+
+    // Find the right table element
+    Element table = getTableWithName(tablesDocGeneric, tableName);
+
+    // Find the columns element within
+    Element columns = getFirstChildWithName(table, "columns");
+
+    // Search for the first column who's name is columnName
+    for (Node ch = columns.getFirstChild(); ch != null; ch = ch.getNextSibling())
+    {
+      if (ch instanceof Element && ch.getNodeName().equals("column"))
+      {
+        Element name = getFirstChildWithName((Element)ch, "name");
+        if (getNodeValue(name).equals(columnName))
+        {
+          // Get the corresponding type and return it's type code
+          Element value = getFirstChildWithName((Element)ch, "type");
+          dataType = getJavaSqlType(getNodeValue(value));
+        }
+      }
+    }
+
+    return dataType;
+  }
+
+  private static Element getFirstChildWithName (Element parent, String name)
+  {
+    Element child = null;
+
+    for (Node ch = parent.getFirstChild(); ch != null; ch = ch.getNextSibling())
+    {
+      if (ch instanceof Element && ch.getNodeName().equals(name))
+      {
+        child = (Element)ch;
+        break;
+      }
+    }
+
+    return child;
+  }
+
+  private static Element getTableWithName (Document tablesDoc, String tableName)
+  {
+    Element tableElement = null;
+    NodeList tables = tablesDoc.getElementsByTagName("table");
+
+    for (int i = 0; i < tables.getLength(); i++)
+    {
+      Node table = (Node)tables.item(i);
+
+      for (Node tableChild = table.getFirstChild(); tableChild != null; tableChild = tableChild.getNextSibling())
+      {
+        if (tableChild instanceof Element && tableChild.getNodeName() != null && tableChild.getNodeName().equals("name"))
+        {
+          if (tableName.equals(getNodeValue(tableChild)))
+          {
+            tableElement = (Element)table;
+            break;
+          }
+        }
+      }
+    }
+
+    return tableElement;
+  }
+
+  private static String getNodeValue (Node node)
+  {
+    String nodeVal = null;
+
+    for (Node ch = node.getFirstChild(); ch != null; ch = ch.getNextSibling())
+    {
+      if (ch instanceof Text)
+        nodeVal = ch.getNodeValue();
+    }
+
+    return nodeVal;
+  }
+
+  private static String getLocalDataTypeName (String genericDataTypeName)
+  {
+    // Find the type code for this generic type name
+    int dataTypeCode = getJavaSqlType(genericDataTypeName);
+
+    // Find the first local type name matching the type code
+    String localDataTypeName = null;
+
+    try
+    {
+      DatabaseMetaData dbmd = con.getMetaData();
+      ResultSet rs = dbmd.getTypeInfo();
+
+      while (rs.next())
+      {
+        int localDataTypeCode = rs.getInt("DATA_TYPE");
+
+        if (dataTypeCode == localDataTypeCode)
+        {
+          try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
+          break;
+        }
+      }
+
+      // If a local data type wasn't found, look in properties file
+      // for a mapped data type name
+      if (localDataTypeName == null)
+      {
+        DatabaseMetaData dbMetaData = con.getMetaData();
+        String dbName = dbMetaData.getDatabaseProductName();
+        String dbVersion = dbMetaData.getDatabaseProductVersion();
+        String driverName = dbMetaData.getDriverName();
+        String driverVersion = dbMetaData.getDriverVersion();
+
+        localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
+
+        if (localDataTypeName == null)
+        {
+          System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
+          System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
+          System.out.println("Exiting...");
+          exit();
+        }
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      exit();
+    }
+
+    return localDataTypeName;
+  }
+
+  private static int getJavaSqlType (String genericDataTypeName)
+  {
+    // Find the type code for this generic type name
+    int dataTypeCode = 0;
+
+    if (genericDataTypeName.equalsIgnoreCase("BIT"))
+      dataTypeCode = Types.BIT; // -7
+    else if (genericDataTypeName.equalsIgnoreCase("TINYINT"))
+      dataTypeCode = Types.TINYINT; // -6
+    else if (genericDataTypeName.equalsIgnoreCase("SMALLINT"))
+      dataTypeCode = Types.SMALLINT; // 5
+    else if (genericDataTypeName.equalsIgnoreCase("INTEGER"))
+      dataTypeCode = Types.INTEGER; // 4
+    else if (genericDataTypeName.equalsIgnoreCase("BIGINT"))
+      dataTypeCode = Types.BIGINT; // -5
+
+    else if (genericDataTypeName.equalsIgnoreCase("FLOAT"))
+      dataTypeCode = Types.FLOAT; // 6
+    else if (genericDataTypeName.equalsIgnoreCase("REAL"))
+      dataTypeCode = Types.REAL; // 7
+    else if (genericDataTypeName.equalsIgnoreCase("DOUBLE"))
+      dataTypeCode = Types.DOUBLE; // 8
+
+    else if (genericDataTypeName.equalsIgnoreCase("NUMERIC"))
+      dataTypeCode = Types.NUMERIC; // 2
+    else if (genericDataTypeName.equalsIgnoreCase("DECIMAL"))
+      dataTypeCode = Types.DECIMAL; // 3
+
+    else if (genericDataTypeName.equalsIgnoreCase("CHAR"))
+      dataTypeCode = Types.CHAR; // 1
+    else if (genericDataTypeName.equalsIgnoreCase("VARCHAR"))
+      dataTypeCode = Types.VARCHAR; // 12
+    else if (genericDataTypeName.equalsIgnoreCase("LONGVARCHAR"))
+      dataTypeCode = Types.LONGVARCHAR; // -1
+
+    else if (genericDataTypeName.equalsIgnoreCase("DATE"))
+      dataTypeCode = Types.DATE; // 91
+    else if (genericDataTypeName.equalsIgnoreCase("TIME"))
+      dataTypeCode = Types.TIME; // 92
+    else if (genericDataTypeName.equalsIgnoreCase("TIMESTAMP"))
+      dataTypeCode = Types.TIMESTAMP; // 93
+
+    else if (genericDataTypeName.equalsIgnoreCase("BINARY"))
+      dataTypeCode = Types.BINARY; // -2
+    else if (genericDataTypeName.equalsIgnoreCase("VARBINARY"))
+      dataTypeCode = Types.VARBINARY; // -3
+    else if (genericDataTypeName.equalsIgnoreCase("LONGVARBINARY"))
+      dataTypeCode = Types.LONGVARBINARY;  // -4
+
+    else if (genericDataTypeName.equalsIgnoreCase("NULL"))
+      dataTypeCode = Types.NULL; // 0
+
+    else if (genericDataTypeName.equalsIgnoreCase("OTHER"))
+      dataTypeCode = Types.OTHER; // 1111
+
+    else if (genericDataTypeName.equalsIgnoreCase("JAVA_OBJECT"))
+      dataTypeCode = Types.JAVA_OBJECT; // 2000
+    else if (genericDataTypeName.equalsIgnoreCase("DISTINCT"))
+      dataTypeCode = Types.DISTINCT; // 2001
+    else if (genericDataTypeName.equalsIgnoreCase("STRUCT"))
+      dataTypeCode = Types.STRUCT; // 2002
+
+    else if (genericDataTypeName.equalsIgnoreCase("ARRAY"))
+      dataTypeCode = Types.ARRAY; // 2003
+    else if (genericDataTypeName.equalsIgnoreCase("BLOB"))
+      dataTypeCode = Types.BLOB; // 2004
+    else if (genericDataTypeName.equalsIgnoreCase("CLOB"))
+      dataTypeCode = Types.CLOB; // 2005
+    else if (genericDataTypeName.equalsIgnoreCase("REF"))
+      dataTypeCode = Types.REF; // 2006
+
+    return dataTypeCode;
+  }
+
+  private static void dropTable (String dropTableStatement)
+  {
+    System.out.print("...");
+    //System.out.println(dropTableStatement);
+
+    try
+    {
+      stmt = con.createStatement();
+      try { stmt.executeUpdate(dropTableStatement); } catch (SQLException sqle) {/*Table didn't exist*/}
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    finally
+    {
+      try { stmt.close(); } catch (Exception e) { }
+    }
+  }
+
+  private static void createTable (String createTableStatement)
+  {
+    System.out.print("...");
+    //System.out.println(createTableStatement);
+
+    try
+    {
+      stmt = con.createStatement();
+      stmt.executeUpdate(createTableStatement);
+    }
+    catch (Exception e)
+    {
+      System.out.println(createTableStatement);
+      e.printStackTrace();
+    }
+    finally
+    {
+      try { stmt.close(); } catch (Exception e) { }
+    }
+  }
+
+  private static void readProperties (XMLReader parser) throws SAXException, IOException
+  {
+    PropertiesHandler propertiesHandler = new PropertiesHandler();
+    parser.setContentHandler(propertiesHandler);
+    parser.setErrorHandler(propertiesHandler);
+    parser.parse(propertiesUri);
+  }
+
   static class PropertiesHandler extends DefaultHandler
   {
     private static boolean insideProperties = false;
     private static boolean insideTablesUri = false;
+    private static boolean insideTablesXslUri = false;
     private static boolean insideDataUri = false;
+    private static boolean insideDataXslUri = false;
     private static boolean insideCreateScript = false;
     private static boolean insideScriptUri = false;
     private static boolean insideStatementTerminator = false;
@@ -255,8 +556,12 @@ public class DbLoader
         }
         else if (name.equals("tables-uri"))
           insideTablesUri = true;
+       else if (name.equals("tables-xsl-uri"))
+          insideTablesXslUri = true;
         else if (name.equals("data-uri"))
           insideDataUri = true;
+       else if (name.equals("data-xsl-uri"))
+          insideDataXslUri = true;
         else if (name.equals("create-script"))
           insideCreateScript = true;
         else if (name.equals("script-uri"))
@@ -294,8 +599,12 @@ public class DbLoader
           insideProperties = false;
         else if (name.equals("tables-uri"))
           insideTablesUri = false;
+        else if (name.equals("tables-xsl-uri"))
+          insideTablesXslUri = false;
         else if (name.equals("data-uri"))
           insideDataUri = false;
+        else if (name.equals("data-xsl-uri"))
+          insideDataXslUri = false;
         else if (name.equals("create-script"))
           insideCreateScript = false;
         else if (name.equals("script-uri"))
@@ -330,8 +639,12 @@ public class DbLoader
     {
       if (insideTablesUri) // tables xml URI
         properties.setTablesUri(new String(ch, start, length));
+      else if (insideTablesXslUri) // tables xsl URI
+        properties.setTablesXslUri(new String(ch, start, length));
       else if (insideDataUri) // data xml URI
         properties.setDataUri(new String(ch, start, length));
+      else if (insideDataXslUri) // data xsl URI
+        properties.setDataXslUri(new String(ch, start, length));
       else if (insideCreateScript) // create script ("yes" or "no")
         properties.setCreateScript(new String(ch, start, length));
       else if (insideScriptUri) // script URI
@@ -355,21 +668,27 @@ public class DbLoader
     class Properties
     {
       private String tablesUri;
+      private String tablesXslUri;
       private String dataUri;
+      private String dataXslUri;
       private String createScript;
       private String scriptUri;
       private String statementTerminator;
       private ArrayList dbTypeMappings = new ArrayList();
 
       public String getTablesUri() { return tablesUri; }
+      public String getTablesXslUri() { return tablesXslUri; }
       public String getDataUri() { return dataUri; }
+      public String getDataXslUri() { return dataXslUri; }
       public String getCreateScript() { return createScript; }
       public String getScriptUri() { return scriptUri; }
       public String getStatementTerminator() { return statementTerminator; }
       public ArrayList getDbTypeMappings() { return dbTypeMappings; }
 
       public void setTablesUri(String tablesUri) { this.tablesUri = tablesUri; }
+      public void setTablesXslUri(String tablesXslUri) { this.tablesXslUri = tablesXslUri; }
       public void setDataUri(String dataUri) { this.dataUri = dataUri; }
+      public void setDataXslUri(String dataXslUri) { this.dataXslUri = dataXslUri; }
       public void setCreateScript(String createScript) { this.createScript = createScript; }
       public void setScriptUri(String scriptUri) { this.scriptUri = scriptUri; }
       public void setStatementTerminator(String statementTerminator) { this.statementTerminator = statementTerminator; }
@@ -449,345 +768,78 @@ public class DbLoader
     }
   }
 
-  static class TableHandler extends DefaultHandler
+  static class TableHandler implements DocumentHandler
   {
-    private static boolean insideTables = false;
-    private static boolean insideTable = false;
-    private static boolean insideName = false;
-    private static boolean insideType = false;
-    private static boolean insideColumn = false;
-    private static boolean insideParam = false;
-    private static boolean insidePrimaryKey = false;
-
-    static HashMap tables;
-    static Table table;
-    static Column column;
+    private static final int UNSET = -1;
+    private static final int DROP = 0;
+    private static final int CREATE = 1;
+    private static int mode = UNSET;
+    private static StringBuffer stmtBuffer;
 
     public void startDocument ()
     {
-      System.out.print("Parsing " + PropertiesHandler.properties.getTablesUri() + "...");
     }
 
     public void endDocument ()
     {
-      System.out.println("");
+      System.out.println();
     }
 
-    public void startElement (String uri, String name, String qName, Attributes atts)
+    public void startElement (String name, AttributeList atts)
     {
-        if (name.equals("tables"))
+      if (name.equals("statement"))
+      {
+        stmtBuffer = new StringBuffer(1024);
+        String statementType = atts.getValue("type");
+
+        if (mode == UNSET || mode == CREATE && statementType != null && statementType.equals("drop"))
         {
-          insideTables = true;
-          tables = new HashMap();
+          mode = DROP;
+          System.out.print("Dropping tables...");
         }
-        else if (name.equals("table"))
+        else if (mode == UNSET || mode == DROP && statementType != null && statementType.equals("create"))
         {
-          insideTable = true;
-          table = new Table();
+          mode = CREATE;
+          System.out.print("\nCreating tables...");
         }
-        else if (name.equals("name"))
-          insideName = true;
-        else if (name.equals("column"))
-        {
-          insideColumn = true;
-          column = new Column();
-        }
-        else if (name.equals("type"))
-          insideType = true;
-        else if (name.equals("param"))
-          insideParam = true;
-        else if (name.equals("primary-key"))
-          insidePrimaryKey = true;
+      }
     }
 
-    public void endElement (String uri, String name, String qName)
+    public void endElement (String name)
     {
-        if (name.equals("tables"))
-          insideTables = false;
-        else if (name.equals("table"))
+      if (name.equals("statement"))
+      {
+        String statement = stmtBuffer.toString();
+
+        switch (mode)
         {
-          insideTable = false;
-          replaceTable(table);
-          tables.put(table.getName(), table);
+          case DROP:
+            dropTable(statement);
+            break;
+          case CREATE:
+            createTable(statement);
+            break;
+          default:
+            break;
         }
-        else if (name.equals("name"))
-          insideName = false;
-        else if (name.equals("column"))
-        {
-          insideColumn = false;
-          table.addColumn(column);
-        }
-        else if (name.equals("type"))
-          insideType = false;
-        else if (name.equals("param"))
-          insideParam = false;
-        else if (name.equals("primary-key"))
-          insidePrimaryKey = false;
+      }
     }
 
     public void characters (char ch[], int start, int length)
     {
-      // Implicitly inside <tables> and <table>
-      if (insideName && !insideColumn) // table name
-        table.setName(new String(ch, start, length));
-      else if (insideColumn && insideName) // column name
-        column.setName(new String(ch, start, length));
-      else if (insideColumn && insideType) // column type
-      {
-        column.setGenericType(new String(ch, start, length));
-        column.setLocalType(getLocalDataTypeName(new String(ch, start, length)));
-      }
-      else if (insideColumn && insideParam) // column param
-        column.setParam(new String(ch, start, length));
-      else if (insidePrimaryKey) // a primary key
-        table.setPrimaryKey(new String(ch, start, length));
+      stmtBuffer.append(ch, start, length);
     }
 
-    private String getLocalDataTypeName (String genericDataTypeName)
+    public void setDocumentLocator (Locator locator)
     {
-      // Find the type code for this generic type name
-      int dataTypeCode = getJavaSqlType(genericDataTypeName);
-
-      // Find the first local type name matching the type code
-      String localDataTypeName = null;
-
-      try
-      {
-        DatabaseMetaData dbmd = con.getMetaData();
-        ResultSet rs = dbmd.getTypeInfo();
-
-        while (rs.next())
-        {
-          int localDataTypeCode = rs.getInt("DATA_TYPE");
-          //String createParams = rs.getString("CREATE_PARAMS");
-
-          if (dataTypeCode == localDataTypeCode)
-          {
-            try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
-            break;
-          }
-        }
-
-        // If a local data type wasn't found, look in properties file
-        // for a mapped data type name
-        if (localDataTypeName == null)
-        {
-          DatabaseMetaData dbMetaData = con.getMetaData();
-          String dbName = dbMetaData.getDatabaseProductName();
-          String dbVersion = dbMetaData.getDatabaseProductVersion();
-          String driverName = dbMetaData.getDriverName();
-          String driverVersion = dbMetaData.getDriverVersion();
-
-          localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
-
-          if (localDataTypeName == null)
-          {
-            System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
-            System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
-            System.out.println("Exiting...");
-            exit();
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        exit();
-      }
-
-      return localDataTypeName;
     }
 
-    private int getJavaSqlType (String genericDataTypeName)
+    public void processingInstruction (String target, String data)
     {
-      // Find the type code for this generic type name
-      int dataTypeCode = 0;
-
-      if (genericDataTypeName.equalsIgnoreCase("BIT"))
-        dataTypeCode = Types.BIT; // -7
-      else if (genericDataTypeName.equalsIgnoreCase("TINYINT"))
-        dataTypeCode = Types.TINYINT; // -6
-      else if (genericDataTypeName.equalsIgnoreCase("SMALLINT"))
-        dataTypeCode = Types.SMALLINT; // 5
-      else if (genericDataTypeName.equalsIgnoreCase("INTEGER"))
-        dataTypeCode = Types.INTEGER; // 4
-      else if (genericDataTypeName.equalsIgnoreCase("BIGINT"))
-        dataTypeCode = Types.BIGINT; // -5
-
-      else if (genericDataTypeName.equalsIgnoreCase("FLOAT"))
-        dataTypeCode = Types.FLOAT; // 6
-      else if (genericDataTypeName.equalsIgnoreCase("REAL"))
-        dataTypeCode = Types.REAL; // 7
-      else if (genericDataTypeName.equalsIgnoreCase("DOUBLE"))
-        dataTypeCode = Types.DOUBLE; // 8
-
-      else if (genericDataTypeName.equalsIgnoreCase("NUMERIC"))
-        dataTypeCode = Types.NUMERIC; // 2
-      else if (genericDataTypeName.equalsIgnoreCase("DECIMAL"))
-        dataTypeCode = Types.DECIMAL; // 3
-
-      else if (genericDataTypeName.equalsIgnoreCase("CHAR"))
-        dataTypeCode = Types.CHAR; // 1
-      else if (genericDataTypeName.equalsIgnoreCase("VARCHAR"))
-        dataTypeCode = Types.VARCHAR; // 12
-      else if (genericDataTypeName.equalsIgnoreCase("LONGVARCHAR"))
-        dataTypeCode = Types.LONGVARCHAR; // -1
-
-      else if (genericDataTypeName.equalsIgnoreCase("DATE"))
-        dataTypeCode = Types.DATE; // 91
-      else if (genericDataTypeName.equalsIgnoreCase("TIME"))
-        dataTypeCode = Types.TIME; // 92
-      else if (genericDataTypeName.equalsIgnoreCase("TIMESTAMP"))
-        dataTypeCode = Types.TIMESTAMP; // 93
-
-      else if (genericDataTypeName.equalsIgnoreCase("BINARY"))
-        dataTypeCode = Types.BINARY; // -2
-      else if (genericDataTypeName.equalsIgnoreCase("VARBINARY"))
-        dataTypeCode = Types.VARBINARY; // -3
-      else if (genericDataTypeName.equalsIgnoreCase("LONGVARBINARY"))
-        dataTypeCode = Types.LONGVARBINARY;  // -4
-
-      else if (genericDataTypeName.equalsIgnoreCase("NULL"))
-        dataTypeCode = Types.NULL; // 0
-
-      else if (genericDataTypeName.equalsIgnoreCase("OTHER"))
-        dataTypeCode = Types.OTHER; // 1111
-
-      else if (genericDataTypeName.equalsIgnoreCase("JAVA_OBJECT"))
-        dataTypeCode = Types.JAVA_OBJECT; // 2000
-      else if (genericDataTypeName.equalsIgnoreCase("DISTINCT"))
-        dataTypeCode = Types.DISTINCT; // 2001
-      else if (genericDataTypeName.equalsIgnoreCase("STRUCT"))
-        dataTypeCode = Types.STRUCT; // 2002
-
-      else if (genericDataTypeName.equalsIgnoreCase("ARRAY"))
-        dataTypeCode = Types.ARRAY; // 2003
-      else if (genericDataTypeName.equalsIgnoreCase("BLOB"))
-        dataTypeCode = Types.BLOB; // 2004
-      else if (genericDataTypeName.equalsIgnoreCase("CLOB"))
-        dataTypeCode = Types.CLOB; // 2005
-      else if (genericDataTypeName.equalsIgnoreCase("REF"))
-        dataTypeCode = Types.REF; // 2006
-
-      return dataTypeCode;
     }
 
-    private String prepareDropTableStatement (Table table)
+    public void ignorableWhitespace (char[] ch, int start, int length)
     {
-      StringBuffer sb = new StringBuffer("DROP TABLE ");
-      sb.append(table.getName());
-      return sb.toString();
-    }
-
-    private String prepareCreateTableStatement (Table table)
-    {
-      StringBuffer sb = new StringBuffer("CREATE TABLE ");
-      sb.append(table.getName()).append("\n(\n");
-
-      ArrayList columns = table.getColumns();
-      Iterator iterator = columns.iterator();
-
-      while (iterator.hasNext())
-      {
-        Column column = (Column)iterator.next();
-        sb.append(indent).append(column.getName());
-        sb.append(space).append(column.getLocalType());
-
-        String param = column.getParam();
-
-        if (param != null)
-          sb.append("(").append(param).append(")");
-
-        sb.append(",\n");
-      }
-
-      String primaryKey = table.getPrimaryKey();
-
-      if (primaryKey != null)
-        sb.append(indent).append("PRIMARY KEY (").append(primaryKey).append("),\n");
-
-      sb.append(")");
-
-      // Delete comma after last line (kind of sloppy, but it works)
-      sb.deleteCharAt(sb.length() - 3);
-
-      return sb.toString();
-    }
-
-    private void replaceTable (Table table)
-    {
-      System.out.print("...");
-      String dropTableStatement = prepareDropTableStatement(table);
-      String createTableStatement = prepareCreateTableStatement(table);
-      //System.out.println(dropTableStatement);
-      //System.out.println(createTableStatement);
-
-      try
-      {
-        stmt = con.createStatement();
-
-        try { stmt.executeUpdate(dropTableStatement); } catch (SQLException sqle) {/*Table didn't exist*/}
-        stmt.executeUpdate(createTableStatement);
-      }
-      catch (Exception e)
-      {
-        System.err.println(createTableStatement);
-        e.printStackTrace();
-      }
-      finally
-      {
-        try { stmt.close(); } catch (Exception e) { }
-      }
-    }
-
-    class Table
-    {
-      private String name;
-      private ArrayList columns = new ArrayList();
-      private String primaryKey;
-
-      public String getName() { return name; }
-      public ArrayList getColumns() { return columns; }
-      public String getPrimaryKey() { return primaryKey; }
-      public void setName(String name) { this.name = name; }
-      public void setPrimaryKey(String primaryKey) { this.primaryKey = primaryKey; }
-      public void addColumn(Column column) { columns.add(column); }
-
-      public int getSqlType (String columnName)
-      {
-        int type = 0;
-        Iterator iterator = columns.iterator();
-
-        while (iterator.hasNext())
-        {
-          Column column = (Column)iterator.next();
-
-          if (column.getName().equalsIgnoreCase(columnName))
-          {
-            String columnType = column.getGenericType();
-            type = getJavaSqlType(columnType);
-            break;
-          }
-        }
-        return type;
-      }
-    }
-
-    class Column
-    {
-      private String name;
-      private String localType;
-      private String genericType;
-      private String param;
-
-      public String getName() { return name; }
-      public String getLocalType() { return localType; }
-      public String getGenericType() { return genericType; }
-      public String getParam() { return param; }
-      public void setName(String name) { this.name = name; }
-      public void setLocalType(String localType) { this.localType = localType; }
-      public void setGenericType(String genericType) { this.genericType = genericType; }
-      public void setParam(String param) { this.param = param; }
     }
   }
 
@@ -806,7 +858,7 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.print("Parsing " + PropertiesHandler.properties.getDataUri() + "...");
+      System.out.print("Inserting data...");
     }
 
     public void endDocument ()
@@ -946,8 +998,9 @@ public class DbLoader
             {
               value = value.trim(); // portal can't read xml properly without this, don't know why yet
               int valueLength = value.length();
-              TableHandler.Table aTable = (TableHandler.Table)TableHandler.tables.get(table.getName());
-              int javaSqlDataType = aTable.getSqlType(column.getName());
+
+              // Get a java sql data type for column name
+              int javaSqlDataType = getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName());
 
               if (valueLength <= 4000)
               {
@@ -1080,6 +1133,6 @@ public class DbLoader
   private static void exit()
   {
     rdbmService.releaseConnection(con);
-    System.exit(1);
+    System.exit(0);
   }
 }
