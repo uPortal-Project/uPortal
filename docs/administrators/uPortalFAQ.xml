@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE article PUBLIC "-//Norman Walsh//DTD DocBk XML V3.1.7//EN"
-  "http://nwalsh.com/docbook/xml/3.1.7/docbookx.dtd">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+ "http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd" >
 
   <!--
    Author:   Bill Brooks
    Filename: uPortal-FAQ.xml
    Creation: Tue Aug 8 12:00:06 PDT 2000
    Revision: $Revision$ 
-   Language: XML 1.0 (DocBook XML DTD v3.1.7)
-   Purpose: Frequently Asked Questions about JA-SIG uPortal
+   Language: XML 1.0 (DocBook XML DTD v4.1.2)
+   Purpose:  Frequently Asked Questions about JA-SIG uPortal
    $Id$
    -->
 
 <article status="draft" class="techreport">
-  <artheader>
+  <articleinfo>
     <author>
       <firstname>Bill</firstname>
       <surname>Brooks</surname>
@@ -26,7 +26,7 @@
 
      <date>September 21, 2000</date>
 
-     <title>Frequently Asked Questions about JA-SIG's uPortal</title>
+     <title>Frequently Asked Questions about uPortal</title>
   <!--
      <revhistory>
         <revision>
@@ -36,7 +36,7 @@
         </revision>
      </revhistory>
    -->
-  </artheader>
+  </articleinfo>
 
   <sect1>
     <title>FAQ Administration</title>
@@ -49,11 +49,12 @@
           <answer>
              <para>This Freqently Asked Questions (FAQ) list will
              attempt to answer some of the most common questions
-             relating to uPortal.  Although this FAQ contains some
-             technical information, it is best used as an introduction
-             to uPortal and not a comprehensive reference document.
-             See the references section, below, for a comprehensive
-             list of uPortal resources.</para>
+             relating to <productname>uPortal</productname>.  Although
+             this FAQ contains some technical information, it is best
+             used as an introduction to uPortal and not a
+             comprehensive reference document.  See the references
+             section, below, for a comprehensive list of uPortal
+             resources.</para>
           </answer>
        </qandaentry>
        <qandaentry>
@@ -87,8 +88,9 @@
              <para>Where can this FAQ be found on the World-Wide Web?</para>
           </question>
           <answer>
-             <para>This FAQ will eventually be posted on the JA-SIG
-             website, located at <ulink
+             <para>It isn't available now, but this FAQ will
+             eventually be posted on the JA-SIG website, located at
+             <ulink
              url="http://www.ja-sig.org/">http://www.ja-sig.org/</ulink>
              The latest version can always be found in the docs/
              directory of the uPortal CVS repository. See the JA-SIG
@@ -106,11 +108,39 @@
     <qandaset>
        <qandaentry>
           <question>
-             <para>What kind of java expertise is necessary to
-             implement uPortal?</para>
+             <para>What kind of Java expertise would I need to have in
+             order to successfully install and configure
+             <productname>uPortal</productname> for use on my
+             campus?</para>
           </question>
           <answer>
-             <para>Foo.</para>
+             <para>In general, over and above basic familiarity with
+             the Java Language, the standard JDK tools, and a
+             fundamental understanding of distributed and
+             client/server computing, you'll need to be familiar with
+             several of the <ulink
+             url="http://www.javasoft.com/j2ee/overview.html">J2EE</ulink>
+             technologies for enterprise applications. At a
+             <emphasis>minimum</emphasis>, you'll have to be conversant
+             with:
+             <itemizedlist mark="bullet">
+                <listitem>
+                   <para>XML</para>
+                </listitem>
+                <listitem>
+                   <para>Servlets</para>
+                </listitem>
+                <listitem>
+                   <para>JSP</para>
+                </listitem>
+                <listitem>
+                   <para>JDBC</para>
+                </listitem>
+             </itemizedlist>
+             In addition, if you want to use a directory service for
+             authentication and/or authorization of users to the
+             portal, you'll have to be familiar with JNDI. 
+             </para>
           </answer>
        </qandaentry>
 
@@ -119,7 +149,13 @@
              <para>Will uPortal run on all platforms?</para>
           </question>
           <answer>
-             <para>Bar.</para>
+             <para><productname>uPortal</productname> will run on any
+             platform that has a Java 2 implementation available for
+             it. JA-SIG members are running
+             <productname>uPortal</productname> for development and
+             deployment purposes on a number of different platforms,
+             including Microsoft Windows, Solaris, Linux on 3
+             different architectures and MacOS X.</para>
           </answer>
        </qandaentry>
 
@@ -128,7 +164,12 @@
              <para>What differentiates uPortal from other portal solutions?</para>
           </question>
           <answer>
-             <para>Baz.</para>
+             <para>uPortal is focused on the requirements of higher
+             education, whereas other products are mostly focused on
+             the requirements of large corporations. uPortal is free
+             to Universities, most commercial portal "solutions" cost
+             upwards of $50,000 per year for a typical campus'
+             license.</para>
           </answer>
        </qandaentry>
 
@@ -137,7 +178,13 @@
              <para>Does uPortal support single-sign on?</para>
           </question>
           <answer>
-             <para>Baz.</para>
+             <para>Yes. The <productname>uPortal</productname>
+             framework has an authentication system that explicitly
+             supports the notion of single sign-on, but as yet there
+             aren't a lot of channels that ship with uPortal that take
+             advantage of it. Of course, any campus that wants to
+             write their own channels that will defer to the portal
+             for authentication are certainly able to do so.</para>
           </answer>
        </qandaentry>
 
@@ -146,8 +193,14 @@
              <para>Does uPortal support LDAP authentication?</para>
           </question>
           <answer>
-             <para>Baz.</para>
+             <para>Yes. The problem, however, is that there are dozens
+             of possible ways to do an LDAP authentication for uPortal
+             and hence what is available now may not be useful for
+             your campus. But there are a few Universities now who are
+             using uPortal in conjunction with an LDAP server to
+             authenticate users. </para>
           </answer>
+
        </qandaentry>
 
        <qandaentry>
@@ -199,7 +252,22 @@
              develop content and/or applications for use with uPortal?</para>
           </question>
           <answer>
-             <para>Foo.</para>
+             <para>For simple content provision, you only have to be
+             familiar with how to produce an XML document. One of the
+             defined kinds of channels for use with uPortal is an RSS
+             (Rich Site Summary) channel, which is the same format
+             that Netscape uses for their Internet portal. If you
+             create an <ulink
+             url="http://my.netscape.com/publish/">XML document which
+             adheres to this standard</ulink>, the uPortal framework
+             will handle formatting and presenting the output for
+             you.</para>
+ 
+             <para>To develop applications that can operate with the
+             portal, you have to be a reasonably experienced software
+             developer and Java programmer who is familiar with the
+             J2EE APIs (see the question above on uPortal deployment,
+             above). </para>
           </answer>
        </qandaentry>
 
@@ -211,15 +279,6 @@
           </question>
           <answer>
              <para>Bar.</para>
-          </answer>
-       </qandaentry>
-
-       <qandaentry>
-          <question>
-             <para></para>
-          </question>
-          <answer>
-             <para>Baz.</para>
           </answer>
        </qandaentry>
 
