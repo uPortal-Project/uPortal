@@ -44,7 +44,6 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
-import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.UtilitiesBean;
@@ -70,8 +69,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
   private String channelName = "Log in...";
-  private String media;
-    private MediaManager mm;
   private String attemptedUserName="";
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CLogin/CLogin.ssl");
   private boolean bAuthenticated = false;
@@ -82,7 +79,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
   public CLogin()
   {
-      mm=new MediaManager();
   }
 
   public void setPortalControlStructures(PortalControlStructures pcs)
@@ -119,8 +115,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-
-    media = mm.getMedia(runtimeData.getBrowserInfo());
     attemptedUserName = runtimeData.getParameter("userName");
   }
 
@@ -162,7 +156,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
     try
     {
-      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, media);
+      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getBrowserInfo());
     }
     catch (Exception e)
     {
@@ -181,7 +175,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 	}
 	StringBuffer sbKey = new StringBuffer(1024);
 	sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
-	sbKey.append("media:").append(media).append(", ");
+	sbKey.append("browserInfo:").append(runtimeData.getBrowserInfo().toString()).append(", ");
 	sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
 	sbKey.append("bAuthorizationAttemptFailed:").append(bAuthorizationAttemptFailed).append(", ");
 	sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
