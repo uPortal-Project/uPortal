@@ -43,8 +43,6 @@ package org.jasig.portal.lang;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version "$Revision$"
- * 
- * @invariant null != System.err
  **/
 public interface ChainedThrowable
 {

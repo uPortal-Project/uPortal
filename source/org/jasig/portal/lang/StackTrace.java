@@ -51,8 +51,6 @@ import java.io.StringWriter;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version "$Revision$"
- * 
- * @invariant null != RCS_ID
  **/
 public final class StackTrace
 {
@@ -77,10 +75,6 @@ public final class StackTrace
      * be returned.
      *
      * @return name of the source file
-     *
-     * @pre null != mFileName
-     *
-     * @post $result == mFileName
      **/
     public final String getFileName()
     {
@@ -102,10 +96,6 @@ public final class StackTrace
      * able to identify the calling class.
      *
      * @return name of the class
-     *
-     * @pre null != mClassName
-     *
-     * @post $result == mClassName
      **/
     public final String getClassName()
     {
@@ -117,10 +107,6 @@ public final class StackTrace
      * able to identify the calling method name.
      *
      * @return name of the method
-     *
-     * @pre null != mMethodName
-     *
-     * @post $result == mMethodName
      **/
     public final String getMethodName()
     {
@@ -134,10 +120,6 @@ public final class StackTrace
      * native, a -2 is returned.
      *
      * @return source code line number, or -1 or -2
-     *
-     * @pre NATIVE_METHOD <= mLineNumber
-     *
-     * @post $result == mLineNumber
      **/
     public final int getLineNumber()
     {
@@ -150,10 +132,6 @@ public final class StackTrace
      *
      * @return <code>true</code> is native method; otherwise
      * <code>false</code>
-     *
-     * @pre NATIVE_METHOD <= mLineNumber
-     *
-     * @post $result == (NATIVE_METHOD == mLineNumber)
      **/
     public final boolean isNativeMethod()
     {
@@ -175,14 +153,6 @@ public final class StackTrace
      *
      * @throws IllegalArgumentException if stackTrace is an empty
      * string
-     *
-     * @pre null != throwable
-     * @pre null != stackTrace
-     *
-     * @post {
-     *     for( int i = 0; i < $result.length; i++ )
-     *         $assert( null != $result[i] );
-     *     }
      **/
     public static final StackTrace[] getStackTrace(
         Throwable throwable
@@ -262,14 +232,6 @@ public final class StackTrace
      * @throws NullPointerException if stackTrace is <code>null</code>
      *
      * @throws IllegalArgumentException if stackTrace is an empty string
-     *
-     * @pre null != throwable
-     * @pre null != stackTrace
-     *
-     * @post {
-     *     for( int i = 0; i < $result.length; i++ )
-     *         $assert( null != $result[i] );
-     *     }
      **/
     static final StackTrace[] getStackTrace(
         Throwable throwable,
@@ -585,13 +547,6 @@ public final class StackTrace
      * </ul>
      *
      * @return string presentation of the stack frame.
-     *
-     * @pre null != mFileName
-     * @pre null != mClassName
-     * @pre null != mMethodName
-     * @pre -2 <= mLineNumber
-     *
-     * @post null != $result
      **/
     public final String toString()
     {
@@ -634,9 +589,11 @@ public final class StackTrace
     }
 
     /**
-         * Returns a
-     * @param elements
-     * @return
+     * Returns a string representation of the stack trace elements.
+     *
+     * @param elements stack trace elements to stringify
+     *
+     * @return string representation of the stack trace array 
      **/
     public static final String toString(
         StackTrace[] elements
@@ -682,13 +639,6 @@ public final class StackTrace
      * @return <code>true</code> if the specified object is another
      * <tt>StackTrace</tt> instance representing the same
      * execution point as this instance; otherwise <code>false</code>
-     *
-     * @pre null != mFileName
-     * @pre null != mClassName
-     * @pre null != mMethodName
-     * @pre -2 <= mLineNumber
-     *
-     * @post null != mFileName
      **/
     public boolean equals( Object obj )
     {
@@ -733,13 +683,6 @@ public final class StackTrace
      * Returns a hash code value for this stack trace element.
      *
      * @return hash code value
-     *
-     * @pre null != mFileName
-     * @pre null != mClassName
-     * @pre null != mMethodName
-     * @pre -2 <= mLineNumber
-     *
-     * @post null != mFileName
      **/
     public int hashCode()
     {
@@ -1006,10 +949,6 @@ public final class StackTrace
          * stack trace.
          *
          * @param stackTrace stack trace to be parsed
-         *
-         * @pre null != stackTrace
-         *
-         * @post null != mStackTrace
          **/
         private ParseState( String stackTrace )
         {

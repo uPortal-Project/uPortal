@@ -43,8 +43,6 @@ package org.jasig.portal.lang;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  * 
  * @version $Revision$
- * 
- * @invariant null != RCS_ID
  **/
 public final class TypeConverter
 {
@@ -65,10 +63,6 @@ public final class TypeConverter
      *
      * @return canonical string representation of the
      * <code>boolean</code> value
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( boolean value )
     {
@@ -105,10 +99,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if value is (ignoring case)
      * neither <code>"true"</code>, nor <code>"false"</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final boolean toBoolean( String value )
     {
@@ -154,10 +144,6 @@ public final class TypeConverter
      * @param value <code>byte</code> value to be converted
      *
      * @return string respresentation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( byte value )
     {
@@ -176,10 +162,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if argument is not a parseable
      * <code>byte</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final byte toByte( String value )
     {
@@ -215,10 +197,6 @@ public final class TypeConverter
      * @param value <code>char</code> value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( char value )
     {
@@ -234,10 +212,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if <code>value</code> is
      * <code>null</code> or of zero length
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final char toChar( String value )
     {
@@ -273,10 +247,6 @@ public final class TypeConverter
      * @param value <code>short</code> value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( short value )
     {
@@ -295,10 +265,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if argument is not a parseable
      * <code>short</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final short toShort( String value )
     {
@@ -334,10 +300,6 @@ public final class TypeConverter
      * @param value <code>int</code> >value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( int value )
     {
@@ -356,10 +318,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if string does not contain a
      * parseable <code>int</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final int toInt( String value )
     {
@@ -396,10 +354,6 @@ public final class TypeConverter
      *
      * @return <code>true</code> if argument is an <code>int</code>;
      * otherwise <code>false</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final boolean isInt( String value )
     {
@@ -424,10 +378,6 @@ public final class TypeConverter
      * @param value <code>long</code> value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( long value )
     {
@@ -451,10 +401,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if string does not contain a
      * parseable <code>long</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final long toLong( String value )
     {
@@ -490,10 +436,6 @@ public final class TypeConverter
      * @param value <code>float</code> value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( float value )
     {
@@ -511,10 +453,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if string does not contain a
      * parseable <code>long</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final float toFloat( String value )
     {
@@ -568,10 +506,6 @@ public final class TypeConverter
      * @param value <code>double</code> value to be converted
      *
      * @return string representation of the argument
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toString( double value )
     {
@@ -589,10 +523,6 @@ public final class TypeConverter
      *
      * @throws IllegalArgumentException if string does not contain a
      * parseable <code>long</code>
-     *
-     * @pre null != value
-     *
-     * @post null != RCS_ID
      **/
     public static final double toDouble( String value )
     {
@@ -646,10 +576,6 @@ public final class TypeConverter
      * @param values <code>byte</code> array to be converted
      *
      * @return hexidecimal string representation of argument
-     *
-     * @pre null != values
-     *
-     * @post null != $result
      **/
     public static final String toHexString( byte[] values )
     {
@@ -670,10 +596,6 @@ public final class TypeConverter
      * @param value long to be converted
      *
      * @return string representation of the long value
-     *
-     * @pre null != RCS_ID
-     *
-     * @post null != $result
      **/
     public static final String toHexString( long value )
     {

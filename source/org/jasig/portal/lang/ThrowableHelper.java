@@ -201,11 +201,6 @@ public final class ThrowableHelper
      * @param error error property name of the error condition
      *
      * @return internationalized error message
-     *
-     * @pre null != client
-     * @pre null != error
-     *
-     * @post null != $result
      **/
     public static final String getInternationalizedMessage(
         Class client,
@@ -235,12 +230,6 @@ public final class ThrowableHelper
      *
      * @throws NullPointerException if client, or error parameters are
      * null
-     *
-     * @pre null != client
-     * @pre null != error
-     * @pre null == objects || null != objects
-     *
-     * @post null != $result
      **/
     public static final String getInternationalizedMessage(
         Class client,
@@ -294,10 +283,6 @@ public final class ThrowableHelper
      * @param i18nMessage internationalized error message
      *
      * @return localized error message, or <code>null</code>
-     *
-     * @pre null != i18nMessage || null == i18nMessage
-     *
-     * @post (null == i18nMessage) == (null == $result)
      **/
     public static final String getLocalizedMessage(
         String i18nMessage
@@ -359,10 +344,6 @@ public final class ThrowableHelper
      * @param locale locale to translate the message
      *
      * @return localized error message, or <code>null</code>
-     *
-     * @pre null != i18nMessage || null == i18nMessage
-     *
-     * @post (null == i18nMessage) == (null == $result)
      **/
     public static final String getLocalizedMessage(
         String i18nMessage,
@@ -432,12 +413,6 @@ public final class ThrowableHelper
      * @param throwable throwable whose cause should be set
      *
      * @param cause throwable which caused the throwable condition
-     *
-     * @pre null != throwable
-     * @pre null != cause
-     *
-     * @post null != throwable
-     * @post null != cause
      **/
     public static final void initCause(
         Throwable throwable,

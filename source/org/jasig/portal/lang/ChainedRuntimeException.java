@@ -49,8 +49,6 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version "$Revision$"
- * 
- * @invariant null != System.err
  **/
 public class ChainedRuntimeException
     extends RuntimeException
@@ -64,14 +62,6 @@ public class ChainedRuntimeException
 
     /**
      * Constructs an exception with no message and no cause.
-     *
-     * @param message exception message
-     *
-     * @pre null == mCause
-     * @pre null == mStackTrace
-     *
-     * @post null == mCause
-     * @post null == mStackTrace
      **/
     public ChainedRuntimeException()
     {
@@ -83,12 +73,6 @@ public class ChainedRuntimeException
      * message should be an internationalized message.
      *
      * @param message exception message
-     *
-     * @pre null == mCause
-     * @pre null == mStackTrace
-     *
-     * @post null == mCause
-     * @post null == mStackTrace
      **/
     public ChainedRuntimeException( String message )
     {
@@ -101,12 +85,6 @@ public class ChainedRuntimeException
      * cause.
      *
      * @param cause underlying cause of the exception
-     *
-     * @pre null == mCause
-     * @pre null == mStackTrace
-     *
-     * @post cause == mCause
-     * @post null == mStackTrace
      **/
     public ChainedRuntimeException( Throwable cause )
     {
@@ -122,12 +100,6 @@ public class ChainedRuntimeException
      * @param message exception message
      *
      * @param cause underlying cause of the exception
-     *
-     * @pre null == mCause
-     * @pre null == mStackTrace
-     *
-     * @post cause == mCause
-     * @post null == mStackTrace
      **/
     public ChainedRuntimeException( String message, Throwable cause )
     {
@@ -145,10 +117,6 @@ public class ChainedRuntimeException
      *
      * @return throwable associated with this object, or
      * <code>null</code> if not set
-     *
-     * @pre null == mCause || null != mCause
-     *
-     * @post mCause == $result
      **/
     public Throwable getCause()
     {
@@ -160,10 +128,6 @@ public class ChainedRuntimeException
      * message.
      *
      * @return localized error message
-     *
-     * @pre null == getMessage() || null != getMessage()
-     *
-     * @post null == $result || null != $result
      **/
     public String getLocalizedMessage()
     {
@@ -283,11 +247,6 @@ public class ChainedRuntimeException
      * class LowLevelException extends Exception {
      * }
      * </pre>
-     *
-     * @pre null == mCause || null != mCause
-     * @pre null != getOurStackTrace()
-     *
-     * @post null != System.err
      **/
     public void printStackTrace()
     {
@@ -301,11 +260,6 @@ public class ChainedRuntimeException
      * @param stream <code>PrintStream</code> to use for output
      *
      * @throws NullPointerException if stream is <code>null</code>
-     *
-     * @pre null != stream
-     * @pre null != getOurStackTrace()
-     *
-     * @post null != stream
      **/
     public void printStackTrace(
         PrintStream stream
@@ -365,11 +319,6 @@ public class ChainedRuntimeException
      * @param stream <code>PrintWriter</code> to use for output
      *
      * @throws NullPointerException if stream is <code>null</code>
-     *
-     * @pre null != stream
-     * @pre null != getOurStackTrace()
-     *
-     * @post null != stream
      **/
     public void printStackTrace(
         PrintWriter stream

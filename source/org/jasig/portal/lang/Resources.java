@@ -49,8 +49,6 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version "$Revision$"
- * 
- * @invariant null != System.err
  **/
 public final class Resources
 {
