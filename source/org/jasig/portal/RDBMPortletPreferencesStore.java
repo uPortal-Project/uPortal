@@ -151,25 +151,16 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     
                     if (pref.isReadOnly()) {
                         insertPrefNamePstmt.setString(3, READ_ONLY_TRUE);
-                    }
-                    else {
+                    } else {
                         insertPrefNamePstmt.setString(3, READ_ONLY_FALSE);
                     }
                     
                     //Use the list of removed ids to re-use IDs before generating new ones
                     if (prefIds.size() > 0) {
                         prefId = ((Integer)prefIds.removeLast()).intValue();
-                    }
-                    else {
+                    } else {
                         final ICounterStore counterStore = CounterStoreFactory.getCounterStoreImpl();
-                        
-                        try {
-                            prefId = counterStore.getIncrementIntegerId(UP_PORTLET_PREFERENCE_VALUE);
-                        }
-                        catch (Exception e) {
-                            counterStore.createCounter(UP_PORTLET_PREFERENCE_VALUE);
-                            prefId = counterStore.getIncrementIntegerId(UP_PORTLET_PREFERENCE_VALUE);
-                        }
+                        prefId = counterStore.getIncrementIntegerId(UP_PORTLET_PREFERENCE_VALUE);
                     }
                     
                     insertPrefNamePstmt.setInt(4, prefId);
