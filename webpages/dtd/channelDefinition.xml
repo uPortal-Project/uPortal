@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="H:\cvs_co\portal\webpages\stylesheets\org\jasig\portal\channels\CPublisher\CPublisher.xsl"?>
+<!DOCTYPE channelDef SYSTEM "channelDefinition.dtd">
 <channelDef>
 	<description>
    	This is a channel for rendering local or remote RSS files
