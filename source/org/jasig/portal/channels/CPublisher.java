@@ -102,6 +102,15 @@ public class CPublisher implements IPrivilegedChannel
   private Vector vRoles = null;
   private Vector vCats = null;
   private String chanName = "New Channel";
+  
+  //default settings for channel controls
+  private String timeout = "5000";
+  private String priority = "1";
+  private String minimized = "false";
+  private String editable = "false";
+  private String hasHelp = "false";
+  private String removable = "true";
+  private String detachable = "true";
 
 
   /** Construct a CPublisher.
@@ -124,7 +133,7 @@ public class CPublisher implements IPrivilegedChannel
         v.addElement("action");
         v.addElement("currentStep");
         v.addElement("numSteps");
-        v.addElement("ssl");
+        //v.addElement("ssl");
         v.addElement("class");
         v.addElement("chanName");
         return v;
@@ -174,7 +183,8 @@ public class CPublisher implements IPrivilegedChannel
     if (channelTypes==null) channelTypes = chanReg.getTypesXML(role);
 
     action = runtimeData.getParameter ("action");
-    //System.out.println("action: "+ action);
+    if (runtimeData.getParameter("currentStep")!=null) currentStep = runtimeData.getParameter("currentStep");
+
     if (action != null)
     {
       if (action.equals ("choose"))
@@ -265,7 +275,6 @@ public class CPublisher implements IPrivilegedChannel
     try{
         org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
         parser.parse(UtilitiesBean.fixURI(declURI));
-        //System.out.println("declURI: "+ UtilitiesBean.fixURI(declURI));
         channelDecl = parser.getDocument();
     }
     catch (Exception e) {}
@@ -275,7 +284,7 @@ public class CPublisher implements IPrivilegedChannel
   {
     mode = PUBLISH;
     if (hParams==null) hParams = new Hashtable();
-    currentStep = runtimeData.getParameter("currentStep");
+    //currentStep = runtimeData.getParameter("currentStep");
     if(numSteps==0) numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
     if(totSteps==0) totSteps = numSteps + EXTRA;
     Enumeration e = runtimeData.getParameterNames();
@@ -291,29 +300,15 @@ public class CPublisher implements IPrivilegedChannel
             mode = CATS;
             currentStep = Integer.toString(i+1);
         }
-        else if(i == numSteps+1){
-            mode = NAME;
-            //specialStep = "name";
-            currentStep = Integer.toString(i+1);
-        }
-        else if(i == numSteps + 2) {
-            mode = ROLES;
-            currentStep = Integer.toString(i+1);
-        }
         else {
             publishChannel();
-            specialStep = "end";
+            currentStep = "end";
         }
-
-    //System.out.println("numSteps: "+ numSteps);
-    //System.out.println("currentStep: "+ currentStep);
 
     while(e.hasMoreElements()) {
         String s = (String)e.nextElement();
 
             if (runtimeData.getParameter(s)!=null) {
-                //System.out.println("adding param: "+ s);
-                //System.out.println("adding param value: "+ runtimeData.getParameter(s));
             hParams.put(s, runtimeData.getParameter(s));
             }
     }
@@ -360,19 +355,24 @@ public class CPublisher implements IPrivilegedChannel
 
   private void preparePublishCats ()
   {
-    mode = PUBLISH;
+    mode = ROLES;
+    int i = Integer.parseInt(currentStep);
+    currentStep = Integer.toString(i+1);
     catID = runtimeData.getParameterValues("cat");
   }
   
   private void preparePublishRoles ()
   {
-    mode = PUBLISH;
+    mode = NAME;
+    int i = Integer.parseInt(currentStep);
+    currentStep = Integer.toString(i+1);
     vRoles = new Vector(Arrays.asList(runtimeData.getParameterValues("role")));
   }
 
   private void preparePublishName ()
   {
     mode = PUBLISH;
+    //currentStep = "end";
     chanName = runtimeData.getParameter("chanName");
   }
   
