@@ -152,31 +152,21 @@ public class DBImpl implements IDBImpl
   }
   protected static final void createChannelNodeParameters(DocumentImpl doc, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
   {
-            String chanParmNM = rs.getString("CHAN_PARM_NM");
-            if (rs.wasNull()) {
-              return;
-            }
-            String chanHDInd = rs.getString("CHAN_H_D_IND");
-            String chanParmVal = rs.getString("CHAN_PARM_VAL");
+    String chanParmNM = rs.getString("CHAN_PARM_NM");
+    if (rs.wasNull()) {
+      return;
+    }
 
-            if (chanHDInd.equals("H")) {
-              channel.setAttribute(chanParmNM, chanParmVal);
-              String override = rs.getString("CHAN_PARM_OVRD");
-              if (override != null && override.equals("N")) {
-                system.setAttribute("H"+chanParmNM, "");
-              }
-            } else if (chanHDInd.equals("D")) {
-              Element parameter = doc.createElement("parameter");
-              parameter.setAttribute("name", chanParmNM);
-              parameter.setAttribute("value", chanParmVal);
-              String override = rs.getString("CHAN_PARM_OVRD");
-              if (override != null && override.equals("N")) {
-                system.setAttribute("D"+chanParmNM, "");
-              }
-              channel.appendChild(parameter);
-            } else {
-              throw new SQLException("Invalid value for CHAN_H_D_IND for channel " + channel.getAttribute("chanID"));
-            }
+    String chanParmVal = rs.getString("CHAN_PARM_VAL");
+
+    Element parameter = doc.createElement("parameter");
+    parameter.setAttribute("name", chanParmNM);
+    parameter.setAttribute("value", chanParmVal);
+    String override = rs.getString("CHAN_PARM_OVRD");
+    if (override != null && override.equals("N")) {
+      system.setAttribute("D"+chanParmNM, "");
+    }
+    channel.appendChild(parameter);
   }
 
   protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
@@ -289,22 +279,13 @@ public class DBImpl implements IDBImpl
     String paramName = rs.getString("STRUCT_PARM_NM");
 
     if (paramName != null) {
-      String foldHDInd = rs.getString("STRUCT_H_D_IND");
       String paramValue = rs.getString("STRUCT_PARM_VAL");
       if (chanId == 0) { // Folder
         structure.setAttribute(paramName, paramValue);
       } else { // Channel
-        if (foldHDInd.equals("H")) {
-          if (!system.hasAttribute("H" + paramName)) {
-            structure.setAttribute(paramName, paramValue);
-          }
-        } else if (foldHDInd.equals("D")) {
           if (!system.hasAttribute("D" + paramName)) {
             parameter.setAttribute(paramName, paramValue);
           }
-        } else {
-          throw new SQLException("Invalid value ('" + foldHDInd + "') for PARAM_H_D_IND for channel ");
-        }
       }
     }
   }
@@ -551,8 +532,8 @@ public class DBImpl implements IDBImpl
           if (system != null && system.hasAttribute(structHDInd + nodeName)) {
             if (DEBUG > 1) System.err.println("Not saving channel defined header value " + nodeName);
           } else {
-            sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
-              userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nm.item(i).getNodeValue() + "','" + structHDInd + "')";
+            sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) VALUES ("+
+              userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nm.item(i).getNodeValue() + "')";
             Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
             stmt.executeUpdate(sQuery);
           }
@@ -572,8 +553,8 @@ public class DBImpl implements IDBImpl
               if (system.hasAttribute(structHDInd + nodeName)) {
                 if (DEBUG > 1) System.err.println("Not saving channel defined parameter value " + nodeName);
               } else {
-                sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
-                  userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "','" + structHDInd + "')";
+                sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) VALUES ("+
+                  userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "')";
                 Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
                 stmt.executeUpdate(sQuery);
               }
@@ -699,8 +680,8 @@ public class DBImpl implements IDBImpl
               String nodeName = nm.item(0).getNodeName();
               String nodeValue = nm.item(0).getNodeValue();
               if (DEBUG > 1) System.err.println("D" +  nodeName + "=" + nodeValue);
-              sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_H_D_IND, CHAN_PARM_OVRD) VALUES ("+
-               id + ",'" + nodeName + "','" + nodeValue + "','D','N')";
+              sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES ("+
+               id + ",'" + nodeName + "','" + nodeValue + "','N')";
               Logger.log(Logger.DEBUG, "DBImpl::addChannel()" + sInsert);
               stmt.executeUpdate(sInsert);
             }
