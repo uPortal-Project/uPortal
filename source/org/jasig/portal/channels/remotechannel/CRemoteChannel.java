@@ -47,7 +47,6 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.*;
 import org.jasig.portal.security.provider.*;
-import org.jasig.portal.channels.remotechannel.*;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.net.URL;
@@ -69,6 +68,7 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
   protected String instanceId = null;
   protected static final String SSL_LOCATION = "CRemoteChannel.ssl";
   protected String xslUriForKey = null;
+  protected boolean receivedEvent = false;
 
 
   public void setStaticData(ChannelStaticData sd) throws PortalException {
@@ -97,6 +97,11 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
 
   public void receiveEvent(PortalEvent ev) {
     try {
+      // Pass the portal event to the remote channel
+      rc.receiveEvent(instanceId, ev);
+      
+      // For session done and unsubscribe events, logout and
+      // and release remote channel respectively
       if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
         rc.logout();
       } else if (ev.getEventNumber() == PortalEvent.UNSUBSCRIBE) {
@@ -105,9 +110,11 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
     } catch (RemoteException re) {
       // Do nothing
     }
+    receivedEvent = true;
   }
 
   public void renderXML(ContentHandler out) throws PortalException {
+    System.out.println("Rendering remote channel...");
     // Set up arguments to renderChannel()
     BrowserInfo bi = runtimeData.getBrowserInfo();
     Map headers = bi.getHeaders();
@@ -198,10 +205,15 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
   }
 
   /**
-   * Return <code>true</code> when no runtime parameters are sent to the
-   * channel, otherwise <code>false</code>
+   * Return <code>true</code> when we have not just received an event
+   * and no runtime parameters are sent to the channel, 
+   * otherwise <code>false</code>.  In other words, cache the content
+   * in all cases except for when a user clicks either a channel button
+   * or a link or form button within the channel.
    */
   public boolean isCacheValid(Object validity) {
-    return runtimeData.size() == 0;
+    boolean cacheValid = !receivedEvent && runtimeData.size() == 0;
+    receivedEvent = false;
+    return cacheValid;
   }
 }
