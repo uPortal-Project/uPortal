@@ -98,13 +98,18 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
         if ( parameters != null && !parameters.isEmpty() ) {
-         url.append("?");
+         
          Iterator names = parameters.keySet().iterator();
+         boolean firstValue = true;;
          while (names.hasNext()) {
+         	if ( firstValue ) {
+			   url.append("?");
+			   firstValue = false;	
+         	} else
+         	   url.append("&");
             String name = (String)names.next();
             Object value = parameters.get(name);
             url.append(name).append("=").append(value.toString());
-            url.append("&"); // Need to add logic to add this the last time though only
          }
         } 
         return url.toString();
