@@ -89,7 +89,10 @@ import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
@@ -113,6 +116,17 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     private static ChannelCacheKey instanceCacheKey;
     
     private static final String uniqueContainerName = "Pluto-in-uPortal";
+    
+    /**
+     * Holds the String "password" as the name of the attribute a portlet
+     * can specify in the portlet.xml to request from the portal. The
+     * password attribute corresponds to a user's cached password. If
+     * the users password is being stored in memory by a caching
+     * security context the adapter will consult the cache to fill the
+     * request for the attribute. If the user's password is not cached
+     * null will be set for the attributes value.
+     */
+    public static final String PASSWORD_USER_ATRB = "password";
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
@@ -220,7 +234,19 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
                         UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();
                         String attName = userAttribute.getName();
-                        String attValue = (String)person.getAttribute(attName);
+                        String attValue = null;
+                        
+                        attValue = (String)person.getAttribute(attName);
+
+                        if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_USER_ATRB)) {
+                            try {
+                                attValue = this.getPassword(person);
+                            }
+                            catch (Exception e) {
+                                //Don't really care about any exceptions, just log them
+                                LogService.log(LogService.INFO, "CPortletAdapter::initPortletWindow() - Error getting password from cache.", e);
+                            }
+                        }
                         userInfo.put(attName, attValue);
                     }
                     cd.setUserInfo(userInfo);
@@ -678,4 +704,42 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
         }
     }
+    
+    /**
+     * Retrieves the users cached credentials
+     *
+     * @param p the IPerson object of the person of whose credentials is being looked for
+     * @return the users cached password
+     */
+    private String getPassword (IPerson p) throws Exception {
+        String sPassword = null;
+        try {
+            ISecurityContext ic = (ISecurityContext) p.getSecurityContext();
+            IOpaqueCredentials oc = ic.getOpaqueCredentials();
+            
+            if (oc instanceof NotSoOpaqueCredentials) {
+                NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)oc;
+                sPassword = nsoc.getCredentials();
+            }
+
+            // If still no password, loop through subcontexts to find cached credentials
+            if (sPassword == null) {
+                java.util.Enumeration en = ic.getSubContexts();
+                
+                while (en.hasMoreElements()) {
+                    ISecurityContext sctx = (ISecurityContext)en.nextElement();
+                    IOpaqueCredentials soc = sctx.getOpaqueCredentials();
+                    
+                    if (soc instanceof NotSoOpaqueCredentials) {
+                        NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)soc;
+                        sPassword = nsoc.getCredentials();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        
+        return sPassword;
+    }      
 }
