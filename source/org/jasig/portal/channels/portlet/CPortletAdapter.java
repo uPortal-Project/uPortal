@@ -48,12 +48,15 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
+import org.apache.pluto.core.InternalActionResponse;
+import org.apache.pluto.factory.PortletObjectAccess;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
@@ -76,9 +79,12 @@ import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
+import org.jasig.portal.container.services.information.DynamicInformationProviderImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
+import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.StoredServletResponseImpl;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
@@ -211,6 +217,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
 			portletWindow.setChannelRuntimeData(rd);
+            portletWindow.setHttpServletRequest(pcs.getHttpServletRequest());
             cd.setPortletWindow(portletWindow);
                 
             // As the container to load the portlet
@@ -247,50 +254,57 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
-        DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
-        PortletActionProvider pap = dip.getPortletActionProvider(cd.getPortletWindow());
         
-        switch (ev.getEventNumber()) {
+        try {
+            PortletContainerServices.prepare(uniqueContainerName);
             
-            // Detect portlet mode changes   
-                 
-            case PortalEvent.EDIT_BUTTON_EVENT:
-                pap.changePortletMode(PortletMode.EDIT);
-                break;
-            case PortalEvent.HELP_BUTTON_EVENT:
-                pap.changePortletMode(PortletMode.HELP);
-                break;
-            case PortalEvent.ABOUT_BUTTON_EVENT:
-                // We might want to consider a custom ABOUT mode here
-                //pap.changePortletMode(new PortletMode("ABOUT"));
-                break;
+            DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+            PortletActionProvider pap = dip.getPortletActionProvider(cd.getPortletWindow());
+            
+            switch (ev.getEventNumber()) {
                 
-            // Detect portlet window state changes
-            
-            case PortalEvent.DETACH_BUTTON_EVENT:
-                // Maybe we want to consider a custom window state here or used MAXIMIZED
-                //pap.changePortletWindowState(new WindowState("DETACHED"));
-                break;
-            
-            // Detect end of session or portlet removed from layout
-            
-            case PortalEvent.SESSION_DONE:
-            case PortalEvent.UNSUBSCRIBE:
-                // For both SESSION_DONE and UNSUBSCRIBE, we might want to
-                // release resources here if we need to
-                // 
-                break;
+                // Detect portlet mode changes   
+                     
+                case PortalEvent.EDIT_BUTTON_EVENT:
+                    pap.changePortletMode(PortletMode.EDIT);
+                    break;
+                case PortalEvent.HELP_BUTTON_EVENT:
+                    pap.changePortletMode(PortletMode.HELP);
+                    break;
+                case PortalEvent.ABOUT_BUTTON_EVENT:
+                    // We might want to consider a custom ABOUT mode here
+                    //pap.changePortletMode(new PortletMode("ABOUT"));
+                    break;
+                    
+                // Detect portlet window state changes
                 
-            default:
-                break;
-        }
-               
-        if (channelState != null) {
-            channelState.setPortalEvent(ev);
-            if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
-                channelStateMap.remove(uid); // Clean up
+                case PortalEvent.DETACH_BUTTON_EVENT:
+                    // Maybe we want to consider a custom window state here or used MAXIMIZED
+                    //pap.changePortletWindowState(new WindowState("DETACHED"));
+                    break;
+                
+                // Detect end of session or portlet removed from layout
+                
+                case PortalEvent.SESSION_DONE:
+                case PortalEvent.UNSUBSCRIBE:
+                    // For both SESSION_DONE and UNSUBSCRIBE, we might want to
+                    // release resources here if we need to
+                    // 
+                    break;
+                    
+                default:
+                    break;
             }
-        }        
+                   
+            if (channelState != null) {
+                channelState.setPortalEvent(ev);
+                if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
+                    channelStateMap.remove(uid); // Clean up
+                }
+            }
+        } finally {
+            PortletContainerServices.release();     
+        }
     }
 
     /**
@@ -332,19 +346,45 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
-        // Process action if this is the targeted channel
-        if (rd.isTargeted() && rd.getParameters().size() > 0) {
-            try {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
-                HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+        
+        try {
+            PortletContainerServices.prepare(uniqueContainerName);
+            
+            if (cd.isPortletWindowInitialized()) {
+                // Put the current runtime data into the portlet window
                 PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
                 portletWindow.setChannelRuntimeData(rd);
-                portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
-            } catch (Exception e) {
-                throw new PortalException(e);
+                portletWindow.setHttpServletRequest(pcs.getHttpServletRequest());
+                
+                // Get the portlet url manager which will analyze the request parameters
+                DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+                PortletStateManager pum = ((DynamicInformationProviderImpl)dip).getPortletURLManager(portletWindow);
+                
+                // If portlet is rendering as root, change mode to maximized, otherwise minimized
+                PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
+                if (rd.isRenderingAsRoot()) {
+                    pap.changePortletWindowState(WindowState.MAXIMIZED);
+                } else {
+                    pap.changePortletWindowState(WindowState.NORMAL);
+                }
+                
+                // Process action if this is the targeted channel and the URL is an action URL
+                if (rd.isTargeted() && pum.isAction()) {
+                    try {
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
+                        HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+                        //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
+                        portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+                        cd.setProcessedAction(true);
+                    } catch (Exception e) {
+                        throw new PortalException(e);
+                    }
+                }
             }
+        } finally {
+            PortletContainerServices.release();
         }
         
     }
@@ -388,6 +428,13 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * @param uid a unique ID used to identify the state of the channel
      */
     public void renderXML(ContentHandler out, String uid) throws PortalException {        
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelData cd = channelState.getChannelData();
+
+        if (!cd.isPortletWindowInitialized()) {
+            initPortletWindow(uid);
+        }
+        
         try {
             String markupString = getMarkup(uid);
                                 
@@ -417,23 +464,51 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         String markup = "<b>Problem rendering portlet " + sd.getParameter("portletDefinitionId") + "</b>";
         
         try {
+            PortletContainerServices.prepare(uniqueContainerName);
+            
+            // Check if this portlet has just processed an action during this request.
+            // If so, then we capture the changes that the portlet may have made during
+            // its processAction implementation and we pass them to the render request.
+            // Pluto's normally does this by creating a new render URL and redirecting,
+            // but we have overidden that behavior in our own version of PortletContainerImpl.
+            if (cd.hasProcessedAction()) {
+                InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
+                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
+                // Change modes
+                if (actionResponse.getChangedPortletMode() != null) {
+                    pap.changePortletMode(actionResponse.getChangedPortletMode());
+                }
+                // Change window states
+                if (actionResponse.getChangedWindowState() != null) {
+                    pap.changePortletWindowState(actionResponse.getChangedWindowState());
+                }
+                // Change render parameters
+                Map renderParameters = actionResponse.getRenderParameters();
+                PortletStateManager pum = ((DynamicInformationProviderImpl)InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest())).getPortletURLManager(cd.getPortletWindow());
+                pum.setParameters(renderParameters);
+            }
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
-            //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
-            HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
-                        
+            HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
+                                    
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
                 wrappedRequest = new EmptyRequestImpl(wrappedRequest);
             }
             
+            //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             
             markup = sw.toString();
+            
+            cd.setProcessedAction(false);
                         
         } catch (Throwable t) {
             t.printStackTrace();
+        } finally {
+            PortletContainerServices.release();
         }
         
         return markup;
