@@ -1378,7 +1378,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       sourceFolder.setFirstChildNodeId(node.getNextNodeId());
      }
 
-     if ( CommonUtils.nvl(targetFolder.getFirstChildNodeId()).equals(nextSiblingId) ) {
+     String firstChildId = targetFolder.getFirstChildNodeId();
+     if ( firstChildId == null || firstChildId.equals(nextSiblingId) ) {
       // Set the new first child node ID to the target folder
       targetFolder.setFirstChildNodeId(nodeId);
      }
