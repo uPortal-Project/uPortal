@@ -45,7 +45,6 @@ import  org.xml.sax.DocumentHandler;
 import  java.util.*;
 import  javax.servlet.http.*;
 import  org.w3c.dom.*;
-import  org.apache.xalan.xslt.*;
 import  java.io.StringWriter;
 import  java.net.URL;
 
@@ -61,11 +60,9 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
   IUserPreferencesStore updb;
   private Hashtable systemProfileList;
-    private MediaManager mm;
 
 
     public CSelectSystemProfile() {
-	this.mm=new MediaManager();
     }
 
   /**
@@ -138,15 +135,15 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     }
     edEl.appendChild(sEl);
     /*  try {
-     Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+     LogService.instance().log(LogService.DEBUG,UtilitiesBean.dom2PrettyString(doc));
      } catch (Exception e) {
-     Logger.log(Logger.ERROR,e);
+     LogService.instance().log(LogService.ERROR,e);
      }
      */
     Hashtable params = new Hashtable();
     params.put("baseActionURL", runtimeData.getBaseActionURL());
     try {
-      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, mm.getMedia(runtimeData.getBrowserInfo()));
+      XSLT.transform(doc, new URL(sslLocation), out, params, runtimeData.getBrowserInfo());
     } catch (org.xml.sax.SAXException e) {
       throw  new GeneralRenderingException("Unable to complete transformation");
     } catch (java.io.IOException i) {
