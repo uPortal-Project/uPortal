@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet title="login" href="webpages/stylesheets/org/jasig/portal/channels/CLogin/login_webbrowser.xsl" type="text/xsl" media="explorer"?>
+<?xml-stylesheet title="login" href="webpages/stylesheets/org/jasig/portal/channels/CLogin/login_wml.xsl" type="text/xsl" media="up"?>
 
 <document>
 </document>
