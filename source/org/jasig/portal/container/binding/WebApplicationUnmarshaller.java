@@ -559,10 +559,12 @@ public class WebApplicationUnmarshaller {
         EnvEntryImpl[] envEntries = new EnvEntryImpl[envEntryNL.getLength()];
         for (int i = 0; i < envEntryNL.getLength(); i++) {
             Element envEntryE = (Element)envEntryNL.item(i);
-            envEntries[i].setDescriptions(getDescriptions(envEntryE));
-            envEntries[i].setEnvEntryName(XML.getChildElementText(envEntryE, "env-entry-name"));
-            envEntries[i].setEnvEntryValue(XML.getChildElementText(envEntryE, "env-entry-value"));
-            envEntries[i].setEnvEntryType(XML.getChildElementText(envEntryE, "env-entry-type"));
+            EnvEntryImpl envEntry = new EnvEntryImpl();
+            envEntry.setDescriptions(getDescriptions(envEntryE));
+            envEntry.setEnvEntryName(XML.getChildElementText(envEntryE, "env-entry-name"));
+            envEntry.setEnvEntryValue(XML.getChildElementText(envEntryE, "env-entry-value"));
+            envEntry.setEnvEntryType(XML.getChildElementText(envEntryE, "env-entry-type"));
+            envEntries[i] = envEntry;
         }
         return envEntries;
     }
@@ -572,12 +574,14 @@ public class WebApplicationUnmarshaller {
         EjbRefImpl[] ejbRefs = new EjbRefImpl[ejbRefNL.getLength()];
         for (int i = 0; i < ejbRefNL.getLength(); i++) {
             Element ejbRefE = (Element)ejbRefNL.item(i);
-            ejbRefs[i].setDescriptions(getDescriptions(ejbRefE));
-            ejbRefs[i].setEjbRefName(XML.getChildElementText(ejbRefE, "ejb-ref-name"));
-            ejbRefs[i].setEjbRefType(XML.getChildElementText(ejbRefE, "ejb-ref-type"));
-            ejbRefs[i].setHome(XML.getChildElementText(ejbRefE, "home"));
-            ejbRefs[i].setRemote(XML.getChildElementText(ejbRefE, "remote"));
-            ejbRefs[i].setEjbLink(XML.getChildElementText(ejbRefE, "ejb-link"));
+            EjbRefImpl ejbRef = new EjbRefImpl();
+            ejbRef.setDescriptions(getDescriptions(ejbRefE));
+            ejbRef.setEjbRefName(XML.getChildElementText(ejbRefE, "ejb-ref-name"));
+            ejbRef.setEjbRefType(XML.getChildElementText(ejbRefE, "ejb-ref-type"));
+            ejbRef.setHome(XML.getChildElementText(ejbRefE, "home"));
+            ejbRef.setRemote(XML.getChildElementText(ejbRefE, "remote"));
+            ejbRef.setEjbLink(XML.getChildElementText(ejbRefE, "ejb-link"));
+            ejbRefs[i] = ejbRef;
         }
         return ejbRefs;
     }
@@ -587,12 +591,14 @@ public class WebApplicationUnmarshaller {
         EjbLocalRefImpl[] ejbLocalRefs = new EjbLocalRefImpl[ejbRefNL.getLength()];
         for (int i = 0; i < ejbRefNL.getLength(); i++) {
             Element ejbLocalRefE = (Element)ejbRefNL.item(i);
-            ejbLocalRefs[i].setDescriptions(getDescriptions(ejbLocalRefE));
-            ejbLocalRefs[i].setEjbRefName(XML.getChildElementText(ejbLocalRefE, "ejb-ref-name"));
-            ejbLocalRefs[i].setEjbRefType(XML.getChildElementText(ejbLocalRefE, "ejb-ref-type"));
-            ejbLocalRefs[i].setLocalHome(XML.getChildElementText(ejbLocalRefE, "local-home"));
-            ejbLocalRefs[i].setLocal(XML.getChildElementText(ejbLocalRefE, "local"));
-            ejbLocalRefs[i].setEjbLink(XML.getChildElementText(ejbLocalRefE, "ejb-link"));
+            EjbLocalRefImpl ejbLocalRef = new EjbLocalRefImpl();
+            ejbLocalRef.setDescriptions(getDescriptions(ejbLocalRefE));
+            ejbLocalRef.setEjbRefName(XML.getChildElementText(ejbLocalRefE, "ejb-ref-name"));
+            ejbLocalRef.setEjbRefType(XML.getChildElementText(ejbLocalRefE, "ejb-ref-type"));
+            ejbLocalRef.setLocalHome(XML.getChildElementText(ejbLocalRefE, "local-home"));
+            ejbLocalRef.setLocal(XML.getChildElementText(ejbLocalRefE, "local"));
+            ejbLocalRef.setEjbLink(XML.getChildElementText(ejbLocalRefE, "ejb-link"));
+            ejbLocalRefs[i] = ejbLocalRef;
         }
         return ejbLocalRefs;
     }
