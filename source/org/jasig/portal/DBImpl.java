@@ -2047,9 +2047,16 @@ public class DBImpl implements IDBImpl
 	  Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
 	  stmt.executeUpdate(sQuery);
 
-          // clean up user preferences
+          // clean up user preferences 
+	  sQuery="DELETE FROM UP_USER_SS_PARMS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=2";
+	  Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
+	  stmt.executeUpdate(sQuery);
+	  sQuery="DELETE FROM UP_USER_SS_ATTS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=2";
+	  Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
+	  stmt.executeUpdate(sQuery);
 
-          // should we do something about profiles ?
+	  // nuke the profiles as well ?
+
 
 	  commit(con);
       } catch (Exception e) {
@@ -2063,6 +2070,7 @@ public class DBImpl implements IDBImpl
       rdbmService.releaseConnection(con);
     }
   }
+
 
   /**
    * put your documentation comment here
@@ -2155,6 +2163,9 @@ public class DBImpl implements IDBImpl
 	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeStylesheetParam() : "+sQuery);
 	    stmt.executeQuery(sQuery);
 	    // clean up user preference tables
+	    sQuery="DELETE FROM UP_USER_SS_PARMS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=2 AND PARAM_TYPE=1 AND PARAM_NAME='"+pName+"'";
+	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeStylesheetParam() : "+sQuery);
+	    stmt.executeQuery(sQuery);
 	} finally {
 	    stmt.close();
 	}
@@ -2173,6 +2184,9 @@ public class DBImpl implements IDBImpl
 	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeChannelAttribute() : "+sQuery);
 	    stmt.executeQuery(sQuery);
 	    // clean up user preference tables
+	    sQuery="DELETE FROM UP_USER_SS_ATTS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=2 AND PARAM_TYPE=3 AND PARAM_NAME='"+pName+"'";
+	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeStylesheetParam() : "+sQuery);
+	    stmt.executeQuery(sQuery);
 	} finally {
 	    stmt.close();
 	}
@@ -2293,6 +2307,9 @@ public class DBImpl implements IDBImpl
 	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureStylesheetParam() : "+sQuery);
 	    stmt.executeQuery(sQuery);
 	    // clean up user preference tables
+	    sQuery="DELETE FROM UP_USER_SS_PARMS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=1 AND PARAM_TYPE=1 AND PARAM_NAME='"+pName+"'";
+	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureStylesheetParam() : "+sQuery);
+	    stmt.executeQuery(sQuery);
 	} finally {
 	    stmt.close();
 	}
@@ -2311,6 +2328,9 @@ public class DBImpl implements IDBImpl
 	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureFolderAttribute() : "+sQuery);
 	    stmt.executeQuery(sQuery);
 	    // clean up user preference tables
+	    sQuery="DELETE FROM UP_USER_SS_ATTS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=1 AND PARAM_TYPE=2 AND PARAM_NAME='"+pName+"'";
+	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureFolderAttribute() : "+sQuery);
+	    stmt.executeQuery(sQuery);
 	} finally {
 	    stmt.close();
 	}
@@ -2329,6 +2349,9 @@ public class DBImpl implements IDBImpl
 	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureChannelAttribute() : "+sQuery);
 	    stmt.executeQuery(sQuery);
 	    // clean up user preference tables
+	    sQuery="DELETE FROM UP_USER_SS_ATTS WHERE SS_ID="+stylesheetId+" AND SS_TYPE=1 AND PARAM_TYPE=3 AND PARAM_NAME='"+pName+"'";
+	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureChannelAttribute() : "+sQuery);
+	    stmt.executeQuery(sQuery);
 	} finally {
 	    stmt.close();
 	}
