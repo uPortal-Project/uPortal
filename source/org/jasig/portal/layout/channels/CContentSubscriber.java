@@ -138,6 +138,9 @@ public class CContentSubscriber extends FragmentManager {
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channel-state"),"browse");
+		    String searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
+		    String searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
+		    String searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
 			boolean all = false,
 			        expand = action.equals("expand"),
 			        condense = action.equals("condense");    
@@ -202,9 +205,6 @@ public class CContentSubscriber extends FragmentManager {
 				} 	
 			}
 			if ( CommonUtils.nvl(query).length() > 0 ) {
-			  String searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"));
-			  String searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"));
-			  String searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"));
 			  String[] xPathQueries = new String[3];
 			  if ( searchChannel.equals("true") )	
 			   xPathQueries[0] = "//channel[contains(@name,'"+query+"') or contains(@description,'"+query+"')]";
@@ -227,8 +227,9 @@ public class CContentSubscriber extends FragmentManager {
 			 
 		Vector removedItems = new Vector(); 
 		String attrName = channelState.equals("search")?"search-view":"view";
-						 
-		if ( !all ) {   
+		
+		if ( !action.equals("search") ) {				 
+		 if ( !all ) {   
 				
 		     Vector items = expandedItems;		
 		     for ( int k = 0; k < 2; items = condensedItems, k++ ) {		 
@@ -252,7 +253,7 @@ public class CContentSubscriber extends FragmentManager {
 			    items.removeAll(removedItems);
 		     }	           
 			  
-		} else { 
+		 } else { 
 		    
 		      for ( int i = 0; i < tagNames.size(); i++ ) {
 		        String tagName = (String) tagNames.get(i);	
@@ -276,10 +277,14 @@ public class CContentSubscriber extends FragmentManager {
 			    } 
 		      }
 		     
-		 }  
+		  }
+		}   
 		     
 		    // Passing all the HTTP params back to the stylesheet
 		     passAllParameters(xslt);
+		     xslt.setStylesheetParameter("search-fragment", searchFragment);
+		     xslt.setStylesheetParameter("search-channel", searchChannel);
+		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     
 	  } catch ( Exception e ) {
 	  	  e.printStackTrace();
