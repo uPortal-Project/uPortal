@@ -2236,54 +2236,64 @@
         <column><name>PROFILE_ID</name><value>1</value></column>
       </row>
       <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
         <column><name>USER_ID</name><value>0</value></column>
         <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>0</value></column>
+        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 4.0)</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
         <column><name>USER_AGENT</name><value>Mozilla/4.76 [en] (Windows NT 5.0; U)</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
       </row>
     </rows>
   </table>
