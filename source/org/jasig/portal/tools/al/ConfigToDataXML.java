@@ -132,7 +132,8 @@ public class ConfigToDataXML {
         reader.parse(new InputSource(ConfigToDataXML.class.getResourceAsStream(alConfigFile)));
 
         // Cleaning the database before the DbLoader is called
-        (new DbCleaner(filter.getFragmentIds())).cleanTables();
+        DbCleaner.fragmentIds = filter.getFragmentIds();
+        DbCleaner.cleanTables();
 
         System.out.println("DEBUG: done.");
     }
@@ -148,7 +149,7 @@ public class ConfigToDataXML {
       private static Vector fragmentIds;
 
       public DbCleaner ( Vector fragmentIds ) {
-        this.fragmentIds = fragmentIds;
+        DbCleaner.fragmentIds = fragmentIds;
       }
 
       public static void cleanTables() {
