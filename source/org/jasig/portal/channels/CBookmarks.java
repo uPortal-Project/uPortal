@@ -46,7 +46,11 @@ import  org.jasig.portal.ChannelRuntimeProperties;
 import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.PortalException;
 import  org.jasig.portal.Logger;
+import  org.jasig.portal.GeneralRenderingException;
+import  org.jasig.portal.ResourceMissingException;
+import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
@@ -64,6 +68,7 @@ import  org.apache.xalan.xslt.XSLTProcessorFactory;
 import  org.xml.sax.InputSource;
 import  org.xml.sax.DocumentHandler;
 import  org.xml.sax.EntityResolver;
+import  org.xml.sax.SAXException;
 import  java.sql.Connection;
 import  java.sql.Statement;
 import  java.sql.ResultSet;
@@ -83,10 +88,8 @@ import  java.util.Enumeration;
 public class CBookmarks extends BaseChannel {
   // A DOM document where all the bookmark information will be contained
   protected DocumentImpl m_bookmarksXML;
-  // This is the cached content
-  String m_cachedContent = null;
   // Initialize StylesheetSet
-  StylesheetSet m_styleSheetSet;
+  private static StylesheetSet m_stylesheetSet;
   // Define some constants to keep the state of the channel
   private final int VIEWMODE = 0;
   private final int EDITMODE = 1;
@@ -97,8 +100,8 @@ public class CBookmarks extends BaseChannel {
   // Start out in view mode by default
   private int m_currentState = 0;
   // Keep track of the node that the user is currently working with
-  String m_activeNodeID = null;
-  String m_activeNodeType = null;
+  private String m_activeNodeID = null;
+  private String m_activeNodeType = null;
 
   /**
    * put your documentation comment here
@@ -108,8 +111,8 @@ public class CBookmarks extends BaseChannel {
     // Location of the stylesheet files
     String stylesheetDir = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig"
         + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
-    m_styleSheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
-    m_styleSheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    m_stylesheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
+    m_stylesheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
   }
 
   /**
@@ -237,11 +240,6 @@ public class CBookmarks extends BaseChannel {
   public void renderXML (DocumentHandler out) {
     // Retrieve the command passed in by the user
     String command = runtimeData.getParameter("command");
-    // Output the cached content if the user has not interacted 
-    if (command == null && m_cachedContent != null) {
-      outputContent(out);
-      return;
-    }
     if (command != null) {
       if (command.equals("fold")) {
         // Get the ID of the specified folder to close
@@ -327,8 +325,6 @@ public class CBookmarks extends BaseChannel {
                 m_activeNodeType = null;
                 // Return to view mode
                 m_currentState = VIEWMODE;
-                // Clear the content cache
-                m_cachedContent = null;
                 // Save the user's XML
                 saveXML();
               }
@@ -382,8 +378,6 @@ public class CBookmarks extends BaseChannel {
                 m_activeNodeType = null;
                 // Return to view mode
                 m_currentState = VIEWMODE;
-                // Clear the content cache
-                m_cachedContent = null;
                 // Save the user's XML
                 saveXML();
               }
@@ -424,8 +418,6 @@ public class CBookmarks extends BaseChannel {
                   }
                 }
               }
-              // Clear the content cache
-              m_cachedContent = null;
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
@@ -462,8 +454,6 @@ public class CBookmarks extends BaseChannel {
                   }
                 }
               }
-              // Clear the content cache
-              m_cachedContent = null;
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
@@ -505,7 +495,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderViewModeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderViewModeXML (DocumentHandler out) throws Exception {
     transformXML(out, "view_mode", getBookmarkXML());
   }
 
@@ -514,7 +504,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderEditModeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderEditModeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "EditMode");
@@ -526,7 +516,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderEditNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderEditNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "DeleteNode");
@@ -538,7 +528,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderAddNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderAddNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
       Logger.log(Logger.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
@@ -563,7 +553,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderMoveNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderMoveNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "MoveNode");
@@ -575,7 +565,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderDeleteNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
+  private void renderDeleteNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
       Logger.log(Logger.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
@@ -598,31 +588,11 @@ public class CBookmarks extends BaseChannel {
   /**
    * put your documentation comment here
    * @param out
-   */
-  private void outputContent (DocumentHandler out) {
-    SAXParser saxParser = new SAXParser();
-    saxParser.setDocumentHandler(out);
-    try {
-      saxParser.parse(new InputSource(new StringReader(m_cachedContent)));
-    } catch (java.io.IOException ioe) {
-      // Clear the cache because there's something wrong with it
-      m_cachedContent = null;
-      Logger.log(Logger.ERROR, ioe);
-    } catch (org.xml.sax.SAXException se) {
-      // Clear the cache because there's something wrong with it
-      m_cachedContent = null;
-      Logger.log(Logger.ERROR, se);
-    }
-  }
-
-  /**
-   * put your documentation comment here
-   * @param out
    * @param styleSheetName
    * @param inputXML
    */
-  private void transformXML (DocumentHandler out, String styleSheetName, DocumentImpl inputXML) {
-    transformXML(out, styleSheetName, inputXML, null);
+  private void transformXML (DocumentHandler out, String stylesheetName, DocumentImpl inputXML) throws Exception {
+    transformXML(out, stylesheetName, inputXML, null);
   }
 
   /**
@@ -632,39 +602,15 @@ public class CBookmarks extends BaseChannel {
    * @param inputXML
    * @param parameters
    */
-  private void transformXML (DocumentHandler out, String styleSheetName, DocumentImpl inputXML, Hashtable parameters) {
-    try {
-      XSLTInputSource stylesheet = m_styleSheetSet.getStylesheet(styleSheetName, runtimeData.getHttpRequest());
-      if (stylesheet != null) {
-        StringWriter stringWriter = new StringWriter();
-        XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-        if (parameters != null) {
-          Enumeration keys = parameters.keys();
-          while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            processor.setStylesheetParam(key, processor.createXString((String)parameters.get(key)));
-          }
-        }
-        // Pass the baseActionURL down to the stylesheet
-        processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
-        
-        // Pass the location of the image files down to the stylesheet
-        //String imagesURL = "stylesheets/org/jasig/portal/channels/CBookmarks/";
-        //processor.setStylesheetParam("imagesURL", processor.createXString(imagesURL));
-        
-        // Perform the XSLT transformation and store the result in a string writer
-        processor.process(new XSLTInputSource(inputXML), stylesheet, new XSLTResultTarget(stringWriter));
-        // Cache the result of the XSLT transformation
-        m_cachedContent = stringWriter.toString();
-        // Display the content to the user
-        outputContent(out);
-      } 
-      else {
-        Logger.log(Logger.ERROR, "BookmarksChannel.processXML() - Unable to load stylesheet: " + styleSheetName);
-      }
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+  private void transformXML (DocumentHandler out, String stylesheetName, DocumentImpl inputXML, Hashtable parameters) throws Exception {
+    // Create the parameters hashtable if it is null
+    if (parameters == null) {
+      parameters = new Hashtable(1);
     }
+    // Add the baseActionURL to the stylesheet parameters
+    parameters.put("baseActionURL", runtimeData.getBaseActionURL());
+    // Use the XSLT utility to perform the transformation
+    XSLT.transform(inputXML, m_stylesheetSet, out, parameters, stylesheetName, runtimeData.getMedia());
   }
 
   /**
