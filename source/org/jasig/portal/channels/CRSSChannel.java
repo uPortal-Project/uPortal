@@ -15,18 +15,20 @@ import java.net.*;
 
 /**
  * This is a channel for displaying an RSS broadcast.
- * The first time an RSS file is requested, it is retrieved 
+ * The first time an RSS file is requested, it is retrieved
  * from its URL, and then stored in a memory cache for future requests.
  * After one hour from the initial request, it is flushed from the
  * cache and retrieved again.
- * 
+ *
  * @author Ken Weiner
  * @version $Revision$
  */
-public class CRSSChannel implements org.jasig.portal.IChannel                           
-{ 
+public class CRSSChannel implements org.jasig.portal.IChannel
+{
   private static RSSCache m_RSSCache = new RSSCache (3600);
   private ChannelConfig chConfig = null;
+  private static final int DEFAULT_CHANNEL_TIMEOUT = 10 * 1000; // ten seconds
+  private static final String UNAVAILABLE_CHANNEL = "<?xml version=\"1.0\"?><!DOCTYPE rss PUBLIC \"-//JASIG uPortal//DTD RSS 1.0//EN\"><rss version=\"1.0\"><channel><title></title><description></description><language>en-us</language><item><title></title><description>This channel is temporarily unavailable</description></item></channel></rss>";
 
   private static Vector params = null;
 
@@ -37,43 +39,111 @@ public class CRSSChannel implements org.jasig.portal.IChannel
   }
 
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
-  
+
   public Vector getParameters()
   {
     return params;
+  }
+
+  /**
+   * Backgroundloader is a new thread which tries to load the RSS
+   * channel and times out after a short period of time
+   * @author George Lindholm
+   */
+  private class BackgroundLoader extends Thread {
+    private volatile IXml xml = null;
+    private String sUrl;
+    Thread masterThread;
+
+    public BackgroundLoader(String sUrl) {
+      this.sUrl = sUrl;
+      start();
+      try {
+        join();
+      } catch (InterruptedException ie) {
+        Logger.log(Logger.ERROR, ie);
+      }
+    }
+
+    public IXml getXml() throws Exception {
+      if (xml == null) {
+        throw new Exception("Unable to load channel " + sUrl);
+      }
+
+      return xml;
+    }
+
+    public void run () {
+      masterThread = currentThread();
+
+      Thread loadThread = new Thread () {
+        public void run() {
+          String sXmlPackage = "org.jasig.portal.channels.rss";
+          try {
+            URL url = new URL (sUrl);
+            InputStream xmlStream = url.openStream();
+            xml = Xml.openDocument (sXmlPackage, xmlStream);
+          } catch (Exception e) {
+            try {
+              xml = Xml.openDocument(sXmlPackage, new StringReader(UNAVAILABLE_CHANNEL));
+            } catch (Exception e2) {
+              Logger.log(Logger.ERROR, e2);
+            }
+            Logger.log(Logger.ERROR, "" + e);
+          }
+          masterThread.interrupt(); // Let master know we've done something
+        }
+      };
+      loadThread.start();
+
+      // Now wait for timeout or channel load
+      try {
+        sleep(DEFAULT_CHANNEL_TIMEOUT);
+        if (loadThread.isAlive()) {
+          loadThread.interrupt(); // Try to kill child
+        }
+      } catch (InterruptedException ie) {
+        // Probably from loader thread
+      }
+    }
+  }
+
+  private org.jasig.portal.channels.rss.IChannel getChannel() throws Exception {
+    // Check if RSSXml is already in the cache
+    String sUrl = (String) chConfig.get ("url");
+    IXml xml = (IXml) m_RSSCache.get (sUrl);
+
+    // If the RSSXml isn't already cached, download it and put it in the cache
+    if (xml == null)
+    {
+      BackgroundLoader loadChannel = new BackgroundLoader(sUrl);
+      xml = loadChannel.getXml();
+
+      m_RSSCache.put (sUrl, xml);
+      Logger.log (Logger.INFO, "Caching RSS at URL: " + sUrl);
+    }
+
+    IRss rss = (IRss) xml.getRoot ();
+
+    // Get Channel
+    org.jasig.portal.channels.rss.IChannel channel = (org.jasig.portal.channels.rss.IChannel) rss.getChannel ();
+
+    return (org.jasig.portal.channels.rss.IChannel) rss.getChannel ();
   }
 
   public String getName ()
   {
     try
     {
-      // Check if RSSXml is already in the cache
-      String sUrl = (String) chConfig.get ("url");
-      IXml xml = (IXml) m_RSSCache.get (sUrl);
-      
-      // If the RSSXml isn't already cached, download it and put it in the cache
-      if (xml == null)
-      {
-        URL url = new URL (sUrl);
-        String sXmlPackage = "org.jasig.portal.channels.rss";
-        InputStream xmlStream = url.openStream();
-        xml = Xml.openDocument (sXmlPackage, xmlStream);
-        m_RSSCache.put (sUrl, xml);
-        Logger.log (Logger.INFO, "Caching RSS at URL: " + sUrl);
-      }
-      
-      IRss rss = (IRss) xml.getRoot ();            
-      
-      // Get Channel
-      org.jasig.portal.channels.rss.IChannel channel = (org.jasig.portal.channels.rss.IChannel) rss.getChannel ();
-      
+      org.jasig.portal.channels.rss.IChannel channel = getChannel();
+
       ITitleOrDescriptionOrLinkOrLanguageOrOneOrMoreItemOrRatingOrImageOrTextinputOrCopyrightOrPubDateOrLastBuildDateOrDocsOrManagingEditorOrWebMasterOrSkipHoursOrSkipDays[] channelAttr = channel.getTitleOrDescriptionOrLinkOrLanguageOrOneOrMoreItemOrRatingOrImageOrTextinputOrCopyrightOrPubDateOrLastBuildDateOrDocsOrManagingEditorOrWebMasterOrSkipHoursOrSkipDayss ();
       String sTitle = null;
-      
+
       for (int i = 0; i < channelAttr.length; i++)
       {
         if (channelAttr[i].getTitle () != null)
-          sTitle = channelAttr[i].getTitle ();  
+          sTitle = channelAttr[i].getTitle ();
       }
       return sTitle;
     }
@@ -81,47 +151,30 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     {
       Logger.log (Logger.ERROR, e);
     }
-    
+
     return "&nbsp;";
   }
-  
+
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return false;}
-  public boolean hasHelp () {return false;}  
-  
+  public boolean hasHelp () {return false;}
+
   public int getDefaultDetachWidth () {return 550;}
   public int getDefaultDetachHeight () {return 450;}
-      
-  public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
-    {
-      // Check if RSSXml is already in the cache
-      String sUrl = (String) chConfig.get ("url");
-      IXml xml = (IXml) m_RSSCache.get (sUrl);
-      
-      // If the RSSXml isn't already cached, download it and put it in the cache
-      if (xml == null)
-      {
-        URL url = new URL (sUrl);
-        String sXmlPackage = "org.jasig.portal.channels.rss";
-        InputStream xmlStream = url.openStream();
-        xml = Xml.openDocument (sXmlPackage, xmlStream);
-        m_RSSCache.put (sUrl, xml);
-      }
-      
-      IRss rss = (IRss) xml.getRoot ();
 
-      // Get Channel
-      org.jasig.portal.channels.rss.IChannel channel = (org.jasig.portal.channels.rss.IChannel) rss.getChannel ();
-      
+  public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    try
+    {
+      org.jasig.portal.channels.rss.IChannel channel = getChannel();
+
       ITitleOrDescriptionOrLinkOrLanguageOrOneOrMoreItemOrRatingOrImageOrTextinputOrCopyrightOrPubDateOrLastBuildDateOrDocsOrManagingEditorOrWebMasterOrSkipHoursOrSkipDays[] channelAttr = channel.getTitleOrDescriptionOrLinkOrLanguageOrOneOrMoreItemOrRatingOrImageOrTextinputOrCopyrightOrPubDateOrLastBuildDateOrDocsOrManagingEditorOrWebMasterOrSkipHoursOrSkipDayss ();
       String sTitleLink = null;
       String sDescription = null;
       IImage image = null;
-      
+
       for (int i = 0; i < channelAttr.length; i++)
       {
         if (channelAttr[i].getLink () != null)
@@ -131,7 +184,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
           sDescription = channelAttr[i].getDescription ();
 
         if (channelAttr[i].getImage () != null)
-          image = (IImage) channelAttr[i].getImage ();          
+          image = (IImage) channelAttr[i].getImage ();
       }
 // An image is optional but there should be a description and a link for the channel
       if (image != null)
@@ -208,7 +261,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
-      
+
       try
       {
         out.println ("Problem rendering channel.");
@@ -219,12 +272,12 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       }
     }
   }
-  
+
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
+  {
     // This channel is not editable
   }
-  
+
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     // This channel has no help
@@ -237,17 +290,17 @@ public class CRSSChannel implements org.jasig.portal.IChannel
   protected static class RSSCache extends java.util.Hashtable
   {
     protected int m_iExpirationTimeout = 3600000;   // default to 1 hour
-    
+
     public RSSCache (int timeout)
     {
       super ();
       m_iExpirationTimeout = timeout * 1000;
     }
-    
+
     public synchronized Object get (Object key)
     {
       Placeholder placeholder = (Placeholder) super.get (key);
-      
+
       if (placeholder != null)
       {
         if (placeholder.m_lCreationTime + m_iExpirationTimeout < System.currentTimeMillis())
@@ -260,23 +313,23 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       else
         return null;
     }
-    
+
     public synchronized Object put (Object key, Object value)
     {
       Placeholder placeholder = new Placeholder (value);
       return super.put (key, placeholder);
     }
-    
+
     protected class Placeholder
     {
       protected long m_lCreationTime = System.currentTimeMillis ();
       protected Object m_Value;
-      
+
       protected Placeholder (Object value)
       {
         m_lCreationTime = System.currentTimeMillis ();
         m_Value = value;
       }
     }
-  }  
+  }
 }
