@@ -220,6 +220,16 @@
     restrictive, not less.
     </p>
 
+    <p>According to the HTML specification, "If the processing of a form is
+       is idempotent (i.e. it has no lasting                            
+       observable effect on the state of the world), then the form method 
+       should be GET. Many database searches have no visible side-effects 
+       and make ideal applications of query forms...If the service 
+       associated with the processing of a form has side effects 
+       (for example, modification of a database or subscription to a  
+       service), the method should be POST."  For this reason, POST
+       requests are not cached.</p>
+
     <h2>Configuration</h2>
     <h3>Static Data</h3>
     Except as noted, parameters are identical for both static and
