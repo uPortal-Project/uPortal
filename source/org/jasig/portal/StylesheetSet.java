@@ -174,6 +174,22 @@ public class StylesheetSet extends SAXFilterImpl
   }
 
   /**
+   * Returns the URI of the stylesheet matching the media
+   * @param media
+   * @return the stylesheet URI
+   */
+  public String getStylesheetURI (String media)
+  {
+    String ssURI = null;
+    StylesheetDescription sd = getStylesheetDescription(media);
+
+    if (sd != null)
+      ssURI = sd.getURI();
+
+    return ssURI;
+  }
+
+  /**
    * Returns the URI of the stylesheet matching the title and media
    * @param title
    * @param media
@@ -181,25 +197,30 @@ public class StylesheetSet extends SAXFilterImpl
    */
   public String getStylesheetURI (String title, String media)
   {
-    Hashtable media_table = (Hashtable)title_table.get(title);
-
-    if (media_table == null)
-      return null;
-
-    StylesheetDescription sd = (StylesheetDescription) media_table.get (media);
-
-    if (sd == null)
+    if (title != null)
     {
-      Enumeration sls = media_table.elements ();
+      Hashtable media_table = (Hashtable)title_table.get(title);
 
-      if (sls.hasMoreElements())
-        sd = (StylesheetDescription) sls.nextElement ();
+      if (media_table == null)
+        return null;
+
+      StylesheetDescription sd = (StylesheetDescription) media_table.get (media);
+
+      if (sd == null)
+      {
+        Enumeration sls = media_table.elements ();
+
+        if (sls.hasMoreElements())
+          sd = (StylesheetDescription) sls.nextElement ();
+      }
+
+      if (sd == null)
+        return null;
+
+      return sd.getURI ();
     }
-
-    if (sd == null)
-      return null;
-
-    return sd.getURI ();
+    else
+      return getStylesheetURI (media);
   }
 
   protected StylesheetDescription getStylesheetDescription (String media)
@@ -468,7 +489,7 @@ public class StylesheetSet extends SAXFilterImpl
      */
     String getValue (String s)
     {
-	if(s==null) return null;
+        if(s==null) return null;
       int i, j = attVec.size ();
 
       for (i = 0; i < j; i++)
