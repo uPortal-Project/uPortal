@@ -62,12 +62,6 @@ throws GroupsException
  */
 public IEntityGroupStore newInstance() throws GroupsException
 {
-    try
-        { return getGroupStore(); }
-    catch ( Exception ex )
-    {
-        log.error(ex.getMessage(), ex);
-        throw new GroupsException(ex);
-    }
+    return getGroupStore();
 }
 }
