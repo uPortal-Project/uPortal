@@ -35,6 +35,17 @@
 
 package org.jasig.portal.i18n;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
+
 /**
  * Database implementation of locale storage interface.
  * @author Ken Weiner, kweiner@unicon.net
@@ -42,6 +53,68 @@ package org.jasig.portal.i18n;
  */
 public class RDBMLocaleStore implements ILocaleStore {
 
+    public Locale[] getUserLocales(IPerson person) throws Exception {
+        List localeList = new ArrayList();
+        Connection con = RDBMServices.getConnection();
+        try {
+            String query = "SELECT * FROM UP_USER_LOCALE WHERE USER_ID=? ORDER BY PRIORITY";
+            RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
+            try {
+                pstmt.clearParameters();
+                pstmt.setInt(1, person.getID());
+                LogService.log(LogService.DEBUG, query);
+                ResultSet rs = pstmt.executeQuery();
+                try {
+                    while (rs.next()) {
+                       String localeString = rs.getString("LOCALE");
+                       Locale locale = LocaleManager.parseLocale(localeString);
+                       localeList.add(locale);
+                    }
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                pstmt.close();
+            }
+        } finally {
+            RDBMServices.releaseConnection(con);
+        } 
+        return (Locale[])localeList.toArray(new Locale[0]); 
+    }
 
+    public void updateUserLocales(IPerson person, Locale[] locales) throws SQLException {
+        Connection con = RDBMServices.getConnection();
+        try {
+            // Delete the existing list of locales
+            String delete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID=?";
+            RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, delete);
+            try {
+                pstmt.clearParameters();
+                pstmt.setInt(1, person.getID());
+                LogService.log(LogService.DEBUG, delete);
+                pstmt.executeUpdate();
 
+            } finally {
+                pstmt.close();
+            }
+            // Insert the new list of locales
+            String insert = "INSERT INTO UP_USER_LOCALE VALUES (?, ?, ?)";
+            pstmt = new RDBMServices.PreparedStatement(con, insert);
+            try {
+                for (int i = 0; i < locales.length; i++) {                        
+                    pstmt.clearParameters();
+                    pstmt.setInt(1, person.getID());
+                    pstmt.setString(2, locales[i].toString());
+                    pstmt.setInt(3, i);
+                    LogService.log(LogService.DEBUG, insert);
+                    pstmt.executeUpdate();
+                } 
+
+            } finally {
+                pstmt.close();
+            }            
+        } finally {
+            RDBMServices.releaseConnection(con);
+        } 
+    }
 }
