@@ -123,8 +123,9 @@ public class PortletURLProviderImpl implements PortletURLProvider {
             else
 				controlURL.setRenderParam(portletWindow, name, values );
          }
-          url.append("?"+controlURL.toString());
         } 
+        String curl = controlURL.toString();
+		if ( curl.length() > 0 ) url.append("?"+curl);
         return url.toString();
     }
 
