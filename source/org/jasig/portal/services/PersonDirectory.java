@@ -146,7 +146,7 @@ public class PersonDirectory {
   private synchronized boolean getParameters() {
     if (sources!=null)
       return true;
-    sources= new Vector();
+    sources = new Vector();
     try  {
 
       // Build a DOM tree out of uPortal/properties/PersonDirs.xml
@@ -241,9 +241,10 @@ public class PersonDirectory {
         }
         sources.addElement(pdi); // Add one LDAP or JDBC source to the list
       }
-     }
+    }
     catch(Exception e)
     {
+      sources = null;
       LogService.log(LogService.WARN,"PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.");
       return false;
     }

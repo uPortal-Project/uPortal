@@ -294,9 +294,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           java.util.Iterator templateGroups =  template.getContainingGroups();
           while (templateGroups.hasNext())
           {
-              IEntityGroup eg = (IEntityGroup) templateGroups.next();
+            IEntityGroup eg = (IEntityGroup) templateGroups.next();
+            if (eg.isEditable()) {
               eg.addMember(me);
               eg.updateMembers();
+            }
 
           }      // end while()
         }        // end try

@@ -437,8 +437,8 @@ public class ChannelPublisher {
                   ResultSet rs = pstmt.executeQuery();
                   try {
                       while (rs.next()) {
-                          String chanTypeName = rs.getString("TYPE_NAME");
-                          String chanTypeId = rs.getString("TYPE_ID");
+                      	String chanTypeId = rs.getString("TYPE_ID");
+                      	String chanTypeName = rs.getString("TYPE_NAME");
                           chanTypesNamesToIds.put(chanTypeName, chanTypeId);
                       }
                   } finally {
