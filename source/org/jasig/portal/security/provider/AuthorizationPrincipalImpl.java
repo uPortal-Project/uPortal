@@ -36,7 +36,6 @@ package org.jasig.portal.security.provider;
  */
 
 import org.jasig.portal.*;
-import org.jasig.portal.groups.EntityTypes;
 import org.jasig.portal.security.*;
 
 /**
@@ -64,6 +63,14 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
     key = newKey;
     type = newType;
     authorizationService = authService;
+}
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
+ * @return boolean
+ * @exception AuthorizationException thrown when authorization information could not be retrieved.
+ */
+public boolean canPublish() throws org.jasig.portal.AuthorizationException {
+    return getAuthorizationService().canPrincipalPublish(this);
 }
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.
@@ -186,25 +193,15 @@ throws AuthorizationException
     return getAuthorizationService().getPermissionsForPrincipal(this, owner, activity, target);
 }
 /**
- * FIX THIS!
- * Creation date: (11/16/01 2:48:11 PM)
  * @return java.lang.String
  */
 public String getPrincipalString() 
 {
-	if ( principalString == null )
-	{
-		String typeString = null;
-		String typeName = getType().getName();
-		if ( typeName.equals("org.jasig.portal.security.IPerson") )
-			typeString = "USER_ID";
-		if ( typeName.equals("org.jasig.portal.groups.IEntityGroup") )
-			typeString = "GROUP_ID";
-		if ( typeName.equals("org.jasig.portal.IChannel") )
-			typeString = "CHAN_ID";
-		principalString = typeString + "." + getKey();
-	}
-	return principalString;
+    if ( principalString == null )
+    {
+        principalString = getAuthorizationService().getPrincipalString(this);
+    }
+    return principalString;
 }
 /**
  * @return java.lang.Class
@@ -260,14 +257,5 @@ private void setPrincipalString(java.lang.String newPrincipalString) {
 public String toString() 
 {
     return getPrincipalString();
-}
-
-/**
- * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
- * @return boolean
- * @exception AuthorizationException thrown when authorization information could not be retrieved.
- */
-public boolean canPublish() throws org.jasig.portal.AuthorizationException {
-    return getAuthorizationService().canPrincipalPublish(this);
 }
 }

@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.security.provider;
 
 import java.io.File;
@@ -334,22 +369,12 @@ private IPermissionStore getPermissionStore()
     return permissionStore;
 }
 /**
- * @param org.jasig.portal.groups.IEntityGroup
- * @return user org.jasig.portal.security.IAuthorizationPrincipal
- */
-private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group) 
-{
-    String key = group.getKey();
-    Class type = IEntityGroup.class;    //group.getEntityType();
-    return newPrincipal(key, type);
-}
-/**
  * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.  
  *
- * @return IAuthorizationPrincipal[]
- * @param permissions IPermission[]
+ * @return IAuthorizationPrincipal
+ * @param permission IPermission
  */
-private IAuthorizationPrincipal getPrincipalFromPermission(IPermission permission) 
+public IAuthorizationPrincipal getPrincipal(IPermission permission) 
 throws AuthorizationException
 {
     String principalString = permission.getPrincipal();    
@@ -357,6 +382,16 @@ throws AuthorizationException
     Integer typeId = new Integer(principalString.substring(0, idx));
     Class type = EntityTypes.getEntityType(typeId);
     String key = principalString.substring(idx + 1);
+    return newPrincipal(key, type);
+}
+/**
+ * @param org.jasig.portal.groups.IEntityGroup
+ * @return user org.jasig.portal.security.IAuthorizationPrincipal
+ */
+private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group) 
+{
+    String key = group.getKey();
+    Class type = IEntityGroup.class;    //group.getEntityType();
     return newPrincipal(key, type);
 }
 /**
@@ -371,7 +406,7 @@ throws AuthorizationException
     Set principals = new HashSet();
     for ( int i=0; i<permissions.length; i++ )
     {
-        IAuthorizationPrincipal principal = getPrincipalFromPermission(permissions[i]);
+        IAuthorizationPrincipal principal = getPrincipal(permissions[i]);
         principals.add(principal);
     }
     return ((IAuthorizationPrincipal[])principals.toArray(new IAuthorizationPrincipal[principals.size()]));
@@ -381,7 +416,7 @@ throws AuthorizationException
  * <code>IAuthorizationPrincipal</code>.
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
-private String getPrincipalString(IAuthorizationPrincipal principal) 
+public String getPrincipalString(IAuthorizationPrincipal principal) 
 {
     Integer type = EntityTypes.getEntityTypeID(principal.getType());
     return type + PERIOD_STRING + principal.getKey();

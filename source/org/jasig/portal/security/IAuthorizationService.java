@@ -232,4 +232,17 @@ public interface IAuthorizationService
  */
     public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal) 
     throws AuthorizationException;
+
+/**
+ * Returns the <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.
+ * @param permission IPermission
+ */
+    public IAuthorizationPrincipal getPrincipal(IPermission permission)
+    throws AuthorizationException;
+
+/**
+ * Returns a <code>String</code> used to represent the <code>IAuthorizationPrincipal</code>.  
+ * @param principal IAuthorizationPrincipal 
+ */
+    public String getPrincipalString(IAuthorizationPrincipal principal);
 }
