@@ -275,7 +275,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
       up = ulsdb.getUserPreferences(getUserLayoutManager().getPerson(), profile);
-      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile().getProfileId()));
+      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile()));
       return up;
   }
 

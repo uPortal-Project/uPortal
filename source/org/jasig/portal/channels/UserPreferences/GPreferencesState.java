@@ -155,8 +155,7 @@ class GPreferencesState extends BaseState {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
-        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserLayoutManager().getPerson(),
-            context.getCurrentUserPreferences().getProfile().getProfileId());
+        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserLayoutManager().getPerson(), context.getCurrentUserPreferences().getProfile());
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
