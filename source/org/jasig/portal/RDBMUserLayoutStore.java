@@ -2917,6 +2917,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
       public ISecurityContext getSecurityContext() { return(null); }
       public void setSecurityContext(ISecurityContext context) {}
+      
+      public EntityIdentifier getEntityIdentifier() {return null;}
     }
 
     private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
