@@ -45,11 +45,12 @@ import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
 
 /**
- When retrieving a new person, the value of the REMOTEUSER environment variable
- is passed to the security context.  If it is set then the server has authenticated
- the user and the username may be used for login.
- *@author     Pete Boysen (pboysen@iastate.edu)
- *@created    November 16, 2002
+ * When retrieving a new person, the value of the <code>REMOTEUSER</code> environment variable
+ * is passed to the security context.  If it is set then the server has authenticated
+ * the user and the username may be used for login.
+ *
+ * @author     Pete Boysen (pboysen@iastate.edu)
+ * @version
  */
 public class RemoteUserPersonManager
 	 implements IPersonManager {
@@ -90,7 +91,7 @@ public class RemoteUserPersonManager
 		}
 		// By default new user's have the UID of 1
 		person.setID(1);
-        person.setAttribute(person.USERNAME, user);
+        person.setAttribute(IPerson.USERNAME, user);
 		// Add this person object to the user's session
 		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
 		// Return the new person object
