@@ -41,13 +41,17 @@
                           </table>
                         </td>
                       </tr>
-                      <xsl:for-each select="/userPrefParams/paramNames/paramName">
+                      <xsl:for-each select="/userPrefParams/channel/parameter[@override = 'yes']">
                         <tr class="uportal-channel-table-header" valign="bottom">
                           <td width="100%">
                             <span class="uportal-label">
-                              <xsl:value-of select="."/>:</span>
+                              <xsl:value-of select="@name"/>:</span>
                             <br/>
-                            <input type="text" name="{.}" size="40" class="uportal-input-text"/>
+                            <input type="text" name="{.}" size="40" class="uportal-input-text">
+                              <xsl:attribute name="value">
+                                <xsl:value-of select="@value"/>
+                              </xsl:attribute>
+                            </input>
                           </td>
                         </tr>
                       </xsl:for-each>
@@ -73,7 +77,7 @@
                         </td>
                       </tr>
 
-                      <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
+                      <xsl:apply-templates select="/userPrefParams/channelDef//parameter[child::name = /userPrefParams/channel/parameter[@override='yes']/@name]"/>
                     </xsl:otherwise>
                   </xsl:choose>
                 </xsl:when>
@@ -105,8 +109,8 @@
           <td>
             <input type="submit" name="uPTCUP_submit" value="Back" onclick="document.parameters.uPTCUP_action.value='back'" class="uportal-button"/>
             <input type="submit" name="uPTCUP_submit" value="Finished" onclick="document.parameters.uPTCUP_action.value='finished'" class="uportal-button"/>
-            <input type="submit" name="uPTCUP_submit" value="Cancel" onclick="document.parameters.uPTCUP_action.value='cancel'" class="uportal-button"/> 
-           </td>
+            <input type="submit" name="uPTCUP_submit" value="Cancel" onclick="document.parameters.uPTCUP_action.value='cancel'" class="uportal-button"/>
+          </td>
         </tr>
       </table>
     </form>
@@ -114,7 +118,6 @@
 
 
   <xsl:template match="parameter">
-
     <xsl:choose>
       <xsl:when test="type/@display != 'hidden'">
         <tr>
@@ -174,30 +177,19 @@
           <br/>
           <select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
-              <xsl:variable name="name">
+              <xsl:variable name="paramName">
                 <xsl:value-of select="../../../name"/>
               </xsl:variable>
-              <xsl:variable name="value">
+              <xsl:variable name="paramValue">
                 <xsl:value-of select="."/>
               </xsl:variable>
 
 
               <option value="{.}">
 
-                <xsl:choose>
-                  <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]">
-                    <xsl:if test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value = $value">
-                      <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                  </xsl:when>
-
-                  <xsl:otherwise>
-                    <xsl:if test=". = ../defaultValue[1]">
-                      <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                  </xsl:otherwise>
-                </xsl:choose>
-
+                <xsl:if test="/userPrefParams/channel/parameter[@name=$paramName]/@value=$paramValue]">
+                  <xsl:attribute name="selected">selected</xsl:attribute>
+                </xsl:if>
 
                 <xsl:choose>
                   <xsl:when test="@display">
@@ -220,7 +212,7 @@
           <br/>
           <xsl:for-each select="type/restriction/value">
             <input type="radio" name="{name}" value="{.}" class="uportal-input-text">
-              <xsl:if test=". = ../defaultValue[1]">
+              <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
@@ -244,7 +236,7 @@
             <xsl:for-each select="type/restriction/value">
               <xsl:call-template name="subscribe"/>
               <option value="{.}">
-                <xsl:if test=". = ../defaultValue[1]">
+                <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -273,8 +265,14 @@
           <br/>
           <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
+              <xsl:variable name="paramName">
+                <xsl:value-of select="../../../name"/>
+              </xsl:variable>
+              <xsl:variable name="paramValue">
+                <xsl:value-of select="."/>
+              </xsl:variable>
               <option value="{.}">
-                <xsl:if test=". = ../defaultValue[1]">
+                <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -298,7 +296,7 @@
           <br/>
           <xsl:for-each select="type/restriction/value">
             <input type="checkbox" name="{name}" value="{.}">
-              <xsl:if test=". = ../defaultValue[1]">
+              <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
@@ -322,7 +320,7 @@
           <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
               <option value="{.}">
-                <xsl:if test=". = ../defaultValue[1]">
+                <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -355,6 +353,9 @@
         <xsl:otherwise> <xsl:value-of select="$defaultMaxLength"/> </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="paramName">
+      <xsl:value-of select="name"/>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="type/@display='text'">
         <xsl:call-template name="subscribe"/>
@@ -363,21 +364,9 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
-            <xsl:choose>
-              <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
-                <xsl:variable name="name">
-                  <xsl:value-of select="name"/>
-                </xsl:variable>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="defaultValue"/>
-                </xsl:attribute>
-              </xsl:otherwise>
-            </xsl:choose>
+            <xsl:attribute name="value">
+              <xsl:value-of select="/userPrefParams/channel/parameter[@name = $paramName]/@value"/>
+            </xsl:attribute>
           </input>
           <xsl:apply-templates select="units"/>
         </td>
@@ -388,23 +377,13 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-          <textarea rows="{$defaultTextRows}" cols="{$defaultTextCols}" class="uportal-input-text">
-            <xsl:choose>
-              <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
-                <xsl:variable name="name">
-                  <xsl:value-of select="name"/>
-                </xsl:variable>
-                <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="defaultValue"/>
-              </xsl:otherwise>
-            </xsl:choose>
+          <textarea name="{name}" rows="{$defaultTextRows}" cols="{$defaultTextCols}" class="uportal-input-text">
+            <xsl:value-of select="/userPrefParams/channel/parameter[@name = $paramName]/@value"/>
           </textarea>
         </td>
       </xsl:when>
       <xsl:when test="type/@display='hidden'">
-        <input type="hidden" name="{name}" value="{defaultValue}"/>
+        <input type="hidden" name="{name}" value="{/userPrefParams/channel/parameter[@name = $paramName]/@value}"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="subscribe"/>
@@ -413,21 +392,9 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
-            <xsl:choose>
-              <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
-                <xsl:variable name="name">
-                  <xsl:value-of select="name"/>
-                </xsl:variable>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="defaultValue"/>
-                </xsl:attribute>
-              </xsl:otherwise>
-            </xsl:choose>
+            <xsl:attribute name="value">
+              <xsl:value-of select="/userPrefParams/channel/parameter[@name = $paramName]/@value"/>
+            </xsl:attribute>
           </input>
         </td>
       </xsl:otherwise>
@@ -457,6 +424,4 @@
       <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
-
-</xsl:stylesheet>
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
