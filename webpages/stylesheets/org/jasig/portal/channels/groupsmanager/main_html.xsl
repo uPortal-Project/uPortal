@@ -234,13 +234,13 @@
           			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group" title="Delete Group"/></a>
           		</xsl:when>
           		<xsl:when test="$mode='edit'">
-          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Edit Group" title="Edit Group"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Finish Editing Group" title="Finish Editing Group"/></a>
           			<xsl:if test="$ignorePermissions or key('can',concat('DELETE','|',$group/@key))">
 						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group" title="Delete Group"/></a>
 					</xsl:if>
           		</xsl:when>
-          		<xsl:when test="$ignorePermissions or key('can',concat('UPDATE','|',$group/@key)) or key('can',concat('ASSIGNPERMISSIONS','|',$group/@key)) or key('can',concat('ADD/REMOVE','|',$group/@key)) or key('can',concat('CREATE','|',$group/@key))">
-          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Finish Editing Group" title="Finish Editing Group"/></a>
+          		<xsl:when test="($group/@editable='true') and ($ignorePermissions or key('can',concat('UPDATE','|',$group/@key)) or key('can',concat('ASSIGNPERMISSIONS','|',$group/@key)) or key('can',concat('ADD/REMOVE','|',$group/@key)) or key('can',concat('CREATE','|',$group/@key)))">
+          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Edit Group" title="Edit Group"/></a>
           		</xsl:when>
           	</xsl:choose>
           	
