@@ -508,7 +508,7 @@
             <parameters>
             </parameters>
             <folderattributes>
-              <attribute name="width">
+              <attribute name="width" defaultvalue="100%">
                 <folder folderid="col01" value="70%"/>
                 <folder folderid="col02" value="30%"/>
                 <folder folderid="col03" value="30%"/>
@@ -533,7 +533,7 @@
               <parameter name="borderWidth">2</parameter>
             </parameters>
             <channelattributes>
-              <attribute name="minimizable">
+              <attribute name="minimizable" defaultvalue="true">
                 <channel channelid="chan01" value="false"/>
                 <channel channelid="chan02" value="false"/>
               </attribute>
@@ -552,7 +552,7 @@
             <parameters>
             </parameters>
             <folderattributes>
-              <attribute name="width">
+              <attribute name="width" defaultvalue="100%">
                 <folder folderid="col01" value="70%"/>
                 <folder folderid="col02" value="30%"/>
                 <folder folderid="col03" value="30%"/>
@@ -577,7 +577,7 @@
               <parameter name="borderWidth">2</parameter>
             </parameters>
             <channelattributes>
-              <attribute name="minimizable">
+              <attribute name="minimizable" defaultvalue="true">
                 <channel channelid="chan01" value="false"/>
                 <channel channelid="chan02" value="false"/>
               </attribute>
