@@ -54,7 +54,7 @@ Version $Revision$
         URIs can optionally be specified relative to the classpath
       </description>
 
-      <parameter modify="subscribe">
+      <parameter modify="publish">
         <name>xmlUri</name>
         <label>XML URI</label>
         <type base="string" input="text" display="text">
@@ -78,7 +78,7 @@ Version $Revision$
 
       </parameter>
 
-      <parameter modify="subscribe">
+      <parameter modify="publish">
         <name>sslUri</name>
         <label>Stylesheet list file (.ssl) URI</label>
         <type base="string" input="text" display="text">
