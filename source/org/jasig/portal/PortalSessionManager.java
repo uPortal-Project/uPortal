@@ -89,10 +89,18 @@ public class PortalSessionManager extends HttpServlet {
   // repeated requests from going through. This is useful
   // when debugging and typing things in on a command line.
   // Otherwise, the flag should be set to false.
-  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
+  private static final boolean ALLOW_REPEATED_REQUESTS = getAllowRepeatedRequestsValue();
 
   // random number generator
   private static final Random randomGenerator = new Random();
+  
+  private static boolean getAllowRepeatedRequestsValue() {
+  	try {
+  	    return 	PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
+  	} catch ( RuntimeException re ) {
+  		return false;
+  	}
+  }
 
   static {
     LogService.log(LogService.INFO, "uPortal started");
