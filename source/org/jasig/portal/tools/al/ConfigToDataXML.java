@@ -30,10 +30,12 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+ **/
 
-package org.jasig.portal.tools.al;
+
+package org.jasig.portal.layout.tools;
+
+
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.groups.*;
@@ -53,8 +55,25 @@ import org.apache.xalan.serialize.SerializerFactory;
 import org.apache.xalan.serialize.Serializer;
 import org.apache.xalan.templates.OutputProperties;
 
+import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
+import  java.sql.PreparedStatement;
+import  java.sql.Types;
+import  java.sql.Timestamp;
+import  java.sql.SQLException;
+
+/**
+ * A utility class to load pushed fragment configuration into the database
+ * used by the alconfg ant target. 
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version 1.0
+ */
 public class ConfigToDataXML {
-    static final String configXSL="ConfigToDataXML.xsl";
+
+    static final String configXSL="/org/jasig/portal/tools/al/ConfigToDataXML.xsl";
 
     public static void main(String[] args) throws Exception {
 
@@ -90,7 +109,7 @@ public class ConfigToDataXML {
                 RDBMServices.releaseConnection(con);
             }
         }
-        
+
 
         // instantiate transfomer
         SAXTransformerFactory saxTFactory=(SAXTransformerFactory) TransformerFactory.newInstance();
@@ -98,7 +117,7 @@ public class ConfigToDataXML {
         System.out.println("DEBUG: reading XSLT from url="+ConfigToDataXML.class.getResource(configXSL));
 
         XMLReader reader = XMLReaderFactory.createXMLReader();
-        // for some weird weird reason, the following way of instantiating the parser causes all elements to dissapear ... 
+        // for some weird weird reason, the following way of instantiating the parser causes all elements to dissapear ...
         // nothing like a bizzare bug like that to take up your afternoon :(
         //        XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
         TransformerHandler thand=saxTFactory.newTransformerHandler(new StreamSource(ConfigToDataXML.class.getResourceAsStream(configXSL)));
@@ -109,8 +128,87 @@ public class ConfigToDataXML {
         reader.setContentHandler(filter);
         thand.setResult(new StreamResult(outputDataFile));
         reader.parse(new InputSource(ConfigToDataXML.class.getResourceAsStream(alConfigFile)));
-        System.out.println("DEBUG: done."); System.exit(0); 
+
+        // Cleaning the database before the DbLoader is called
+        (new DbCleaner(filter.getFragmentIds())).cleanTables();
+
+        System.out.println("DEBUG: done.");
     }
+
+
+     /**
+     * Cleans up the tables contained the old data of the fragments to be reloaded
+     * It is used before the DbLoader utility is called
+     *
+     */
+    private static class DbCleaner {
+
+      private static Vector fragmentIds;
+
+      public DbCleaner ( Vector fragmentIds ) {
+        this.fragmentIds = fragmentIds;
+      }
+
+      public static void cleanTables() {
+       if ( fragmentIds != null && fragmentIds.size() > 0 ) {
+        System.out.println("DEBUG: cleaning tables...");
+
+        Connection con = RDBMServices.getConnection();
+        try {
+
+         con.setAutoCommit(false);
+
+         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE fragment_id = ?");
+         PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM up_fragments WHERE fragment_id = ?");
+         PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM up_fragment_restrictions WHERE fragment_id = ?");
+         PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM up_fragment_param WHERE fragment_id = ?");
+         PreparedStatement deleteOwnerFragment = con.prepareStatement("DELETE FROM up_owner_fragment WHERE fragment_id = ?");
+         PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM up_group_fragment WHERE fragment_id = ?");
+
+         for ( int i = 0; i < fragmentIds.size(); i++ ) {
+          int fragmentId = Integer.parseInt(fragmentIds.get(i).toString());
+          // Setting the parameter - fragment id
+          deleteLayoutStruct.setInt(1,fragmentId);
+          deleteFragments.setInt(1,fragmentId);
+          deleteFragmentRestrictions.setInt(1,fragmentId);
+          deleteFragmentParams.setInt(1,fragmentId);
+          deleteOwnerFragment.setInt(1,fragmentId);
+          deleteGroupFragment.setInt(1,fragmentId);
+
+          // Executing statements
+          deleteLayoutStruct.executeUpdate();
+          deleteFragments.executeUpdate();
+          deleteFragmentRestrictions.executeUpdate();
+          deleteFragmentParams.executeUpdate();
+          deleteOwnerFragment.executeUpdate();
+          deleteGroupFragment.executeUpdate();
+
+         }
+
+         // Commit
+         con.commit();
+
+         if ( deleteLayoutStruct != null ) deleteLayoutStruct.close();
+         if ( deleteFragments != null ) deleteFragments.close();
+         if ( deleteFragmentRestrictions != null ) deleteFragmentRestrictions.close();
+         if ( deleteFragmentParams != null ) deleteFragmentParams.close();
+         if ( deleteOwnerFragment != null ) deleteOwnerFragment.close();
+         if ( deleteGroupFragment != null ) deleteGroupFragment.close();
+
+         if ( con != null ) con.close();
+
+         System.out.println("DEBUG: cleaning done...");
+
+        } catch ( Exception e ) {
+            System.out.println ( "DEBUG: " + e.getMessage() );
+            e.printStackTrace();
+          }
+       }
+      }
+
+    };
+
+
 
     /**
      * Attempts to determine group key based on a group name.
@@ -148,8 +246,8 @@ public class ConfigToDataXML {
                 }
                 System.out.println("]");
             }
-            System.exit(1);
-        } 
+             throw new PortalException("ERROR: can not find user group with name \""+groupName+"\" in the database !");
+        }
         return null;
     }
 
@@ -159,19 +257,25 @@ public class ConfigToDataXML {
      * - intercept and verify user group names, writing out ids
      *
      */
-    static class ConfigFilter extends SAX2FilterImpl {
+    private static class ConfigFilter extends SAX2FilterImpl {
         Map rMap;
         boolean groupMode=false;
         AttributesImpl groupAtts;
         String groupLocalName;
         String groupUri;
         String groupData=null;
+        private Vector fragmentIds;
 
         public ConfigFilter(ContentHandler ch,Map rMap) {
             super(ch);
             this.rMap=rMap;
+            fragmentIds= new Vector();
         }
-        
+
+        public Vector getFragmentIds() {
+           return fragmentIds;
+        }
+
         public void characters (char ch[], int start, int length) throws SAXException   {
             if(groupMode) {
                 // accumulate character data
@@ -187,6 +291,11 @@ public class ConfigToDataXML {
         }
 
         public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException {
+
+             // Adding the fragment id to the vector
+            if ( qName.equals("fragment") )
+             fragmentIds.add(atts.getValue("id"));
+
             if(qName.equals("group")) { // this could be made more robust by adding another mode for "groups" element
                 groupMode=true;
                 groupUri=uri; groupLocalName=localName; groupAtts=new AttributesImpl(atts);
@@ -208,7 +317,7 @@ public class ConfigToDataXML {
                             super.startElement(uri,localName,qName,atts);
                         }
                     }
-                } else {                        
+                } else {
                     String restrName=ai.getValue("name");
                     restrType=(String)rMap.get(restrName);
                     if(restrType!=null) {
@@ -222,10 +331,11 @@ public class ConfigToDataXML {
             } else {
                 super.startElement(uri,localName,qName,atts);
             }
-            
+
         }
 
         public void endElement (String uri, String localName, String qName)	throws SAXException {
+
             if(groupMode) {
                 if(qName.equals("group")) {
                     if(groupAtts.getIndex("key")==-1) {
@@ -275,7 +385,7 @@ public class ConfigToDataXML {
                             e.printStackTrace();
                             System.exit(1);
                         }
-                    }       
+                    }
                 } else {
                     System.out.println("WARNING: <group/> contains other elements, which it shouldn't! Please check config validity.");
                 }
