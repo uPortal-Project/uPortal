@@ -943,22 +943,26 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
              String firstChildId = folder.getFirstChildNodeId();
                for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
 
-                  // if necessary we add marking nodes
+                 // if necessary we add marking nodes
+                 if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
                   if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,nodeId,nextNodeId) )
                     createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,nextNodeId);
                   if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,nodeId,nextNodeId) )
                     createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,nextNodeId);
+                 }
 
                 // !!!!!!!!!!!
                 getUserLayout(nextNodeId,contentHandler);
                 nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
                }
 
-                  // if necessary we add marking nodes at the end of the sibling line
+                 // if necessary we add marking nodes at the end of the sibling line
+                 if ( !node.getNodeDescription().isHidden() ) {
                   if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,nodeId,null) )
                     createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,null);
                   if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,nodeId,null) )
                     createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,null);
+                 }
 
              // Putting restrictions to the content handler
               if ( restrictionMask > 0 )
@@ -1103,25 +1107,38 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
           String parentId = layoutNode.getParentNodeId();
           String nextId = layoutNode.getNextNodeId();
 
-          // If the node is the first node in the sibling line
-          if ( parentId != null && layoutNode.getPreviousNodeId() == null ) {
-             if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nodeId) )
+           // If the node is the first node in the sibling line
+
+            if ( parentId != null && layoutNode.getPreviousNodeId() == null ) {
+             if ( !layoutNode.getNodeDescription().isHidden() && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
+              if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nodeId) )
                createMarkingLeaf(domLayout,ADD_TARGET,parentId,nodeId,node);
 
-             if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,parentId,nodeId) )
+              if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,parentId,nodeId) )
                createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nodeId,node);
-          }
+             }
+            }
 
           // Appending a new node
           node.appendChild(newNode);
 
           if ( parentId != null ) {
 
+            boolean isNodeMarkable = false;
+            if ( nextId != null && !getLayoutNode(nextId).getNodeDescription().isHidden() )
+              isNodeMarkable = true;
+            else if ( nextId == null )
+              isNodeMarkable = true;
+
+            if ( isNodeMarkable && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
+
              if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nextId) )
                createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
 
              if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,parentId,nextId) )
                createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nextId,node);
+
+            }
           }
 
 
