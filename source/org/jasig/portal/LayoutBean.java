@@ -194,11 +194,10 @@ public class LayoutBean
           detachMode=false;
       }
 
-      // Including the context path in front of uPElement is necessary for phone.com browsers to work
-      String uPElement = req.getContextPath() + "/render.uP";
+      String uPElement = "render.uP";
       if(detachMode) {
           Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : entering detach mode for nodeId=\""+detachId+"\".");
-          uPElement = req.getContextPath() + "/detach_" + detachId + ".uP";
+          uPElement = "detach_" + detachId + ".uP";
       }
 
 
@@ -222,7 +221,8 @@ public class LayoutBean
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 
       // prepare .uP element and detach flag to be passed to the stylesheets
-      XString xuPElement=processor.createXString (uPElement);
+      // Including the context path in front of uPElement is necessary for phone.com browsers to work
+      XString xuPElement=processor.createXString(req.getContextPath() + "/" + uPElement);
 
       // set up the channelManager
       if (channelManager == null)
