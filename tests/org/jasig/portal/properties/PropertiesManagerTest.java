@@ -4,7 +4,6 @@
  */
 package org.jasig.portal.properties;
 
-import org.jasig.portal.PropertiesManager;
 
 import junit.framework.TestCase;
 
@@ -19,7 +18,7 @@ public class PropertiesManagerTest extends TestCase {
      * The test properties file is in the properties package of the source tree
      * containing the PropertiesManager itself.
      */
-    private static final String TEST_FILE = "./properties/test.properties";
+    private static final String TEST_FILE = "./test.properties";
     
     /**
      * Save a copy of the value of the system property so that we can reset it when we clean up.
