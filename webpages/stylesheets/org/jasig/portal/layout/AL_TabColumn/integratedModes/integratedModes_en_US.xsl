@@ -173,7 +173,7 @@ Version $Revision$
 								</xsl:if>
 								<td>
 									<a href="Logout" class="uportal-navigation-category">
-										<img src="{$mediaPathIcons}/logout.gif" width="24" height="24" alt="logout" title="logout" border="0"/>
+										<img src="{$mediaPathIcons}/logout.gif" width="24" height="24" alt="Logout" title="Logout" border="0"/>
 									</a>
 								</td>
 							</tr>
@@ -864,22 +864,22 @@ Version $Revision$
 	<xsl:template name="preferencesControls">
 		<xsl:choose>
 			<xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
-				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Channel Move">
 					<img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="Cancel Channel Move" title="Cancel Channel Move" border="0"/>
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
 				<a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel&amp;uP_sparam=targetAction&amp;targetAction=Channel Move">
-					<img src="{$mediaPathIcons}/contentmove.gif" width="26" height="23" alt="move this channel" title="move this channel" border="0"/>
+					<img src="{$mediaPathIcons}/contentmove.gif" width="26" height="23" alt="Move this channel" title="Move this channel" border="0"/>
 				</a>
 			</xsl:otherwise>
 		</xsl:choose>
 		<!-- Channel Language Control Removed until later version of uPortal
 		<a href="#">
-			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="change language for this channel" title="change language for this channel" border="0"/>
+			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="Change language for this channel" title="Change language for this channel" border="0"/>
 		</a> -->
 		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this channel?')">
-			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="delete this channel" title="delete this channel" border="0"/>
+			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="Delete this channel" title="Delete this channel" border="0"/>
 		</a>
 	</xsl:template>
 	<xsl:template name="focusedControls">
@@ -1583,7 +1583,7 @@ Version $Revision$
 										<xsl:value-of select="@name"/>
 									</span>
 									<img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
-									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Tab Move">
 										<img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="Cancel Tab Move" title="Cancel Tab Move" border="0"/>
 									</a>
 								</td>
@@ -2569,13 +2569,13 @@ Version $Revision$
 										<td>
 											<xsl:choose>
 												<xsl:when test="$selectedID=@ID and $targetAction='Column Move'">
-													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=Cancel Column Move">
 														<img src="{$mediaPathIcons}/columncancelmove.gif" width="28" height="25" alt="cancel move action" title="cancel move action" border="0"/>
 													</a>
 												</xsl:when>
 												<xsl:otherwise>
 													<a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=Column Move">
-														<img src="{$mediaPathIcons}/columnmove.gif" width="28" height="25" alt="move this column" title="move this column" border="0"/>
+														<img src="{$mediaPathIcons}/columnmove.gif" width="28" height="25" alt="Move this column" title="Move this column" border="0"/>
 													</a>
 												</xsl:otherwise>
 											</xsl:choose>
@@ -2583,12 +2583,12 @@ Version $Revision$
 										<!-- Language Button Removed until later version of uPortal
 										<td>
 											<a href="#">
-												<img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="change language for this column" title="change language for this column" border="0"/>
+												<img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="Change language for this column" title="Change language for this column" border="0"/>
 											</a>
 										</td> -->
 										<td>
 											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this column?')">
-												<img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="delete this column" title="delete this column" border="0"/>
+												<img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="Delete this column" title="Delete this column" border="0"/>
 											</a>
 										</td>
 										<xsl:if test="count(../column)&gt;1">
@@ -2674,7 +2674,7 @@ Version $Revision$
 				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
 					<xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
 					<xsl:variable name="followingColumnExpanded" select="number(substring-before(following-sibling::column/@width,'%'))+5"/>
-					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="shrink this column by 5%" title="shrink this column by 5%"/>
+					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2690,7 +2690,7 @@ Version $Revision$
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
 					<xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
 					<xsl:variable name="precedingColumnExpanded" select="number(substring-before(preceding-sibling::column/@width,'%'))+5"/>
-					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="shrink this column by 5%" title="shrink this column by 5%"/>
+					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2713,7 +2713,7 @@ Version $Revision$
 				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
 					<xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
 					<xsl:variable name="followingColumnCondensed" select="number(substring-before(following-sibling::column/@width,'%'))-5"/>
-					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="expand this column by 5%" title="expand this column by 5%"/>
+					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2729,7 +2729,7 @@ Version $Revision$
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
 					<xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
 					<xsl:variable name="precedingColumnCondensed" select="number(substring-before(preceding-sibling::column/@width,'%'))-5"/>
-					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="expand this column by 5%" title="expand this column by 5%"/>
+					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
