@@ -102,7 +102,7 @@ public class GenericPortalBean {
     public static void initialize(javax.servlet.ServletContext application) {
         if (sPortalBaseDir == null) {
 
-            String sPathToPortal = application.getInitParameter("sPortalBaseDir");
+            String sPathToPortal = application.getInitParameter("portalBaseDir");
             if (sPathToPortal == null) {
                 // either the web server is stupid (like WebLogic) and they
                 // can't set InitParameters for JSPs, or they just didn't do it
@@ -114,7 +114,7 @@ public class GenericPortalBean {
                     if (testFile.exists()) {
                         // found it on the second try, remove the properties directory
                         sPathToPortal = testFile.getParent() + File.separator;
-                        System.err.println("portal base directory is : " + sPathToPortal);
+                        System.err.println("Guessing portal base directory to be: " + sPathToPortal);
                     }
                 }
                 else {
@@ -123,7 +123,6 @@ public class GenericPortalBean {
                 }
             }
 
-            System.err.println("sPathTOPortal is : " + sPathToPortal);
             setPortalBaseDir(sPathToPortal);
         }
     }
