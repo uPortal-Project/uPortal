@@ -4,7 +4,7 @@
 
    <xsl:param name="baseActionURL">render.uP</xsl:param>
 
-   <xsl:param name="theme" select="'imm'" />
+   <xsl:param name="theme" select="'java'" />
 
    <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>
 
@@ -61,7 +61,7 @@ function openBrWindow(theURL,winName,features) {
                               <img alt="interface image" src="{$mediaPath}/theme_{$theme}/uportal_logo.gif" border="0" />
                            </td>
 
-                           <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Current theme: 
+                           <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Current skin: 
                            <xsl:value-of select="$theme" />
 
                            <br />
