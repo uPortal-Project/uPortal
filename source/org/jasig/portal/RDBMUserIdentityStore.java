@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return uPortalUID number
    * @throws Authorization exception if no user is found.
    */
-  public int getPortalUID (IPerson person) throws AuthorizationException {
+  public int getPortalUID (IPerson person) throws Exception {
     int uPortalUID=-1;
     uPortalUID=this.getPortalUID(person, false);
     return uPortalUID;
@@ -84,7 +84,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    *
    * removeuPortalUID
    * @param   uPortalUID integer key to uPortal data for a user
-   * @throws Authorization exception if a sql error is encountered
+   * @throws SQLException exception if a sql error is encountered
    */
   public void removePortalUID(int uPortalUID) throws Exception {
     Connection con = RDBMServices.getConnection();
@@ -204,20 +204,21 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
+      	LogService.log(LogService.ERROR, "RDBMUserIdentityStore::removePortalUID(): " + se);
         if (RDBMServices.supportsTransactions)
           con.rollback();
       }
       catch (SQLException e) {
+      	LogService.log(LogService.ERROR, "RDBMUserIdentityStore::removePortalUID(): " + e);
       }
-        if (DEBUG>0){
-        System.err.println("SQLException: " + se.getMessage());
-        System.err.println("SQLState:  " + se.getSQLState());
-        System.err.println("Message:  " + se.getMessage());
-        System.err.println("Vendor:  " + se.getErrorCode());}
+        if (DEBUG>0) {
+         System.err.println("SQLException: " + se.getMessage());
+         System.err.println("SQLState:  " + se.getSQLState());
+         System.err.println("Message:  " + se.getMessage());
+         System.err.println("Vendor:  " + se.getErrorCode());
+        }
 
-        AuthorizationException ae = new AuthorizationException("SQL Database Error");
-        LogService.log(LogService.ERROR, "RDBMUserIdentityStore::removePortalUID(): " + ae);
-        throw  (ae);
+        throw se;
       }
     finally {
       RDBMServices.releaseConnection(con);

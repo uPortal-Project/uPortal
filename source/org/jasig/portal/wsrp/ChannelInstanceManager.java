@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -278,7 +278,11 @@ public class ChannelInstanceManager {
      * @throws org.jasig.portal.PortalException  
      */
     protected IPerson getPerson(UserContext userContext) throws PortalException {
-        return PersonFactory.createGuestPerson();
+      try {	
+          return PersonFactory.createGuestPerson();
+      } catch ( Exception e ) {
+      	  throw new PortalException(e);
+      }
     }
 
     /**
