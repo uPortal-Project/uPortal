@@ -211,6 +211,16 @@ Version $Revision$
 	<example>eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
       </parameter>
 
+      <parameter modify="publish-only">
+        <name>upc_localConnContext</name>
+        <label>Class name of the LocalConnectionContext implementation (optional)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue></defaultValue>
+      </parameter>
+
     </step>
 
   </params>
