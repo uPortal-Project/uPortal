@@ -73,6 +73,8 @@ public class RDBMUserLayoutStore
   protected static boolean supportsPreparedStatements = false;
   protected static boolean supportsOuterJoins = false;
   protected static boolean supportsTransactions = false;
+  protected static String tsStart = "";
+  protected static String tsEnd = "";
 
   static class DbStrings {
     String testJoin;
@@ -116,6 +118,7 @@ public class RDBMUserLayoutStore
       String sql;
       rdbmService = new RdbmServices();
       Connection con = rdbmService.getConnection();
+      setAutoCommit(con, false);
       try {
         sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
         try {
@@ -124,12 +127,11 @@ public class RDBMUserLayoutStore
             pstmt.clearParameters ();
             pstmt.setInt(1, 0);
             pstmt.executeQuery();
-            supportsPreparedStatements = false;
+            supportsPreparedStatements = true;
           } finally {
             pstmt.close();
           }
         } catch (SQLException sqle) {
-          System.err.println(sqle + ":" + sql);
         }
 
         try {
@@ -154,11 +156,24 @@ public class RDBMUserLayoutStore
         }
 
         try {
+          sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} WHERE USER_ID=0";
+          Statement stmt = con.createStatement();
+          try {
+            stmt.executeUpdate(sql);
+            tsStart = "{ts";
+            tsEnd = "}";
+          } finally {
+            stmt.close();
+          }
+        } catch (SQLException sqle) {
+        }
+
+        try {
           supportsTransactions = con.getMetaData().supportsTransactions();
         } catch (SQLException sqle) {}
 
         LogService.instance().log(LogService.INFO, "Database supports: Outer Joins=" + supportsOuterJoins +", Prepared statements=" +
-          supportsPreparedStatements + ", Transactions=" + supportsTransactions);
+          supportsPreparedStatements + ", Transactions=" + supportsTransactions + ", {ts ...} syntax=" + tsEnd.equals("}"));
       } finally {
         rdbmService.releaseConnection(con);
       }
@@ -1079,6 +1094,7 @@ public class RDBMUserLayoutStore
           } finally {
             uir.close();
           }
+          layoutStructure.clear();
 
           long stopTime = System.currentTimeMillis();
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
@@ -1470,7 +1486,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approverId + ", CHAN_APVL_DT = " +
-        "{ts '" + approveDate.toString() + "'}" +
+        tsStart + " '" + approveDate.toString() + "'" + tsEnd +
         " WHERE CHAN_ID = " + chanId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
@@ -1500,7 +1516,7 @@ public class RDBMUserLayoutStore
       String sqlDescription = sqlEscape(channel.getAttribute("description"));
       String sqlClass = channel.getAttribute("class");
       String sqlTypeID = channel.getAttribute("typeID");
-      String sysdate = "{ts '" + new Timestamp(System.currentTimeMillis()).toString() + "'}";
+      String sysdate = tsStart + " '" + new Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
       String sqlTimeout = channel.getAttribute("timeout");
       String sqlMinimizable = dbBool(channel.getAttribute("minimizable"));
       String sqlEditable = dbBool(channel.getAttribute("editable"));
