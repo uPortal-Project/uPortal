@@ -157,19 +157,24 @@
 						  machine available on your system), the first step is turn on the client. From
 						  the DOS prompt type: </P> 
 						<BLOCKQUOTE> <CODE>java mindbright.application.MindTerm</CODE> </BLOCKQUOTE> 
-						<P> Now, go to the <EM>tunnels</EM> menu and set is up so
-						  that local port <EM>2401</EM> is directed to host "localhost" on the same (you
-						  don't need to understand why) as showed in the picture below: </P>
+						
+            <P> Connect to SSH host <em>mis105.mis.udel.edu</em> by selecting 
+              Settings, New Server from the menu, and then typing mis105.mis.udel.edu 
+              for the Server name. When you click Connect, your username will 
+              be requested and the password. Don't worry about transmitting your 
+              password since SSH is done exactly to allow you to transmit your 
+              password without worrying about sniffing and other security holes 
+              of normal remote shells. Now, go to the <EM>tunnels</EM> menu and 
+              select Basic to display the dialog box. Fill in the fields so that 
+              local port <EM>2401</EM> is directed to host "localhost" on the 
+              remote port 2401, as shown in the picture below: </P>
 						<IMG SRC="images/mindterm_tunnel.gif" WIDTH="587" HEIGHT="475"> 
-						<P> When this is done, go ahead and connect to SSH host
-						  <EM>mis105.mis.udel.edu</EM> by typing so at the <CODE>SSH-server:</CODE> prompt. Then your username will be requested and the password. Don't
-						  worry about transmitting your password since SSH is done exactly to allow you
-						  to transmit your password without worrying about sniffing and other security
-						  holes of normal remote shells. </P> 
-						<P> When mis105 welcomes you and its prompt appears, you can
-						  safely minimize your mindterm window since, for plain WinCVS operation, you
-						  won't need to type anything in the ssh terminal. The WinCVS client will send
-						  CVS commands thru the SSH tunnel transparently. </P> 
+						
+            <P> When mis105 welcomes you and its prompt appears, you can safely 
+              minimize your mindterm window since, for plain WinCVS operation, 
+              you won't need to type anything in the ssh terminal. The WinCVS 
+              client will send CVS commands thru the SSH tunnel transparently. 
+            </P> 
 						<P> Then launch the WinCVS client. The first time, it will
 						  ask you the basic configuration preferences that it needs. These are the CVS
 						  repository location and authentication information. The screenshot below tells
