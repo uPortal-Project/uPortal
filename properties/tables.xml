@@ -38,18 +38,20 @@
     <primary-key>USER_NAME</primary-key>
   </table>
 
-  <table>
+ <table>
     <name>UP_PERMISSION</name>
     <columns>
-      <column> <name>OWNER</name>           <type>VARCHAR</type>   <param>255</param></column>
-      <column><name>PRINCIPAL</name>        <type>VARCHAR</type>   <param>255</param></column>
-      <column><name>ACTIVITY</name>         <type>VARCHAR</type>   <param>255</param></column>
-      <column><name>TARGET</name>           <type>VARCHAR</type>   <param>255</param></column>
-      <column><name>PERMISSION_TYPE</name>  <type>VARCHAR</type>   <param>255</param></column>
-      <column><name>EFFECTIVE</name>        <type>TIMESTAMP</type>                   </column>
-      <column><name>EXPIRES</name>          <type>TIMESTAMP</type>                   </column>
+      <column> <name>OWNER</name>            <type>VARCHAR</type>   <param>255</param></column>
+      <column> <name>PRINCIPAL_TYPE</name>   <type>INTEGER</type>                     </column>
+      <column> <name>PRINCIPAL_KEY</name>    <type>VARCHAR</type>   <param>255</param></column>
+      <column> <name>ACTIVITY</name>         <type>VARCHAR</type>   <param>255</param></column>
+      <column> <name>TARGET</name>           <type>VARCHAR</type>   <param>255</param></column>
+      <column> <name>PERMISSION_TYPE</name>  <type>VARCHAR</type>   <param>255</param></column>
+      <column> <name>EFFECTIVE</name>        <type>TIMESTAMP</type>                   </column>
+      <column> <name>EXPIRES</name>          <type>TIMESTAMP</type>                   </column>
     </columns>
   </table>
+
 
   <table>
     <name>UP_USER_LAYOUT</name>
