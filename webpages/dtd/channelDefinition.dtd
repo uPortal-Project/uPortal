@@ -35,7 +35,7 @@ Author: Ken Weiner, kweiner@interactivebusiness.com
 $Revision$
 -->
 
-<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, locale, categories, groups, parameters?)>
+<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, parameters?)>
 
 <!ELEMENT categories (category)*>
 
@@ -55,6 +55,7 @@ $Revision$
 <!ELEMENT hasedit (#PCDATA)>
 <!ELEMENT hashelp (#PCDATA)>
 <!ELEMENT hasabout (#PCDATA)>
+<!ELEMENT secure (#PCDATA)>
 <!ELEMENT locale (#PCDATA)>
 
 <!ELEMENT category (#PCDATA)>
