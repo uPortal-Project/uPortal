@@ -83,12 +83,20 @@ public class StylesheetUtils
   {
     String begin;
     String end;
-    while (uri.indexOf("/../") != -1)
+    int upDirIndex;
+    int endProtoIndex = uri.indexOf("//");
+
+    while ((upDirIndex=uri.indexOf("/../")) != -1)
     {
-       end = uri.substring(uri.indexOf("/../")+4);
-       begin = uri.substring(0, uri.indexOf("/../"));
-       begin = uri.substring(0, begin.lastIndexOf("/")+1);
-       uri = begin.concat(end); 
+      end = uri.substring(upDirIndex+4);
+      begin = uri.substring(0, upDirIndex);
+
+      if (begin.indexOf("/", endProtoIndex+2) != -1)       
+        begin = uri.substring(0, begin.lastIndexOf("/")+1);
+      else
+        begin += "/";
+
+      uri = begin.concat(end);
     }
     return uri;
   }
