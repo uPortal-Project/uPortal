@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="http://localhost:8080/portal/webpages/stylesheets/LayoutBean/sLayout2html_full.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet alternate="true" href="http://localhost:8080/portal/webpages/stylesheets/LayoutBean/sLayout2html_wml.xsl"  type="text/xsl" media="WAP"?>
+<?xml-stylesheet alternate="true" href="http://localhost:8080/portal/webpages/stylesheets/LayoutBean/sLayout2html_pp.xsl"  type="text/xsl" media="avantgo"?>
+
+<document>
+</document>

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rss PUBLIC "-//Netscape Communications//DTD RSS 0.91//EN" "http://my.netscape.com/publish/formats/rss-0.91.dtd">
+
+<rss version="0.91">
+
+  <channel>
+    <title>XML News and Features from XML.com</title>
+    <description>XML.com features a rich mix of information and services for the XML community.</description>
+    <language>en-us</language>
+    <link>http://xml.com/pub</link>
+    <copyright>Copyright 1999, O'Reilly and Associates and Seybold Publications</copyright>
+    <managingEditor>dale@xml.com (Dale Dougherty)</managingEditor>
+    <webMaster>peter@xml.com (Peter Wiggin)</webMaster>
+
+  <image>
+    <title>XML News and Features from XML.com</title>
+    <url>http://xml.com/universal/images/xml_tiny.gif</url>
+    <link>http://xml.com/pub</link>
+    <width>88</width>
+    <height>31</height>
+  </image>
+
+  <item>
+    <title>Customizing the DocBook DTD</title>
+    <link>http://xml.com/pub/1999/10/docbook/index.html?wwwrrr_rss</link>
+    <description>In this three-part excerpt from his new book, Norm Walsh describes how to modify the DocBook DTD and customize it for your own applications.</description>
+  </item>
+
+  <item>
+    <title>The Making of the DocBook DTD</title>
+    <link>http://xml.com/pub/1999/10/docbook/docbook-making.html?wwwrrr_rss</link>
+    <description>The DocBook DTD grew out of the Davenport Group, and many of the people who contributed to this DTD for computer documentation have gone on to take leading roles in XML development.   </description>
+  </item>
+
+  <item>
+    <title>Where the Web Leads Us -- Responses</title>
+    <link>http://xml.com/pub/1999/10/responses/index.html?wwwrrr_rss</link>
+    <description>Readers respond to Tim O'Reilly's perspectives on Open Source software and open standards.</description>
+  </item>
+
+  <item>
+    <title>XML Inter-Application Protocols</title>
+    <link>http://xml.com/pub/1999/10/open/index.html?wwwrrr_rss</link>
+    <description>Last week, XML.com reported on a talk by Tim O'Reilly, in which he discussed the next-generation of web-centric applications. This week, Edd Dumbill presents a case why XML is already in a position to form the links between these services.</description>
+  </item>
+
+  <item>
+    <title>XHTML: Three Namespaces or One?</title>
+    <link>http://xml.com/pub/1999/10/names/namespaces.html?wwwrrr_rss</link>
+    <description>It sounds like a religious debate from the days of the Byzantine empire. Whether XHTML should have three namespaces or one has been a question that's consuming the top minds in the XML community for the last month.</description>
+  </item>
+
+  <item>
+    <title>Mission-critical Data</title>
+    <link>http://xml.com/pub/1999/10/mission/mission.html?wwwrrr_rss</link>
+    <description>The recent loss of a spacecraft on Mars points out just how mission-critical proper data interchange is.</description>
+  </item>
+
+  <item>
+    <title>Where the Web Leads Us</title>
+    <link>http://xml.com/pub/1999/10/open/index.html?wwwrrr_rss</link>
+    <description>In a talk from Linux World in Tokyo, Tim O'Reilly offers a broad perspective on the confluence of Open Source software and open standards, looking at past and future developments.</description>
+  </item>
+
+  <item>
+    <title>News: XOL: An XML-Based Ontology Exchange Language.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-26-a?wwwrrr_rss</link>
+    <description>      XOL is a language for ontology exchange being designed within the framework of a Molecular Biology Ontology Working Group.  XOL is "designed to provide a format for exchanging ontology definitions among a set of interested parties. The ontology definitions that XOL is designed to encode include both schema information (meta-data), such as class definitions from object databases -- as well as non-schema information (ground facts) , such as object definitions from object databases. XOL i...
+</description>
+  </item>
+
+  <item>
+    <title>News: GCA Prepares for XML '99 and Markup Technologies '99 Conferences.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-26-b?wwwrrr_rss</link>
+    <description>      An announcement from the Graphic Communications Association predicts that the XML '99 Conference will be "the Largest Exposition to Date Showcasing XML and Related Technologies."  XML '99, to be held in conjunction with the Markup Technologies '99 Conference, "is the premier event on XML and related technologies [which] convenes in Philadelphia, December 5-9, 1999.  Featuring over 200 speakers representing vertical industry users and technology developers, XML '99 is guaranteed to bogg...
+</description>
+  </item>
+
+  <item>
+    <title>News: ISO/IEC 15445:1999(E) Hypertext Markup Language (ISO-HTML) Available Online.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-25-b?wwwrrr_rss</link>
+    <description>      A communiqu&eacute; from Russell Steven Shawn O'Connor notes that a revised 'First edition' of ISO/IEC 15445:1999(E) is now available online: Information technology -- Document description and processing languages -- HyperText Markup Language (HTML)  ['First edition 1999-00-00, Copyright 1999 IETF, W3C (MIT, Inria, Keio), ISO/IEC'] "International Standard ISO/IEC 15445 was prepared by Joint Technical Committee ISO/IEC JTC 1, Information technology, Subcommittee SC34, Document descripti...
+</description>
+  </item>
+
+  <item>
+    <title>News: Schematron Report: Error Browser for Open Source Schematron.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-25-c?wwwrrr_rss</link>
+    <description>       Rick Jelliffe (Computing Centre, Academia Sinica) has posted an announcement for an implementation of 'Schematron'.  David Carlisle has produced a Schematron Report implementation of Schematron with an error browser.  "The Schematron is a Open Source tree-pattern language for representing schemas for XML documents. It is a radically different approach from grammar-based schemas.  It is based on XPath, and can be trivially implemented over an XSL system.  I think it has the potential t...
+</description>
+  </item>
+
+  <item>
+    <title>News: Automatic Graphical User Interface (AGUI) Using XML Schemas.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-25-a?wwwrrr_rss</link>
+    <description>       Roger L. Costello (MITRE Corp.) recently posted an announcement describing technology which would automatically generate GUIs from XML schemas and e-catalogues.  The announcement for the Automatic Graphical User Interface (AGUI) concerns an "Open Source tool which automatically generates Web pages based upon an XML schema and conforming XML instance documents (e-catalogs): 'XML Schema + e-catalogs --&gt; AGUI tool --&gt; Web page'.  The purpose of this tool is to provide automatic, co...
+</description>
+  </item>
+
+  <item>
+    <title>News: XSIL: Extensible Scientific Interchange Language.</title>
+    <link>http://xml.com/pub/coverpage/newspage.html#ni1999-10-22-a?wwwrrr_rss</link>
+    <description>      Researchers at the LIGO Lab (Laser Interferometer Gravitational-Wave Observatory) at the California Institute of Technology, Pasadena, California, have proposed an XML-based "XSIL: Extensible Scientific Interchange Language."  As described in an abstract for a paper delivered at the 7th International Conference on High-Performance Computing and Networking:  "We motivate and define the XSIL language as a flexible, hierarchical, extensible transport language for scientific data objects. ...
+</description>
+  </item>
+
+  </channel>
+</rss>

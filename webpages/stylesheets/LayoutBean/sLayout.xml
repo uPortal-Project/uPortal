@@ -1,0 +1,22 @@
+<layout><header><title>guest, welcome !</title><description>XML version
+   </description><image><link>http://localhost:8080/portal/</link><url>images/MyIBS.gif</url><description>IBS logo</description><width>100</width><height>50</height></image></header>
+<tab ID="t01" priority="1" name="Main">
+  <column ID="col01" priority="0" width="40%">
+    <channel ID="chan01" priority="0" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Mozilla">
+       <parameter value="http://localhost:8080/portal/rss/netscape.rss" name="uri"/>
+    </channel>
+    <channel ID="chan02" priority="0" minimized="true" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Mozilla">
+       <parameter value="http://localhost:8080/portal/rss/netscape.rss" name="uri"/>
+    </channel>
+    <channel ID="chan03" priority="1" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="StockCharts">
+      <parameter value="http://localhost:8080/portal/rss/stockcharts.rss" name="uri"/>
+    </channel>
+  </column>
+  <column ID="col02" priority="0" width="60%">
+    <channel ID="chan04" priority="0" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.BookmarksChannel" name="Bookmarks">
+    </channel>
+  </column>
+</tab>
+<tab ID="t02" priority="0" name="Other">
+</tab>
+</layout>
