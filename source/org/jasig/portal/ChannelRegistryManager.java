@@ -37,7 +37,9 @@ package  org.jasig.portal;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
+import org.w3c.dom.Node;
 import org.w3c.dom.Document;
+import java.util.Set;
 import java.sql.SQLException;
 
 /**
@@ -54,13 +56,15 @@ public class ChannelRegistryManager {
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
   protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
-  
+  private static final String CHANNEL_REGISTRY_CACHE_KEY = "channelRegistryCacheKey";
+  private static final String CHANNEL_TYPES_CACHE_KEY = "channelTypesCacheKey";
+
   /**
    * Returns the channel registry as a Document.  This list is not filtered by roles.
    * @return the channel registry as a Document
    */
   public static Document getChannelRegistry() throws PortalException {
-    Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
+    Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
     if (channelRegistry == null)
     {
       // Channel registry has expired, so get it and cache it
@@ -72,20 +76,46 @@ public class ChannelRegistryManager {
 
       if (channelRegistry != null)
       {
-        channelRegistryCache.put("channelRegistry", channelRegistry);
+        channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
         LogService.instance().log(LogService.INFO, "Caching channel registry.");
       }
     }
-    return channelRegistry;    
-  }     
-  
+    return channelRegistry;
+  }
+
+  /**
+   * Publishes a channel.
+   * @param the channel XML fragment
+   * @param a list of categories that the channel belongs to
+   * @param a list of roles that are permitted to subscribe to the channel
+   * @param the user ID of the channel publisher
+   */
+  public static void publishChannel (Node channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
+    // Wipe out the channel registry
+    channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
+
+    int nextID = chanRegStore.getNextId();
+
+    // Add channel
+    String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
+    Document channelDoc = channel.getOwnerDocument();
+    channelDoc.appendChild(channel);
+    chanRegStore.addChannel(nextID, publisherID, "Channel Title", channelDoc, catIDs);
+
+    // Set roles
+    java.util.Vector vRoles = new java.util.Vector(roles);
+    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(nextID, vRoles);
+
+    // Approve channel
+    chanRegStore.approveChannel(nextID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));
+  }
+
   /**
    * Returns the publishable channel types as a Document.
    * @return a list of channel types as a Document
    */
   public static Document getChannelTypes() throws PortalException {
-    String key = "channelTypes";
-    Document channelTypes = (Document)channelTypesCache.get(key);
+    Document channelTypes = (Document)channelTypesCache.get(CHANNEL_TYPES_CACHE_KEY);
     if (channelTypes == null)
     {
       // Channel types doc has expired, so get it and cache it
@@ -97,12 +127,12 @@ public class ChannelRegistryManager {
 
       if (channelTypes != null)
       {
-        channelTypesCache.put(key, channelTypes);
+        channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
         LogService.instance().log(LogService.INFO, "Caching channel types.");
       }
     }
-    return channelTypes;    
-  }           
+    return channelTypes;
+  }
 }
 
 
