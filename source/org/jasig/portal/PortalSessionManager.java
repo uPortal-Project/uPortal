@@ -191,7 +191,7 @@ public class PortalSessionManager extends HttpServlet {
             return;
         } 
         
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
 
         if (session != null) {
             Set requestTags=null;
@@ -255,7 +255,14 @@ public class PortalSessionManager extends HttpServlet {
            }
 
         } else {
-            //throw new ServletException("Session object is null !");
+           try {	
+             //throw new ServletException("Session object is null !");
+        	 res.sendRedirect(req.getContextPath() + "/" );
+           } catch (Exception e) {
+        	  ExceptionHelper.genericTopHandler(Errors.bug,e);
+			  ExceptionHelper.generateErrorPage(res,e);
+        	  return;
+             } 	
         }
 
     }

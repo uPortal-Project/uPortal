@@ -164,7 +164,8 @@ public class LoginServlet extends HttpServlet {
     }
     else {
       // Store the fact that this user has attempted authentication in the session
-      request.getSession(false).setAttribute("up_authenticationAttempted", "true");
+      if ( person != null )	
+       request.getSession(false).setAttribute("up_authenticationAttempted", "true");
       // Preserve the attempted username so it can be redisplayed to the user by CLogin
       String attemptedUserName = request.getParameter("userName");
       if (attemptedUserName != null)
