@@ -63,15 +63,29 @@ String sAction = request.getParameter ("action");
       <td width="3%" height="2">&nbsp;</td>
       <td width="71%" height="2">&nbsp;</td>
     </tr>
-    <tr valign="top"> 
-      <td width="26%" height="37"> 
+    <tr valign="top">
+      <td width="26%" height="37">
         <input type="radio" name="chan_type" value="CPageRenderer">
         HTML Channel</td>
       <td width="3%" height="37">&nbsp;</td>
-      <td width="71%" height="37"><font size="2">HTML is a quick and easy way 
-        to create a channel. Anyone may publish a HTML channel as long as the 
-        HTML is valid and stored on a publicly accessible web server. You will 
+      <td width="71%" height="37"><font size="2">HTML is a quick and easy way
+        to create a channel. Anyone may publish a HTML channel as long as the
+        HTML is valid and stored on a publicly accessible web server. You will
         need to provide a URL for the HTML file.</font></td>
+    </tr>
+    <tr>
+      <td width="26%" height="2">&nbsp;</td>
+      <td width="3%" height="2">&nbsp;</td>
+      <td width="71%" height="2">&nbsp;</td>
+    </tr>
+    <tr valign="top">
+      <td width="26%" height="37">
+        <input type="radio" name="chan_type" value="CInlineFrame">
+        Inline Frame Channel</td>
+      <td width="3%" height="37">&nbsp;</td>
+      <td width="71%" height="37"><font size="2">This channel uses HTML and
+      presents it in an Inline Frame. Please note that only newer browsers support
+      this.</font></td>
     </tr>
   </table>
   <p> 
