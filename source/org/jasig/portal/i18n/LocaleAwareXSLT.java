@@ -120,7 +120,7 @@ public class LocaleAwareXSLT extends XSLT {
         String localeAwareXslUri = xslUri;
         int i;
 
-        if (locales == null) {
+        if (!LocaleManager.isLocaleAware() || locales == null) {
             try {
                 xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);
                 LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
