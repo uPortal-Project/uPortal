@@ -245,8 +245,6 @@ public class CChannelManager extends BaseChannel {
         channelDef.setHasHelp(hasHelp != null ? "true" : "false");
         String hasAbout = runtimeData.getParameter("hasAbout");
         channelDef.setHasAbout(hasAbout != null ? "true" : "false");
-        String printable = runtimeData.getParameter("printable");
-        channelDef.setPrintable(printable != null ? "true" : "false");
       // Categories
       } else if (capture.equals("selectCategories")) {
         String selectedCategory = runtimeData.getParameter("selectedCategory");
@@ -755,7 +753,6 @@ public class CChannelManager extends BaseChannel {
     protected String editable;
     protected String hasHelp;
     protected String hasAbout;
-    protected String printable;
     protected Map parameters;
 
     protected class Parameter {
@@ -785,7 +782,6 @@ public class CChannelManager extends BaseChannel {
     protected String getEditable() { return editable; }
     protected String getHasHelp() { return hasHelp; }
     protected String getHasAbout() { return hasAbout; }
-    protected String getPrintable() { return printable; }
 
     protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
@@ -796,7 +792,6 @@ public class CChannelManager extends BaseChannel {
     protected void setEditable(String editable) { this.editable = editable; }
     protected void setHasHelp(String hasHelp) { this.hasHelp = hasHelp; }
     protected void setHasAbout(String hasAbout) { this.hasAbout = hasAbout; }
-    protected void setPrintable(String printable) { this.printable = printable; }
 
     private void setAttribute(Element e, String attName, String attVal) {
       // Only set the attribute if it has a non-null value
@@ -827,7 +822,6 @@ public class CChannelManager extends BaseChannel {
               editable = defaultControls.getAttribute("editable");
               hasHelp = defaultControls.getAttribute("hasHelp");
               hasAbout = defaultControls.getAttribute("hasAbout");
-              printable = defaultControls.getAttribute("printable");
             }
           }
         }
@@ -848,7 +842,6 @@ public class CChannelManager extends BaseChannel {
       editable = channelE.getAttribute("editable");
       hasHelp = channelE.getAttribute("hasHelp");
       hasAbout = channelE.getAttribute("hasAbout");
-      printable = channelE.getAttribute("printable");
 
       for (Node n = channelE.getFirstChild(); n != null; n = n.getNextSibling()) {
         if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("parameter")) {
@@ -872,7 +865,6 @@ public class CChannelManager extends BaseChannel {
       setAttribute(channelE, "class", javaClass);
       setAttribute(channelE, "timeout", timeout);
       setAttribute(channelE, "editable", editable);
-      setAttribute(channelE, "printable", printable);
       setAttribute(channelE, "hasAbout", hasAbout);
       setAttribute(channelE, "hasHelp", hasHelp);
 
