@@ -186,7 +186,7 @@ public class UserLayoutManager extends GenericPortalBean {
 	IUserPreferencesDB updb=new UserPreferencesDBImpl();
 	UserPreferences temp_up=updb.getUserPreferences(sUserName,mediaM.getMedia(req)); 
 	if(temp_up==null) temp_up=updb.getUserPreferences(sUserName,mediaM.getDefaultMedia()); 
-	this.setCurrentUserPreferences(temp_up,req.getSession (false));
+	this.setCurrentUserPreferences(temp_up);
 
     } catch (Exception e) { Logger.log(Logger.ERROR,e);}
   }
@@ -265,8 +265,8 @@ public class UserLayoutManager extends GenericPortalBean {
 	return complete_up;
     }
 
-    public void setCurrentUserPreferences(UserPreferences current_up,HttpSession session) {
-	up=current_up;
+    public void setCurrentUserPreferences(UserPreferences current_up) {
+	if(current_up!=null) up=current_up;
 	// load stylesheet description files and fix user preferences
 	ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();	
 	
@@ -321,7 +321,9 @@ public class UserLayoutManager extends GenericPortalBean {
 	//  2. contruct a filter that will fill out attributes required for the second transform
 	//  3. revamp the CSS stylesheet to include user parameters
 	
-	argumentedUserLayoutXML=(Document) uLayoutXML.cloneNode(true);
+	//	argumentedUserLayoutXML=(Document) uLayoutXML.cloneNode(true);
+	argumentedUserLayoutXML= UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
+
 	
 	// deal with category attributes first
 	NodeList categoryElements=argumentedUserLayoutXML.getElementsByTagName("category");
@@ -347,6 +349,19 @@ public class UserLayoutManager extends GenericPortalBean {
 	}
     }
 
+    /*
+     * Resets both user layout and user preferences.
+     * Note that if any of the two are "null", old values will be used.
+     */
+    public void setNewUserLayoutAndUserPreferences(Document newLayout,UserPreferences newPreferences) {
+	if(newLayout!=null) uLayoutXML=newLayout;
+	this.setCurrentUserPreferences(newPreferences);
+    }
+
+
+    public Document getUserLayoutCopy() {
+	return UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
+    }
 
 
   public Node getNode (String elementID) 
