@@ -458,6 +458,18 @@ public class UserInstance implements HttpSessionBindingListener {
 
                 // filter to fill in channel/folder attributes for the "structure" transformation.
                 StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth, userPreferences.getStructureStylesheetUserPreferences());
+
+                /*
+                // low debug -- begin
+                // this is a debug statement that will print out XML incoming to the structure transformation to a log file 
+                // serializer to a printstream
+                java.io.StringWriter dbwr1=new java.io.StringWriter();
+                org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, new OutputFormat());
+                SAX2DuplicatingFilterImpl dupl1=new SAX2DuplicatingFilterImpl(ssth,dbser1);
+                dupl1.setParent(saif);
+                // low debug -- end
+                */
+
                 // if operating in the detach mode, need wrap everything
                 // in a document node and a <layout_fragment> node
                 if (detachMode) {
@@ -475,6 +487,14 @@ public class UserInstance implements HttpSessionBindingListener {
                     saif.endDocument();
                 }
                 // all channels should be rendering now
+
+                /*
+                // low debug -- begin
+                // debug piece to print out the recorded pre-structure transformation XML
+                Logger.log("UserInstance::renderState() : XML incoming to the structure transformation :\""+dbwr1.toString()+"\"");
+                // low debug -- end
+                */
+
                 // prepare for the theme transformation
 
                 // set up of the parameters
@@ -494,6 +514,18 @@ public class UserInstance implements HttpSessionBindingListener {
                 // attach theme transformation downstream of the theme attribute incorporation filter
                 taif.setAllHandlers(tsth);
                 
+
+                /*
+                // low debug -- begin
+                // this is a debug statement that will print out XML incoming to the structure transformation to a log file 
+                // serializer to a printstream
+                java.io.StringWriter dbwr2=new java.io.StringWriter();
+                org.apache.xml.serialize.XMLSerializer dbser2 = new org.apache.xml.serialize.XMLSerializer(dbwr2, new OutputFormat());
+                SAX2DuplicatingFilterImpl dupl2=new SAX2DuplicatingFilterImpl(tsth,dbser2);
+                dupl2.setParent(taif);
+                // low debug -- end
+                */
+
                 if(this.CACHE_ENABLED && !ccaching) {
                     // record cache
                     // attach caching buffer downstream of the theme transformer
@@ -513,6 +545,12 @@ public class UserInstance implements HttpSessionBindingListener {
                 // fire up theme transformation
                 crb.stopBuffering(); crb.outputBuffer(); crb.clearBuffer();
 
+                /*
+                // low debug -- begin
+                // debug piece to print out the recorded pre-theme transformation XML
+                Logger.log("UserInstance::renderState() : XML incoming to the theme transformation :\""+dbwr2.toString()+"\"");
+                // low debug -- end
+                */
 
                 if(this.CACHE_ENABLED && ccaching) {
                     // save character block cache
