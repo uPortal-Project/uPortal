@@ -75,7 +75,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public boolean isModified () {
     return  modified;
@@ -101,7 +101,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public String getFolderID () {
     if (folderID == null)
@@ -111,10 +111,18 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public String getLayoutRootID () {
     return  layoutID;
+  }
+
+  /**
+   * put your documentation comment here
+   */
+  public GPreferencesState () {
+    super();
+    this.internalState = new GBrowseState(this);
   }
 
   /**
@@ -139,14 +147,14 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   public Document getUserLayoutXML () throws PortalException {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
-        userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson().getID(), 
+        userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson().getID(),
             context.getCurrentUserPreferences().getProfile().getProfileId());
       } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
@@ -158,7 +166,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public UserLayoutManager getUserLayoutManager () {
     return  context.getUserLayoutManager();
@@ -166,7 +174,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception ResourceMissingException
    */
   public IUserPreferencesStore getUserPreferencesStore () throws ResourceMissingException {
@@ -181,7 +189,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception ResourceMissingException, PortalException
    */
   public UserPreferences getUserPreferences () throws ResourceMissingException, PortalException {
@@ -195,7 +203,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () {
     if (csddb == null)
@@ -205,7 +213,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription () {
     if (tsd == null) {
@@ -221,7 +229,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception ResourceMissingException, PortalException
    */
   public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
@@ -250,7 +258,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public StylesheetSet getStylesheetSet () {
     return  context.getStylesheetSet();
@@ -258,7 +266,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public UserProfile getProfile () {
     if (profile == null)
@@ -283,7 +291,7 @@ class GPreferencesState extends BaseState {
           GBrowseState bstate = new GBrowseState(this);
           bstate.setRuntimeData(rd);
           this.internalState = bstate;
-        } 
+        }
         else if (manageTarget.equals("gpref")) {
           // invoke gpref mode
           GGlobalPrefsState pstate = new GGlobalPrefsState(this);
@@ -303,8 +311,8 @@ class GPreferencesState extends BaseState {
    */
   public void renderXML (DocumentHandler out) throws PortalException {
     if (this.internalState != null)
-      this.internalState.renderXML(out); 
-    else 
+      this.internalState.renderXML(out);
+    else
       Logger.log(Logger.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
   }
 
@@ -330,7 +338,7 @@ class GPreferencesState extends BaseState {
       if (action != null) {
         if (action.equals("editElement")) {
           editElementID = runtimeData.getParameter("folderID");
-        } 
+        }
         else if (action.equals("submitEditValues")) {
           String submit = runtimeData.getParameter("submit");
           if (submit.equals("Cancel")) {
@@ -338,7 +346,7 @@ class GPreferencesState extends BaseState {
             IPrivilegedChannel bstate = new GBrowseState(context);
             bstate.setRuntimeData(rd);
             context.setState(bstate);
-          } 
+          }
           else if (submit.equals("Save")) {
             prepareSaveEditedItem();
           }
@@ -365,7 +373,7 @@ class GPreferencesState extends BaseState {
             atValue = null;
           ssup.setFolderAttributeValue(editElementID, atName, atValue);
         }
-      } 
+      }
       else if (elType.equals("channel")) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
@@ -405,8 +413,8 @@ class GPreferencesState extends BaseState {
       Element edEl = doc.createElement("editelement");
       Element typeEl = doc.createElement("type");
       if (elType.equals("folder"))
-        typeEl.appendChild(doc.createTextNode("folder")); 
-      else 
+        typeEl.appendChild(doc.createTextNode("folder"));
+      else
         typeEl.appendChild(doc.createTextNode("channel"));
       edEl.appendChild(typeEl);
       Element nameEl = doc.createElement("name");
@@ -437,7 +445,7 @@ class GPreferencesState extends BaseState {
           saEl.appendChild(atEl);
         }
         edEl.appendChild(saEl);
-      } 
+      }
       else if (elType.equals("channel")) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
@@ -511,8 +519,8 @@ class GPreferencesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }
@@ -543,7 +551,7 @@ class GPreferencesState extends BaseState {
           String submit = runtimeData.getParameter("submit");
           if (submit == null || submit.equals("Save")) {
             prepareSaveEditGPrefs();
-          } 
+          }
           else if (submit.equals("Cancel")) {
             IPrivilegedChannel bstate = new GBrowseState(context);
             bstate.setRuntimeData(runtimeData);
@@ -634,8 +642,8 @@ class GPreferencesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
 
@@ -650,7 +658,7 @@ class GPreferencesState extends BaseState {
         String value = runtimeData.getParameter(parName);
         if (value == null) {
           ssup.putParameterValue(parName, context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(parName));
-        } 
+        }
         else {
           ssup.putParameterValue(parName, value);
           //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
@@ -662,7 +670,7 @@ class GPreferencesState extends BaseState {
         String value = runtimeData.getParameter(parName);
         if (value == null) {
           tsup.putParameterValue(parName, context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(parName));
-        } 
+        }
         else {
           tsup.putParameterValue(parName, value);
           //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
@@ -701,17 +709,17 @@ class GPreferencesState extends BaseState {
           String runtimeFolderID = runtimeData.getParameter("folderID");
           if (runtimeFolderID != null)
             context.setFolderID(runtimeFolderID);
-        } 
+        }
         else if (action.equals("move")) {
           IPrivilegedChannel mts = new GMoveToState(context);
           mts.setRuntimeData(rd);
           context.setState(mts);
-        } 
+        }
         else if (action.equals("reorder"))
-          prepareReorder(); 
+          prepareReorder();
         else if (action.equals("saveChanges")) {
           prepareSaveChanges();
-        } 
+        }
         else if (action.equals("editElement")) {
           IPrivilegedChannel eli = new GEditLayoutItemState(context);
           eli.setRuntimeData(rd);
@@ -737,8 +745,8 @@ class GPreferencesState extends BaseState {
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       params.put("profileName", context.getProfile().getProfileName());
       if (context.getProfile().isSystemProfile())
-        params.put("profileType", "system"); 
-      else 
+        params.put("profileType", "system");
+      else
         params.put("profileType", "user");
       if (xslURI != null) {
         try {
@@ -748,8 +756,8 @@ class GPreferencesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
 
@@ -766,7 +774,7 @@ class GPreferencesState extends BaseState {
       // (unless profile-specific layouts will be introduced)
       if (context.getUserLayoutManager().getCurrentProfile() == context.getProfile()) {
         context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences());
-      } 
+      }
       else {
         // do a database save on the preferences
         context.getUserPreferencesStore().putUserPreferences(context.getUserLayoutManager().getPerson().getID(), context.getUserPreferences());
@@ -789,7 +797,7 @@ class GPreferencesState extends BaseState {
         for (prev = element.getPreviousSibling(); prev != null && prev.getNodeType() != Node.ELEMENT_NODE && (!prev.getNodeName().equals("channel")
             || !prev.getNodeName().equals("folder")); prev = prev.getPreviousSibling());
         parent.insertBefore(element, prev);
-      } 
+      }
       else if (direction.equals("down")) {
         Node next;
         // Goto the next channel or folder element
@@ -825,9 +833,9 @@ class GPreferencesState extends BaseState {
       if (action != null) {
         if (action.equals("cancel")) {
         //			prepareCancel ();
-        } 
+        }
         else if (action.equals("move"))
-          prepareMove(); 
+          prepareMove();
         else if (action.equals("moveTo"))
           prepareMoveTo();
       }
@@ -854,8 +862,8 @@ class GPreferencesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
 
@@ -877,15 +885,15 @@ class GPreferencesState extends BaseState {
       Node destination = null;
       if (destinationID == null) {
         Logger.log(Logger.ERROR, "CUserPreferences::prepareMove() : received a null destinationID !");
-      } 
+      }
       else {
         if (destinationID.equals(context.getLayoutRootID()))
           destination = context.getUserLayoutXML().getDocumentElement();        // the layout element
-        else 
+        else
           destination = context.getUserLayoutXML().getElementById(destinationID);
         if (destination == null) {
           Logger.log(Logger.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
-        } 
+        }
         else {
           for (int i = 0; i < moveIDs.length; i++) {
             Node relocating = context.getUserLayoutXML().getElementById(moveIDs[i]);
