@@ -975,7 +975,7 @@ final class TabColumnPrefsState extends BaseState
 
         connection = getConnection();
 
-        String query = "SELECT SKIN_NAME, SKIN_DESCRIPTION, THUMBNAIL_FILE_LOCATION, FOLDER_NAME FROM UP_SKINS";
+        String query = "SELECT SKIN_NAME, SKIN_DESCRIPTION, THUMBNAIL_URI, SKIN_DIR FROM UP_SKINS";
         // Get the result set
         ResultSet rs = connection.createStatement().executeQuery(query);
 
@@ -993,11 +993,11 @@ final class TabColumnPrefsState extends BaseState
           skin.appendChild(node);
           //make Skin-Thumbnail-File node
           node = SkinsInfoDocument.createElement("Skin-Thumbnail-File");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("THUMBNAIL_FILE_LOCATION")));
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("THUMBNAIL_URI")));
           skin.appendChild(node);
           //make Skin-Folder-Name node
           node = SkinsInfoDocument.createElement("Skin-Folder-Name");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("FOLDER_NAME")));
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_DIR")));
           skin.appendChild(node);
           //append skin to root
           root.appendChild(skin);
