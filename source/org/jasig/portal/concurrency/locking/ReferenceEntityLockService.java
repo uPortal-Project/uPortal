@@ -136,7 +136,7 @@ public boolean existsInStore(IEntityLock lock) throws LockingException
     String owner = lock.getLockOwner();
     IEntityLock[] lockArray = getLockStore().find(entityType, key, lockType, expiration, owner);
 
-    return (lockArray.length == 1);
+    return (lockArray.length > 0);
 }
 
 /**
@@ -278,7 +278,6 @@ throws LockingException
 {
     return newLock(entityType, entityKey, lockType, owner, defaultLockPeriod);
 }
-
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @param entityType
@@ -288,29 +287,58 @@ throws LockingException
  * @param durationSecs
  * @return org.jasig.portal.groups.IEntityLock
  * @exception LockingException
+ * 
+ * Retrieves potentially conflicting locks and checks them before adding
+ * the new lock to the store.  The add of a write lock will fail if any 
+ * other lock exists for the entity.  The add of a read lock will fail if 
+ * a write lock exists for the entity.  After we add a write lock we 
+ * check the store a second time and roll back if any other lock has snuck
+ * in.  I think this is slightly safer than depending on the db isolation
+ * level for transactional integrity.  
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner, int durationSecs)
 throws LockingException
 {
     Date expires = getNewExpiration(durationSecs);
-    IEntityLock lock = new EntityLockImpl(entityType, entityKey, lockType, expires, owner, this);
+    IEntityLock newLock = new EntityLockImpl(entityType, entityKey, lockType, expires, owner, this);
 
-    if ( lockType == WRITE_LOCK && isLocked(entityType, entityKey ) )
-        { throw new LockingException("Could not create lock: entity already locked."); }
+    // retrieve potentially conflicting locks:
+    IEntityLock[] locks = retrieveLocks(entityType, entityKey, null);
 
-    if ( lockType == READ_LOCK )
+    if ( lockType == WRITE_LOCK ) 
     {
-        IEntityLock[] locks = retrieveLocks(entityType, entityKey, null);
+        if ( locks.length > 0 ) 
+            { throw new LockingException("Could not create lock: entity already locked."); }
+        
+        getLockStore().add(newLock);
+
+        locks = retrieveLocks(entityType, entityKey, null);
+        if ( locks.length > 1 )  // another lock snuck in
+        { 
+            release(newLock);
+            throw new LockingException("Could not create lock: entity already locked.");
+        }
+    }
+
+    else // ( lockType == READ_LOCK )
+    {
         for ( int i = 0; i<locks.length; i++ )
         {
             if ( locks[i].getLockType() == WRITE_LOCK )
                 { throw new LockingException("Could not create lock: entity already write locked."); }
+            else
+            {
+                if ( locks[i].equals(newLock) ) 
+                { 
+                    // another read lock from the same owner; bump the expiration time.
+                    expires = getNewExpiration(durationSecs + 1);
+                    newLock = new EntityLockImpl(entityType, entityKey, lockType, expires, owner, this);
+                }
+            }
         }
+        getLockStore().add(newLock);
     }
-
-    getLockStore().add(lock);
-
-    return lock;
+    return newLock;
 }
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
