@@ -1760,8 +1760,9 @@ public class RDBMUserLayoutStore
             if (rs.wasNull()) {
               structId = 0;
             }
-            if (DEBUG > 1) System.err.println("Read layout structrure " + structId);
             readLayout: while (true) {
+              if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
+
               int nextId = rs.getInt(2);
               if (rs.wasNull()) {
                 nextId = 0;
