@@ -48,6 +48,7 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
@@ -62,6 +63,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.HashMap;
@@ -95,8 +97,6 @@ final class TabColumnPrefsState extends BaseState
   private static IUserLayoutStore ulStore = RdbmServices.getUserLayoutStoreImpl();
   private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
-
-  private SAX2BufferImpl skinsSAX2ChannelBuffer;
 
   private String action = "none";
   private String activeTab = "none";
@@ -941,24 +941,41 @@ final class TabColumnPrefsState extends BaseState
     {
       File xmlFile = null;
 
-      String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages/media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml";
-      String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+      //if (skinsSAX2ChannelBuffer == null) {
+        //skinsSAX2ChannelBuffer = new SAX2BufferImpl(out);
+        String sFS = File.separator;
+        String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
+        String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+        try {
+          xmlFile = new File (XMLUri);
+        }
+        catch (NullPointerException e) {
+          throw new GeneralRenderingException ("Can't find XML file in TabColumnPrefsState:SelectSkinsState.renderXML");
+        }
+
+        XSLT xslt = new XSLT ();
+        xslt.setXML(xmlFile);
+        xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+        xslt.setTarget(out);
+        //skinsSAX2ChannelBuffer.startBuffering();
+        //xslt.setTarget(skinsSAX2ChannelBuffer);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        if(currentSkin!=null)
+          xslt.setStylesheetParameter("currentSkin", currentSkin);
+        xslt.transform();
+        /*try {
+          skinsSAX2ChannelBuffer.stopBuffering();
+        }
+        catch (SAXException e) {
+          throw new GeneralRenderingException ("Trying to stop buffering, TabColumnPrefsState:SelectSkinsState.renderXML");
+        }
+      }
       try {
-        xmlFile = new File (XMLUri);
+        skinsSAX2ChannelBuffer.outputBuffer();
       }
-      catch (NullPointerException e) {
-        throw new GeneralRenderingException ("Can't find XML file in TabColumnPrefsState:SelectSkinsState.renderXML");
-      }
-
-      XSLT xslt = new XSLT ();
-      xslt.setXML(xmlFile);
-      xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
-      xslt.setTarget(out);
-      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      if(currentSkin!=null)
-        xslt.setStylesheetParameter("currentSkin", currentSkin);
-
-      xslt.transform();
+      catch (SAXException e) {
+        throw new GeneralRenderingException ("Trying to output buffer, TabColumnPrefsState:SelectSkinsState.renderXML");
+      }*/
     }
   }
 
