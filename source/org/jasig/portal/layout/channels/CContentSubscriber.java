@@ -40,6 +40,7 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 //import org.w3c.dom.Node;
@@ -57,11 +58,13 @@ public class CContentSubscriber extends FragmentManager {
 
     private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
     private static Document channelRegistry;
+	private Document registry;
     private Vector expandedCategories, condensedCategories;
     private Vector expandedChannels, condensedChannels;
     private Vector expandedFragments, condensedFragments;
     private Vector[] expandedItems;
 	private Vector[] condensedItems;
+	private boolean initRegistry = true;
 	
 
     public CContentSubscriber() {
@@ -154,24 +157,28 @@ public class CContentSubscriber extends FragmentManager {
 			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
 			   Vector list = expandedItems[i];
 			   for ( int j = 0; j < list.size(); j++ )
-			    channelRegistry.getElementById((String)list.get(j)).setAttribute("view","expand");
+			    registry.getElementById((String)list.get(j)).setAttribute("view","expand");
 			 }  
 			  
 			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
 			   Vector list = condensedItems[i];
 			   for ( int j = 0; j < list.size(); j++ )
-				channelRegistry.getElementById((String)list.get(j)).setAttribute("view","condense");
+				registry.getElementById((String)list.get(j)).setAttribute("view","condense");
 			 }    
 			 
 		     for ( int i = 0; i < tagNames.size(); i++ ) {
-			  NodeList nodeList = channelRegistry.getElementsByTagName((String)tagNames.get(i));
+			  NodeList nodeList = registry.getElementsByTagName((String)tagNames.get(i));
 			  for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				Element node = (Element) nodeList.item(k);
 				node.setAttribute("view",action);
 			  } 
 		     } 
 		     
-		//System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(channelRegistry));    
+		     String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
+		     xslt.setStylesheetParameter("channelState", channelState );
+		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
+		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );
+		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );
 			 
 	}		 	
 
@@ -180,6 +187,14 @@ public class CContentSubscriber extends FragmentManager {
 		 return alm.getSubscribableFragments();
 	}
 
+    public void initRegistry() throws PortalException {
+      if ( initRegistry ) {
+      	registry = DocumentFactory.getNewDocument();
+      	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));	
+        getFragmentList(registry,registry.getDocumentElement());
+        initRegistry = false;
+      }  	        	
+    }
 
     public void setStaticData (ChannelStaticData sd) throws PortalException {
        super.setStaticData(sd);
@@ -188,15 +203,16 @@ public class CContentSubscriber extends FragmentManager {
     }
 
     public void renderXML (ContentHandler out) throws PortalException {
-
-      String catId = CommonUtils.nvl(runtimeData.getParameter("catID"));
+    	
+      initRegistry();
+      
+      System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(registry));    
 
       XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
-      xslt.setXML(channelRegistry);
+      analyzeParameters(xslt);
+      xslt.setXML(registry);
       xslt.setXSL(sslLocation, "contentSubscriber", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
-      if ( catId.length() > 0 )
-       xslt.setStylesheetParameter("catID", catId );
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       xslt.transform();
     }

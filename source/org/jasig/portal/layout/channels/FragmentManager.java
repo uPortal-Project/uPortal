@@ -55,6 +55,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 
@@ -96,9 +97,13 @@ public abstract class FragmentManager extends BaseChannel implements IPrivileged
 		 refreshFragmentMap();
 	}
 
-	protected void getFragmentList ( Document document ) throws PortalException {
+    protected void getFragmentList ( Document document ) throws PortalException {
+       getFragmentList(document,document);
+    }
+ 
+	protected void getFragmentList ( Document document, Node node ) throws PortalException {
 		Element fragmentsNode = document.createElement("fragments");
-		document.appendChild(fragmentsNode);
+		node.appendChild(fragmentsNode);
 		Element category = document.createElement("category");
 		category.setAttribute("name", "Fragments");
 		category.setAttribute("expanded", "true");
