@@ -226,13 +226,7 @@
              campus. JA-SIG realizes that a portal, in order to be
              truly useful, can't something you take out of a box and
              install, it has to be something you customize for the
-             needs of your institution. Some portal vendors say that
-             they can have a portal ready for you in no time, but
-             after you've paid them for the <quote>product</quote>,
-             you realize that you're on the hook for some very
-             expensive consulting engagements in order to get their
-             closed, proprietary portal to work the way you
-             want.</para>
+             needs of your institution.</para>
 
              <para>Some portal <quote>solutions</quote> are actually
              third party packages that a vendor of a non-Java,
@@ -301,15 +295,16 @@
              among others.</para>
 
              <para>Please don't think that uPortal is somehow
-             dependent upon 'Tomcat', the open-source JSP and servlet
-             container from the Apache Jakarta project that ships with
-             the existing 'monterey' distribution and
-             soon-to-be-released 'plymouth' distribution. You can use
-             any JSP 1.1/Servlet 2.2-compliant container or
-             application server, and if you want commercial quality
-             tech support, formal training or documentation, then a
-             commercial application server is something to
-             consider.</para>
+             dependent upon <productname>Tomcat</productname>, the
+             open-source JSP and servlet container from the Apache
+             Jakarta project that ships with the existing
+             <quote>monterey</quote> distribution and
+             soon-to-be-released <quote>plymouth</quote>
+             distribution. You can use any JSP 1.1/Servlet
+             2.2-compliant container or application server, and if you
+             want commercial quality tech support, formal training or
+             documentation, then a commercial application server is
+             something to consider.</para>
           </answer>
        </qandaentry>
 
@@ -319,14 +314,15 @@
              single-sign on?</para>
           </question>
           <answer>
-             <para>A qualified 'Yes'. The <productname>uPortal</productname>
-             framework does provide an authentication system that explicitly
-             supports the notion of single sign-on, but as of this
-             writing there are few channels that ship with the framework 
-             which take advantage of it. Of course, any campus that wants to
+             <para>A qualified <quote>Yes</quote>. The
+             <productname>uPortal</productname> framework does provide
+             an authentication system that explicitly supports the
+             notion of single sign-on, but as of this writing there
+             are few channels that ship with the framework which take
+             advantage of it. Of course, any campus that wants to
              write their own channels that will use the
-             <productname>uPortal</productname> single sign-on capabilities are
-             certainly able to do so.</para>
+             <productname>uPortal</productname> single sign-on
+             capabilities are certainly able to do so.</para>
           </answer>
        </qandaentry>
 
@@ -445,7 +441,7 @@
                    programming language code that leverages the
                    underlying Java Runtime environment. If you want to
                    change the look and feel of the portal
-                   significantly, you'll have to edit Java Server
+                   substantially, you'll have to edit Java Server
                    Pages, so you should understand how to use JSP
                    syntax correctly.</para>
 
@@ -477,6 +473,9 @@
                    use of SQL in order to work with the
                    <productname>uPortal</productname>
                    framework. </para>
+
+                   <para><citation>Gulutzan1999</citation> offers
+                   comprehensive coverage of the SQL standard. </para>
                 </listitem>
              </itemizedlist>
              </para>
@@ -596,10 +595,10 @@
                    <para>EJB. If your application requires distributed
                    data access, transactions and persistence, the
                    Enterprise Java Beans distributed component model
-                   will probably become a central part of your
-                   design.</para>
+                   will probably become an important part of your
+                   architecture.</para>
 
-                   <para>For ENB beginners,
+                   <para>For EJB beginners,
                    <citation>Monson-Haefel2000</citation> provides a
                    complete reference.</para>
                 </listitem>
@@ -608,8 +607,8 @@
              </itemizedlist>
              </para>
  
-             <para>To get an idea of what you're in for when you're
-             working at this level, carefully read <ulink
+             <para>To get an idea of what you're in for when you begin
+             developing channnels, carefully read <ulink
              url="http://www.mis2.udel.edu/ja-sig/write-channel/">Michael
              Oltz' tutorial</ulink>.</para>
 
@@ -692,7 +691,7 @@
              <ulink
              url="http://www.nwalsh.com/docbook/xsl/index.html">
              DocBook XSL stylesheets</ulink> to transform the XML
-             source into HTML. In JA-SIG, we drink the
+             source into the target formats. In JA-SIG, we drink the
              Kool-Aid!</para>
 
           </answer>
@@ -1104,7 +1103,7 @@
        </bibliodiv>
 
      </bibliography>
-     <para>$Id$</para>
+     <para>$Revision$</para>
   </sect1>
 
 </article>
