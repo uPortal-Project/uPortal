@@ -137,30 +137,6 @@ public class CommonUtils {
       return strwrt.toString();
     }
 
-    /**
-  * This method gets a Properties object by fileName parameter.
-  * @param fileName - the file name for this properties file
-  * @return a Properties object
-  **/
- public static Properties getProperties ( Object object, String fileName ) {
-     Properties props = new Properties();
-     try {
-     if ( object != null ) {
-        InputStream in = object.getClass().getClassLoader().getResourceAsStream(fileName);
-      if ( in != null )
-        props.load( in );
-      else
-        System.err.println( "Util::getProperties: Couldn't load \""+fileName+"\"" );
-     } else
-        System.err.println( "Util::getProperties: object is null!" );
-     } catch ( IOException ioe ) {
-        System.err.println( "Util::getProperties: " + ioe );
-       }
-
-      return props;
- }
-
-
  /**
   * This method gets an array of strings from given string splitted by commas.
   * @param str - a string value
