@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="content-type"
- content="text/html; charset=ISO-8859-1">
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
   <title>Guide to Working with Portlets in uPortal 2.3</title>
 </head>
 <body>
@@ -16,6 +16,9 @@ uPortal 2.3</h1>
 <a href="#Publishing_Portlets">Publishing Portlets</a><br>
 <a href="#Portlet_Caching">Portlet Caching</a><br>
 <a href="#User_Information">User Information</a><br>
+<a
+ href="file:///C:/Projects/JA-SIG/uPortal/docs/website/implementors/portlets/workingWithPortlets.html#Custom_Portlet_Modes_and_Window_States">Custom
+Portlet Modes and Window States</a><br>
 <a href="#Future_of_Portlets_in_uPortal">Future of Portlets in uPortal</a><br>
 <h2><a name="Introduction"></a>Introduction</h2>
 uPortal is committed to supporting open standards including the <a
@@ -177,11 +180,7 @@ your browser will not cause the Portlet to render itself again.&nbsp;
 The optional Portlet caching settings mentioned in the Portlet
 Specification are not implemented at this time.<br>
 <h2><a name="User_Information"></a>User Information</h2>
-The accessibility of user information (person attributes) is not yet
-available in uPortal 2.3.&nbsp;&nbsp; <br>
-<br>
-This feature will be
-available in the 2.3.2 release.&nbsp; You will be able to access a user
+As of uPortal 2.3.2, you will be able to access a user
 attribute with the following code: <br>
 <pre wrap=""><code>Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);<br>String givenName = (String)userInfo.get("user.name.given");<br>String lastName = (String)userInfo.get("user.name.last");<br></code></pre>
 The Portlet Specification says that you should be able to map user
@@ -215,7 +214,32 @@ contain something like...<br>
 <br>
 Full support of deployment-time mapping will be
 available in
-uPortal 3.0.
+uPortal 3.0.<br>
+<h2><a name="Custom_Portlet_Modes_and_Window_States"></a>Custom Portlet
+Modes and Window States</h2>
+uPortal 2.3 supports the following Portlet modes:<br>
+<ul>
+  <li>VIEW</li>
+  <li>EDIT</li>
+  <li>HELP</li>
+</ul>
+When a user clicks on one of these buttons in the channel control bar,
+the Portlet mode will change.&nbsp; There is currently no button
+provided to
+switch the mode back to the default VIEW mode.&nbsp; At this time,
+custom
+Portlet modes are not supported. <br>
+<br>
+uPortal 2.3 supports the following Portlet window states: <br>
+<ul>
+  <li>NORMAL - Portlet is rendered along with other Portlets in the
+layout.<br>
+  </li>
+  <li>MAXIMIZED - Same as uPortal focused concept.<br>
+  </li>
+  <li>MINIMIZED - Same as uPortal minimized concept.</li>
+</ul>
+At this time, custom Portlet window states are not supported.<br>
 <pre wrap=""><code></code><code></code></pre>
 <pre wrap=""><code></code><code></code></pre>
 <h2><a name="Future_of_Portlets_in_uPortal"></a>Future of Portlets in
