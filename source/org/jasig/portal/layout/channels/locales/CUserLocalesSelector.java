@@ -43,10 +43,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -90,48 +87,9 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-        Document doc = DocumentFactory.getNewDocument();
         Locale[] locales = runtimeData.getLocales();
-
-        // <locales>
-        Element localesE = doc.createElement("locales");
-        Locale[] portalLocales = lm.getPortalLocales();
-        for (int i = 0; i < portalLocales.length; i++) {
-          Element locE = doc.createElement("locale");
-          locE.setAttribute("displayName", portalLocales[i].getDisplayName(locales[0]));
-          locE.setAttribute("code", portalLocales[i].toString());
-
-          // Mark which locale is the user's preference
-          if (userLocale != null && userLocale.equals(portalLocales[i])) {
-              locE.setAttribute("selected", "true");
-          }
-
-          // <language iso2="..." iso3="..." displayName="..."/>
-          Element languageE = doc.createElement("language");
-          languageE.setAttribute("iso2", portalLocales[i].getLanguage());
-          languageE.setAttribute("iso3", portalLocales[i].getISO3Language());
-          languageE.setAttribute("displayName", portalLocales[i].getDisplayLanguage(locales[0]));
-          locE.appendChild(languageE);
-
-          // <country iso2="..." iso3="..." displayName="..."/>
-          Element countryE = doc.createElement("country");
-          countryE.setAttribute("iso2", portalLocales[i].getCountry());
-          countryE.setAttribute("iso3", portalLocales[i].getISO3Country());
-          countryE.setAttribute("displayName", portalLocales[i].getDisplayCountry(locales[0]));
-          locE.appendChild(countryE);
-
-          // <variant code="..." displayName="..."/>
-          Element variantE = doc.createElement("variant");
-          variantE.setAttribute("code", portalLocales[i].getVariant());
-          variantE.setAttribute("displayName", portalLocales[i].getDisplayVariant(locales[0]));
-          locE.appendChild(variantE);
-
-          localesE.appendChild(locE);
-        }
-
-        doc.appendChild(localesE);
         XSLT xslt = XSLT.getTransformer(this, locales);
-        xslt.setXML(doc);
+        xslt.setXML(LocaleManager.xmlValueOf(locales, userLocale));
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());

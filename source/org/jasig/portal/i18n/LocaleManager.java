@@ -43,6 +43,9 @@ import java.util.StringTokenizer;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Manages locales on behalf of a user. 
@@ -104,15 +107,15 @@ public class LocaleManager  {
 
     // Getters
     public boolean isLocaleAware() { return localeAware; }
-    public Locale getJvmLocale() { return jvmLocale; }
-    public Locale[] getPortalLocales() { return portalLocales; }
+    public static Locale getJvmLocale() { return jvmLocale; }
+    public static Locale[] getPortalLocales() { return portalLocales; }
     public Locale[] getBrowserLocales() { return browserLocales; }
     public Locale[] getUserLocales() { return userLocales; }
     public Locale[] getSessionLocales() { return sessionLocales; }
 
     // Setters
-    public void setJvmLocale(Locale jvmLocale) { LocaleManager.jvmLocale = jvmLocale; }
-    public void setPortalLocales(Locale[] portalLocales) { LocaleManager.portalLocales = portalLocales; }
+    public static void setJvmLocale(Locale jvmLocale) { LocaleManager.jvmLocale = jvmLocale; }
+    public static void setPortalLocales(Locale[] portalLocales) { LocaleManager.portalLocales = portalLocales; }
     public void setBrowserLocales(Locale[] browserLocales) { this.browserLocales = browserLocales; }
     public void setUserLocales(Locale[] userLocales) { this.userLocales = userLocales; }
     public void setSessionLocales(Locale[] sessionLocales) { this.sessionLocales = sessionLocales; }
@@ -241,6 +244,74 @@ public class LocaleManager  {
     public void persistUserLocales(Locale[] userLocales) throws Exception {
         setUserLocales(userLocales);
         LocaleStoreFactory.getLocaleStoreImpl().updateUserLocales(person, userLocales);
+    }
+    
+    /**
+     * Creates an XML representation of a list of locales.
+     * @param locales the locale list
+     * @return the locale list as XML
+     */
+    public static Document xmlValueOf(Locale[] locales) {
+        return xmlValueOf(locales, null);
+    }
+    
+    /**
+     * Creates an XML representation of a list of locales.
+     * If a selected locale is supplied, the XML element representing
+     * the selected locale will have an attribute of selected with value
+     * of true.  This is helpful when constructing user interfaces that
+     * indicate which locale is selected.
+     * @param locales the locale list
+     * @param selectedLocale a locale that should be selected if it is in the list
+     * @return the locale list as XML
+     */
+    public static Document xmlValueOf(Locale[] locales, Locale selectedLocale) {
+        Document doc = DocumentFactory.getNewDocument();
+
+        // <locales>
+        Element localesE = doc.createElement("locales");
+        for (int i = 0; i < locales.length; i++) {
+          Element locE = doc.createElement("locale");
+          locE.setAttribute("displayName", locales[i].getDisplayName(locales[0]));
+          locE.setAttribute("code", locales[i].toString());
+
+          // Mark which locale is the user's preference
+          if (selectedLocale != null && selectedLocale.equals(locales[i])) {
+              locE.setAttribute("selected", "true");
+          }
+
+          // <language iso2="..." iso3="..." displayName="..."/>
+          Element languageE = doc.createElement("language");
+          languageE.setAttribute("iso2", locales[i].getLanguage());
+          try {
+              languageE.setAttribute("iso3", locales[i].getISO3Language());
+          } catch (Exception e) {
+              // Do nothing
+          }
+          languageE.setAttribute("displayName", locales[i].getDisplayLanguage(locales[0]));
+          locE.appendChild(languageE);
+
+          // <country iso2="..." iso3="..." displayName="..."/>
+          Element countryE = doc.createElement("country");
+          countryE.setAttribute("iso2", locales[i].getCountry());
+          try {
+              countryE.setAttribute("iso3", locales[i].getISO3Country());
+          } catch (Exception e) {
+              // Do nothing
+          }
+          countryE.setAttribute("displayName", locales[i].getDisplayCountry(locales[0]));
+          locE.appendChild(countryE);
+
+          // <variant code="..." displayName="..."/>
+          Element variantE = doc.createElement("variant");
+          variantE.setAttribute("code", locales[i].getVariant());
+          variantE.setAttribute("displayName", locales[i].getDisplayVariant(locales[0]));
+          locE.appendChild(variantE);
+
+          localesE.appendChild(locE);
+        }
+        doc.appendChild(localesE);
+        return doc;  
     }
     
     public String toString() {
