@@ -41,19 +41,9 @@ import java.io.*;
 import java.util.*;
 
 /**
- * <p>Title: CommonUtils class</p>
- * <p>Description: CommonUtils class contains base useful utilities </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic</p>
- * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
- */
-
-
-/**
  * CommonUtils class contains base useful utilities
- * @author mike
- * @version 1.1
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version $Revision$ 
  */
 public class CommonUtils {
 
@@ -136,29 +126,6 @@ public class CommonUtils {
       e.printStackTrace(new PrintWriter(strwrt));
       return strwrt.toString();
     }
-
-    /**
-  * This method gets a Properties object by fileName parameter.
-  * @param fileName - the file name for this properties file
-  * @return a Properties object
-  **/
- public static Properties getProperties ( Object object, String fileName ) {
-     Properties props = new Properties();
-     try {
-     if ( object != null ) {
-        InputStream in = object.getClass().getClassLoader().getResourceAsStream(fileName);
-      if ( in != null )
-        props.load( in );
-      else
-        System.err.println( "Util::getProperties: Couldn't load \""+fileName+"\"" );
-     } else
-        System.err.println( "Util::getProperties: object is null!" );
-     } catch ( IOException ioe ) {
-        System.err.println( "Util::getProperties: " + ioe );
-       }
-
-      return props;
- }
 
 
  /**
