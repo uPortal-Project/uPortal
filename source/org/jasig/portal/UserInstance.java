@@ -787,9 +787,9 @@ public class UserInstance implements HttpSessionBindingListener {
              // Adding a new node
              String nodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
             
-             // If we have created a new tab we need to focus it
-             if ( nodeId != null && ulm.getDepth(nodeId) == 1 )
-			   structPrefs.putParameterValue("focusedTabID",nodeId);
+             // If we have created a new node we need to let the structure XSL know about it
+             if ( nodeId != null )
+			   structPrefs.putParameterValue("newNodeID",nodeId);
 			 
           }
          }
