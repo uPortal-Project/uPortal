@@ -39,15 +39,15 @@ public class JNDIManager
     {
       Context context = getContext();
       
+      // Create a subcontext for portal-wide services
       context.createSubcontext("services");
       
       // Bind in the logger service
       LogService logger = LogService.instance();
       context.bind("/services/logger", logger);
       
+      // Create a subcontext for user specific bindings
       context.createSubcontext("users");
-      Context test = (Context)context.lookup("users");
-      System.out.println("");
     }
     catch(Exception e)
     {
