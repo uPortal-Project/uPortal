@@ -85,7 +85,7 @@ Version $Revision$
     <!--Create root element - call child templates-->
     <!-- -->
     <xsl:template match="layout">
-        <layout mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
+        <layout lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
             <!--             <xsl:if test="$mode='preferences'">
                 <xsl:apply-templates select="fragments"/>
             </xsl:if> -->
@@ -170,7 +170,7 @@ Version $Revision$
         <xsl:variable name="sumOfWidths">
             <xsl:value-of select="sum(../folder/@width)"/>
         </xsl:variable>
-        <column ID="{@ID}">
+        <column ID="{@ID}" immutable="{@immutable}" unremovable="{@unremovable}">
             <xsl:attribute name="width">
                 <xsl:choose>
                     <xsl:when test="$sumOfWidths = 100">
