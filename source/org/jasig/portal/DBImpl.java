@@ -512,10 +512,17 @@ public class DBImpl implements IDBImpl
       } else {
         structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
       }
+
+      String externalId = structure.getAttribute("external_id");
+      if (externalId != null && externalId.trim().length() > 0)
+        externalId = "'" + externalId + "'";
+      else
+        externalId = "NULL";
+
       sQuery = "INSERT INTO UP_LAYOUT_STRUCT " +
       "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES (" +
         userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," +
-        "'" + structure.getAttribute("external_id") + "'," + chanId + "," +
+        externalId + "," + chanId + "," +
         structName + ",'" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
         "'" + dbBool(structure.getAttribute("unremovable")) + "')";
