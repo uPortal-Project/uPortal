@@ -41,11 +41,11 @@ package  org.jasig.portal.channels.UserPreferences;
 import  org.jasig.portal.*;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
 import  org.xml.sax.DocumentHandler;
 import  java.util.*;
 import  javax.servlet.http.*;
 import  org.w3c.dom.*;
-import  org.apache.xalan.xslt.*;
 import  java.io.StringWriter;
 import  java.net.URL;
 
@@ -251,9 +251,9 @@ class ManageProfilesState extends BaseState {
       }
       edEl.appendChild(sEl);
       /*  try {
-       Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+       LogService.instance().log(LogService.DEBUG,UtilitiesBean.dom2PrettyString(doc));
        } catch (Exception e) {
-       Logger.log(Logger.ERROR,e);
+       LogService.instance().log(LogService.ERROR,e);
        }
        */
       // find the stylesheet and transform
@@ -308,7 +308,7 @@ class ManageProfilesState extends BaseState {
         mimeImagesProps.load(in);
         in.close();
       } catch (Exception e) {
-        Logger.log(Logger.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at "
+        LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at "
             + GenericPortalBean.getPortalBaseDir() + java.io.File.separator + mimeImagesPropsFile);
       }
       this.context = context;
@@ -566,9 +566,9 @@ class ManageProfilesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        Logger.log(Logger.DEBUG, outString.toString());
+        LogService.instance().log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        Logger.log(Logger.DEBUG, e);
+        LogService.instance().log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
