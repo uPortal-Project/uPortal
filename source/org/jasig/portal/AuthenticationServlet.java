@@ -48,7 +48,7 @@ import  java.util.Enumeration;
 import  java.util.HashMap;
 import  org.jasig.portal.services.Authentication;
 import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManager;
+import  org.jasig.portal.security.PersonManagerFactory;
 import  org.jasig.portal.services.LogService;
 
 
@@ -89,9 +89,10 @@ public class AuthenticationServlet extends HttpServlet {
     request.getSession().invalidate();
     // Retrieve the user's session
     HttpSession session = request.getSession(true);
-    // Get the person object associated with the request
-    IPerson person = PersonManager.getPerson(request);
+    IPerson person = null;
     try {
+      // Get the person object associated with the request
+      person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
       // Grab all of the principals from the request
       // NOTE: This should refer to a properties file
       HashMap principals = new HashMap(1);
@@ -109,7 +110,7 @@ public class AuthenticationServlet extends HttpServlet {
       session.setAttribute("up_authorizationError", "true");
     }
     // Check to see if the person has been authenticated
-    if (person.getSecurityContext().isAuthenticated()) {
+    if (person != null && person.getSecurityContext().isAuthenticated()) {
       // Send the now authenticated user back to the PortalSessionManager servlet
       response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
           + "/" + redirectString);
