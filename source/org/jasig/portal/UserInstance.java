@@ -326,10 +326,10 @@ public class UserInstance implements HttpSessionBindingListener {
                     channelManager.setCharacterCaching(ccaching);
                     // initialize ChannelIncorporationFilter
                     //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
-                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CACHE_ENABLED && this.CHARACTER_CACHE_ENABLED);
+                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
                     String cacheKey=null;
                     boolean output_produced=false;
-                    if(this.CACHE_ENABLED) {
+                    if(UserInstance.CACHE_ENABLED) {
                         boolean ccache_exists=false;
                         // obtain the cache key
                         cacheKey=constructCacheKey(this.getPerson(),upm,rootNodeId);
@@ -510,7 +510,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             dupl2.setParent(taif);
                         }
 
-                        if(this.CACHE_ENABLED && !ccaching) {
+                        if(UserInstance.CACHE_ENABLED && !ccaching) {
                             // record cache
                             // attach caching buffer downstream of the theme transformer
                             SAX2BufferImpl newCache=new SAX2BufferImpl();
@@ -537,7 +537,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         }
 
 
-                        if(this.CACHE_ENABLED && ccaching) {
+                        if(UserInstance.CACHE_ENABLED && ccaching) {
                             // save character block cache
                             CharacterCacheEntry ce=new CharacterCacheEntry();
                             ce.systemBuffers=cif.getSystemCCacheBlocks();

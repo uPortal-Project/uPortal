@@ -167,7 +167,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	    th.startElement("","channel","channel", atl);
 	    ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
 	    int out=cr.outputRendering(custodian);
-	    if(out==cr.RENDERING_TIMED_OUT) {
+	    if(out==ChannelRenderer.RENDERING_TIMED_OUT) {
 		throw new InternalTimeoutException("The channel has timed out");
 	    }
 	    th.endElement("","channel","channel");

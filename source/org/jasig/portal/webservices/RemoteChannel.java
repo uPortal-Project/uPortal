@@ -146,7 +146,7 @@ public class RemoteChannel implements IRemoteChannel {
     int channelPublishId = channelDef.getId();
     boolean authorized = ap.canSubscribe(channelPublishId);
     if (!authorized)
-      throw new AuthorizationException("User '" + person.getAttribute(person.USERNAME) + "' is not authorized to access channel with functional name '" + fname + "'");
+      throw new AuthorizationException("User '" + person.getAttribute(IPerson.USERNAME) + "' is not authorized to access channel with functional name '" + fname + "'");
       
     // Instantiate channel
     // Should this block be synchronized?
@@ -332,7 +332,7 @@ public class RemoteChannel implements IRemoteChannel {
     IPerson person = new PersonImpl();
     person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
     person.setID(1); // Guest users have a UID of 1
-    person.setAttribute(person.USERNAME,"guest");
+    person.setAttribute(IPerson.USERNAME,"guest");
     return person;
   }
   
