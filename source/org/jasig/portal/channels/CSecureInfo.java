@@ -43,9 +43,9 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -138,7 +138,7 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
         // end of debug block
 
         try {
-            LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+            XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
             xslt.setXML(doc);
             xslt.setXSL(sslLocation, ssTitle, runtimeData.getBrowserInfo());
             xslt.setTarget(out);

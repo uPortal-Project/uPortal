@@ -44,7 +44,6 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -60,7 +59,7 @@ import org.xml.sax.ContentHandler;
  * <code>data=foo</code></p>
  * <p><i>This code was adapted from uPortal 1.0's
  * <code>org.jasig.portal.channels.CApplet</code></i></p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CApplet extends BaseMultithreadedChannel implements IMultithreadedCacheable {
@@ -109,7 +108,7 @@ public class CApplet extends BaseMultithreadedChannel implements IMultithreadedC
 
     doc.appendChild(appletE);
 
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

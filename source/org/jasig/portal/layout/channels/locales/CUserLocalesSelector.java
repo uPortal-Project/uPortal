@@ -128,7 +128,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
         }
 
         doc.appendChild(localesE);
-        XSLT xslt = new XSLT(this);
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
         xslt.setTarget(out);

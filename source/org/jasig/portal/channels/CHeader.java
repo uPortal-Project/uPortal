@@ -38,7 +38,6 @@ package org.jasig.portal.channels;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -53,7 +52,7 @@ import org.xml.sax.ContentHandler;
  * will render the content of such header channels consistently on every
  * page.
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
@@ -196,7 +195,7 @@ public class CHeader extends BaseChannel implements ICacheable {
    */
   public void renderXML (ContentHandler out) throws PortalException {
     // Perform the transformation
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(getUserXML());
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

@@ -50,7 +50,6 @@ import org.jasig.portal.IChannel;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
@@ -301,7 +300,7 @@ public class CPermissionsManager
             if (!session.view.equals("Select Principals")
                     || !session.isAuthorized) {
                 long time2 = Calendar.getInstance().getTime().getTime();
-                LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, session.runtimeData.getLocales());
+                XSLT xslt = XSLT.getTransformer(this, session.runtimeData.getLocales());
                 xslt.setXML(PermissionsXML.getViewDoc(session));
                 xslt.setTarget(out);
                 xslt.setStylesheetParameter("baseActionURL", session.runtimeData.getBaseActionURL());

@@ -56,13 +56,13 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -472,7 +472,7 @@ class GPreferencesState extends BaseState {
       }
       String xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -580,7 +580,7 @@ class GPreferencesState extends BaseState {
       }
       String xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -676,7 +676,7 @@ class GPreferencesState extends BaseState {
         params.put("profileType", "user");
       }
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -761,7 +761,7 @@ class GPreferencesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);

@@ -43,8 +43,8 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
 /** <p>A number guessing game which asks the user to enter a number within
@@ -196,7 +196,7 @@ public class CNumberGuess implements IChannel
 
     w.write ("</content>\n");
 
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(w.toString());
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

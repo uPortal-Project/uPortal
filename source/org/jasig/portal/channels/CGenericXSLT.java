@@ -100,7 +100,7 @@ import org.xml.sax.ContentHandler;
  * can be used and is included with CGenericXSLT.  Just set the xml parameter to this
  * empty document.</p>
  * @author Steve Toth, stoth@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
  * @version $Revision$
  */
@@ -310,7 +310,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
          }
       }
 
-      XSLT xslt = new XSLT(this);
+      XSLT xslt = XSLT.getTransformer(this, state.runtimeData.getLocales());
       xslt.setXML(xmlDoc);
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);

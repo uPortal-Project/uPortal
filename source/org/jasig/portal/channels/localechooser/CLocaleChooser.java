@@ -42,9 +42,9 @@ import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -113,7 +113,7 @@ public class CLocaleChooser implements IChannel
 	LogService.log(LogService.DEBUG, "LocaleChooser -  sslLocation: " + sslLocation);
 	LogService.log(LogService.DEBUG, "LocaleChooser -  XSL= " + locale + "/" + sslLocation);
 
-	LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 	xslt.setXML(doc);
 	xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
 	xslt.setTarget(out);

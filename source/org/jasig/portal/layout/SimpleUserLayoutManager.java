@@ -176,8 +176,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 if(markingNode!=null) {
                     stylesheetParams.put("targetId",markingNode);
                 }
-                XSLT xslt=new XSLT(this);
-                xslt.setXML(n); xslt.setTarget(ch);
+                XSLT xslt = XSLT.getTransformer(this);
+                xslt.setXML(n); 
+                xslt.setTarget(ch);
                 xslt.setStylesheetParameters(stylesheetParams);
                 xslt.setXSL(MARKING_XSLT_URI);
                 xslt.transform();

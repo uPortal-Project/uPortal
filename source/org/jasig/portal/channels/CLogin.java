@@ -46,7 +46,6 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -60,7 +59,7 @@ import org.xml.sax.ContentHandler;
  * <code>LoginServlet</code>.  If user enters incorrect username and
  * password, he/she is instructed to login again with a different
  * password (the username of the previous attempt is preserved).</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CLogin implements IPrivilegedChannel, ICacheable
@@ -151,7 +150,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
     doc.appendChild(loginStatusElement);
 
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

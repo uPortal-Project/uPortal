@@ -53,10 +53,10 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -203,7 +203,7 @@ public class CGroupsManager
          else {
             viewDoc = sessionData.model;
             time2 = Calendar.getInstance().getTime().getTime();
-            LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+            XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
             xslt.setXML(viewDoc);
             xslt.setTarget(out);
             xslt.setStylesheetParameter("baseActionURL", sessionData.runtimeData.getBaseActionURL());

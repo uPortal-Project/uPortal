@@ -72,7 +72,7 @@ public class RunXSLT {
                 System.out.println("XslOutputFile is "+XslOutputFile.getAbsolutePath());
                 }
               }
-      XSLT xslt = new XSLT(RunXSLT.class);
+      XSLT xslt = XSLT.getTransformer(RunXSLT.class);
 
       try {
           ostream = new FileOutputStream(XslOutputFile);

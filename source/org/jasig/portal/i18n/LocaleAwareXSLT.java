@@ -53,22 +53,15 @@ import org.jasig.portal.utils.XSLT;
  */
 public class LocaleAwareXSLT extends XSLT {
 
-    private Object caller;
-    private Locale[] locales;
-    private static final String mediaProps = "/properties/media.properties";
+    protected Locale[] locales;
     private static Perl5Util perl5Util = new Perl5Util();
-
-    public LocaleAwareXSLT(Object instance, Locale[] locales) {
+    
+    public LocaleAwareXSLT(Object instance) {
         super(instance);
-        this.caller = instance;
+    }
+    
+    public void setLocales(Locale[] locales) {
         this.locales = locales;
-
-        // debug
-        if (locales != null) {
-            for (int i = 0; i < locales.length; i++) {
-                LogService.log(LogService.DEBUG, "LocaleAwareXSLT: locales #" + i + " = " + locales[i]);
-            }
-        }
     }
 
     public void setXSL(String sslUri, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {

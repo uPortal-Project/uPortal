@@ -40,6 +40,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -63,6 +64,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
@@ -93,34 +95,62 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * xslt.transform();
  * </pre></code></p>
  * 
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-
 public class XSLT {
   // These flags should be set to true for production to
   // ensure that pre-compiled stylesheets and stylesheet sets are cached.
-  private static boolean stylesheetRootCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
-  private static boolean stylesheetSetCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
-  private static final String mediaProps = "/properties/media.properties";
-  private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
-  private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
+  protected static boolean stylesheetRootCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
+  protected static boolean stylesheetSetCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
+  protected static final String mediaProps = "/properties/media.properties";
+  protected static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
+  protected static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
   private static SAXTransformerFactory saxTFactory = null;
 
-  private Object caller = null;
-  private Source xmlSource;
-  private Result xmlResult;
-  private HashMap stylesheetParams;
-  private String xslURI;
+  protected Object caller = null;
+  protected Source xmlSource;
+  protected Result xmlResult;
+  protected HashMap stylesheetParams;
+  protected String xslURI;
 
 
   /**
-   * Constructs an XSLT object.
+   * Constructs an XSLT object. This contructor should
+   * be declared protected, but it will remain public for a while
+   * until most client code is changed to use the getTransformer()
+   * methods.  <strong>Please avoid using this constructor!</strong>
+   * @param instance the client of this utility
    */
   public XSLT (Object instance) {
     this.stylesheetParams = new HashMap();
     this.caller = instance;
+  }
+  
+  /**
+   * Factory method that produces an XSLT transformer utility.
+   * @param instance the client of this utility
+   * @return a transformer utility
+   * @since uPortal 2.2
+   */
+  public static XSLT getTransformer(Object instance) {
+      XSLT transformer = new XSLT(instance);
+      return transformer;
+  }
+
+  /**
+   * Factory method that produces an XSLT transformer utility
+   * with a capability of choosing a stylesheet depending on a
+   * list of locales.
+   * @param instance the client of this utility
+   * @return a locale-aware transformer utility
+   * @since uPortal 2.2
+   */
+  public static XSLT getTransformer(Object instance, Locale[] locales) {
+      LocaleAwareXSLT transformer = new LocaleAwareXSLT(instance);
+      transformer.setLocales(locales);
+      return transformer;
   }
 
   public static SAXTransformerFactory getSAXTFactory() {

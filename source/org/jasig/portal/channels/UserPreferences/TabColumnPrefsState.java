@@ -1059,7 +1059,7 @@ public class TabColumnPrefsState extends BaseState
       InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
-      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+      XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       xslt.setXML(xmlStream);
       xslt.setXSL(sslLocation, "skinList", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
@@ -1138,7 +1138,7 @@ public class TabColumnPrefsState extends BaseState
     {
       Document doc = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
 
-      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+      XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       xslt.setXML(doc);
       xslt.setXSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
@@ -1206,7 +1206,7 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      LocaleAwareXSLT xslt = new LocaleAwareXSLT (this, runtimeData.getLocales());
+      XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       xslt.setXML(getParametersDoc());
       xslt.setXSL(sslLocation, "parameters", runtimeData.getBrowserInfo());
       xslt.setTarget(out);

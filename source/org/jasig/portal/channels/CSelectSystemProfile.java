@@ -45,8 +45,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StandaloneChannelRenderer;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -120,7 +120,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     }
     edEl.appendChild(sEl);
 
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

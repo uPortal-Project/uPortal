@@ -107,7 +107,7 @@ import org.xml.sax.ContentHandler;
       UserPreferences userPrefs = upm.getUserPreferences();
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
-      XSLT xslt = new XSLT (this);
+      XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       xslt.setXML(xmlStream);
       xslt.setXSL(sslLocation, "skinSelector", runtimeData.getBrowserInfo());
       xslt.setTarget(out);

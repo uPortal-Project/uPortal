@@ -52,10 +52,10 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -344,7 +344,7 @@ class ManageProfilesState extends BaseState {
       }
 
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -657,7 +657,7 @@ class ManageProfilesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);

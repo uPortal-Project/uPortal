@@ -82,7 +82,7 @@ import org.xml.sax.ContentHandler;
 
       String catId = CommonUtils.nvl(runtimeData.getParameter("catID"));
 
-      XSLT xslt = new XSLT (this);
+      XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       xslt.setXML(channelRegistry);
       xslt.setXSL(sslLocation, "contentSubscriber", runtimeData.getBrowserInfo());
       xslt.setTarget(out);

@@ -51,7 +51,6 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -162,7 +161,7 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
       throw new PortalException(re);
     }
 
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(channelE);
     xslt.setXSL(SSL_LOCATION, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

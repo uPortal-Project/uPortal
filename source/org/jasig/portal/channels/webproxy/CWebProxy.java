@@ -71,7 +71,6 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
 import org.jasig.portal.services.LogService;
@@ -652,7 +651,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       if (state.personAllow != null)
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
-      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, state.runtimeData.getLocales());
+      XSLT xslt = XSLT.getTransformer(this, state.runtimeData.getLocales());
       if (tidiedXml != null)
         xslt.setXML(tidiedXml);
       else

@@ -52,7 +52,6 @@ import org.jasig.portal.IServant;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
@@ -61,6 +60,7 @@ import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +70,7 @@ import org.xml.sax.ContentHandler;
  * CChannelManager is a Channel used to manage other Channels.
  * This is a replacement for CPublisher.
  * 
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CChannelManager extends BaseChannel {
@@ -107,21 +107,11 @@ public class CChannelManager extends BaseChannel {
         errorMsg = null;
     }
 
-    /**
-     * put your documentation comment here
-     * @param sd
-     * @exception PortalException
-     */
     public void setStaticData (ChannelStaticData sd) throws PortalException {
         staticData = sd;
         person = sd.getPerson();
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
         runtimeData = rd;
         action = runtimeData.getParameter("uPCM_action");
@@ -145,13 +135,8 @@ public class CChannelManager extends BaseChannel {
         doAction();
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
     public void renderXML (ContentHandler out) throws PortalException {
-        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(channelManagerDoc);
         xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
@@ -211,8 +196,8 @@ public class CChannelManager extends BaseChannel {
      }
 
     /**
-     * put your documentation comment here
-     * @return
+     * Produces a group servant
+     * @return the group servant
      */
     protected synchronized IServant getGroupServant () {
         if (groupServant == null) {
@@ -246,8 +231,8 @@ public class CChannelManager extends BaseChannel {
     }
 
     /**
-     * put your documentation comment here
-     * @return
+     * Produces a category servant
+     * @return the category servant
      */
     protected synchronized IServant getCategoryServant () {
         if (categoryServant == null) {
@@ -394,7 +379,7 @@ public class CChannelManager extends BaseChannel {
     }
 
     /**
-     * put your documentation comment here
+     * Controller method that reacts to the action parameter.
      * @exception PortalException
      */
     protected void doAction () throws PortalException {
@@ -586,7 +571,8 @@ public class CChannelManager extends BaseChannel {
     }
 
     /**
-     * put your documentation comment here
+     * Produces an XML document used as an input to 
+     * this channel's XSLT transformation.
      * @param modChanSettings
      * @return
      * @exception PortalException
@@ -610,10 +596,6 @@ public class CChannelManager extends BaseChannel {
         return  channelManagerDoc;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     protected Element getGroupsXML () {
         Element el = emptyDoc.createElement("userSettings");
         Element browsingGroupE = emptyDoc.createElement("browsingGroup");
@@ -638,10 +620,6 @@ public class CChannelManager extends BaseChannel {
         return  el;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     protected Element getCategoriesXML () {
         Element userSettingsE = emptyDoc.createElement("userSettings");
         Element browsingCategoryE = emptyDoc.createElement("browsingCategory");
@@ -666,11 +644,6 @@ public class CChannelManager extends BaseChannel {
         return  userSettingsE;
     }
 
-    /**
-     * put your documentation comment here
-     * @param channelManager
-     * @param modChanSettings
-     */
     protected static void appendModifyChannelSettings (Element channelManager, ModifyChannelSettings modChanSettings) {
         Document doc = channelManager.getOwnerDocument();
         Element userSettingsE = doc.createElement("userSettings");
@@ -710,42 +683,22 @@ public class CChannelManager extends BaseChannel {
             return  recordsPerPage;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getCurrentPage () {
             return  currentPage;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getFilterByID () {
             return  filterByID;
         }
 
-        /**
-         * put your documentation comment here
-         * @param recordsPerPage
-         */
         protected void setRecordsPerPage (String recordsPerPage) {
             this.recordsPerPage = recordsPerPage;
         }
 
-        /**
-         * put your documentation comment here
-         * @param currentPage
-         */
         protected void setCurrentPage (String currentPage) {
             this.currentPage = currentPage;
         }
 
-        /**
-         * put your documentation comment here
-         * @param filterByID
-         */
         protected void setFilterByID (String filterByID) {
             this.filterByID = filterByID;
         }
@@ -768,67 +721,34 @@ public class CChannelManager extends BaseChannel {
         protected WorkflowSection groupsSection;
         protected WorkflowSection reviewSection;
 
-        /**
-         * put your documentation comment here
-         * @param channelTypesSection
-         */
         protected void setChannelTypesSection (WorkflowSection channelTypesSection) {
             this.channelTypesSection = channelTypesSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param generalSettingsSection
-         */
         protected void setGeneralSettingsSection (WorkflowSection generalSettingsSection) {
             this.generalSettingsSection = generalSettingsSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param channelParamsSection
-         */
         protected void setChannelParamsSection (WorkflowSection channelParamsSection) {
             this.channelParamsSection = channelParamsSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param controlsSection
-         */
         protected void setControlsSection (WorkflowSection controlsSection) {
             this.controlsSection = controlsSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param categoriesSection
-         */
         protected void setCategoriesSection (WorkflowSection categoriesSection) {
             this.categoriesSection = categoriesSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param groupsSection
-         */
         protected void setGroupsSection (WorkflowSection groupsSection) {
             this.groupsSection = groupsSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @param reviewSection
-         */
         protected void setReviewSection (WorkflowSection reviewSection) {
             this.reviewSection = reviewSection;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         * @exception PortalException
-         */
         protected Document toXML () throws PortalException {
             Document doc = DocumentFactory.getNewDocument();
             // Add the top level <manageChannels> to the document
@@ -847,13 +767,6 @@ public class CChannelManager extends BaseChannel {
             return  doc;
         }
 
-        /**
-         * put your documentation comment here
-         * @param section
-         * @param sectionElementName
-         * @param stepTitle
-         * @param e
-         */
         private void addSection (WorkflowSection section, String sectionElementName,
                 String stepTitle, Element e) {
             // For sections that haven't been set, add an empty one with one step
@@ -864,11 +777,6 @@ public class CChannelManager extends BaseChannel {
             e.appendChild(section.toXML(e.getOwnerDocument()));
         }
 
-        /**
-         * put your documentation comment here
-         * @param e
-         * @exception PortalException
-         */
         private void addChannelParamsSection (Element e) throws PortalException {
             if (channelParamsSection == null) {
                 // Add CPD document if channel is "generic", otherwise custom settings
@@ -897,42 +805,22 @@ public class CChannelManager extends BaseChannel {
         protected String name;
         protected List steps;
 
-        /**
-         * put your documentation comment here
-         */
         protected WorkflowSection () {
         }
 
-        /**
-         * put your documentation comment here
-         * @param         String name
-         */
         protected WorkflowSection (String name) {
             this.name = name;
             steps = new ArrayList();
         }
 
-        /**
-         * put your documentation comment here
-         * @param name
-         */
         protected void setName (String name) {
             this.name = name;
         }
 
-        /**
-         * put your documentation comment here
-         * @param step
-         */
         protected void addStep (WorkflowStep step) {
             steps.add(step);
         }
 
-        /**
-         * put your documentation comment here
-         * @param doc
-         * @return
-         */
         protected Element toXML (Document doc) {
             // Add this step's workflow element
             Element sectionE = doc.createElement(name);
@@ -952,21 +840,12 @@ public class CChannelManager extends BaseChannel {
     protected class CPDWorkflowSection extends WorkflowSection {
         protected Document cpdDoc;
 
-        /**
-         * put your documentation comment here
-         * @param         String chanTypeID
-         */
         protected CPDWorkflowSection (String chanTypeID) throws PortalException
         {
             super();
             cpdDoc = ChannelRegistryManager.getCPD(chanTypeID);
         }
 
-        /**
-         * put your documentation comment here
-         * @param element
-         * @param stepID
-         */
         protected void addToStep (Element element, String stepID) {
             for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
                 if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("params")) {
@@ -992,11 +871,6 @@ public class CChannelManager extends BaseChannel {
             }
         }
 
-        /**
-         * put your documentation comment here
-         * @param doc
-         * @return
-         */
         protected Element toXML (Document doc) {
             return  (Element)doc.importNode(cpdDoc.getDocumentElement(), true);
         }
@@ -1007,11 +881,6 @@ public class CChannelManager extends BaseChannel {
         protected String name;
         protected List dataElements;
 
-        /**
-         * put your documentation comment here
-         * @param         String ID
-         * @param         String name
-         */
         protected WorkflowStep (String ID, String name) {
             this.ID = ID;
             this.name = name;
@@ -1023,43 +892,22 @@ public class CChannelManager extends BaseChannel {
             return  ID;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getName () {
             return  name;
         }
 
-        /**
-         * put your documentation comment here
-         * @param ID
-         */
         protected void setID (String ID) {
             this.ID = ID;
         }
 
-        /**
-         * put your documentation comment here
-         * @param name
-         */
         protected void setName (String name) {
             this.name = name;
         }
 
-        /**
-         * put your documentation comment here
-         * @param dataElement
-         */
         protected void addDataElement (Element dataElement) {
             this.dataElements.add(dataElement);
         }
 
-        /**
-         * put your documentation comment here
-         * @param doc
-         * @return
-         */
         protected Element toXML (Document doc) {
             Element stepE = doc.createElement("step");
             Element IDE = doc.createElement("ID");
@@ -1094,192 +942,99 @@ public class CChannelManager extends BaseChannel {
         protected class Parameter {
             protected String name;
             protected String value;
-            protected String override;          // "yes" or "no"
+            protected String override; // "yes" or "no"
 
-            /**
-             * put your documentation comment here
-             * @param             String name
-             * @param             String value
-             * @param             String override
-             */
             protected Parameter (String name, String value, String override) {
                 this.name = name;
                 this.value = value;
                 this.override = override;
             }
 
-            /**
-             * put your documentation comment here
-             * @return
-             */
             protected String getName () {
                 return  name;
             }
 
-            /**
-             * put your documentation comment here
-             * @return
-             */
             protected String getValue () {
                 return  value;
             }
 
-            /**
-             * put your documentation comment here
-             * @return
-             */
             protected String getOverride () {
                 return  override;
             }
 
-            /**
-             * put your documentation comment here
-             * @param name
-             */
             protected void setName (String name) {
                 this.name = name;
             }
 
-            /**
-             * put your documentation comment here
-             * @param value
-             */
             protected void setValue (String value) {
                 this.value = value;
             }
 
-            /**
-             * put your documentation comment here
-             * @param override
-             */
             protected void setOverride (String override) {
                 this.override = override;
             }
         }
 
-        /**
-         * put your documentation comment here
-         */
         protected ChannelDefinition () {
             parameters = new HashMap();
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getTypeID () {
             return  typeID;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getEditable () {
             return  editable;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getHasHelp () {
             return  hasHelp;
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected String getHasAbout () {
             return  hasAbout;
         }
 
-        /**
-         * Channel secure setting.
-         * @return 'true' or 'false'
-         */
         protected String isSecure () {
             return  secure;
         }
         
-        /**
-         * put your documentation comment here
-         * @param typeID
-         */
         protected void setTypeID (String typeID) {
             this.typeID = typeID;
         }
 
-        /**
-         * put your documentation comment here
-         * @param name
-         */
         protected void setName (String name) {
             this.name = name;
         }
 
-        /**
-         * Set the channel functional name
-         * @param fname the functional name
-         */
         protected void setFunctionalName (String fname) {
             this.fname = fname;
         }
 
-        /**
-         * put your documentation comment here
-         * @param description
-         */
         protected void setDescription (String description) {
             this.description = description;
         }
 
-        /**
-         * put your documentation comment here
-         * @param title
-         */
         protected void setTitle (String title) {
             this.title = title;
         }
 
-        /**
-         * put your documentation comment here
-         * @param timeout
-         */
         protected void setTimeout (String timeout) {
             this.timeout = timeout;
         }
 
-        /**
-         * put your documentation comment here
-         * @param javaClass
-         */
         protected void setJavaClass (String javaClass) {
             this.javaClass = javaClass;
         }
 
-        /**
-         * put your documentation comment here
-         * @param editable
-         */
         protected void setEditable (String editable) {
             this.editable = editable;
         }
 
-        /**
-         * put your documentation comment here
-         * @param hasHelp
-         */
         protected void setHasHelp (String hasHelp) {
             this.hasHelp = hasHelp;
         }
 
-        /**
-         * put your documentation comment here
-         * @param hasAbout
-         */
         protected void setHasAbout (String hasAbout) {
             this.hasAbout = hasAbout;
         }
@@ -1292,46 +1047,24 @@ public class CChannelManager extends BaseChannel {
             this.secure = secure;
         }
         
-        /**
-         * put your documentation comment here
-         * @param e
-         * @param attName
-         * @param attVal
-         */
         private void setAttribute (Element e, String attName, String attVal) {
             // Only set the attribute if it has a non-null value
             if (attVal != null)
                 e.setAttribute(attName, attVal);
         }
 
-        /**
-         * put your documentation comment here
-         * @param name
-         * @param value
-         * @param modType
-         */
         protected void addParameter (String name, String value, String modType) {
             parameters.put(name, new Parameter(name, value, modType));
         }
 
-        /**
-         * put your documentation comment here
-         * @param name
-         */
         protected void removeParameter (String name) {
             parameters.remove(name);
         }
 
-        /**
-         * put your documentation comment here
-         */
         protected void removeParameters () {
             parameters = new HashMap();
         }
 
-        /**
-         * put your documentation comment here
-         */
         protected void resetChannelControls () {
             try {
                 // Look inside CPD for controls.
@@ -1371,11 +1104,6 @@ public class CChannelManager extends BaseChannel {
             }
         }
 
-        /**
-         * put your documentation comment here
-         * @param channelE
-         * @exception PortalException
-         */
         protected void setChannelDefinition (Element channelE) throws PortalException {
             ID = channelE.getAttribute("ID");
             typeID = channelE.getAttribute("typeID");
@@ -1400,10 +1128,6 @@ public class CChannelManager extends BaseChannel {
             }
         }
 
-        /**
-         * put your documentation comment here
-         * @return
-         */
         protected Element toXML () {
             Element channelE = emptyDoc.createElement("channel");
             setAttribute(channelE, "ID", ID);
@@ -1432,6 +1156,3 @@ public class CChannelManager extends BaseChannel {
         }
     }
 }
-
-
-

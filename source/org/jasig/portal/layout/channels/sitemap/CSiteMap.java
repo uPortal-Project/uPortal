@@ -62,7 +62,7 @@ public class CSiteMap extends BaseChannel implements IPrivileged {
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-        XSLT xslt = new XSLT(this);
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(userLayoutDoc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
