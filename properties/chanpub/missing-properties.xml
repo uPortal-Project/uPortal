@@ -8,7 +8,7 @@
     <name>Missing Properties</name>
     <fname>missing-properties</fname>
     <desc>Shows any properties that the properties manager looked for, but did not find.</desc>
-    <type>XML Transformation</type>
+    <type>XML XSLT</type>
     <class>org.jasig.portal.channels.CGenericXSLT</class>
     <timeout>10000</timeout>
     
