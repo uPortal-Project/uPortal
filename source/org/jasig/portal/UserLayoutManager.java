@@ -312,36 +312,8 @@ public class UserLayoutManager {
       complete_up = current_up;
     // load stylesheet description files and fix user preferences
     ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
-    // clean up
-    StructureStylesheetUserPreferences fsup = complete_up.getStructureStylesheetUserPreferences();
-    StructureStylesheetDescription fssd = csddb.getStructureStylesheetDescription(fsup.getStylesheetId());
-    if (fssd == null) {
-    // assign a default stylesheet instead
-    }
-    else {
-      fsup.synchronizeWithDescription(fssd);
-    }
-    ThemeStylesheetUserPreferences ssup = complete_up.getThemeStylesheetUserPreferences();
-    ThemeStylesheetDescription sssd = csddb.getThemeStylesheetDescription(ssup.getStylesheetId());
-    if (sssd == null) {
-    // assign a default stylesheet instead
-    }
-    else {
-      ssup.synchronizeWithDescription(sssd);
-    }
-    // in case something was reset to default
-    complete_up.setStructureStylesheetUserPreferences(fsup);
-    complete_up.setThemeStylesheetUserPreferences(ssup);
-    // now generate "filled-out copies"
-    //        complete_up=new UserPreferences(up);
     // syncronize up with layout
     synchUserPreferencesWithLayout(complete_up);
-    StructureStylesheetUserPreferences complete_fsup = complete_up.getStructureStylesheetUserPreferences();
-    ThemeStylesheetUserPreferences complete_ssup = complete_up.getThemeStylesheetUserPreferences();
-    complete_fsup.completeWithDescriptionInformation(fssd);
-    complete_ssup.completeWithDescriptionInformation(sssd);
-    complete_up.setStructureStylesheetUserPreferences(complete_fsup);
-    complete_up.setThemeStylesheetUserPreferences(complete_ssup);
   }
 
   /*
@@ -349,6 +321,11 @@ public class UserLayoutManager {
    * Note that if any of the two are "null", old values will be used.
    */
   public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
+    if (newPreferences != null) {
+      IUserPreferencesDB updb = new UserPreferencesDBImpl();
+      updb.putUserPreferences(person.getID(), newPreferences);
+      this.setCurrentUserPreferences(newPreferences);
+    }
     if (newLayout != null) {
       uLayoutXML = newLayout;
       try {
@@ -358,11 +335,7 @@ public class UserLayoutManager {
         throw new GeneralRenderingException(e.getMessage());
       }
     }
-    if (newPreferences != null) {
-      IUserPreferencesDB updb = new UserPreferencesDBImpl();
-      updb.putUserPreferences(person.getID(), newPreferences);
-      this.setCurrentUserPreferences(newPreferences);
-    }
+
   }
 
   /**
