@@ -2,7 +2,7 @@
 
 <xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
-<xsl:variable name="activeID" select="/layout/folder[@type='regular'][position()=$activeTab]/@ID"/>
+<xsl:variable name="activeID" select="/layout/folder[@type='regular' and @hidden='false'][position()=$activeTab]/@ID"/>
 
 <!-- document fragment template. See structure stylesheet for more comments -->
 <xsl:template match="layout_fragment">
@@ -18,7 +18,7 @@
   <layout>
   
     <header>
-      <xsl:for-each select="child::folder[attribute::type='header']">
+      <xsl:for-each select="child::folder[@type='header']">
 	      <xsl:copy-of select=".//channel"/>
       </xsl:for-each>
     </header>
@@ -28,7 +28,7 @@
     <content>
       <xsl:choose>
         <xsl:when test="$userLayoutRoot = 'root'">
-          <xsl:apply-templates select="folder[attribute::type='regular']"/>
+          <xsl:apply-templates select="folder[@type='regular']"/>
         </xsl:when>
         <xsl:otherwise>
           <column>
@@ -49,7 +49,7 @@
 
 <xsl:template name="tabList">
   <navigation>
-    <xsl:for-each select="/layout/folder[attribute::type='regular']">
+    <xsl:for-each select="/layout/folder[@type='regular' and @hidden='false']">
       <tab>
         <xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
       	<xsl:choose>
@@ -67,7 +67,7 @@
   </navigation>
 </xsl:template>
 
-<xsl:template match="folder">
+<xsl:template match="folder[@hidden='false']">
   <xsl:if test="$activeID = @ID">
     <xsl:if test="child::folder">
       <xsl:for-each select="folder">

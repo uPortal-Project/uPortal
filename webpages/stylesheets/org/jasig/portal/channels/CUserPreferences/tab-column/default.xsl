@@ -48,8 +48,7 @@ $Revision$
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
 
-  <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer')][position() = $activeTab]/@ID" />
-  <!--xsl:variable name="activeID" select="/layout/folder[@type='regular'][position() = $activeTab]/@ID" /-->
+  <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID" />
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
 
   <xsl:template match="layout">
@@ -107,153 +106,78 @@ $Revision$
 
   </xsl:template>
 
-
-
   <xsl:template name="tabRow">
 
 <!--Begin Tab Table -->
 
     <table summary="add summary" border="0" cellspacing="0" cellpadding="0" width="100%">
       <tr>
-        <xsl:for-each select="/layout/folder[not(attribute::type='header' or type='footer')]">
-
+        <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
           <xsl:choose>
-
             <xsl:when test="not($activeTab = position())">
-
               <td nowrap="nowrap" class="uportal-background-light">
-
                 <a class="uportal-text-small">
-
                   <xsl:choose>
-
                     <xsl:when test="$action = 'moveColumn' or $action = 'moveChannel'">
                       <xsl:attribute name="href">
                         <xsl:value-of select="$baseActionURL" />?action=<xsl:value-of select="$action" />&amp;activeTab=<xsl:value-of select="position()" />
                       </xsl:attribute>
                     </xsl:when>
-
                     <xsl:otherwise>
                       <xsl:attribute name="href">
                         <xsl:value-of select="$baseActionURL" />?action=selectTab&amp;activeTab=<xsl:value-of select="position()" />
                       </xsl:attribute>
                     </xsl:otherwise>
-
                   </xsl:choose>
-
                   <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
                   <xsl:value-of select="@name" />
-
                   <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
                 </a>
-
               </td>
-
-
               <td class="uportal-background-dark">
-
                 <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
               </td>
-
             </xsl:when>
-
-
-
             <xsl:otherwise>
-
               <td nowrap="nowrap">
-
                 <xsl:choose>
-
                   <xsl:when test="$action='modifyTab'">
-
                     <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
-
                   </xsl:when>
-
-
-
                   <xsl:otherwise>
-
                     <xsl:attribute name="class">uportal-background-content</xsl:attribute>
-
                   </xsl:otherwise>
-
                 </xsl:choose>
-
-
 
                 <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
 
-
-
                 <a class="uportal-navigation-category-selected">
-
                   <xsl:choose>
-
                     <xsl:when test="$action = 'moveColumn' or $action = 'moveChannel'">
-
                       <xsl:attribute name="href">
-
-                      <xsl:value-of select="$baseActionURL" />
-
-
-
-                      ?action=
-
-                      <xsl:value-of select="$action" />
-
-
-
-                      &amp;activeTab=
-
-                      <xsl:value-of select="position()" />
-
+                        <xsl:value-of select="$baseActionURL" />?action=<xsl:value-of select="$action" />&amp;activeTab=<xsl:value-of select="position()" />
                       </xsl:attribute>
-
                     </xsl:when>
-
-
-
                     <xsl:otherwise>
                       <xsl:attribute name="href">
                         <xsl:value-of select="$baseActionURL" />?action=selectTab&amp;activeTab=<xsl:value-of select="position()" />
                       </xsl:attribute>
                     </xsl:otherwise>
-
                   </xsl:choose>
 
-
-
                   <span class="uportal-text-small">
-
                     <xsl:value-of select="@name" />
-
                   </span>
-
                 </a>
 
-
-
                 <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
               </td>
-
-
 
               <td class="uportal-background-dark">
-
                 <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
               </td>
-
             </xsl:otherwise>
-
           </xsl:choose>
-
         </xsl:for-each>
 
 
@@ -327,54 +251,25 @@ $Revision$
 
       <xsl:call-template name="controlRow" />
 
-
-
       <tr>
-
         <xsl:choose>
-
           <xsl:when test="/layout/folder[attribute::ID=$activeTabID]/folder">
-
             <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]/descendant::folder">
-
               <xsl:call-template name="contentColumns" />
-
-
-
               <xsl:if test="position()=last()">
-
                 <xsl:call-template name="closeContentRow" />
-
               </xsl:if>
-
             </xsl:for-each>
-
           </xsl:when>
-
-
-
           <xsl:otherwise>
-
             <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]">
-
               <xsl:call-template name="contentColumns" />
-
-
-
               <xsl:call-template name="closeContentRow" />
-
             </xsl:for-each>
-
           </xsl:otherwise>
-
         </xsl:choose>
-
-
-
         <xsl:call-template name="controlRow" />
-
       </tr>
-
     </table>
 
 
@@ -383,250 +278,135 @@ $Revision$
 
   </xsl:template>
 
-
-
   <xsl:template name="controlRow">
 
 <!--Begin Control Row -->
 
     <tr>
-
       <xsl:choose>
-
         <xsl:when test="/layout/folder[attribute::ID=$activeTabID]/folder">
 
           <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]/folder">
-
             <td width="10">
-
               <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
             </td>
-
-
 
             <td width="20">
-
               <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
             </td>
-
-
 
             <td width="10">
-
               <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
-
             </td>
-
-
 
             <td width="">
-
               <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
             </td>
-
           </xsl:for-each>
-
-
-
+          
           <td width="10">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td width="20">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td width="10">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
-
           </td>
-
         </xsl:when>
 
-
-
         <xsl:otherwise>
-
           <td width="10">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
-
+          
           <td width="20">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td width="10">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
-
           </td>
-
-
 
           <td width="100%">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td width="10">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td width="20">
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
           </td>
-
-
 
           <td>
-
             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
-
           </td>
-
         </xsl:otherwise>
-
       </xsl:choose>
-
     </tr>
-
 
 
 <!--End Control Row -->
 
   </xsl:template>
 
-
-
   <xsl:template name="optionMenu">
 
 <!--Begin Option Menu-->
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
       <tr class="uportal-background-light">
-
         <td class="uportal-channel-text">
-
           <xsl:choose>
-
             <xsl:when test="$action='selectTab'">
-
               <xsl:call-template name="optionMenuModifyTab" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='selectColumn'">
-
               <xsl:call-template name="optionMenuModifyColumn" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='selectChannel'">
-
               <xsl:call-template name="optionMenuModifyChannel" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='newTab'">
-
               <xsl:call-template name="optionMenuNewTab" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='newColumn'">
-
               <xsl:call-template name="optionMenuNewColumn" />
-
             </xsl:when>
 
-
-
             <xsl:when test="$action='newChannel'">
-
               <xsl:call-template name="optionMenuDefault" />
-
-
 
 <!--Change Value When "newChannel" is Coded-->
 
             </xsl:when>
 
-
-
             <xsl:when test="$action='moveColumn'">
-
               <xsl:call-template name="optionMenuMoveColumn" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='moveChannel'">
-
               <xsl:call-template name="optionMenuMoveChannel" />
-
             </xsl:when>
-
-
 
             <xsl:when test="$action='error'">
-
               <xsl:call-template name="optionMenuError" />
-
             </xsl:when>
 
-
-
             <xsl:otherwise>
-
               <xsl:call-template name="optionMenuDefault" />
-
             </xsl:otherwise>
-
           </xsl:choose>
-
         </td>
-
       </tr>
-
     </table>
 
 
@@ -635,17 +415,11 @@ $Revision$
 
   </xsl:template>
 
-
-
   <xsl:template name="contentColumns">
 
     <xsl:call-template name="controlColumn" />
 
-
-
     <xsl:call-template name="newColumn" />
-
-
 
     <xsl:call-template name="controlColumn" />
 
@@ -654,66 +428,33 @@ $Revision$
 <!--Begin Content Column -->
 
     <td align="center" valign="top">
-
       <xsl:if test="($action = 'selectColumn' or $action = 'moveColumn') and $elementID=@ID">
-
         <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
-
       </xsl:if>
-
-
-
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <!--Begin [select Column]row -->
 
         <tr>
-
           <td>
-
             <img alt="interface image" src="{$mediaPath}\leftarrow.gif" width="20" height="20" />
-
           </td>
-
-
-
           <td bgcolor="#CCCCCC" width="100%" align="center">
-
             <xsl:choose>
-
               <xsl:when test="($action = 'selectColumn' or $action = 'moveColumn') and $elementID=@ID">
-
                 <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
-
               </xsl:when>
-
-
-
               <xsl:otherwise>
-
                 <a href="{$baseActionURL}?action=selectColumn&amp;elementID={@ID}" class="uportal-text-small">
-
                   <img alt="click to select this column [{@ID}]" src="{$mediaPath}\selectcolumn.gif" width="79" height="20" border="0" />
-
                 </a>
-
               </xsl:otherwise>
-
             </xsl:choose>
-
           </td>
-
-
-
           <td>
-
             <img alt="interface image" src="{$mediaPath}\rightarrow.gif" width="20" height="20" />
-
           </td>
-
         </tr>
-
-
 
 <!--End [select Column] row -->
 
@@ -1169,357 +910,157 @@ $Revision$
 
     <xsl:variable name="tabName" select="/layout/folder[@ID=$activeTabID]/@name" />
 
-
-
     <p>
-
       <span class="uportal-channel-subtitle-reversed">Options for modifying this tab:</span>
-
     </p>
 
-
-
     <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
-
       <tr>
-
         <td valign="top">
-
           <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
         </td>
-
-
-
         <td width="100%">
-
           <a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTab}">Make this the default "Active Tab" (the tab that is selected when you log into the portal)</a>
-
         </td>
-
       </tr>
-
-
 
       <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@immutable = 'true')">
-
         <tr>
-
           <td valign="top">
-
             <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
           </td>
-
-
-
           <td>
-
             <form name="formRenameTab" method="post" action="{$baseActionURL}">
-
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-channel-text">
-
                 <tr>
-
                   <td nowrap="nowrap">
-
                     <a href="#">Rename the tab:
-
                     <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
                     </a>
-
                   </td>
-
-
-
                   <td width="100%">
-
                     <input type="text" name="tabName" value="{$tabName}" class="uportal-input-text" size="30" />
-
-
-
                     <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
-
-
                     <input type="submit" name="RenameTab" value="Rename" class="uportal-button" />
-
-
-
                     <input type="hidden" name="action" value="renameTab" />
-
-
-
                     <input type="hidden" name="elementID" value="{$activeTabID}" />
-
                   </td>
-
                 </tr>
-
               </table>
-
             </form>
-
           </td>
-
         </tr>
-
       </xsl:if>
 
-
-
       <tr>
-
         <td valign="top">
-
           <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
         </td>
-
-
-
         <td>
-
-          <a href="#">Move this tab to a diffferent position: (select below then click Move button)</a>
-
+          <a href="#">Move this tab to a different position: (select below then click Move button)</a>
         </td>
-
       </tr>
-
-
-
       <tr>
-
         <td valign="top">
-
           <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
-
         </td>
-
-
-
         <td>
-
           <form name="formMoveTab" method="post" action="{$baseActionURL}">
-
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-channel-text">
-
               <tr>
-
-                <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer')]">
-
+                <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
                   <xsl:choose>
-
                     <xsl:when test="@ID=$activeTabID">
-
                       <td class="uportal-background-light">
-
                         <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                       </td>
-
-
-
                       <td nowrap="nowrap" class="uportal-background-content">
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                         <span class="uportal-text-small">
-
                           <xsl:value-of select="@name" />
-
                         </span>
-
-
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                       </td>
-
-
-
                       <td class="uportal-background-light">
-
                         <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                       </td>
-
                     </xsl:when>
 
-
-
-                    <xsl:when test="preceding-sibling::*[1]/@ID=$activeTabID">
-
+                    <xsl:when test="preceding-sibling::*[@hidden = 'false'][1]/@ID=$activeTabID">
                       <xsl:choose>
-
                         <xsl:when test="position() = last()">
-
                           <td nowrap="nowrap" class="uportal-background-med">
-
                             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                             <span class="uportal-text-small">
-
                               <xsl:value-of select="@name" />
-
                             </span>
-
-
-
                             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                           </td>
-
-
-
                           <td nowrap="nowrap" class="uportal-background-light">
-
                             <input type="radio" name="method_ID" value="appendAfter_{@ID}" />
-
                           </td>
-
                         </xsl:when>
 
-
-
                         <xsl:otherwise>
-
                           <td nowrap="nowrap" class="uportal-background-med">
-
                             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                             <span class="uportal-text-small">
-
                               <xsl:value-of select="@name" />
-
                             </span>
-
-
-
                             <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                           </td>
-
                         </xsl:otherwise>
 
                       </xsl:choose>
-
                     </xsl:when>
-
-
 
                     <xsl:when test="position()=last()">
-
                       <td nowrap="nowrap" class="uportal-background-light">
-
                         <input type="radio" name="method_ID" value="insertBefore_{@ID}" />
-
                       </td>
-
-
 
                       <td nowrap="nowrap" class="uportal-background-med">
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                         <span class="uportal-text-small">
-
                           <xsl:value-of select="@name" />
-
                         </span>
-
-
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                       </td>
-
-
 
                       <td nowrap="nowrap" class="uportal-background-light">
-
                         <input type="radio" name="method_ID" value="appendAfter_{@ID}" />
-
                       </td>
-
                     </xsl:when>
 
-
-
                     <xsl:otherwise>
-
                       <td nowrap="nowrap" class="uportal-background-light">
-
                         <input type="radio" name="method_ID" value="insertBefore_{@ID}" />
-
                       </td>
-
-
 
                       <td nowrap="nowrap" class="uportal-background-med">
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                         <span class="uportal-text-small">
-
                           <xsl:value-of select="@name" />
-
                         </span>
-
-
-
                         <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                       </td>
-
                     </xsl:otherwise>
 
                   </xsl:choose>
 
                 </xsl:for-each>
 
-
-
                 <td width="100%">
-
                   <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
-
-
                   <input type="submit" name="MoveTab" value="Move" class="uportal-button" />
-
-
-
                   <input type="hidden" name="action" value="moveTab" />
-
-
-
                   <input type="hidden" name="elementID" value="{$activeTabID}" />
-
                 </td>
-
               </tr>
-
             </table>
-
           </form>
-
         </td>
-
       </tr>
-
-
 
       <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@unremovable = 'true')">
 
@@ -1815,166 +1356,82 @@ $Revision$
 
     <xsl:variable name="channelName" select="/layout/folder/descendant::*[@ID = $elementID]/@name" />
 
-
-
     <form name="formModifyChannel" method="post" action="{$baseActionURL}">
-
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
         <tr class="uportal-background-light">
-
           <td class="uportal-channel-text">
-
             <p>
-
               <span class="uportal-channel-subtitle-reversed">Options for modifying this channel:</span>
-
             </p>
-
-
 
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
+              <!-- We aren't going to allow renaming a channel at the moment...
               <xsl:if test="not(/layout/descendant::channel[@ID=$elementID]/@immutable = 'true')">
-
                 <tr>
-
                   <td class="uportal-channel-text">
-
                     <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
                   </td>
-
-
-
                   <td width="100%" class="uportal-channel-text">
-
                     <a href="#">Rename this channel:</a>
-
-
-
                     <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                     <input type="hidden" name="action" value="renameChannel" />
-
-
-
                     <input type="hidden" name="elementID" value="{$elementID}" />
-
-
-
                     <input type="text" name="channelName" class="uportal-input-text" value="{$channelName}" size="30" />
-
-
-
                     <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                     <input type="submit" name="RenameTab" value="Rename" class="uportal-button" />
-
                   </td>
-
                 </tr>
-
               </xsl:if>
-
-
+              End of channel rename section-->
 
 <!-- If ancestor is immutable - the channel cannot be moved-->
 
               <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
-
                 <tr>
-
                   <td class="uportal-channel-text">
-
                     <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
                   </td>
-
-
-
                   <td width="100%" class="uportal-channel-text">
-
                     <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">Move this channel to a different location</a>
-
                   </td>
-
                 </tr>
-
               </xsl:if>
-
-
 
 <!-- If ancestor or self is unremovable - the channel cannot be deleted-->
 
               <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
-
                 <tr>
-
                   <td class="uportal-channel-text">
-
                     <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
                   </td>
-
-
-
                   <td width="100%" class="uportal-channel-text">
-
                     <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Delete this channel</a>
-
                   </td>
-
                 </tr>
-
               </xsl:if>
 
-
-
               <tr>
-
                 <td colspan="2" class="uportal-channel-text">
-
                   <hr/>
-
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
                 </td>
-
-
 
                 <td width="100%" class="uportal-channel-text">
-
                   <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
                 </td>
-
               </tr>
-
             </table>
-
           </td>
-
         </tr>
-
       </table>
-
     </form>
-
+    
   </xsl:template>
 
 
@@ -2017,7 +1474,7 @@ $Revision$
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                      <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer')]">
+                      <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
                         <td nowrap="nowrap" class="uportal-background-light">
                           <input type="radio" name="method_ID" value="insertBefore_{@ID}" />
                         </td>
@@ -2032,7 +1489,7 @@ $Revision$
                       </xsl:for-each>
 
                       <td width="100%">
-                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and position() = last()]/@ID}" />
+                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and @hidden='false' and position() = last()]/@ID}" />
                       </td>
                     </tr>
                   </table>
@@ -2075,66 +1532,33 @@ $Revision$
   <xsl:template name="optionMenuNewColumn">
 
     <form name="formNewColumn" method="post" action="">
-
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
         <tr class="uportal-background-light">
-
           <td class="uportal-channel-text">
-
             <p>
-
               <span class="uportal-channel-subtitle-reversed">Steps for adding this new column:</span>
-
             </p>
 
-
-
             <table width="100%" border="0" cellspacing="0" cellpadding="2">
-
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <strong>1.</strong>
-
                 </td>
-
-
-
                 <td class="uportal-channel-text">Set the width of the columns (column widths should total 100%):</td>
-
               </tr>
-
-
-
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
-
                 </td>
 
-
-
                 <td class="uportal-channel-text">
-
                   <table width="100%" border="0" cellspacing="0" cellpadding="2">
-
                     <tr valign="top">
-
                       <td nowrap="nowrap" align="center">
-
                         <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
                       </td>
 
-
-
                       <input type="hidden" name="action" value="columnWidth" />
-
-
 
                       <xsl:for-each select="/layout/folder[@ID = $activeTabID]/descendant::folder">
 
@@ -2171,8 +1595,6 @@ $Revision$
                         </xsl:if>
 
                       </xsl:for-each>
-
-
 
                       <td width="100%" align="left" nowrap="nowrap">
                         <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
@@ -2225,77 +1647,41 @@ $Revision$
   <xsl:template name="optionMenuNewChannel">
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
       <tr class="uportal-background-light">
-
         <td class="uportal-channel-text">
-
           <p>
-
             <span class="uportal-channel-subtitle-reversed">Options for moving this channel:</span>
-
           </p>
 
-
-
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
 
-
-
               <td class="uportal-channel-text">
-
                 <a href="#">Select one of the highlighted locations below, or select a different tab on which to place this channel</a>
-
               </td>
-
             </tr>
 
-
-
             <tr>
-
               <td class="uportal-channel-text" colspan="2">
-
                 <hr/>
-
               </td>
-
             </tr>
 
-
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
-
-
-
               <td class="uportal-channel-text" width="100%">
-
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
               </td>
-
             </tr>
 
           </table>
-
         </td>
-
       </tr>
-
     </table>
 
   </xsl:template>
@@ -2305,77 +1691,37 @@ $Revision$
   <xsl:template name="optionMenuMoveColumn">
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
       <tr class="uportal-background-light">
-
         <td class="uportal-channel-text">
-
           <p>
-
             <span class="uportal-channel-subtitle-reversed">Options for moving this column:</span>
-
           </p>
 
-
-
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
-
-
-
               <td class="uportal-channel-text">
-
                 <a href="#">Select one of the highlighted locations below, or select a different tab on which to place this column</a>
-
               </td>
-
             </tr>
-
-
-
             <tr>
-
               <td class="uportal-channel-text" colspan="2">
-
                 <hr/>
-
               </td>
-
             </tr>
-
-
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
-
-
-
               <td class="uportal-channel-text" width="100%">
-
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
               </td>
-
             </tr>
-
           </table>
-
         </td>
-
       </tr>
-
     </table>
 
   </xsl:template>
@@ -2385,107 +1731,52 @@ $Revision$
   <xsl:template name="optionMenuMoveChannel">
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
       <tr class="uportal-background-light">
-
         <td class="uportal-channel-text">
-
           <p>
-
             <span class="uportal-channel-subtitle-reversed">Options for moving this channel:</span>
-
           </p>
 
-
-
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
-
-
-
               <td class="uportal-channel-text">
-
                 <a href="#">Select one of the highlighted locations below, or select a different tab on which to place this channel</a>
-
               </td>
-
             </tr>
-
-
-
             <tr>
-
               <td class="uportal-channel-text" colspan="2">
-
                 <hr/>
-
               </td>
-
             </tr>
-
-
-
             <tr>
-
               <td class="uportal-channel-text">
-
                 <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
-
               </td>
-
-
-
               <td class="uportal-channel-text" width="100%">
-
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
               </td>
-
             </tr>
-
           </table>
-
         </td>
-
       </tr>
-
     </table>
 
   </xsl:template>
 
-
-
   <xsl:template name="optionMenuError">
-
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
       <tr class="uportal-background-light">
-
         <td class="uportal-channel-text">
-
           <p>
-
             <span class="uportal-channel-subtitle-reversed">The following error was reported:</span>
-
           </p>
-
-
-
           <xsl:value-of select="$errorMessage" />
-
         </td>
-
       </tr>
-
     </table>
-
   </xsl:template>
 
 </xsl:stylesheet>
