@@ -244,15 +244,31 @@
   </table>
 
   <table>
-    <name>UP_USER_SS_PREFS</name>
+    <name>UP_USER_SS_PARMS</name>
     <columns>
       <column> <name>USER_ID</name>              <type>INTEGER</type>                       </column>
       <column> <name>PROFILE_ID</name>           <type>INTEGER</type>                       </column>
-      <column> <name>STYLESHEET_ID</name>      <type>INTEGER</type>   </column>
+      <column> <name>SS_ID</name>      <type>INTEGER</type>   </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type> </column>
-      <column> <name>USER_PREFERENCES_XML</name> <type>LONGVARCHAR</type>                   </column>
+      <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>  </column>
+      <column> <name>PARAM_VAL</name>              <type>VARCHAR</type>     <param>255</param> </column>
     </columns>
   </table>
+
+  <table>
+    <name>UP_USER_SS_ATTS</name>
+    <columns>
+      <column> <name>USER_ID</name>              <type>INTEGER</type>                       </column>
+      <column> <name>PROFILE_ID</name>           <type>INTEGER</type>                       </column>
+      <column> <name>SS_ID</name>      <type>INTEGER</type>   </column>
+      <column> <name>SS_TYPE</name> <type>INTEGER</type> </column>
+      <column> <name>NODE_ID</name>      <type>VARCHAR</type>  <param>30</param> </column>
+      <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>  </column>
+      <column> <name>PARAM_TYPE</name>             <type>INTEGER</type>    </column>
+      <column> <name>PARAM_VAL</name>              <type>VARCHAR</type>     <param>255</param> </column>
+    </columns>
+  </table>
+
 
   <table>
     <name>UP_THEME_SS</name>

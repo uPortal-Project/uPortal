@@ -1672,105 +1672,192 @@
   </table>
 
   <table>
-    <name>UP_USER_SS_PREFS</name>
+    <name>UP_USER_SS_PARMS</name>
     <rows>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_ID</name><value>1</value></column>
-	<column><name>SS_TYPE</name><value>1</value></column>
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
-          <structurestylesheetuserpreferences>
-            <parameters>
-            	<parameter name="activeTab">
-            		<defaultvalue>1</defaultvalue>
-            		<description>The number of the tab that is initially active</description>
-            	</parameter>
-            </parameters>
-            <folderattributes>
-              <attribute name="width" defaultvalue="100%">
-                <folder folderid="col01" value="30%"/>
-                <folder folderid="col02" value="70%"/>
-                <folder folderid="col03" value="50%"/>
-                <folder folderid="col04" value="50%"/>
-                <folder folderid="col05" value="50%"/>
-                <folder folderid="col06" value="50%"/>
-              </attribute>
-            </folderattributes>
-            <channelattributes/>
-          </structurestylesheetuserpreferences>
-          ]]></value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_USER_SS_ATTS</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col01</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col02</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col04</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col03</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col05</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col06</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>     
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>NODE_ID</name><value>chan01</value></column>
+        <column><name>PARAM_NAME</name><value>minimizable</value></column>
+        <column><name>PARAM_TYPE</name><value>3</value></column>
+        <column><name>PARAM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>NODE_ID</name><value>chan02</value></column>
+        <column><name>PARAM_NAME</name><value>minimizable</value></column>
+        <column><name>PARAM_TYPE</name><value>3</value></column>
+        <column><name>PARAM_VAL</name><value>false</value></column>
       </row>
 
+     <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col01</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_ID</name><value>1</value></column>
-	<column><name>SS_TYPE</name><value>2</value></column>
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
-          <themestylesheetuserpreferences>
-            <parameters>
-            </parameters>
-            <channelattributes>
-              <attribute name="minimizable" defaultvalue="true">
-                <channel channelid="chan01" value="false"/>
-                <channel channelid="chan02" value="false"/>
-              </attribute>
-              <attribute name="minimized" defaultvalue="false">
-              </attribute>
-            </channelattributes>
-          </themestylesheetuserpreferences>
-          ]]></value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col02</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
-
       <row>
-        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_ID</name><value>1</value></column>
-	<column><name>SS_TYPE</name><value>1</value></column>
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
-          <structurestylesheetuserpreferences>
-            <parameters>
-            	<parameter name="activeTab">
-            		<defaultvalue>1</defaultvalue>
-            		<description>The number of the tab that is initially active</description>
-            	</parameter>
-            </parameters>
-            <folderattributes>
-              <attribute name="width" defaultvalue="100%">
-                <folder folderid="col01" value="70%"/>
-                <folder folderid="col02" value="30%"/>
-                <folder folderid="col03" value="30%"/>
-                <folder folderid="col04" value="70%"/>
-                <folder folderid="col05" value="30%"/>
-                <folder folderid="col06" value="70%"/>
-              </attribute>
-            </folderattributes>
-            <channelattributes/>
-          </structurestylesheetuserpreferences>
-          ]]></value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col04</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
       </row>
-
       <row>
-        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_ID</name><value>1</value></column>
-	<column><name>SS_TYPE</name><value>2</value></column>
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
-
-        <themestylesheetuserpreferences>
-          <parameters>
-          </parameters>
-          <channelattributes>
-            <attribute name="minimizable" defaultvalue="true">
-              <channel channelid="chan01" value="false"/>
-              <channel channelid="chan02" value="false"/>
-            </attribute>
-            <attribute name="minimized" defaultvalue="false"/>
-          </channelattributes>
-        </themestylesheetuserpreferences>
-        ]]></value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col03</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col05</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>col06</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>     
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>NODE_ID</name><value>chan01</value></column>
+        <column><name>PARAM_NAME</name><value>minimizable</value></column>
+        <column><name>PARAM_TYPE</name><value>3</value></column>
+        <column><name>PARAM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>NODE_ID</name><value>chan02</value></column>
+        <column><name>PARAM_NAME</name><value>minimizable</value></column>
+        <column><name>PARAM_TYPE</name><value>3</value></column>
+        <column><name>PARAM_VAL</name><value>false</value></column>
+      </row>
+
     </rows>
   </table>
 
