@@ -297,11 +297,20 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		category.setAttribute("name", "Fragments");
 		category.setAttribute("expanded", "true");
 		fragmentsNode.appendChild(category);
+		boolean updateList = false;
 		if (fragments != null) {
 			for ( Iterator ids = fragments.keySet().iterator(); ids.hasNext(); ) {
 				String fragmentId = (String) ids.next();
 				ALFragment fragment = (ALFragment) fragments.get(fragmentId);
 				String fragmentRootId = getFragmentRootId(fragmentId);
+				// if the fragment root ID is NULL then the fragment must be deleted
+				// since it does not have any content
+				if ( fragmentRootId == null ) {
+					alm.deleteFragment(fragmentId);
+				    if ( !updateList ) 
+				      updateList = true;
+				    continue;
+				}
 				Element fragmentNode = document.createElement("fragment");
 				category.appendChild(fragmentNode);
 				Element id = document.createElement("ID");
@@ -331,6 +340,10 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				desc.appendChild(document.createTextNode(fragment.getDescription()));
 				fragmentNode.appendChild(desc);
 			}
+			
+			// If there were any fragments withno rootID and these fragments were deleted - need to update the fragment list
+			if ( updateList )
+			  refreshFragments();
 		}
 		//System.out.println ( org.jasig.portal.utils.XML.serializeNode(document));
 		return document;
