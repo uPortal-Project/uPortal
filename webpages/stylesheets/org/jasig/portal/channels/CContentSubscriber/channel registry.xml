@@ -187,8 +187,8 @@
   <category id="catlocal.51" description="Applications" name="Applications" view="condensed">
     <channel id="chan94" view="condensed" chanid="94" class="org.jasig.portal.channels.groupsmanager.CGroupsManager" description="An administrative tool for creating and managing groups and memberships" editable="false" fname="groupsmanager" hasabout="false" hashelp="false" name="Groups Manager" secure="false" timeout="40000" title="Groups Manager" typeid="-1"/>
   </category>
-<fragments view="condensed">
-    <category name="Fragments" expanded="true">
+<fragments>
+    <category name="Fragments" ID="fragments" view="expanded">
         <fragment ID="f001">
             <rootNodeID immutable='N'>frnid001</rootNodeID>
             <type>pulled</type>
