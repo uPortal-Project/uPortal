@@ -103,6 +103,15 @@ public class PreferenceImpl implements Preference, PreferenceCtrl, Serializable 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
+    
+    public String getFirstValue() {
+        Iterator iter = values.iterator();
+        String firstValue = null;
+        if (iter.hasNext()) {
+            firstValue = (String)iter.next();
+        }
+        return firstValue;
+    }
 
     
 }
