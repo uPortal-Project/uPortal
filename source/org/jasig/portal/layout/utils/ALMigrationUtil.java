@@ -37,13 +37,10 @@ package org.jasig.portal.layout.utils;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.sql.Connection;
-import java.sql.Statement;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.RDBMServices;
 
 /**
  * The aggregated layout migration utility
@@ -64,7 +61,6 @@ public class ALMigrationUtil {
 
   public void registerStylesheet ( String stylesheetURI, String stylesheetDescriptionURI, int stylesheetId, boolean isTheme, int command ) {
         try {
-            setInitialStructureId( command );
             switch ( command ) {
              case DELETE:
                if ( stylesheetId > 1 ) {
@@ -100,42 +96,6 @@ public class ALMigrationUtil {
         }
 
   }
-
-
-  public synchronized void setInitialStructureId( int command ) throws Exception {
-        Connection con = RDBMServices.getConnection();
-        try {
-            RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
-            System.out.println( "Updating the initial structure ID...");
-            try {
-               String sql = null;
-               switch ( command ) {
-                case ADD:
-                 sql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID = 1 WHERE USER_ID IN (1,2)";
-                 stmt.executeUpdate(sql);
-                 break;
-                case DELETE:
-                 sql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID = 20 WHERE USER_ID = 1";
-                 stmt.executeUpdate(sql);
-                 sql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID = 9 WHERE USER_ID = 2";
-                 stmt.executeUpdate(sql);
-                 break;
-               }
-                 RDBMServices.commit(con);
-                 System.out.println( "The initial structure ID successfully updated.");
-            } catch (Exception e) {
-                RDBMServices.rollback(con);
-                e.printStackTrace();
-            } finally {
-                stmt.close();
-            }
-        } finally {
-            RDBMServices.releaseConnection(con);
-        }
-    }
-
-
 
   public void updateUserProfile ( int stylesheetId ) {
    try {
