@@ -52,7 +52,7 @@ Version $Revision$
 	<xsl:param name="errorMessage" select="'no errorMessage passed'"/>
 	<xsl:param name="authenticated" select="'true'"/>
 	<xsl:param name="channelManager" select="'false'"/>
-	<xsl:param name="userName" select="'no user name'"/>
+	<xsl:param name="userName" select="'Guest'"/>
 	<!--These variables and parameters are used in fragment mode-->
 	<xsl:variable name="pushedFragmentFoundation">
 		<layout>
