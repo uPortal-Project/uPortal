@@ -52,7 +52,12 @@ public class PreferenceImpl implements Preference, PreferenceCtrl, Serializable 
     
     private String name = null;
     private boolean readOnly = false;
-    private Collection values = new ArrayList(); // list of Strings
+    private Collection values = null; // list of Strings
+    
+
+	public PreferenceImpl() {
+		values = new ArrayList();
+	}	
     
     // Preference methods
     

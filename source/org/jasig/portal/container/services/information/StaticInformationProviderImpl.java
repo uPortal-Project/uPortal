@@ -44,7 +44,6 @@ import java.util.Map;
 import javax.portlet.PortletMode;
 
 import org.apache.pluto.om.common.ObjectID;
-import org.apache.pluto.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.PortalContextProvider;
 import org.apache.pluto.services.information.StaticInformationProvider;

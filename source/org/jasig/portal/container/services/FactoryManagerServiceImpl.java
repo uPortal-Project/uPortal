@@ -38,16 +38,18 @@ package org.jasig.portal.container.services;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 
 import org.apache.pluto.factory.Factory;
 import org.apache.pluto.services.factory.FactoryManagerService;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
+
 
 /**
  * Implementation of Apache Pluto object model.
- * @author Ken Weiner, kweiner@unicon.net
+ * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
 public class FactoryManagerServiceImpl implements PortletContainerService, FactoryManagerService {
@@ -55,6 +57,7 @@ public class FactoryManagerServiceImpl implements PortletContainerService, Facto
     private ServletConfig servletConfig = null;
     private Properties properties = null;
     private Map factories = null;
+    protected final static String FACTORY_PROPERTIES = "/properties/container/factory.properties";
     
     public FactoryManagerServiceImpl() {
         factories = new HashMap();        
@@ -65,37 +68,21 @@ public class FactoryManagerServiceImpl implements PortletContainerService, Facto
     public void init(ServletConfig servletConfig, Properties properties) throws Exception {
         this.servletConfig = servletConfig;
         this.properties = properties;
-        
-        // Temporarily hard-coding registered factories
-        // These need to be read from some config file
-        
-        //addFactory("javax.servlet.http.HttpServletRequest", "org.jasig.portal.servlet.ServletRequestFactoryImpl");
-        addFactory("javax.servlet.http.HttpServletResponse", "org.jasig.portal.container.servlet.ServletResponseFactoryImpl");
-
-        addFactory("javax.portlet.ActionRequest", "org.apache.pluto.factory.impl.ActionRequestFactoryImpl");
-        addFactory("javax.portlet.RenderRequest", "org.apache.pluto.factory.impl.RenderRequestFactoryImpl");
-        addFactory("javax.portlet.RenderResponse", "org.apache.pluto.factory.impl.RenderResponseFactoryImpl");
-        addFactory("javax.portlet.PortletSession", "org.apache.pluto.factory.impl.PortletSessionFactoryImpl");
-        addFactory("javax.portlet.PortletConfig", "org.apache.pluto.factory.impl.PortletConfigFactoryImpl");
-        addFactory("javax.portlet.PortletContext", "org.apache.pluto.factory.impl.PortletContextFactoryImpl");
-        addFactory("javax.portlet.PortletPreferences", "org.apache.pluto.factory.impl.PortletPreferencesFactoryImpl");
-        addFactory("javax.portlet.PortalContext", "org.apache.pluto.factory.impl.PortalContextFactoryImpl");
-        addFactory("javax.portlet.ActionResponse", "org.apache.pluto.factory.impl.ActionResponseFactoryImpl");
-        addFactory("javax.portlet.PortletURL", "org.apache.pluto.factory.impl.PortletURLFactoryImpl");
-        addFactory("javax.portlet.PortletPreferences", "org.apache.pluto.factory.impl.PortletPreferencesFactoryImpl");
-
-        addFactory("org.apache.pluto.invoker.PortletInvoker", "org.apache.pluto.invoker.impl.PortletInvokerFactoryImpl");
-        addFactory("org.apache.pluto.util.NamespaceMapper", "org.apache.pluto.util.impl.NamespaceMapperFactoryImpl");
-        addFactory("org.apache.pluto.factory.ObjectIDFactory", "org.jasig.portal.container.factory.ObjectIDFactoryImpl");
-        addFactory("org.apache.pluto.om.ControllerFactory", "org.jasig.portal.container.factory.ControllerFactoryImpl");
-
-        //addFactory("org.apache.pluto.portalImpl.factory.InformationProviderFactory", "org.apache.pluto.portalImpl.core.InformationProviderServiceFactoryImpl");
-        //addFactory("org.apache.pluto.portalImpl.factory.DynamicTitleServiceFactory", "org.apache.pluto.portalImpl.core.DynamicTitleServiceFactoryImpl");
+        Properties factoryProperties = null;
+        try {
+         factoryProperties = ResourceLoader.getResourceAsProperties(FactoryManagerServiceImpl.class,FACTORY_PROPERTIES);
+        } catch ( Exception e ) {
+           throw new IllegalAccessException ( "Could not load " + FACTORY_PROPERTIES + " file");	 
+          }
+        for ( Enumeration names = factoryProperties.propertyNames(); names.hasMoreElements(); ) {
+        	String name = (String) names.nextElement();
+            addFactory(name,factoryProperties.getProperty(name));
+        }    
         
     }
     
     public void destroy() throws Exception {
-        // Nothing to do at this time
+        factories = null;
     }
     
     // FactoryManagerService methods
@@ -106,16 +93,12 @@ public class FactoryManagerServiceImpl implements PortletContainerService, Facto
     
     // Additional methods
     
-    private void addFactory(String factoryInterfaceName, String factoryImplName) {
-        try {
+    private void addFactory(String factoryInterfaceName, String factoryImplName) throws Exception {
             Class factoryInterface = Class.forName(factoryInterfaceName);
             Class factoryImpl = Class.forName(factoryImplName);
             Factory factory = (Factory)factoryImpl.newInstance();
             factory.init(servletConfig, properties);
             addFactory(factoryInterface, factory);
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
-        }
     }
     
     private void addFactory(Class factoryInterface, Factory factory) {
