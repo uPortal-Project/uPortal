@@ -195,10 +195,16 @@ public class CChannelManager extends BaseChannel {
       // General Settings (name and timeout)
       } else if (capture.equals("selectGeneralSettings")) {
         String name = runtimeData.getParameter("name");
+        String description = runtimeData.getParameter("description");
+        String title = runtimeData.getParameter("title");
         String timeout = runtimeData.getParameter("timeout");
         String javaClass = runtimeData.getParameter("class");
         if (name != null)
           channelDef.setName(name);
+        if (description != null)
+          channelDef.setDescription(description);
+        if (title != null)
+          channelDef.setTitle(title);
         if (timeout != null)
           channelDef.setTimeout(timeout);
         if (javaClass != null)
@@ -832,6 +838,8 @@ public class CChannelManager extends BaseChannel {
     protected String ID;
     protected String typeID;
     protected String name;
+    protected String description;
+    protected String title;
     protected String timeout;
     protected String fname;
     protected String javaClass;
@@ -878,6 +886,8 @@ public class CChannelManager extends BaseChannel {
 
     protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
+    protected void setDescription(String description) { this.description = description; }
+    protected void setTitle(String title) { this.title = title; }
     protected void setTimeout(String timeout) { this.timeout = timeout; }
     protected void setJavaClass(String javaClass) { this.javaClass = javaClass; }
     protected void setMinimizable(String minimizable) { this.minimizable = minimizable; }
@@ -933,6 +943,8 @@ public class CChannelManager extends BaseChannel {
       ID = channelE.getAttribute("ID");
       typeID = channelE.getAttribute("typeID");
       name = channelE.getAttribute("name");
+      description = channelE.getAttribute("description");
+      title = channelE.getAttribute("title");
       timeout = channelE.getAttribute("timeout");
       fname = channelE.getAttribute("fname");
       javaClass = channelE.getAttribute("class");
@@ -960,6 +972,8 @@ public class CChannelManager extends BaseChannel {
       setAttribute(channelE, "ID", ID);
       setAttribute(channelE, "typeID", typeID); // Need to officially make this part of channel def
       setAttribute(channelE, "name", name);
+      setAttribute(channelE, "description", description);
+      setAttribute(channelE, "title", title);
       setAttribute(channelE, "fname", fname);
       setAttribute(channelE, "class", javaClass);
       setAttribute(channelE, "timeout", timeout);
