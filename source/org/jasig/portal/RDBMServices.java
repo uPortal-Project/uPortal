@@ -83,8 +83,10 @@ public class RDBMServices {
         loadRDBMServer();
 
         //Cache lookups to the two JNDI data sources we "know" about
-        getDatabaseServer(PORTAL_DB);
-        getDatabaseServer(PERSON_DB);
+        if (getDatasourceFromJndi) {
+            getDatabaseServer(PORTAL_DB);
+            getDatabaseServer(PERSON_DB);
+        }
 
         //Legacy support for the public fields
         final IDatabaseServer dbs = getDatabaseServer();
