@@ -92,18 +92,23 @@ public class Logger extends GenericPortalBean
   {
     try 
 		{
-			// Advance logs			
-		  advanceLogs ();
-		  
-		  // Print a header to the log containing the current time and log level
-      String sDate = getLogTimeStamp ();
-		  PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (getPortalBaseDir () + sLogRelativePath, true)));
-			out.println ("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
-			out.println ();
-			out.close ();
+      String sPortalBaseDir = getPortalBaseDir ();
+      
+      if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())        
+		  {
+			  // Advance logs			
+		    advanceLogs ();
+  		  
+		    // Print a header to the log containing the current time and log level
+        String sDate = getLogTimeStamp ();
+		    PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+			  out.println ("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
+			  out.println ();
+			  out.close ();
 			
-			// Insures that initialization is only done once
-			bInitialized = true;
+			  // Insures that initialization is only done once
+			  bInitialized = true;
+			}
 		}
 		catch (Exception e)
 		{
@@ -127,9 +132,14 @@ public class Logger extends GenericPortalBean
       if (iLogLevel <= iLogLevelSetting)
       {
         String sDate = getLogTimeStamp ();
-		    PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (getPortalBaseDir () + sLogRelativePath, true)));
-			  out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + sMessage);
-			  out.close ();
+        String sPortalBaseDir = getPortalBaseDir ();
+        
+        if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())        
+		    {        
+		      PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+			    out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + sMessage);
+			    out.close ();
+			  }
 			}
 		}	
 		catch (IllegalArgumentException iae)
@@ -159,12 +169,17 @@ public class Logger extends GenericPortalBean
       if (iLogLevel <= iLogLevelSetting)
       {
         String sDate = getLogTimeStamp ();
-		    PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (getPortalBaseDir () + sLogRelativePath, true)));
-			  out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + "Stack trace:");
-			  out.println ();
-			  ex.printStackTrace (out);
-			  out.println ();
-			  out.close ();
+        String sPortalBaseDir = getPortalBaseDir ();
+        
+        if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())        
+		    {        
+		      PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+			    out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + "Stack trace:");
+			    out.println ();
+			    ex.printStackTrace (out);
+			    out.println ();
+			    out.close ();
+			  }
 			}
 		}
 		catch (IllegalArgumentException iae)
@@ -270,5 +285,5 @@ public class Logger extends GenericPortalBean
     newFile = new File (sNewPath);
     oldFile = new File (sLogFile);
     oldFile.renameTo (newFile);
-  }  
+  }
 }
