@@ -1,5 +1,5 @@
 /**
- * Copyright ? 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,18 +39,16 @@ package  org.jasig.portal.security.provider;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.services.*;
 
 
 /**
  * This is a reference IPerson implementation.
- * @author Adam Rybicki, arybicki@interactivebusiness.com
+ * @author Adam Rybicki, arybicki@unicon.net
  * @version $Revision$
  */
 public class PersonImpl implements IPerson {
@@ -69,18 +67,15 @@ public class PersonImpl implements IPerson {
   }
 
   /**
-   * Returns an attribute for a key.  For multivalue attributes, this will be
-   * a <code>java.util.Vector</code>.  For objects represented as strings,
+   * Returns an attribute for a key.  For objects represented as strings,
    * a <code>java.lang.String</code> will be returned.  Binary values will
-   * be represented a byte arrays.
-   * This reference implementation supports the attribute: Email
-   * corresponding to the eduPerson attribute: mail.
-   * @param key Attribute's name.
-   * @return Value of an attribute identified by the key.
+   * be represented as byte arrays.
+   * @param key the attribute name.
+   * @return value the attribute value identified by the key.
    */
   public Object getAttribute (String key) {
     if (m_Attributes == null)
-      return  null;
+      return null;
     Object value = m_Attributes.get(key);
     if (value instanceof List)
       return ((List)value).get(0);
@@ -90,9 +85,9 @@ public class PersonImpl implements IPerson {
   
   /**
    * Returns multiple attributes for a key.  If only one
-   * value exists, it will be stuffed into a Vector and
-   * returned.
-   * 
+   * value exists, it will be returned in an array of size one.
+   * @param key the attribute name
+   * @return the array of attribute values identified by the key
    */
   public Object[] getAttributeValues (String key) {
      if (m_Attributes == null)
@@ -103,9 +98,7 @@ public class PersonImpl implements IPerson {
      } else if (value instanceof List) {
        return ((List)value).toArray();
      } else {
-       Vector rval = new Vector();
-       rval.add(value);
-       return rval.toArray();
+       return new Object[] { value };
      } 
   }
 
@@ -134,8 +127,6 @@ public class PersonImpl implements IPerson {
 
   /**
    * Sets the specified attribute to a value.
-   * This reference implementation supports the attribute: Email
-   * corresponding to the eduPerson attribute: mail.
    * 
    * Reference impementation checks for the setting of the username attribute
    * and updates the EntityIdentifier accordingly
