@@ -53,10 +53,8 @@ import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.PortalControlStructures;
 import  org.jasig.portal.BrowserInfo;
-import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.PortalSessionManager;
 import  org.jasig.portal.ChannelSAXStreamFilter;
-import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.utils.XSLT;
@@ -108,7 +106,6 @@ public class ChannelServlet extends HttpServlet {
           // initialize stylesheet set
           PortalSessionManager.setPortalBaseDir(baseDir);
           // once JNDI DB access is in place the following line can be removed
-          GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
           try {
             this.set = new StylesheetSet(baseDir + fs + relativeSSLLocation);
             String propertiesDir = baseDir + fs + "properties" + fs;
