@@ -132,6 +132,10 @@ public class LayoutBean extends GenericPortalBean
       out.println ("A:link { color: " + sATabColor + "}");
       out.println ("A:visited { color: " + sTabColor + "}");
       out.println ("A:active { color: " + sChanColor + "}");
+      out.println (".PortalTitleText     { text-decoration:none; color: " + sFgColor + ";");
+	out.println ("font-weight:bold; font-family:arial,helvetica,times,courier; font-size:14pt}");
+      out.println (".PortalText          { text-decoration:none; color: " + sFgColor + ";");
+      out.println ("font-weight:plain; font-family:arial,helvetica,times,courier; font-size:12pt}");
       out.println (" --></style></head>");
 
       /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
