@@ -7,27 +7,25 @@
 
 <xsl:template match="header">
   <table border="0">
-    <tr class="uportal-background-med">
+    <tr class="uportal-background-light">
       <td nowrap="nowrap" class="uportal-channel-text">
-        Welcome <xsl:value-of select="full-name"/>!<br/>
         <xsl:choose>
-        <xsl:when test="$guest='false'">
-          You are currently logged in.
+        <xsl:when test="$guest='true'">
+          Welcome to uPortal 2.0 Please sign in...
         </xsl:when>
         <xsl:otherwise>
-          Please log in.
+          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Publish</a> |
+          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Subscribe</a> |
+          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">User Preferences</a>
         </xsl:otherwise>        
         </xsl:choose>
       </td>
     </tr>
-    <tr class="uportal-background-light">
-      <td nowrap="nowrap" class="uportal-channel-text">
+    <tr class="uportal-background-med">
+      <td nowrap="nowrap" class="uportal-channel-code">
         <xsl:value-of select="timestamp-long"/>
       </td>
     </tr>
-    <xsl:if test="$guest='false'">
-      <tr><td nowrap="nowrap" class="uportal-channel-text"><a href="logout.jsp">Logout</a></td></tr>
-    </xsl:if>
   </table>
 </xsl:template>
 
