@@ -39,6 +39,7 @@
 package  org.jasig.portal.channels.UserPreferences;
 
 import  org.jasig.portal.*;
+import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
 import  org.xml.sax.DocumentHandler;
 import  java.io.File;
@@ -56,7 +57,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   StylesheetSet set = null;
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir();
-  String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CUserPreferences";
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/CUserPreferences.ssl");
   private UserPreferences up = null;
   private Document userLayoutXML = null;
   private int mode;
@@ -73,15 +74,12 @@ public class CUserPreferences implements IPrivilegedChannel {
   /**
    * put your documentation comment here
    */
-  public CUserPreferences () {
+  public CUserPreferences () throws PortalException {
     this.runtimeData = new ChannelRuntimeData();
-    this.set = new StylesheetSet(stylesheetDir + fs + "CUserPreferences.ssl");
+    this.set = new StylesheetSet(sslLocation);
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
 
     manageProfiles = new ManageProfilesState(this);
-    //managePreferences = new GPreferencesState(this);
-    //internalState = managePreferences;
-
   }
 
   /**
@@ -156,11 +154,11 @@ public class CUserPreferences implements IPrivilegedChannel {
 		managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
 		((BaseState)managePreferences).setContext(this);
 	    } else {
-		Logger.log(Logger.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+		LogService.instance().log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
 		managePreferences = new GPreferencesState(this);
 	    }
 	} catch (Exception e) {
-	    Logger.log(Logger.ERROR, e);
+	    LogService.instance().log(LogService.ERROR, e);
 	    managePreferences = new GPreferencesState(this);
 	}
     }

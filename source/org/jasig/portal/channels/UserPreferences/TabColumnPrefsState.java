@@ -98,21 +98,21 @@ final class TabColumnPrefsState extends BaseState
   private static final String errorMessageNewChannel = "Problem trying to create a new channel";
   private static final String errorMessageDeleteChannel = "Problem trying to delete channel";
 
-  public TabColumnPrefsState()
+  public TabColumnPrefsState() throws PortalException
   {
     super();
     this.internalState = new DefaultState(this);
     
     // initialize stylesheet set
-    set=new StylesheetSet(sslLocation);
+    set = new StylesheetSet(sslLocation);
   }
 
-  public TabColumnPrefsState(CUserPreferences context)
+  public TabColumnPrefsState(CUserPreferences context) throws PortalException
   {
     super(context);
     this.internalState = new DefaultState(this);
     // initialize stylesheet set
-    set=new StylesheetSet(sslLocation);
+    set = new StylesheetSet(sslLocation);
   }
 
   public void setStaticData (ChannelStaticData sd) throws PortalException
