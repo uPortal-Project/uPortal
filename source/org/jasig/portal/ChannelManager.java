@@ -332,9 +332,6 @@ public class ChannelManager {
 
         // get person object from UsreLayoutManager
         sd.setPerson(ulm.getPerson());
-        // security context is saved in the session as well
-        // Eventually it should be retrieved from authenticationService (?)
-        sd.setSecurityContext((ISecurityContext) this.pcs.getHttpServletRequest().getSession(false).getAttribute("up_SecurityContext"));
 
         ch.setStaticData (sd);
         channelTable.put (chanId,ch);

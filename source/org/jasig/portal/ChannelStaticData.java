@@ -184,26 +184,10 @@ public class ChannelStaticData extends Hashtable {
    * put your documentation comment here
    * @return
    */
-  public ISecurityContext getSecurityContext () {
-    return  (m_securityContext);
-  }
-
-  /**
-   * put your documentation comment here
-   * @param sc
-   */
-  public void setSecurityContext (ISecurityContext securitContext) {
-    m_securityContext = securitContext;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
   public InitialContext getPortalContext () {
     if (m_portalContext != null) {
       return  (m_portalContext);
-    } 
+    }
     else {
       Hashtable environment = new Hashtable(1);
       // Set up the path
@@ -221,7 +205,7 @@ public class ChannelStaticData extends Hashtable {
 
   /**
    * Returns an instance of the PermissionManager for this channel
-   * @return 
+   * @return
    */
   public PermissionManager getPermissionManager () {
     return  (m_permissionManager);

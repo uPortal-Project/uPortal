@@ -107,7 +107,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void setStaticData (ChannelStaticData sd)
   {
     this.staticData = sd;
-    ic = staticData.getSecurityContext();
+    ic = staticData.getPerson().getSecurityContext();
 
     if (ic!=null && ic.isAuthenticated())
       bAuthenticated = true;
