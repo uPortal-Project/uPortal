@@ -62,4 +62,8 @@ public interface Constants {
     public static final String WSRP_MAXIMIZED = "wsrp:maximized";
     public static final String WSRP_SOLO = "wsrp:solo";
     
+    // WSRP Spec B.1: Standard User Categories
+    public static final String WSRP_FULL = "wsrp:full";
+    public static final String WSRP_STANDARD = "wsrp:standard";
+    public static final String WSRP_MINIMAL = "wsrp:minimal";
 }
