@@ -1,0 +1,68 @@
+en_US ::: it_IT
+<?xml version="1.0" encoding="ascii"?> ::: <?xml version="1.0" encoding="ascii"?>
+Interface image ::: Interface image
+interface image ::: interface image
+This column is locked ::: This column is locked
+This channel is locked ::: This channel is locked
+This tab is locked ::: This tab is locked
+Click to move this column left ::: Click to move this column left
+Click to move this column right ::: Click to move this column right
+Click to move this tab right ::: Click to move this tab right
+Click to move this tab left ::: Click to move this tab left
+click to add a new column in this location \[after \{\@ID\}\] ::: click to add a new column in this location [after {@ID}]
+Click to add a new column in this location \[after \{\@ID\}\] ::: Click to add a new column in this location [after {@ID}]
+click to add a new column in this location \[before \{\@ID\}\] ::: click to add a new column in this location [before {@ID}]
+Click to add a new column in this location \[before \{\@ID\}\] ::: Click to add a new column in this location [before {@ID}]
+Click to add a new channel in this location \[after \{\@ID\}\] ::: Click to add a new channel in this location [after {@ID}]
+Click to add a new channel in this location \[before \{\@ID\}\] ::: Click to add a new channel in this location [before {@ID}]
+click to move the selected column to this location \[before \{\@ID\}\] ::: click to move the selected column to this location [before {@ID}]
+Click to move the selected column to this location \[after \{\@ID\}\] ::: Click to move the selected column to this location [after {@ID}]
+click to move the selected column to this location \[after \{\@ID\}\] ::: click to move the selected column to this location [after {@ID}]
+Click to move the selected channel to this location \[after \{\@ID\}\] ::: Click to move the selected channel to this location [after {@ID}]
+Click to move the selected channel to this location \[before \{\@ID\}\] ::: Click to move the selected channel to this location [before {@ID}]
+Click to add a new column here ::: Click to add a new column here
+Click to add a new tab here ::: Click to add a new tab here
+Click to add a new channel here ::: Click to add a new channel here
+Click to select this column ::: Click to select this column
+No Channel Name ::: No Channel Name
+Click to move this channel up ::: Click to move this channel up
+Click to move this channel down ::: Click to move this channel down
+Click to remove this channel ::: Click to remove this channel
+Click to move this channel to the top of the previous column ::: Click to move this channel to the top of the previous column
+Click to move this channel to the top of the next column ::: Click to move this channel to the top of the next column
+Click to select this channel ::: Click to select this channel
+Options for modifying Preferences: ::: Options for modifying Preferences:
+Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the ::: Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the
+buttons to add a new channel in that location. ::: buttons to add a new channel in that location.
+Choose a skin ::: Choose a skin
+Manage profiles \[advanced\] ::: Manage profiles [advanced]
+Options for modifying this tab: ::: Options for modifying this tab:
+Options for modifying this column: ::: Options for modifying this column:
+Options for modifying this channel: ::: Options for modifying this channel:
+Make this the default \"Active Tab\" \(the tab that is selected when you log into the portal\) ::: Make this the default "Active Tab" (the tab that is selected when you log into the portal)
+Rename the tab: ::: Rename the tab:
+Rename this channel: ::: Rename this channel:
+value="Rename" ::: value="Rename"
+Move this tab to a different position: \(select below then click Move button\) ::: Move this tab to a different position: (select below then click Move button)
+Move this channel to a different location ::: Move this channel to a different location
+Move this column to a different location ::: Move this column to a different location
+Unlock this tab ::: Unlock this tab
+Lock this tab ::: Lock this tab
+Delete this tab ::: Delete this tab
+Delete this channel ::: Delete this channel
+Delete this column ::: Delete this column
+Cancel and return ::: Cancel and return
+Change the width of the columns \(column widths should total 100\%\): ::: Change the width of the columns (column widths should total 100\%):
+Set the width of the columns \(column widths should total 100\%\): ::: Set the width of the columns (column widths should total 100\%):
+value="Submit" ::: value="Submit"
+Modify this channel's parameters ::: Modify this channel's parameters
+Steps for adding this new tab: ::: Steps for adding this new tab:
+Steps for adding this new column: ::: Steps for adding this new column:
+Select a position for the tab: ::: Select a position for the tab:
+Options for moving this column: ::: Options for moving this column:
+Options for moving this channel: ::: Options for moving this channel:
+Select one of the highlighted locations below, or select a different tab on which to place this column ::: Select one of the highlighted locations below, or select a different tab on which to place this column
+Select one of the highlighted locations below, or select a different tab on which to place this channel ::: Select one of the highlighted locations below, or select a different tab on which to place this channel
+The following error was reported: ::: The following error was reported:
+Submit the choices: ::: Submit the choices:
+Are you sure you want to remove this channel? ::: Are you sure you want to remove this channel?

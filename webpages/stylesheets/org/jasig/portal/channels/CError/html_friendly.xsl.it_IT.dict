@@ -1,0 +1,13 @@
+en_US ::: it_IT
+Error: ::: Error:
+The Channel timed out ::: The Channel timed out
+This channel failed to render ::: This channel failed to render
+This channel failed to initialize ::: This channel failed to initialize
+This channel failed to accept needed data ::: This channel failed to accept needed data
+This channel experienced a general error ::: This channel experienced a general error
+This channel failed to accept PCS ::: This channel failed to accept PCS
+You are not authorized to view this channel ::: You are not authorized to view this channel
+This channel is not available ::: This channel is not available
+This channel experienced a general uPortal error ::: This channel experienced a general uPortal error
+Refresh the Channel ::: Refresh the Channel
+Reboot the Channel ::: Reboot the Channel

@@ -1,0 +1,10 @@
+en_US ::: it_IT
+Channel Settings: ::: Impostazioni del canale:
+Channel Settings ::: Impostazioni del canale
+Error Message ::: Messaggio di errore
+The channel you have selected has settings which may be modified. ::: Il canale selezionato ha delle impostazioni che possono essere modificate.
+Custom Channel Settings ::: Impostazioni del canale personale (custom)
+interface image ::: mappa dell'interfaccia
+value=\"Back\" ::: value="Indietro"
+value=\"Finished\" ::: value="Finito"
+value=\"Cancel\" ::: value="Cancella"

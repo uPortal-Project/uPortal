@@ -1,0 +1,11 @@
+en_US ::: it_IT
+profile name: ::: nome del profilo:
+channels and folders ::: canali e cartelle
+global preferences ::: preferenze globali
+profiles</option> ::: profili</option>
+Editing stylesheet parameters: ::: Modifica i parametri dello stylesheet:
+<b>description</b> ::: <b>descrizione</b>
+structure stylesheet parameters ::: parametri della struttura dello stylesheet
+theme stylesheet parameters ::: parametri del tema dello stylesheet
+value="Save" ::: value="Salva"
+value="Cancel" ::: value="Cancella"

@@ -1,0 +1,10 @@
+en_US ::: it_IT
+>Skin Selection:< ::: >Selezione del Tema Grafico:<
+Select a portal skin below, then click \[Change Skin\]. ::: Seleziona un tema grafico sottostante, poi seleziona [Cambia Tema Grafico].
+>Option< ::: >Opzione<
+>Thumbnail< ::: >miniatura<
+"Change Skin" ::: "Cambia Tema Grafico"
+\{skin-name\} thumbnail ::: {skin-name} miniatura
+>Name:< ::: >Nome:<
+>Description:< ::: >Descrizione:<
+"interface image" ::: "immagine dell'interfaccia"
