@@ -3,9 +3,6 @@
 
 <xsl:param name="baseActionURL">default</xsl:param>
 
-<!-- This include is only necessary for dispatching in uPortal 1.0 -->
-<xsl:include href="../../../../../dispatch_include.xsl"/>
-
 <xsl:template match="content">
   <xsl:choose>
     <xsl:when test="suggest">
