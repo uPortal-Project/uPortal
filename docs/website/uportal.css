@@ -19,3 +19,25 @@ A:hover {
 	COLOR: #cc0000; FONT-FAMILY: Arial, Verdana, sans-serif; TEXT-DECORATION: underline
 }
 .highlight {  color: #FF0066}
+
+
+A.sidelinks:link {
+   COLOR: #000099; 
+   FONT-FAMILY: Arial, Verdana, sans-serif;
+   TEXT-DECORATION: none
+}
+A.sidelinks:visited {
+   COLOR: #000099; 
+   FONT-FAMILY: Arial, Verdana, sans-serif; 
+   TEXT-DECORATION: none
+}
+A.sidelinks:active {
+   COLOR: #000099; 
+   FONT-FAMILY: Arial, Verdana, sans-serif;
+   TEXT-DECORATION: none
+}
+A.sidelinks:hover {
+   COLOR: #CC0000; 
+   FONT-FAMILY: Arial, Verdana, sans-serif; 
+   TEXT-DECORATION: underline
+}
