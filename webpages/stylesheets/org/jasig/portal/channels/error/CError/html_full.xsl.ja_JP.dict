@@ -1,0 +1,33 @@
+en_US ::: ja_JP
+Error Report ::: エラーレポート
+Channel ID: ::: チャネル ID：
+Message: ::: メッセージ：
+Message not available ::: メッセージは利用できません
+Error type: ::: エラータイプ：
+Channel timed out \(code 4\) ::: チャネルのタイムアウト（コード 4）
+Channel failed to render \(code 1\) ::: レンダリングの失敗（コード 1）
+Channel failed to initialize \(code 2\) ::: 初期化の失敗（コード 2）
+Channel failed to accept runtime data \(code 3\) ::: ランタイムデータの取得に失敗（コード 3）
+General error \(code 0\) ::: 何らかのエラー（コード 0）
+Channel failed to accept PCS \(code 5\) ::: PCS の取得に失敗（コード 5）
+User not authorized \(code 6\) ::: 権限のないユーザ（コード 6）
+Channel not available \(code 7\) ::: 利用不可能（コード 7）
+uPortal error \(code -1\) ::: uPortal エラー（コード -1）
+Retry the channel ::: チャネルのリトライ
+Restart the channel ::: チャネルの再起動
+Show stack trace ::: スタックトレースの表示
+Problem type: ::: 問題種別：
+Runtime exception \(code -1\) ::: ランタイム例外（コード -1）
+General rendering problem \(code 1\) ::: 一般的なレンダリング問題（コード 1）
+Internal timeout \(code 2\) ::: 内部タイムアウト（コード 2）
+Authorization problem \(code 3\) ::: 権限の問題（コード 3）
+Missing resource \(code 4\) ::: リソースの不足（コード 4）
+Timeout limit</p> ::: タイムアウト制限</p>
+Timeout limit not available ::: タイムアウト制限は利用できません
+Resource description</p> ::: リソースの説明</p>
+Resource description not available ::: リソースの説明は利用できません
+Resource URI</p> ::: リソースの URI</p>
+Resource URI not available ::: リソースの URI は利用できません
+Error message</p> ::: エラーメッセージ</p>
+Error message not available ::: エラーメッセージは利用できません
+Stack Trace ::: スタックトレース

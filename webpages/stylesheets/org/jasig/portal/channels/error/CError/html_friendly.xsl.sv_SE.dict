@@ -1,0 +1,13 @@
+en_US ::: sv_SE
+Error: ::: Fel:
+The Channel timed out ::: Kanalen överskred maximal tidsgräns
+This channel failed to render ::: Kanalen misslyckades rendera
+This channel failed to initialize ::: Kanalen misslyckades initilaisera
+This channel failed to accept needed data ::: Kanalen tog inte emot erforderlig information
+This channel experienced a general error ::: Kanalen drabbades av ett allmänt fel
+This channel failed to accept PCS ::: Kanalen tog inte emot PCS
+You are not authorized to view this channel ::: Du har inte tillåtelse att se information i denna kanal
+This channel is not available ::: Kanalen är inte tillgänglig
+This channel experienced a general uPortal error ::: Kanalen drabbades av ett allmänt uPortal-fel
+Refresh the Channel ::: Ladda om kanalen
+Reboot the Channel ::: Starta om kanalen
