@@ -50,7 +50,7 @@ import org.jasig.portal.security.PortalSecurityException;
  * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContext} chained with {@link CacheSecurityContext} instead
  */
 public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
-  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF03;
+  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF06;
   private byte[] cachedCredentials;
 
   CacheLdapSecurityContext () {
