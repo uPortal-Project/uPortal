@@ -35,7 +35,6 @@
 
 package org.jasig.portal.ldap;
 
-import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 
@@ -53,9 +52,8 @@ public interface ILdapServer {
      * Gets an LDAP directory context.
      * 
      * @return an LDAP directory context object.
-     * @throws NamingException If an error occurs while getting a connection to the ldap server.
      */
-    public DirContext getConnection() throws NamingException;
+    public DirContext getConnection();
     
     /**
      * Gets the base DN used to search the LDAP directory context.

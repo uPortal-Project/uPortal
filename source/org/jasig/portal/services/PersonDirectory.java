@@ -354,13 +354,7 @@ public class PersonDirectory {
                 srvr = LdapServices.getLdapServer(pdi.LdapRefName);
 
                 if (srvr != null) {
-                    try {
-                        context = srvr.getConnection();
-                    }
-                    catch (NamingException ne) {
-                        log.warn("Error getting connection to LDAP server.", ne);
-                    }
-
+                    context = srvr.getConnection();
                     fromLdapServices = true;
                 }
 
