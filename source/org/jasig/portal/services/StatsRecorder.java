@@ -37,6 +37,7 @@ package org.jasig.portal.services;
 
 import org.jasig.portal.services.stats.IStatsRecorderFactory;
 import org.jasig.portal.services.stats.IStatsRecorder;
+import org.jasig.portal.services.stats.StatsRecorderSettings;
 import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
 import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
 import org.jasig.portal.services.stats.RecordLoginWorkerTask;
@@ -80,6 +81,7 @@ import org.jasig.portal.PropertiesManager;
  */
 public class StatsRecorder {
   protected static StatsRecorder statsRecorderInstance;
+  protected StatsRecorderSettings statsRecorderSettings;
   protected IStatsRecorder statsRecorder;
   protected ThreadPool threadPool;
   
@@ -94,8 +96,15 @@ public class StatsRecorder {
 			IStatsRecorderFactory statsRecorderFactory = (IStatsRecorderFactory)Class.forName(statsRecorderFactoryName).newInstance();
       statsRecorder = statsRecorderFactory.getStatsRecorder();	
       
+      // Get the stats recorder settings instance
+      statsRecorderSettings = StatsRecorderSettings.instance();
+      
       // Create a thread pool
-      threadPool = new BoundedThreadPool(5, 15, 5);
+      String prefix = this.getClass().getName() + ".threadPool_";
+      int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
+      int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
+      int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
+      threadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
 		} catch (Exception e) {
 			LogService.log(LogService.ERROR, e);
 		}
@@ -121,15 +130,39 @@ public class StatsRecorder {
   public final static StatsRecorderLayoutEventListener newLayoutEventListener(IPerson person, UserProfile profile) {
     return new StatsRecorderLayoutEventListener(person, profile);
   }  
+
+  /**
+   * Gets the value of a particular stats recorder setting.
+   * Possible settings are available from <code>StatsRecorderSettings</code>.
+   * For example: <code>StatsRecorder.get(StatsRecorderSettings.RECORD_LOGIN)</code>
+   * @param setting, the setting
+   * @return value, the value for the setting
+   */
+  public static boolean get(int setting) {
+    return instance().statsRecorderSettings.get(setting);
+  }  
+  
+  /**
+   * Sets the value of a particular stats recorder setting.
+   * Possible settings are available from <code>StatsRecorderSettings</code>.
+   * For example: <code>StatsRecorder.set(StatsRecorderSettings.RECORD_LOGIN, true)</code>
+   * @param setting, the setting to change
+   * @param newValue, the new value for the setting
+   */
+  public static void set(int setting, boolean newValue) {
+    instance().statsRecorderSettings.set(setting, newValue);
+  }  
   
   /**
    * Record the successful login of a user.
    * @param person, the person who is logging in
    */
   public static void recordLogin(IPerson person) {
-    StatsRecorderWorkerTask task = new RecordLoginWorkerTask(person);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGIN)) {
+      StatsRecorderWorkerTask task = new RecordLoginWorkerTask(person);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
 
   /**
@@ -137,9 +170,11 @@ public class StatsRecorder {
    * @param person, the person who is logging out
    */
   public static void recordLogout(IPerson person) {
-    StatsRecorderWorkerTask task = new RecordLogoutWorkerTask(person);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGOUT)) {
+      StatsRecorderWorkerTask task = new RecordLogoutWorkerTask(person);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -147,9 +182,11 @@ public class StatsRecorder {
    * @param person, the person whose session is being created
    */
   public static void recordSessionCreated(IPerson person) {
-    StatsRecorderWorkerTask task = new RecordSessionCreatedWorkerTask(person);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_CREATED)) {
+      StatsRecorderWorkerTask task = new RecordSessionCreatedWorkerTask(person);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -159,9 +196,11 @@ public class StatsRecorder {
    * @param person, the person whose session is ending
    */
   public static void recordSessionDestroyed(IPerson person) {
-    StatsRecorderWorkerTask task = new RecordSessionDestroyedWorkerTask(person);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_DESTROYED)) {
+      StatsRecorderWorkerTask task = new RecordSessionDestroyedWorkerTask(person);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -170,9 +209,11 @@ public class StatsRecorder {
    * @param channelDef, the channel being published
    */
   public static void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
-    StatsRecorderWorkerTask task = new RecordChannelDefinitionPublishedWorkerTask(person, channelDef);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_PUBLISHED)) {
+      StatsRecorderWorkerTask task = new RecordChannelDefinitionPublishedWorkerTask(person, channelDef);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   } 
   
   /**
@@ -181,9 +222,11 @@ public class StatsRecorder {
    * @param channelDef, the channel being modified
    */
   public static void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
-    StatsRecorderWorkerTask task = new RecordChannelDefinitionModifiedWorkerTask(person, channelDef);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_MODIFIED)) {
+      StatsRecorderWorkerTask task = new RecordChannelDefinitionModifiedWorkerTask(person, channelDef);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
   
   /**
@@ -192,9 +235,11 @@ public class StatsRecorder {
    * @param channelDef, the channel being modified
    */
   public static void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
-    StatsRecorderWorkerTask task = new RecordChannelDefinitionRemovedWorkerTask(person, channelDef);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_REMOVED)) {
+      StatsRecorderWorkerTask task = new RecordChannelDefinitionRemovedWorkerTask(person, channelDef);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
   
   /**
@@ -204,9 +249,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being subscribed to
    */
   public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelAddedToLayoutWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_ADDED_TO_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordChannelAddedToLayoutWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }    
   
   /**
@@ -216,9 +263,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being updated
    */
   public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelUpdatedInLayoutWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_UPDATED_IN_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordChannelUpdatedInLayoutWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
 
   /**
@@ -228,9 +277,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being moved
    */
   public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelMovedInLayoutWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_MOVED_IN_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordChannelMovedInLayoutWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -240,9 +291,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being removed from a user layout
    */
   public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelRemovedFromLayoutWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_REMOVED_FROM_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordChannelRemovedFromLayoutWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -252,9 +305,11 @@ public class StatsRecorder {
    * @param folderDesc, the folder being subscribed to
    */
   public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
-    StatsRecorderWorkerTask task = new RecordFolderAddedToLayoutWorkerTask(person, profile, folderDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_ADDED_TO_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordFolderAddedToLayoutWorkerTask(person, profile, folderDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }    
   
   /**
@@ -264,9 +319,11 @@ public class StatsRecorder {
    * @param folderDesc, the folder being updated
    */
   public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
-    StatsRecorderWorkerTask task = new RecordFolderUpdatedInLayoutWorkerTask(person, profile, folderDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_UPDATED_IN_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordFolderUpdatedInLayoutWorkerTask(person, profile, folderDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
 
   /**
@@ -276,9 +333,11 @@ public class StatsRecorder {
    * @param folderDesc, the folder being moved
    */
   public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
-    StatsRecorderWorkerTask task = new RecordFolderMovedInLayoutWorkerTask(person, profile, folderDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_MOVED_IN_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordFolderMovedInLayoutWorkerTask(person, profile, folderDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }
   
   /**
@@ -288,9 +347,11 @@ public class StatsRecorder {
    * @param folderDesc, the folder being removed from a user layout
    */
   public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
-    StatsRecorderWorkerTask task = new RecordFolderRemovedFromLayoutWorkerTask(person, profile, folderDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_REMOVED_FROM_LAYOUT)) {
+      StatsRecorderWorkerTask task = new RecordFolderRemovedFromLayoutWorkerTask(person, profile, folderDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
   
   /**
@@ -300,9 +361,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being instantiated
    */
   public static void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelInstantiatedWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_INSTANTIATED)) {
+      StatsRecorderWorkerTask task = new RecordChannelInstantiatedWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
   
   /**
@@ -312,9 +375,11 @@ public class StatsRecorder {
    * @param channelDesc, the channel being rendered
    */
   public static void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelRenderedWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_RENDERED)) {
+      StatsRecorderWorkerTask task = new RecordChannelRenderedWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }  
 
   /**
@@ -326,8 +391,10 @@ public class StatsRecorder {
    * @param channelDesc, the channel being targeted
    */
   public static void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    StatsRecorderWorkerTask task = new RecordChannelTargetedWorkerTask(person, profile, channelDesc);
-    task.setStatsRecorder(instance().statsRecorder);
-    WorkTracker workTracker = instance().threadPool.execute(task);
+    if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_TARGETED)) {
+      StatsRecorderWorkerTask task = new RecordChannelTargetedWorkerTask(person, profile, channelDesc);
+      task.setStatsRecorder(instance().statsRecorder);
+      WorkTracker workTracker = instance().threadPool.execute(task);
+    }
   }   
 }
