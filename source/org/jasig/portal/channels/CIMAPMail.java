@@ -2218,10 +2218,12 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           weAre = activeMethod.getWeAre();
           if (DEBUG) System.err.println(weAre + ":" + xmlString);
 
-          Hashtable ssParams = new Hashtable();
-          ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-          XSLT.transform(xmlString, new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, weAre, runtimeData.getBrowserInfo());
-        } else {
+          XSLT xslt = new XSLT();
+          xslt.setXML(xmlString);
+          xslt.setSSL(UtilitiesBean.fixURI(sslLocation), weAre, runtimeData.getBrowserInfo());
+          xslt.setTarget(out);
+          xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+          xslt.transform();
         }
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, e);
