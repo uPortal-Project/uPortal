@@ -330,8 +330,7 @@ public class CPublisher
       String value = (String)hParams.get(name);
       if (!vReservedParams.contains(name)) {
         Element el = doc.createElement("parameter");
-        el.setAttribute("name", XMLEscaper.escape(name));
-        el.setAttribute("value", XMLEscaper.escape(value));
+        el.setAttribute(name, XMLEscaper.escape(value));
         chan.appendChild(el);
       }
     }
