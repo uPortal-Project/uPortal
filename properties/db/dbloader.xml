@@ -63,6 +63,22 @@
     <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
     <!-- map more types here -->
   </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>Microsoft SQL Server</db-name>
+    <db-version>Microsoft SQL Server  2000 - 8.00.194 (Intel X86) 
+	Aug  6 2000 00:57:48 
+	Copyright (c) 1988-2000 Microsoft Corporation
+	Standard Edition on Windows NT 5.0 (Build 2195: Service Pack 3)
+</db-version>
+    <driver-name>SQLServer</driver-name>
+    <driver-version>2.2.0029</driver-version>
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>    
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
 
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
@@ -156,7 +172,19 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <type><generic>TIMESTAMP</generic><local>DATE</local></type>
     <!-- map more types here -->
   </db-type-mapping>
-
+  
+  <db-type-mapping>
+    <db-name>Oracle</db-name>
+    <!-- Line breaks have to be here -->
+    <db-version>Oracle8i Enterprise Edition Release 8.1.7.0.0 - Production
+With the Partitioning option
+JServer Release 8.1.7.0.0 - Production</db-version>
+    <driver-name>Oracle JDBC driver</driver-name>
+    <driver-version>9.2.0.3.0</driver-version>
+    <type><generic>TIMESTAMP</generic><local>DATE</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
     <db-version>7.2.1</db-version>
@@ -168,6 +196,18 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <type><generic>VARBINARY</generic><local>BYTEA</local></type>
     <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>  
+    
+  <db-type-mapping>
+    <db-name>PostgreSQL</db-name>
+    <db-version>7.2.1</db-version>
+    <driver-name>PostgreSQL Native Driver</driver-name>
+    <driver-version>PostgreSQL 7.4.3 JDBC3 with SSL (build 214)</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>LONGVARBINARY</generic><local>BYTEA</local></type>    
+    <type><generic>VARBINARY</generic><local>BYTEA</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
+  </db-type-mapping>    
   
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
