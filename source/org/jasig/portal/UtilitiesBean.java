@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.MalformedURLException;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.ResourceMissingException;
 
 
 /**
@@ -119,46 +120,6 @@ public class UtilitiesBean
 
     return "&nbsp;";
   }
-
-
-  /**
-   * Allows the hrefs in each .ssl file to be entered in one
-   * of 3 ways:
-   * 1) http://...
-   * 2) An absolute file system path optionally beginning with file://
-   *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
-   *    or file://C:\WinNT\whatever.xsl or file:///usr/local/whatever.xsl
-   * 3) A path relative to the portal base dir
-   */
-  public static String fixURI (String str)
-  {
-      if(str==null) return null;
-    boolean bWindows = (System.getProperty ("os.name").indexOf ("Windows") != -1) ? true : false;
-    char ch0 = str.charAt (0);
-    char ch1 = str.charAt (1);
-
-    if (bWindows && str.startsWith ("file://"))
-    {
-      // Replace "file://" with "file:/" on Windows machines
-      str = "file:/" + str.substring (7);
-    }
-    else if (ch0 == java.io.File.separatorChar || ch1 == ':')
-    {
-      // It's a full path without "file://"
-      str = (bWindows ? "file:/" : "file://") + str;
-    }
-    else if (str.indexOf ("://") == -1 && str.indexOf (":/") == -1 && ch1 != ':')
-    {
-      // Relative path was specified, so prepend portal base dir
-      str = (bWindows ? "file:/" : "file://") + PortalSessionManager.getPortalBaseDir () + str;
-    }
-
-    // Handle platform-dependent strings
-    str = str.replace (java.io.File.separatorChar, '/');
-
-    return str;
-  }
-
 
     /**
      * This allows to create a deep copy of a DocumentImpl that preserves
@@ -329,24 +290,6 @@ public class UtilitiesBean
         }
         return theElement;
     }
-
-  /**
-   * Get the contents of a URI as a String
-   * @param uri the URI
-   * @return the data pointed to by a URI
-   */
-  public static String getContentsAsString (String uri) throws IOException, MalformedURLException
-  {
-    String line = null;
-    URL url = new URL (fixURI(uri));
-    BufferedReader in = new BufferedReader (new InputStreamReader (url.openStream()));
-    StringBuffer sbText = new StringBuffer (1024);
-
-    while ((line = in.readLine()) != null)
-      sbText.append (line).append ("\n");
-
-    return sbText.toString ();
-  }
 
   /**
    * Print the contents of an XML Document as a nicely formatted string.
