@@ -2043,7 +2043,7 @@ Version $Revision$
 						<a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
-						<a href="javascript:alert('[Languages] function is under construction')">Layout Languages</a>
+						<a href="{$baseActionURL}?uP_fname=user-locales-selector">Layout Languages</a>
 						
 						<!--  Profiles action temporarily removed
 						<span>&#160;|<xsl:text> </xsl:text>
