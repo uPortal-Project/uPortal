@@ -237,10 +237,10 @@
       <column> <name>PROFILE_NAME</name>      <type>VARCHAR</type> <param>50</param>  </column>
       <column> <name>DESCRIPTION</name>       <type>VARCHAR</type> <param>100</param> </column>
       <column> <name>LAYOUT_ID</name>         <type>INTEGER</type>                    </column>
-      <column> <name>STRUCTURE_SS_NAME</name> <type>VARCHAR</type> <param>30</param>  </column>
-      <column> <name>THEME_SS_NAME</name>     <type>VARCHAR</type> <param>30</param>  </column>
+      <column> <name>STRUCTURE_SS_ID</name> <type>INTEGER</type> </column>
+      <column> <name>THEME_SS_ID</name>     <type>INTEGER</type>   </column>
     </columns>
-    <primary-key>USER_ID, PROFILE_ID, LAYOUT_ID</primary-key>
+    <primary-key>USER_ID, PROFILE_ID </primary-key>
   </table>
 
   <table>
@@ -248,31 +248,65 @@
     <columns>
       <column> <name>USER_ID</name>              <type>INTEGER</type>                       </column>
       <column> <name>PROFILE_ID</name>           <type>INTEGER</type>                       </column>
-      <column> <name>STYLESHEET_NAME</name>      <type>VARCHAR</type>     <param>30</param> </column>
+      <column> <name>STYLESHEET_ID</name>      <type>INTEGER</type>   </column>
+      <column> <name>SS_TYPE</name> <type>INTEGER</type> </column>
       <column> <name>USER_PREFERENCES_XML</name> <type>LONGVARCHAR</type>                   </column>
     </columns>
   </table>
 
   <table>
-    <name>UP_STRUCT_SS</name>
+    <name>UP_THEME_SS</name>
     <columns>
-      <column> <name>STYLESHEET_NAME</name>             <type>VARCHAR</type>     <param>30</param>  </column>
-      <column> <name>STYLESHEET_URI</name>              <type>VARCHAR</type>     <param>255</param> </column>
-      <column> <name>STYLESHEET_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param> </column>
-      <column> <name>STYLESHEET_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>                    </column>
+      <column> <name>SS_ID</name> <type>INTEGER</type> </column>
+      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>SS_URI</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>SS_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>SS_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>                    </column>
+      <column> <name>STRUCT_SS_ID</name>		<type>INTEGER</type> </column>	
+      <column> <name>SAMPLE_ICON_URI</name>      <type>VARCHAR</type> <param>255</param> </column>
+      <column> <name>SAMPLE_URI</name>      <type>VARCHAR</type> <param>255</param> </column>
+      <column> <name>MIME_TYPE</name>      <type>VARCHAR</type> <param>30</param> </column>
+      <column> <name>DEVICE_TYPE</name>      <type>VARCHAR</type> <param>30</param> </column>
+      <column> <name>SERIALIZER_NAME</name>      <type>VARCHAR</type> <param>255</param> </column>
+      <column> <name>UP_MODULE_CLASS</name>      <type>VARCHAR</type> <param>255</param> </column>
     </columns>
-    <primary-key>STYLESHEET_NAME</primary-key>
+    <primary-key>SS_ID</primary-key>
   </table>
 
   <table>
-    <name>UP_THEME_SS</name>
+    <name>UP_STRUCT_SS</name>
     <columns>
-      <column> <name>STYLESHEET_NAME</name>             <type>VARCHAR</type>     <param>30</param>  </column>
-      <column> <name>STYLESHEET_URI</name>              <type>VARCHAR</type>     <param>255</param> </column>
-      <column> <name>STYLESHEET_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param> </column>
-      <column> <name>STYLESHEET_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>                    </column>
+      <column> <name>SS_ID</name> <type>INTEGER</type> </column>
+      <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>SS_URI</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>SS_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>SS_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>                    </column>
     </columns>
-    <primary-key>STYLESHEET_NAME</primary-key>
+    <primary-key>SS_ID</primary-key>
+  </table>
+
+  <table>
+    <name>UP_STRUCT_PARAMS</name>
+    <columns>
+      <column> <name>SS_ID</name> <type>INTEGER</type> </column>
+      <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>  </column>
+      <column> <name>PARAM_DEFAULT_VAL</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>PARAM_DESCRIPT</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>TYPE</name> <type>INTEGER</type> </column>
+    </columns>
+    <primary-key>SS_ID, PARAM_NAME, TYPE</primary-key>
+  </table>
+
+  <table>
+    <name>UP_THEME_PARAMS</name>
+    <columns>
+      <column> <name>SS_ID</name> <type>INTEGER</type> </column>
+      <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>  </column>
+      <column> <name>PARAM_DEFAULT_VAL</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>PARAM_DESCRIPT</name>              <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>TYPE</name> <type>INTEGER</type> </column>
+    </columns>
+    <primary-key>SS_ID, PARAM_NAME, TYPE</primary-key>
   </table>
 
   <table>
