@@ -888,7 +888,7 @@ public class DBImpl implements IDBImpl {
 
       try
       {
-          String query = "SELECT * FROM PORTAL_USER_ROLES WHERE " +
+          String query = "SELECT * FROM UP_USER_ROLES WHERE " +
                      "ID=" + userId + "') AND " +
                      "UPPER(ROLE)=UPPER('" + role + "')";
           Logger.log(Logger.DEBUG, "DBImpl::isUserInRole(): " + query);
@@ -917,7 +917,7 @@ public class DBImpl implements IDBImpl {
       try {
         Statement stmt = con.createStatement();
 
-        String sQuery = "SELECT ROLE, DESCR FROM PORTAL_ROLES";
+        String sQuery = "SELECT ROLE, DESCR FROM UP_ROLES";
         Logger.log(Logger.DEBUG, "DBImpl::getAllRolessQuery(): " + sQuery);
 
         ResultSet rs = stmt.executeQuery(sQuery);
@@ -956,7 +956,7 @@ public class DBImpl implements IDBImpl {
 
       for(int i = 0; i < roles.size(); i++)
       {
-        String sInsert = "INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','"
+        String sInsert = "INSERT INTO UP_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','"
         + roles.elementAt(i) + "')";
 
         Logger.log (Logger.DEBUG, "DBImpl::setChannelRoles(): " + sInsert);
@@ -983,7 +983,7 @@ public class DBImpl implements IDBImpl {
       try {
       Statement stmt = con.createStatement();
 
-      String query = "SELECT ROLE FROM PORTAL_CHAN_ROLES WHERE " +
+      String query = "SELECT ROLE FROM UP_CHAN_ROLES WHERE " +
       "CHAN_ID='" + channelID + "'";
       Logger.log(Logger.DEBUG, "DBImpl::getChannelRoles(): " + query);
       ResultSet rs = stmt.executeQuery(query);
@@ -1007,7 +1007,7 @@ public class DBImpl implements IDBImpl {
     try {
       Statement stmt = con.createStatement();
 
-      String query = "SELECT ROLE FROM PORTAL_USER_ROLES WHERE " +
+      String query = "SELECT ROLE FROM UP_USER_ROLES WHERE " +
       "ID='" + userId + "'";
       Logger.log(Logger.DEBUG, "DBImpl::getUserRoles(): " + query);
       ResultSet rs = stmt.executeQuery(query);
@@ -1035,7 +1035,7 @@ public class DBImpl implements IDBImpl {
 
       for(int i = 0; i < roles.size(); i++)
       {
-        String insert = "INSERT INTO PORTAL_USER_ROLES (ID, ROLE) VALUES (" + userId + ", " + roles.elementAt(i) + ")";
+        String insert = "INSERT INTO UP_USER_ROLES (ID, ROLE) VALUES (" + userId + ", " + roles.elementAt(i) + ")";
         Logger.log(Logger.DEBUG, "DBImpl::addUserRoles(): " + insert);
         insertCount = stmt.executeUpdate(insert);
 
@@ -1067,7 +1067,7 @@ public class DBImpl implements IDBImpl {
 
       for(int i = 0; i < roles.size(); i++)
       {
-        String delete = "DELETE FROM PORTAL_USER_ROLES WHERE ID=" + userId + " AND ROLE=" + roles.elementAt(i);
+        String delete = "DELETE FROM UP_USER_ROLES WHERE ID=" + userId + " AND ROLE=" + roles.elementAt(i);
         Logger.log(Logger.DEBUG, "DBImpl::removeUserRoles(): " + delete);
         deleteCount = stmt.executeUpdate(delete);
 
