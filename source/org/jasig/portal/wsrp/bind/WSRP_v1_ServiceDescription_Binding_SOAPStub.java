@@ -7,6 +7,9 @@
 
 package org.jasig.portal.wsrp.bind;
 
+/**
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
+ */
 public class WSRP_v1_ServiceDescription_Binding_SOAPStub extends org.apache.axis.client.Stub implements org.jasig.portal.wsrp.intf.WSRP_v1_ServiceDescription_PortType {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();

@@ -59,6 +59,7 @@ import org.jasig.portal.wsrp.wsdl.WSRPServiceLocator;
  * ServiceDescriptionService API for a particular service endpoint.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
  */
 public class ServiceDescriptionService {
     WSRPServiceLocator locator = new WSRPServiceLocator();

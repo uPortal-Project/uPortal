@@ -7,6 +7,9 @@
 
 package org.jasig.portal.wsrp.types;
 
+/**
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
+ */
 public class _releaseSessions  implements java.io.Serializable {
     private org.jasig.portal.wsrp.types.RegistrationContext registrationContext;
     private java.lang.String[] sessionIDs;

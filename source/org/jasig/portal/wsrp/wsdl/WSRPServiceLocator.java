@@ -7,6 +7,9 @@
 
 package org.jasig.portal.wsrp.wsdl;
 
+/**
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
+ */
 public class WSRPServiceLocator extends org.apache.axis.client.Service implements org.jasig.portal.wsrp.wsdl.WSRPService {
 
     // Use to get a proxy class for WSRPPortletManagementService

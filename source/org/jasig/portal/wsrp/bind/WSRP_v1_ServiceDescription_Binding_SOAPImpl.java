@@ -80,6 +80,7 @@ import org.jasig.portal.wsrp.types.holders.StringArrayHolder;
  * 
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
  */
 public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_ServiceDescription_PortType {
 

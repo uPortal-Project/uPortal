@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +85,7 @@ import org.jasig.portal.wsrp.types.UserContext;
  * and one channel instance.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
  */
 public class ChannelInstanceManager {
     

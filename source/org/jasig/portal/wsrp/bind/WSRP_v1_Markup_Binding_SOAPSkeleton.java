@@ -7,6 +7,9 @@
 
 package org.jasig.portal.wsrp.bind;
 
+/**
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
+ */
 public class WSRP_v1_Markup_Binding_SOAPSkeleton implements org.jasig.portal.wsrp.intf.WSRP_v1_Markup_PortType, org.apache.axis.wsdl.Skeleton {
     private org.jasig.portal.wsrp.intf.WSRP_v1_Markup_PortType impl;
     private static java.util.Map _myOperations = new java.util.Hashtable();

@@ -7,6 +7,9 @@
 
 package org.jasig.portal.wsrp.types.holders;
 
+/**
+ * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
+ */
 public final class PropertyArrayHolder implements javax.xml.rpc.holders.Holder {
     public org.jasig.portal.wsrp.types.Property[] value;
 
