@@ -51,25 +51,41 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML='<?xml version="1.0"?>
         <parameter value="1" name="minNum"/>
         <parameter value="100" name="maxNum"/>
       </channel>
+      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CApplet" name="ESPN Scoreboard">
+        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+        <parameter value="ScorePost.zip" name="archive"/>
+        <parameter value="128" name="width"/>
+        <parameter value="182" name="height"/>
+        <parameter value="ScorePost.cab" name="APPLET.cabbase"/>
+        <parameter value="#336699" name="APPLET.bgcolor"/>
+        <parameter value="#FFFFFF" name="APPLET.text"/>
+        <parameter value="/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat" name="APPLET.data"/>
+        <parameter value="/ad/scorepost/nhl.txt" name="APPLET.ad data"/>
+        <parameter value="_top" name="APPLET.target"/>
+        <parameter value="3500" name="APPLET.delay"/>
+        <parameter value="30000" name="APPLET.data time"/>
+        <parameter value="300000" name="APPLET.inactive data time"/>
+      </channel> 
     </category>
   </category>
   <category ID="t03" priority="0" name="More">
     <category ID="col05" priority="0" width="50%">
-      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
+      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
+      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
         <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
     </category>
     <category ID="col06" priority="0" width="50%">
-      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
+      <channel ID="chan10" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
         <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan10" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
+      <channel ID="chan11" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
