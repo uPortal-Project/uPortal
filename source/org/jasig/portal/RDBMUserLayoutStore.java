@@ -676,7 +676,7 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
-        Element root, int structId, UserInRole uir) throws java.sql.SQLException, Exception {
+        Element root, int structId, UserInChannelRole uir) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
           System.err.println("CreateLayout(" + structId + ")");
@@ -728,10 +728,10 @@ public class RDBMUserLayoutStore
     }
   }
 
-  private final class UserInRole {
+  private final class UserInChannelRole {
     MyPreparedStatement pstmtUserInRole;
     MyPreparedStatement pstmtReadAll;
-    public UserInRole(Connection con, int userId) throws SQLException {
+    public UserInChannelRole(Connection con, int userId) throws SQLException {
       String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
         "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId +
         " AND URC.APPROVAL_FLG = 'Y' AND URC.RELEASE_DT <= " + tsStart + "'" + new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
@@ -845,7 +845,7 @@ public class RDBMUserLayoutStore
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc, UserInRole uir) throws Exception {
+    public Element getStructureDocument(DocumentImpl doc, UserInChannelRole uir) throws Exception {
       Element structure = null;
 
       if (isChannel()) {
@@ -1107,7 +1107,7 @@ public class RDBMUserLayoutStore
         }
 
         if (layoutStructure.size() > 0) { // We have a layout to work with
-          UserInRole uir = new UserInRole(con, realUserId);
+          UserInChannelRole uir = new UserInChannelRole(con, realUserId);
           try {
             createLayout(layoutStructure, doc, root, firstStructId, uir);
           } finally {
@@ -1630,7 +1630,7 @@ public class RDBMUserLayoutStore
       try {
         Statement stmt = con.createStatement();
         try {
-          UserInRole uir = new UserInRole(con, person.getID());
+          UserInChannelRole uir = new UserInChannelRole(con, person.getID());
           try {
             String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
@@ -1670,7 +1670,7 @@ public class RDBMUserLayoutStore
     return doc;
   }
 
-  protected void appendChildCategoriesAndChannels (Connection con, UserInRole uir, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException {
+  protected void appendChildCategoriesAndChannels (Connection con, UserInChannelRole uir, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
