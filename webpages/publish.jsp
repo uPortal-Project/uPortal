@@ -1,5 +1,6 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.jasig.portal.*" %>
 <%@ page errorPage="error.jsp" %>
 
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" type="org.jasig.portal.ILayoutBean" scope="session" />
