@@ -170,8 +170,9 @@ public interface IChannelDescription extends INodeDescription {
     public void setIsSecure(boolean  v);
 
     /**
-     * Get the channel type for portlet / not portlet
-     * @return the channel type for portlet / not portlet
+     * Return true if the channel description describes a channel which is
+     * adapting a JSR-168 portlet.  Return false otherwise.
+     * @return true if our channel type is a portlet, false otherwise
      */
     public boolean isPortlet();    
     
