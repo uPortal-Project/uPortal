@@ -131,16 +131,22 @@ public class LdapServices
                     Properties ldapProps = new Properties();
                     ldapProps.load(ins);
                   
-                    //Create the default connection object
-                    defaultConn = new LdapConnectionImpl(
-                        "ldap.properties configured connection",
-                        ldapProps.getProperty("ldap.host"),
-                        ldapProps.getProperty("ldap.port"),
-                        ldapProps.getProperty("ldap.baseDN"),
-                        ldapProps.getProperty("ldap.uidAttribute"),
-                        ldapProps.getProperty("ldap.managerDN"),
-                        ldapProps.getProperty("ldap.managerPW"),
-                        ldapProps.getProperty("ldap.protocol"));
+                    try {
+                        //Create the default connection object
+                        defaultConn = new LdapConnectionImpl(
+                            "ldap.properties configured connection",
+                            ldapProps.getProperty("ldap.host"),
+                            ldapProps.getProperty("ldap.port"),
+                            ldapProps.getProperty("ldap.baseDN"),
+                            ldapProps.getProperty("ldap.uidAttribute"),
+                            ldapProps.getProperty("ldap.managerDN"),
+                            ldapProps.getProperty("ldap.managerPW"),
+                            ldapProps.getProperty("ldap.protocol"),
+                            ldapProps.getProperty("ldap.factory"));
+                    }
+                    catch (IllegalArgumentException iae) {
+                        LogService.log(LogService.INFO, "Invalid data in " + LDAP_PROPERTIES_FILE, iae);
+                    }
                 }
                 else {
                     LogService.log(LogService.INFO, "LdapServices::initConnections(): " + LDAP_PROPERTIES_FILE + " was not found, all ldap connections will be loaded from " + LDAP_XML_FILE);
@@ -205,6 +211,7 @@ public class LdapServices
                                 String managerPW = null;
                                 String uidAttribute = null;
                                 String protocol = null;
+                                String factory = null;
 
                                 //Loop through all the child nodes of the connection
                                 NodeList connParams = connElement.getChildNodes();
@@ -243,20 +250,28 @@ public class LdapServices
                                         else if (tagName.equals("protocol")) {
                                             protocol = tagValue;
                                         }
+                                        else if (tagName.equals("factory")) {
+                                            factory = tagValue;
+                                        }                                        
                                     }
                                 }
 
                                 //Create a new ILdapServer
                                 if (name != null) {
-                                    ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol);
-                                    ldapConnections.put(name, newConn);
-                                    
-                                    if (isDefaultConn && defaultConn == null) {
-                                        defaultConn = newConn;
+                                    try {
+                                        ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol, factory);
+                                        ldapConnections.put(name, newConn);
+                                        
+                                        if (isDefaultConn && defaultConn == null) {
+                                            defaultConn = newConn;
+                                        }
+                                        else if (isDefaultConn && defaultConn != null) {
+                                            LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
+                                        }
                                     }
-                                    else if (isDefaultConn && defaultConn != null) {
-                                        LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
-                                    }
+                                    catch (IllegalArgumentException iae) {
+                                        LogService.log(LogService.INFO, "Invalid data for server " + name + " in " + LDAP_XML_FILE, iae);
+                                    }                                    
                                 }
                                 else {
                                     LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapServer, no name specified.");
@@ -310,20 +325,27 @@ public class LdapServices
         private final String ldapManagerDn;
         private final String ldapManagerPw;
         private final String ldapManagerProtocol;
+        private final String ldapInitCtxFactory;
         
         public LdapConnectionImpl(
             String name, String host, String port, String baseDn,
             String uidAttribute, String managerDn, String managerPw,
-            String managerProtocol) {
+            String managerProtocol, String initialContextFactory) {
+            
+            if (name == null)
+                throw new IllegalArgumentException("name cannot be null.");
+            if (host == null)
+                throw new IllegalArgumentException("host cannot be null.");
             
             this.ldapName = name;
-            this.ldapHost = checkNull(host, "389");
-            this.ldapPort = checkNull(port, "");
+            this.ldapHost = checkNull(host, "");
+            this.ldapPort = checkNull(port, "389");
             this.ldapBaseDn = checkNull(baseDn, "");
             this.ldapUidAttribute = checkNull(uidAttribute, "");
             this.ldapManagerDn = checkNull(managerDn, "");
             this.ldapManagerPw = checkNull(managerPw, "");
             this.ldapManagerProtocol = checkNull(managerProtocol, "");
+            this.ldapInitCtxFactory = checkNull(initialContextFactory, "com.sun.jndi.ldap.LdapCtxFactory");
             
             LogService.log(LogService.DEBUG, "LdapServices: Creating LDAP Connection: " + this.ldapName);
             LogService.log(LogService.DEBUG, "\thost = " + this.ldapHost);
@@ -349,7 +371,7 @@ public class LdapServices
 
             try {
                 Hashtable env = new Hashtable(5, 0.75f);
-                env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+                env.put(Context.INITIAL_CONTEXT_FACTORY, this.ldapInitCtxFactory);
                 StringBuffer urlBuffer = new StringBuffer("ldap://");
                 urlBuffer.append(ldapHost).append(":").append(ldapPort);
      

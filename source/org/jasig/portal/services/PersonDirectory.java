@@ -65,6 +65,8 @@ import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.ldap.ILdapServer;
+import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
@@ -192,6 +194,8 @@ public class PersonDirectory {
             pdi.url=value;
           } else if (tagname.equals("res-ref-name")) {
             pdi.ResRefName=value;
+          } else if (tagname.equals("ldap-ref-name")) {
+              pdi.LdapRefName=value;
           } else if (tagname.equals("logonid")) {
             pdi.logonid=value;
           } else if (tagname.equals("driver")) {
@@ -285,6 +289,8 @@ public class PersonDirectory {
       // DataSource from ldap source
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0)
         processJdbcDir(username, pdi,attribs);
+      else if (pdi.LdapRefName != null && pdi.LdapRefName.length()>0)
+        processLdapDir(username, pdi,attribs);
       else if (pdi.url.startsWith("ldap"))
         processLdapDir(username, pdi,attribs);
       else if (pdi.url.startsWith("jdbc:"))
@@ -321,27 +327,47 @@ public class PersonDirectory {
    */
   void processLdapDir(String username, PersonDirInfo pdi, Hashtable attribs) {
 
-    //JNDI boilerplate to connect to an initial context
     Hashtable jndienv = new Hashtable();
     DirContext context = null;
-    jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
-    jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
-    if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
-      String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
-      jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
-      jndienv.put(Context.PROVIDER_URL,newurl);
-    }
-    else {
-      jndienv.put(Context.PROVIDER_URL,pdi.url);
-    }
-    if (pdi.logonid!=null)
-      jndienv.put(Context.SECURITY_PRINCIPAL,pdi.logonid);
-    if (pdi.logonpassword!=null)
-      jndienv.put(Context.SECURITY_CREDENTIALS,pdi.logonpassword);
-    try {
-      context = new InitialDirContext(jndienv);
-    } catch (NamingException nex) {
-      return;
+    ILdapServer srvr = null;
+    boolean fromLdapServices = false;
+
+    //Check for a named ldap reference 
+    if (pdi.LdapRefName!=null && pdi.LdapRefName.length()>0) {
+        //Get a ILdapServer info interface from LdapServices
+        srvr = LdapServices.getLdapServer(pdi.LdapRefName);
+        
+        if (srvr != null) {
+            context = srvr.getConnection();
+            fromLdapServices = true;
+        }
+        
+        LogService.log(LogService.DEBUG,"PersonDirectory::processLdapDir(): Looking in "+pdi.LdapRefName+
+          " for person attributes of "+username);
+      }
+    
+    //Either no named ldap reference specified or it wasn't found
+    if (context == null) {
+        //JNDI boilerplate to connect to an initial context
+        jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
+        jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
+        if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
+          String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
+          jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
+          jndienv.put(Context.PROVIDER_URL,newurl);
+        }
+        else {
+          jndienv.put(Context.PROVIDER_URL,pdi.url);
+        }
+        if (pdi.logonid!=null)
+          jndienv.put(Context.SECURITY_PRINCIPAL,pdi.logonid);
+        if (pdi.logonpassword!=null)
+          jndienv.put(Context.SECURITY_CREDENTIALS,pdi.logonpassword);
+        try {
+          context = new InitialDirContext(jndienv);
+        } catch (NamingException nex) {
+          return;
+        }
     }
 
     // Search for the userid in the usercontext subtree of the directory
@@ -352,7 +378,15 @@ public class PersonDirectory {
     sc.setTimeLimit(pdi.ldaptimelimit);
     Object [] args = new Object[] {username};
     try {
-      userlist = context.search(pdi.usercontext,pdi.uidquery,args,sc);
+        String userCtx = pdi.usercontext;
+        
+        //ILdapServer instances have no DN in the connect string
+        //Append the baseDN for the server here.
+        if (fromLdapServices) {
+            userCtx = userCtx + "," + srvr.getBaseDN();
+        }
+        
+        userlist = context.search(userCtx,pdi.uidquery,args,sc);
     } catch (NamingException nex) {
       return;
     }
@@ -397,7 +431,13 @@ public class PersonDirectory {
     }
 
     try {userlist.close();} catch (Exception e) {;}
-    try {context.close();} catch (Exception e) {;}
+    
+    if (srvr != null && fromLdapServices) {
+        srvr.releaseConnection(context);
+    }
+    else {
+        try {context.close();} catch (Exception e) {;}
+    }
 
   }
 
@@ -524,6 +564,7 @@ public class PersonDirectory {
   private class PersonDirInfo {
     String url; // protocol, server, and initial connection parameters
     String ResRefName; // Resource Reference name for a J2EE style DataSource
+    String LdapRefName; // Ldap Reference Name for a named Ldap connection from LdapServices
     String driver; // JDBC java class to register
     String logonid; // database userid or LDAP user DN (if needed)
     String logonpassword; // password

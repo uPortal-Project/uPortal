@@ -5,6 +5,17 @@
  | defined there will be the default, overridding the default specified here.
  |
  | If an element is missing it is assumed to be the same as being empty.
+ |
+ | Valid elements are:
+ |	name			Name of the connection for retrieval by name
+ |	host			host name or IP address
+ |	port			Default port for LDAP is 389
+ |	baseDN			Directory context to search for users via their uid.
+ |	managerDN		You can leave these blank unless your directory server doesn't
+ |	managerPW		permit anonymous binds.
+ |	uidAttribute	Attribute used to search for user.  Typically, the netID.
+ |	protocol		enable SSL encryption to protect passwords (disabled by default)
+ |	factory			value for the java.naming.factory.initial env property (com.sun.jndi.ldap.LdapCtxFactory is default)
  +-->
 <ldapConnections>
 	<!-- Example LDAP Connections -->

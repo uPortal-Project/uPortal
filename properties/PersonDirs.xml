@@ -47,13 +47,20 @@
          <PersonDirInfo> elements under <PersonDirs>.
     -->
 
-    <!-- LDAP Properties -->
+    <!-- LDAP Properties (LdapServices.getDefaultServer())-->
     <!--
     <url>ldap://yu.yale.edu:389/dc=itstp, dc=yale, dc=edu</url>
     <logonid>cn=bogus,cn=Users,dc=itstp,dc=yale,dc=edu</logonid>
     <logonpassword>foobar</logonpassword>
     <uidquery>(cn={0})</uidquery>
     <usercontext>cn=Users</usercontext>
+    -->
+    
+    <!-- Named LDAP Server Properties (LdapServices.getServer(ref-name))-->
+    <!--
+    <ldap-ref-name>Main</ldap-ref-name>
+    <uidquery>(cn={0})</uidquery>
+    <usercontext>cn=Users</usercontext>    
     -->
 
     <!-- JDBC Properties -->
