@@ -749,7 +749,7 @@
         <column><name>CHAN_H_D_IND</name><value>D</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
