@@ -213,7 +213,6 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         if(nodeId!=null && nodeDescription!=null && restrictionManager.checkUpdateRestrictions(nodeDescription,nodeId)) {
             if(isCentralModification(nodeId)) {
                 IALNode node=(IALNode) getNode(nodeId);
-                IFragmentLocalNodeId localNodeId = node.getFragmentNodeId();
                 IFragmentId fragmentId=node.getFragmentId();
                 IFragment fragment=fragmentRegistry.getFragment(fragmentId);
                 if(fragment.updateNode(node.getFragmentNodeId(),nodeDescription)) {

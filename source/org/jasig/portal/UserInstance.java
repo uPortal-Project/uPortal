@@ -456,9 +456,6 @@ public class UserInstance implements HttpSessionBindingListener {
                         Transformer sst=ssth.getTransformer();
                         Transformer tst=tsth.getTransformer();
 
-                        // empty transformer to do dom2sax transition
-                        Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-
                         // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                         ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
                         ssth.setResult(new SAXResult(crb));
@@ -798,7 +795,6 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_add_target")) != null) {
          String[] values1, values2;
          String value = null;
-         int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          values1 =  req.getParameterValues("targetNextID");
          if ( values1 != null && values1.length > 0 )
             value = values1[0];
