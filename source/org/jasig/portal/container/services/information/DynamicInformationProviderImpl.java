@@ -47,6 +47,7 @@ import javax.servlet.ServletConfig;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.DynamicInformationProvider;
+import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.information.StaticInformationProvider;
 import org.apache.pluto.services.information.PortletActionProvider;
 import org.apache.pluto.services.information.PortletURLProvider;
@@ -60,7 +61,6 @@ import org.apache.pluto.services.information.ResourceURLProvider;
 public class DynamicInformationProviderImpl implements DynamicInformationProvider {
 	
     private static StaticInformationProvider staticInfoProvider = null;
-    private static final String staticInformationProviderName = "org.apache.pluto.services.information.StaticInformationProvider";
     private HttpServletRequest request = null;
     private String responseContentType = null;
     private static final int KNOWN_MIME_TYPES = 15;
@@ -70,7 +70,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
         this.request = request;
         controlParameter = new PortalControlParameter(getRequestedPortalURL());
         if ( servletConfig != null && staticInfoProvider == null )
-		 staticInfoProvider = (StaticInformationProvider) servletConfig.getServletContext().getAttribute(staticInformationProviderName);
+		staticInfoProvider = InformationProviderAccess.getStaticProvider();
         responseContentType = "text/html";
     }
 
