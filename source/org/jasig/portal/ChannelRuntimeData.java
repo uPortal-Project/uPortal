@@ -52,12 +52,11 @@ import com.oreilly.servlet.multipart.Part;
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
-    private boolean renderingAsRoot=false;
     private BrowserInfo binfo=null;
-    private String channelSubscribeId=null;
     private UPFileSpec channelUPFile;
     private String baseActionURL = null; // Not sure if this will stay
     private String httpRequestMethod=null;
+    private boolean renderingAsRoot=false;
 
     /**
      * Default empty constructor
@@ -70,27 +69,36 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     /**
      * Create a new instance of ourself
      * Used by the CError channel
+     * @return crd the cloned ChannelRuntimeData object
      */
     public Object clone() {
       ChannelRuntimeData crd = new ChannelRuntimeData();
-      crd.channelUPFile = channelUPFile;
       crd.binfo = binfo;
-      crd.channelSubscribeId=channelSubscribeId;
-      crd.renderingAsRoot=renderingAsRoot;
+      crd.channelUPFile = channelUPFile;
+      crd.baseActionURL = baseActionURL;
+      crd.httpRequestMethod = httpRequestMethod;
+      crd.renderingAsRoot = renderingAsRoot;
       crd.putAll(this);
-      return  crd;
+      return crd;
     }
 
     /**
      * Set a UPFileSpec which will be used to produce
      * baseActionURL and workerActionURL.
-     *
-     * @param baURL a baseActionURL value.
+     * @param upfs the UPFileSpec
      */
     public void setUPFile(UPFileSpec upfs) {
         channelUPFile = upfs;
     }
 
+    /**
+     * Get the UPFileSpec 
+     * @return channelUPFile the UPFileSpec
+     */
+    public UPFileSpec getUPFile() {
+        return this.channelUPFile;
+    }    
+    
     /**
      * Set the HTTP Reqeust method.
      *
@@ -133,15 +141,6 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     public void setBrowserInfo(BrowserInfo bi) {
         this.binfo = bi;
-    }
-
-    /**
-     * Setter method for channel subscribe Id.
-     *
-     * @param chanSubscribeId a <code>String</code> value, first character must be alphanumeric.
-     */
-    public void setChannelSubscribeId(String chanSubscribeId) {
-        this.channelSubscribeId=chanSubscribeId;
     }
 
     /**
