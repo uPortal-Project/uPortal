@@ -671,82 +671,46 @@ $Revision$
 <!--Begin [new channel] Table -->
 
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
-
       <tr align="center">
-
         <xsl:choose>
-
           <xsl:when test="$action = 'newChannel' and $position='before' and $elementID=@ID">
-
             <td class="uportal-background-highlight">
-
-              <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
-
+              <!--a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small"-->
+              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+                <img alt="Click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:when>
-
-
 
           <xsl:when test="$action = 'moveChannel' and not(@ID=$elementID or preceding-sibling::channel[1]/@ID=$elementID)">
-
             <td class="uportal-background-highlight">
-
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to move the selected channel to this location [before {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
-
+                <img alt="Click to move the selected channel to this location [before {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:when>
-
-
 
           <xsl:when test="$action = 'moveChannel' and (@ID=$elementID or preceding-sibling::channel[1]/@ID=$elementID)">
-
             <td>
-
               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
-
             </td>
-
           </xsl:when>
 
-
-
           <xsl:otherwise>
-
             <td>
-
-              <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
-
+              <!--a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small"-->
+              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+                <img alt="Click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:otherwise>
-
         </xsl:choose>
-
       </tr>
-
     </table>
-
-
 
 <!--End [new channel] Table -->
 
   </xsl:template>
-
-
 
   <xsl:template name="selectChannel">
 
@@ -807,91 +771,51 @@ $Revision$
 <!--Begin [new channel] Table -->
 
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
-
       <tr align="center">
-
         <xsl:choose>
-
           <xsl:when test="$action = 'newChannel' and $position='after'">
-
             <td class="uportal-background-highlight">
-
-              <a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
-
+              <!--a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small"-->
+              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+                <img alt="Click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:when>
-
-
 
           <xsl:when test="$action = 'moveChannel' and not(@ID=$elementID)">
-
             <td class="uportal-background-highlight">
-
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to move the selected channel to this location [after {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
-
+                <img alt="Click to move the selected channel to this location [after {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:when>
-
-
 
           <xsl:when test="$action = 'moveChannel' and @ID=$elementID">
-
             <td>
-
               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
-
             </td>
-
           </xsl:when>
 
-
-
           <xsl:otherwise>
-
             <td>
-
-              <a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-
-                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
-
+              <!--a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small"-->
+              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+                <img alt="Click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
               </a>
-
             </td>
-
           </xsl:otherwise>
-
         </xsl:choose>
-
       </tr>
-
     </table>
-
-
 
 <!--End [new channel] Table -->
 
   </xsl:template>
 
-
-
   <xsl:template name="optionMenuDefault">Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the 
-
-  <img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20" />
-
-
-
-  buttons to add a new channel in that location.</xsl:template>
-
+    <img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20" />
+    buttons to add a new channel in that location.
+  </xsl:template>
 
 
   <xsl:template name="optionMenuModifyTab">
