@@ -41,16 +41,15 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
-
-import org.jasig.portal.ChannelRuntimeData;
 
 /**
  * Hides request parameters.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class EmptyRequestImpl extends ServletRequestImpl {
+public class EmptyRequestImpl extends HttpServletRequestWrapper {
 
     
     // Define empty collections that can be reused so as not to
@@ -60,13 +59,9 @@ public class EmptyRequestImpl extends ServletRequestImpl {
     private static final String[] emptyStringArray = new String[] {};
     private static final Enumeration emptyEnumeration = new Vector(0).elements();
 
-    public EmptyRequestImpl(HttpServletRequest request, ChannelRuntimeData runtimeData) {
-        super(request,null);
+    public EmptyRequestImpl(HttpServletRequest request) {
+        super(request);
     }
-    
-	public EmptyRequestImpl(HttpServletRequest request) {
-			super(request);
-	}
     
     public String getParameter(String name) {
         return null;

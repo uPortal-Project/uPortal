@@ -65,11 +65,12 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     private HttpServletRequest request = null;
     private String responseContentType = null;
     private static final int KNOWN_MIME_TYPES = 15;
-    private PortalControlParameter controlParameter = null;
+    private static PortletURLManager urlManager;
     
     public DynamicInformationProviderImpl(HttpServletRequest request, ServletConfig servletConfig ) {
         this.request = request;
-        controlParameter = new PortalControlParameter(request.getParameterMap());
+		if ( urlManager == null )
+			urlManager = new PortletURLManagerImpl();
         if ( servletConfig != null && staticInfoProvider == null )
 		staticInfoProvider = InformationProviderAccess.getStaticProvider();
         responseContentType = "text/html";
@@ -88,7 +89,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
-        return new PortletURLProviderImpl(this, portletWindow, controlParameter);
+        return new PortletURLProviderImpl(this, portletWindow, urlManager );
     }
 
     public ResourceURLProvider getResourceURLProvider(PortletWindow portletWindow) {
@@ -100,19 +101,19 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletMode getPortletMode(PortletWindow portletWindow) {
-        return controlParameter.getMode(portletWindow);
+        return urlManager.getMode(portletWindow);
     }
 
     public PortletMode getPreviousPortletMode(PortletWindow portletWindow) {
-        return controlParameter.getPrevMode(portletWindow);
+        return urlManager.getPrevMode(portletWindow);
     }
 
     public WindowState getWindowState(PortletWindow portletWindow) {
-        return controlParameter.getState(portletWindow);
+        return urlManager.getState(portletWindow);
     }
 
     public WindowState getPreviousWindowState(PortletWindow portletWindow) {
-        return controlParameter.getPrevState(portletWindow);
+        return urlManager.getPrevState(portletWindow);
     }
 
     public boolean isPortletModeAllowed(PortletMode mode) {
@@ -124,9 +125,5 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 		Collection supportedStates = staticInfoProvider.getPortalContextProvider().getSupportedWindowStates();
 		return supportedStates.contains(state);
     }
-
-	public HttpServletRequest getServletRequest() {
-		return request;
-	}
 
 }

@@ -79,7 +79,6 @@ import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
-import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.servlet.StoredServletResponseImpl;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
@@ -211,10 +210,11 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PortletWindowImpl portletWindow = new PortletWindowImpl();
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
+			portletWindow.setChannelRuntimeData(rd);
             cd.setPortletWindow(portletWindow);
                 
             // As the container to load the portlet
-            HttpServletRequest requestWrapper = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+            HttpServletRequest requestWrapper = pcs.getHttpServletRequest();
             portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
             
             cd.setPortletWindowInitialized(true);
@@ -337,8 +337,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             try {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
-                HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+                HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
                 HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+                PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
+                portletWindow.setChannelRuntimeData(rd);
                 portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             } catch (Exception e) {
                 throw new PortalException(e);
@@ -417,7 +419,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         try {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+            HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
                         

@@ -33,39 +33,41 @@
  *
  */
 
-package org.jasig.portal.container.servlet;
+package org.jasig.portal.container.services.information;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.jasig.portal.ChannelRuntimeData;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+
+import org.apache.pluto.om.window.PortletWindow;
 
 /**
- * Makes our ChannelRuntimeData accessible from the request.
- * This is needed by the DynamicInformationServiceProvider in order
- * to gain access to the base action URLS and channel parameters.
- * @author Ken Weiner, kweiner@unicon.net
+ * Portlet URL Manager interface
+ * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
-public class ServletRequestImpl extends HttpServletRequestWrapper {
+public interface PortletURLManager {
     
-    protected ChannelRuntimeData runtimeData = null;
-
-    public ServletRequestImpl(HttpServletRequest request) {
-        super(request);
-    }
+     public boolean isAction();
+     
+	 public void setAction();
+  
+     public WindowState getState(PortletWindow window);
     
-    public ServletRequestImpl(HttpServletRequest request, ChannelRuntimeData runtimeData) {
-        this(request);
-        this.runtimeData = runtimeData;
-    }
+     public PortletMode getMode(PortletWindow window); 
+  
+     public WindowState getPrevState(PortletWindow window);
     
-    public void setChannelRuntimeData(ChannelRuntimeData runtimeData) {
-        this.runtimeData = runtimeData;
-    }
-    
-    public ChannelRuntimeData getChannelRuntimeData() {
-        return this.runtimeData;
-    }
+     public PortletMode getPrevMode(PortletWindow window);  
+  
+     public void setMode(PortletWindow window, PortletMode mode);
+  
+     public void setState(PortletWindow window, WindowState state);
+   
+	 public void setWindowOfAction ( PortletWindow windowOfAction );
+	 
+	 public void clearParameters(PortletWindow portletWindow);
+	 
+	 public void clearParameters();
 
 }

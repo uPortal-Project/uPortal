@@ -35,7 +35,6 @@
 
 package org.jasig.portal.container.services.information;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -44,7 +43,7 @@ import javax.portlet.WindowState;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletURLProvider;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.servlet.ServletRequestImpl;
+import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
@@ -61,34 +60,34 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private boolean secure;
     private boolean clearParameters;
     private Map parameters;
-    private PortalControlParameter controlURL;
+    private PortletURLManager urlManager;
 
-    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortalControlParameter controlURL ) {
+    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortletURLManager urlManager ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
-        this.controlURL = controlURL;
-		this.controlURL.setPortletId(portletWindow);
+        this.urlManager = urlManager;
+		this.urlManager.setWindowOfAction(portletWindow);
     }
     
     // PortletURLProvider methods
 
     public void setPortletMode(PortletMode mode) {
-	  if ( mode != null && !controlURL.getMode(portletWindow).equals(mode) ) {	
+	  if ( mode != null && !urlManager.getMode(portletWindow).equals(mode) ) {	
 		 this.portletMode = mode;
-		 controlURL.setMode(portletWindow, portletMode);
+		 urlManager.setMode(portletWindow, portletMode);
 	  }		 
     }
 
     public void setWindowState(WindowState state) {
-      if ( state != null && !controlURL.getState(portletWindow).equals(state) ) {	
+      if ( state != null && !urlManager.getState(portletWindow).equals(state) ) {	
          this.windowState = state;
-		 controlURL.setState(portletWindow, windowState);
+		 urlManager.setState(portletWindow, windowState);
       }		 
     }
 
     public void setAction() {
     	action = true;
-		controlURL.setAction(portletWindow);
+		urlManager.setAction();
     }
 
     public void setSecure() {
@@ -97,7 +96,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public void clearParameters() {
         clearParameters = true;
-		controlURL.clearRenderParameters(portletWindow);
+		urlManager.clearParameters(portletWindow);
     }
 
     public void setParameters(Map parameters) {
@@ -106,26 +105,14 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public String toString() {
     	
-        ChannelRuntimeData runtimeData = ((ServletRequestImpl)provider.getServletRequest()).getChannelRuntimeData();
+        ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
-	
-        if ( parameters != null && !parameters.isEmpty() ) {        
-         Iterator names = parameters.keySet().iterator();
-         boolean firstValue = true;
-         while (names.hasNext()) {
-         	
-            String name = (String)names.next();
-            Object value = parameters.get(name);
-			String[] values = ( value instanceof String ) ? new String[] {(String)value} : (String[])value;
-			if (action)
-				controlURL.setRequestParam(name,values);
-            else
-				controlURL.setRenderParam(portletWindow, name, values );
-         }
-        } 
-        String curl = controlURL.toString();
-		if ( curl.length() > 0 ) url.append("?"+curl);
+        
+        String queryString = urlManager.toString();
+  
+		if ( queryString.length() > 0 ) url.append("?"+queryString);
+		
         return url.toString();
     }
 
