@@ -78,18 +78,6 @@ public class LayoutBean
     String fs = System.getProperty ("file.separator");
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
     mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
-
-    /*
-    // instantiate the processors
-    try
-    {
-      sLayoutProcessor = XSLTProcessorFactory.getProcessor ();
-      uLayoutProcessor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, "LayoutBean::LayoutBean() : caught an exception while trying initialize XLST processors. "+e);
-      } */
   }
 
   /**
@@ -293,7 +281,10 @@ public class LayoutBean
       } else if(rElement.getNodeType() == Node.DOCUMENT_NODE) {
 	  UtilitiesBean.node2SAX(rElement,saif);
       } else {
-
+	  // as it is, this should never happen
+	  saif.startDocument();
+	  UtilitiesBean.node2SAX(rElement,saif);
+	  saif.endDocument();
       }
 	  
 	  
@@ -327,13 +318,6 @@ public class LayoutBean
       Logger.log (Logger.ERROR, e);
     }
   }
-
-
-    public void outputContent(HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out) {
-        // at this point the response can be commited
-
-
-    }
 
   /**
    * Process layout action events.

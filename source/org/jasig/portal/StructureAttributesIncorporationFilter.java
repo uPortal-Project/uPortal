@@ -42,7 +42,7 @@ public class StructureAttributesIncorporationFilter extends SAXFilterImpl
 	    for(Enumeration ca=fsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
 		String attrName=(String) ca.nextElement();
 		attsImpl.addAttribute(attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
-		Logger.log(Logger.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
+		//		Logger.log(Logger.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
 	    }
 	    super.startElement(name,attsImpl);
 	} else 	if (name.equals ("folder")) {
@@ -51,7 +51,7 @@ public class StructureAttributesIncorporationFilter extends SAXFilterImpl
 	    for(Enumeration fe=fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
 		String attrName=(String) fe.nextElement();
 		attsImpl.addAttribute(attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
-		Logger.log(Logger.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
+		//		Logger.log(Logger.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
 	    }
 	    super.startElement(name,attsImpl);
 

@@ -63,7 +63,7 @@ public class PortalSessionManager extends HttpServlet
 	    
 	    HttpSession session = req.getSession ();
 	    if(session!=null) {
-		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
+		//		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
 		String redirectBase=null;
 		if((redirectBase=this.doRedirect(req))!=null) {
 		    // cache request
@@ -71,7 +71,7 @@ public class PortalSessionManager extends HttpServlet
 		    // initial request, requeres forwarding
 		    session.setAttribute("forwarded",new Boolean(true));
 		    // forward
-		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
 		    //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
 		    res.sendRedirect(req.getContextPath()+redirectBase);
 		} else {
@@ -79,14 +79,14 @@ public class PortalSessionManager extends HttpServlet
 		    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
 		    if(forwarded!=null) session.removeAttribute("forwarded");
 		    // proceed with rendering
-		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");		    
+		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");		    
 		    // look if the LayoutBean object is already in the session, otherwise
 		    // make a new one
 		    LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
 		    if(layout==null) {
 			layout=new LayoutBean();
 			session.setAttribute("LayoutBean",layout);
-			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+			//			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
 		    }
 		    RequestParamWrapper oreqp=null;
 		    if(forwarded!=null && forwarded.booleanValue()) oreqp=(RequestParamWrapper) sc.getAttribute("oreqp_"+session.getId());
@@ -134,7 +134,7 @@ public class PortalSessionManager extends HttpServlet
 	    if(servletPath.equals("/"+renderBase)) return servletPath;
 	    // redirect to the same base, but no parameters
 	    String uPFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
-	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");		    
+	    //	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");		    
 	    if(uPFile.startsWith("/"+detachBaseStart) && uPFile.endsWith(".uP")) return uPFile;
 	} 
 	// redirect by default
