@@ -10,11 +10,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ALChannel;
 import org.jasig.portal.layout.ALFolder;
 import org.jasig.portal.layout.ALNode;
-import org.jasig.portal.layout.IALChannelDescription;
-import org.jasig.portal.layout.IALFolderDescription;
+import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.IALNodeDescription;
 import org.jasig.portal.layout.IAggregatedLayout;
 import org.jasig.portal.layout.IUserLayout;
@@ -35,6 +33,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
   private static final Log log = LogFactory.getLog(ALRestrictionManager.class);
   private IAggregatedLayout layout;
   
+  
+  public ALRestrictionManager() throws Exception {}
 
   public ALRestrictionManager( IAggregatedLayout layout ) throws Exception {
     this.layout = layout;
@@ -105,27 +105,19 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
   /**
      * Checks the necessary restrictions while adding a new node
-     * @param nodeDesc a <code>IUserLayoutNodeDescription</code> node description of a new node to be added
+     * @param node a <code>ILayoutNode</code> a new node to be added
      * @param parentId a <code>String</code> parent node ID
      * @param nextSiblingId a <code>String</code> next sibling node ID
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkAddRestrictions( IUserLayoutNodeDescription nodeDesc, String parentId, String nextSiblingId ) throws PortalException {
+  public boolean checkAddRestrictions( ILayoutNode node, String parentId, String nextSiblingId ) throws PortalException {
   	
-  	if ( !(nodeDesc instanceof IALNodeDescription) )
-  	  throw new PortalException ("The node description must be IALNodeDescription type!"); 	
+  	if ( !(node instanceof ALNode) )
+       throw new PortalException ("The node must be ALNode type!");
   	
-    String newNodeId = nodeDesc.getId();
-    ALNode newNode = null;
-    if ( newNodeId == null ) {
-      if ( nodeDesc instanceof IALChannelDescription )
-        newNode = new ALChannel((IALChannelDescription)nodeDesc);
-      else
-        newNode = new ALFolder((IALFolderDescription)nodeDesc);
-    } else
-        newNode = layout.getLayoutNode(newNodeId);
-
+  	ALNode newNode = (ALNode) node;
+    String newNodeId = newNode.getId();
     ALNode parentNode = layout.getLayoutNode(parentId);
 
     if ( !(parentNode.getNodeType()==IUserLayoutNodeDescription.FOLDER ) )

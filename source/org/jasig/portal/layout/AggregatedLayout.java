@@ -80,8 +80,10 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
       Hashtable restrictions = nodeDesc.getRestrictions();
-      for ( Enumeration e = restrictions.keys(); e.hasMoreElements(); ) {
-       IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
+      if ( restrictions != null ) {
+       System.out.println ( "restr="+restrictions );	
+       for ( Enumeration e = restrictions.elements(); e.hasMoreElements(); ) {
+        IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
          AttributesImpl paramAttrs = new AttributesImpl();
          paramAttrs.addAttribute("","path","path","CDATA",restriction.getRestrictionPath());
          // we have to re-scale the priority restriction for the UI
@@ -95,7 +97,8 @@ public class AggregatedLayout implements IAggregatedLayout {
          paramAttrs.addAttribute("","type","type","CDATA",restriction.getName());
          contentHandler.startElement("",RESTRICTION,RESTRICTION,paramAttrs);
          contentHandler.endElement("",RESTRICTION,RESTRICTION);
-      }
+       }
+      } 
   }
 
   public ALNode getLayoutNode(String nodeId) {

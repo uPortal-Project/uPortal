@@ -13,6 +13,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+
+import org.jasig.portal.layout.restrictions.IALRestrictionManager;
+import org.jasig.portal.layout.restrictions.RestrictionManagerFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
@@ -47,6 +50,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   private static final Log log = LogFactory.getLog(AggregatedLayoutManager.class);
     
+  private IALRestrictionManager restrictionManager;
   private AggregatedUserLayoutStore layoutStore;
   private AggregatedLayout layout;
   private UserProfile userProfile;
@@ -77,6 +81,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     this.person = person;
     this.userProfile = userProfile;
     layout = new AggregatedLayout ( String.valueOf(getLayoutId()), this );
+    restrictionManager = (IALRestrictionManager) RestrictionManagerFactory.getRestrictionManager(layout);
     autoCommit = false;
     if ( guid == null )
       guid = new GuidGenerator();
@@ -96,11 +101,12 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   public IUserLayout getUserLayout() throws PortalException {
       return layout;
   }
-
+  
   public void setUserLayout(IUserLayout layout) throws PortalException {
    if ( !(layout instanceof AggregatedLayout) )
     throw new PortalException ( "The user layout instance must have AggregatedLayout type!" );
     this.layout = (AggregatedLayout) layout;
+    restrictionManager.setUserLayout(layout);
     updateCacheKey();
   }
 
@@ -199,49 +205,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   }
 
 
-   /**
-     * Checks the restriction specified by the parameters below
-     * @param nodeId a <code>String</code> node ID
-     * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
-     * @param propertyValue a <code>String</code> property value to be checked
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  protected boolean checkRestriction(String nodeId, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    return (node!=null)?checkRestriction(node,restrictionName,restrictionPath,propertyValue):true;
-  }
-
-
-  /**
-     * Checks the local restriction specified by the parameters below
-     * @param nodeId a <code>String</code> node ID
-     * @param restrictionName a restriction name
-     * @param propertyValue a <code>String</code> property value to be checked
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  protected boolean checkRestriction(String nodeId, String restrictionName, String propertyValue ) throws PortalException {
-    return (nodeId!=null)?checkRestriction(nodeId, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue):true;
-  }
-
-  /**
-     * Checks the restriction specified by the parameters below
-     * @param node a <code>ALNode</code> node to be checked
-     * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
-     * @param propertyValue a <code>String</code> property value to be checked
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  protected boolean checkRestriction(ALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
-    IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
-    if ( restriction != null )
-     return restriction.checkRestriction(propertyValue);
-     return true;
-  }
-
  private void moveWrongFragmentsToLostFolder() throws PortalException {
   Collection nodes = layoutStore.getIncorrectPushedFragmentNodes(person,userProfile);
   for ( Iterator i = nodes.iterator(); i.hasNext(); ) {
@@ -287,7 +250,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       }
 
       // Checking the depth restriction
-      if ( !checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,depth+"") ) {
+      if ( !restrictionManager.checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,depth+"") ) {
           moveNodeToLostFolder(nodeId);
       }
 
@@ -350,189 +313,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     return org.jasig.portal.utils.XML.serializeNode(document);
   }
 
-  /**
-     * Checks the local restriction specified by the parameters below
-     * @param node a <code>ALNode</code> node to be checked
-     * @param restrictionName a restriction name
-     * @param propertyValue a <code>String</code> property value to be checked
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  protected boolean checkRestriction(ALNode node, String restrictionName, String propertyValue ) throws PortalException {
-    return checkRestriction(node, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
-  }
-
-
-  /**
-     * Checks the necessary restrictions while adding a new node
-     * @param nodeDesc a <code>IALNodeDescription</code> node description of a new node to be added
-     * @param parentId a <code>String</code> parent node ID
-     * @param nextSiblingId a <code>String</code> next sibling node ID
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  private boolean checkAddRestrictions( IALNodeDescription nodeDesc, String parentId, String nextSiblingId ) throws PortalException {
-    String newNodeId = nodeDesc.getId();
-    ALNode newNode = null;
-    if ( newNodeId == null ) {
-      if ( nodeDesc instanceof IALChannelDescription )
-        newNode = new ALChannel((IALChannelDescription)nodeDesc);
-      else
-        newNode = new ALFolder((IALFolderDescription)nodeDesc);
-    } else
-        newNode = getLayoutNode(newNodeId);
-
-    ALNode parentNode = getLayoutNode(parentId);
-
-    if ( !(parentNode.getNodeType()==IUserLayoutNodeDescription.FOLDER ) )
-      throw new PortalException ("The target parent node should be a folder!");
-
-    //if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
-    if ( !parentNode.getNodeDescription().isImmutable() ) {
-
-     // Checking children related restrictions
-     Collection restrictions = parentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
-     for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-         if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
-                !restriction.checkRestriction(newNode) )
-            return false;
-     }
-
-     // Checking parent related restrictions
-     restrictions = newNode.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
-     for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-          if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
-                !restriction.checkRestriction(parentNode) )
-            return false;
-     }
-
-     // Considering two cases if the node is new or it is already in the user layout
-     if ( newNodeId != null ) {
-      // Checking depth restrictions for the node and all its descendants (if there are any)
-      if ( !checkDepthRestrictions(newNodeId,parentId) )
-         return false;
-     } else
-         return checkRestriction(newNode,RestrictionTypes.DEPTH_RESTRICTION,(getDepth(parentId)+1)+"");
-
-     // Checking sibling nodes order
-     return changeSiblingNodesPriorities(newNode,parentId,nextSiblingId);
-
-    } else
-        return false;
-  }
-
-
-  /**
-     * Checks the necessary restrictions while moving a node
-     * @param nodeId a <code>String</code> node ID of a node to be moved
-     * @param newParentId a <code>String</code> new parent node ID
-     * @param nextSiblingId a <code>String</code> next sibling node ID
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  private boolean checkMoveRestrictions( String nodeId, String newParentId, String nextSiblingId ) throws PortalException {
-  	
-    ALNode node = getLayoutNode(nodeId);
-    ALNode oldParentNode = getLayoutNode(node.getParentNodeId());
-    ALFolder newParentNode = getLayoutFolder(newParentId);
-
-    /*if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
-         checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {*/
-    if ( !oldParentNode.getNodeDescription().isImmutable() && !newParentNode.getNodeDescription().isImmutable() ) {
-
-     if ( !oldParentNode.equals(newParentNode) ) {
-      // Checking children related restrictions
-      Collection restrictions = newParentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
-      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-         if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
-                !restriction.checkRestriction(node) )
-            return false;
-      }
-
-      // Checking parent related restrictions
-      restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
-      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-          if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
-                !restriction.checkRestriction(newParentNode) )
-            return false;
-      }
-
-      // Checking depth restrictions for the node and all its descendants
-      if ( !checkDepthRestrictions(nodeId,newParentId) )
-            return false;
-     }
-
-      // Checking sibling nodes order in the line where the node is being moved to
-      //String firstChildId = newParentNode.getFirstChildNodeId();
-      //return (firstChildId!=null)?changeSiblingNodesPriorities(firstChildId):true;
-      return changeSiblingNodesPriorities(node,newParentId,nextSiblingId);
-
-    } else
-        return false;
-  }
-
-
-  /**
-     * Checks the necessary restrictions while deleting a node
-     * @param nodeId a <code>String</code> node ID of a node to be deleted
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  private boolean checkDeleteRestrictions( String nodeId ) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    if ( nodeId == null || node == null ) return true;
-    //if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
-    if ( !getLayoutNode(node.getParentNodeId()).getNodeDescription().isImmutable() ) {
-         // Checking the unremovable restriction on the node to be deleted
-         //return checkRestriction(nodeId,RestrictionTypes.UNREMOVABLE_RESTRICTION,"false");
-         return !node.getNodeDescription().isUnremovable();
-    } else
-         return false;
-  }
-
-
-  /**
-     * Recursively checks the depth restrictions beginning with a given node
-     * @param nodeId a <code>String</code> node ID
-     * @param newParentId a <code>String</code> new parent node ID
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  private boolean checkDepthRestrictions(String nodeId,String newParentId) throws PortalException {
-    if ( nodeId == null ) return true;
-    int nodeDepth = getDepth(nodeId);
-    int parentDepth = getDepth(newParentId);
-    if ( nodeDepth == parentDepth+1 ) return true;
-    return checkDepthRestrictions(nodeId,parentDepth+1);
-  }
-
-
-  /**
-     * Recursively checks the depth restrictions beginning with a given node
-     * @param nodeId a <code>String</code> node ID
-     * @param depth a depth on which the node is going to be attached
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  private boolean checkDepthRestrictions( String nodeId, int depth ) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    // Checking restrictions for the node
-    if ( !checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,depth+"") )
-            return false;
-    if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-     for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; nextId = node.getNextNodeId() ) {
-      node = getLayoutNode(nextId);
-      if ( !checkDepthRestrictions(nextId,depth+1) )
-            return false;
-     }
-    }
-    return true;
-  }
-
 
   /**
      * Gets the tree depth for a given node
@@ -541,9 +321,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public int getDepth(String nodeId) throws PortalException {
-	 int depth = 0;
-	 for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ );
-	 return depth;
+	 return layout.getDepth(nodeId);
   }
 
 
@@ -1048,6 +826,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                 fragmentId = null;
                 layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
                 layout.setLayoutManager(this);
+                restrictionManager.setUserLayout(layout);
                 // Setting the first child node id for the root node to NULL if it does not exist in the layout
                 ALFolder rootFolder = getLayoutFolder(getRootFolderId());
                 String firstChildId = rootFolder.getFirstChildNodeId();
@@ -1209,15 +988,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
     public void loadFragment( String fragmentId ) throws PortalException {
       try {
-      
         layout = (ALFragment) layoutStore.getFragment(person,fragmentId);
         layout.setLayoutManager(this);
-        /*fragments = (Hashtable) layoutStore.getFragments(person);
-		if ( fragments != null && fragments.size() > 0 ) 
-		  layout.setFragments(fragments);*/
+        restrictionManager.setUserLayout(layout);
         this.fragmentId = fragmentId;
-        // Checking restrictions and move "wrong" nodes to the lost folder
-        //moveWrongNodesToLostFolder();
         updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());
@@ -1548,15 +1322,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              // Checking the hidden property if it's changed
              if ( !hiddenValuesMatch ) {
                  // Checking the hidden node restriction
-                 boolean canChange = checkRestriction(currentNode,RestrictionTypes.HIDDEN_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isHidden()));
+                 boolean canChange = restrictionManager.checkRestriction(currentNode,RestrictionTypes.HIDDEN_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isHidden()));
                  // Checking the hidden parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
+                 canChange &= restrictionManager.checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
               // Checking the hidden children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
+                canChange &= restrictionManager.checkRestriction(nextId,RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
               }
                 // Changing the hidden value if canChange is true
                 if ( canChange )
@@ -1566,15 +1340,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              // Checking the immutable property if it's changed
              if ( !immutableValuesMatch ) {
                  // Checking the immutable node restriction
-                 boolean canChange = checkRestriction(currentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                 boolean canChange = restrictionManager.checkRestriction(currentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isImmutable()));
                  // Checking the immutable parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                 canChange &= restrictionManager.checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               // Checking the immutable children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                canChange &= restrictionManager.checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               }
                 // Changing the immutable value if canChange is true
                 if ( canChange )
@@ -1584,15 +1358,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              // Checking the unremovable property if it's changed
              if ( !unremovableValuesMatch ) {
                  // Checking the unremovable node restriction
-                 boolean canChange = checkRestriction(currentNode,RestrictionTypes.UNREMOVABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
+                 boolean canChange = restrictionManager.checkRestriction(currentNode,RestrictionTypes.UNREMOVABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
                  // Checking the unremovable parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
+                 canChange &= restrictionManager.checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
               // Checking the unremovable children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                canChange &= restrictionManager.checkRestriction(nextId,RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               }
                 // Changing the unremovable value if canChange is true
                 if ( canChange )
@@ -1641,93 +1415,36 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
     public boolean canAddNode(IUserLayoutNodeDescription nodeDesc, String parentId, String nextSiblingId) throws PortalException {
-       return checkAddRestrictions((IALNodeDescription)nodeDesc,parentId,nextSiblingId);
+    	
+    	if ( !(nodeDesc instanceof IALNodeDescription) )
+      	  throw new PortalException ("The node description must be IALNodeDescription type!"); 	
+      	
+        String newNodeId = nodeDesc.getId();
+        ALNode newNode = null;
+        if ( newNodeId == null ) {
+          if ( nodeDesc instanceof IALChannelDescription )
+            newNode = new ALChannel((IALChannelDescription)nodeDesc);
+          else
+            newNode = new ALFolder((IALFolderDescription)nodeDesc);
+        } else
+            newNode = layout.getLayoutNode(newNodeId);
+
+        return restrictionManager.checkAddRestrictions(newNode,parentId,nextSiblingId)?
+     		    changeSiblingNodesPriorities(newNode,parentId,nextSiblingId):false;
     }
 
     public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
-       return checkMoveRestrictions(nodeId,parentId,nextSiblingId);
+    	return restrictionManager.checkMoveRestrictions(nodeId,parentId,nextSiblingId)?
+    	   		changeSiblingNodesPriorities(getLayoutNode(nodeId),parentId,nextSiblingId):false;
     }
 
     public boolean canDeleteNode(String nodeId) throws PortalException {
-      return checkDeleteRestrictions(nodeId);
+        return restrictionManager.checkDeleteRestrictions(nodeId);
     }
 
 
     public boolean canUpdateNode(IUserLayoutNodeDescription nodeDescription) throws PortalException {
-        IALNodeDescription nodeDesc=(IALNodeDescription)nodeDescription;
-        String nodeId = nodeDesc.getId();
-
-        if ( nodeId == null ) return false;
-        ALNode node = getLayoutNode(nodeId);
-        IALNodeDescription currentNodeDesc = (IALNodeDescription) node.getNodeDescription();
-        // If the node Ids do no match to each other then return false
-        if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
-
-        // Checking the immutable node restriction
-        //if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
-        if ( currentNodeDesc.isImmutable() )
-            return false;
-
-        // Checking the immutable parent node related restriction
-        if ( getRestriction(getLayoutNode(node.getParentNodeId()),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH) != null &&
-             checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,"true") )
-            return false;
-
-        // Checking the immutable children node related restrictions
-        if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-            ALFolder folder = (ALFolder) node;
-            //Loop for all children
-            for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-             if ( getRestriction(getLayoutNode(nextId),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH) != null &&
-                  checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,"true") )
-                  return false;
-        }
-
-       // if a new node description doesn't contain any restrictions the old restrictions will be used
-        if ( nodeDesc.getRestrictions() == null )
-          nodeDesc.setRestrictions(currentNodeDesc.getRestrictions());
-        Hashtable rhash = nodeDesc.getRestrictions();
-        // Setting the new node description to the node
-        node.setNodeDescription(nodeDesc);
-
-        // Checking restrictions for the node
-        if ( rhash != null ) {
-           for ( Enumeration enum = rhash.elements(); enum.hasMoreElements(); )
-             if ( !((IUserLayoutRestriction)enum.nextElement()).checkRestriction(node) ) {
-                  node.setNodeDescription(currentNodeDesc);
-                  return false;
-             }
-        }
-
-
-        // Checking parent related restrictions for the children
-        Collection restrictions = getLayoutNode(node.getParentNodeId()).getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
-        for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-         if ( !restriction.checkRestriction(node) ) {
-            node.setNodeDescription(currentNodeDesc);
-            return false;
-         }
-        }
-
-
-        // Checking child related restrictions for the parent
-        if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-         for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
-          ALNode child = getLayoutNode(nextId);
-          restrictions = child.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
-          for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-           if ( !restriction.checkRestriction(node) ) {
-            node.setNodeDescription(currentNodeDesc);
-            return false;
-           }
-          }
-            nextId = child.getNextNodeId();
-         }
-        }
-
-        return true;
+        return restrictionManager.checkUpdateRestrictions(nodeDescription);
     }
 
     public void markAddTargets(IUserLayoutNodeDescription nodeDesc) throws PortalException {

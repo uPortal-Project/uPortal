@@ -6,6 +6,8 @@
 package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.ILayoutNode;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 
@@ -16,7 +18,14 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
  * @version $Revision$
  */
 public interface IRestrictionManager {
-
+	
+  /**
+     * Sets the user layout.
+     * @param layout a <code>IUserLayout</code> user layout to be checked
+     * @return a boolean value
+     * @exception PortalException if an error occurs
+     */
+  public void setUserLayout(IUserLayout layout) throws PortalException;
 
    /**
      * Checks the restriction specified by the parameters below.
@@ -40,14 +49,14 @@ public interface IRestrictionManager {
   public boolean checkRestriction(String nodeId, String restrictionName, String propertyValue ) throws PortalException;
   
   /**
-     * Checks the necessary restrictions while adding a new node.
-     * @param nodeDesc a <code>IUserLayoutNodeDescription</code> node description of a new node to be added
-     * @param parentId a <code>String</code> parent node ID
-     * @param nextSiblingId a <code>String</code> next sibling node ID
-     * @return a boolean value
-     * @exception PortalException if an error occurs
-     */
-  public boolean checkAddRestrictions( IUserLayoutNodeDescription nodeDesc, String parentId, String nextSiblingId ) throws PortalException;
+   * Checks the necessary restrictions while adding a new node
+   * @param node a <code>ILayoutNode</code> a new node to be added
+   * @param parentId a <code>String</code> parent node ID
+   * @param nextSiblingId a <code>String</code> next sibling node ID
+   * @return a boolean value
+   * @exception PortalException if an error occurs
+   */
+  public boolean checkAddRestrictions( ILayoutNode node, String parentId, String nextSiblingId ) throws PortalException;
 
   /**
      * Checks the necessary restrictions while moving a node.
