@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2000-2001 The JA-SIG Collaborative.  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
+ * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
  * are met:
  *
@@ -47,7 +47,8 @@ import  org.jasig.portal.LayoutEvent;
 import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.GenericPortalBean;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.UtilitiesBean;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
@@ -82,10 +83,10 @@ import  java.util.Enumeration;
  * @author Bernie Durfee
  * @version $Revision$
  */
-public class CBookmarks implements IXMLChannel {
+public class CBookmarks
+    implements IXMLChannel {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
-
   // A DOM document where all the bookmark information will be contained
   protected DocumentImpl m_bookmarksXML;
   // This is the cached content
@@ -109,12 +110,8 @@ public class CBookmarks implements IXMLChannel {
    * put your documentation comment here
    */
   public CBookmarks () {
-    String fs = System.getProperty("file.separator");
-    // Location of the stylesheet files
-    String stylesheetDir = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig"
-        + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
-    m_styleSheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
-    m_styleSheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    String stylesheetLocation = UtilitiesBean.fixURI(GenericPortalBean.getPortalBaseDir() + "/webpages/stylesheets/org/jasig/portal/channels/CBookmarks/CBookmarks.ssl");
+    m_styleSheetSet = new StylesheetSet(stylesheetLocation);
   }
 
   /**
@@ -155,7 +152,7 @@ public class CBookmarks implements IXMLChannel {
       // Cache the bookmarks DOM locally
       m_bookmarksXML = (DocumentImpl)domParser.getDocument();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       // Release the database connection
       if (connection != null) {
@@ -184,28 +181,28 @@ public class CBookmarks implements IXMLChannel {
       if (rs.next()) {
         // Use the 'default' user's bookmarks...
         inputXML = rs.getString("BOOKMARK_XML");
-      }
+      } 
       else {
         // Generate the XML here as a last resort
         inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
             + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + runtimeData.getPerson().getID()
             + "\'/>" + "  </info>" + "</xbel>";
-        Logger.log(Logger.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
+        LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
       }
       // Now add a row to the database for the user
-      String insert = "INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) " + "VALUES (" + getUserId(runtimeData.getPerson().getID())
-          + ", " + getUserId(runtimeData.getPerson().getID()) + ",'" + inputXML + "')";
+      String insert = "INSERT INTO PORTAL_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) " + "VALUES (" + getUserId(runtimeData.getPerson().getID())
+          + ",'" + inputXML + "')";
       //Logger.log(Logger.DEBUG, insert);
       connection.createStatement().executeUpdate(insert);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       if (connection != null) {
         releaseConnection(connection);
       }
       if (inputXML == null) {
         // ...or else just start with an empty set of bookmarks
-        Logger.log(Logger.ERROR, "CBookmarks.getDefaultBookmarks() - Could not retrieve default bookmark xml, using blank xml.");
+        LogService.instance().log(LogService.ERROR, "CBookmarks.getDefaultBookmarks() - Could not retrieve default bookmark xml, using blank xml.");
         inputXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xbel></xbel>";
       }
     }
@@ -231,7 +228,7 @@ public class CBookmarks implements IXMLChannel {
           + getUserId(runtimeData.getPerson().getID());
       connection.createStatement().executeUpdate(update);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       releaseConnection(connection);
     }
@@ -241,19 +238,24 @@ public class CBookmarks implements IXMLChannel {
    * Returns channel runtime properties
    * @return handle to runtime properties
    */
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
+  public ChannelRuntimeProperties getRuntimeProperties () {
     // Channel will always render, so the default values are ok
-    return new ChannelRuntimeProperties ();
+    return  new ChannelRuntimeProperties();
   }
 
-  public void setStaticData (ChannelStaticData sd)
-  {
+  /**
+   * put your documentation comment here
+   * @param sd
+   */
+  public void setStaticData (ChannelStaticData sd) {
     this.staticData = sd;
   }
 
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
+  /**
+   * put your documentation comment here
+   * @param rd
+   */
+  public void setRuntimeData (ChannelRuntimeData rd) {
     this.runtimeData = rd;
   }
 
@@ -261,23 +263,20 @@ public class CBookmarks implements IXMLChannel {
    * Processes layout-level events coming from the portal
    * @param ev a portal layout event
    */
-  public void receiveEvent (LayoutEvent ev)
-  {
-    // no events for this channel
+  public void receiveEvent (LayoutEvent ev) {
+  // no events for this channel
   }
 
   /** Returns static channel properties to the portal
    * @return handle to subscription properties
    */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-
+  public ChannelSubscriptionProperties getSubscriptionProperties () {
+    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties();
     // Properties which are not specifically set here will assume default
     // values as determined by ChannelSubscriptionProperties
-    csb.setDetachable (false);
-    csb.setName ("My Bookmarks");
-    return csb;
+    csb.setDetachable(false);
+    csb.setName("My Bookmarks");
+    return  csb;
   }
 
   /**
@@ -301,7 +300,7 @@ public class CBookmarks implements IXMLChannel {
             folderElement.setAttribute("folded", "yes");
           }
         }
-      }
+      } 
       else if (command.equals("unfold")) {
         // Get the ID of the specified folder to open
         String folderID = runtimeData.getParameter("ID");
@@ -311,24 +310,24 @@ public class CBookmarks implements IXMLChannel {
             folderElement.setAttribute("folded", "no");
           }
         }
-      }
+      } 
       else if (command.equals("View")) {
         // Switch to view mode
         m_currentState = VIEWMODE;
         m_activeNodeID = null;
-      }
+      } 
       else if (command.equals("Edit")) {
         // Switch to edit mode
         m_currentState = EDITMODE;
         m_activeNodeID = null;
-      }
+      } 
       else if (command.equals("AddBookmark")) {
         if (m_currentState != ADDNODEMODE) {
           // Switch to add bookmark mode
           m_currentState = ADDNODEMODE;
           m_activeNodeID = null;
           m_activeNodeType = "bookmark";
-        }
+        } 
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null && submitButton.equals("Cancel")) {
@@ -336,25 +335,25 @@ public class CBookmarks implements IXMLChannel {
             m_activeNodeID = null;
             m_activeNodeType = null;
             m_currentState = VIEWMODE;
-          }
+          } 
           else if (submitButton != null && submitButton.equals("Add")) {
             // Check for the incoming parameters
             String bookmarkTitle = runtimeData.getParameter("BookmarkTitle");
             String bookmarkURL = runtimeData.getParameter("BookmarkURL");
             String bookmarkDesc = runtimeData.getParameter("BookmarkDescription");
             String folderID = runtimeData.getParameter("FolderRadioButton");
-            if (bookmarkTitle == null || bookmarkTitle.length() < 1) {}
-            else if (bookmarkURL == null || bookmarkURL.length() < 1) {}
-            else if (folderID == null || folderID.length() < 1) {}
+            if (bookmarkTitle == null || bookmarkTitle.length() < 1) {} 
+            else if (bookmarkURL == null || bookmarkURL.length() < 1) {} 
+            else if (folderID == null || folderID.length() < 1) {} 
             else {
               Element folderElement;
               if (folderID.equals("RootLevel")) {
                 folderElement = (Element)m_bookmarksXML.getElementsByTagName("xbel").item(0);
-              }
+              } 
               else {
                 folderElement = m_bookmarksXML.getElementById(folderID);
               }
-              if (folderElement == null) {}
+              if (folderElement == null) {} 
               else {
                 // Build the bookmark XML DOM
                 Element bookmarkElement = m_bookmarksXML.createElement("bookmark");
@@ -384,15 +383,14 @@ public class CBookmarks implements IXMLChannel {
             }
           }
         }
-      }
-      else if (command.equals("AddFolder"))
-      {
+      } 
+      else if (command.equals("AddFolder")) {
         if (m_currentState != ADDNODEMODE) {
           // Switch to add bookmark mode
           m_currentState = ADDNODEMODE;
           m_activeNodeID = null;
           m_activeNodeType = "folder";
-        }
+        } 
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null && submitButton.equals("Cancel")) {
@@ -400,22 +398,22 @@ public class CBookmarks implements IXMLChannel {
             m_activeNodeID = null;
             m_activeNodeType = null;
             m_currentState = VIEWMODE;
-          }
+          } 
           else if (submitButton != null && submitButton.equals("Add")) {
             // Check for the incoming parameters
             String folderTitle = runtimeData.getParameter("FolderTitle");
             String folderID = runtimeData.getParameter("FolderRadioButton");
-            if (folderTitle == null || folderTitle.length() < 1) {}
-            else if (folderID == null || folderID.length() < 1) {}
+            if (folderTitle == null || folderTitle.length() < 1) {} 
+            else if (folderID == null || folderID.length() < 1) {} 
             else {
               Element folderElement;
               if (folderID.equals("RootLevel")) {
                 folderElement = (Element)m_bookmarksXML.getElementsByTagName("xbel").item(0);
-              }
+              } 
               else {
                 folderElement = m_bookmarksXML.getElementById(folderID);
               }
-              if (folderElement == null) {}
+              if (folderElement == null) {} 
               else {
                 // Build the new folder XML node
                 Element newFolderElement = m_bookmarksXML.createElement("folder");
@@ -440,27 +438,27 @@ public class CBookmarks implements IXMLChannel {
             }
           }
         }
-      }
+      } 
       else if (command.equals("MoveNode")) {
         m_activeNodeID = runtimeData.getParameter("ID");
         m_currentState = MOVENODEMODE;
-      }
+      } 
       else if (command.equals("EditNode")) {
         m_activeNodeID = runtimeData.getParameter("ID");
         m_currentState = EDITNODEMODE;
-      }
+      } 
       else if (command.equals("DeleteBookmark")) {
         if (m_currentState != DELETENODEMODE) {
           m_currentState = DELETENODEMODE;
           m_activeNodeType = "bookmark";
-        }
+        } 
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null) {
             if (submitButton.equals("Cancel")) {
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            }
+            } 
             else if (submitButton.equals("Delete")) {
               // Run through the passed in parameters and delete the bookmarks
               Enumeration e = runtimeData.keys();
@@ -479,23 +477,23 @@ public class CBookmarks implements IXMLChannel {
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            }
+            } 
             else if (submitButton.equals("ConfirmDelete")) {}
           }
         }
-      }
+      } 
       else if (command.equals("DeleteFolder")) {
         if (m_currentState != DELETENODEMODE) {
           m_currentState = DELETENODEMODE;
           m_activeNodeType = "folder";
-        }
+        } 
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null) {
             if (submitButton.equals("Cancel")) {
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            }
+            } 
             else if (submitButton.equals("Delete")) {
               // Run through the passed in parameters and delete the bookmarks
               Enumeration e = runtimeData.keys();
@@ -517,7 +515,7 @@ public class CBookmarks implements IXMLChannel {
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            }
+            } 
             else if (submitButton.equals("ConfirmDelete")) {}
           }
         }
@@ -546,7 +544,7 @@ public class CBookmarks implements IXMLChannel {
           break;
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -591,19 +589,19 @@ public class CBookmarks implements IXMLChannel {
   private void renderAddNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      Logger.log(Logger.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
       renderViewModeXML(out);
-    }
+    } 
     else if (m_activeNodeType.equals("bookmark")) {
       parameters.put("EditMode", "AddBookmark");
       transformXML(out, "add_node", getBookmarkXML(), parameters);
-    }
+    } 
     else if (m_activeNodeType.equals("folder")) {
       parameters.put("EditMode", "AddFolder");
       transformXML(out, "add_node", getBookmarkXML(), parameters);
-    }
+    } 
     else {
-      Logger.log(Logger.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
@@ -628,19 +626,19 @@ public class CBookmarks implements IXMLChannel {
   private void renderDeleteNodeXML (DocumentHandler out) throws org.xml.sax.SAXException {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      Logger.log(Logger.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
       renderViewModeXML(out);
-    }
+    } 
     else if (m_activeNodeType.equals("bookmark")) {
       parameters.put("EditMode", "DeleteBookmark");
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
-    }
+    } 
     else if (m_activeNodeType.equals("folder")) {
       parameters.put("EditMode", "DeleteFolder");
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
-    }
+    } 
     else {
-      Logger.log(Logger.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
@@ -657,11 +655,11 @@ public class CBookmarks implements IXMLChannel {
     } catch (java.io.IOException ioe) {
       // Clear the cache because there's something wrong with it
       m_cachedContent = null;
-      Logger.log(Logger.ERROR, ioe);
+      LogService.instance().log(LogService.ERROR, ioe);
     } catch (org.xml.sax.SAXException se) {
       // Clear the cache because there's something wrong with it
       m_cachedContent = null;
-      Logger.log(Logger.ERROR, se);
+      LogService.instance().log(LogService.ERROR, se);
     }
   }
 
@@ -684,9 +682,11 @@ public class CBookmarks implements IXMLChannel {
    */
   private void transformXML (DocumentHandler out, String styleSheetName, DocumentImpl inputXML, Hashtable parameters) {
     try {
+      // Get the stylesheet object from the stylesheet set
       XSLTInputSource stylesheet = m_styleSheetSet.getStylesheet(styleSheetName, runtimeData.getHttpRequest());
       if (stylesheet != null) {
         StringWriter stringWriter = new StringWriter();
+        // Create an instance of an XSLT processor
         XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
         if (parameters != null) {
           Enumeration keys = parameters.keys();
@@ -697,23 +697,21 @@ public class CBookmarks implements IXMLChannel {
         }
         // Pass the baseActionURL down to the stylesheet
         processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
-
         // Pass the location of the image files down to the stylesheet
         //String imagesURL = "stylesheets/org/jasig/portal/channels/CBookmarks/";
         //processor.setStylesheetParam("imagesURL", processor.createXString(imagesURL));
-
         // Perform the XSLT transformation and store the result in a string writer
         processor.process(new XSLTInputSource(inputXML), stylesheet, new XSLTResultTarget(stringWriter));
         // Cache the result of the XSLT transformation
         m_cachedContent = stringWriter.toString();
         // Display the content to the user
         outputContent(out);
-      }
+      } 
       else {
-        Logger.log(Logger.ERROR, "BookmarksChannel.processXML() - Unable to load stylesheet: " + styleSheetName);
+        LogService.instance().log(LogService.ERROR, "BookmarksChannel.processXML() - Unable to load stylesheet: " + styleSheetName);
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -765,7 +763,7 @@ public class CBookmarks implements IXMLChannel {
       RdbmServices rdbmServices = new RdbmServices();
       return  (rdbmServices.getConnection());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -779,12 +777,17 @@ public class CBookmarks implements IXMLChannel {
       RdbmServices rdbmServices = new RdbmServices();
       rdbmServices.releaseConnection(connection);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
-  private int getUserId (String userName) throws SQLException
-  {
+  /**
+   * put your documentation comment here
+   * @param userName
+   * @return 
+   * @exception SQLException
+   */
+  private int getUserId (String userName) throws SQLException {
     Connection connection = getConnection();
     String query = "SELECT ID FROM PORTAL_USERS WHERE USER_NAME='" + userName + "'";
     Statement stmt = connection.createStatement();
@@ -792,11 +795,16 @@ public class CBookmarks implements IXMLChannel {
     rs.next();
     int userid = rs.getInt(1);
     releaseConnection(connection);
-    return userid;
+    return  userid;
   }
 
-  private String getUserName (int userId) throws SQLException
-  {
+  /**
+   * put your documentation comment here
+   * @param userId
+   * @return 
+   * @exception SQLException
+   */
+  private String getUserName (int userId) throws SQLException {
     Connection connection = getConnection();
     String query = "SELECT USER_NAME FROM PORTAL_USERS WHERE ID=" + userId;
     Statement stmt = connection.createStatement();
@@ -804,7 +812,7 @@ public class CBookmarks implements IXMLChannel {
     rs.next();
     String userName = rs.getString(1);
     releaseConnection(connection);
-    return userName;
+    return  userName;
   }
 
   /**
@@ -813,24 +821,23 @@ public class CBookmarks implements IXMLChannel {
    * @author Ken Weiner, kweiner@interactivebusiness.com
    * @version $Revision$
    */
-  public class DTDResolver implements EntityResolver
-  {
-    private String pathToDtd = org.jasig.portal.UtilitiesBean.getPortalBaseDir() + "webpages" + java.io.File.separator + "dtd" + java.io.File.separator;
+  public class DTDResolver
+      implements EntityResolver {
+    private String pathToDtd = org.jasig.portal.UtilitiesBean.getPortalBaseDir() + "webpages" + java.io.File.separator + 
+        "dtd" + java.io.File.separator;
     private String dtdName = null;
 
     /**
      * Constructor for DTDResolver
      */
-    public DTDResolver ()
-    {
+    public DTDResolver () {
     }
 
     /**
      * Constructor for DTDResolver
      * @param dtdName the name of the dtd
      */
-    public DTDResolver (String dtdName)
-    {
+    public DTDResolver (String dtdName) {
       this.dtdName = dtdName;
     }
 
@@ -840,27 +847,19 @@ public class CBookmarks implements IXMLChannel {
      * @param systemId the system ID
      * @return an input source based on the dtd specified in the xml document
      */
-    public InputSource resolveEntity (String publicId, String systemId)
-    {
+    public InputSource resolveEntity (String publicId, String systemId) {
       java.io.FileReader fr = null;
       InputSource inSrc = null;
-
-      try
-      {
-        if (systemId != null)
-        {
+      try {
+        if (systemId != null) {
           if (dtdName != null && systemId.indexOf(dtdName) != -1)
             fr = new java.io.FileReader(pathToDtd + dtdName);
-
           inSrc = new InputSource(fr);
         }
+      } catch (java.io.FileNotFoundException fnfe) {
+        LogService.instance().log(LogService.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
       }
-      catch (java.io.FileNotFoundException fnfe)
-      {
-        Logger.log(Logger.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
-      }
-
-      return inSrc;
+      return  inSrc;
     }
   }
 }
