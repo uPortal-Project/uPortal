@@ -12,6 +12,7 @@ import java.util.Map;
 public class ChannelStaticData extends java.util.Hashtable
 {
     private String sChannelID = null;
+    private long l_timeOut=java.lang.Long.MAX_VALUE;
   
     // Parameters are strings !
     /**
@@ -60,6 +61,10 @@ public class ChannelStaticData extends java.util.Hashtable
      * @return the channel's ID
      */
     public String getChannelID () {return sChannelID;}  
+
+
+    public void setTimeout(long value) { this.l_timeOut=value; }
+    public long getTimeout() { return this.l_timeOut; }
 }
     
     

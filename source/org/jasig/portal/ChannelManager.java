@@ -27,18 +27,22 @@ public class ChannelManager {
     private HttpServletResponse res;
     
     private Hashtable channelTable;
+    private Hashtable rendererTable;
 
     private String channelTarget;
     private Hashtable targetParams;
     
     
-    public ChannelManager(){ channelTable=new Hashtable();};
+    public ChannelManager(){ channelTable=new Hashtable(); rendererTable=new Hashtable();};
     public ChannelManager(HttpServletRequest request,HttpServletResponse response) {
 	this();
 	this.req=request; this.res=response;
     }
     public void setReqNRes(HttpServletRequest request,HttpServletResponse response) {
 	this.req=request; this.res=response;
+	
+	rendererTable.clear();
+
 	processRequestChannelParameters(request);
     }
 
@@ -65,6 +69,73 @@ public class ChannelManager {
 		}
 	    }
 	}
+    }
+
+    /**
+     * Start rendering the channel in a separate thread.
+     * This function retreives a particular channel from cache, passes parameters to the
+     * channel and then creates a new ChannelRenderer object to render the channel in a
+     * separate thread.
+     * @param chanID channel ID (unique)
+     * @param className name of the channel class
+     * @param params a table of parameters
+     */
+
+    public void startChannelRendering(String chanID, String className, long timeOut, Hashtable params) {
+	try{
+	    // see if the channel is cached
+	    IXMLChannel ch;
+	    if((ch=(IXMLChannel) channelTable.get(chanID))==null) {
+		ch = (org.jasig.portal.IXMLChannel) Class.forName (className).newInstance ();
+		// construct a ChannelStaticData object 
+		ChannelStaticData sd=new ChannelStaticData();
+		sd.setChannelID(chanID);
+		sd.setTimeout(timeOut);
+		sd.setParameters( params);
+		ch.setStaticData(sd);
+		channelTable.put(chanID,ch);
+	    }
+
+	    // set up RuntimeData for the channel
+	    Hashtable chParams=new Hashtable();
+	    if(chanID.equals(channelTarget)) chParams=targetParams;
+	    //	    RuntimeData rd=new ChannelRuntimeData(req,res,chanID,"index.jsp?channelTarget="+chanID+"&",chParams);
+	    ChannelRuntimeData rd=new ChannelRuntimeData();
+	    rd.setParameters(chParams);
+	    rd.setHttpRequest(req);
+	    String reqURI=req.getRequestURI();
+	    reqURI=reqURI.substring(reqURI.lastIndexOf("/")+1,reqURI.length());
+	    rd.setBaseActionURL(reqURI+"?channelTarget="+chanID+"&");
+	    ch.setRuntimeData(rd);
+
+	    ChannelRenderer cr=new ChannelRenderer(ch);
+	    cr.setTimeout(timeOut);
+	    cr.startRendering();
+	    rendererTable.put(chanID,cr);
+
+	} catch (Exception e) { Logger.log(Logger.ERROR,e); }	
+    }
+
+    /**
+     * Output channel content. 
+     * Note that startChannelRendering had to be invoked on this channel prior to calling this function.
+     * @param chanID unique channel ID
+     * @param dh document handler that will receive channel content
+     */
+
+    public void outputChannel(String chanID, DocumentHandler dh) {
+	try {
+	    ChannelRenderer cr;
+	    if((cr=(ChannelRenderer) rendererTable.get(chanID))!=null) {
+		ChannelSAXStreamFilter custodian=new ChannelSAXStreamFilter(dh);
+		int out=cr.outputRendering(custodian);
+		
+		//		Logger.log(Logger.DEBUG,"ChannelManager::outputChannel() : outputRendering() = "+Integer.toString(out));
+	    } else {
+		Logger.log(Logger.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanID=\""+chanID+"\" is absent from cache !!!");
+	    }
+	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
+
     }
 
     /**
@@ -102,6 +173,7 @@ public class ChannelManager {
 	    rd.setBaseActionURL(reqURI+"?channelTarget="+chanID+"&");
 	    ch.setRuntimeData(rd);
 	    ch.renderXML(custodian);
+
 	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
     }
 

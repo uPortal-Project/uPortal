@@ -103,6 +103,10 @@ public class LayoutBean extends GenericPortalBean
 	//              |
 	//        HeaderAndFooterIncorporation filter
 	//              |
+	//        sLayout2html filter
+	//              |
+	//        ChannelRendering buffer
+	//              |
 	//        ChannelIncorporation filter
 	//              |
 	//        Serializer (XHTML/WML/HTML/etc.)
@@ -142,11 +146,16 @@ public class LayoutBean extends GenericPortalBean
 	    if(channelManager==null) channelManager=new ChannelManager(req,res);
 	    else channelManager.setReqNRes(req,res);
 
+
+
 	    // initialize ChannelIncorporationFilter
 	    ChannelIncorporationFilter cf = new ChannelIncorporationFilter(markupSerializer,channelManager);
 
+	    // initialize ChannelRenderingBuffer
+	    ChannelRenderingBuffer crb= new ChannelRenderingBuffer(cf,channelManager);
+
 	    sLayoutProcessor.processStylesheet(structuredLayoutSS.getStylesheet(req));
-	    sLayoutProcessor.setDocumentHandler(cf);
+	    sLayoutProcessor.setDocumentHandler(crb);
 
 	    // deal with parameters that are meant for the LayoutBean
 	    HttpSession session = req.getSession (false);
