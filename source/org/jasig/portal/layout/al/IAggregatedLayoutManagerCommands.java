@@ -9,7 +9,6 @@ package org.jasig.portal.layout.al;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.ILayoutManagerCommands;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
-import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
