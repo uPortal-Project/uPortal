@@ -39,7 +39,6 @@
 package  org.jasig.portal.channels;
 
 import  org.jasig.portal.*;
-import  java.io.File;
 import  java.io.IOException;
 import  java.util.Hashtable;
 import  java.net.URL;
@@ -47,6 +46,7 @@ import  java.net.MalformedURLException;
 import  org.xml.sax.DocumentHandler;
 import  org.xml.sax.SAXException;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
 
 
 /**
@@ -62,22 +62,10 @@ import  org.jasig.portal.utils.XSLT;
  */
 public class CInlineFrame extends BaseChannel {
   protected String srcUrl;      // the url for the IFrame content
-  protected String frameHeight;                 // the height of the IFrame in pixels
-  private static final String fs = File.separator;
-  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir();
-  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig"
-      + fs + "portal" + fs + "channels" + fs + "CInlineFrame";
-  private static final String sslLocation = UtilitiesBean.fixURI(stylesheetDir + fs + "CInlineFrame.ssl");
+  protected String frameHeight; // the height of the IFrame in pixels
+  
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/CInlineFrame.ssl");
   private static URL m_sslURL = null;
-  private static final MediaManager mm = new MediaManager();
-  private String media;
-
-  /**
-   * Discover browser via MediaManager and save for render time
-   */
-  public void setRuntimeData (ChannelRuntimeData rd) {
-    runtimeData = rd;
-  }
 
   /**
    * Get channel parameters: url, height and name
@@ -97,19 +85,14 @@ public class CInlineFrame extends BaseChannel {
         // Create a URL out of the stylesheet list url
         m_sslURL = new URL(sslLocation);
       } catch (MalformedURLException mue) {
-        Logger.log(Logger.ERROR, "CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
+        LogService.instance().log(LogService.ERROR, "CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
         throw  new GeneralRenderingException("CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
       }
     }
-    // Get the current media type
-    media = mm.getMedia(runtimeData.getBrowserInfo());
-    // Media type cannot be null
-    if (media == null) {
-      Logger.log(Logger.ERROR, "CInlineFrame.renderXML(): MediaManager.getMedia() returned null");
-      throw  new GeneralRenderingException("CInlineFrame.renderXML(): MediaManager.getMedia() returned null");
-    }
+
     // Get the title of the stylesheet
     String ssTitle = getStylesheetTitle();
+    
     StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
     sbXML.append("<iframe>");
     sbXML.append("  <url>").append(srcUrl).append("</url>");
@@ -117,16 +100,17 @@ public class CInlineFrame extends BaseChannel {
     sbXML.append("</iframe>");
     try {
       // Perform the XLST transformation
-      XSLT.transform(sbXML.toString(), m_sslURL, out, ssTitle, media);
+      XSLT.transform(sbXML.toString(), m_sslURL, out, ssTitle, runtimeData.getBrowserInfo());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       throw  new GeneralRenderingException("CInlineFrame.renderXML(): XSLT.transform() threw exception - " + e.getMessage());
     }
   }
 
   /**
-   * put your documentation comment here
-   * @return 
+   * Uses the user agent string to determine which stylesheet title to use.
+   * We wouldn't need this method if stylesheet sets could distinguish between browser versions
+   * @return ssTitle the stylesheet title
    */
   private String getStylesheetTitle () {
     String ssTitle = "noIFrameSupport";
