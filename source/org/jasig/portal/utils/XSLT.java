@@ -38,6 +38,7 @@ package  org.jasig.portal.utils;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.BrowserInfo;
@@ -88,11 +89,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, Hashtable, String, BrowserInfo)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -115,10 +115,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -141,11 +140,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(String, URL, StringWriter, Hashtable, String, BrowserInfo)}
    */
-  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -171,10 +169,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -198,11 +195,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, String, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, media);
   }
 
@@ -215,10 +211,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
   }  
   
@@ -232,12 +227,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, Hashtable, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException,
-      IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, stylesheetParams, (String)null, media);
   }
 
@@ -251,10 +244,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
@@ -266,11 +258,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, (Hashtable)null, (String)null, media);
   }
 
@@ -282,10 +273,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (String xml, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xml, sslUri, out, (Hashtable)null, (String)null, browserInfo);
   }
     
@@ -300,11 +290,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, Hashtable, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -327,10 +316,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -353,11 +341,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, StringWriter, Hashtable, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -380,10 +367,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
@@ -404,12 +390,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException,
-      IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, (Hashtable)null, stylesheetTitle, media);
   }
 
@@ -422,10 +406,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
   }  
   
@@ -439,11 +422,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, Hashtable, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, media);
   }
 
@@ -457,10 +439,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
@@ -474,11 +455,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, StringWriter, Hashtable, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, media);
   }
 
@@ -492,10 +472,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
@@ -507,11 +486,10 @@ public class XSLT {
    * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, (Hashtable)null, (String)null, media);
   }
 
@@ -523,10 +501,9 @@ public class XSLT {
    * @param browserInfo the browser information
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   * @throws org.jasig.portal.GeneralRenderingException
+   * @throws org.jasig.portal.PortalException
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     transform(xmlDoc, sslUri, out, (Hashtable)null, (String)null, browserInfo);
   }  
   
@@ -669,6 +646,19 @@ public class XSLT {
     }
     return  stylesheetRoot;
   }
+  
+  /**
+   * Returns a stylesheet URI.
+   * @param sslUri the stylesheet list file URI
+   * @param browserInfo the browser information
+   * @return the stylesheet URI as a string
+   * @throws org.jasig.portal.PortalException
+   */
+  public static String getStylesheetURI (String sslUri, BrowserInfo browserInfo) throws PortalException {
+    StylesheetSet set = new StylesheetSet(sslUri);
+    String xslUri = set.getStylesheetURI(browserInfo);
+    return  xslUri;
+  }  
 }
 
 
