@@ -68,6 +68,10 @@ public interface GroupsManagerConstants {
    // contexts in the groups management channel
    String ROOT_GROUP_TITLE = "My Groups";
    String ROOT_GROUP_DESCRIPTION = "Set of Initial Group Contexts for this user";
+   
+   String BROWSE_MODE = "browse";
+   String EDIT_MODE = "edit";
+   String SELECT_MODE = "select";
 
    /** @todo Have to externalize all message strings in order to be "international"
     *  These strings will eventually be held in a properties file so languages can
