@@ -1188,10 +1188,6 @@
 
     <xsl:call-template name="workflow"/>
 
-    <!-- form begin -->
-    <form name="workflow" method="post" action="{$baseActionURL}">
-      <input type="hidden" name="uPCM_action" value="changeMe"/>
-      <input type="hidden" name="uPCM_capture" value="selectCategories"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
 
@@ -1302,6 +1298,11 @@
                         <td align="left" valign="top">
                           <xsl:choose>
                             <xsl:when test="$catID = 'top' or $catID = 'all'">
+
+                              <form name="selectCategory" method="post" action="{$baseActionURL}">
+                                <input type="hidden" name="uPCM_action" value="selectCategories"/>
+                                <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+
                               <table width="100%" border="0">
                                   <tr>
                                     <td nowrap="nowrap" align="left" valign="top">
@@ -1326,15 +1327,21 @@
                                     </xsl:otherwise>
                                   </xsl:choose>
 -->                                </select>
-                                      <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
-                                      <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
+                                      <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                      <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
                                     </td>
                                   </tr>
                               </table>
+                              </form>
                             </xsl:when>
                             <xsl:otherwise>
                               <xsl:for-each select="//registry//category[@ID=$catID]">
                                 <xsl:for-each select="ancestor-or-self::category">
+
+                                  <form name="selectCategory" method="post" action="{$baseActionURL}">
+                                    <input type="hidden" name="uPCM_action" value="selectCategories"/>
+                                    <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+
                                   <table width="100%" border="0">
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
@@ -1368,11 +1375,12 @@
                                       </xsl:if>
 -->                                    </select>
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                          <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
-                                          <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
                                   </table>
+                                  </form>
                                 </xsl:for-each>
                                 <xsl:if test="child::category">
                                   <table width="100%" border="0" class="uportal-channel-text">
@@ -1382,6 +1390,9 @@
                                       </td>
                                     </tr>
                                   </table>
+                                  <form name="selectCategory" method="post" action="{$baseActionURL}">
+                                    <input type="hidden" name="uPCM_action" value="selectCategories"/>
+                                    <input type="hidden" name="uPCM_capture" value="selectCategories"/>
                                   <table width="100%" border="0">
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
@@ -1398,11 +1409,12 @@
                                             <option value=" " selected="selected">Select a subcategory</option>
                                           </select>
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                          <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
-                                          <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
                                   </table>
+                                  </form>
                                 </xsl:if>
                               </xsl:for-each>
                             </xsl:otherwise>
@@ -1625,6 +1637,11 @@
         </td>
       </tr>
 
+      <!-- form begin -->
+      <form name="workflow" method="post" action="{$baseActionURL}">
+        <input type="hidden" name="uPCM_action" value="changeMe"/>
+        <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+
       <tr>
         <td>
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
@@ -1633,18 +1650,21 @@
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
       </tr>
+
+      </form>
+      <!-- form end -->
+
     </table>
-    </form>
-    <!-- form end -->
   </xsl:template>
 
   <xsl:template name="selectRoles">
     <xsl:call-template name="workflow"/>
 
+    <!-- form begin -->
+    <form name="workflow" method="post" action="{$baseActionURL}">
+      <input type="hidden" name="uPCM_action" value="changeMe"/>
+      <input type="hidden" name="uPCM_capture" value="channelDef"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <!-- form begin -->
-
-
 
       <tr class="uportal-channel-text">
 
@@ -1779,15 +1799,17 @@
         </td>
       </tr>
 
-
-
       <tr>
-
         <td>
-          <input type="submit" name="Submit423" value="&lt; Back" class="uportal-button"/> <input type="submit" name="Submit323" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit535" value="Review" class="uportal-button"/> <input type="submit" name="Submit85" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+        </td>
       </tr>
-      <!-- form end -->
     </table>
+    </form>
+    <!-- form end -->
   </xsl:template>
 
   <xsl:template name="reviewChannel">
