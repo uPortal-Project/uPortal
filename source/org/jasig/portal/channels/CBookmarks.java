@@ -18,7 +18,7 @@ import com.objectspace.xml.*;
 public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IChannel                         
 { 
   // This should come from a database
-  private File xmlFile = new File (getPortalBaseDir () + "source\\org\\jasig\\portal\\channels\\bookmarks\\bookmarks.xml");
+  private File xmlFile = new File (getPortalBaseDir () + "source" + File.separator + "org" + File.separator + "jasig" + File.separator + "portal" + File.separator + "channels" + File.separator + "bookmarks" + File.separator + "bookmarks.xml");
   private String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
   
   public String getName () {return "My Bookmarks";}
