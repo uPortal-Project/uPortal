@@ -48,12 +48,12 @@ import org.jasig.portal.utils.SqlTransaction;
  * Reference implementation of IPermissionStore.  Performs CRUD operations
  * on the UP_Permission table.
  * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$ 
+ * @version $Revision$
  */
 public class PermissionImplRDBM implements IPermissionStore {
 
     private static PermissionImplRDBM singleton;
-	
+
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
     private static String OWNER_COLUMN =     "OWNER";
@@ -79,7 +79,7 @@ public PermissionImplRDBM() {
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void add(IPermission[] perms) throws AuthorizationException 
+public void add(IPermission[] perms) throws AuthorizationException
 {
     if ( perms.length > 0 )
     {
@@ -88,7 +88,7 @@ public void add(IPermission[] perms) throws AuthorizationException
             primAdd(perms);
         }
         catch (SQLException sqle)
-        { 
+        {
             LogService.log (LogService.ERROR, sqle);
             throw new AuthorizationException(sqle.getMessage());
         }
@@ -99,21 +99,22 @@ public void add(IPermission[] perms) throws AuthorizationException
  * @param perm org.jasig.portal.security.IPermission
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void add(IPermission perm) throws AuthorizationException 
+public void add(IPermission perm) throws AuthorizationException
 
 {
     Connection conn = null;
     int rc = 0;
 
     try
-    {   
+    {
         conn = RdbmServices.getConnection();
         String sQuery = getInsertPermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.add(): " + sQuery); 
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
         {
-            rc = primAdd(perm, ps);
+            primAdd(perm, ps);
+            LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.add(): " + ps);
+            rc = ps.executeUpdate();
             if ( rc != 1 )
                 { throw new AuthorizationException("Problem adding Permission " + perm); }
         }
@@ -132,7 +133,7 @@ public void add(IPermission perm) throws AuthorizationException
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-protected static void commit(Connection conn) throws java.sql.SQLException 
+protected static void commit(Connection conn) throws java.sql.SQLException
 {
     SqlTransaction.commit(conn);
 }
@@ -141,7 +142,7 @@ protected static void commit(Connection conn) throws java.sql.SQLException
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void delete(IPermission[] perms) throws AuthorizationException 
+public void delete(IPermission[] perms) throws AuthorizationException
 {
     if ( perms.length > 0 )
     {
@@ -150,7 +151,7 @@ public void delete(IPermission[] perms) throws AuthorizationException
             primDelete(perms);
         }
         catch (SQLException sqle)
-        { 
+        {
             LogService.log (LogService.ERROR, sqle);
             throw new AuthorizationException(sqle.getMessage());
         }
@@ -161,7 +162,7 @@ public void delete(IPermission[] perms) throws AuthorizationException
  * @param perm org.jasig.portal.security.IPermission
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void delete(IPermission perm) throws AuthorizationException 
+public void delete(IPermission perm) throws AuthorizationException
 
 {
     Connection conn = null;
@@ -169,7 +170,7 @@ public void delete(IPermission perm) throws AuthorizationException
     {
         conn = RdbmServices.getConnection();
         String sQuery = getDeletePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.delete(): " + sQuery); 
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.delete(): " + sQuery);
         PreparedStatement ps = conn.prepareStatement(sQuery);
         try
             { primDelete(perm, ps); }
@@ -188,9 +189,9 @@ public void delete(IPermission perm) throws AuthorizationException
  * Answer if this entity exists in the database.
  * @return boolean
  * @param perm org.jasig.portal.security.IPermission
- * @exception java.sql.SQLException 
+ * @exception java.sql.SQLException
  */
-public boolean existsInDatabase(IPermission perm) throws SQLException 
+public boolean existsInDatabase(IPermission perm) throws SQLException
 {
     Connection conn = null;
     ResultSet rs = null;
@@ -198,7 +199,7 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
     {
         conn = RdbmServices.getConnection();
         String sQuery = getFindPermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.existsInDatabase(): " + sQuery); 
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.existsInDatabase(): " + sQuery);
         PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
@@ -213,7 +214,7 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
             { rs.close(); }
     }
     catch (SQLException sqle)
-    { 
+    {
         LogService.log (LogService.ERROR, sqle);
         throw sqle;
     }
@@ -226,7 +227,7 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
 /**
  * @return java.lang.String
  */
-private static String getDeletePermissionSql() 
+private static String getDeletePermissionSql()
 {
     if ( deletePermissionSql == null )
     {
@@ -251,7 +252,7 @@ private static String getDeletePermissionSql()
  * Creation date: (11/6/01 5:19:57 PM)
  * @return java.lang.String
  */
-private static java.lang.String getFindPermissionSql() 
+private static java.lang.String getFindPermissionSql()
 {
     if ( findPermissionSql == null )
     {
@@ -274,7 +275,7 @@ private static java.lang.String getFindPermissionSql()
 /**
  * @return java.lang.String
  */
-private static String getInsertPermissionSql() 
+private static String getInsertPermissionSql()
 {
     if ( insertPermissionSql == null )
     {
@@ -303,7 +304,7 @@ private static String getInsertPermissionSql()
 /**
  * @return java.lang.String
  */
-private static String getSelectPermissionSql() 
+private static String getSelectPermissionSql()
 {
     if ( selectPermissionSql == null )
     {
@@ -312,7 +313,7 @@ private static String getSelectPermissionSql()
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(", ");
         sqlBuff.append(PRINCIPAL_COLUMN);
-        sqlBuff.append(", ");	    
+        sqlBuff.append(", ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(", ");
         sqlBuff.append(TARGET_COLUMN);
@@ -332,7 +333,7 @@ private static String getSelectPermissionSql()
 /**
  * @return java.lang.String
  */
-private static String getUpdatePermissionSql() 
+private static String getUpdatePermissionSql()
 {
     if ( updatePermissionSql == null )
     {
@@ -377,7 +378,7 @@ private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 /**
  * Factory method for IPermissions
  */
-public IPermission newInstance(String owner) 
+public IPermission newInstance(String owner)
 {
     return new PermissionImpl(owner);
 }
@@ -395,21 +396,22 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
     {
         conn = RdbmServices.getConnection();
         String sQuery = getInsertPermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primAdd(): " + sQuery); 
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
         {
-            setAutoCommit(conn, false);
+            RdbmServices.setAutoCommit(conn, false);
 
             for ( int i=0; i<perms.length; i++ )
             {
-                rc = primAdd(perms[i], ps);
+                primAdd(perms[i], ps);
+                LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primAdd(): " + ps);
+                rc = ps.executeUpdate();
 
                 if ( rc != 1 )
                 {
     	            String errMsg = "Problem adding " + perms[i] + " RC: " + rc;
                     LogService.log (LogService.ERROR, errMsg);
-                    rollback(conn);
+                    RdbmServices.rollback(conn);
                     throw new AuthorizationException(errMsg);
                 }
             }
@@ -417,19 +419,19 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
         finally
             { ps.close(); }
 
-        commit(conn);
+        RdbmServices.commit(conn);
 
     }
     catch (SQLException sqle)
     {
         LogService.log (LogService.ERROR, sqle);
-        rollback(conn); 
+        RdbmServices.rollback(conn);
         throw sqle;
     }
     finally
-    { 
-        setAutoCommit(conn, true);
-        RdbmServices.releaseConnection(conn); 
+    {
+        RdbmServices.setAutoCommit(conn, true);
+        RdbmServices.releaseConnection(conn);
     }
 }
 /**
@@ -439,7 +441,7 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private int primAdd(IPermission perm, PreparedStatement ps) throws SQLException
+private void primAdd(IPermission perm, RdbmServices.PreparedStatement ps) throws SQLException
 {
     java.sql.Date date = null;
 
@@ -457,9 +459,9 @@ private int primAdd(IPermission perm, PreparedStatement ps) throws SQLException
     if ( perm.getEffective() == null )
    	    { ps.setNull(6, Types.DATE); }
 	else
-        { 
+        {
             date = new java.sql.Date(perm.getEffective().getTime());
-            ps.setDate(6, date); 
+            ps.setDate(6, date);
         }
     // EXPIRES:
     if ( perm.getExpires() == null )
@@ -469,7 +471,6 @@ private int primAdd(IPermission perm, PreparedStatement ps) throws SQLException
             date = new java.sql.Date(perm.getExpires().getTime());
             ps.setDate(7, date);
         }
-    return ps.executeUpdate();
 }
 /**
  * Delete the IPermissions from the store.
@@ -484,7 +485,7 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
     {
         conn = RdbmServices.getConnection();
         String sQuery = getDeletePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primDelete(): " + sQuery); 
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primDelete(): " + sQuery);
         PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
@@ -495,7 +496,7 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
         }
         finally
             { ps.close(); }
-		
+
         commit(conn);
 
     }
@@ -506,7 +507,7 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
         throw sqle;
     }
     finally
-    { 
+    {
         setAutoCommit(conn, true);
         RdbmServices.releaseConnection(conn);
     }
@@ -536,10 +537,10 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
     Connection conn = null;
 
     try
-    { 
+    {
         conn = RdbmServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primUpdate(): " + sQuery); 
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primUpdate(): " + sQuery);
         PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
@@ -550,7 +551,7 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
         }
         finally
             { ps.close(); }
-            
+
         commit(conn);
 
     }
@@ -561,9 +562,9 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
         throw sqle;
     }
     finally
-    { 
+    {
         setAutoCommit(conn, true);
-        RdbmServices.releaseConnection(conn); 
+        RdbmServices.releaseConnection(conn);
     }
 }
 /**
@@ -576,9 +577,9 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
 private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLException
 {
     java.sql.Date date = null;
-	
+
     // UPDATE COLUMNS:
-	
+
     // TYPE:
     if ( perm.getType() == null )
         { ps.setNull(1, Types.VARCHAR); }
@@ -588,9 +589,9 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLExcepti
     if ( perm.getEffective() == null )
         { ps.setNull(2, Types.DATE); }
     else
-    { 
+    {
         date = new java.sql.Date(perm.getEffective().getTime());
-        ps.setDate(2, date); 
+        ps.setDate(2, date);
     }
     // EXPIRES:
     if ( perm.getExpires() == null )
@@ -612,7 +613,7 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLExcepti
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-protected static void rollback(Connection conn) throws java.sql.SQLException 
+protected static void rollback(Connection conn) throws java.sql.SQLException
 {
     SqlTransaction.rollback(conn);
 }
@@ -620,16 +621,16 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
  * Select the Permissions from the store.
  * @param owner String - the Permission owner
  * @param principal String - the Permission principal
- * @param activity String - the Permission activity  
+ * @param activity String - the Permission activity
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
 public IPermission[] select
-    (String owner, 
-    String principal, 
-    String activity, 
-    String target, 
-    String type) 
-throws AuthorizationException 
+    (String owner,
+    String principal,
+    String activity,
+    String target,
+    String type)
+throws AuthorizationException
 {
     Connection conn = null;
     Statement stmnt = null;
@@ -638,7 +639,7 @@ throws AuthorizationException
 
     StringBuffer sqlQuery = new StringBuffer(getSelectPermissionSql());
     sqlQuery.append(" WHERE ");
-	
+
     if ( owner != null )
     {
         sqlQuery.append(OWNER_COLUMN);
@@ -650,9 +651,9 @@ throws AuthorizationException
     {
         sqlQuery.append("1 = 1 ");
     }
-	
+
     if ( principal != null )
-        { 
+        {
             sqlQuery.append("AND ");
             sqlQuery.append(PRINCIPAL_COLUMN);
             sqlQuery.append(" = '");
@@ -661,7 +662,7 @@ throws AuthorizationException
         }
 
     if ( activity != null )
-        { 
+        {
             sqlQuery.append("AND ");
             sqlQuery.append(ACTIVITY_COLUMN);
             sqlQuery.append(" = '");
@@ -670,7 +671,7 @@ throws AuthorizationException
         }
 
     if ( target != null )
-        { 
+        {
             sqlQuery.append("AND ");
             sqlQuery.append(TARGET_COLUMN);
             sqlQuery.append(" = '");
@@ -679,7 +680,7 @@ throws AuthorizationException
         }
 
     if ( type != null )
-        { 
+        {
             sqlQuery.append("AND ");
             sqlQuery.append(TYPE_COLUMN);
             sqlQuery.append(" = '");
@@ -687,12 +688,12 @@ throws AuthorizationException
             sqlQuery.append("' ");
         }
 
-    LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.select(): " + sqlQuery.toString()); 
+    LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.select(): " + sqlQuery.toString());
 
     try
     {
         conn = RdbmServices.getConnection();
-        stmnt = conn.createStatement();        
+        stmnt = conn.createStatement();
         try
         {
             rs = stmnt.executeQuery(sqlQuery.toString());
@@ -708,21 +709,21 @@ throws AuthorizationException
             { stmnt.close(); }
     }
     catch (SQLException sqle)
-    { 
+    {
         LogService.log (LogService.ERROR, sqle);
         throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage());
     }
     finally
         { RdbmServices.releaseConnection(conn); }
-    
-    return ((IPermission[])perms.toArray(new IPermission[perms.size()]));	
+
+    return ((IPermission[])perms.toArray(new IPermission[perms.size()]));
 }
 /**
  * @param conn java.sql.Connection
  * @param newValue boolean
  * @exception java.sql.SQLException The exception description.
  */
-protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException 
+protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
 {
     SqlTransaction.setAutoCommit(conn, newValue);
 }
@@ -740,7 +741,7 @@ public static synchronized PermissionImplRDBM singleton()
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void update(IPermission[] perms) throws AuthorizationException 
+public void update(IPermission[] perms) throws AuthorizationException
 {
     if ( perms.length > 0 )
     {
@@ -749,7 +750,7 @@ public void update(IPermission[] perms) throws AuthorizationException
             primUpdate(perms);
         }
         catch (SQLException sqle)
-        { 
+        {
             LogService.log (LogService.ERROR, sqle);
             throw new AuthorizationException(sqle.getMessage());
         }
@@ -760,7 +761,7 @@ public void update(IPermission[] perms) throws AuthorizationException
  * @param perm org.jasig.portal.security.IPermission
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
-public void update(IPermission perm) throws AuthorizationException 
+public void update(IPermission perm) throws AuthorizationException
 
 {
     Connection conn = null;
@@ -768,7 +769,7 @@ public void update(IPermission perm) throws AuthorizationException
     {
         conn = RdbmServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.update(): " + sQuery); 
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.update(): " + sQuery);
         PreparedStatement ps = conn.prepareStatement(sQuery);
         try
             { primUpdate(perm, ps); }

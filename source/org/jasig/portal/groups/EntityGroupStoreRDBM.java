@@ -137,11 +137,11 @@ public IEntityGroup find(String groupID) throws GroupsException
     {
 	    conn = RdbmServices.getConnection();
             String sql = getFindGroupSql();
-            LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.find(): " + sql);
-	    java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
 	    try
 	    {
 		    ps.setString(1, groupID);
+                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.find(): " + ps);
 		    java.sql.ResultSet rs = ps.executeQuery();
 		    try
 		    {
@@ -179,12 +179,12 @@ private java.util.Iterator findContainingGroups(String memberKey, int type) thro
     {
 	    conn = RdbmServices.getConnection();
             String sql = getFindContainingGroupsSql();
-            LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findContainingGroups(): " + sql);
-	    java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
 	    try
 	    {
 		    ps.setString(1, memberKey);
 		    ps.setInt(2, type);
+                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findContainingGroups(): " + ps);
 		    java.sql.ResultSet rs = ps.executeQuery();
 		    try
 		    {
@@ -237,11 +237,11 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
     {
 	    conn = RdbmServices.getConnection();
             String sql = getFindGroupsByCreatorSql();
-            LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findGroupsByCreator(): " + sql);
-	    PreparedStatement ps = conn.prepareStatement(sql);
+	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
         try
         {
 	        ps.setString(1, creatorID);
+                LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findGroupsByCreator(): " + ps);
 	        ResultSet rs = ps.executeQuery();
 	        try
 	        {
@@ -283,11 +283,11 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
     {
 	    conn = RdbmServices.getConnection();
             String sql = getFindMemberGroupsSql();
-            LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findMemberGroups(): " + sql);
-	    java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
 	    try
 	    {
 		    ps.setString(1, group.getKey());
+                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findMemberGroups(): " + ps);
 		    java.sql.ResultSet rs = ps.executeQuery();
 		    try
 		    {
