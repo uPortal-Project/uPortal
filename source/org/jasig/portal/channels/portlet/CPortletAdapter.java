@@ -37,9 +37,7 @@ package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +55,6 @@ import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.factory.PortletObjectAccess;
-import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.information.PortletActionProvider;
@@ -76,7 +73,6 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
-import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
@@ -92,6 +88,7 @@ import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
@@ -195,40 +192,23 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 throw new PortalException("Missing publish parameter '" + portletDefinitionIdParamName + "'");
             }
             
-            PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));
+            // Create the PortletDefinition
+            PortletDefinitionImpl portletDefinition = (PortletDefinitionImpl)InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));
             if (portletDefinition == null) {
                 throw new PortalException("Unable to find portlet definition for ID '" + portletDefinitionId + "'");
             }
-            
             ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(sd.getChannelPublishId()));
-            ((PortletDefinitionImpl)portletDefinition).setChannelDefinition(channelDefinition);      
-                    
+            portletDefinition.setChannelDefinition(channelDefinition);
+            portletDefinition.loadPreferences();
+            
+            // Create the PortletEntity
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());
             portletEntity.setPortletDefinition(portletDefinition);
-
-            // Take all parameters whose names start with "PORTLET." and pass them
-            // as portlet entity preferences (after stripping "PORTLET.")
-            PreferenceSetImpl preferences = new PreferenceSetImpl();
-            Enumeration allKeys = sd.keys();
-            while (allKeys.hasMoreElements()) {
-                String p = (String)allKeys.nextElement();
-                if (p.startsWith(portletPreferenceNamePrefix)) {
-                    String prefName = p.substring(portletPreferenceNamePrefix.length());
-                    String prefVal = (String)sd.getParameter(p);
-                    // Currently we are limited to one value per name
-                    // The Preference object supports multiple values per name.
-                    // We could consider a convention in which multi-valued preferences
-                    // are denoted by a comma-delimited String.  This is a little messy,
-                    // but we want to minimize changes to the framework in order to support
-                    // the Portlet adapter.
-                    List values = new ArrayList(1);
-                    values.add(prefVal);
-                    preferences.add(prefName, values);
-                }
-            }
-            
-            portletEntity.setPreferences(preferences);
+            portletEntity.setUserLayout(pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout());
+            portletEntity.setChannelDescription((IUserLayoutChannelDescription)pcs.getUserPreferencesManager().getUserLayoutManager().getNode(sd.getChannelSubscribeId()));
+            portletEntity.setPerson(sd.getPerson());
+            portletEntity.loadPreferences();
             
             // Add the user information into the request See PLT.17.2.
             Map userInfo = cd.getUserInfo();
