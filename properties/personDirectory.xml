@@ -17,9 +17,115 @@
 		This personDirectory.xml file is likely a temporary solution that will be replaced before uPortal 2.5 is released, in favor of
 		PersonDirectory discovering an ApplicationContext that might be shared with other components.
 		-->
+	
+	<!-- Legacy Person Directory configruation. This will read the config from PersonDirs.xml -->
 	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonDirectoryImpl">
-		<!-- the legacy implementation takes no configuration -->
 	</bean>
+	
+	<!-- Example Person Directory configuration using the Spring implementation -->
+	<!-- When removing this comment please find the lines that begin and end with - below and comment them out
+	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.PersonDirectoryImpl">
+		<property name="attributeSource">
+			
+			<bean id="mergeAttributeSource" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
+				<property name="personAttributeDaos">
+					<list>
+						
+						- JDBC Person Attribute Source, uses the default portal DataSource via RDBMServicesDataSource -
+						<bean id="uPortalJdbcAttributeSource" class="org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl">
+							<constructor-arg>
+								<bean id="myDataSource" class="org.jasig.portal.rdbm.RDBMServicesDataSource"/>
+							</constructor-arg> 
+					  		<constructor-arg>
+					  			<value>
+					  				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL 
+					  				FROM UP_PERSON_DIR 
+					  				WHERE USER_NAME=?
+				  				</value>
+			  				</constructor-arg>
+							
+							<property name="columnsToAttributes">
+								<map>
+								    <entry key="FIRST_LAST">	<value>displayName</value></entry>
+								    <entry key="FIRST_NAME">	<value>givenName</value></entry>
+					                <entry key="EMAIL">			<value>mail</value></entry>
+					                <entry key="LAST_NAME">		<value>sn</value></entry>
+					                <entry key="FIRST_NAME">	<value>user.name.given</value></entry>
+					                <entry key="LAST_NAME">		<value>user.name.family</value></entry>
+					                <entry key="EMAIL">			<value>user.home-info.online.email</value></entry>
+								</map>
+							</property>
+						</bean>
+						
+						- LDAP Person Attribute Source, uses the default ILdapServer via the LdapServices.getDefaultLdapServer method call -
+						<bean id="uPortalLdapAttributeSource" class="org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl">
+							<property name="ldapServer">
+								<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+									<property name="staticMethod">
+										<value>org.jasig.portal.ldap.LdapServices.getDefaultLdapServer</value>
+	                                </property>
+								</bean>
+							</property>
+							<property name="uidQuery">
+								<value>(cn={0})</value>
+							</property>
+							<property name="ldapAttributesToPortalAttributes">
+								<map>
+						            <entry key="uPortalTemplateUserName">       <value>eduPersonPrimaryAffiliation</value></entry>
+						
+						            <entry key="eduPersonAffiliation">          <value>eduPersonAffiliation</value></entry>
+						            <entry key="eduPersonNickname">             <value>eduPersonNickname</value></entry>
+						            <entry key="eduPersonOrgDN">                <value>eduPersonOrgDN</value></entry>
+						            <entry key="eduPersonOrgUnitDN">            <value>eduPersonOrgUnitDN</value></entry>
+						            <entry key="eduPersonPrimaryAffiliation">   <value>eduPersonPrimaryAffiliation</value></entry>
+						            <entry key="eduPersonPrincipalName">        <value>eduPersonPrincipalName</value></entry>
+						            <entry key="c">                             <value>c</value></entry>
+						            <entry key="cn">                            <value>cn</value></entry>
+						            <entry key="description">                   <value>description</value></entry>
+						            <entry key="displayName">                   <value>displayName</value></entry>
+						            <entry key="facsimileTelephoneNumber">      <value>facsimileTelephoneNumber</value></entry>
+						            <entry key="givenName">                     <value>givenName</value></entry>
+						            <entry key="homePhone">                     <value>homePhone</value></entry>
+						            <entry key="homePostalAddress">             <value>homePostalAddress</value></entry>
+						            <entry key="initials">                      <value>initials</value></entry>
+						            <entry key="jpegPhoto">                     <value>jpegPhoto</value></entry>
+						            <entry key="l">                             <value>l</value></entry>
+						            <entry key="labeledURI">                    <value>labeledURI</value></entry>
+						            <entry key="mail">                          <value>mail</value></entry>
+						            <entry key="mobile">                        <value>mobile</value></entry>
+						            <entry key="o">                             <value>o</value></entry>
+						            <entry key="ou">                            <value>ou</value></entry>
+						            <entry key="pager">                         <value>pager</value></entry>
+						            <entry key="postalAddress">                 <value>postalAddress</value></entry>
+						            <entry key="postalCode">                    <value>postalCode</value></entry>
+						            <entry key="postOfficeBox">                 <value>postOfficeBox</value></entry>
+						            <entry key="preferredLanguage">             <value>preferredLanguage</value></entry>
+						            <entry key="seeAlso">                       <value>seeAlso</value></entry>
+						            <entry key="sn">                            <value>sn</value></entry>
+						            <entry key="st">                            <value>st</value></entry>
+						            <entry key="street">                        <value>street</value></entry>
+						            <entry key="telephoneNumber">               <value>telephoneNumber</value></entry>
+						            <entry key="uid">                           <value>uid</value></entry>
+						            <entry key="userCertificate">               <value>userCertificate</value></entry>
+						            <entry key="userSMIMECertificate">          <value>userSMIMECertificate</value></entry>
+						
+						            <entry key="user.employer">                 <value>eduPersonOrgDN</value></entry>
+						            <entry key="user.department">               <value>eduPersonOrgUnitDN</value></entry>
+						            <entry key="user.name.given">               <value>givenName</value></entry>
+						            <entry key="user.name.family">              <value>sn</value></entry>
+						            <entry key="user.name.nickName">            <value>eduPersonNickname</value></entry>
+						            <entry key="user.home-info.online.email">   <value>mail</value></entry>
+								</map>
+							</property>
+						</bean>
+						
+					</list>
+				</property>
+			</bean>
+			
+		</property>
+	</bean>
+	-->
 </beans>
 
 <!-- CVS metadata: $Revision$ $Date$ -->
