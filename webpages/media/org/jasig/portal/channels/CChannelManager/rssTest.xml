@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manageChannels>
+  <selectChannelType>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Channel Type</name>
+        <channelTypes>
+          <channelType ID="0">
+            <class>org.jasig.portal.channels.CGenericXSLT</class>
+            <name>RSS (Rich Site Summary)</name>
+            <description>RSS or Rich Site Summary, the most common channel
+            format, is a channel which has its content defined through
+            an XML document. Anyone may publish an RSS channel as long
+            as the specification is adhered to and the file is stored on
+            a publicly accessible web server. You will need to provide a
+            URL for the RSS file.</description>
+            <definition>webpages/media/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</definition>
+          </channelType>
+          <channelType ID="1">
+            <class>org.jasig.portal.channels.CGenericXSLT</class>
+            <name>Simple XML Transformation</name>
+            <description>XSL renders XML to a particular style, is a channel
+            which has its content defined through an XML document.
+            Anyone may publish an XSL channel as long as the
+            specification is adhered to and the file is stored on a
+            publicly accessible web server. You will need to provide a
+            URL or Path for the XML and XSL file.</description>
+            <definition>webpages/media/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</definition>
+          </channelType>
+          <channelType ID="2">
+            <class>org.jasig.portal.channels.CInlineFrame</class>
+            <name>Inline Frame</name>
+            <description>The Inline Frame channel can be used to render an
+            HTML page within a frame. This channel does not work
+            correctly in browsers older than Internet Explorer 5 and
+            Netscape 6.</description>
+            <definition>webpages/media/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</definition>
+          </channelType>
+          <channelType ID="3">
+            <class>org.jasig.portal.channels.CImage</class>
+            <name>Image</name>
+            <description>Simple channel to display an image with optional
+            caption and subcaption</description>
+            <definition>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</definition>
+          </channelType>
+          <channelType ID="4">
+            <class>org.jasig.portal.channels.CWebProxy</class>
+            <name>Web Proxy</name>
+            <description>Incorporate a dynamic HTML or XML application</description>
+            <definition>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</definition>
+          </channelType>
+        </channelTypes>
+      </step>
+    </params>
+  </selectChannelType>
+  <selectGeneralSettings>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>General Settings</name>
+        <categories>
+          <catagory>
+          </catagory>
+        </categories>
+      </step>
+    </params>
+  </selectGeneralSettings>
+  <channelDef>
+    <description>RDF Site Summary (RSS) is a lightweight multipurpose extensible metadata description and syndication format. The Resource Description Framework (RDF) integrates a variety of applications from library catalogs and world-wide directories to syndication and aggregation of news, software, and content to personal collections of music, photos, and events using XML as an interchange syntax. The RDF specifications provide a lightweight ontology system to support the exchange of knowledge on the Web.</description>
+    <class>org.jasig.portal.channels.CGenericXSLT</class>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Settings</name>
+        <!-- displayed at the top of the step screen -->
+        <description>Complete the settings form below</description>
+        <!-- intention is for documentation but could be used for other things -->
+        <parameter modify="publish">
+          <name>xmlUri</name>
+          <label>RSS URL</label>
+          <type base="string" input="text" display="text">
+            <length>80</length>
+            <!-- length and maxlength for text field -->
+            <maxlength>100</maxlength>
+            <restriction type="range">
+              <!-- range could be used for error checking -->
+              <min>0</min>
+              <max>40</max>
+            </restriction>
+          </type>
+          <defaultValue>webpages/rss/stockcharts.rss</defaultValue>
+          <!-- default value for text field -->
+        </parameter>
+        <!-- Choose which RSS version from a drop down list-->
+        <parameter modify="publish">
+          <name>sslUri</name>
+          <label>RSS Version</label>
+          <type base="string" input="single-choice" display="drop-down">
+            <restriction type="enumeration">
+              <value display="0.9x" default="true">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+              <value display="1.0x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+            </restriction>
+          </type>
+        </parameter>
+      </step>
+    </params>
+    <controls/>
+  </channelDef>
+  <selectCategory>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Categories</name>
+        <categories>
+          <catagory>
+          </catagory>
+        </categories>
+      </step>
+    </params>
+  </selectCategory>
+  <selectRoles>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Roles</name>
+        <roles>
+          <role>
+          </role>
+        </roles>
+      </step>
+    </params>
+  </selectRoles>
+  <reviewChannel>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Review</name>
+        <settings>
+          <setting>
+            <name>
+            </name>
+            <value>
+            </value>
+          </setting>
+        </settings>
+      </step>
+    </params>
+  </reviewChannel>
+</manageChannels>
