@@ -43,6 +43,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.services.LogService;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -79,7 +80,8 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         if (request_verified) {
             // parse request body
             String contentType = source.getContentType();
-            if (contentType != null && contentType.startsWith("multipart/form-data")) {
+            String portletAction = source.getParameter(PortletStateManager.ACTION);
+            if (contentType != null && contentType.startsWith("multipart/form-data") && portletAction == null) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
                     MultipartParser multi = new MultipartParser(source, sizeLimit, true, true, "UTF-8");

@@ -384,6 +384,8 @@ public class PortletStateManager {
 		
 		if ( nextAction )
 		  url.append(ACTION+"=true&");
+        else
+          url.append(ACTION+"=false&");
 		
 		// Window state
 		if ( nextState != null ) {
@@ -432,7 +434,7 @@ public class PortletStateManager {
 		}
    
 		String strURL = url.toString();
-		if ( strURL.endsWith("&") )
+		while ( strURL.endsWith("&") )
 		 strURL = strURL.substring(0,strURL.lastIndexOf("&"));
 		
 		return strURL;
