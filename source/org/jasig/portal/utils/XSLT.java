@@ -135,8 +135,7 @@ public class XSLT {
    * @since uPortal 2.2
    */
   public static XSLT getTransformer(Object instance) {
-      XSLT transformer = new XSLT(instance);
-      return transformer;
+      return new XSLT(instance);
   }
 
   /**
@@ -148,9 +147,7 @@ public class XSLT {
    * @since uPortal 2.2
    */
   public static XSLT getTransformer(Object instance, Locale[] locales) {
-      LocaleAwareXSLT transformer = new LocaleAwareXSLT(instance);
-      transformer.setLocales(locales);
-      return transformer;
+      return new LocaleAwareXSLT(instance, locales);
   }
 
   public static SAXTransformerFactory getSAXTFactory() {
