@@ -226,7 +226,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       log.error("CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
-      log.debug("CGenericXSLT::renderXML() : state = " + state.toString() );
+      if (log.isDebugEnabled())
+          log.debug("CGenericXSLT::renderXML() : state = " + state );
 
       String xml;
       Document xmlDoc;
