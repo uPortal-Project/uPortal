@@ -44,7 +44,7 @@ import javax.portlet.WindowState;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletURLProvider;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.om.window.PortletWindowImpl;
+import org.jasig.portal.container.servlet.ServletRequestImpl;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
@@ -106,7 +106,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public String toString() {
     	
-        ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
+        ChannelRuntimeData runtimeData = ((ServletRequestImpl)provider.getServletRequest()).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
 	

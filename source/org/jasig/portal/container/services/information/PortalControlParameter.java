@@ -398,9 +398,9 @@ public class PortalControlParameter {
 					if ( value instanceof String[] ) {
 					 String[] values = (String[]) value;
 					 for (int j = 0; j < values.length; j++ )
-					  url.append(encodeParameter(name)).append("=").append(values[j]);	
+					  url.append(encodeParameter(name)).append("=").append(decodeValue(values[j]));	
 					} else
-					  url.append(encodeParameter(name)).append("=").append((String)value);
+					  url.append(encodeParameter(name)).append("=").append(decodeValue((String)value));
 				}
 			}
 		}

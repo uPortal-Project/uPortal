@@ -208,7 +208,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PortletWindowImpl portletWindow = new PortletWindowImpl();
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
-            portletWindow.setChannelRuntimeData(rd);
             cd.setPortletWindow(portletWindow);
                 
             // As the container to load the portlet

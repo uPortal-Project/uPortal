@@ -41,7 +41,6 @@ import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.om.window.PortletWindowCtrl;
-import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 
@@ -55,8 +54,6 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     private ObjectID objectId = null;
     private PortletEntity portletEntity = null;
     
-    private ChannelRuntimeData runtimeData = null;
-
     // PortletWindow methods
     
     public ObjectID getId() {
@@ -78,14 +75,4 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
         ((PortletEntityImpl)portletEntity).addPortletWindow(this);
     }
     
-    // Additional methods
-    
-    public void setChannelRuntimeData(ChannelRuntimeData runtimeData) {
-        this.runtimeData = runtimeData;
-    }
-    
-    public ChannelRuntimeData getChannelRuntimeData() {
-        return this.runtimeData;
-    }
-
 }

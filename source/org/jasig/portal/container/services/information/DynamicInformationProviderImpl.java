@@ -125,4 +125,8 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 		return supportedStates.contains(state);
     }
 
+	public HttpServletRequest getServletRequest() {
+		return request;
+	}
+
 }

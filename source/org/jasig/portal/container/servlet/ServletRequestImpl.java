@@ -49,7 +49,7 @@ import org.jasig.portal.ChannelRuntimeData;
  */
 public class ServletRequestImpl extends HttpServletRequestWrapper {
     
-    private ChannelRuntimeData runtimeData = null;
+    protected ChannelRuntimeData runtimeData = null;
 
     public ServletRequestImpl(HttpServletRequest request) {
         super(request);
