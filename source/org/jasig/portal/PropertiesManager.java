@@ -35,7 +35,6 @@
 
 package  org.jasig.portal;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.jasig.portal.services.LogService;
