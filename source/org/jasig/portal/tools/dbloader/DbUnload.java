@@ -70,7 +70,7 @@ public class DbUnload {
     }
 
     xmlOut.println("  <table>");
-    xmlOut.println("    <name>" + tableName + "</name>");
+    xmlOut.println("    <name>" + tableName.toUpperCase() + "</name>");
     xmlOut.println("    <rows>");
     try {
       ResultSetMetaData rsmd = rs.getMetaData();
@@ -105,9 +105,10 @@ public class DbUnload {
             throw new Exception("Unrecognized column type " + columnType[i] + " for column " + (i + 1) +
             " in table " + tableName);
           }
-          if (rs.wasNull()) xmlOut.println("        <column><name>" + columnName[i] + "</name></column>");
+          if (rs.wasNull()) 
+            xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name></column>");
           else
-          xmlOut.println("        <column><name>" + columnName[i] + "</name><value>" + value + "</value></column>");
+            xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name><value>" + value + "</value></column>");
         }
         xmlOut.println("      </row>");
       }
