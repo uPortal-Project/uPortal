@@ -65,7 +65,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     /**
      * The channel instance that failed.
      */
-    protected IChannel the_channel = null;
+    private IChannel the_channel = null;
 
     /**
      * CError is a placeholder when it is taking the place of a channel that no
@@ -73,7 +73,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      * is not a placeholder when it represents the failure of a channel that
      * actually tried to render.
      */
-    protected boolean placeHolder = false;
+    private boolean placeHolder = false;
 
     /**
      * True if we should display the stack trace of the stored Throwable, if
@@ -93,7 +93,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      */
     private static final String sslLocation = "CError/CError.ssl";
 
-    protected static MediaManager mediaM = new MediaManager();
+    private static MediaManager mediaM = new MediaManager();
 
     /**
      * Construct an uninitialized instance of the CError channel.
