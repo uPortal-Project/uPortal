@@ -65,7 +65,7 @@ import org.w3c.dom.Text;
  */
 public class PortalDocumentImpl implements IPortalDocument {
 
-    private final Hashtable identifiers = new Hashtable(1024);
+    private Hashtable identifiers = new Hashtable(1024);
     private final Hashtable keys = new Hashtable(1024);
 
     public Document document = null;
@@ -76,6 +76,14 @@ public class PortalDocumentImpl implements IPortalDocument {
 
     PortalDocumentImpl(Document doc) {
         document = doc;
+    }
+    
+    public final Hashtable getIdentifiers() {
+        return identifiers;   
+    }
+    
+    public final void setIdentifiers( Hashtable identifiers ) {
+        this.identifiers = identifiers;   
     }
     
     /**
@@ -316,7 +324,8 @@ public class PortalDocumentImpl implements IPortalDocument {
         // the children won't exist and you'd have an identifier mapping
         // that was invalid.
         if (deep) {
-            newNode.copyCache(this);
+            //newNode.copyCache(this);
+            newNode.setIdentifiers((Hashtable)identifiers.clone());
         }
         return newNode;
     }
