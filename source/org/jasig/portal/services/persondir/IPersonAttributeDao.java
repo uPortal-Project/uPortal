@@ -74,7 +74,7 @@ public interface IPersonAttributeDao {
      * dao doesn't have a way to know all possible attribute names this
      * method should return <code>null</code>.
      * <br>
-     * An immutable {@link Set} is returned.
+     * Returns an immutable {@link Set}.
      * 
      * @return A {link Set} of possible attribute names for user queries.
      */
