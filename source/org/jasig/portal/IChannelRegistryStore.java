@@ -76,7 +76,7 @@ public interface IChannelRegistryStore {
 
 
 
-  /** 
+  /**
    * Returns a string of XML which describes the channel types.
    * @return channelTypes, the list of publishable channel types
    * @throws java.lang.Exception
@@ -110,8 +110,9 @@ public interface IChannelRegistryStore {
    * @param title
    * @param doc
    * @param catID[]
+   * @exception Exception
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]);
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception;
 
   /**
    * put your documentation comment here
