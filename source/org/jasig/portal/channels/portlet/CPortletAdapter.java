@@ -37,7 +37,10 @@ package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +65,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.container.services.FactoryManagerServiceImpl;
@@ -95,6 +99,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
+    private static final String preferencesValidatorParamName = "preferencesValidator";
+    private static final String portletPreferenceNamePrefix = "PORTLET.";
 
     static {
         channelStateMap = Collections.synchronizedMap(new HashMap());
@@ -110,7 +116,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         servletConfig = config;
     }
     
-    private void initPortletContainer(String uid) throws PortalException {
+    protected void initPortletContainer(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         PortalControlStructures pcs = channelState.getPortalControlStructures();
 
@@ -138,7 +144,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         }
     }
         
-    private void initPortletWindow(String uid) throws PortalException {
+    protected void initPortletWindow(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
@@ -155,7 +161,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PortletContainerServices.prepare(uniqueContainerName);
 
             // Get the portlet definition Id which must be specified as a publish
-            // parameter.  The form of the Id is <portlet-context-name>.<portlet-name>
+            // parameter.  The syntax of the ID is [portlet-context-name].[portlet-name]
             String portletDefinitionId = sd.getParameter(portletDefinitionIdParamName);
             if (portletDefinitionId == null) {
                 throw new PortalException("Missing publish parameter '" + portletDefinitionIdParamName + "'");
@@ -166,15 +172,45 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());
             portletEntity.setPortletDefinition(portletDefinition);
-            // need to set preferences here based on channel's static parameters
-                
+
+            // Take all parameters whose names start with "PORTLET." and pass them
+            // as portlet entity preferences (after stripping "PORTLET.")
+            PreferenceSetImpl preferences = new PreferenceSetImpl();
+            Enumeration allKeys = sd.keys();
+            while (allKeys.hasMoreElements()) {
+                String p = (String)allKeys.nextElement();
+                if (p.startsWith(portletPreferenceNamePrefix)) {
+                    String prefName = p.substring(portletPreferenceNamePrefix.length());
+                    String prefVal = (String)sd.getParameter(p);
+                    // Currently we are limited to one value per name
+                    // The Preference object supports multiple values per name.
+                    // We could consider a convention in which multi-valued preferences
+                    // are denoted by a comma-delimited String.  This is a little messy,
+                    // but we want to minimize changes to the framework in order to support
+                    // the portlet-to-channel adapter.
+                    Collection values = new ArrayList(1);
+                    values.add(prefVal);
+                    preferences.add(prefName, values, true);
+                }
+            }
+
+            // Get the portlet preferences validator implementation which can optionally
+            // be specified as a publish parameter.
+            String preferencesValidator = sd.getParameter(preferencesValidatorParamName);
+            if (preferencesValidator != null) {         
+                preferences.setPreferencesValidator(preferencesValidator);
+            }
+            
+            portletEntity.setPreferences(preferences);
+             
+            // Now create the PortletWindow and hold a reference to it
             PortletWindowImpl portletWindow = new PortletWindowImpl();
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
             portletWindow.setChannelRuntimeData(rd);
-            
             cd.setPortletWindow(portletWindow);
                 
+            // As the container to load the portlet
             HttpServletRequest requestWrapper = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
             portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
             
@@ -339,7 +375,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * This is called from both renderXML() and renderCharacters().
      * @param uid a unique ID used to identify the state of the channel
      */
-    private synchronized String getMarkup(String uid) {
+    protected synchronized String getMarkup(String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();

@@ -29,6 +29,7 @@
     
     <parameters>
 
+        <!-- The syntax of the ID is [portlet-context-name].[portlet-name] -->
         <parameter>
             <name>portletDefinitionId</name>
             <value>testsuite.TestPortlet1</value>
@@ -36,6 +37,23 @@
             <ovrd>N</ovrd>
         </parameter>
 
+        <!-- Portlet entity preference names will be prepended with "PORTLET." -->
+        <parameter>
+            <name>PORTLET.TestName4</name>
+            <value>TestValue4</value>
+            <description>A test portlet entity preference</description>
+            <ovrd>N</ovrd>
+        </parameter>
+
+        <!--
+        <parameter>
+            <name>preferencesValidator</name>
+            <value>org.apache.pluto.core.impl.PreferencesValidatorImpl</value>
+            <description>An optional portlet preferences validator</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        -->
+        
     </parameters>
     
 </channel-definition>
