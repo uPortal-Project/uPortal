@@ -537,8 +537,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlDescription = RDBMServices.sqlEscape(channelDef.getDescription());
         String sqlClass = channelDef.getJavaClass();
         int sqlTypeID = channelDef.getTypeId();
-        int chanPupblUsrId = channelDef.getPublisherId();
-        String sysdate = RDBMServices.sqlTimeStamp();
+        int chanPublisherId = channelDef.getPublisherId();
+        String chanPublishDate = RDBMServices.sqlTimeStamp(channelDef.getPublishDate());
+        int chanApproverId = channelDef.getApproverId();
+        String chanApprovalDate = RDBMServices.sqlTimeStamp(channelDef.getApprovalDate());
         int sqlTimeout = channelDef.getTimeout();
         String sqlEditable = RDBMServices.dbFlag(channelDef.isEditable());
         String sqlHasHelp = RDBMServices.dbFlag(channelDef.hasHelp());
@@ -557,10 +559,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_DESC='" + sqlDescription + "', " +
           "CHAN_CLASS='" + sqlClass + "', " +
           "CHAN_TYPE_ID=" + sqlTypeID + ", " +
-          "CHAN_PUBL_ID=" + chanPupblUsrId + ", " +
-          "CHAN_PUBL_DT=" + sysdate + ", " +
-          "CHAN_APVL_ID=NULL, " +
-          "CHAN_APVL_DT=NULL, " +
+          "CHAN_PUBL_ID=" + chanPublisherId + ", " +
+          "CHAN_PUBL_DT=" + chanPublishDate + ", " +
+          "CHAN_APVL_ID=" + chanApproverId + ", " +
+          "CHAN_APVL_DT=" + chanApprovalDate + ", " +
           "CHAN_TIMEOUT=" + sqlTimeout + ", " +
           "CHAN_EDITABLE='" + sqlEditable + "', " +
           "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
@@ -571,10 +573,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
           stmt.executeUpdate(update);
         } else {
-          String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-              + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
+          String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, "
+              + "CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
           insert += "VALUES (" + channelPublishId + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-              + chanPupblUsrId + ", " + sysdate + ", " + sqlTimeout
+              + chanPublisherId + ", " + chanPublishDate + ", " + chanApproverId + ", " + chanApprovalDate + ", " + sqlTimeout
               + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
               + "', '" + sqlName + "', '" + sqlFName + "')";
           LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
@@ -616,8 +618,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         }
 
       } catch (SQLException sqle) {
+        LogService.log(LogService.ERROR, sqle);
         RDBMServices.rollback(con);
-        throw  sqle;
+        throw sqle;
       } finally {
         stmt.close();
       }
@@ -688,83 +691,35 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Sets a channel definition as "approved".  This effectively makes a
    * channel definition available in the channel registry, making the channel
-   * available for subscription.
+   * available for subscription to those authorized to subscribe to it.
+   * This method is a convenience method. As an alternative to calling 
+   * this method, one could simply set the approver ID and approval date
+   * and then call saveChannelDefinition(ChannelDefinition chanDef).   
    * @param channelDef the channel definition to approve
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
    * @throws java.sql.SQLException
    */
   public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws SQLException {
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        int channelPublishId = channelDef.getId();
-        String update = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
-        ", CHAN_APVL_DT = " + RDBMServices.sqlTimeStamp(approveDate) +
-        " WHERE CHAN_ID = " + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannelDefinition(): " + update);
-        stmt.executeUpdate(update);
-        
-        // Notify the cache
-        try {
-          channelDef.setApproverId(approver.getID());
-          channelDef.setApprovalDate(approveDate);
-          EntityCachingService.instance().update(channelDef);
-        } catch (Exception e) {
-          LogService.log(LogService.ERROR, e);
-        }
-        
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+    channelDef.setApproverId(approver.getID());
+    channelDef.setApprovalDate(approveDate);
+    saveChannelDefinition(channelDef);
   }
-
 
   /**
    * Removes a channel from the channel registry by changing
    * its status from "approved" to "unapproved".  Afterwards, no one
    * will be able to subscribe to or render the channel.
+   * This method is a convenience method. As an alternative to calling 
+   * this method, one could simply set the approver ID and approval date
+   * to NULL and then call saveChannelDefinition(ChannelDefinition chanDef).
    * @param channelDef the channel definition to disapprove
    * @throws java.sql.SQLException
    */
-  public void disapproveChannelDefinition (ChannelDefinition channelDef) throws SQLException {   
-    Connection con = RDBMServices.getConnection();
-    try {
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        // Delete channel.
-        int channelPublishId = channelDef.getId();
-        String update = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.disapproveChannelDefinition(): " + update);
-        stmt.executeUpdate(update);
-
-        // Commit the transaction
-        RDBMServices.commit(con);
-        
-        // Notify the cache
-        try {
-          channelDef.setApprovalDate(null);
-          EntityCachingService.instance().update(channelDef);
-        } catch (Exception e) {
-          LogService.log(LogService.ERROR, e);
-        }
-
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw sqle;
-      } finally {
-          stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws SQLException {   
+    channelDef.setApproverId(-1);
+    channelDef.setApprovalDate(null);
+    saveChannelDefinition(channelDef);
   }
 
   /**
