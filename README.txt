@@ -113,28 +113,43 @@ uPortal website:
 
 Release Notes - uPortal - Version 2.4.2
 ---------------------------------------
-** Bug
-    * [UP-338] - RENDERING_DONE Event never sent
-    * [UP-476] - User's LDAP groups not loaded if username contains uppercase
-    * [UP-744] - PersonDirectory has a memory leak related to caching IPersons in a WeakHashMap
-    * [UP-745] - ChannelManager has a memory leak, when it swaps out a channel for the CError channel, the end session events never progagate to the original channel
-    * [UP-746] - CSecureInfo has a memory leak, when ChannelManager swaps out a channel for the CSecureInfo channel, the to end session events never propagate to the original channel
-    * [UP-747] - Change to portlet parameter encoding breaks download worker URLs
-    * [UP-748] - Infinite recursion in RestrictedPerson
-    * [UP-749] - render parameter does not survive refresh
-    * [UP-753] - ChannelFactory should not expose internal map of static channels, not create more than one instance of a multithreaded channel
-    * [UP-759] - Xalan jar should be deployed to endorsed directory
-    * [UP-760] - Entity locks not expired correctly
-    * [UP-761] - A lock owner is limited to single READ lock on an entity
-    * [UP-772] - Classpath resources not being copied to build
-    * [UP-775] - Duplicate read locks for a single owner not permitted.
-    * [UP-776] - WebApplicationMarshaller.java turns resource-ref into resource-env-ref
-    * [UP-778] - AggregatedLayoutManager.loadUserLayout() fails to log stack trace for exception
-    * [UP-779] - ChannelRenderer declares constants that are already declared in its base class
-    * [UP-780] - Eliminate "unknown additional descriptor warning" when using ChainingSecurityContext
-    * [UP-796] - contains() doesn't always work for PAGS groups
-    * [UP-798] - GroupService.isComposite always returns null
+************
+* Database *
+************
+
+-UP-775 (Bugzilla 1825), Designated UP_ENTITY_LOCK.EXPIRATION_TIME as a primary key.
 
 
-** Improvement
-    * [UP-770] - Document hsqldb version included with uPortal
+**************
+* Properties *
+**************
+
+(no changes)
+
+
+*******************
+* Issues resolved *
+*******************
+
+-UP-338 (Bugzilla 1081), Deprecated RENDERING_DONE portal event.
+-UP-476 (Bugzilla 1499), Used lower case user name within Ldap group store.
+-UP-744 (Bugzilla 1787), Fixed memory leak by changing IPerson cache from a WeakHashMap to a WeakValueMap.
+-UP-745 (Bugzilla 1789), Fixed memory leak by making CError pass events to the channel it's replacing.
+-UP-746 (Bugzilla 1790), Fixed memory leak by making CSecureInfo pass events to the channel it's replacing.
+-UP-747 (Bugzilla 1791), Fixed download worker URLs for portlets.
+-UP-748 (Bugzilla 1793), Fixed potential infinite recursion in RestrictedPerson.
+-UP-749 (Bugzilla 1794), Fixed survival of portlet render parameter after browser refresh.
+-UP-753 (Bugzilla 1799), Restricted access to ChannelFactory's channel cache, synchronized instantiateChannel method.
+-UP-759 (Bugzilla 1805), Changed deployment location of xalan.jar to Tomcat's common/endorsed directory.
+-UP-760 (Bugzilla 1806), Changed MemoryEntityLockStore to expire locks correctly.
+-UP-761 (Bugzilla 1807), Fixed entity lock service to allow a lock owner to get more than one READ lock.
+-UP-770 (Bugzilla 1820), Added note to README file about problems caused by HSQLDB version conflicts.
+-UP-772 (Bugzilla 1822), Copied all files from source to build directories except CVS and java files.
+-UP-775 (Bugzilla 1825), Fixed entity lock service to allow duplicate read locks for a single owner.
+-UP-776 (Bugzilla 1826), Fixed name of resource-ref in WebApplicationMarshaller.
+-UP-778 (Bugzilla 1828), Logged stack trace in AggregatedLayoutManager.loadUserLayout().
+-UP-779 (Bugzilla 1829), Removed redundant constants from ChannelRenderer.
+-UP-780 (Bugzilla 1830), Eliminated "unknown additional descriptor warning" when using ChainingSecurityContext.
+-UP-796,    --------   , Fixed container() method for PAGS groups.
+-UP-798,    --------   , Fixed implementation of GroupService.isComposite() method.
+-UP-800,    --------   , Added message to Logger.properties explaining deployment of properties file.
