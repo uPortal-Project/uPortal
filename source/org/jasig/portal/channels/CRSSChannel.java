@@ -146,7 +146,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       else
         if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"images/rsslink.gif\" border=0 align=right /></a>");
 
-      out.println ("<p><em>" + sDescription + "</em>");
+      out.println ("<p><em>" + sDescription + "</em></p>");
 
       out.println ("<ul>");
       for (int i = 0; i < channelAttr.length; i++)
@@ -179,16 +179,13 @@ public class CRSSChannel implements org.jasig.portal.IChannel
                   sItemDescription = itemAttr[k].getDescription ();
               }
 
-
               if (sItemTitle.length() > 0)
-                out.println ("<p><li /><a href=\"" + sItemLink + "\">" + sItemTitle + "</a>");
+                out.println ("<li><a href=\"" + sItemLink + "\">" + sItemTitle + "</a></li>");
               else
-                out.println ("<p>" + sItemTitle );
+                out.println ("<li>" + sItemTitle + "</li>");
 
               if (sItemDescription != null)
-                out.println ("<br />" + sItemDescription + "<p />");
-              else out.println ("<br /><p />");
-
+                out.println ("<br />" + sItemDescription );
             }
           }
         }
