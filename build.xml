@@ -272,7 +272,10 @@
     ======================================================================= 
 -->
 
-   <target name="all" depends="classes,db"/>
+   <target name="all" 
+           depends="classes,db"
+           description="builds all classes and creates and populates the database"
+   />
    <!-- these targets will be used once a directory structure is decided on -->
    <!-- <target name="all" depends="classes,html,support,javadoc,db"/> -->
 
@@ -287,7 +290,9 @@
    </target>
 
 
-   <target name="stage" depends="prepare">
+   <target name="stage" 
+           depends="prepare"
+           description="Puts config files &#38; directories into place for compilation">
 
       <!-- Copy the web application descriptor file to the proper location  -->
       <copy file="${conf}/web.xml" todir="${build}/${dist}/WEB-INF/" />
@@ -328,10 +333,9 @@
 
    </target>
 
-   <target name="classes" depends="stage">
-      <echo message="Compiling classes to ${build}/${dist}/WEB-INF/classes"/>
-
-
+   <target name="classes" 
+           depends="stage"
+           description="Compiles java source files to class files">
 
       <javac srcdir="${classsrc}"
              destdir="${build}/${dist}/WEB-INF/classes"
@@ -349,7 +353,9 @@
 
    </target>
 
-   <target name="dist" depends="classes">
+   <target name="dist" 
+           description="Constructs the .war file from the staged directory structure"       
+           depends="classes">
    <!-- make a .war file we can place into the server's webapps directory  -->
       <jar jarfile="${build}/${dist}/uPortal.war" 
            excludes="**/uPortal.war"
@@ -357,7 +363,9 @@
       />
    </target>
 
-   <target name="db" if="dbdriver">
+   <target name="db" 
+           description="Creates and populates the database"
+           if="dbdriver">
       <echo message="Running database scripts on ${dburl}"/>
       <sql
         classpath="${classpath}"
@@ -372,17 +380,22 @@
       </sql>
    </target>
 	
-   <target name="install" depends="dist" if="webapps">
+   <target name="install" depends="dist"
+           description="Moves the .war file to the server application root dir" 
+           if="webapps">
       <copy file="${build}/${dist}/uPortal.war" todir="${webapps}" />
    </target>
 
-   <target name="clean">
+   <target name="clean"
+           description="Deletes the temporary build directory and everything in it">
       <!-- Delete the ${build} directory tree -->
       <echo message="Doing a clean on build directory"/>
       <delete dir="${build}"/>
    </target>
 
-   <target name="spotless" depends="clean">
+   <target name="spotless" 
+           description="Removes deployed .war file &#38; intermediate files &#38; dirs"
+           depends="clean">
       <!-- Delete the ${build} directory tree -->
       <echo message="Removing deployed web application"/>
       <delete file="${webapps}/uPortal.war"/>
