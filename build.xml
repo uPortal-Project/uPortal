@@ -137,7 +137,7 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.2 D14
+                       Version: 2.2.0
                        URL: http://xml.apache.org/xalan-j/
 
   xerces.jar           Xerces2 is the next generation of high performance,
@@ -334,9 +334,6 @@
     <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
       <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
     </copy>
-
-    <!-- Copy tables.xml to datadictviewer channel -->
-    <copy todir="${build.home}/WEB-INF/classes/org/jasig/portal/channels/CGenericXSLT/DataDictViewer" file="properties/tables.xml"/>
 
     <!-- Copy all stylesheets and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
