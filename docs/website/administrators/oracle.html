@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+<HEAD> 
+<TITLE>uPortal</TITLE> 
+<LINK HREF="../uportal.css" REL="stylesheet">
+<!-- Use the following script to do rollovers in the left column of the
+page.  If you don't want to do rollovers, you can delete these script lines 
+from this html.  If you do use this .js file to do the rollovers, be sure 
+to name your images using the format filename-on.gif and filename-off.gif.  -->
+<SCRIPT LANGUAGE="Javascript" SRC="SwapImage.js"></SCRIPT> 
+</HEAD> 
+<BODY BGCOLOR="#FFFFFF"> 
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+<TR> 
+<TD ALIGN="LEFT" VALIGN="BOTTOM" COLSPAN="3"><IMG SRC="../images/uportal-head.gif" ALT="uPortal by JA-SIG" BORDER="0" HEIGHT="87" WIDTH="592"></TD> 
+</TR> 
+<TR> 
+<TD COLSPAN="3" BGCOLOR="#FF6600"><IMG SRC="../images/spacer.gif" ALT="" BORDER="0" HEIGHT="2" WIDTH="1"></TD> 
+</TR> 
+<TR VALIGN="TOP"> 
+<TD ALIGN="LEFT" WIDTH="150"> 
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0"> 
+<TBODY> 
+<TR> 
+<TD>
+<A HREF="http://www.ja-sig.org/" ONMOUSEOVER="swapImage('jahome','on')" ONMOUSEOUT="swapImage('jahome','off')"> <IMG NAME="jahome" SRC="../images/jahome-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../index.html" ONMOUSEOVER="swapImage('about','on')" ONMOUSEOUT="swapImage('about','off')"> <IMG NAME="about" SRC="../images/about-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../faq.html" ONMOUSEOVER="swapImage('faq','on')" ONMOUSEOUT="swapImage('faq','off')"> <IMG NAME="faq" SRC="../images/faq-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../download.html" ONMOUSEOVER="swapImage('downld','on')" ONMOUSEOUT="swapImage('downld','off')"> <IMG NAME="downld" SRC="../images/downld-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../docs.html" ONMOUSEOVER="swapImage('docs','on')" ONMOUSEOUT="swapImage('docs','off')"> <IMG NAME="docs" SRC="../images/docs-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../getinv.html" ONMOUSEOVER="swapImage('getinv','on')" ONMOUSEOUT="swapImage('getinv','off')"> <IMG NAME="getinv" SRC="../images/getinv-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../cvs.html" ONMOUSEOVER="swapImage('coderep','on')" ONMOUSEOUT="swapImage('coderep','off')"> <IMG NAME="coderep" SRC="../images/coderep-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../bugs.html" ONMOUSEOVER="swapImage('bug','on')" ONMOUSEOUT="swapImage('bug','off')"> <IMG NAME="bug" SRC="../images/bug-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+<TR> 
+<TD><A HREF="../license.html" ONMOUSEOVER="swapImage('license','on')" ONMOUSEOUT="swapImage('license','off')"> <IMG NAME="license" SRC="../images/license-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
+</TD> 
+</TR> 
+</TBODY> 
+</TABLE>
+<BR><BR>
+<!--nested table for mellon logo -->
+<IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"> 
+</TD> 
+<TD WIDTH="10">&nbsp;</TD> 
+
+<!-- insert main body into this table cell here -->
+<TD>
+
+   <h4 class="title"> <a name="hsql-database"></a> Setting up A Oracle Database</h4>
+	
+  <h5> About Oracle </h5>
+  <p>Oracle is a commercial database available from <a href="http://www.oracle.com">
+  http://www.oracle.com</a>
+  </p>
+  <h5> Obtaining the Driver </h5>
+  
+<p>A Oracle JDBC driver is also available through <a href="http://www.oracle.com"> 
+http://www.oracle.com</a>. Versions for Oracle 8i and Oracle 9i are available. 
+The driver downloads as a single &quot;zip&quot; file (for example, classes12.zip). 
+The file should be stored in a directory where it will be accessible from the 
+uPortal build environment (for example /usr/local/java/oracle/lib/classes12.zip)</p>
+<p>See Issues section about possible issues using this driver</p>
+
+  <h5> Properties Configuration </h5>
+  
+<p>The uPortal build.properties  will need to be modifed. Find the property called 
+<b>jdbcDriver</b> and change it to point to the Oracle zip/jar file, for example:</p>
+<pre>jdbcDriver.jar=/usr/local/java/lib/classes12.zip
+</pre>
+<p>The uPortal rdbm.properties file (in the properties directory) will need to modified to specify the driver 
+properties.  First, comment out the property definitions which are currently defined
+(most likely, for HypersonicSQL).  The rdbm.properties file contains several sample
+entries.  Uncomment the lines for the Oracle database and make whatever changes
+necessary to match your local database installation,  For example:
+</p>
+<pre>
+##### Oracle - example
+jdbcDriver=oracle.jdbc.driver.OracleDriver
+jdbcUrl=jdbc:oracle:thin:@localhost:1521:uportal
+jdbcUser=test
+jdbcPassword=mypass
+</pre>
+<p>The dbloader.xml properties file (also in the properties directory) may also need to be 
+modified.  This file is used by the DbLoader tool to create the uPortal database tables and
+populate the database.  It contains several sample entries which create db-type-mappings
+for different databases.  Find the tags for an Oracle database and modify the db-version,
+driver-name, and driver-version as necessary.  For example:
+</p>
+<pre>
+  &lt;db-type-mapping&gt;
+    &lt;db-name>Oracle&lt;/db-name&gt;
+    &lt;!-- Line break has to be here --&gt;
+    &lt;db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production
+PL/SQL Release 8.0.6.2.0 - Production&lt;/db-version&gt;
+    &lt;driver-name&gt;Oracle JDBC driver&lt;/driver-name&gt;
+    &lt;driver-version&gt;8.1.6.0.0&lt;/driver-version&gt;
+    &lt;type&gt;&lt;generic&gt;TIMESTAMP&lt;/generic&gt;&lt;local&gt;DATE&lt;/local&gt;&lt;/type&gt;
+    &lt;!-- map more types here --&gt;
+  &lt;/db-type-mapping&gt;
+</pre>
+<h5> Loading the Database </h5>
+<p>Loading the database requires a couple of steps</p>
+<ul>
+   <li>Create the database: Refer to the Oracle database documentation for instructions
+	regarding how to create an Oracle database instances.  The database name (or in this
+	case, the Oracle SID), port number, and driver information must reflect what was defined
+	in the rdbm.properties file</li>
+	<li>Create the tables and populate the database: From the uPortal build directory, 
+run "ant db" to execute the ant target which loads the database. The ant target 
+uses the Dbloader tool. </li>
+	</ul>
+  <h5> Issues and Known Bugs </h5>
+   
+<p>Some people have encountered problems with the Oracle JDBC driver with certain 
+web application environments if the classes <b>zip</b> file is used as-is with 
+the <b>.zip</b> file extension. Simply renaming the file to a <b>.jar</b> file 
+seems to fix the problem. Alternatively, unzipping the classes file into a directory 
+structure, then using the <b>jar</b> command to repackage the classes into a jar 
+file works as well. 
+</TD> 
+</TR> 
+</TABLE>
+
+<!-- page footer -->
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+   <TBODY> 
+   <TR> 
+   <TD ALIGN="CENTER">&nbsp;</TD> 
+   </TR> 
+   <TR> 
+   <TD BGCOLOR="#ff6600" ALIGN="CENTER"><IMG HEIGHT="2"
+   SRC="../images/spacer.gif" WIDTH="1" BORDER="0" ALT="."></TD> 
+   </TR> 
+   <TR> 
+   <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="../images/spacer.gif" WIDTH="1"
+   BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
+   SIZE="1"><A HREF="http://www.ja-sig.org/">JA-SIG Home</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../index.html"> About uPortal</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../faq.html">FAQ</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../download.html">Download</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../docs.html">Documentation</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../getinv.html">Getting Involved</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <BR><A HREF="../cvs.html">Code Repository</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../bugs.html">Reporting Bugs</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../license.html">License</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   </FONT></TD> 
+   </TR> 
+   </TBODY> 
+</TABLE><!-- end page footer -->
+</BODY>
+</HTML>
