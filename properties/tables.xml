@@ -362,4 +362,19 @@
 		</columns>
 		<primary-key>MIME_TYPE</primary-key>
 	</table>
+	<table>
+		<name>UP_COUNTERS</name>
+		<columns>
+			<column>
+				<name>TABLE_NAME</name>
+				<type>VARCHAR</type>
+				<param>50</param>
+			</column>
+			<column>
+				<name>ID</name>
+				<type>INTEGER</type>
+			</column>
+		</columns>
+		<primary-key>TABLE_NAME</primary-key>
+	</table>
 </tables>

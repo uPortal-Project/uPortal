@@ -935,4 +935,19 @@
 			</row>
 		</rows>
 	</table>
+	<table>
+          <name>UP_COUNTERS</name>
+	  <rows>
+	   <row>
+            <column>
+              <name>TABLE_NAME</name>
+              <value>UP_USER_PROFILES</value>
+            </column>
+            <column>
+              <name>ID</name>
+              <value>10</value>
+            </column>
+	   </row>
+	  </rows>
+        </table>
 </data>
