@@ -160,7 +160,6 @@ public class CGroupsManager
    public void renderXML (ContentHandler out, String uid) throws PortalException {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): this = " + this);
       CGroupsManagerSessionData sessionData = getSessionData(uid);
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       long time1 = Calendar.getInstance().getTime().getTime();
       long time2 = 0;
@@ -254,7 +253,6 @@ public class CGroupsManager
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setRuntimeData(): this = " + this);
       CGroupsManagerSessionData sessionData = getSessionData(uid);
       sessionData.runtimeData = rd;
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       sessionData.startRD = Calendar.getInstance().getTime().getTime();
       if(sessionData.servantChannel == null){
@@ -414,7 +412,6 @@ public class CGroupsManager
       Utility.logMessage("DEBUG", this.getClass().getName() + "::generateKey(): this = " + this);
       CGroupsManagerSessionData sessionData = getSessionData(uid);
       ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
       ChannelCacheKey cck;
       Utility.logMessage("DEBUG", "CGroupsManager.generateKey():: uid parm = " + uid);
       if (sessionData.servantChannel == null) {
@@ -442,8 +439,6 @@ public class CGroupsManager
    private String vKey (String uid) {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::vKey(): this = " + this);
       CGroupsManagerSessionData sessionData = getSessionData(uid);
-      ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
       String vkey = sessionData.currentPage+" - "+sessionData.feedback+" - "+sessionData.highlightedGroupID+" - "
         +sessionData.mode+" - "+sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", this.getClass().getName() + ".vKey() : vKey returns = " + vkey);
@@ -459,7 +454,6 @@ public class CGroupsManager
    public boolean isCacheValid (Object validity, String uid) {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::isCacheValid(): this = " + this);
       CGroupsManagerSessionData sessionData = getSessionData(uid);
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       boolean valid = false;
       if (sessionData.servantChannel == null) {
