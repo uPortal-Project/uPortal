@@ -53,6 +53,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
@@ -670,9 +671,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          PreparedStatement psRestr = null;
 
 
-         if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+         if ( fragmentId > 0 ) {
 
-          Enumeration restrictions = restrHash.elements();
+          /*Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
@@ -687,7 +688,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
              //execute update restrictions
              psAddRestriction.executeUpdate();
 
-           } // end for
+           } // end for*/
 
          } else {
 
@@ -1047,9 +1048,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          Hashtable restrHash = nodeDesc.getRestrictions();
          if ( restrHash != null ) {
 
-          if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+          if ( fragmentId > 0 ) {
 
-           Enumeration restrictions = restrHash.elements();
+           /*Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
@@ -1063,7 +1064,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
             //execute update restrictions
             count += psUpdateRestriction.executeUpdate();
-           } // end for
+           } // end for */
 
           } else {
 
@@ -1677,8 +1678,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
   try {
 
-    EntityIdentifier personIdentifier = person.getEntityIdentifier();
-    IGroupMember groupMember = GroupService.getGroupMember(personIdentifier);
+       EntityIdentifier personIdentifier = person.getEntityIdentifier();
+       IGroupMember groupMember = GroupService.getGroupMember(personIdentifier);
 
 
         con = RDBMServices.getConnection();
@@ -1695,9 +1696,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        if ( containingGroups.hasNext() ) {
         //Connection extraCon = RDBMServices.getConnection();
 
-        // Getting the "pushed" fragments based on a group key parameter
+        // Getting push-fragments based on a group key parameter
         PreparedStatement psGroups = con.prepareStatement("SELECT UOF.FRAGMENT_ID, UOF.FRAGMENT_ROOT_ID FROM UP_GROUP_FRAGMENT UPG, UP_OWNER_FRAGMENT UOF " +
-                                                          "WHERE UPG.GROUP_KEY=? AND UPG.FRAGMENT_ID = UOF.FRAGMENT_ID");
+                                                          "WHERE UPG.GROUP_KEY=? AND UPG.FRAGMENT_ID = UOF.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y'");
 
         pushFragmentRoots = new Hashtable();
         while ( containingGroups.hasNext() ) {
@@ -1717,9 +1718,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            pushFragmentIds += "," + fragmentId;
            pushFragmentRoots.put(""+fragmentId,rsGroups.getInt(2)+"");
           }
-          rsGroups.close();
+          if ( rsGroups != null ) rsGroups.close();
         }
-        if ( psGroups != null ) psGroups.close();
+
+         if ( psGroups != null ) psGroups.close();
           //RDBMServices.releaseConnection(extraCon);
        } // end if hasNext()
 
@@ -1727,20 +1729,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // A separate statement is needed so as not to interfere with ResultSet
         // of statements used for queries
         Statement insertStmt = con.createStatement();
-
-        // we have to delete all the records from up_layout_struct_aggr table related to the pushed fragments that an user is not allowed to have
-        if ( pushFragmentIds != null ) {
-         ResultSet pushedFragRs = stmt.executeQuery("SELECT UOF.FRAGMENT_ID FROM UP_OWNER_FRAGMENT UOF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ULS.FRAGMENT_ID != NULL AND " +
-          "UOF.FRAGMENT_ID = ULS.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y' AND ULS.FRAGMENT_ID NOT IN ("+pushFragmentIds+")");
-         PreparedStatement psDeletePushed = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE FRAGMENT_ID=?");
-         while ( pushedFragRs.next() ) {
-           psDeletePushed.setInt(1,pushedFragRs.getInt(1));
-           psDeletePushed.executeUpdate();
-         }
-           if ( pushedFragRs != null ) pushedFragRs.close();
-           if ( psDeletePushed != null ) psDeletePushed.close();
-        }
-
 
 
       try {
@@ -1825,6 +1813,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           RDBMServices.commit(con); // Make sure it appears in the store
         } // end if layoutID == null
 
+        // we have to delete all the records from up_layout_struct_aggr table related to the pushed fragments that an user is not allowed to have
+        /*if ( pushFragmentIds != null ) {
+         ResultSet pushedFragRs = stmt.executeQuery("SELECT UOF.FRAGMENT_ID FROM UP_OWNER_FRAGMENT UOF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ULS.FRAGMENT_ID != NULL AND " +
+         "UOF.FRAGMENT_ID=ULS.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y' AND ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId+" AND ULS.FRAGMENT_ID NOT IN ("+pushFragmentIds+")");
+         PreparedStatement psDeletePushed =
+            con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND FRAGMENT_ID=?");
+         while ( pushedFragRs.next() ) {
+           psDeletePushed.setInt(1,pushedFragRs.getInt(1));
+           psDeletePushed.executeUpdate();
+         }
+           if ( pushedFragRs != null ) pushedFragRs.close();
+           if ( psDeletePushed != null ) psDeletePushed.close();
+        }*/
 
         // Instantiating the layout and setting the layout ID
         layout = new AggregatedLayout ( layoutId + "" );
@@ -1863,12 +1864,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlLayout += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlLayout += " ULS.USER_ID=? AND ULS.LAYOUT_ID=?";
+        sqlLayout += " ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId;
 
-        LogService.log(LogService.DEBUG, "sqlLayout");
-        PreparedStatement psLayout = con.prepareStatement(sqlLayout);
-        psLayout.setInt(1,userId);
-        psLayout.setInt(2,layoutId);
+        LogService.log(LogService.DEBUG, sqlLayout);
 
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
@@ -1878,23 +1876,20 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += " UF.FRAGMENT_ID=ULS.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += " ULS.FRAGMENT_ID=UF.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
         LogService.log(LogService.DEBUG, sqlFragment);
-        PreparedStatement psFragment = con.prepareStatement(sqlFragment);
-        //psFragment.setInt(1,userId);
-        //psFragment.setInt(2,layoutId);
 
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
 
         int count = 0;
-        for ( PreparedStatement ps = psLayout; count < 2; ps = psFragment, count++ ) {
+        for ( String sql = sqlLayout; count < 2; sql = sqlFragment, count++ ) {
 
          List chanIds = Collections.synchronizedList(new ArrayList());
          StringBuffer structParms = new StringBuffer();
 
-         rs = ps.executeQuery();
+         rs = stmt.executeQuery(sql);
 
          try {
           int lastStructId = 0;
@@ -1935,7 +1930,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               }*/
 
               int fragmentId = rs.getInt(13);
-              int fragmentNodeId = ( ps.equals(psLayout) )?rs.getInt(14):0;
+              int fragmentNodeId = ( sql.equals(sqlLayout) )?rs.getInt(14):0;
 
               IALNodeDescription nodeDesc= null;
               // Trying to get the node if it already exists
@@ -1980,7 +1975,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               nodeDesc.setFragmentId((fragmentId>0)?fragmentId+"":null);
 
-              if ( ps.equals(psLayout) ) {
+              if ( sql.equals(sqlLayout) ) {
                nodeDesc.setFragmentNodeId((fragmentNodeId>0)?fragmentNodeId+"":null);
               }
 
@@ -2056,7 +2051,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // getting restrictions for the nodes
               PreparedStatement psRestr = null;
-              if ( ps.equals(psLayout) && fragmentNodeId <= 0) {
+              if ( sql.equals(sqlLayout) && fragmentNodeId <= 0) {
                   psRestr = con.prepareStatement(restrLayoutSQL);
                   psRestr.setInt(1,structId);
               } else {
@@ -2077,7 +2072,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                rsRestr.close();
                if ( psRestr != null ) psRestr.close();
 
-              int index = (ps.equals(psLayout))?15:14;
+              int index = (sql.equals(sqlLayout))?15:14;
 
               if (RDBMServices.supportsOuterJoins) {
                 do {
@@ -2164,14 +2159,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
         if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
-          String sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
+          String paramSql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + paramSql);
 
           // Adding this to prevent the error "closed statement" in Oracle
           Statement st = con.createStatement();
 
-          rs = st.executeQuery(sql);
+          rs = st.executeQuery(paramSql);
           try {
             if (rs.next()) {
               int structId = rs.getInt(1);
@@ -2199,7 +2194,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           }
         }
 
-          if ( ps != null ) ps.close();
        } // End of for
 
        // Very suspicious place !!!!
@@ -2254,11 +2248,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
         // finding the last node in the sibling line of the root children
-        ALNode lastNode = null;
+        ALNode lastNode = null, prevNode = null;
         String nextId = rootNode.getFirstChildNodeId();
+        int i = 1;
         while ( nextId != null ) {
           lastNode = (ALNode)layoutData.get(nextId);
+          // If neccessary cleaning the end of tabs sibling line setting the next ID to null of the last tab
+          if ( lastNode == null && prevNode != null ) {
+             prevNode.setNextNodeId(null);
+             lastNode = prevNode;
+             break;
+          }
           nextId = lastNode.getNextNodeId();
+          prevNode = lastNode;
         }
 
         // Binding the push-fragments to the end of the sibling line of the root children
