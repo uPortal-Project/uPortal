@@ -42,6 +42,7 @@ import  org.jasig.portal.utils.DTDResolver;
 import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.security.IPerson;
 import  java.io.*;
+import java.util.Date;
 import  org.apache.xml.serialize.*;
 import  org.apache.xerces.dom.*;
 import  org.w3c.dom.*;
@@ -124,7 +125,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    *  @param approved Account approving the channel
    *  @param approveDate When should the channel appear
    */
-  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception {
+  public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception {
     UserLayoutStoreFactory.getUserLayoutStoreImpl().approveChannel(chanId, approver, approveDate);
   }
 

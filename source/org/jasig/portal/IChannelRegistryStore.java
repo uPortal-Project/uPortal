@@ -40,6 +40,7 @@ package  org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 import  org.w3c.dom.*;
+import java.util.Date;
 
 
 /**
@@ -121,7 +122,7 @@ public interface IChannelRegistryStore {
    * @param approveDate
    * @exception Exception
    */
-  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception;
+  public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception;
 }
 
 

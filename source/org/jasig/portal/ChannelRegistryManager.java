@@ -46,6 +46,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Text;
 import java.util.Set;
+import java.util.Date;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xpath.XPathAPI;
@@ -167,7 +168,7 @@ public class ChannelRegistryManager {
     int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, aRoles);
 
     // Approve channel
-    chanRegStore.approveChannel(ID, publisher, new java.sql.Timestamp(System.currentTimeMillis()));
+    chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
   }
