@@ -2,38 +2,10 @@
 
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.*" %>
-
+<%-- include file="support.jsp" --%>
 
 <%
-    // verify all the form variables are correct
-    String creationTime = request.getParameter("creationTime");
-    String lastAccessedTime = request.getParameter("lastAccessedTime");
-    String inactiveTime = request.getParameter("inactiveTime");
-    String sessionType = request.getParameter("sessionType");
-    String kickType = request.getParameter("kickType");
-    String resetTime = request.getParameter("resetTime");
-
-    // pick a 200 second time as the default
-    if(resetTime != null && resetTime.length() <= 0) {
-        resetTime="200";
-    }
-    
-    // a : indicates that this criteria was not specified    
-    char creationTimeCriteria = ':';
-    char lastAccessedTimeCriteria = ':';
-    char inactiveTimeCriteria = ':';
-    
-    
-
-    if(creationTime != null && creationTime.length() > 0)
-        creationTimeCriteria=creationTime.charAt(0);
-    
-    if(lastAccessedTime != null && lastAccessedTime.length() > 0)
-        lastAccessedTimeCriteria=lastAccessedTime.charAt(0);
-    
-    if(inactiveTime != null && inactiveTime.length() > 0)
-        inactiveTimeCriteria=inactiveTime.charAt(0);
-    
+    KickCriteria criteria = new KickCriteria(request);
 %>
 
 <html>
@@ -47,31 +19,32 @@
 
     <ul>
 
-<% if (creationTimeCriteria != ':') { %>
-      <li>Creation time <%= creationTime %> minutes ago.</li>
+<% if (criteria.getCreationTimeCriteria() != KickCriteria.NOT_SET) { %>
+      <li>Creation time <%= criteria.getCreationTime() %> minutes ago.</li>
 <% } %>
 
-<% if (lastAccessedTimeCriteria != ':') { %>  
-      <li>Last accessed time <%= lastAccessedTime %> minutes ago.</li>
+<% if (criteria.getLastAccessedTimeCriteria() != KickCriteria.NOT_SET) { %>  
+      <li>Last accessed time <%= criteria.getLastAccessedTime() %> minutes ago.</li>
 <% } %>
       
-      <li>Sessions of type <%= sessionType %>.</li>
+      <li>Sessions of type <%= criteria.getSessionType() %>.</li>
  
-<% if (inactiveTimeCriteria != ':') { %>
-      <li>Inactivity time is <%= inactiveTime %> seconds.</li>
+<% if (criteria.getInactiveTimeCriteria() != KickCriteria.NOT_SET) { %>
+      <li>Inactivity time is <%= criteria.getInactiveTime() %> seconds.</li>
 <% } %>
  
    </ul>
 
-<% if ("reset".equals(kickType)) { %>
-    <p>And resetting inactivity timeout to <%=resetTime%> will remove:</p>
-<% } else { %>
-    <p>And invalidating user sessions will remove:</p>
-<% } %>
-
+   <p>And kicking users with a <%= KickCriteria.interpretKickType(criteria.getKickType()) %>
+   will invalidate:
+   
     <h3>204 users</h3>
 
-    <p>At the end of the inactivity timeout.</p>
+    <% if(criteria.getKickType() == KickCriteria.RESET_KICK) { %>
+        <p>At the end of the inactivity timeout.</p>
+    <% } else if(criteria.getKickType() == KickCriteria.INVALIDATE_KICK) { %>
+        <p>Immediately after pressing the CONTINUE! button below.
+    <% } %>
 
     <p style="font-size: 80%">NOTE: This number will fluctuate
     slightly if you continue since the action has not been

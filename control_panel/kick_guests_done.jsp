@@ -25,16 +25,11 @@
     <p><a href="kick_guests.jsp">Click here to try again.</a>
 
 <% } else { 
-    // delete all the guest users then
-    // get the user sessionIDs so we can NOT invalidate them
-    Enumeration sessionTypes = SessionManager.getSessionTypes();
-    HashSet userIdSet = new HashSet();
-    
-    while(sessionTypes.hasMoreElements()) {
-        Enumeration userSessionIds = SessionManager.getSessionIDs((String)sessionTypes.nextElement());
-        while(userSessionIds.hasMoreElements())
-            userIdSet.add(userSessionIds.nextElement());
-    }
+    	// delete all the guest users then
+    	// get the user sessionIDs so we can NOT invalidate them
+    	Set sessionTypes = SessionManager.getSessionTypes();
+    	HashSet userIdSet = new HashSet();
+    	userIdSet.add(sessionTypes);
     
     // go through all the sessionIds that the SessionContext has
     HttpSessionContext ctx = session.getSessionContext();
@@ -61,5 +56,7 @@
     
 </body>
 </html>
+
+
 
 

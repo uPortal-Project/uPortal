@@ -1,8 +1,8 @@
 /**
- *  $Author$ $Date$ $Id: SessionManager.java,v 1.8
- *  2001/05/30 00:54:55 zshaw Exp $ $Name$ $Revision$ Copyright (c) 2000
- *  The JA-SIG Collaborative. All rights reserved. Redistribution and use in
- *  source and binary forms, with or without modification, are permitted
+ *  $Author$ $Date$ $Id: SessionManager.java,v
+ *  1.8 2001/05/30 00:54:55 zshaw Exp $ $Name$ $Revision$ Copyright (c)
+ *  2000 The JA-SIG Collaborative. All rights reserved. Redistribution and use
+ *  in source and binary forms, with or without modification, are permitted
  *  provided that the following conditions are met: 1. Redistributions of source
  *  code must retain the above copyright notice, this list of conditions and the
  *  following disclaimer. 2. Redistributions in binary form must reproduce the
@@ -47,12 +47,13 @@ import java.io.*;
  */
 public class SessionManager {
 
-    private static Hashtable sessionTypes = new Hashtable();
+    private static Map sessionTypes = new HashMap();
     // this tracks the sessionType/userName to sessionID mapping
-    private static Hashtable sessionToUser = new Hashtable();
+    private static Map sessionToUser = new HashMap();
     // this tracks the active sessionIDs in the system
-    private static Hashtable sessionWrapTable = new Hashtable();
+    private static Map sessionWrapTable = new HashMap();
     // this maps the active sessionIDs to the corresponding SessionWrappers.
+
     private static boolean initialized = false;
     private static Properties sessionProps = new Properties();
     private static boolean starvation_denies_login = true;
@@ -80,15 +81,37 @@ public class SessionManager {
 
 
     /**
+     *  Gets the Creation time of a session
+     *
+     *@param  sessionId  Description of Parameter
+     *@return            The CreationTime value
+     *@since
+     *@author            $Author$
+     */
+    public static Date getCreationTime(String sessionId) {
+        init();
+
+        SessionWrapper sessInfo = (SessionWrapper) sessionWrapTable.get(sessionId);
+        if (sessInfo == null) {
+            return null;
+        }
+        // this session is not in our table
+        return sessInfo.creationTime;
+    }
+
+
+    /**
      *  Lists the available properties that the SessionManager has configured.
+     *  Tells the SessionManager that the specified userName is logged in and
+     *  using the session with sessionID. You also need to specify the
+     *  sessionType to prevent different parts of the application from stepping
+     *  on eachother.
      *
      *@return    The ConfigurationNames value
      *@since
-     *@author    $Author$
      */
     public static Enumeration getConfigurationNames() {
         init();
-
         return sessionProps.propertyNames();
     }
 
@@ -102,10 +125,9 @@ public class SessionManager {
      *@since
      *@author    $Author$
      */
-    public static Enumeration getSessionTypes() {
+    public static Set getSessionTypes() {
         init();
-
-        return sessionTypes.keys();
+        return sessionTypes.keySet();
     }
 
 
@@ -117,10 +139,9 @@ public class SessionManager {
      *@return              The SessionCount value
      *@since
      */
-    public static long getSessionCount(String sessionType) {
+    public static int getSessionCount(String sessionType) {
         init();
-
-        Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+        Map userToSession = (Map) sessionTypes.get(sessionType);
         if (userToSession == null) {
             return -1;
         }
@@ -139,17 +160,17 @@ public class SessionManager {
      *@since
      *@author              $Author$
      */
-    public static Enumeration getUserNames(String sessionType) {
+    public static Set getUserNames(String sessionType) {
         init();
 
-        Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+        Map userToSession = (Map) sessionTypes.get(sessionType);
 
         if (userToSession == null) {
             return null;
         }
         // bad sesion, return null
 
-        return userToSession.keys();
+        return userToSession.keySet();
     }
 
 
@@ -161,36 +182,14 @@ public class SessionManager {
      *@since
      *@author              $Author$
      */
-    public static Enumeration getSessionIDs(String sessionType) {
+    public static Collection getSessionIDs(String sessionType) {
         init();
-
-        Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+        Map userToSession = (Map) sessionTypes.get(sessionType);
         if (userToSession == null) {
             return null;
             // bad sesion, return null
         }
-
-        return userToSession.elements();
-    }
-
-
-    /**
-     *  Gets the Creation time of a session
-     *
-     *@param  sessionId  Description of Parameter
-     *@return            The CreationTime value
-     *@since
-     *@author            $Author$
-     */
-    public static Date getCreationTime(String sessionId) {
-        init();
-
-        SessionWrapper sessInfo = (SessionWrapper) sessionWrapTable.get(sessionId);
-        if (sessInfo == null) {
-            return null;
-        }
-        // this session is not in our table
-        return sessInfo.creationTime;
+        return userToSession.values();
     }
 
 
@@ -278,11 +277,11 @@ public class SessionManager {
         boolean allowingMultipleLogins = false;
 
         synchronized (sessionWrapTable) {
-            Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+            Map userToSession = (Map) sessionTypes.get(sessionType);
 
             // register this new sessionType if it doesn't exist already
             if (userToSession == null) {
-                userToSession = new Hashtable();
+                userToSession = new HashMap();
                 sessionTypes.put(sessionType, userToSession);
             }
 
@@ -350,7 +349,7 @@ public class SessionManager {
         SessionWrapper sessInfo = null;
 
         synchronized (sessionWrapTable) {
-            Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+            Map userToSession = (HashMap) sessionTypes.get(sessionType);
 
             // check to see if that sessionType exists already
             if (userToSession == null) {
@@ -374,7 +373,10 @@ public class SessionManager {
         }
 
         if (sessInfo != null) {
-            Logger.log(Logger.INFO, "SessionManager:  logged out user " + userName + " with session ID " + sessInfo.Id);
+            Logger.log(Logger.INFO, "SessionManager: logged out user " + userName + " with session ID " + sessInfo.Id);
+        }
+        else {
+            Logger.log(Logger.INFO, "SessionManager: logged out user " + userName + " without session ID");
         }
     }
 
@@ -408,7 +410,7 @@ public class SessionManager {
             }
             // bad user name, do nothing
 
-            Hashtable userToSession = (Hashtable) sessionTypes.get(sessionType);
+            Map userToSession = (Map) sessionTypes.get(sessionType);
 
             if (userToSession == null) {
                 return;
@@ -419,12 +421,9 @@ public class SessionManager {
             sessionToUser.remove(sessionID);
             sessionWrapTable.remove(sessionID);
             userToSession.remove(userName);
-
         }
 
-        if (sessionID != null) {
-            Logger.log(Logger.INFO, "SessionManager:  logged out user " + userName + " with session ID " + sessionID);
-        }
+        Logger.log(Logger.INFO, "SessionManager: logged out user " + userName + " with session ID " + sessionID);
     }
 
 
@@ -493,4 +492,5 @@ public class SessionManager {
     }
 
 }
+
 

@@ -11,13 +11,14 @@
 
     HttpSessionContext sessionContext = session.getSessionContext();
     
-    long totalUserCount = 0;
-    Enumeration userTypes = SessionManager.getSessionTypes();
-    while(userTypes.hasMoreElements()) {
-        totalUserCount += SessionManager.getSessionCount((String)userTypes.nextElement());
+    int totalUserCount = 0;
+    Set userTypes = SessionManager.getSessionTypes();
+    Iterator itr = userTypes.iterator();
+    while(itr.hasNext()) {
+        totalUserCount += SessionManager.getSessionCount((String)itr.next());
     }
     
-    long totalGuestCount = 0;
+    int totalGuestCount = 0;
     Enumeration sessionIds = sessionContext.getIds();
     while(sessionIds.hasMoreElements()) {
         sessionIds.nextElement();  // do nothing with it since we are just counting

@@ -959,7 +959,7 @@ public final class LayoutBean extends GenericPortalBean
                                     out.println("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
                                 }
                                 else
-                                        if (ch.isMinimizable()) {
+                                        if (!readOnly && ch.isMinimizable()) {
                                     out.println("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
                                 }
 
@@ -967,11 +967,11 @@ public final class LayoutBean extends GenericPortalBean
                                     out.println("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth() + ", " + ch.getDefaultDetachHeight() + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
                                 }
 
-                                if (ch.isRemovable()) {
+                                if (ch.isRemovable() && !readOnly) {
                                     out.println("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
                                 }
 
-                                if (ch.isEditable()) {
+                                if (ch.isEditable() && !readOnly) {
                                     out.println("<a href=\"" + DispatchBean.buildURL("edit", getChannelID(channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
                                 }
 

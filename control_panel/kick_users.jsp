@@ -13,10 +13,11 @@
   <body bgcolor="#FFFFFF">
 <% 
     // don't show anything if there are no users to invalidate
-    Enumeration sessionIds = SessionManager.getSessionTypes();
+    Set sessionIds = SessionManager.getSessionTypes();
+    Iterator itr = sessionIds.iterator();
     int sessionCount = 0;
-    while(sessionIds.hasMoreElements())
-        sessionCount += SessionManager.getSessionCount((String)sessionIds.nextElement());
+    while(itr.hasNext())
+        sessionCount += SessionManager.getSessionCount((String)itr.next());
     
     if(sessionCount == 0) {
     
@@ -76,9 +77,10 @@
           <select name="sessionType">
 <%
     // list out all the different session types currently available
-    Enumeration sessionTypes = SessionManager.getSessionTypes();
-    while(sessionTypes.hasMoreElements()) {
-        out.println("<option>" + (String)sessionTypes.nextElement() + "</option>");
+    Set sessionTypes = SessionManager.getSessionTypes();
+    itr = sessionTypes.iterator();
+    while(itr.hasNext()) {
+        out.println("<option>" + (String)itr.next() + "</option>");
     }
 %>
             
@@ -120,5 +122,4 @@
 
   </body>
 </html>
-
 
