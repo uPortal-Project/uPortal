@@ -75,8 +75,9 @@ class SimpleSecurityContext extends ChainingSecurityContext
       PreparedStatement stmt = null;
       ResultSet rset = null;
       String first_name = null, last_name = null, md5_passwd = null;
+      int globalUID;
       try {
-        String query = "SELECT FIRST_NAME, LAST_NAME, PORTAL_SHADOW.PASSWORD " +
+        String query = "SELECT ID, FIRST_NAME, LAST_NAME, PORTAL_SHADOW.PASSWORD " +
             "FROM PORTAL_USERS, PORTAL_SHADOW WHERE " +
             "PORTAL_USERS.USER_NAME = PORTAL_SHADOW.USER_NAME AND " +
             "PORTAL_USERS.USER_NAME = ?";
@@ -85,6 +86,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
         stmt.setString(1, this.myPrincipal.UID);
         rset = stmt.executeQuery();
         if (rset.next()) {
+          globalUID  = rset.getInt("ID");
           first_name = rset.getString("FIRST_NAME");
           last_name  = rset.getString("LAST_NAME");
           md5_passwd = rset.getString("PASSWORD");
@@ -111,6 +113,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
             if (dgx[i] != compare[i])
               same = false;
           if (same) {
+            this.myPrincipal.globalUID = globalUID;
             this.myPrincipal.FullName = first_name + " " + last_name;
             Logger.log(Logger.INFO, "User " + this.myPrincipal.UID +
               " is authenticated");

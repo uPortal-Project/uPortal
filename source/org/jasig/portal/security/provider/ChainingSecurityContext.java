@@ -158,6 +158,7 @@ public abstract class ChainingSecurityContext implements SecurityContext {
   // but I prefer member classes. -ADN
 
   protected class ChainingPrincipal implements Principal {
+    protected int globalUID;
     protected String UID;
     protected String FullName;
 
@@ -166,7 +167,7 @@ public abstract class ChainingSecurityContext implements SecurityContext {
     }
 
     public String getGlobalUID() {
-      return this.UID;
+      return this.globalUID + "";
     }
 
     // This is supposed to be the person's "human readable" name. We should
