@@ -70,6 +70,7 @@ public class ReferenceAuthorization implements IAuthorization {
       Properties securityProps = new Properties();
       try {
         securityProps.load(stream);
+		  stream.close();
         s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
         LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));

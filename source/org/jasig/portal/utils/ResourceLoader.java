@@ -199,6 +199,7 @@ public class ResourceLoader {
     InputStream inputStream = getResourceAsStream(requestingClass, resource);
     Properties props = new Properties();
     props.load(inputStream);
+	 inputStream.close();
     return props;
   }  
   
