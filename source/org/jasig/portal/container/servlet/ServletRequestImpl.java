@@ -40,6 +40,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.jasig.portal.container.services.information.PortletStateManager;
+import org.jasig.portal.UPFileSpec;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -57,8 +58,8 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     public ServletRequestImpl(HttpServletRequest request) {
         super(request);
         String url = getRequestURL().toString();
-        if ( url.indexOf("param.") > 0 ) {
-          String encodedParams = url.substring(url.indexOf("param.")+6,url.indexOf(".param"));	
+        if ( url.indexOf(UPFileSpec.ENCODED_PARAM+"@") > 0 ) {
+          String encodedParams = url.substring(url.indexOf(UPFileSpec.ENCODED_PARAM+"@")+6,url.indexOf("@"+UPFileSpec.ENCODED_PARAM));	
           parameters = PortletStateManager.decodeURLParameters(java.net.URLDecoder.decode(encodedParams));
         } 
         if ( parameters != null )

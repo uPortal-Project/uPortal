@@ -44,6 +44,7 @@ import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletURLProvider;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
+import org.jasig.portal.UPFileSpec;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
@@ -102,7 +103,8 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         String encodedURLParams = PortletStateManager.encodeURLParameters(urlManager.toString());
   
 		StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-		  ("param."+java.net.URLEncoder.encode(encodedURLParams)+".param."+baseActionURL):baseActionURL);
+		  (UPFileSpec.ENCODED_PARAM+"@"+java.net.URLEncoder.encode(encodedURLParams)+"@"+UPFileSpec.ENCODED_PARAM+
+		   UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
 		
         return url.toString();
     }
