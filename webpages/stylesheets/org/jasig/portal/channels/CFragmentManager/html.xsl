@@ -45,9 +45,6 @@ Version $Revision$
     <!--~-->
     <xsl:param name="uPcFM_action" select="'save'"/>
     <xsl:param name="uPcFM_selectedID" select="''"/>
-    <!-- Param removed under assumption of non-use
-    <xsl:param name="selectedID" select="'noSelectedID'"/>
-     Param removed under assumption of non-use -->
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CFragmentManager'"/>
     <!--~-->
     <!--root template-->
