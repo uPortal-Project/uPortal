@@ -137,4 +137,12 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      */
     public Map getFragments (IPerson person) throws Exception;
 
+    /**
+     * Returns the next fragment ID
+     *
+     * @return a <code>String</code> next fragment ID
+     * @exception PortalException if an error occurs
+     */
+    public String getNextFragmentId() throws PortalException;
+
 }

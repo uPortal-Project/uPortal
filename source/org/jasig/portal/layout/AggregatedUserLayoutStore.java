@@ -2730,5 +2730,48 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
   }
 
+    /**
+     * Returns the next fragment ID.
+     *
+     * @return a <code>String</code> next fragment ID
+     * @exception PortalException if an error occurs
+     */
+    public synchronized String getNextFragmentId() throws PortalException {
+     int attemptsNumber = 20;
+     Statement stmt = null;
+     try {
+      Connection con = RDBMServices.getConnection();
+      try {
+        RDBMServices.setAutoCommit(con, false);
+        stmt = con.createStatement();
+        String sQuery = "SELECT NEXT_ID FROM UP_FRAGMENT_SEQ";
+        for (int i = 0; i < attemptsNumber; i++) {
+         try {
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          int currentStructId = 0;
+          rs.next();
+          currentStructId = rs.getInt(1);
+          if ( rs != null ) rs.close();
+            String sUpdate = "UPDATE UP_FRAGMENT_SEQ SET NEXT_ID=" + (currentStructId + 1);
+            LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
+            stmt.executeUpdate(sUpdate);
+            RDBMServices.commit(con);
+            return new String (  (currentStructId + 1) + "" );
+          } catch (Exception sqle) {
+            RDBMServices.rollback(con);
+            // Assume a concurrent update. Try again after some random amount of milliseconds.
+            Thread.sleep(500); // Retry in up to 1/2 seconds
+          }
+        }
+      } finally {
+            if ( stmt != null ) stmt.close();
+            RDBMServices.releaseConnection(con);
+         }
+     } catch ( Exception e ) {
+        throw new PortalException(e);
+       }
+        throw new PortalException("Unable to generate a new next fragment node id!");
+    }
 
 }
