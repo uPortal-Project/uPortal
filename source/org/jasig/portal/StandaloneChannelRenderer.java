@@ -210,7 +210,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         }
 
         try {
-            rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
+            rd.setUPFile(new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
         } catch (Exception e) {
             LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }
