@@ -297,8 +297,11 @@ public class ChannelPublisher
                 crs.removeChannelFromCategory(ci.chanDef, categories[i]);
             }
             // Now add channel to assigned categories
-            for (int k = 0; k < ci.categories.length; k++) {
-                crs.addChannelToCategory(ci.chanDef, ci.categories[k]);
+            if (ci.categories != null)
+            {
+                for (int k = 0; k < ci.categories.length; k++) {
+                    crs.addChannelToCategory(ci.chanDef, ci.categories[k]);
+                }
             }
 
             // Need to approve channel
