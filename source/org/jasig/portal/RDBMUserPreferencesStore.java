@@ -64,6 +64,7 @@ public class RDBMUserPreferencesStore
       public void setAttribute (String key, Object value) {}
 
       public Enumeration getAttributes () {return null;}
+      public Enumeration getAttributeNames () {return null;}
       
       public boolean isGuest() {return(false);}
       
