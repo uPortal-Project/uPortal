@@ -117,7 +117,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       
       user.append(ldapConn.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      log.debug(
+      if (log.isDebugEnabled())
+          log.debug(
                      "SimpleLdapSecurityContext: Looking for " +
                      user.toString());
       conn = ldapConn.getConnection();
@@ -154,14 +155,16 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
             
             String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
-            log.debug(
+            if (log.isDebugEnabled())
+                log.debug(
                            "SimpleLdapSecurityContext: Looking in " +
                            dnBuffer.toString() + " for " + attrSearch);
             conn.search(dnBuffer.toString(), attrSearch, searchCtls);
  
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            log.debug(
+            if (log.isDebugEnabled())
+                log.debug(
                            "SimpleLdapSecurityContext: User " +
                            this.myPrincipal.UID + " (" +
                            this.myPrincipal.FullName + ") is authenticated");
@@ -177,7 +180,9 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                          this.myPrincipal.UID);
         }
       } catch (AuthenticationException ae) {
-        log.info("SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
+          if (log.isInfoEnabled())
+              log.info("SimpleLdapSecurityContext: Password invalid for user: " +
+                      this.myPrincipal.UID);
       } catch (Exception e) {
         log.error(
                        "SimpleLdapSecurityContext: LDAP Error with user: " +

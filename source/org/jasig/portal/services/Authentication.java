@@ -113,8 +113,9 @@ public class Authentication {
                }
             }
             else {
-               log.warn("Authentication Service recieved " +
-                    "unknown additional descriptor [" + addInfo + "]");
+                if (log.isWarnEnabled())
+                    log.warn("Authentication Service recieved " +
+                            "unknown additional descriptor [" + addInfo + "]");
             }
          }
          // Populate the person object using the PersonDirectory if applicable
@@ -213,7 +214,8 @@ public class Authentication {
       // set in security properties. We will then use the value for root.
       username = (username != null ? username : (String)principals.get("root"));
       credential = (credential != null ? credential : (String)credentials.get("root"));
-      log.debug("Authentication::setContextParameters() username: " + username);
+      if (log.isDebugEnabled())
+          log.debug("Authentication::setContextParameters() username: " + username);
       // Retrieve and populate an instance of the principal object
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
       if (username != null && !username.equals("")) {

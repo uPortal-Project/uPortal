@@ -134,7 +134,8 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       }
     }
     PortalSecurityException ep = new PortalSecurityException("No such subcontext: " + name);
-    log.debug("No such subcontext as " + name, ep);
+    if (log.isDebugEnabled())
+        log.debug("No such subcontext as " + name, ep);
     return(null);
   }
 

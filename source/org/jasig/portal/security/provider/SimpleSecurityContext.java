@@ -73,14 +73,16 @@ public class SimpleSecurityContext extends ChainingSecurityContext
               same = false;
           if (same) {
             this.myPrincipal.FullName = first_name + " " + last_name;
-            log.info( "User " + this.myPrincipal.UID + " is authenticated");
+            if (log.isInfoEnabled())
+                log.info( "User " + this.myPrincipal.UID + " is authenticated");
             this.isauth = true;
           }
           else
             log.info( "MD5 Password Invalid");
         }
         else {
-            log.info( "No such user: " + this.myPrincipal.UID);
+            if (log.isInfoEnabled())
+                log.info( "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");

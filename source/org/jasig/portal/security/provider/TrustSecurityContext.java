@@ -48,11 +48,13 @@ class TrustSecurityContext extends ChainingSecurityContext
           first_name = acct[1];
           last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          log.info( "User " + this.myPrincipal.UID + " is authenticated");
+          if (log.isInfoEnabled())
+              log.info( "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
         }
         else {
-            log.info( "No such user: " + this.myPrincipal.UID);
+            if (log.isInfoEnabled())
+                log.info( "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");

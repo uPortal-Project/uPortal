@@ -66,12 +66,15 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
 
           // the above will throw an exception if authentication does not succeed
 
-          log.info( "User " + this.myPrincipal.UID + " is authenticated");
+          if (log.isInfoEnabled())
+              log.info( "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
 
       } catch (LoginException e) {
-        log.info( "User " + this.myPrincipal.UID + ": invalid password");
-        log.debug("LoginException: " + e.getMessage());
+          if (log.isInfoEnabled())
+              log.info( "User " + this.myPrincipal.UID + ": invalid password");
+          if (log.isDebugEnabled())
+              log.debug("LoginException: " + e.getMessage());
       }
     } else {
       log.error( "Principal or OpaqueCredentials not initialized prior to authenticate");

@@ -302,14 +302,15 @@ throws GroupsException
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
-    log.debug(
-       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
-       principal.toString());
+    if (log.isDebugEnabled())
+        log.debug( "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
+                principal);
 
     IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
-    log.debug(
-       "AuthorizationImpl.getGroupMemberForPrincipal(): got group member " + gm);
+    if (log.isDebugEnabled())
+        log.debug("AuthorizationImpl.getGroupMemberForPrincipal(): " +
+                "got group member " + gm);
 
     return gm;
 }
@@ -630,8 +631,8 @@ throws GroupsException
     String key = groupMember.getKey();
     Class type = groupMember.getType();
 
-    log.debug(
-       "AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
+    if (log.isDebugEnabled())
+        log.debug("AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
 
     return newPrincipal(key, type);
 }
@@ -696,6 +697,7 @@ private IPermission[] primGetPermissionsForPrincipal
     String target)
 throws AuthorizationException
 {
+    if (log.isDebugEnabled())
         log.debug(
           "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
           "Principal: " + principal + " owner: " + owner +
@@ -716,9 +718,10 @@ throws AuthorizationException
             { al.add(perms[i]); }
     }
 
-    log.debug(
-      "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
-      "# permissions retrieved: " + al.size());
+    if (log.isDebugEnabled())
+        log.debug(
+                "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
+                "# permissions retrieved: " + al.size());
 
 
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
