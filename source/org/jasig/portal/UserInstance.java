@@ -56,6 +56,7 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
@@ -112,7 +113,7 @@ public class UserInstance implements HttpSessionBindingListener {
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
 
     // a string that will be used to designate user layout root node in .uP files
-    public static final String USER_LAYOUT_ROOT_NODE="userLayoutRootNode";
+    public static final String USER_LAYOUT_ROOT_NODE=IALFolderDescription.ROOT_FOLDER_ID;
 
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
     private static Properties workerProperties;
@@ -264,7 +265,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
-                        processUserLayoutParameters(req,channelManager,ulm);
+                        processUserLayoutParameters(req,channelManager,ulm,upm);
                     } catch (PortalException pe) {
                         LogService.log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
                     }
@@ -658,8 +659,23 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param channelManager a <code>ChannelManager</code> value
      * @exception PortalException if an error occurs
      */
-    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm) throws PortalException {
+    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm, IUserPreferencesManager upm) throws PortalException {
      try {
+
+
+       // Sending the theme stylesheets parameters based on the user security context
+       UserPreferences userPrefs = upm.getUserPreferences();
+        ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
+        if ( person.getSecurityContext().isAuthenticated() ) {
+          themePrefs.putParameterValue("authenticated","true");
+          try {
+            if ( ChannelStaticData.getAuthorizationPrincipal(person).canPublish() )
+             themePrefs.putParameterValue("channelManager","true");
+          } catch ( Exception e ) {
+              LogService.log(LogService.ERROR, e);
+            }
+        }
+
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
