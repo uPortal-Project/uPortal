@@ -56,6 +56,7 @@ import  java.io.IOException;
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private String baseActionURL;
+    private boolean renderingAsRoot;
     private static final String fs = File.separator;
     private BrowserInfo binfo;
 
@@ -83,6 +84,14 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     //set methods
   public void setBaseActionURL (String baURL) {
     baseActionURL = baURL;
+  }
+
+  /**
+   * Sets whether or not the channel is rendering as the root of the layout.
+   * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+   */
+  public void setRenderingAsRoot (boolean rar) {
+    renderingAsRoot = rar;
   }
 
   public void setBrowserInfo (BrowserInfo bi) {
@@ -121,6 +130,14 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
   // the get methods ...
   public String getBaseActionURL () {
     return  baseActionURL;
+  }
+
+  /**
+   * Tells whether or not the channel is rendering as the root of the layout.
+   * @return <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+   */
+  public boolean isRenderingAsRoot() {
+    return renderingAsRoot;
   }
 
   public synchronized String getParameter (String key) {

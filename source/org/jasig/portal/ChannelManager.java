@@ -402,6 +402,11 @@ public class ChannelManager {
             }
         }
 
+        // Check if channel is rendering as the root element of the layout
+        String userLayoutRoot = ulm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+        if (userLayoutRoot != null && !userLayoutRoot.equals("root"))
+          rd.setRenderingAsRoot(true);
+
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
         cr.setCharacterCacheable(ccacheable);
 	if(ch instanceof ICacheable) {
