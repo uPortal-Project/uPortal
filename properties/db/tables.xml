@@ -762,31 +762,6 @@
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
-    <name>UPC_KEYWORD</name>
-    <desc>Not used</desc>
-    <columns>
-      <column> <name>CHAN_ID</name> <type>INTEGER</type>
-        <desc>Foreign key of table UP_CHANNEL and compound key</desc>
-        <key>CK</key>
-      </column>
-      <column> <name>GROUP_ID</name> <type>INTEGER</type>
-      <desc>Foreign key of table UP_GROUP and compound key</desc>
-      <key>CK</key>
-      </column>
-      <column> <name>USER_ID</name> <type>INTEGER</type>
-        <desc>Foreign key USER_ID of table UP_USER</desc>
-        <key>CK</key>
-      </column>
-      <column> <name>KEYWORD</name> <type>LONGVARCHAR</type>
-        <desc>Keywords separated by commas used to search for a channel</desc>
-      </column>
-    </columns>
-    <primary-key>CHAN_ID</primary-key>
-    <primary-key>GROUP_ID</primary-key>
-    <primary-key>USER_ID</primary-key>
-  </table>
-
-  <table sinceMajor="2" sinceMinor="1">
     <name>UP_CHAN_TYPE</name>
     <desc>Information about a java channel class, including the class to execute and it's Channel Publishing Document, used at publish</desc>
     <columns>
