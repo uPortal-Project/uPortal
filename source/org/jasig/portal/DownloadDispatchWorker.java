@@ -1,0 +1,131 @@
+package org.jasig.portal;
+
+
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.jasig.portal.services.LogService;
+import java.io.IOException;
+
+/**
+ * Provides file download capability for the portal.
+ *
+ * @author <a href="mailto:svenkatesh@interactivebusiness.com">Sridhar Venkatesh</a>
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ */
+public class DownloadDispatchWorker implements IWorkerRequestProcessor {
+    public void processWorkerDispatch(PortalControlStructures pcs) throws PortalException {
+        HttpServletRequest req=pcs.getHttpServletRequest();
+        HttpServletResponse res=pcs.getHttpServletResponse();
+        
+        // determine the channel, follow the same logic as the standard uPortal processing.
+        // (although, in general, worker processors can make their own rules
+        String channelTarget=null;
+        Hashtable targetParams = new Hashtable();
+        
+        // check if the uP_channelTarget parameter has been passed
+        channelTarget=req.getParameter("uP_channelTarget");
+        if(channelTarget==null) {
+            // determine target channel id
+            String servletPath = req.getServletPath();
+            String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
+            StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
+            while(uPTokenizer.hasMoreTokens()) {
+                String eT=uPTokenizer.nextToken();
+                if(eT.equals("channel") && uPTokenizer.hasMoreTokens()) {
+                    channelTarget=uPTokenizer.nextToken();
+                    LogService.instance().log(LogService.DEBUG,"DownloadDispatchWorker::processWorkerDispatch() : channelTarget=\""+channelTarget+"\".");
+                    break;
+                }
+            }
+        }
+
+        // gather parameters
+        if(channelTarget!=null) {
+            Enumeration en = req.getParameterNames();
+            if (en != null) {
+                while (en.hasMoreElements()) {
+                    String pName= (String) en.nextElement();
+                    if (!pName.equals ("uP_channelTarget")) {
+                        Object[] val= (Object[]) req.getParameterValues(pName);
+                        if (val == null) {
+                            val = ((PortalSessionManager.RequestParamWrapper)req).getObjectParameterValues(pName);
+                        }
+                        targetParams.put(pName, val);
+                    }
+                }
+            }
+            
+            IChannel ch = pcs.getChannelManager().getChannelInstance(channelTarget);
+
+            if(ch!=null) {
+                // set pcs
+                if(ch instanceof IPrivilegedChannel) {
+                    ((IPrivilegedChannel)ch).setPortalControlStructures(pcs);
+                }
+                // set runtime data
+                ChannelRuntimeData rd = new ChannelRuntimeData();
+                rd.setParameters(targetParams);
+                rd.setBrowserInfo(new BrowserInfo(req));
+                rd.setChannelId(channelTarget);
+                // just give a default baseActionURL
+                rd.setBaseActionURL(PortalSessionManager.RENDER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+channelTarget+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                ch.setRuntimeData(rd);
+                
+                if (ch instanceof org.jasig.portal.IMimeResponse) {
+                    try {
+                        org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
+                    
+                        // Set the headers if available
+                        Map httpHeaders = ds.getHeaders();
+                        if (httpHeaders != null) {
+                            Set headerKeys = httpHeaders.keySet();
+                            Iterator it = headerKeys.iterator();
+                            while (it.hasNext()) {
+                                String param = (String)it.next();
+                                String value = (String)httpHeaders.get(param);
+                                res.setHeader(param, value);
+                            }
+                            httpHeaders.clear();
+                        }
+                    
+                        // Set the MIME content type
+                        res.setContentType (ds.getContentType());
+                    
+                        // Set the data
+                        javax.servlet.ServletOutputStream out = res.getOutputStream();
+                        java.io.InputStream ios = ds.getInputStream();
+                        if (ios != null) {
+                            int size = 0;
+                            byte[] contentBytes = new byte[8192];
+                            while ((size = ios.read(contentBytes)) != -1) {
+                                out.write(contentBytes,0, size);
+                            }
+                            ios.close();
+                        } else {
+                            /**
+                             * The channel has more complicated processing it needs to do on the
+                             * output stream
+                             */
+                            ds.downloadData(out);
+                        }
+                        out.flush();
+                    } catch (IOException ioe) {
+                        throw new PortalException(ioe);
+                    }
+                } else {
+                    LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
+                }
+            } else {
+                LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
+            }
+        } else {
+            LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
+        }
+    }
+}
