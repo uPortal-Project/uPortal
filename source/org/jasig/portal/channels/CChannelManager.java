@@ -446,12 +446,24 @@ public class CChannelManager extends BaseChannel {
       } else if (action.equals("changeRecordsPerPage")) {
         String recordsPerPage = runtimeData.getParameter("recordsPerPage");
         if (recordsPerPage != null) {
-          modChanSettings.setRecordsPerPage(recordsPerPage);
-          channelManagerDoc = getChannelManagerDoc(modChanSettings);
+          // Figure out what page we should be on based on the change in records per page.
+          try {
+            int oldPage = Integer.parseInt(modChanSettings.getCurrentPage());
+            int oldRecordsPerPage = Integer.parseInt(modChanSettings.getRecordsPerPage());
+            // Thanks to jweight@campuspipeline.com for the following formula:
+            String newPage = String.valueOf(((((oldPage-1)*oldRecordsPerPage)+1)/(Integer.parseInt(recordsPerPage))+1));
+            modChanSettings.setCurrentPage(newPage);
+            modChanSettings.setRecordsPerPage(recordsPerPage);
+            channelManagerDoc = getChannelManagerDoc(modChanSettings);
+          } catch (NumberFormatException nfe) {
+            // do nothing here, just leave the current page as is.
+          }
         }
       } else if (action.equals("filterByCategory")) {
         String filterByID = runtimeData.getParameter("newCategory");
         if (filterByID != null) {
+          // User may be beyond the last page of this filtered set so put them back on page 1.
+          modChanSettings.setCurrentPage("1");                            
           modChanSettings.setFilterByID(filterByID);
           channelManagerDoc = getChannelManagerDoc(modChanSettings);
         }
