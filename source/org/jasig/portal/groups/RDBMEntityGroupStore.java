@@ -35,7 +35,6 @@
 package org.jasig.portal.groups;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
@@ -727,8 +726,9 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
 {
     try
     {
-        java.sql.PreparedStatement ps = conn.prepareStatement(getInsertGroupSql());
-        try
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getInsertGroupSql());
+       try
         {
             Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
             ps.setString(1, group.getKey());
@@ -803,7 +803,8 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
 {
     try
     {
-        java.sql.PreparedStatement ps = conn.prepareStatement(getUpdateGroupSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getUpdateGroupSql());
 
         try
         {
@@ -847,7 +848,9 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
     {
         if ( egi.hasDeletes() )
         {
-            PreparedStatement psDelete = conn.prepareStatement(getDeleteMemberSql());
+            RDBMServices.PreparedStatement psDelete =
+                new RDBMServices.PreparedStatement(conn, getDeleteMemberSql());
+
             try
             {
                 Iterator deletes = egi.getRemovedMembers().values().iterator();
@@ -868,7 +871,9 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
 
         if ( egi.hasAdds() )
         {
-            PreparedStatement psAdd = conn.prepareStatement(getInsertMemberSql());
+            RDBMServices.PreparedStatement psAdd =
+                new RDBMServices.PreparedStatement(conn, getInsertMemberSql());
+
             try
             {
                 Iterator adds = egi.getAddedMembers().values().iterator();
