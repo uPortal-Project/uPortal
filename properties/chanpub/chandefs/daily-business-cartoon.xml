@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+
+<channel-definition>
+
+    <title>Daily Business Cartoon</title>
+    <name>Account Request</name>
+    <fname>ibs-account-request</fname>
+    <desc>Lets people request an account for uPortal.biz. The request
+        will be     sent as an email to the portal administrator and the
+        person that requested     the account will receive a
+        confirmation email.</desc>
+    <type>Custom</type>
+    <class>com.interactivebusiness.accountrequest.channel.CAccountRequest</class>
+    <timeout>30000</timeout>
+    
+    <hasedit>N</hasedit>
+    <hashelp>N</hashelp>
+    <hasabout>N</hasabout>
+    
+    <categories>
+        <category>Applications</category>
+    </categories>
+    
+    <groups>
+        <group>Everyone</group>
+    </groups>
+    
+    <parameters>
+    
+        <parameter>
+            <name>SMTPServer</name>
+            <value>mail.interactivebusiness.com</value>
+            <description>The SMTP server address</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>SenderUserName</name>
+            <value>wrybicki</value>
+            <description>The sender user name</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>SenderPassword</name>
+            <value>ibsuser</value>
+            <description>The sender password</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>SenderEmail</name>
+            <value>upbiz-account-request@interactivebusiness.com</value>
+            <description>The sender email address</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>AdminEmail</name>
+            <value>mjerdely@interactivebusiness.com,kweiner@interactivebusiness.com</value>
+            <description>The administrator email address</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>EmailSubjectLineToAdmin</name>
+            <value>New uPortal.biz account request</value>
+            <description>The subject line of the email sent to the administrator</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>EmailSubjectLineToRequestor</name>
+            <value>Information about your uPortal.biz account request</value>
+            <description>The subject line of the email sent to the requestor</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+        <parameter>
+            <name>DaysToWaitForAccount</name>
+            <value>2</value>
+            <description>Days to wait for an account</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        
+    </parameters>
+    
+</channel-definition>

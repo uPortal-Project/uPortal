@@ -360,7 +360,7 @@
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
     <delete dir="${dist.home}"/>
-    <!--<delete dir="${deploy.home}"/>-->
+    <delete dir="${deploy.home}"/>
   </target>
 
 
@@ -981,4 +981,33 @@ Example:
     </java>
   </target>
 
+
+<!-- ==================== publish Target ================================ -->
+
+<!--
+
+  The "publish" target runs the ChannelPublisher tool
+  Examples:
+  
+  ant publish -Dchannel=all
+  ant publish -Dchannel=daily-business-cartoon.xml
+
+-->
+  
+  <target name="publish" description="Publish a channel" depends="compile">
+    <echo message="Invoking Channel Publisher Tool"/>
+    
+    <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>
+    
+    <property name="channel" value=" "/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
+      <classpath refid="compile.classpath"/>
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+      </classpath>
+      <arg value="-n"/>
+      <arg value="${channel}"/>
+    </java>
+  </target>
+  
 </project>

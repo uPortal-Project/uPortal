@@ -36,6 +36,7 @@
 package org.jasig.portal.tools.chanpub;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Date;
@@ -91,6 +92,8 @@ public class ChannelPublisher {
   private static IPerson systemUser;
   private static DocumentBuilder domParser;
   private static IChannelRegistryStore crs;
+  
+  private static final String chanDefsLocation = "/properties/chanpub/chandefs";
 
   public static void main(String[] args) {
 
@@ -101,7 +104,7 @@ public class ChannelPublisher {
 
 	ant publish -Dchannel=all or -Dchannel=webmail.xml
 
-	2) validate each against the channel-definition.dtd file
+	2) validate each against the channelDefinition.dtd file
 
 	3) load properties files
 	  - channelTypes.properties
@@ -152,9 +155,17 @@ public class ChannelPublisher {
 		// user has selected to publish all channel in the /channels directory
 		// lets publish all channel one by one that is
 		// create InputStream object to pass to next method
-		File f = ResourceLoader.getResourceAsFile(ChannelPublisher.class, "/properties/chanpub/channel-definitions/");
+		File f = ResourceLoader.getResourceAsFile(ChannelPublisher.class, chanDefsLocation + "/");
 		if (f.isDirectory()) {
-		  File[] files = f.listFiles();
+			
+		  // Consider only files that end in .xml
+		  class ChannelDefFileFilter implements FileFilter {
+		    public boolean accept(File file) {
+		      return file.getName().endsWith(".xml");		        
+		    }
+		  }
+		  File[] files = f.listFiles(new ChannelDefFileFilter());
+		  
 		  for (int j=0; j < files.length; j++) {
 			try {
 			  System.out.print("Publishing channel " + files[j].getName() + ".....");
@@ -258,6 +269,7 @@ public class ChannelPublisher {
 	  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	  dbf.setValidating(true);
 	  domParser = dbf.newDocumentBuilder();
+	  domParser.setEntityResolver(new ChannelDefDtdResolver());
 	} catch (Exception e) {
 	  LogService.log(LogService.ERROR, "setupDomParser() :: creating Dom Parser. "+e);
 	  throw e;
@@ -270,7 +282,7 @@ public class ChannelPublisher {
     
 	try {
 	  // Build a DOM tree out of Channel_To_Publish.xml
-	  InputStream is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, "/properties/chanpub/channel-definitions/"+chanDefFile);
+	  InputStream is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, chanDefsLocation + "/" + chanDefFile);
 	  doc = domParser.parse(is);
       
 	  Element chanDefE = doc.getDocumentElement();
@@ -394,6 +406,8 @@ public class ChannelPublisher {
 			}
 		  }
 		}
+		ci.chanDef.setPublisherId(0); // system user
+		ci.chanDef.setPublishDate(new Date());
 	  }
 	} catch (Exception e) {
 	  LogService.log(LogService.ERROR, "getChannelInfo() :: Exception reading channel definition file: " + chanDefFile);
