@@ -737,9 +737,11 @@ public class ChannelManager implements LayoutEventListener {
 
                 ChannelRuntimeData rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
+                String qs = pcs.getHttpServletRequest().getQueryString();
+                if (qs != null && qs.indexOf("=") == -1)
+                  rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
                 rd.setUPFile(up);
@@ -939,6 +941,9 @@ public class ChannelManager implements LayoutEventListener {
             if(!(ch instanceof IPrivileged)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
+                String qs = pcs.getHttpServletRequest().getQueryString();
+                if (qs != null && qs.indexOf("=") == -1)
+                  rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
