@@ -11,17 +11,18 @@
 <!ELEMENT channel (parameter)*>
 <!ATTLIST channel 
   ID ID #REQUIRED
-  priority CDATA #REQUIRED
   name CDATA #REQUIRED 
   description CDATA #IMPLIED
-  timeout CDATA "5000"
-  minimized (true|false) "true"
-  detachable (true|false) "true"
-  editable (true|false) "true"
-  hasHelp (true|false) "true"
-  hasAbout (true|false) "true"
+  timeout CDATA "10000"
+  minimized (true|false) "false"
+  detachable (true|false) "false"
+  editable (true|false) "false"
+  hasHelp (true|false) "false"
+  hasAbout (true|false) "false"
   removable (true|false) "true"
-  class CDATA #REQUIRED>
+  printable (true| false) "false"
+  class CDATA #REQUIRED
+  typeID CDATA #REQUIRED>
 
 
 <!ELEMENT parameter EMPTY>
