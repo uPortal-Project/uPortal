@@ -44,6 +44,7 @@ echo "set getDatasourceFromJNDI in portal.properties to true
 echo "run ant deploy in uPortal home"
 echo "start tomcat, ant tomcatstart, and check for no errors in portal.log"
 echo "stop HSQL and Tomcat"
+echo "rm uPortal/build, and Tomcat work and logs, and portal.log"
 echo "run fix-unix-modes.sh"
 echo "zip -r uPortal_X-X-X-quick-start uPortal_X-X-X-quick-start"
 echo ""
