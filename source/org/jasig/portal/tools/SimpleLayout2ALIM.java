@@ -64,6 +64,7 @@ import org.w3c.dom.NodeList;
 
 public class SimpleLayout2ALIM {
 	   public static void main(String[] args) {
+	   	
 		int uid;
 		int SimpleProfileId = 1;
 		final int NEW_LAYOUT_ID =1;  /* id to use when creating new layout */
@@ -106,9 +107,19 @@ public class SimpleLayout2ALIM {
 				rs = 
 					qstmt.executeQuery("select ss_id from up_ss_struct where ss_uri like '%org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl'");
 				if (rs.next()) 		structSsId = rs.getInt(1);
+				else {
+					System.out.println("No AL structure stylesheet found. \n Layout for user "+uid+" not converted.");
+					con.rollback();
+					return;
+				}
 				rs = 
 					qstmt.executeQuery("select ss_id from up_ss_theme where ss_uri like '%org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.xsl'");
 				if (rs.next()) 		themeSsId = rs.getInt(1);
+				else {
+					System.out.println("No IM theme stylesheet found. \n Layout for user "+uid+" not converted.");
+					con.rollback();
+					return;
+				}
 				
 				// create a new profile id
 				//rs = qstmt.executeQuery("select max(profile_id) from UP_USER_PROFILE where user_ID ="+ uid);
