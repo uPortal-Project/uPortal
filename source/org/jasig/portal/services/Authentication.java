@@ -186,7 +186,10 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
-         PersonDirectory.persons.put(person.getAttribute(IPerson.USERNAME), person);
+         // PersonDirectory.persons.put(person.getAttribute(IPerson.USERNAME), person);
+         // prior to uP 2.4.2, PersonDirectory exposed a cache into which
+         // Authentication placed this newly logged in IPerson
+         
          
          // Record the successful authentication
          StatsRecorder.recordLogin(person);
