@@ -1002,7 +1002,10 @@
         <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_CACHE</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
-
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_FRAGMENT</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+      </row>
     </rows>
   </table>
 
