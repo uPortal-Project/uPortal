@@ -735,11 +735,16 @@ public class ChannelManager {
         // Set the data
         javax.servlet.ServletOutputStream out = res.getOutputStream ();
         java.io.InputStream ios = ds.getInputStream();
-
-        int size = 0;
-        byte[] contentBytes = new byte[8192];
-        while ((size = ios.read(contentBytes)) != -1) {
-          out.write(contentBytes,0, size);
+        if (ios != null) {
+          int size = 0;
+          byte[] contentBytes = new byte[8192];
+          while ((size = ios.read(contentBytes)) != -1) {
+            out.write(contentBytes,0, size);
+          }
+          ios.close();
+        } else {  // The channel has more complicated processing it needs to do on the
+                  // output stream
+          ds.downloadData(out);
         }
         out.flush();
       } else {
@@ -784,7 +789,7 @@ public class ChannelManager {
         cic.bind("services",servicesContext);
         cic.bind("channel-ids",channel_idsContext);
         cic.bind("channel-obj",channel_objContext);
-        
+
         return cic;
     }
 }

@@ -37,6 +37,7 @@ package  org.jasig.portal;
 
 import java.util.Map;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * An interface that a channel that wants to download MIME files must implement.
@@ -44,7 +45,7 @@ import java.io.IOException;
  * @version $Revision$
  */
 public interface IMimeResponse {
-    
+
     /**
      * Returns the MIME type of the content.
      */
@@ -52,17 +53,25 @@ public interface IMimeResponse {
 
     /**
      * Returns the MIME content in the form of an input stream.
+     * Returns null if the code needs the OutputStream object
      */
     public java.io.InputStream getInputStream() throws IOException;
 
     /**
+     * Pass the OutputStream object to the download code if it needs special handling
+     * (like outputting a Zip file).
+     */
+    public void downloadData(OutputStream out) throws IOException;
+
+    /**
      * Returns the name of the MIME file.
-     */    
+     */
     public java.lang.String getName();
 
     /**
      * Returns a list of header values that can be set in the HttpResponse.
      * Returns null if no headers need to be set.
-     */    
-    public Map getHeaders();    
+     */
+    public Map getHeaders();
+
 }
