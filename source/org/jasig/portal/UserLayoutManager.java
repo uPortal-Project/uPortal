@@ -50,111 +50,319 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 import java.text.*;
-import java.sql.*;
 import java.net.*;
 
-public class UserLayoutManager extends GenericPortalBean
-{
-  private org.w3c.dom.Document uLayoutXML;
+/**
+ * UserLayoutManager participates in all operations associated with the
+ * user layout and user preferences.
+ * @author Peter Kharchenko
+ * @version $Revision$
+ */
 
-  /**
-   * Constructor does the following
-   *  1. Read layout.properties
-   *  2. read userLayout from the database
-   *  @param the servlet request object
-   *  @param user name
-   */
+public class UserLayoutManager extends GenericPortalBean {
+    private Document uLayoutXML;
+
+    // this one will contain user Layout XML with attrubutes for the
+    // first (structure) transformation
+    private Document argumentedUserLayoutXML;
+
+    private MediaManager mediaM;
+    
+    private UserPreferences up;
+    private UserPreferences complete_up;
+    
+
+
+    /**
+     * Constructor does the following
+     *  1. Read layout.properties
+     *  2. read userLayout from the database
+     *  @param the servlet request object
+     *  @param user name
+     */
+
   public UserLayoutManager (HttpServletRequest req, String sUserName)
   {
     String sLayoutDtd = "userLayout.dtd";
     String sPathToLayoutDtd = null;
     boolean bPropsLoaded = false;
 
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
+    String fs = System.getProperty ("file.separator");
+    String propertiesDir = getPortalBaseDir () + "properties" + fs;
+    MediaManager mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
+    
     String str_uLayoutXML = null;
     uLayoutXML = null;
 
-    try
-    {
-      if (!bPropsLoaded)
-      {
-        File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
-        Properties layoutProps = new Properties ();
-        layoutProps.load (new FileInputStream (layoutPropsFile));
-        sPathToLayoutDtd = layoutProps.getProperty ("pathToUserLayoutDTD");
-        bPropsLoaded = true;
-      }
+    /*      ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+      csddb.removeStructureStylesheetDescription("Tab and Column layout");
+      csddb.removeThemeStylesheetDescription("Nested tables");
+      csddb.removeCSSStylesheetDescription("general CSS");
+      csddb.addStructureStylesheetDescription("webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf","webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl");
+      csddb.addThemeStylesheetDescription("webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf","webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl");
+      csddb.addCSSStylesheetDescription("webpages/stylesheets/general.sdf","webpages/stylesheets/general.css");*/
+//      StructureStylesheetDescription fssd=csddb.getStructureStylesheetDescription("Tab and Column layout");
+//       Hashtable list=csddb.getStructureStylesheetList("netscape");
+//       for (Enumeration e = list.keys() ; e.hasMoreElements() ;) {
+//   	Logger.log(Logger.DEBUG,(String) e.nextElement());
+//       }
+//      Hashtable list=csddb.getThemeStylesheetList("Tab and Column layout");
+//      for (Enumeration e = list.keys() ; e.hasMoreElements() ;) {
+//  	Logger.log(Logger.DEBUG,(String) e.nextElement());
+//      }
+//      list=csddb.getCSSStylesheetList("Nested tables");
+//      for (Enumeration e = list.keys() ; e.hasMoreElements() ;) {
+//  	Logger.log(Logger.DEBUG,(String) e.nextElement());
+//      }
 
-      // read uLayoutXML
 
-      HttpSession session = req.getSession (false);
-      uLayoutXML = (Document) session.getAttribute ("userLayoutXML");
+    /*    IUserPreferencesDB updb=new UserPreferencesDBImpl();
+	  StructureStylesheetUserPreferences fsup= updb.getStructureStylesheetUserPreferences("guest","Tab and Column layout");
+    //updb.setStructureStylesheetUserPreferences("guest","Tab and Column layout",fsup);
+    Logger.log(Logger.DEBUG,"first stylesheet name = "+updb.getStructureStylesheetName("guest","netscape"));
+    Logger.log(Logger.DEBUG,"second stylesheet name = "+updb.getThemeStylesheetName("guest","netscape"));
+    Logger.log(Logger.DEBUG,"CSS stylesheet name = "+updb.getCSSStylesheetName("guest","netscape"));
+    updb.setStructureStylesheetName("Something other then tabs","guest","netscape");
+    updb.setThemeStylesheetName("UnNested tables","guest","netscape");
+    updb.setCSSStylesheetName("specific.CSS","guest","netscape");
+    Logger.log(Logger.DEBUG,"first stylesheet name = "+updb.getStructureStylesheetName("guest","netscape"));
+    Logger.log(Logger.DEBUG,"second stylesheet name = "+updb.getThemeStylesheetName("guest","netscape"));
+    Logger.log(Logger.DEBUG,"CSS stylesheet name = "+updb.getCSSStylesheetName("guest","netscape")); 
+    updb.setStructureStylesheetName("Tab and Column layout","guest","netscape");
+    updb.setThemeStylesheetName("Nested tables","guest","netscape");
+    updb.setCSSStylesheetName("general.CSS","guest","netscape");
+    
+    updb.setStructureStylesheetName("Tab and Column layout","guest2","netscape");
 
-      if (uLayoutXML == null) 
-      {
-        if (sUserName == null)
-          sUserName = "guest";
+    updb.getUserPreferences("guest","netscape"); */
 
-        con = rdbmService.getConnection ();
-        Statement stmt = con.createStatement ();
+    try {
+	if (!bPropsLoaded) {
+	    File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
+	    Properties layoutProps = new Properties ();
+	    layoutProps.load (new FileInputStream (layoutPropsFile));
+	    sPathToLayoutDtd = layoutProps.getProperty ("pathToUserLayoutDTD");
+	    bPropsLoaded = true;
+	}
+	
+	// read uLayoutXML
+	
+	HttpSession session = req.getSession (false);
+	uLayoutXML = (Document) session.getAttribute ("userLayoutXML");
+	
+	if (uLayoutXML == null) {
+	    if (sUserName == null)
+		sUserName = "guest";
+	    
+	    IUserLayoutDB uldb=new UserLayoutDBImpl();
+	    
+	    str_uLayoutXML = uldb.getUserLayout(sUserName,"netscape");
+	    
+	    if(str_uLayoutXML!=null) {
+		// Tack on the full path to user_layout.dtd
+		//peterk: should be done on the SAX level or not at all
+		int iInsertBefore = str_uLayoutXML.indexOf (sLayoutDtd);
+		
+		if (iInsertBefore != -1) 
+		    str_uLayoutXML = str_uLayoutXML.substring (0, iInsertBefore) + sPathToLayoutDtd + str_uLayoutXML.substring (iInsertBefore);
+		
+		// read in the layout DOM
+		// note that we really do need to have a DOM structure here in order to introduce
+		// persistent changes on the level of userLayout.
+		//org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
+		org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
+		
+		// set parser features
+		parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
+		
+		parser.parse (new org.xml.sax.InputSource (new StringReader (str_uLayoutXML)));
+		uLayoutXML = parser.getDocument ();
+		session.setAttribute ("userLayoutXML", uLayoutXML);
+	    }
+	}
+	
 
-        String sQuery = "SELECT USER_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
-        Logger.log (Logger.DEBUG, sQuery);
+	// load user preferences
+	IUserPreferencesDB updb=new UserPreferencesDBImpl();
+	UserPreferences temp_up=updb.getUserPreferences(sUserName,mediaM.getMedia(req)); 
+	if(temp_up==null) temp_up=updb.getUserPreferences(sUserName,mediaM.getDefaultMedia()); 
+	this.setCurrentUserPreferences(temp_up,req.getSession (false));
 
-        ResultSet rs = stmt.executeQuery (sQuery);
-
-        if (rs.next ()) 
-        {
-          str_uLayoutXML = rs.getString ("USER_LAYOUT_XML");
-
-          // Tack on the full path to user_layout.dtd
-          //peterk: should be done on the SAX level or not at all
-          int iInsertBefore = str_uLayoutXML.indexOf (sLayoutDtd);
-          
-          if (iInsertBefore != -1) 
-            str_uLayoutXML = str_uLayoutXML.substring (0, iInsertBefore) + sPathToLayoutDtd + str_uLayoutXML.substring (iInsertBefore);
-
-          // read in the layout DOM
-          // note that we really do need to have a DOM structure here in order to introduce
-          // persistent changes on the level of userLayout.
-          //org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
-          org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-          
-          // set parser features
-          parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-          
-          parser.parse (new org.xml.sax.InputSource (new StringReader (str_uLayoutXML)));
-          uLayoutXML = parser.getDocument ();
-          session.setAttribute ("userLayoutXML", uLayoutXML);
-        }
-        stmt.close ();
-      }
-    }
-    catch (Exception e) 
-    {
-      Logger.log (Logger.ERROR, e);
-      Logger.log (Logger.ERROR, str_uLayoutXML);
-    }
-    finally 
-    {
-      rdbmService.releaseConnection (con);
-    }
+    } catch (Exception e) { Logger.log(Logger.ERROR,e);}
   }
+    
+    
+    private void synchUserPreferencesWithLayout(UserPreferences someup) {
+
+	StructureStylesheetUserPreferences fsup=someup.getStructureStylesheetUserPreferences();	
+	ThemeStylesheetUserPreferences ssup=someup.getThemeStylesheetUserPreferences();
+
+	// make a list of channels in the XML Layout
+	NodeList channelNodes=uLayoutXML.getElementsByTagName("channel");
+	HashSet channelSet=new HashSet();
+	for(int i=0;i<channelNodes.getLength();i++) {
+	    Element el=(Element) channelNodes.item(i);
+	    if(el!=null) {
+		String chID=el.getAttribute("ID");
+		if(!fsup.hasChannel(chID)) {
+		    fsup.addChannel(chID);
+		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+chID);
+		}
+		if(!ssup.hasChannel(chID)) {
+		    ssup.addChannel(chID);
+		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+chID);
+		}
+		channelSet.add(chID);
+	    }
+
+	}
+	
+	// make a list of categories in the XML Layout
+	NodeList categoryNodes=uLayoutXML.getElementsByTagName("category");
+	HashSet categorySet=new HashSet();
+	for(int i=0;i<categoryNodes.getLength();i++) {
+	    Element el=(Element) categoryNodes.item(i);
+	    if(el!=null) {
+		String caID=el.getAttribute("ID");
+		if(!fsup.hasCategory(caID)) {
+		    fsup.addCategory(caID);
+		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a category="+caID);
+		}
+		categorySet.add(caID);
+	    }
+	}
+	
+	// cross check
+	for(Enumeration e=fsup.getChannels();e.hasMoreElements();) {
+	    String chID=(String)e.nextElement();
+	    if(!channelSet.contains(chID)) {
+		fsup.removeChannel(chID);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
+	    }
+	}
+
+	for(Enumeration e=fsup.getCategories();e.hasMoreElements();) {
+	    String caID=(String)e.nextElement();
+	    if(!categorySet.contains(caID)) {
+		fsup.removeCategory(caID);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent category="+caID);
+	    }
+	}
+
+	for(Enumeration e=ssup.getChannels();e.hasMoreElements();) {
+	    String chID=(String)e.nextElement();
+	    if(!channelSet.contains(chID)) {
+		ssup.removeChannel(chID);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
+	    }
+	}
+	someup.setStructureStylesheetUserPreferences(fsup);	
+	someup.setThemeStylesheetUserPreferences(ssup);
+
+    }
+
+    public UserPreferences getCompleteCurrentUserPreferences() {
+	return complete_up;
+    }
+
+    public void setCurrentUserPreferences(UserPreferences current_up,HttpSession session) {
+	up=current_up;
+	// load stylesheet description files and fix user preferences
+	ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();	
+	
+	// clean up
+	StructureStylesheetUserPreferences fsup=up.getStructureStylesheetUserPreferences();	
+	StructureStylesheetDescription fssd=csddb.getStructureStylesheetDescription(fsup.getStylesheetName());
+	if(fssd==null) {
+	    // assign a default stylesheet instead
+	    
+	} else {
+	    fsup.synchronizeWithDescription(fssd);
+	}
+	
+	ThemeStylesheetUserPreferences ssup=up.getThemeStylesheetUserPreferences();
+	ThemeStylesheetDescription sssd=csddb.getThemeStylesheetDescription(ssup.getStylesheetName());
+	if(sssd==null) {
+	    // assign a default stylesheet instead
+	} else {
+	    ssup.synchronizeWithDescription(sssd);
+	}
+	
+	CoreCSSStylesheetUserPreferences cssup=up.getCoreCSSStylesheetUserPreferences();
+	CoreCSSStylesheetDescription csssd=csddb.getCSSStylesheetDescription(cssup.getStylesheetName());
+	if(csssd==null) {
+	    // assign a default stylesheet instead
+	} else {
+	    cssup.synchronizeWithDescription(csssd);
+	}
+	
+	// in case something was reset to default
+	up.setStructureStylesheetUserPreferences(fsup);
+	up.setThemeStylesheetUserPreferences(ssup);
+	up.setCoreCSSStylesheetUserPreferences(cssup);
+
+
+	// now generate "filled-out copies" 
+	complete_up=new UserPreferences(up);
+	// syncronize up with layout
+	synchUserPreferencesWithLayout(complete_up);
+	StructureStylesheetUserPreferences complete_fsup=complete_up.getStructureStylesheetUserPreferences();	
+	ThemeStylesheetUserPreferences complete_ssup=complete_up.getThemeStylesheetUserPreferences();
+	CoreCSSStylesheetUserPreferences complete_cssup=complete_up.getCoreCSSStylesheetUserPreferences();
+	complete_fsup.completeWithDescriptionInformation(fssd);
+	complete_ssup.completeWithDescriptionInformation(sssd);
+	complete_cssup.completeWithDescriptionInformation(csssd);
+	complete_up.setStructureStylesheetUserPreferences(complete_fsup);
+	complete_up.setThemeStylesheetUserPreferences(complete_ssup);
+	complete_up.setCoreCSSStylesheetUserPreferences(complete_cssup);
+
+	// complete user preferences are used to:
+	//  1. fill out userLayoutXML with attributes required for the first transform
+	//  2. contruct a filter that will fill out attributes required for the second transform
+	//  3. revamp the CSS stylesheet to include user parameters
+	
+	argumentedUserLayoutXML=(Document) uLayoutXML.cloneNode(true);
+	
+	// deal with category attributes first
+	NodeList categoryElements=argumentedUserLayoutXML.getElementsByTagName("category");
+	if(categoryElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of category elements obtained!");
+	List cl=complete_fsup.getCategoryAttributeNames();
+	for(int j=0;j<cl.size();j++) {
+	    for(int i=categoryElements.getLength()-1;i>=0;i--) {
+		Element categoryElement=(Element) categoryElements.item(i);
+		categoryElement.setAttribute((String) cl.get(j),complete_fsup.getCategoryAttributeValue(categoryElement.getAttribute("ID"),(String) cl.get(j)));
+		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getCategoryAttributeValue(categoryElement.getAttribute("ID"),(String) cl.get(j))+" for a category "+categoryElement.getAttribute("ID"));
+	    }
+	}
+	// channel attributes
+	NodeList channelElements=argumentedUserLayoutXML.getElementsByTagName("channel");
+	if(channelElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
+	List chl=complete_fsup.getChannelAttributeNames();
+	for(int j=0;j<chl.size();j++) {
+	    for(int i=channelElements.getLength()-1;i>=0;i--) {
+		Element channelElement=(Element) channelElements.item(i);
+		channelElement.setAttribute((String) chl.get(j),complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j)));
+		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) chl.get(j)+"="+complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j))+" for a channel "+channelElement.getAttribute("ID"));
+	    }
+	}
+    }
+
+
 
   public Node getNode (String elementID) 
   {
-    return uLayoutXML.getElementById (elementID);
+    return argumentedUserLayoutXML.getElementById (elementID);
   }
   
   public Node getRoot () 
   {
-    return uLayoutXML;
+    return argumentedUserLayoutXML;
   }
+
 
   public void minimizeChannel (String str_ID) 
   {
-    Element channel = uLayoutXML.getElementById (str_ID);
+    Element channel = argumentedUserLayoutXML.getElementById (str_ID);
     
     if (channel != null) 
     {
@@ -169,7 +377,8 @@ public class UserLayoutManager extends GenericPortalBean
 
   public void removeChannel (String str_ID) 
   {
-    Element channel = uLayoutXML.getElementById (str_ID);
+      // warning .. the channel should also be removed from uLayoutXML
+    Element channel = argumentedUserLayoutXML.getElementById (str_ID);
     
     if (channel != null) 
     {
@@ -182,4 +391,18 @@ public class UserLayoutManager extends GenericPortalBean
     } 
     else Logger.log (Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID="+str_ID);
   }
+
+    private Element getChildByTagName(Node node,String tagName) {
+	if(node==null) return null;
+	NodeList children=node.getChildNodes();
+	for(int i=children.getLength()-1;i>=0;i--) {
+	    Node child=children.item(i);
+	    if(child.getNodeType()==Node.ELEMENT_NODE) {
+		Element el=(Element) child;
+		if((el.getTagName()).equals(tagName))
+		    return el;
+	    }
+	}
+	return null;
+    }
 }

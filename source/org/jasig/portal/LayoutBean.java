@@ -59,7 +59,9 @@ import org.apache.xml.serialize.*;
 public class LayoutBean extends GenericPortalBean
 {
   // all channel content/parameters/caches/etc are managed here
-  ChannelManager channelManager;
+    ChannelManager channelManager;
+
+    UserLayoutManager uLayoutManager;
 
   // stylesheet sets for the first two major XSL transformations
   // userLayout -> structuredLayout -> target markup language
@@ -91,6 +93,8 @@ public class LayoutBean extends GenericPortalBean
     // create a stylesheet set for structuredLayout transformations
     structuredLayoutSS = new StylesheetSet (stylesheetDir + "StructuredLayout.ssl");
     structuredLayoutSS.setMediaProps (propertiesDir + "media.properties ");
+
+
 
     // instantiate the processors
     try
@@ -149,8 +153,9 @@ public class LayoutBean extends GenericPortalBean
       // see "userLayoutRoot" parameter
       Node rElement;
 
-      // get the layout
-      UserLayoutManager uLayoutManager = new UserLayoutManager (req, getUserName (req));
+      // get the layout manager
+      if(uLayoutManager==null)
+	  uLayoutManager = new UserLayoutManager (req, getUserName (req));
 
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
@@ -174,6 +179,10 @@ public class LayoutBean extends GenericPortalBean
       else
         channelManager.setReqNRes (req, res);
 
+      // The preferences we get below are complete, that is all of the default
+      // values that are usually null are filled out
+      UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
+
       // initialize ChannelIncorporationFilter
       ChannelIncorporationFilter cf = new ChannelIncorporationFilter (markupSerializer, channelManager);
 
@@ -183,6 +192,10 @@ public class LayoutBean extends GenericPortalBean
       XSLTInputSource stylesheet = structuredLayoutSS.getStylesheet (req);
       sLayoutProcessor.processStylesheet (stylesheet);
       sLayoutProcessor.setDocumentHandler (crb);
+
+      // initialize a filter to fill in channel attributes for the 
+      // "theme" (second) transformation.
+      ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(sLayoutProcessor,cup.getThemeStylesheetUserPreferences());
 
       // deal with parameters that are meant for the LayoutBean
       HttpSession session = req.getSession (false);
@@ -220,9 +233,10 @@ public class LayoutBean extends GenericPortalBean
       // "u" stands for the stylesheet set used for userLayout->structuredLayout transform.,
       // and "s" is a set used for structuedLayout->pageContent transformation.
 
+      Hashtable upTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
+      Hashtable spTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
+      
       String stylesheetTarget = null;
-      Hashtable upTable = new Hashtable ();
-      Hashtable spTable = new Hashtable ();
 
       if ( (stylesheetTarget = (req.getParameter ("stylesheetTarget"))) != null)
       {
@@ -258,74 +272,26 @@ public class LayoutBean extends GenericPortalBean
         }
       }
 
-      // process old stylesheet params and add new ones.
-      // Because session can store only strings, I have two strings
-      // (one for userLayoutStylesheet, one for structuredLayoutStylesheet)
-      // listing the names of the parameters. The values of the parameters
-      // are stored in the sesion.
-
-      // merge the old parameter values with the new ones
-      String upNames= (String) session.getAttribute ("userLayoutParameterNames");
-
-      if (upNames!=null)
-      {
-        StringTokenizer st = new StringTokenizer (upNames,"&");
-
-        while (st.hasMoreTokens ())
-        {
-          String pName=st.nextToken ();
-
-          if (!upTable.containsKey (pName))
-          upTable.put (pName,session.getAttribute (pName));
-        }
-      }
-
-      // set stylesheet params, save parameters in a session, generate a new userLayoutParameterNames string
-      upNames = "";
-
       for (Enumeration e = upTable.keys (); e.hasMoreElements ();)
       {
         String pName= (String) e.nextElement ();
-        upNames += pName + "&";
         String pValue= (String) upTable.get (pName);
-        session.setAttribute (pName,pValue);
         uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
       }
-
-      session.setAttribute ("userLayoutParameterNames",upNames);
-
-      // merge the old parameter values with the new ones
-      String spNames= (String) session.getAttribute ("structuredLayoutParameterNames");
-
-      if (spNames != null)
-      {
-        StringTokenizer st = new StringTokenizer (spNames,"&");
-
-        while (st.hasMoreTokens ())
-        {
-          String pName=st.nextToken ();
-
-          if (!spTable.containsKey (pName))
-          spTable.put (pName,session.getAttribute (pName));
-        }
-      }
-
-      // set stylesheet params, save parameters in a session, generate a new userLayoutParameterNames string
-      spNames="";
 
       for (Enumeration e = spTable.keys (); e.hasMoreElements ();)
       {
         String pName= (String) e.nextElement ();
-        spNames += pName + "&";
         String pValue= (String) spTable.get (pName);
-        session.setAttribute (pName,pValue);
         sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
+      
+       cup.getStructureStylesheetUserPreferences().setParameterValues(upTable);
+       cup.getThemeStylesheetUserPreferences().setParameterValues(spTable);
 
-      session.setAttribute ("structuredLayoutParameterNames",spNames);
-
+      
       // all the parameters are set up, fire up the filter transforms
-      uLayoutProcessor.process (new XSLTInputSource (rElement),userLayoutSS.getStylesheet (),new XSLTResultTarget (sLayoutProcessor));
+      uLayoutProcessor.process (new XSLTInputSource (rElement),userLayoutSS.getStylesheet (),new XSLTResultTarget (taif));
     }
     catch (Exception e)
     {
@@ -344,6 +310,10 @@ public class LayoutBean extends GenericPortalBean
   private void processUserLayoutParameters (HttpServletRequest req, UserLayoutManager man)
   {
     String layoutTarget;
+
+    /*    for (Enumeration e = req.getParameterNames() ; e.hasMoreElements() ;) {
+	Logger.log(Logger.DEBUG,(String) e.nextElement());
+	}*/
 
     if ( (layoutTarget = req.getParameter ("userLayoutTarget")) != null)
     {
