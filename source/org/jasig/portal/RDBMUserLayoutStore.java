@@ -162,8 +162,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       } else {
         structure = doc.createElement("folder");
         
-        structure.setIdAttribute("ID", true);
         structure.setAttribute("ID", folderPrefix + structId);
+        structure.setIdAttribute("ID", true);
         
         structure.setAttribute("name", name);
         structure.setAttribute("type", (type != null ? type : "regular"));
