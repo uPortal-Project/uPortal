@@ -38,6 +38,7 @@ package  org.jasig.portal;
 
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
 import  javax.servlet.*;
 import  javax.servlet.jsp.*;
 import  javax.servlet.http.*;
@@ -67,7 +68,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
         }
     }
     Map stateTable;
-    
+
 
     // manages layout and preferences
     GuestUserLayoutManager uLayoutManager;
@@ -80,7 +81,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
         uLayoutManager=new GuestUserLayoutManager(person);
     }
 
-   
+
     /**
      * Register arrival of a new session.
      * Create and populate new state entry.
@@ -101,7 +102,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void unbindSession(String sessionId) {
 	IState state=(IState)stateTable.get(sessionId);
 	if(state==null) {
-	    Logger.log(Logger.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+	    LogService.instance().log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
 	    return;
 	}
         state.channelManager.finishedSession();
@@ -118,20 +119,20 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
         this.unbindSession(bindingEvent.getSession().getId());
-        Logger.log(Logger.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+        LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
     }
-    
+
     /**
      * Notifies UserInstance that it has been bound to a session.
      *
      * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        Logger.log(Logger.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+        LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
     }
-   
+
     /**
-     * Prepares for and initates the rendering cycle. 
+     * Prepares for and initates the rendering cycle.
      * @param the servlet request object
      * @param the servlet response object
      * @param the JspWriter object
@@ -140,7 +141,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
         String sessionId=req.getSession(false).getId();
 	IState state=(IState)stateTable.get(sessionId);
 	if(state==null) {
-	    Logger.log(Logger.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+	    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
 	    return;
 	}
 
@@ -154,9 +155,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 uLayoutManager.registerSession(req);
             } else {
                 // p_browserMapper is no longer needed
-                state.p_browserMapper = null; 
+                state.p_browserMapper = null;
             }
-         
+
             if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
                 // unmapped browser
                 if (state.p_browserMapper== null) {
@@ -166,19 +167,19 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 try {
                     state.p_browserMapper.render(req, res);
                 } catch (Exception e) {
-                    // something went wrong trying to show CSelectSystemProfileChannel 
-                    Logger.log(Logger.ERROR,"GuestUserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
+                    // something went wrong trying to show CSelectSystemProfileChannel
+                    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
                 }
                 // don't go any further!
                 return;
             }
-	    
+
             renderState (req, res, out, state.channelManager, new GuestUserLayoutManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
         } catch (Exception e) {
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             sw.flush();
-            Logger.log(Logger.ERROR,"UserInstance::writeContent() : an unknown exception occurred : "+sw.toString());
+            LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : an unknown exception occurred : "+sw.toString());
         }
     }
 }
