@@ -111,6 +111,7 @@ public class TabColumnPrefsState extends BaseState
   private String action = "none";
   private String activeTab = "none";
   private String elementID = "none";
+  private String newColumnId = null;
 
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
@@ -191,6 +192,13 @@ public class TabColumnPrefsState extends BaseState
 
     try
     {
+        
+      // Need this check so that we don't override the column width's we just set
+      if (internalState instanceof DefaultState){
+        if (((DefaultState)internalState).columnHasBeenAdded)
+          return;
+      }
+        
       // The profile the user is currently viewing or modifying...
       editedUserProfile = context.getEditedUserProfile();
       ulm = getUserLayoutManager();
@@ -311,6 +319,26 @@ public class TabColumnPrefsState extends BaseState
     IUserLayoutFolderDescription newColumn = createFolder("Column");
     ulm.addNode(newColumn, newTab.getId(), null);    
   }
+  
+  /**
+   * This method will remove a column from the user's layout.  The column will be added into the layout
+   * via the "add new column" link within the preferences channel.  Clicking on cancel after choosing to add
+   * a new column will not remove the column hence the introduction of this method.
+   */
+  private final void removeNewColumn() {
+      try {
+          Document doc = this.ulm.getUserLayoutDOM();
+          Node nNewColumnNode = doc.getElementById(this.newColumnId);    
+          if (nNewColumnNode != null){
+            Node parent = nNewColumnNode.getParentNode();
+            parent.removeChild(nNewColumnNode);
+            this.newColumnId = null;
+          }
+      } catch (Exception e){
+          LogService.log(LogService.DEBUG, "removeNewColumn failed to find new column with id " + this.newColumnId);
+      }
+  }
+  
 
   /**
    * Adds a new column into the layout.  Before the column is added,
@@ -331,7 +359,17 @@ public class TabColumnPrefsState extends BaseState
           if(method.equals("insertBefore")) {
               siblingId=destinationElementId;
           }
-          ulm.addNode(newColumn,ulm.getParentId(destinationElementId),siblingId);
+          // Returns the node that was just added containing the default width of 100%
+          IUserLayoutNodeDescription ulnd = ulm.addNode(newColumn,ulm.getParentId(destinationElementId),siblingId);
+          // Get the current users layout
+          Document doc = this.ulm.getUserLayoutDOM();
+          // Keep track of the new column id incase the user clicks on cancel button
+          this.newColumnId = ulnd.getId();
+          Element nE = (Element)doc.getElementById(ulnd.getId());
+          // Find out how many siblings this node contains
+          NodeList list = nE.getParentNode().getChildNodes();
+          if (list != null && list.getLength() > 0)
+              this.setEvenlyAssignedColumnWidths(list);
       }
   }
 
@@ -475,7 +513,46 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void deleteElement(String elementId) throws Exception
   {
-      ulm.deleteNode(elementId);
+      // Need to check if we are about to delete a column, if so, need to reset other columns to appropriate width's
+      Document doc = this.ulm.getUserLayoutDOM();
+      Element childElement=(Element)doc.getElementById(elementId);
+      // determine if this is a column
+      String whatIsThis = childElement.getAttribute("name");
+      if (whatIsThis != null && whatIsThis.startsWith("Column")){
+        userPrefs.getStructureStylesheetUserPreferences().removeFolder(childElement.getAttribute("ID"));
+        // get the id of the parent (tab)
+        String tabId = ((Element)childElement.getParentNode()).getAttribute("ID");
+        // Found a column .. lets remove the column selected first
+        ulm.deleteNode(elementId);
+        // get the updated xml document
+        doc = this.ulm.getUserLayoutDOM();
+        // Find out how many siblings this node contains
+        NodeList list = ((Element)doc.getElementById(tabId)).getChildNodes();
+        if (list != null && list.getLength() > 0)
+            this.setEvenlyAssignedColumnWidths(list);
+        this.saveUserPreferences();
+        
+      } else {
+        // this is a tab, go ahead and delete it
+        ulm.deleteNode(elementId);
+      }
+  }
+
+  /**
+ * @param siblingsIncludingSelf
+ */
+  private void setEvenlyAssignedColumnWidths(NodeList list) {
+    // Simply divide the number of columns by 100 and produce an evenly numbered column widths
+    int columns = list.getLength();
+    int columnSize = 100 / columns;
+    int remainder = 100 % columns;
+    // Traverse through the columns and reset with the new caculated value
+    StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+    for (int i=0; i < list.getLength(); i++){
+        Element c = (Element) list.item(i);
+        String nId = c.getAttribute("ID");
+        ssup.setFolderAttributeValue(nId, "width", (i == (list.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
+    }            
   }
 
   private final void updateTabLock(String elementId, boolean locked) throws Exception
@@ -587,7 +664,7 @@ public class TabColumnPrefsState extends BaseState
   protected class DefaultState extends BaseState
   {
     private static final boolean printXMLToLog = false;
-
+    private boolean columnHasBeenAdded = false;
     protected TabColumnPrefsState context;
 
     public DefaultState(TabColumnPrefsState context)
@@ -813,6 +890,7 @@ public class TabColumnPrefsState extends BaseState
             String destinationColumnId = elementID;
 
             addColumn(method, destinationColumnId);
+            columnHasBeenAdded = true;
           }
           catch (Exception e)
           {
@@ -916,6 +994,11 @@ public class TabColumnPrefsState extends BaseState
         else if (action.equals("cancel"))
         {
           elementID = "none";
+          // check to see if we added a new column
+          if (columnHasBeenAdded){
+            removeNewColumn();
+            columnHasBeenAdded = false;
+          }
         }
       }
       else

@@ -1033,7 +1033,8 @@ $Revision$
                 </tr>
               </xsl:if>
               <!-- If ancestor or self is unremovable - the column cannot be deleted-->
-              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
+              <!-- fix for 2.3 due to the layout having a new root attribute that is unremovable, hence this call will always not show the delete link -->
+              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1216,7 +1217,7 @@ $Revision$
     </form>
   </xsl:template>
   <xsl:template name="optionMenuNewColumn">
-    <form name="formNewColumn" method="post" action="">
+    <form name="formNewColumn" method="post" action="{$baseActionURL}">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
