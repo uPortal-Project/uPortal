@@ -41,12 +41,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
-import org.jasig.portal.Logger;
+import org.jasig.portal.services.LogService;
 
 
 /**
  * A thread pool implementation with a few extra kinks,
- * such as ThreadPoolReceipt. 
+ * such as ThreadPoolReceipt.
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
  */
@@ -208,22 +208,22 @@ public class ThreadPool extends ThreadGroup {
     * Handle the case when some worker crashes
     */
     public void uncaughtException(Thread t, Throwable e) {
-	Logger.log(Logger.DEBUG,"Registered an uncaughted exception "+e+" by thread "+t.getName());
+	LogService.instance().log(LogService.ERROR,"Registered an uncaughted exception by thread "+t.getName(), e);
 	if(t instanceof ThreadPoolWorker && !(e instanceof ThreadDeath)) {
 	    ThreadPoolWorker w=(ThreadPoolWorker) t;
-	    // clean up currentReceipt if the thrad didn't do it
+	    // clean up currentReceipt if the thread didn't do it
 	    try {
 		if(w.currentReceipt!=null) {
 		    w.currentReceipt.updateStatus(null,true,false,null);
 		}
 	    } catch (Exception bad) {};
-	    
+
 	    notifyWorkerRestart(w);
 	}
     }
 
     /**
-     * Notifies the pool that a certain worker is done and 
+     * Notifies the pool that a certain worker is done and
      * wants to have a replacement started.
      */
     protected void notifyWorkerRestart(ThreadPoolWorker pw) {
