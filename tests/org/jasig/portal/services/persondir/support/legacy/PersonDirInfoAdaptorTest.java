@@ -7,6 +7,8 @@ package org.jasig.portal.services.persondir.support.legacy;
 
 import java.util.Map;
 
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+
 import junit.framework.TestCase;
 
 /**
@@ -32,9 +34,10 @@ public class PersonDirInfoAdaptorTest extends TestCase {
         pdi.setAttributenames(new String[] {"mail"});
         pdi.setAttributealiases(new String[] {"emailfromldap"});
 
-        PersonDirInfoAdaptor pdiAdaptor = new PersonDirInfoAdaptor(pdi);
         
-        Map attributes = pdiAdaptor.getUserAttributes("awp9");
+        IPersonAttributeDao dao = PersonDirInfoAdaptor.adapt(pdi);
+        
+        Map attributes = dao.getUserAttributes("awp9");
         
         assertFalse(attributes.isEmpty());
         assertEquals("andrew.petro@yale.edu", attributes.get("emailfromldap"));
