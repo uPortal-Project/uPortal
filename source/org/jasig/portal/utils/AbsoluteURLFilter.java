@@ -104,13 +104,13 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
       String attValue = atts.getValue(attName);
       if (attValue != null)
       {
-        // Assume that if attribute value exists and doesn't contain a 
-        // semicolon, or if the URL contains a semicolon and there's a
-        // backslash before the semicolon, then it is a relative URL
+        // Assume that if the attribute value exists and doesn't contain a 
+        // colon, or if the URL contains a colon and there's a
+        // slash before the first colon, then it is a relative URL
         // (http://<something> and mailto:<something> are both valid,
         // absolute URLs)
         int i = attValue.indexOf(":");
-        if ( i==-1 || !(i!=-1 && attValue.substring(0, i).indexOf("/")!=-1) )
+        if ( i==-1 || (i!=-1 && attValue.substring(0, i).indexOf("/")!=-1) )
         {
           if (attValue.startsWith("/"))
           {
