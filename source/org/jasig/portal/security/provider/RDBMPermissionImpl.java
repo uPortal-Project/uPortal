@@ -190,11 +190,9 @@ public void delete(IPermission perm) throws AuthorizationException
  */
 public boolean existsInDatabase(IPermission perm) throws SQLException
 {
-    Connection conn = null;
-    ResultSet rs = null;
+    Connection conn = RDBMServices.getConnection();
     try
     {
-        conn = RDBMServices.getConnection();
         String sQuery = getFindPermissionSql();
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
         try
@@ -204,11 +202,15 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
             ps.setString(3, perm.getActivity());
             ps.setString(4, perm.getTarget());
             LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
-            rs = ps.executeQuery();
-            return ( rs.next() );
+            ResultSet rs = ps.executeQuery();
+            try {
+              return ( rs.next() );
+            } finally {
+              rs.close();
+            }
         }
         finally
-            { rs.close(); }
+            { ps.close(); }
     }
     catch (SQLException sqle)
     {
@@ -217,7 +219,6 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
     }
     finally
     {
-        rs.close();
         RDBMServices.releaseConnection(conn);
     }
 }
