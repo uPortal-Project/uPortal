@@ -23,107 +23,123 @@ import org.jasig.portal.jndi.JNDIManager;
  */
 public class PortalSessionManager extends HttpServlet
 {
-  private boolean baseDirSet=false;
-  public static String renderBase="render.uP";
-  
-  public void init()
-    throws ServletException
-  {
-    JNDIManager.initializePortalContext();
-  }
-   
-  public void doPost (HttpServletRequest req, HttpServletResponse res)
-    throws ServletException, IOException
-  {
-    doGet( req, res );
-  }
+    private boolean baseDirSet=false;
+    public static String renderBase="render.uP";
+    public static String detachBaseStart="detach_";
     
-  public void doGet (HttpServletRequest req, HttpServletResponse res)
-  throws ServletException, IOException
-  {
-    // Should be text/xml !
-    if(!baseDirSet)
+    public void init() throws ServletException {
+	JNDIManager.initializePortalContext();
+    }
+    
+    public void doPost (HttpServletRequest req, HttpServletResponse res)
+	throws ServletException, IOException  {
+	doGet( req, res );
+    }
+    
+    public void doGet (HttpServletRequest req, HttpServletResponse res)
+	throws ServletException, IOException
     {
-      ServletConfig sc=this.getServletConfig();
-      
-      if(sc!=null)
-      {
-        String sPortalBaseDir=this.getServletConfig().getInitParameter("portalBaseDir");
-        
-        if(sPortalBaseDir!=null)
-        {
-          File portalBaseDir = new java.io.File (sPortalBaseDir);
-          
-          if(portalBaseDir.exists())
-          {
-            GenericPortalBean.setPortalBaseDir (sPortalBaseDir);
-            baseDirSet=true;
-          }
-        }
-      }
+	// Should be text/xml !
+	if(!baseDirSet) {
+	    ServletConfig sc=this.getServletConfig();
+		
+	    if(sc!=null) {
+		String sPortalBaseDir=this.getServletConfig().getInitParameter("portalBaseDir");
+		
+		if(sPortalBaseDir!=null)  {
+		    File portalBaseDir = new java.io.File (sPortalBaseDir);
+		    
+		    if(portalBaseDir.exists())  {
+			GenericPortalBean.setPortalBaseDir (sPortalBaseDir);
+			baseDirSet=true;
+		    }
+		}
+	    }
+	}
+	
+	if(baseDirSet) {
+	    // forwarding
+	    ServletContext sc=this.getServletContext();
+	    
+	    HttpSession session = req.getSession ();
+	    if(session!=null) {
+		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
+		String redirectBase=null;
+		if((redirectBase=this.doRedirect(req))!=null) {
+		    // cache request
+		    sc.setAttribute("oreqp_"+session.getId(),new RequestParamWrapper(req));
+		    // initial request, requeres forwarding
+		    session.setAttribute("forwarded",new Boolean(true));
+		    // forward
+		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+		    //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
+		    res.sendRedirect(req.getContextPath()+redirectBase);
+		} else {
+		    // delete old request
+		    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
+		    if(forwarded!=null) session.removeAttribute("forwarded");
+		    // proceed with rendering
+		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");		    
+		    // look if the LayoutBean object is already in the session, otherwise
+		    // make a new one
+		    LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
+		    if(layout==null) {
+			layout=new LayoutBean();
+			session.setAttribute("LayoutBean",layout);
+			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+		    }
+		    RequestParamWrapper oreqp=null;
+		    if(forwarded!=null && forwarded.booleanValue()) oreqp=(RequestParamWrapper) sc.getAttribute("oreqp_"+session.getId());
+
+		    if(oreqp!=null) {
+			oreqp.setBaseRequest(req);
+			layout.writeContent(oreqp,res,res.getWriter());
+		    } else {
+			layout.writeContent(req,res,res.getWriter());
+		    }
+		}
+	    } else {
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter ();
+		out.println("<html>");
+		out.println("<body>");
+		
+		out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
+		out.println("Session object is null !??");
+		out.println("</body></html>");
+	    }
+	    
+	} else {
+	    res.setContentType("text/html");
+	    PrintWriter out = res.getWriter ();
+	    out.println("<html>");
+	    out.println("<body>");
+	    
+	    out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
+	    out.println("Base portal directory is not set ! Unable to proceed");
+	    out.println("</body></html>");
+	}
+	
     }
-
-  if(baseDirSet) {
-      // forwarding
-      ServletContext sc=this.getServletContext();
-
-      HttpSession session = req.getSession ();
-      if(session!=null) {
-    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
-    if((forwarded==null) && !((req.getServletPath().equals("/"+renderBase)) && !(req.getParameterNames().hasMoreElements()))) {
-        // cache request
-        sc.setAttribute(session.getId(),new RequestParamWrapper(req));
-        // initial request, requeres forwarding
-        session.setAttribute("forwarded",new Boolean(true));
-        // forward
-        Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
-        //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-        res.sendRedirect(req.getContextPath()+"/"+renderBase);
-    } else {
-        // delete old request
-        session.removeAttribute("forwarded");
-        // proceed with rendering
-        Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected request");		    
-        // look if the LayoutBean object is already in the session, otherwise
-        // make a new one
-        LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
-        if(layout==null) {
-      layout=new LayoutBean();
-      session.setAttribute("LayoutBean",layout);
-      Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
-        }
-        RequestParamWrapper oreqp=(RequestParamWrapper) sc.getAttribute(session.getId());
-        if(oreqp!=null) {
-      oreqp.setBaseRequest(req);
-      layout.writeContent(oreqp,res,res.getWriter());
-        } else {
-      layout.writeContent(req,res,res.getWriter());
-        }
+    // this function determines if a given request needs to be redirected
+    private String doRedirect(HttpServletRequest req) {
+	HttpSession session = req.getSession ();
+	if(session!=null) {
+	    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
+	    if(forwarded!=null && forwarded.booleanValue()) return null;
+	    // don't forward request with no parameters
+	    if(!req.getParameterNames().hasMoreElements()) return null;
+	    String servletPath=req.getServletPath();
+	    // redirect to renderBase
+	    if(servletPath.equals("/"+renderBase)) return servletPath;
+	    // redirect to the same base, but no parameters
+	    String uPFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
+	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");		    
+	    if(uPFile.startsWith("/"+detachBaseStart) && uPFile.endsWith(".uP")) return uPFile;
+	} 
+	// redirect by default
+	return "/"+renderBase;
     }
-      } else {
-    res.setContentType("text/html");
-    PrintWriter out = res.getWriter ();
-    out.println("<html>");
-    out.println("<body>");
-    
-    out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-    out.println("Session object is null !??");
-    out.println("</body></html>");
-      }
-
-  } else {
-      res.setContentType("text/html");
-      PrintWriter out = res.getWriter ();
-      out.println("<html>");
-      out.println("<body>");
-      
-      out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-      out.println("Base portal directory is not set ! Unable to proceed");
-      out.println("</body></html>");
-  }
-
-    }
-
 
     /* RequestParamWrapper persists various information 
      * from the source request.

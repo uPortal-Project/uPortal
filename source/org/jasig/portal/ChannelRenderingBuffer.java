@@ -54,7 +54,6 @@ import java.util.Hashtable;
  */
 public class ChannelRenderingBuffer extends SAXBufferImpl
 {
-  protected DocumentHandler out;
   protected ChannelManager cm;
 
   // information about the current channel
@@ -69,11 +68,12 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
    * @param handler output document handler
    * @param chanman channel manager
    */
-  public ChannelRenderingBuffer (DocumentHandler handler, ChannelManager chanman)
+  public ChannelRenderingBuffer (ChannelManager chanman)
   {
     super ();
-    this.out = handler;
     this.cm = chanman;
+    this.startBuffering();
+    this.setDocumentHandler(null);
   }
 
   public void startDocument () throws SAXException
@@ -85,10 +85,9 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
   public void endDocument () throws SAXException
   {
     super.endDocument ();
-    
-    // at this point we can release the buffer
-    this.setDocumentHandler(out);
-    this.stopBuffering();
+
+    // buffer will be unplugged by the LayoutBean
+    //    this.stopBuffering();
   }
 
   public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException

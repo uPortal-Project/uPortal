@@ -66,10 +66,6 @@ import java.net.*;
 public class UserLayoutManager {
   private Document uLayoutXML;
 
-  // this one will contain user Layout XML with attrubutes for the
-  // first (structure) transformation
-  private Document argumentedUserLayoutXML;
-
   private UserPreferences up;
   private UserPreferences complete_up;
 
@@ -344,39 +340,6 @@ public class UserLayoutManager {
         complete_ssup.completeWithDescriptionInformation(sssd);
         complete_up.setStructureStylesheetUserPreferences(complete_fsup);
         complete_up.setThemeStylesheetUserPreferences(complete_ssup);
-
-        // complete user preferences are used to:
-        //  1. fill out userLayoutXML with attributes required for the first transform
-        //  2. contruct a filter that will fill out attributes required for the second transform
-
-        //	argumentedUserLayoutXML=(Document) uLayoutXML.cloneNode(true);
-        argumentedUserLayoutXML= UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
-
-
-        // deal with folder attributes first
-        NodeList folderElements=argumentedUserLayoutXML.getElementsByTagName("folder");
-        if(folderElements==null)
-            Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
-        for(Enumeration fe=complete_fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
-            String attributeName=(String) fe.nextElement();
-            for(int i=folderElements.getLength()-1;i>=0;i--) {
-                Element folderElement=(Element) folderElements.item(i);
-                folderElement.setAttribute(attributeName,complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),attributeName));
-                //		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
-            }
-        }
-        // channel attributes
-        NodeList channelElements=argumentedUserLayoutXML.getElementsByTagName("channel");
-        if(channelElements==null)
-            Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
-        for(Enumeration ce=complete_fsup.getChannelAttributeNames(); ce.hasMoreElements();) {
-            String attributeName=(String) ce.nextElement();
-            for(int i=channelElements.getLength()-1;i>=0;i--) {
-                Element channelElement=(Element) channelElements.item(i);
-                channelElement.setAttribute(attributeName,complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),attributeName));
-                //		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) chl.get(j)+"="+complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j))+" for a channel "+channelElement.getAttribute("ID"));
-            }
-        }
     }
 
     /*
@@ -434,15 +397,15 @@ public class UserLayoutManager {
     /*
      * Returns structure stylesheet defined by the user profile
      */
-    public XSLTInputSource getStructureStylesheet() {
-        return new XSLTInputSource(UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
+    public String getStructureStylesheet() {
+        return (UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
     }
 
     /*
      * Returns theme stylesheet defined by the user profile
      */
-    public XSLTInputSource getThemeStylesheet() {
-        return new XSLTInputSource(UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
+    public String getThemeStylesheet() {
+        return (UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
     }
 
     /*
@@ -462,26 +425,21 @@ public class UserLayoutManager {
     }
 
 
-  public Node getNode (String elementID)
-  {
-    return argumentedUserLayoutXML.getElementById (elementID);
-  }
-
-  public Node getCleanNode (String elementID)
-  {
-    return uLayoutXML.getElementById (elementID);
-  }
-
-  public Node getRoot ()
-  {
-    return argumentedUserLayoutXML;
-  }
+    public Node getNode (String elementID)
+    {
+	return uLayoutXML.getElementById (elementID);
+    }
+    
+    public Node getRoot ()
+    {
+	return uLayoutXML;
+    }
 
 
     // helper function that allows to determine the name of a channel or
     // folder in the current user layout given their ID.
     public String getNodeName(String nodeID) {
-        Element node=argumentedUserLayoutXML.getElementById(nodeID);
+        Element node=uLayoutXML.getElementById(nodeID);
         if(node!=null) {
             return node.getAttribute("name");
         } else return null;
@@ -491,7 +449,7 @@ public class UserLayoutManager {
   public void removeChannel (String str_ID)
   {
       // warning .. the channel should also be removed from uLayoutXML
-    Element channel = argumentedUserLayoutXML.getElementById (str_ID);
+    Element channel = uLayoutXML.getElementById (str_ID);
 
     if (channel != null)
     {

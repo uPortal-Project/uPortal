@@ -76,35 +76,33 @@ public class ChannelManager {
     private BrowserInfo binfo;
 
     public static String channelAddressingPathElement="channel";
+    public String uPElement;
 
     public ChannelManager () {
         channelTable = new Hashtable ();
         rendererTable = new Hashtable ();
     }
 
-    public ChannelManager (HttpServletRequest request, HttpServletResponse response, UserLayoutManager manager) {
+    public ChannelManager (HttpServletRequest request, HttpServletResponse response, UserLayoutManager manager,String uPElement) {
         this ();
-        this.req = request;
-        this.res = response;
         this.ulm=manager;
         pcs=new PortalControlStructures();
         pcs.setUserLayoutManager(ulm);
-        pcs.setHttpServletRequest(req);
-        pcs.setHttpServletResponse(res);
         pcs.setChannelManager(this);
-	this.binfo=new BrowserInfo(request);
+	this.setReqNRes(request,response,uPElement);
     }
 
     public void setUserLayoutManager(UserLayoutManager m) {
         ulm=m;
     }
 
-    public void setReqNRes (HttpServletRequest request, HttpServletResponse response) {
+    public void setReqNRes (HttpServletRequest request, HttpServletResponse response, String uPElement) {
         this.req = request;
         this.res = response;
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
 	this.binfo=new BrowserInfo(request);
+	this.uPElement=uPElement;
         rendererTable.clear ();
         processRequestChannelParameters (request);
     }
@@ -184,7 +182,7 @@ public class ChannelManager {
 			/*			String reqURI = req.getRequestURI ();
 			reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
 			rd.setBaseActionURL (reqURI + "?channelTarget=" + channelTarget + "&");*/
-			rd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/channelTarget.uP");
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/"+uPElement);
 			try {
 			    isc.setRuntimeData (rd);
 			}
@@ -198,7 +196,7 @@ public class ChannelManager {
 				ChannelRuntimeData erd = new ChannelRuntimeData ();
 				erd.setHttpRequest (req);
 				erd.setBrowserInfo(binfo);
-				erd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/channelTarget.uP");
+				erd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/"+uPElement);
 				errorChannel.setPortalControlStructures(pcs);
 				errorChannel.setRuntimeData (erd);
 			    } catch (Exception e2) {
@@ -221,7 +219,7 @@ public class ChannelManager {
             channelTable.remove(chanID);
         }
         // get channel information from the user layout manager
-        Element elChannel=(Element) ulm.getCleanNode(chanID);
+        Element elChannel=(Element) ulm.getNode(chanID);
         if(elChannel!=null) {
             String className=elChannel.getAttribute("class");
             long timeOut=java.lang.Long.parseLong(elChannel.getAttribute("timeout"));
@@ -308,14 +306,14 @@ public class ChannelManager {
             rd = new ChannelRuntimeData ();
             rd.setHttpRequest (req);
 	    rd.setBrowserInfo(binfo);
-	    rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
+	    rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData ();
                 rd.setParameters(targetParams);
 		rd.setBrowserInfo(binfo);
                 rd.setHttpRequest (req);
-		rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
+		rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
             }
         }
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
@@ -351,7 +349,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
 			rd.setBrowserInfo(binfo);
                         rd.setHttpRequest (req);
-			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
                         errorChannel.setRuntimeData (rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -382,7 +380,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
 			rd.setBrowserInfo(binfo);
                         rd.setHttpRequest (req);
-			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
                         errorChannel.setRuntimeData (rd);
 
                         errorChannel.setPortalControlStructures(pcs);
