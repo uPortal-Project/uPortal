@@ -73,8 +73,6 @@ import  org.w3c.dom.Element;
 public class CHeader extends BaseChannel {
   // Create a URL object for the XSLT parser
   private static URL m_sslURL = null;
-  // Create a MediaManager for this channel to use
-  private static MediaManager mm = new MediaManager();
   // Cache the answers to canUserPublish() to speed things up
   private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
   // Create a URL object from the URI string
@@ -95,7 +93,7 @@ public class CHeader extends BaseChannel {
   public void renderXML (DocumentHandler out) throws PortalException {
     try {
       // Perform the transformation
-      XSLT.transform(getUserXML(), m_sslURL, out, getStylesheetParams(), mm.getMedia(runtimeData.getBrowserInfo()));
+      XSLT.transform(getUserXML(), m_sslURL, out, getStylesheetParams(), runtimeData.getBrowserInfo());
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       throw  (new GeneralRenderingException(e.getMessage()));
