@@ -246,6 +246,6 @@ public String toString() {
 public void update(IBasicEntity entity) throws CachingException
 {
     invalidate(entity);
-    super.update(new CacheEntry(entity));
+    add(entity);
 }
 }
