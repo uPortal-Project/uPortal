@@ -269,12 +269,6 @@ public java.util.Iterator getAllMembers() throws GroupsException
 /**
  * @return java.lang.String
  */
-protected String getCacheKey() {
-    return getName();
-}
-/**
- * @return java.lang.String
- */
 public java.lang.String getCreatorID() {
     return creatorID;
 }
