@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fragments>
+	<fragment name="guest-tab-1">
+		<description>Appears on all guest pages</description>
+		<groups>
+			<group>Guests</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="uPortal" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="uportal-home-page" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="uportal-powered-sites" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>
+	<fragment name="guest-tab-2">
+		<description>Appears on all guest pages</description>
+		<groups>
+			<group>Guests</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="depth" value="2"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="News" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="salon.com" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="motley-fool" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+</fragments>
