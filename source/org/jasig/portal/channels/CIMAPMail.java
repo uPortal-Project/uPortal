@@ -1,36 +1,41 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ *  Copyright © 2001 University of British Columbia
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ *  University of British Columbia ("UBC") will freely share software
+ *  registered in the JA-SIG Clearing House with institutions of
+ *  higher-education for their non-profit use.  The borrowing institution
+ *  will not share or distribute the software without the consent of
+ *  UBC.  By its use, the borrowing institution agrees to indemnify
+ *  and hold harmless UBC against all loss, cost, damage, liability,
+ *  injury or expense, including reasonable attorneys' fees, arising out
+ *  of their use of the software.
  *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *  Those desiring to incorporate this software into commercial products
+ *  or use for commercial purposes should contact:
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
+ *  Associate Director of Info Sys, ITServices, UBC
+ *  6356 Agricultural Road
+ *  Vancouver, B.C.,  CANADA
+ *  V6T 1Z2
  *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
+ *  Tel: 604-822-6611
  *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *  SOFTWARE IS PROVIDED "AS IS."  TO THE MAXIMUM EXTENT PERMITTED BY LAW,
+ *  UBC DISCLAIMS ALL WARRANTIES OF ANY KIND, EITHER EXPRESS OR
+ *  IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. UBC DOES
+ *  NOT WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN SOFTWARE
+ *  WILL MEET ANY REQUIREMENTS OR NEEDS OF THE BORROWING INSTITUTION, OR
+ *  THAT SOFTWARE WILL OPERATE ERROR FREE, OR IN AN UNINTERRUPTED FASHION,
+ *  OR THAT ANY DEFECTS OR ERRORS IN SOFTWARE WILL BE CORRECTED, OR THAT
+ *  SOFTWARE IS COMPATIBLE WITH ANY PARTICULAR PLATFORM.
+ *  IN NO EVENT WILL UBC BE LIABLE TO ANY BORROWING INSTITUTION OR
+ *  ANY THIRD PARTY FOR ANY INCIDENTAL OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, WITHOUT LIMITATION, INDIRECT, SPECIAL, PUNITIVE, OR
+ *  EXEMPLARY DAMAGES) ARISING OUT OF THE USE OF OR INABILITY TO USE
+ *  SOFTWARE, OR FOR ANY CLAIM BY ANY OTHER PARTY, EVEN IF UBC HAS
+ *  BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
 
 /**
@@ -154,10 +159,10 @@ import java.util.zip.*;
 
 import org.w3c.tidy.Tidy;
 
-public final class CIMAPMail implements IChannel
+public final class CIMAPMail implements IChannel, IMimeResponse
 {
   private static String rcsVersion = "$Revision$"; // from rcs/cvs
-  private static String clientVersion = "2.00c";
+  private static String clientVersion = "2.00d";
   private static boolean DEBUG = false;
 
   // Configurable parameters
@@ -439,6 +444,9 @@ public final class CIMAPMail implements IChannel
 
     public StringWriter respond (String submitValue) throws Exception {
       return null;
+    }
+
+    public void download(OutputStream out) throws IOException {
     }
 
     public String renderString() throws Exception {
@@ -937,13 +945,40 @@ public final class CIMAPMail implements IChannel
     }
 
     private int msgIndex;
-
     public void doit(ChannelRuntimeData rd) throws Exception {
       if (DEBUG) System.err.println("doit for " + weAre);
       runtimeData = rd;
       String value ;
       if ((value = runtimeData.getParameter("msg")) != null) {
         msgIndex = Integer.parseInt(value);
+      }
+
+      if ((value = runtimeData.getParameter("attachment")) != null) {
+        int attachmentIndex = Integer.parseInt(value);
+        Message msg = activeFolder.openMessage (msgIndex);
+        MessageParts msgParts = new MessageParts (msg);
+        Part attachment = msgParts.getAttachments ()[attachmentIndex];
+
+        String contentType = attachment.getContentType ();
+        downloadName = attachmentName(attachment, attachmentIndex);
+        downloadHeaders = new HashMap();
+        downloadHeaders.put("Accept-Ranges", "bytes");
+        downloadHeaders.put("Content-Disposition", "inline; filename=\"" + downloadName + "\"");
+        downloadHeaders.put("Cache-Control", "private");  // Have to override (possible) no-cache directives
+        int colonPos = contentType.indexOf (";");
+        if (colonPos > 0) {
+          downloadContentType = contentType.substring (0, colonPos).toLowerCase ();
+        } else {
+          downloadContentType = contentType.toLowerCase ();
+        }
+        Date sentDate = msg.getSentDate();
+        if (sentDate != null) {
+          downloadHeaders.put("Last-Modified", httpDateFormat.format(sentDate));
+        }
+
+        downloadInputStream = attachment.getInputStream ();
+        metrics.attachmentsViewed++;
+
       }
       if (DEBUG) System.err.println("doit for " + weAre);
     }
@@ -954,12 +989,8 @@ public final class CIMAPMail implements IChannel
       StringWriter xml = new StringWriter();
       xml.write("<" + xslTag + ">\n");
 
-        if (submitValue.equals("download")) {
-          downloadAttachment();
-          return null;
-
         // If the user clicked "Reply", goto compose screen using this message as a draft
-        } else if (submitValue.equals (replyMessageButtonTxt)) {
+        if (submitValue.equals (replyMessageButtonTxt)) {
           if (true) {
             activeMethod = composeMethod;
             ((ComposeMessage)composeMethod).setAction("reply");
@@ -1150,72 +1181,6 @@ public final class CIMAPMail implements IChannel
       return xml;
     }
 
-    /**
-     * Respond to read message attachment url
-     */
-    public void downloadAttachment ()
-    {
-      try {
-        int iMsg = Integer.parseInt (runtimeData.getParameter ("msg"));
-        String index = runtimeData.getParameter ("attachment");
-        if (DEBUG) System.err.println(iMsg + ", " + index);
-        if (index == null) {
-          setContentType("text/html");
-          //displayErrorMsg ("No attachment selected", true, xml);
-        } else {
-          int attachmentIndex = Integer.parseInt (index);
-          Message msg = activeFolder.openMessage (iMsg);
-          MessageParts msgParts = new MessageParts (msg);
-          Part attachment = msgParts.getAttachments ()[attachmentIndex];
-
-          String contentType = attachment.getContentType ();
-          String attachmentName = attachmentName(attachment, attachmentIndex);
-
-          addHeader("Accept-Ranges", "bytes");
-          addHeader("Content-Disposition", "inline; filename=\"" + attachmentName + "\"");
-          addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
-          int colonPos = contentType.indexOf (";");
-          if (colonPos > 0) {
-            setContentType (contentType.substring (0, colonPos).toLowerCase ());
-          } else {
-            setContentType (contentType.toLowerCase ());
-          }
-          Date sentDate = msg.getSentDate();
-          if (sentDate != null) {
-            addHeader("Last-Modified", httpDateFormat.format(sentDate));
-          }
-
-          OutputStream browser = getOutputStream();
-          InputStream in = attachment.getInputStream ();
-          try {
-            int bufferSize = 8192;
-            byte[] buff = new byte[bufferSize];
-            int bytesRead;
-
-            while ((bytesRead = in.read (buff, 0, bufferSize)) != -1) {
-              browser.write(buff, 0, bytesRead);
-            }
-          } catch (IOException ioe) {
-            /* Browser probably closed the connection */
-          } finally {
-            in.close();
-            browser.close(); // We've sent everything that we want to
-          }
-          metrics.attachmentsViewed++;
-        }
-      } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
-        /*
-        try {
-           out.println ("Unable to find/display attachment");
-        } catch (IOException ie) {
-          LogService.instance().log(LogService.ERROR, "respondToReadAttachment:"+ie);
-        }
-        */
-      }
-    }
-
-
   }
 
   private class ListFolders extends XmlMethod {
@@ -1243,11 +1208,6 @@ public final class CIMAPMail implements IChannel
     }
 
     public StringWriter respond(String submitValue) throws Exception {
-      if (submitValue.equals("download")) {
-        downloadFolder();
-        return null;
-      }
-
       StringWriter xml = new StringWriter();
       xml.write("<" + xslTag + ">\n");
 
@@ -1368,13 +1328,145 @@ public final class CIMAPMail implements IChannel
     public void setPageIndex(String pageIndex) {
       this.pageIndex = pageIndex;
     }
-    public void doit(ChannelRuntimeData rd) {
+
+    public void doit(ChannelRuntimeData rd) throws PortalException {
       if (DEBUG) System.err.println("doit for " + weAre);
       runtimeData = rd;
       String value;
       if ((value = runtimeData.getParameter("page")) != null){
         setPageIndex(value);
       }
+
+      downloadName = runtimeData.getParameter("downloadFolder");
+      if (downloadName != null) { // Set up for download
+        downloadHeaders = new HashMap();
+        downloadHeaders.put("Accept-Ranges", "bytes");
+        downloadHeaders.put("Content-Disposition", "inline; filename=\"" + downloadName + ".zip\"");
+        downloadHeaders.put("Cache-Control", "private");  // Have to override (possible) no-cache directives
+        downloadContentType = "application/zip";
+        downloadHeaders.put("Last-Modified", httpDateFormat.format(new Date()));
+        downloadInputStream = null;
+      }
+    }
+
+
+    public void download(OutputStream out) throws IOException {
+        final String crlf = "\r\n"; // new line sequence for a zip file
+
+        if (downloadName == null) {
+          throw new IOException("Folder to download not proided in URL");
+        }
+        String folderName = downloadName;
+        try {
+          Folder folder;
+          if (folderName.equalsIgnoreCase (config.sMailbox)) {
+            folder = inbox.folder;
+          } else {
+            folder = getFolder ( (config.sFolderDir == null ? "" : config.sFolderDir + folderSeparator) + folderName);
+            folder.open(Folder.READ_ONLY);
+          }
+          Message messages[] = folder.getMessages();
+
+          ZipOutputStream zout = new ZipOutputStream(out);
+          zout.setLevel(Deflater.BEST_COMPRESSION);
+          zout.setMethod(zout.DEFLATED);
+          StringBuffer pad = new StringBuffer();
+          int padLength = (folder.getMessageCount() + "").length();
+          for (int i = padLength; i > 0; i--) {
+            pad.append("0");
+          }
+          for (int i = 1; i <= messages.length; i++) {
+            MessageParts msgParts = new MessageParts (messages[i-1], true);
+            int indexLength = (i + "").length();
+            String messageName = (pad.toString() + i).substring(indexLength) + " " +
+              msgParts.getSubject().replace('/', '_');
+
+            Part[] attachments = msgParts.getAttachments ();
+            Part bodyText = msgParts.getBodyText();
+            ZipEntry zpart = null;
+            String fileExtension = ".txt";
+            String htmlBreak = "";
+
+            if (bodyText != null && bodyText.isMimeType("text/html")) {
+              fileExtension = ".htm";
+              htmlBreak = "<br/>";
+            }
+            zpart = new ZipEntry(folderName + "/" + messageName.trim() + fileExtension);
+            Date fileDate = messages[i-1].getSentDate();
+            if (fileDate == null) {
+              fileDate = new Date();
+            }
+            zpart.setTime(fileDate.getTime());
+            zout.putNextEntry(zpart);
+            try {
+              StringWriter stringWriter = new StringWriter();
+              PrintWriter printWriter = new PrintWriter(stringWriter);
+
+              Message msg = msgParts.getMsg();
+              Enumeration headers = msg.getAllHeaders();
+              while (headers.hasMoreElements ()) {
+                Header header = (Header)headers.nextElement ();
+                printWriter.print(header.getName() + ": " + header.getValue() + htmlBreak + crlf);
+              }
+              printWriter.print(htmlBreak + crlf);
+              printWriter.flush();
+              printWriter.close();
+              zout.write(stringWriter.getBuffer().toString().getBytes());
+              if (bodyText != null) {
+                InputStream in = bodyText.getInputStream ();
+                try {
+                  int bytes;
+                  byte buffer[] = new byte[8192];
+                  while ( (bytes = in.read (buffer, 0, 8192)) > -1) {
+                    zout.write (buffer, 0, bytes);
+                  }
+                } finally {
+                  in.close();
+                }
+              }
+            } catch (Exception e) {
+              LogService.instance().log(LogService.ERROR, e);
+            }
+            zout.closeEntry();
+
+            for (int j = 0; j < attachments.length; j++) {
+              String partName = attachmentName(attachments[j], j);
+              zpart = new ZipEntry(folderName + "/" + messageName + "/" + partName);
+              zout.putNextEntry(zpart);
+              try {
+                InputStream in = attachments[j].getInputStream ();
+                try {
+                  int bytes;
+                  byte buffer[] = new byte[8192];
+                  while ( (bytes = in.read (buffer, 0, 8192)) > -1) {
+                    zout.write (buffer, 0, bytes);
+                  }
+                } finally {
+                  in.close();
+                }
+              } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, e);
+              }
+              zout.closeEntry();
+            }
+            zout.flush();
+          }
+          zout.flush();
+          zout.finish();
+          zout.close();
+
+          metrics.messagesDownloaded += messages.length;
+          if (!folderName.equalsIgnoreCase (config.sMailbox)) {
+            folder.close(false);
+          }
+
+        } catch (MessagingException me) {
+          LogService.instance().log(LogService.ERROR, me);
+          throw new IOException(me.getMessage());
+        } catch (IOException e) {
+          LogService.instance().log(LogService.ERROR, e);
+          throw e;
+        }
     }
 
     public StringWriter display() {
@@ -1551,145 +1643,8 @@ public final class CIMAPMail implements IChannel
       } catch (IOException ioe) {
       }
     }
-
-    /**
-     * Download the contents of a folder as a zip file
-     * @param the servlet request object
-     * @param the servlet response object
-     * @param the JspWriter object
-     */
-    public void downloadFolder ()
-    {
-      String crlf = "\r\n"; // new line sequence for a zip file
-
-      String folderName;
-      if ( (folderName = runtimeData.getParameter ("downloadfolder")) != null) {
-        try {
-          Folder folder;
-          if (folderName.equalsIgnoreCase (config.sMailbox)) {
-            folder = inbox.folder;
-          } else {
-            folder = getFolder ( (config.sFolderDir == null ? "" : config.sFolderDir + folderSeparator) + folderName);
-            folder.open(Folder.READ_ONLY);
-            if (folder == null) {
-              setContentType("text/html");
-              //displayErrorMsg ("Lost connection to mail server", false, xml);
-              return;
-            }
-          }
-          Message messages[] = folder.getMessages();
-
-          addHeader("Accept-Ranges", "bytes");
-          addHeader("Content-Disposition", "inline; filename=\"" + folderName + ".zip\"");
-          addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
-          setContentType("application/zip");
-          addHeader("Last-Modified", httpDateFormat.format(new Date()));
-
-          ZipOutputStream zout = new ZipOutputStream(getOutputStream());
-          zout.setLevel(Deflater.BEST_COMPRESSION);
-          zout.setMethod(zout.DEFLATED);
-          StringBuffer pad = new StringBuffer();
-          int padLength = (folder.getMessageCount() + "").length();
-          for (int i = padLength; i > 0; i--) {
-            pad.append("0");
-          }
-          for (int i = 1; i <= messages.length; i++) {
-            MessageParts msgParts = new MessageParts (messages[i-1], true);
-            int indexLength = (i + "").length();
-            String messageName = (pad.toString() + i).substring(indexLength) + " " +
-              msgParts.getSubject().replace('/', '_');
-
-            Part[] attachments = msgParts.getAttachments ();
-            Part bodyText = msgParts.getBodyText();
-            ZipEntry zpart = null;
-            String fileExtension = ".txt";
-            String htmlBreak = "";
-
-            if (bodyText.isMimeType("text/html")) {
-              fileExtension = ".htm";
-              htmlBreak = "<br/>";
-            }
-            zpart = new ZipEntry(folderName + "/" + messageName + fileExtension);
-            Date fileDate = messages[i-1].getSentDate();
-            if (fileDate == null) {
-              fileDate = new Date();
-            }
-            zpart.setTime(fileDate.getTime());
-            zout.putNextEntry(zpart);
-            try {
-              StringWriter stringWriter = new StringWriter();
-              PrintWriter printWriter = new PrintWriter(stringWriter);
-
-              Message msg = msgParts.getMsg();
-              Enumeration headers = msg.getAllHeaders();
-              while (headers.hasMoreElements ()) {
-                Header header = (Header)headers.nextElement ();
-                printWriter.print(header.getName() + ": " + header.getValue() + htmlBreak + crlf);
-              }
-              printWriter.print(htmlBreak + crlf);
-              printWriter.flush();
-              printWriter.close();
-              zout.write(stringWriter.getBuffer().toString().getBytes());
-              if (bodyText != null) {
-                InputStream in = bodyText.getInputStream ();
-                try {
-                  int bytes;
-                  byte buffer[] = new byte[8192];
-                  while ( (bytes = in.read (buffer, 0, 8192)) > -1) {
-                    zout.write (buffer, 0, bytes);
-                  }
-                } finally {
-                  in.close();
-                }
-              }
-            } catch (Exception e) {
-              LogService.instance().log(LogService.ERROR, e);
-            }
-            zout.closeEntry();
-
-            for (int j = 0; j < attachments.length; j++) {
-              String partName = attachmentName(attachments[j], j);
-              zpart = new ZipEntry(folderName + "/" + messageName + "/" + partName);
-              zout.putNextEntry(zpart);
-              try {
-                InputStream in = attachments[j].getInputStream ();
-                try {
-                  int bytes;
-                  byte buffer[] = new byte[8192];
-                  while ( (bytes = in.read (buffer, 0, 8192)) > -1) {
-                    zout.write (buffer, 0, bytes);
-                  }
-                } finally {
-                  in.close();
-                }
-              } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
-              }
-              zout.closeEntry();
-            }
-          }
-          zout.flush();
-          zout.finish();
-          zout.close();
-
-          metrics.messagesDownloaded += messages.length;
-          if (!folderName.equalsIgnoreCase (config.sMailbox)) {
-            folder.close(false);
-          }
-
-        } catch (FolderClosedException fce) {
-          //displayErrorMsg(fce, false, out);
-          return;
-        } catch (Exception e) {
-          //displayErrorMsg(e, false, out);
-          LogService.instance().log(LogService.ERROR, e);
-          return;
-        }
-      }
-    }
-
-
   }
+
   private class Template extends XmlMethod {
     public Template() {
       weAre = "mailstatus";
@@ -2272,6 +2227,7 @@ public final class CIMAPMail implements IChannel
           xslt.setXSL(sslLocation, weAre, runtimeData.getBrowserInfo());
           xslt.setTarget(out);
           xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+          xslt.setStylesheetParameter("workerActionURL", runtimeData.getWorkerActionURL(PortalSessionManager.FILE_DOWNLOAD));
           xslt.transform();
         }
       } catch (Exception e) {
@@ -3662,26 +3618,45 @@ public final class CIMAPMail implements IChannel
     }
   }
 
-  //
-    /**
-   * @depricated
-   */
-  public void setContentType(String mimeType) {
-    //response.setContentType(mimeType);
-  }
 
   /**
-   * @depricated
+   * IMimeResponse processing
    */
-  public void addHeader(String name, String value) {
-    //response.addHeader(name, value);
+  private String downloadContentType;
+  private InputStream downloadInputStream;
+  private String downloadName;
+  private Map downloadHeaders;
+  public String getContentType() {
+    return downloadContentType;
   }
-  /**
-   * @depricated
-   */
-  public ServletOutputStream getOutputStream() throws IOException {
-    //return response.getOutputStream();
-    return null;
+  public InputStream getInputStream() {
+    return downloadInputStream;
   }
 
+  public void downloadData(OutputStream out) throws IOException {
+    activeMethod.download(out);
+  }
+
+  public String getName() {
+    return downloadName;
+  }
+  public Map getHeaders() {
+    return downloadHeaders;
+  }
+
+  public void freeResponseResources() {
+    if (downloadInputStream != null) {
+      try {
+        downloadInputStream.close();
+      } catch (IOException ioe) {
+        LogService.instance().log(LogService.ERROR, "CIMAPMail::freeResponseResources: " + ioe);
+      }
+    }
+    downloadContentType = null;
+    downloadName = null;
+    if (downloadHeaders != null) {
+      downloadHeaders.clear();
+      downloadHeaders = null;
+    }
+  }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:param name="baseActionURL">default</xsl:param>
+<xsl:param name="workerActionURL">default</xsl:param>
 <xsl:output method="html"/>
 <xsl:include href="lookAndFeel.xsl"/>
 
@@ -62,7 +63,7 @@
     <td><a><xsl:attribute name="href"><xsl:value-of select="concat($baseActionURL, '?action=listMessages&amp;folder=', .)"/></xsl:attribute><xsl:value-of select="."/></a></td>
     <td align="center"><xsl:value-of select="@messages"/></td>
     <td align="center"><xsl:value-of select="@unread"/></td>
-    <td><!-- <a><xsl:attribute name="href"><xsl:value-of select="concat($baseActionURL, '?action=listFolders&amp;submit=download&amp;downloadfolder=', .)"/></xsl:attribute>download</a>-->download</td>
+    <td><a><xsl:attribute name="href"><xsl:value-of select="concat($workerActionURL, '/', ., '.zip?action=listFolders&amp;submit=download&amp;downloadFolder=', .)"/></xsl:attribute>download</a></td>
    </tr>
   </xsl:for-each>
 </xsl:template>

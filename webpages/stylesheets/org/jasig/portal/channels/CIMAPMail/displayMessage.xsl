@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:param name="baseActionURL">default</xsl:param>
+<xsl:param name="workerActionURL">default</xsl:param>
 <xsl:output method="html"/>
 
 <xsl:template match="displayMessage">
@@ -70,14 +71,11 @@
 <xsl:template match="attachments">
 <strong>Attachments:</strong><br></br>
 <xsl:for-each select="attachment">
-<!--
   <a target="_blank">
   <xsl:attribute name="href">
-  <xsl:value-of select="concat($baseActionURL, '&amp;action=displayMessage&amp;submit=download&amp;msg=', @msg, '&amp;attachment=', @attachment)"/></xsl:attribute>
+  <xsl:value-of select="concat($workerActionURL, '/', .,'?action=displayMessage&amp;submit=download&amp;attachment=', @attachment)"/></xsl:attribute>
   <xsl:value-of select="."/>
   </a>
-  -->
-  <xsl:value-of select="."/><br/>
 </xsl:for-each>
 </xsl:template>
 
