@@ -55,7 +55,8 @@ Version $Revision$
   <!--
    -->
   <xsl:template match="rdf:RDF | rss">
-    <xsl:apply-templates/>
+    <xsl:apply-templates select="//*[local-name()='channel']"/>
+	<xsl:apply-templates select="//*[local-name()='item' ]"/>
     <xsl:if test="/rdf:RDF/*[local-name()='channel']/dc:rights != ''">
       <xsl:call-template name="copyright"/>
     </xsl:if>
@@ -286,7 +287,7 @@ Version $Revision$
         </tr>
       </xsl:if>
     </table>
-    <xsl:apply-templates/>
+    <xsl:apply-templates select="*[local-name='item']"/>
   </xsl:template>
   <!--
    -->
@@ -364,6 +365,7 @@ Version $Revision$
   <!--
    -->
   <xsl:template match="*[local-name()='item']">
+	<xsl:if test="($viewNum='all') or position() &lt; $viewNum + 1 ">	
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
         <td>
@@ -470,6 +472,7 @@ Version $Revision$
     <xsl:apply-templates select="dc:*"/>
     <xsl:apply-templates select="str:*"/>
     <xsl:apply-templates select="ev:*"/>
+	</xsl:if>
   </xsl:template>
   <!--
    -->

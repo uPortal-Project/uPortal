@@ -95,6 +95,22 @@ Version $Revision$
           </restriction>
         </type>
       </parameter>
+	  
+      <parameter modify="publish">
+        <name>viewNum</name>
+          <label>Maximum number of items to display</label>
+          <type base="integer" input="text" display="text">
+
+            <!-- length and maxlength for text field -->
+            <length>3</length>
+            <maxlength>10</maxlength>
+
+          </type>
+
+          <!-- default value for text field -->
+          <defaultValue>15</defaultValue>
+
+      </parameter>
 
       <parameter modify="publish">
         <name>cacheTimeout</name>
