@@ -60,8 +60,10 @@
   // This will check to see if the channel wants to return
   //  to layout. This allow channels to behave the same way
   //  in uPortal 2.0.
-  String sUserLayoutRoot = request.getParameter("userLayoutRoot");
-  if(sUserLayoutRoot != null && sUserLayoutRoot.equals("root"))
+  String sUserLayoutRoot1 = request.getParameter("userLayoutRoot");
+  String sUserLayoutRoot2 = request.getParameter("uP_root"); // uPortal 2.0 syntax changed
+  if((sUserLayoutRoot1 != null && sUserLayoutRoot1.equals("root")) ||
+     (sUserLayoutRoot2 != null && sUserLayoutRoot2.equals("root")))
   {
     // Reconstruct URL parameters
     String jspfile = "layout.jsp?";
