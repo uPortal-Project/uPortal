@@ -33,7 +33,7 @@
  *
  */
 
-package org.jasig.portal.xmlchannels;
+package org.jasig.portal.channels;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
