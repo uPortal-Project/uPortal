@@ -42,7 +42,7 @@
             <xsl:when test="@code='3'">Channel failed to accept runtime data (code 3)</xsl:when>
             <xsl:when test="@code='0'">General error (code 0)</xsl:when>
             <xsl:when test="@code='5'">Channel failed to accept PCS (code 5)</xsl:when>
-            <xsl:when test="@code='6'">Channel not authorized (code 6)</xsl:when>
+            <xsl:when test="@code='6'">User not authorized (code 6)</xsl:when>
             <xsl:when test="@code='7'">Channel not available (code 7)</xsl:when>
             <xsl:when test="@code='-1'">uPortal error (code -1)</xsl:when>
           </xsl:choose>
