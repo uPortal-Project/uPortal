@@ -1,0 +1,109 @@
+uPortal Developers Meeting Agenda
+=============================================================
+August 30-31, 2004 at Massachusetts Institute of Technology
+
+
+Monday, August 30, 2004
+-------------------------------------------------------------
+
+09:00 - 09:15  Introductions [Everyone]
+
+09:15 - 09:30  Meeting overview [Ken Weiner]
+
+                 Review agenda
+                 Explain coding session
+
+09:30 - 10:45  The Sakai Project [Chuck Severance]
+  
+                 Current status
+                 Roadmap
+                 Relationship to uPortal
+                                  
+10:45 - 11:00  Break
+
+11:00 - 12:00  Portlet development challenges [Eric Dalquist]
+
+                 File uploading
+                 File downloading
+                 Portlet preferences
+                 Class loader issues
+                 Access to portal APIs
+                 Portlet portability
+
+12:00 - 01:00  Lunch
+
+01:00 - 01:30  WSRP [Ken Weiner and Michael Ivanov]
+
+                 Current status
+                 WSRP4J
+                 Roadmap
+
+01:30 - 02:30  uPortal 3.0 Code Overview [Ken Weiner, Mike DeSimone, Michael Ivanov]
+
+                 Bean factory (IoC)
+                 Domain objects
+                 Identifiers
+                 Data transfer objects (DTO)
+                 Data access objects (DAO)
+                 Spring JDBC implementation
+
+02:30 - 02:45  Break
+
+02:45 - 04:00  uPortal 3.0 Code Overview (continued)
+
+                 Registries
+                 Factories
+                 Caching
+                 Pluto OM implementation
+                 JUnit tests
+
+
+Tuesday, August 31, 2004
+-------------------------------------------------------------
+
+09:00 - 10:30  uPortal 3.0 Code Overview (continued) [Peter Kharchenko]
+ 
+                 Contexts
+                 URLs
+                 Rendering
+                 Layouts
+                
+10:30 - 10:45  Break
+
+10:45 - 11:30  uPortal 3.0 Services [Ken Weiner]
+
+                 Logging
+                 Security
+                 Groups and permissions
+                 How to integrate into uPortal 3.0
+                 
+11:30 - 12:00  Exception handling [Andrew Petro]
+
+                 Status
+                 How to integrate into uPortal 3.0
+
+12:00 - 01:00  Lunch
+
+01:00 - 01:30  Upgrading [Al Wold]
+  
+                 Upgrade tools
+                 Experiences with upgrading
+
+01:30 - 02:30  Wish list for uPortal 3.0 [Ken Weiner]
+
+                 Gather requirements                 
+
+02:30 - 02:45  Break
+
+02:45 - 03:30  Documentation [John Fereira]
+
+                 Website
+                 What goes in CVS
+
+03:30 - 04:00  Meeting summary [Ken Weiner]
+
+                 Establish priorities
+                 2.4, 3.0 feature sets
+                 Assign work to developers
+                 Set time period for 2.4 release
+
