@@ -56,7 +56,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
   // Constants
     private static final String templateAttrName = "uPortalTemplateUserName";
     private static final int guestUID = 1;
-    static int DEBUG = 1;
+    static int DEBUG = 0;
 
   protected RDBMServices rdbmService = null;
 
