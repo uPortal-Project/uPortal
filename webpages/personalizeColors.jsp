@@ -62,7 +62,7 @@ if (sAction != null) {
 <% 
 
 String fComponent = (String)request.getParameter("Component");
-if (fComponent == null) fComponent = "BGColor";
+if (fComponent == null) fComponent = "bgColor";
 
 String fColorScheme = (String)request.getParameter("ColorScheme");
 if (fColorScheme == null) fColorScheme = "University";
@@ -72,7 +72,7 @@ String fColorPalette = (String)request.getParameter("ColorPalette");
 if (fColorPalette == null) fColorPalette = "browsersafe";
 
 String omyBGColor = layoutBean.getBackgroundColor (request, response, out);
-String fBGColor = (String)request.getParameter("BGColor");
+String fBGColor = (String)request.getParameter("bgColor");
 String myBGColor = layoutBean.getBackgroundColor (request, response, out);
 myBGColor = myBGColor.trim();
 if ((myBGColor.substring(0,1)).equals("#")) myBGColor = myBGColor.substring(1);
@@ -154,7 +154,7 @@ function viewNewColor(whatColor) {
 
   showColor = showColor + "&" + whatComponent + "=" + whatColor
 
-  if (whatComponent != "BGColor") showColor = showColor + "&BGColor=<%=fBGColor%>"
+  if (whatComponent != "bgColor") showColor = showColor + "&bgColor=<%=fBGColor%>"
 
   if (whatComponent != "TextColor") showColor = showColor + "&TextColor=<%=fTextColor%>"
 
@@ -194,7 +194,7 @@ View your color changes on the mini portal below:</td><tr>
 
 <tr><td>
 
-<table border="1" bgcolor="<%=fBGColor%>">
+<table border="1" bgColor="<%=fBGColor%>">
 
 <tr><td>
 
@@ -310,7 +310,7 @@ View your color changes on the mini portal below:</td><tr>
 
 <form name=SaveReturn action="personalizeColors.jsp" method=post>
 
-<input type=hidden name="bgcolor" value="<%=fBGColor%>">
+<input type=hidden name="bgColor" value="<%=fBGColor%>">
 
 <input type=hidden name="fgColor" value="<%=fTextColor%>">
 
@@ -408,16 +408,16 @@ For testing without DB
 
 <form name="ColorScheme">
 
-<tr><td><center><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=<%=myBGColor%>&TextColor=<%=myTextColor%>&ActiveTabColor=<%=myActiveTabColor%>&TabColor=<%=myTabColor%>&ChannelColor=<%=myChannelColor%>';">Revert to your colors</center></td><td bgcolor="<%=myBGColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTextColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myActiveTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myChannelColor%>"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
+<tr><td><center><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=<%=myBGColor%>&TextColor=<%=myTextColor%>&ActiveTabColor=<%=myActiveTabColor%>&TabColor=<%=myTabColor%>&ChannelColor=<%=myChannelColor%>';">Revert to your colors</center></td><td bgcolor="<%=myBGColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTextColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myActiveTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myTabColor%>"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="<%=myChannelColor%>"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
 <%--
 For testing without DB
-<tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=83a368&TabColor=99ccff&ChannelColor=009900';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="99ccff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=ffffff&TextColor=000000&ActiveTabColor=009900&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=eeeeee&TextColor=000000&ActiveTabColor=83a368&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="eeeeee"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=cc6633&TextColor=000000&ActiveTabColor=ff9900&TabColor=ffffff&ChannelColor=ffcc33';"></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=0044AA&TextColor=ffffff&ActiveTabColor=ffDD00&TabColor=ff6600&ChannelColor=ffDD00';"></td><td bgcolor="0044AA"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff6600"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&BGColor=000000&TextColor=ffffff&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
+<tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=ffffff&TextColor=000000&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=ffffff&TextColor=000000&ActiveTabColor=83a368&TabColor=99ccff&ChannelColor=009900';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="99ccff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=ffffff&TextColor=000000&ActiveTabColor=009900&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="009900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=eeeeee&TextColor=000000&ActiveTabColor=83a368&TabColor=336699&ChannelColor=83a368';"></td><td bgcolor="eeeeee"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="336699"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="83a368"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=cc6633&TextColor=000000&ActiveTabColor=ff9900&TabColor=ffffff&ChannelColor=ffcc33';"></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=0044AA&TextColor=ffffff&ActiveTabColor=ffDD00&TabColor=ff6600&ChannelColor=ffDD00';"></td><td bgcolor="0044AA"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff6600"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffDD00"><img src="images/dot_clear.gif" vspace="12"/></td></tr><tr><td><input type="radio" name="colors" onclick="javascript:window.location='personalizeColors.jsp?ColorScheme=University&bgColor=000000&TextColor=ffffff&ActiveTabColor=ff9900&TabColor=cc6633&ChannelColor=ffcc33';"></td><td bgcolor="000000"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffffff"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="cc6633"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ffcc33"><img src="images/dot_clear.gif" vspace="12"/></td><td bgcolor="ff9900"><img src="images/dot_clear.gif" vspace="12"/></td></tr>
 --%>
 <%
   connection = null;
   String ColorSquares = "";
   String SeqID = null;
-  String bgcolor = null;
+  String bgColor = null;
   String TextColor = null;
   String Link = null;
   String VLink = null;
@@ -431,12 +431,12 @@ For testing without DB
        ResultSet rs = statement.executeQuery(SQLString);
        while(rs.next()) {
           SeqID     = rs.getString(1);
-          bgcolor   = rs.getString(2);
+          bgColor   = rs.getString(2);
           TextColor = rs.getString(3);
           Link      = rs.getString(4);
           VLink     = rs.getString(5);
           ALink     = rs.getString(6);
-          ColorSquares = ColorSquares + "<tr><td><input type=\"radio\" name=\"colors\" onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&BGColor=" + bgcolor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</td><td bgcolor=\"" + bgcolor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + TextColor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + Link + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + VLink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + ALink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td></tr>";
+          ColorSquares = ColorSquares + "<tr><td><input type=\"radio\" name=\"colors\" onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&bgColor=" + bgColor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</td><td bgcolor=\"" + bgColor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + TextColor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + Link + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + VLink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + ALink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td></tr>";
        }
        statement.close();
        rdbmService.releaseConnection(connection);
@@ -473,8 +473,8 @@ For testing without DB
         <select name="PortalComponent">
 <%
 String IndivDrop="<option ";
-if (fComponent.equals("BGColor")) IndivDrop = IndivDrop + "selected ";
-IndivDrop = IndivDrop + "value=\"BGColor\">Background</option><option ";
+if (fComponent.equals("bgColor")) IndivDrop = IndivDrop + "selected ";
+IndivDrop = IndivDrop + "value=\"bgColor\">Background</option><option ";
 if (fComponent.equals("TextColor")) IndivDrop = IndivDrop + "selected ";
 IndivDrop = IndivDrop + "value=\"TextColor\">Text</option><option ";
 if (fComponent.equals("ActiveTabColor")) IndivDrop = IndivDrop + "selected ";
