@@ -1318,7 +1318,7 @@ Version $Revision$
   <!--~-->
   <xsl:template match="channel">
     <xsl:choose>
-      <xsl:when test="view='expanded'">
+      <xsl:when test="@view='expanded'">
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
@@ -1354,11 +1354,13 @@ Version $Revision$
               <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Type:</td>
-                  <td>Channel</td>
+                  <td>Individual Channel</td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Description:</td>
-                  <td width="100%"><xsl:value-of select="@description"/></td>
+                  <td width="100%">
+                    <xsl:value-of select="@description"/>
+                  </td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
@@ -1472,31 +1474,61 @@ Version $Revision$
   <!-- begin table for fragment title -->
   <!--~-->
   <xsl:template match="fragments">
-    <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-      <tr class="uportal-channel-text" valign="top" align="left">
-        <td class="uportal-navigation-category">
-          <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
-        </td>
-        <td class="uportal-navigation-category">
-          <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
-        </td>
-        <td width="100%" valign="bottom" class="uportal-navigation-category">
-          <strong> Fragments </strong>
-        </td>
-      </tr>
-      <tr class="uportal-background-content" valign="top" align="left">
-        <td colspan="5">
-          <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
-            <tr>
-              <td>
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <xsl:apply-templates select="category/fragment"/>
+    <xsl:choose>
+      <xsl:when test="@view='expanded'">
+        <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+          <tr class="uportal-channel-text" valign="top" align="left">
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
+            </td>
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
+            </td>
+            <td width="100%" valign="bottom" class="uportal-navigation-category">
+              <strong> Fragments </strong>
+            </td>
+          </tr>
+          <tr class="uportal-background-content" valign="top" align="left">
+            <td colspan="5">
+              <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <xsl:apply-templates select="category/fragment"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+          <tr class="uportal-channel-text" valign="top" align="left">
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/condensed.gif" width="16" height="16" border="0" alt="" title=""/>
+            </td>
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
+            </td>
+            <td width="100%" valign="bottom" class="uportal-navigation-category">
+              <strong> Fragments </strong>
+            </td>
+          </tr>
+          <tr class="uportal-background-content" valign="top" align="left">
+            <td colspan="5">
+              <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <!--~-->
   <!-- end table for fragment title -->
@@ -1505,8 +1537,8 @@ Version $Revision$
   <!-- begin table for fragment list -->
   <!--~-->
   <xsl:template match="fragment">
-        <xsl:choose>
-      <xsl:when test="view='expanded'">
+    <xsl:choose>
+      <xsl:when test="@view='expanded'">
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
@@ -1543,7 +1575,9 @@ Version $Revision$
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Description:</td>
-                  <td width="100%"><xsl:value-of select="./description"/></td>
+                  <td width="100%">
+                    <xsl:value-of select="./description"/>
+                  </td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
