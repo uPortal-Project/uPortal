@@ -501,7 +501,6 @@
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
-
       <!-- StockCharts.com -->
       <row>
         <column><name>CHAN_ID</name><value>2</value></column>
@@ -2165,10 +2164,38 @@
         <column><name>MIME_TYPE</name><value>text/html</value></column>
         <column><name>MIME_TYPE_DESCRIPTION</name><value>HTML mime type is the one that most desktop browsers use</value></column>
       </row>
-
       <row>
         <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
         <column><name>MIME_TYPE_DESCRIPTION</name><value>WML mime type is mostly used by the cell phone WAP browsers.</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- ReferencePermissionManager table -->
+  <table>
+    <name>UP_PERMISSIONS</name>
+    <rows>
+      <row>
+        <column>
+          <name>OWNER</name>
+          <value>CHAN_ID.10</value>
+        </column>
+        <column>
+          <name>PRINCIPAL</name>
+          <value>*</value>
+        </column>
+        <column>
+          <name>ACTIVITY</name>
+          <value>PUBLISH</value>
+        </column>
+        <column>
+          <name>TARGET</name>
+          <value>*</value>
+        </column>
+        <column>
+          <name>PERMISSION_TYPE</name>
+          <value>GRANT</value>
+        </column>
       </row>
     </rows>
   </table>
