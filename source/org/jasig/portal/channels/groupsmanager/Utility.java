@@ -76,7 +76,7 @@ public class Utility
     */
    public static boolean areEqual (String one, String two) {
       String str1 = (one==null ? "" : one).trim();
-      String str2 = (one==null ? "" : two).trim();
+      String str2 = (two==null ? "" : two).trim();
       return str1.equals(str2);
    }
 

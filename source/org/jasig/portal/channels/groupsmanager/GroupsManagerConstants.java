@@ -62,21 +62,15 @@ public interface GroupsManagerConstants {
    String OWNER = "org.jasig.portal.channels.groupsmanager.CGroupsManager";
    String ENTITY_TAGNAME = "entity";
    String GROUP_TAGNAME = "group";
-   //HashMap ENTITY_TYPES = GroupsManagerXML.getEntityTypes();
 
-   // ROOT_ELEMENT_TAGNAME is the name of the root element holding the initial group
+   // ROOT_GROUP_TITLE is the name of the root element holding the initial group
    // contexts in the groups management channel
    String ROOT_GROUP_TITLE = "My Groups";
    String ROOT_GROUP_DESCRIPTION = "Set of Initial Group Contexts for this user";
-   
+
    String BROWSE_MODE = "browse";
    String EDIT_MODE = "edit";
    String SELECT_MODE = "select";
-
-   /** @todo Have to externalize all message strings in order to be "international"
-    *  These strings will eventually be held in a properties file so languages can
-    *  be swapped without recompiling. */
-   //String MSG_OBJECT_NOT_FOUND = "The object you have attempted to operate upon was not found";
 }
 
 

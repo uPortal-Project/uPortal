@@ -148,7 +148,6 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
                Element parentNode = (Element)parentNodes.next();
                GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
                      model);
-
                ((Element)parentNode).setAttribute("hasMembers", "true");
             }
          }
@@ -183,6 +182,9 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
             /** @todo should we check if element already exists??? */
             princElem.appendChild(permElem);
          }
+         // Parent was locked so no other thread or process could have changed it, but
+         // child members could have changed.
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
          sessionData.feedback = retMsg;

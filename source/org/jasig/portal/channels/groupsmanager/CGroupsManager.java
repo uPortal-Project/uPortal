@@ -166,11 +166,8 @@ public class CGroupsManager
    public void receiveEvent (PortalEvent ev, String uid)
    //public void receiveEvent(LayoutEvent ev)
    {
-      if (ev.getEventNumber() == ev.EDIT_BUTTON_EVENT) {
-      // Switch to edit mode
-      //m_currentState = EDITMODE;
-      // Clear the content cache
-      //m_cachedContent = null;
+      if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
+        sessionsMap.remove(uid); // Clean up
       }
    }
 
@@ -234,7 +231,7 @@ public class CGroupsManager
                //        + ".renderXML(): grpView=" + runtimeData.getParameter("grpView"));
                xslt.setXSL(sslLocation, "main", sessionData.runtimeData.getBrowserInfo());
                xslt.transform();
-            } 
+            }
             catch (PortalException pe){
                LogService.instance().log(LogService.ERROR, pe);
                if (pe.getRecordedException()!=null){

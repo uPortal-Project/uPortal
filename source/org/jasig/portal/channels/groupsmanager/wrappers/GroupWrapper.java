@@ -95,13 +95,16 @@ public class GroupWrapper extends GroupMemberWrapper {
          }
          rootElem.setAttribute("hasMembers", String.valueOf(hasMems));
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): hasMembers = " + String.valueOf(hasMems));
-         // no need to recreate the rdf element
+         // If no rdf element, create it, otherwise refresh the element
          NodeList nList = rootElem.getElementsByTagName("rdf:RDF");
          if (nList.getLength() == 0) {
             Utility.logMessage("DEBUG", "GroupWrapper::getXml(): CREATING ELEMENT RDF");
             Element rdf = GroupsManagerXML.createRdfElement(entGrp, aDoc);
             Utility.logMessage("DEBUG", "GroupWrapper::getXml(): APPENDING rdf element TO GRPROOT");
             rootElem.appendChild(rdf);
+         }
+         else{
+            GroupsManagerXML.refreshAllNodesIfRequired(aDoc, rootElem);
          }
          if (isGroupExpanded) {
             expandElement(gm, rootElem, aDoc);

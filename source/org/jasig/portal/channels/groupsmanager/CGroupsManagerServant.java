@@ -93,7 +93,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       }
       return  isFinished;
    }
-   
+
    CGroupsManagerSessionData getSessionData(){
     return ((CGroupsManager) channel).getSessionData(uid);
    }
@@ -113,6 +113,18 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
             + "staticData parm = " + sd
             + "uid parm = " + uid);
       }
+   }
+
+   /**
+    * Create a SESSION_DONE event. This event is caught by CGroupsManager which deletes
+    * the session data object.
+    * @throws Throwable
+    */
+   protected void finalize() throws Throwable{
+      super.finalize();
+      // send SESSION_DONE event to the wrapped CGroupsManager channel.
+      PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
+      channel.receiveEvent(ev, uid);
    }
 
    /**

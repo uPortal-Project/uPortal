@@ -57,12 +57,14 @@ public class CGroupsManagerServantFactory {
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;
     private HashMap servantClasses = new HashMap();
+    private static CGroupsManager _groupsManager = new CGroupsManager();
+
     /** Creates new CGroupsManagerServantFactory */
     protected CGroupsManagerServantFactory() {
     }
 
     protected static CGroupsManagerServant getGroupsServant(){
-      return new CGroupsManagerServant(new CGroupsManager(), getNextUid());
+      return new CGroupsManagerServant(_groupsManager, getNextUid());
     }
 
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message) throws PortalException{
@@ -72,13 +74,13 @@ public class CGroupsManagerServantFactory {
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect, IGroupMember[] members) throws PortalException{
       long time1 = System.currentTimeMillis();
       CGroupsManagerServant servant;
-      
+
       try {
         servant = getGroupsServant();
         ChannelStaticData slaveSD =  cloneStaticData(staticData);
         Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
         servant.setStaticData(slaveSD);
-        
+
         servant.getSessionData().mode = "select";
         servant.getSessionData().allowFinish = allowFinish;
         if(!allowEntitySelect){
@@ -188,7 +190,7 @@ public class CGroupsManagerServantFactory {
         testgroup.getClass();
         servant = getGroupsServant();
         ChannelStaticData slaveSD = cloneStaticData(staticData);
-        
+
         ((IChannel)servant).setStaticData(slaveSD);
         servant.getSessionData().mode = "edit";
         servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
@@ -235,6 +237,6 @@ public class CGroupsManagerServantFactory {
       String newUid = Calendar.getInstance().getTime().getTime() + "grpsservant" + ++UID;
       return  newUid;
    }
-   
-   
+
+
 }

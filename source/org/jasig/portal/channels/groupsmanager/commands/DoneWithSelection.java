@@ -151,6 +151,9 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                staticData.setParameter("groupManagerFinished", "true");
             }
          }
+         // Parent was locked so no other thread or process could have changed it, but
+         // child members could have changed.
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       } catch (Exception e) {
          Utility.logMessage("ERROR", "DoneWithSelection Error: " + sessionData.feedback
                + "/n" + e);

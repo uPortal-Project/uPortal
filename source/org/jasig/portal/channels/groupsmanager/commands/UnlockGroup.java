@@ -36,6 +36,8 @@
 package org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.channels.groupsmanager.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 /**
  * A Groups Manager command to release a lock on a group, return to browse mode
@@ -48,7 +50,7 @@ public class UnlockGroup extends GroupsManagerCommand{
 
   public UnlockGroup() {
   }
-  
+
    public void execute (CGroupsManagerSessionData sessionData) {
       try{
         sessionData.lockedGroup.getLock().release();
@@ -56,5 +58,12 @@ public class UnlockGroup extends GroupsManagerCommand{
       catch(Exception e){
       }
       sessionData.mode = BROWSE_MODE;
+
+      // Parent was locked so no other thread or process could have changed it, but
+      // child members could have changed.
+      Document model = sessionData.model;
+      String parentID = sessionData.staticData.getParameter("groupParentId");
+      Element parentElem = GroupsManagerXML.getElementById(model, parentID);
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
    }
 }

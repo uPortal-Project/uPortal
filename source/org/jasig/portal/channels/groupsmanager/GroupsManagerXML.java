@@ -212,11 +212,16 @@ public class GroupsManagerXML
       return  rdfElem;
    }
 
-   /** @todo There's got to be a better day...not today...maybe Monday */
+   /**
+    * Returns an empty IEntityGroup
+    * @param nonPersistentElement Element
+    * @return IEntityGroup
+    */
    public static IEntityGroup dummyGroup(Element nonPersistentElement){
+      /** @todo delete this method...no longer needed */
       IEntityGroup entGrp = null;
       try {
-         entGrp = new EntityGroupImpl(null,Class.forName(nonPersistentElement.getAttribute("type")));
+         entGrp = new EntityGroupImpl(null,Class.forName(nonPersistentElement.getAttribute("entityType")));
       }
       catch (ClassNotFoundException cnfe){
          Utility.logMessage("INFO", "gotcha again for search element...class not found");
@@ -247,7 +252,7 @@ public class GroupsManagerXML
          Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
          // Have to check for non persistent search element before doing retrieval
          IGroupMember entGrp = (!isPersistentGroup(expandedElem) ?
-            dummyGroup(expandedElem) :
+            null :
             (IGroupMember)retrieveGroup(expandedElem.getAttribute("key")));
          GroupsManagerXML.getGroupMemberXml(entGrp, true, expandedElem, xmlDoc);
          //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
@@ -364,12 +369,15 @@ public class GroupsManagerXML
     * @return String
     */
    public static String getElementValueForTagName (Element anElem, String tagname) {
-      NodeList nList = anElem.getElementsByTagName(tagname);
       Utility.logMessage("DEBUG", "GroupsManagerXML:getElementValueForTagName(): retrieve element value for tagname: " + tagname);
+      String retValue = null;
+      NodeList nList = anElem.getElementsByTagName(tagname);
       if (nList.getLength() > 0) {
-         return nList.item(0).getFirstChild().getNodeValue();
+         retValue = nList.item(0).getFirstChild().getNodeValue();
       }
-      return "";
+      retValue = (retValue != null ? retValue : "");
+      Utility.logMessage("DEBUG", "GroupsManagerXML:getElementValueForTagName(): tagname " + tagname + " = " + retValue);
+      return retValue;
    }
    /**
     * Returns a name from the EntityNameFinderService, for a key and class
@@ -510,6 +518,8 @@ public class GroupsManagerXML
     */
    public static Element getGroupMemberXml (IGroupMember gm, boolean isContextExpanded,
          Element anElem, Document aDoc) {
+      // search elements are nonPersistent and come in as a null group member.
+      if (gm == null) {return null;}
       Element rootElem = null;
       GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
       if (gm.isEntity()) {
@@ -660,13 +670,15 @@ public class GroupsManagerXML
     * @param anElem Element
     * @return boolean
     */
-   public static boolean isPersistentGroup(Element anElem){
-      boolean rval = true;
-      if ((!anElem.getNodeName().equals(GROUP_TAGNAME)) || ((anElem.getAttribute("searchResults")!=null) && anElem.getAttribute("searchResults").equals("true"))) {
-         rval= false;
-      }
-      return rval;
+    public static boolean isPersistentGroup(Element anElem){
+       boolean rval = true;
+       if (!Utility.areEqual(anElem.getNodeName(), GROUP_TAGNAME)
+               || Utility.areEqual(anElem.getAttribute("searchResults"), "true")) {
+          rval= false;
+       }
+       return rval;
    }
+
    /**
     * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
     * @param model  Document
@@ -750,7 +762,7 @@ public class GroupsManagerXML
             String saveExpand = parentElem.getAttribute("expanded");
             // Have to check for non persistent search element before doing retrieval
             IGroupMember parentGM = ((!isPersistentGroup(parentElem) ?
-               dummyGroup(parentElem) :
+               null :
                (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
             getGroupMemberXml (parentGM , true, parentElem, model);
             parentElem.setAttribute("expanded", saveExpand);

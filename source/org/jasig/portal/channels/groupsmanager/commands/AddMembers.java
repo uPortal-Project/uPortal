@@ -81,9 +81,10 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
       try{
          IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(model, parentAddElemId);
          sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),getXmlDoc(sessionData));
-         //Parent was locked so no other thread or process could have changed it.
-         //Element parentElem = GroupsManagerXML.getElementById(model, pg.getKey());
-         //GroupsManagerXML.refreshAllNodesIfRequired(model, parentElem);
+         // Parent was locked so no other thread or process could have changed it, but
+         // child members could have changed.
+         Element parentElem = GroupsManagerXML.getElementById(model, parentAddElemId);
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       }
       catch(Exception e){
          LogService.instance().log(LogService.ERROR,e);
