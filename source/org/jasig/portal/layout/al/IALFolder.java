@@ -16,7 +16,7 @@ import org.jasig.portal.layout.al.common.node.NodeIdFactory;
  * @author Michael Ivanov: mvi at immagic.com
  * @version 1.0
  */
-public interface IALFolder extends ILayoutFolder {
+public interface IALFolder extends IALNode, ILayoutFolder {
 	
 	 // lost folder id
     public static final INodeId LOST_FOLDER_ID=NodeIdFactory.createNodeId("lost_folder");
