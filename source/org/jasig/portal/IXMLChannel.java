@@ -85,6 +85,7 @@ public interface IXMLChannel
      * Acquires ChannelSubscriptionProperties from the channel.
      * This function should be called at the Publishing/Subscription time.
      * @see ChannelSubscriptionProperties
+     * @deprecated These properties are retrieved from an XML file in uPortal 2.x
      */
     public ChannelSubscriptionProperties getSubscriptionProperties();
 
