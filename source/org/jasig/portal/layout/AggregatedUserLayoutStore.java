@@ -46,7 +46,7 @@ import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.layout.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
-import org.jasig.portal.ChannelRegistryStoreFactoryOld;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.utils.CommonUtils;
 
 
@@ -76,7 +76,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
   public AggregatedUserLayoutStore() throws Exception {
-    crsdb = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
+    crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
     csdb = CounterStoreFactory.getCounterStoreImpl();
     if (RDBMServices.supportsOuterJoins) {
       if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
@@ -472,61 +472,49 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // since retrieving the channel data from the DB may interfere with the
         // layout structure ResultSet (in other words, Oracle is a pain to program for)
         if (chanIds.size() > 0) {
-          RDBMServices.PreparedStatement pstmtChannel = crsdb.getChannelPstmt(con);
-          try {
-            RDBMServices.PreparedStatement pstmtChannelParm = crsdb.getChannelParmPstmt(con);
-            try {
-              // Pre-prime the channel pump
-              for (int i = 0; i < chanIds.size(); i++) {
+          // Pre-prime the channel pump
+          for (int i = 0; i < chanIds.size(); i++) {
 
-                //System.out.println( "14" );
+            //System.out.println( "14" );
 
-                String nodeId = (String) chanIds.get(i);
-                //System.out.println( "before" );
-                UserLayoutNode node = (UserLayoutNode) layout.get(nodeId+"");
+            String nodeId = (String) chanIds.get(i);
+            //System.out.println( "before" );
+            UserLayoutNode node = (UserLayoutNode) layout.get(nodeId+"");
 
-                UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
-                ChannelDefinition channelDef = crsdb.getChannel(Integer.parseInt(channelDesc.getChannelPublishId()), true, pstmtChannel, pstmtChannelParm);
+            UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
+            ChannelDefinition channelDef = crs.getChannelDefinition(Integer.parseInt(channelDesc.getChannelPublishId()));
 
-                //System.out.println( "after" );
-                //channelDesc.setChannelSubscribeId(channelDef.);
-                channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
-                channelDesc.setClassName(channelDef.getJavaClass());
-                channelDesc.setDescription(channelDef.getDescription());
-                channelDesc.setEditable(channelDef.isEditable());
-                channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
-                channelDesc.setHasAbout(channelDef.hasAbout());
-                channelDesc.setHasHelp(channelDef.hasHelp());
-                channelDesc.setName(channelDef.getName());
-                channelDesc.setTitle(channelDef.getTitle());
-                channelDesc.setChannelPublishId(channelDef.getId()+"");
-                ChannelParameter[] channelParams = channelDef.getParameters();
+            //System.out.println( "after" );
+            //channelDesc.setChannelSubscribeId(channelDef.);
+            channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
+            channelDesc.setClassName(channelDef.getJavaClass());
+            channelDesc.setDescription(channelDef.getDescription());
+            channelDesc.setEditable(channelDef.isEditable());
+            channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
+            channelDesc.setHasAbout(channelDef.hasAbout());
+            channelDesc.setHasHelp(channelDef.hasHelp());
+            channelDesc.setName(channelDef.getName());
+            channelDesc.setTitle(channelDef.getTitle());
+            channelDesc.setChannelPublishId(channelDef.getId()+"");
+            ChannelParameter[] channelParams = channelDef.getParameters();
 
-                //System.out.println( "15" );
+            //System.out.println( "15" );
 
-                for ( int j = 0; j < channelParams.length; j++ ) {
-                 String paramName = channelParams[j].getName();
-                 if ( channelDesc.getParameterValue(paramName) == null ) {
-                  channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                  channelDesc.setParameterValue(paramName,channelParams[j].getValue());
-                 }
-                }
-                channelDesc.setTimeout(channelDef.getTimeout());
-                channelDesc.setTitle(channelDef.getTitle());
-                if (DEBUG > 1) {
-                  System.err.println("Precached " + nodeId);
-                }
-
-                //System.out.println( "16" );
-
-              }
-            } finally {
-              if (pstmtChannelParm != null) {
-                pstmtChannelParm.close();
-              }
+            for ( int j = 0; j < channelParams.length; j++ ) {
+             String paramName = channelParams[j].getName();
+             if ( channelDesc.getParameterValue(paramName) == null ) {
+              channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
+              channelDesc.setParameterValue(paramName,channelParams[j].getValue());
+             }
             }
-          } finally {
-            pstmtChannel.close();
+            channelDesc.setTimeout(channelDef.getTimeout());
+            channelDesc.setTitle(channelDef.getTitle());
+            if (DEBUG > 1) {
+              System.err.println("Precached " + nodeId);
+            }
+
+            //System.out.println( "16" );
+
           }
           chanIds.clear();
         }

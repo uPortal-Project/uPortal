@@ -79,7 +79,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  protected IChannelRegistryStoreOld crsdb;
+  protected IChannelRegistryStore crs;
   protected ICounterStore csdb;
 
   /**
@@ -145,7 +145,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     public Element getStructureDocument(DocumentImpl doc) throws Exception {
       Element structure = null;
       if (isChannel()) {
-        structure = crsdb.getChannelXML(chanId, doc, channelPrefix + structId);
+        ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
+        structure = channelDef.getDocument(doc, channelPrefix + structId);
         if (structure == null) {
           // Can't find channel
           ChannelDefinition cd = new ChannelDefinition(chanId);
@@ -196,7 +197,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   public RDBMUserLayoutStore () throws Exception {
-    crsdb = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
+    crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
     csdb = CounterStoreFactory.getCounterStoreImpl();
     if (RDBMServices.supportsOuterJoins) {
       if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
@@ -1763,25 +1764,15 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // since retrieving the channel data from the DB may interfere with the
         // layout structure ResultSet (in other words, Oracle is a pain to program for)
         if (chanIds.size() > 0) {
-          RDBMServices.PreparedStatement pstmtChannel = crsdb.getChannelPstmt(con);
-          try {
-            RDBMServices.PreparedStatement pstmtChannelParm = crsdb.getChannelParmPstmt(con);
-            try {
-              // Pre-prime the channel pump
-              for (int i = 0; i < chanIds.size(); i++) {
-                int chanId = ((Integer) chanIds.get(i)).intValue();
-                crsdb.getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
-                if (DEBUG > 1) {
-                  System.err.println("Precached " + chanId);
-                }
-              }
-            } finally {
-              if (pstmtChannelParm != null) {
-                pstmtChannelParm.close();
-              }
+          // Pre-prime the channel pump
+          for (int i = 0; i < chanIds.size(); i++) {
+            int chanId = ((Integer) chanIds.get(i)).intValue();
+            // Figure out if we still need to make sure
+            // channels are cached here!
+            //crs.getChannelDefinition(chanId);
+            if (DEBUG > 1) {
+              System.err.println("Precached " + chanId);
             }
-          } finally {
-            pstmtChannel.close();
           }
           chanIds.clear();
         }
