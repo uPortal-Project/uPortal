@@ -71,51 +71,25 @@ import  org.w3c.dom.Element;
  * @version $Revision 1.1$
  */
 public class CHeader extends BaseChannel {
-  // Create a URL object for the XSLT parser
-  private static URL m_sslURL = null;
   // Cache the answers to canUserPublish() to speed things up
   private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
-  // Create a URL object from the URI string
-  static {
-    try {
-      // Turn the URI string into a URL object
-      m_sslURL = new URL(UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl"));
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-    }
-  }
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
 
   /**
-   * put your documentation comment here
+   * Render method.
    * @param out
    * @exception PortalException
    */
   public void renderXML (DocumentHandler out) throws PortalException {
-    try {
-      // Perform the transformation
-      XSLT.transform(getUserXML(), m_sslURL, out, getStylesheetParams(), runtimeData.getBrowserInfo());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      throw  (new GeneralRenderingException(e.getMessage()));
-    }
-  }
-
-  /**
-   * Returns the Hashtable of stylesheet parameters for the current user
-   * NOTE: This should be made more effecient, perhaps by avoiding the Hashtable creating for every call
-   * @return 
-   */
-  private Hashtable getStylesheetParams () {
-    // Create a new hashtable for the user
-    Hashtable stylesheetParams = new Hashtable(2);
-    // Add the baseActionURL to the stylesheet parameters
-    stylesheetParams.put("baseActionURL", runtimeData.getBaseActionURL());
-    // Add the guest user flag if applicable
-    if (staticData.getPerson().getFullName() != null && staticData.getPerson().getFullName().equals("Guest")) {
-      stylesheetParams.put("guest", "true");
-    }
-    // Return the hashtable
-    return  (stylesheetParams);
+    // Perform the transformation
+    XSLT xslt = new XSLT();
+    xslt.setXML(getUserXML());
+    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    if (staticData.getPerson().getFullName() != null && staticData.getPerson().getFullName().equals("Guest"))
+      xslt.setStylesheetParameter("guest", "true");
+    xslt.transform();
   }
 
   /**
