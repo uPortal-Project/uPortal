@@ -5,8 +5,8 @@
   <xsl:param name="action">channelDef</xsl:param>
   <xsl:param name="stepID">3</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
-  <xsl:variable name="mediaPath">C:\portal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
+  <!--<xsl:variable name="mediaPath">C:\portal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>-->
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
@@ -17,9 +17,7 @@
   <xsl:template match="/">
     <html>
       <head>
-        <title>Untitled Document</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-        <link rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css" type="text/css"/>
+        <!--<link rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css" type="text/css"/>-->
       <xsl:comment></xsl:comment>
       </head>
       <body>
