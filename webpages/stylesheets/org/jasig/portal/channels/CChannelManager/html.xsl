@@ -1938,20 +1938,20 @@
             </td>
           </tr>
           </xsl:for-each>
-
-
           </xsl:when>
+
           <xsl:otherwise>
           <xsl:for-each select="/manageChannels/reviewChannel/params/step/channel/parameter">
           <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
           <xsl:variable name="value"><xsl:value-of select="@value"/></xsl:variable>
-          <xsl:if test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden' or /manageChannels/channelDef/params/step/arbitrary-parameters">
+
+          <xsl:choose>
+          <xsl:when test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden'">
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@override = 'yes'">
             <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
             <xsl:otherwise><img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise></xsl:choose></a>
-
             </td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}"><xsl:value-of select="//parameter/name[.=$name]/../label"/></a></strong></td>
@@ -1960,30 +1960,52 @@
             <xsl:choose><xsl:when test="@value = //channelDef//restriction/value and //channelDef//restriction/value[.=$value]/@display"><xsl:value-of select="//channelDef//restriction/value[.=$value]/@display"/></xsl:when>
             <xsl:otherwise><xsl:value-of select="@value"/></xsl:otherwise></xsl:choose>
             </a></td>
-          </tr>
-
-
-
-      <tr class="uportal-channel-text">
-
-        <td nowrap="nowrap" colspan="5">
-
-          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-
-            <tr>
-
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
-
             </tr>
+            <tr class="uportal-channel-text">
+            <td nowrap="nowrap" colspan="5">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+            </tr>
+            </table>
+            </td>
+          </tr>
+          </xsl:when>
 
-          </table>
+          <xsl:when test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display = 'hidden'"></xsl:when>
 
-        </td>
+          <xsl:when test="/manageChannels/channelDef/params/step/arbitrary-parameters">
+          <xsl:variable name="firstArbParamID" select="/manageChannels/channelDef/params/step[arbitrary-parameters][1]/ID"/>
+          <tr class="uportal-channel-text">
+            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}">
+            <xsl:choose>
+            <xsl:when test="@override = 'yes'">
+            <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+            <xsl:otherwise>
+            <img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" />
+            </xsl:otherwise>
+            </xsl:choose></a></td>
+            <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@name"/></a></strong></td>
+            <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@value"/></a></td>
+            </tr>
+            <tr class="uportal-channel-text">
+            <td nowrap="nowrap" colspan="5">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+            </tr>
+            </table>
+            </td>
+          </tr>
+          </xsl:when>
+          </xsl:choose>
 
-      </tr>
-      </xsl:if>
       </xsl:for-each>
 </xsl:otherwise>
+
+
 </xsl:choose>
 
       <tr class="uportal-channel-text">
