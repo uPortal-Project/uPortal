@@ -68,7 +68,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
   public static final int ATTR_UID = 0;
   public static final int ATTR_FIRSTNAME = ATTR_UID + 1;
   public static final int ATTR_LASTNAME = ATTR_FIRSTNAME + 1;
-  private final int SIMPLE_LDAP_SECURITYAUTHTYPE = 0xFF03;
+  private final int SIMPLE_LDAP_SECURITYAUTHTYPE = 0xFF04;
   private static final String[] attributes =  {
     "uid",      // user ID
     "givenName",                // first name

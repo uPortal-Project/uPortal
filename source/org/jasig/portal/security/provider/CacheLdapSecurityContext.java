@@ -73,7 +73,7 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
     "givenName",                // first name
     "sn"        // last name
   };
-  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF03;
+  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF06;
   private byte[] cachedcredentials;
 
 
