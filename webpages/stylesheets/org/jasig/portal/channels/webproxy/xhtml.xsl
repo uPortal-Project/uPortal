@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:html="http://www.w3.org/1999/xhtml"
                 version="1.0">
 
 <xsl:param name="locale">en_US</xsl:param>
@@ -8,7 +9,7 @@
 <xsl:output method="html"/>
 <xsl:preserve-space elements="script/comment() script/text()"/>
 
-   <xsl:template match="html">
+   <xsl:template match="html|html:html">
       <xsl:copy-of select="/html/head/base" />
       <xsl:apply-templates select="body"/>
    </xsl:template>
