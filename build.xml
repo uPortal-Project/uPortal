@@ -964,4 +964,45 @@ Example:
     </java>
   </target>
 
+<!-- ==================== RunXSLT Target ================================ -->
+
+<!--
+
+  The "RunXSLT" target runs uPortal's RunXSLT program to perform an xsl
+  transform using uPortal XML libraries.  For example:
+
+ ant RunXSLT -DXmlInput=UP_SEQUENCE_20.XML -DoutputFile=NEW_UP_SEQUENCE.XML -DXslfile=UP_SEQUENCE.xsl
+
+ where XmlInput is the file to be transformed, 
+ outputFile is where the result should saved and
+ Xslfile is the URL(!) of the xsl file to be used in the transform.
+
+-->
+
+
+  <target name="RunXSLT" depends="compile">
+    <echo message="Invoking RunXSLT"/>
+    <mkdir    dir="${build.home}/RunXSLT"/>
+	<copy todir="${build.home}/RunXSLT" >
+      <fileset dir="${build.home}/stylesheets/org/jasig/portal/tools/RunXSLT"/>
+	</copy>
+
+    <property name="XmlInput" value=" "/>   
+    <property name="Xslfile" value=" "/>
+    <property name="outputFile" value=" "/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.RunXSLT">
+      <classpath>
+        <pathelement path="${build.home}"/>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+      </classpath>
+      <arg value="${build.home}/RunXSLT/${XmlInput}"/>
+      <arg value="file:${build.home}/RunXSLT/${Xslfile}"/>
+      <arg value="${build.home}/RunXSLT/${outputFile}"/>
+    </java>
+  </target>
+
 </project>
