@@ -259,9 +259,9 @@ public class ExceptionHelper {
 		try {
 			PrintWriter out = resp.getWriter();
 			out.println("<h1>Cannot start uPortal</h1>");
-			out.println("<p>A problem is preventing uPortal from starting. "+
-				"The error must be corrected</p>");
-			out.println("<p><a href='http://www.yale.edu/portal'>Click here to display the static Yaleinfo page.</a></p>");	
+			out.println("<p>Sorry, but a problem is preventing the Portal from starting. "+
+				"The error must be corrected by system administrators. Try again later.</p>");
+			//out.println("<p><a href='http://www.yale.edu/portal'>Click here to display the static Yaleinfo page.</a></p>");	
 			out.println("<!--");
 			ErrorID eid = Errors.bug;
 			String parm = "";

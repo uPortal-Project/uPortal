@@ -88,6 +88,9 @@ public class PortalSessionManager extends HttpServlet {
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
   private static PortalSessionManager instance = null;
+  private static boolean fatalError = false;
+  
+  public static final ErrorID initPortalContext = new ErrorID("config","JNDI","Cannot initialize JNDI context");
 
   /**
    * Provides access to the servlet instance ultimately to provide access
@@ -128,20 +131,9 @@ public class PortalSessionManager extends HttpServlet {
 
       try {
           JNDIManager.initializePortalContext();
-      } catch (PortalException pe) {
-          if(pe.getRecordedException()!=null) {
-              StringWriter sw=new StringWriter();
-              pe.getRecordedException().printStackTrace(new PrintWriter(sw));
-              sw.flush();
-              LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
-              throw new ServletException(pe.getRecordedException());
-          } else {
-              StringWriter sw=new StringWriter();
-              pe.printStackTrace(new PrintWriter(sw));
-              sw.flush();
-              LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
-              throw new ServletException(pe);
-          }
+      } catch (Exception pe) {
+      	  ExceptionHelper.genericTopHandler(initPortalContext,pe);
+      	  fatalError=true;
       }
 
       // Log orderly shutdown time
@@ -171,7 +163,7 @@ public class PortalSessionManager extends HttpServlet {
      * @exception ServletException if an error occurs
      * @exception IOException if an error occurs
      */
-    public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse res)  {
         doGet(req, res);
     }
 
@@ -183,10 +175,17 @@ public class PortalSessionManager extends HttpServlet {
      * @exception ServletException if an error occurs
      * @exception IOException if an error occurs
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
         res.setHeader("uPortal-version", "uPortal_rel-2-1+");
-
+		if (fatalError) {
+			try {
+                res.sendRedirect("error/fatal.htm");
+            } catch (IOException e) {
+                ExceptionHelper.genericTopHandler(Errors.bug,e);
+            }
+			return;
+		} 
         HttpSession session = req.getSession();
 
         if (session != null) {
@@ -221,19 +220,9 @@ public class PortalSessionManager extends HttpServlet {
                     // Retrieve the user's UserInstance object
                     userInstance = UserInstanceManager.getUserInstance(req);
                 } catch(Exception e) {
-                    // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
-                    LogService.log(LogService.ERROR, e);
-                    // invalidate session, throw exception
-                    if(session!=null) {
-                        session.invalidate();
-                    }
-                    if(e instanceof PortalException) {
-                        Exception ie=((PortalException) e).getRecordedException();
-                        if(ie!=null) {
-                            throw new ServletException(ie);
-                        }
-                    }
-                    throw new ServletException(e);
+                	ExceptionHelper.genericTopHandler(Errors.bug,e);
+                	ExceptionHelper.generateErrorPage(res,e);
+                	return;
                 }
 
 
@@ -251,42 +240,14 @@ public class PortalSessionManager extends HttpServlet {
 
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
-            } catch (PortalException pe) {
-                // Go through all the possible nested exceptions...
-                // Right now, all the exceptions are logged, but we might
-                // want to consider logging only the root cause
-                //   -Ken
-                StringWriter sw = new StringWriter();
-                pe.printStackTrace(new PrintWriter(sw));
-                sw.flush();
-                LogService.log(LogService.ERROR, "PortalSessionManager::doGet() : a PortalException has occurred: " + sw.toString());
-                Throwable t = pe.getRecordedException();
-                if (t == null)
-                  throw new ServletException(pe);
-                while (t != null) {
-                  sw = new StringWriter();
-                  t.printStackTrace(new PrintWriter(sw));
-                  sw.flush();
-                  LogService.log(LogService.ERROR, "PortalSessionManager::doGet() : with nested Exception: " + sw.toString());
-                  if (t instanceof PortalException) {
-                    t = ((PortalException)t).getRecordedException();
-                  } else if (t instanceof java.lang.reflect.InvocationTargetException) {
-                    t = ((java.lang.reflect.InvocationTargetException)t).getTargetException();
-                  } else {
-                    // Throw the root cause
-                    throw new ServletException(t);
-                  }
-                }
             } catch (Exception e) {
-                StringWriter sw=new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                sw.flush();
-                LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
-                throw new ServletException(e);
-            }
+            	ExceptionHelper.genericTopHandler(Errors.bug,e);
+				ExceptionHelper.generateErrorPage(res,e);
+            	return;
+           }
 
         } else {
-            throw new ServletException("Session object is null !");
+            //throw new ServletException("Session object is null !");
         }
 
     }
@@ -545,7 +506,8 @@ public class PortalSessionManager extends HttpServlet {
                             }
                         }
                     } catch (Exception e) {
-                        LogService.log(LogService.ERROR, e);
+                        //was: LogService.log(LogService.ERROR, e);
+                        ExceptionHelper.genericTopHandler(Errors.bug,e);
                     }
                 }
                 // regular params
