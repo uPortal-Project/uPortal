@@ -92,6 +92,17 @@
           <xsl:apply-templates select="navigation" />
 
           <xsl:apply-templates select="content" />
+
+          <tr>
+            <td>
+              <table width="100%" border="0" cellpadding="1" cellspacing="0">
+                <tr>
+                  <xsl:apply-templates select="footer" />
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
         </table>
       </body>
     </html>
@@ -436,6 +447,14 @@
         </td>
       </tr>
     </table>
+  </xsl:template>
+
+  <xsl:template match="footer">
+    <xsl:for-each select="channel">
+      <td align="center">
+        <xsl:copy-of select="."/>
+      </td>
+    </xsl:for-each>
   </xsl:template>
 
 </xsl:stylesheet>
