@@ -1058,6 +1058,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
        layout.setLayoutManager(this);
        fragments = (Hashtable) layoutStore.getFragments(person);
+       // Setting the first child node id for the root node to NULL if it does not exist in the layout
+       ALFolder rootFolder = getLayoutFolder(getRootFolderId());
+       String firstChildId = rootFolder.getFirstChildNodeId();
+       if ( firstChildId != null && getLayoutNode(firstChildId) == null )
+        rootFolder.setFirstChildNodeId(null);
        // Moving the wrong pushed fragments to the lost folder
        moveWrongFragmentsToLostFolder();
        // Checking restrictions and move "wrong" nodes to the lost folder
