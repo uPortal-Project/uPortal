@@ -676,7 +676,9 @@ public class UserInstance implements HttpSessionBindingListener {
         if(uPreferencesManager!=null)
             uPreferencesManager.finishedSession(bindingEvent);
       try {      
-        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();    
+        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager(); 
+		if ( ulm instanceof TransientUserLayoutManagerWrapper )
+		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();   
         if ( !(ulm instanceof IAggregatedUserLayoutManager) )
           ulm.saveUserLayout();    
       } catch ( Exception e ) {
