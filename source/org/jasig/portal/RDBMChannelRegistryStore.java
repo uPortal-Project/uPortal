@@ -39,6 +39,7 @@
 package  org.jasig.portal;
 
 import  org.jasig.portal.utils.DTDResolver;
+import  org.jasig.portal.services.LogService;
 import  java.io.*;
 import  org.apache.xml.serialize.*;
 import  org.apache.xerces.dom.*;
@@ -51,8 +52,7 @@ import  org.w3c.dom.*;
  * @author  John Laker, jlaker@udel.edu
  * @version $Revision$
  */
-public class RDBMChannelRegistryStore
-    implements IChannelRegistryStore {
+public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   private DocumentImpl chanDoc = null;
   private Document types = null;
   String sRegDtd = "channelRegistry.dtd";
@@ -64,9 +64,9 @@ public class RDBMChannelRegistryStore
    */
   public Document getChannelRegistryXML () throws Exception {
     return RdbmServices.getUserLayoutStoreImpl().getChannelRegistryXML();
-  }  
-  
-  /** 
+  }
+
+  /**
    * Returns an XML document which describes the channel types.
    * @return channelTypes, the list of publishable channel types
    * @throws java.lang.Exception
@@ -86,7 +86,7 @@ public class RDBMChannelRegistryStore
       Element root = catsDoc.createElement("channelCats");
       GenericPortalBean.getUserLayoutStore().getCategoryXML(catsDoc, root, role);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  catsDoc;
   }
@@ -96,14 +96,10 @@ public class RDBMChannelRegistryStore
    * @param catID an array of category IDs
    * @param chanXML XML that describes the channel
    * @param role an array of roles
+   * @throws java.lang.Exception
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) {
-    try {
-      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc, catID);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
-      //return status;
-    }
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception {
+    GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc, catID);
   }
 
   /** A method for adding a channel to the channel registry.
@@ -114,7 +110,7 @@ public class RDBMChannelRegistryStore
     try {
       GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       //return status;
     }
   }
@@ -137,7 +133,7 @@ public class RDBMChannelRegistryStore
     try {
       nextID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_CHANNEL");
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       throw  new GeneralRenderingException("Unable to allocate new channel ID");
     }
     return  nextID;
@@ -171,10 +167,10 @@ public class RDBMChannelRegistryStore
       serial.asDOMSerializer();                 // As a DOM Serializer
       serial.serialize(chanDoc.getDocumentElement());
     } catch (java.io.IOException ioe) {
-      Logger.log(Logger.ERROR, ioe);
+      LogService.instance().log(LogService.ERROR, ioe);
     }
     return  stringOut.toString();
-    //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
+    //LogService.instance().log(LogService.DEBUG, "STRXML = " + stringOut.toString());
   }
 }
 
