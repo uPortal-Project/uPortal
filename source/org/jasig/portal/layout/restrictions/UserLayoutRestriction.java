@@ -29,6 +29,14 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      this.nodePath = nodePath;
   }
 
+  /**
+   * Sets the restriction path
+   * @param restrictionPath a <code>String</code> path
+   */
+  public void setRestrictionPath ( String nodePath ) {
+  	this.nodePath = nodePath;
+  }
+  
 
   /**
      * Parses the restriction expression of the current node

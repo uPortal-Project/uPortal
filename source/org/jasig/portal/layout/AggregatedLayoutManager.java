@@ -292,7 +292,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       }
 
       // Checking children related restrictions on the children if they exist
-      restrictions = node.getRestrictionsByPath("children");
+      restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
       boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER );
       if ( isFolder ) {
       	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
@@ -312,7 +312,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       // Checking parent related restrictions on the parent if it exists
       String parentNodeId = node.getParentNodeId();
       if ( parentNodeId != null ) {
-       restrictions = node.getRestrictionsByPath("parent");
+       restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
        ALNode parentNode = getLayoutNode(parentNodeId);
        for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
@@ -391,7 +391,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     if ( !parentNode.getNodeDescription().isImmutable() ) {
 
      // Checking children related restrictions
-     Collection restrictions = parentNode.getRestrictionsByPath("children");
+     Collection restrictions = parentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
@@ -400,7 +400,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      }
 
      // Checking parent related restrictions
-     restrictions = newNode.getRestrictionsByPath("parent");
+     restrictions = newNode.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
@@ -444,7 +444,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
-      Collection restrictions = newParentNode.getRestrictionsByPath("children");
+      Collection restrictions = newParentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
@@ -453,7 +453,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       }
 
       // Checking parent related restrictions
-      restrictions = node.getRestrictionsByPath("parent");
+      restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
@@ -1550,13 +1550,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                  // Checking the hidden node restriction
                  boolean canChange = checkRestriction(currentNode,RestrictionTypes.HIDDEN_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isHidden()));
                  // Checking the hidden parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.HIDDEN_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isHidden()));
+                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
               // Checking the hidden children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.HIDDEN_RESTRICTION,"parent",CommonUtils.boolToStr(nodeDesc.isHidden()));
+                canChange &= checkRestriction(nextId,RestrictionTypes.HIDDEN_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isHidden()));
               }
                 // Changing the hidden value if canChange is true
                 if ( canChange )
@@ -1568,13 +1568,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                  // Checking the immutable node restriction
                  boolean canChange = checkRestriction(currentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isImmutable()));
                  // Checking the immutable parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               // Checking the immutable children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,"parent",CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                canChange &= checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               }
                 // Changing the immutable value if canChange is true
                 if ( canChange )
@@ -1586,13 +1586,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                  // Checking the unremovable node restriction
                  boolean canChange = checkRestriction(currentNode,RestrictionTypes.UNREMOVABLE_RESTRICTION,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
                  // Checking the unremovable parent node related restriction
-                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isUnremovable()));
+                 canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isUnremovable()));
               // Checking the unremovable children node related restrictions
               if ( currentNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                canChange &= checkRestriction(nextId,RestrictionTypes.UNREMOVABLE_RESTRICTION,"parent",CommonUtils.boolToStr(nodeDesc.isImmutable()));
+                canChange &= checkRestriction(nextId,RestrictionTypes.UNREMOVABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,CommonUtils.boolToStr(nodeDesc.isImmutable()));
               }
                 // Changing the unremovable value if canChange is true
                 if ( canChange )
@@ -1669,8 +1669,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             return false;
 
         // Checking the immutable parent node related restriction
-        if ( getRestriction(getLayoutNode(node.getParentNodeId()),RestrictionTypes.IMMUTABLE_RESTRICTION,"children") != null &&
-             checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )
+        if ( getRestriction(getLayoutNode(node.getParentNodeId()),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH) != null &&
+             checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,"true") )
             return false;
 
         // Checking the immutable children node related restrictions
@@ -1678,8 +1678,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             ALFolder folder = (ALFolder) node;
             //Loop for all children
             for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-             if ( getRestriction(getLayoutNode(nextId),RestrictionTypes.IMMUTABLE_RESTRICTION,"parent") != null &&
-                  checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,"parent","true") )
+             if ( getRestriction(getLayoutNode(nextId),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH) != null &&
+                  checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,"true") )
                   return false;
         }
 
@@ -1701,7 +1701,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
         // Checking parent related restrictions for the children
-        Collection restrictions = getLayoutNode(node.getParentNodeId()).getRestrictionsByPath("children");
+        Collection restrictions = getLayoutNode(node.getParentNodeId()).getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
         for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( !restriction.checkRestriction(node) ) {
@@ -1715,7 +1715,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
          for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
           ALNode child = getLayoutNode(nextId);
-          restrictions = child.getRestrictionsByPath("parent");
+          restrictions = child.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
           for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
            if ( !restriction.checkRestriction(node) ) {

@@ -32,6 +32,12 @@ public interface IUserLayoutRestriction {
 	
   // The local restriction path defined for every restriction by default 	   
   public final static String LOCAL_RESTRICTION_PATH = "local";	
+  
+  // The parent restriction path, could be setup to a parent node	   
+  public final static String PARENT_RESTRICTION_PATH = "parent";	
+  
+  // The children restriction path, could be setup to all children 
+  public final static String CHILDREN_RESTRICTION_PATH = "children";
 
 
   /**
@@ -79,6 +85,12 @@ public interface IUserLayoutRestriction {
   public String getRestrictionExpression();
 
 
+  /**
+   * Sets the restriction path
+   * @param restrictionPath a <code>String</code> path
+   */
+  public void setRestrictionPath ( String restrictionPath );
+  
    /**
      * Gets the tree path for the current restriction
      * @return a <code>String</code> tree path
