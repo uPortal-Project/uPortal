@@ -63,7 +63,7 @@ public class ALFolderDescription extends UserLayoutFolderDescription implements 
     public ALFolderDescription(IUserLayoutFolderDescription d) {
         super(d);
         if(d instanceof IALFolderDescription) {
-            alproperties=new ALNodeProperties((IALNodeDescription)d);
+            alproperties=new ALNodeProperties((IALFolderDescription)d);
         } else {            
             this.alproperties=new ALNodeProperties();
         }

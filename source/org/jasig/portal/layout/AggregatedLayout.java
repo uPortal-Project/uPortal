@@ -399,6 +399,7 @@ public class AggregatedLayout implements IAggregatedLayout {
              attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(folderDescription.isUnremovable()));
              attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
              attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
+			 attributes.addAttribute("","priority","priority","CDATA",folder.getPriority()+"");
 
              contentHandler.startElement("",FOLDER,FOLDER,attributes);
 
@@ -469,6 +470,7 @@ public class AggregatedLayout implements IAggregatedLayout {
               attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
               attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
               attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
+			  attributes.addAttribute("","priority","priority","CDATA",node.getPriority()+"");
 
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
 

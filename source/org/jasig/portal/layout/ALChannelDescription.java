@@ -66,7 +66,7 @@ public class ALChannelDescription extends UserLayoutChannelDescription implement
     public ALChannelDescription(IUserLayoutChannelDescription d) {
         super(d);
         if(d instanceof IALChannelDescription) {
-            this.alproperties=new ALNodeProperties((IALNodeDescription)d);
+            this.alproperties=new ALNodeProperties((IALChannelDescription)d);
         } else {
             this.alproperties=new ALNodeProperties();
         }

@@ -187,11 +187,11 @@ public abstract class ALNode {
     }
 
     public static ALNode createALNode(IUserLayoutNodeDescription nodeDescription) throws PortalException {
-        if(nodeDescription instanceof IUserLayoutFolderDescription) {
+        if(nodeDescription instanceof IALFolderDescription) {
             // should be a folder
-            return new ALFolder(new ALFolderDescription((IUserLayoutFolderDescription)nodeDescription));
-        } else if(nodeDescription instanceof IUserLayoutChannelDescription) {
-            return new ALChannel(new ALChannelDescription((IUserLayoutChannelDescription)nodeDescription));
+            return new ALFolder(new ALFolderDescription((IALFolderDescription)nodeDescription));
+        } else if(nodeDescription instanceof IALChannelDescription) {
+            return new ALChannel(new ALChannelDescription((IALChannelDescription)nodeDescription));
         } else {
             throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
         }

@@ -676,11 +676,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          PreparedStatement psRestr = null;
 
 
-         if ( fragmentId > 0 && layoutId == 0 ) {  	
-         	
-           //stmt.executeQuery("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId+" AND NODE_ID="+nodeId);	
+         if ( fragmentId > 0 && layoutId <= 0 ) {  	
 
            Enumeration restrictions = restrHash.elements();
+           
            for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
@@ -697,9 +696,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            }
 
-         } else if ( fragmentId == 0 ) {
+         } else if ( fragmentId <= 0 ) {
 
             Enumeration restrictions = restrHash.elements();
+  
             for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
