@@ -48,7 +48,7 @@ import  java.util.*;
  * @version $Revision$
  * @deprecated Use org.jasig.portal.utils.SmartCache
  */
-public class SmartCache extends java.util.Hashtable {
+public class SmartCache extends HashMap {
   protected int iSweepInterval = 3600000;       // default to 1 hour
 
   /**
@@ -113,10 +113,12 @@ public class SmartCache extends java.util.Hashtable {
    * Removes from the cache values which have expired
    */
   protected void sweepCache () {
-    for (Enumeration enum = keys(); enum.hasMoreElements();) {
-      Object key = enum.nextElement();
+    for (Iterator keyIterator = keySet().iterator(); keyIterator.hasNext();)
+    {
+      Object key = keyIterator.next();
       ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
-      if (valueWrapper.getCreationTime() + valueWrapper.getCacheInterval() < System.currentTimeMillis()) {
+      if (valueWrapper.getCreationTime() + valueWrapper.getCacheInterval() < System.currentTimeMillis())
+      {
         remove(key);
       }
     }
