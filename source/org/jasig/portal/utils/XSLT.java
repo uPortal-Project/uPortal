@@ -43,8 +43,7 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.services.LogService;
-import org.apache.xalan.xslt.*;
-import org.apache.xerces.parsers.SAXParser;
+
 import java.io.File;
 import java.io.StringReader;
 import java.io.IOException;
@@ -54,9 +53,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.net.URL;
-import org.xml.sax.DocumentHandler;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
+
+import javax.xml.transform.*;
+import javax.xml.transform.sax.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import org.xml.sax.*;
 import org.w3c.dom.Node;
 
 /**
@@ -80,6 +85,7 @@ import org.w3c.dom.Node;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
+
 public class XSLT {
   // These flags should be set to true for production to
   // ensure that pre-compiled stylesheets and stylesheet sets are cached.
@@ -89,21 +95,33 @@ public class XSLT {
   private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
   private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
-  private XSLTProcessor processor;
-  private XSLTInputSource xmlInputSource;
-  private XSLTInputSource xslInputSource;
-  private XSLTResultTarget resultTarget;
-  private HashMap stylesheetParams;
-  
+    
+    private static SAXTransformerFactory saxTFactory = null;
+
+    private Source xmlSource;
+    private Result xmlResult;
+    private HashMap stylesheetParams;
+    private String xslURI;
+
   /**
    * Constructs an XSLT object. 
    */  
   public XSLT () {
-    processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    xmlInputSource = new XSLTInputSource();
-    xslInputSource = new XSLTInputSource();
-    resultTarget = new XSLTResultTarget();
-    stylesheetParams = new HashMap();
+      stylesheetParams = new HashMap();
+  }
+    
+  public static SAXTransformerFactory getSAXTFactory() {
+      if(saxTFactory==null) {
+          // attempt to instantiate a sax transformer factory
+          TransformerFactory tFactory = TransformerFactory.newInstance();
+          if(tFactory instanceof SAXTransformerFactory) {
+              saxTFactory = ((SAXTransformerFactory) tFactory);
+          }
+      }
+      if(saxTFactory==null) {
+          LogService.instance().log(LogService.ERROR,"XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
+      }
+      return saxTFactory;
   }
 
   /**
@@ -111,7 +129,7 @@ public class XSLT {
    * @param xml a string representing the xml document
    */  
   public void setXML(String xml) {
-    xmlInputSource.setCharacterStream(new StringReader(xml));
+      xmlSource=new StreamSource(new StringReader(xml));
   }
   
   /**
@@ -119,15 +137,24 @@ public class XSLT {
    * @param xml a node representing the xml document
    */  
   public void setXML(Node xml) {
-    xmlInputSource.setNode(xml);
+      xmlSource=new DOMSource(xml);
   }
 
+  /**
+   * Configures the xml source.
+   * @param xml an input stream to the serialized xml source
+   */  
+    public void setXML(java.io.InputStream is) {
+        xmlSource=new StreamSource(is);
+    }
+
+    
   /**
    * Configures the xsl source.
    * @param xslUri the URL of an XSLT stylesheet
    */    
   public void setXSL(String xslUri) {
-    xslInputSource.setSystemId(xslUri);
+      this.xslURI=xslUri;
   }
   
   /**
@@ -142,7 +169,7 @@ public class XSLT {
     StylesheetSet set = getStylesheetSet(sslUri);
     set.setMediaProps(mediaProps);
     String xslUri = set.getStylesheetURI(stylesheetTitle, browserInfo);
-    setXSL(xslUri);    
+    setXSL(xslUri);
   }
   
   /**
@@ -158,18 +185,26 @@ public class XSLT {
   
   /**
    * Configures the xslt target.
-   * @param documentHandler the document handler
+   * @param contentHandler the content handler
    */  
-  public void setTarget(DocumentHandler documentHandler) {
-    resultTarget.setDocumentHandler(documentHandler);
+  public void setTarget(ContentHandler contentHandler) {
+      xmlResult=new SAXResult(contentHandler);
   }
   
   /**
    * Configures the xslt target.
-   * @param fileName a file name
+   * @param os output stream
    */  
-  public void setTarget(String fileName) {
-    resultTarget.setFileName(fileName);
+  public void setTarget(java.io.OutputStream os) {
+      xmlResult=new StreamResult(os);
+  }
+
+  /**
+   * Configures the xslt target.
+   * @param node target node
+   */  
+  public void setTarget(org.w3c.dom.Node node) {
+      xmlResult=new DOMResult(node);
   }
   
   /**
@@ -203,39 +238,64 @@ public class XSLT {
    */  
   public void transform() throws PortalException {
     try {
-      StylesheetRoot stylesheetRoot = getStylesheetRoot(xslInputSource.getSystemId());
-      processor.reset();
-      setStylesheetParams(processor, stylesheetParams);
-      stylesheetRoot.process(processor, xmlInputSource, resultTarget);
+        try {
+            Transformer trans = getTransformer(this.xslURI);
+            setStylesheetParams(trans, stylesheetParams);
+            trans.transform(xmlSource, xmlResult);
+        } catch (PortalException pe) {
+            throw pe;
+        }
     } catch (Exception e) {
       throw new GeneralRenderingException(e.getMessage());
     }
   }
   
+
+  /**
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
+   * @param xmlSource the source to be transformedn
+   * @param xmlResult the result to be populated
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @param xslURI the uri of the stylesheet to be used
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   */
+  public static void transform (Source xmlSource, Result xmlResult, Hashtable stylesheetParams, String xslURI) throws PortalException {
+      try {
+          try {
+              Transformer trans = getTransformer(xslURI);
+              setStylesheetParams(trans, stylesheetParams);
+              trans.transform(xmlSource,xmlResult);
+          } catch (PortalException pe) {
+              throw pe;
+          }
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      }
+  }
+    
+
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, Hashtable, String, BrowserInfo)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(String, URL, ContentHandler, Hashtable, String, BrowserInfo)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (String xml, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new StreamSource(new StringReader(xml)), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
 
   /**
@@ -243,24 +303,20 @@ public class XSLT {
    * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+    public static void transform (String xml, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new StreamSource(new StringReader(xml)), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }  
   
   /**
@@ -272,24 +328,17 @@ public class XSLT {
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated replaced by {@link #transform(String, URL, StringWriter, Hashtable, String, BrowserInfo)}
    */
-  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    // Make sure to generate XML in order to cache it
-    stylesheetRoot.setOutputMethod("xml");
-    // Process the XML/XSLT and store the result in the StringWriter
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new StreamSource(new StringReader(xml)), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
 
   /**
@@ -301,39 +350,30 @@ public class XSLT {
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    // Make sure to generate XML in order to cache it
-    stylesheetRoot.setOutputMethod("xml");
-    // Process the XML/XSLT and store the result in the StringWriter
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new StreamSource(new StringReader(xml)), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
     
   /**
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, String, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(String, URL, ContentHandler, String, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, String stylesheetTitle, String media) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, media);
   }
 
@@ -341,15 +381,13 @@ public class XSLT {
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
   }  
   
@@ -358,15 +396,13 @@ public class XSLT {
    * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, Hashtable, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(String, URL, ContentHandler, Hashtable, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String media) throws PortalException {
     transform(xml, sslUri, out, stylesheetParams, (String)null, media);
   }
 
@@ -375,15 +411,13 @@ public class XSLT {
    * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
@@ -391,14 +425,12 @@ public class XSLT {
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(String, URL, DocumentHandler, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(String, URL, ContentHandler, String)}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, String media) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, (String)null, media);
   }
 
@@ -406,249 +438,215 @@ public class XSLT {
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
+  public static void transform (String xml, URL sslUri, ContentHandler out, BrowserInfo browserInfo) throws PortalException {
     transform(xml, sslUri, out, (Hashtable)null, (String)null, browserInfo);
   }
     
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, Hashtable, String, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, ContentHandler, Hashtable, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new DOMSource(xmlNode), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new DOMSource(xmlNode), new SAXResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }  
   
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param out a string writer
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, StringWriter, Hashtable, String, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, StringWriter, Hashtable, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new DOMSource(xmlNode), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, media));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param out a string writer
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
-    set.setMediaProps(mediaProps);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+      try {
+          StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
+          set.setMediaProps(mediaProps);
+          transform(new DOMSource(xmlNode), new StreamResult(out), stylesheetParams, set.getStylesheetURI(stylesheetTitle, browserInfo));
+      } catch (Exception e) {
+          throw new GeneralRenderingException(e.getMessage());
+      } 
   }
     
   /**
    * Performs an XSL transformation.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, String, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, ContentHandler, String, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, (Hashtable)null, stylesheetTitle, media);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, String stylesheetTitle, String media) throws PortalException {
+    transform(xmlNode, sslUri, out, (Hashtable)null, stylesheetTitle, media);
   }
 
   /**
    * Performs an XSL transformation.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+    transform(xmlNode, sslUri, out, (Hashtable)null, stylesheetTitle, browserInfo);
   }  
   
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, Hashtable, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, ContentHandler, Hashtable, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, media);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, Hashtable stylesheetParams, String media) throws PortalException {
+    transform(xmlNode, sslUri, out, stylesheetParams, (String)null, media);
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, browserInfo);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
+    transform(xmlNode, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param out a StringWriter
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, StringWriter, Hashtable, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, StringWriter, Hashtable, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String media) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, media);
+  public static void transform (Node xmlNode, URL sslUri, StringWriter out, Hashtable stylesheetParams, String media) throws PortalException {
+    transform(xmlNode, sslUri, out, stylesheetParams, (String)null, media);
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param out a StringWriter
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, browserInfo);
+  public static void transform (Node xmlNode, URL sslUri, StringWriter out, Hashtable stylesheetParams, BrowserInfo browserInfo) throws PortalException {
+    transform(xmlNode, sslUri, out, stylesheetParams, (String)null, browserInfo);
   }  
   
   /**
    * Performs an XSL transformation.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param media the media type
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
-   * @deprecated replaced by {@link #transform(Document, URL, DocumentHandler, String)}
+   * @throws org.jasig.portal.PortalException if something goes wrong
+   * @deprecated replaced by {@link #transform(Node, URL, ContentHandler, String)}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, (Hashtable)null, (String)null, media);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, String media) throws PortalException {
+    transform(xmlNode, sslUri, out, (Hashtable)null, (String)null, media);
   }
 
   /**
    * Performs an XSL transformation.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM node of the document to be transformed
    * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param out a document handler
+   * @param out a content handler
    * @param browserInfo the browser information
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.PortalException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
-    transform(xmlDoc, sslUri, out, (Hashtable)null, (String)null, browserInfo);
+  public static void transform (Node xmlNode, URL sslUri, ContentHandler out, BrowserInfo browserInfo) throws PortalException {
+    transform(xmlNode, sslUri, out, (Hashtable)null, (String)null, browserInfo);
   }  
   
   /**
@@ -656,94 +654,66 @@ public class XSLT {
    * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL xslUri, DocumentHandler out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException {
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(xslUri.toExternalForm());
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (String xml, URL xslUri, ContentHandler out, Hashtable stylesheetParams) throws PortalException {
+      transform(new StreamSource(new StringReader(xml)), new SAXResult(out), stylesheetParams, xslUri.toString());
   }
 
   /**
    * Performs an XSL transformation.
    * @param xml a string representing the xml document
    * @param xslUri the URI of the stylesheet file
-   * @param out a document handler
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
+   * @param out a content handler
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (String xml, URL xslUri, DocumentHandler out) throws SAXException, IOException, ResourceMissingException {
+  public static void transform (String xml, URL xslUri, ContentHandler out) throws PortalException {
     transform(xml, xslUri, out, (Hashtable)null);
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM object representing the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
-   * @param out a document handler
+   * @param out a content handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL xslUri, DocumentHandler out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(xslUri.toExternalForm());
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL xslUri, ContentHandler out, Hashtable stylesheetParams) throws PortalException {
+      transform(new DOMSource(xmlNode), new SAXResult(out), stylesheetParams, xslUri.toString());
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM object representing the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
    * @param out a string writer
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL xslUri, StringWriter out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException {
-    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(xslUri.toExternalForm());
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  public static void transform (Node xmlNode, URL xslUri, StringWriter out, Hashtable stylesheetParams) throws PortalException {
+      transform(new DOMSource(xmlNode), new StreamResult(out), stylesheetParams, xslUri.toString());
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param xmlDoc a DOM object representing the xml document
+   * @param xmlNode a DOM object representing the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
-   * @param out a document handler
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
+   * @param out a content handler
+   * @throws org.jasig.portal.PortalException if something goes wrong
    * @deprecated the preferred way to use org.jasig.portal.utils.XSLT is to instatiate it, call its set methods and then {@link #transform()}
    */
-  public static void transform (Document xmlDoc, URL xslUri, DocumentHandler out) throws SAXException, IOException, ResourceMissingException {
-    transform(xmlDoc, xslUri, out, (Hashtable)null);
+  public static void transform (Node xmlNode, URL xslUri, ContentHandler out) throws PortalException {
+    transform(xmlNode, xslUri, out, (Hashtable)null);
   }
   
   /**
@@ -752,11 +722,11 @@ public class XSLT {
    * @param stylesheetParams name/value pairs used as stylesheet parameters
    * @deprecated replaced by {@link #setStylesheetParams(XSLTProcessor, HashMap)}
    */
-  private static void setStylesheetParams (XSLTProcessor processor, Hashtable stylesheetParams) {
+  private static void setStylesheetParams (Transformer transformer, Hashtable stylesheetParams) {
     if (stylesheetParams != null) {
       HashMap stylesheetParamsHashMap = new HashMap();
       stylesheetParamsHashMap.putAll(stylesheetParams);
-      setStylesheetParams(processor, stylesheetParamsHashMap);
+      setStylesheetParams(transformer, stylesheetParamsHashMap);
     }
   }
 
@@ -765,26 +735,17 @@ public class XSLT {
    * @param processor the XSLT processor
    * @param stylesheetParams name/value pairs used as stylesheet parameters
    */
-  private static void setStylesheetParams (XSLTProcessor processor, HashMap stylesheetParams) {
+  private static void setStylesheetParams (Transformer transformer, HashMap stylesheetParams) {
     if (stylesheetParams != null) {      
       Iterator iterator = stylesheetParams.keySet().iterator();
       while (iterator.hasNext()) {
         String key = (String)iterator.next();
         Object o = stylesheetParams.get(key);
-        if (o instanceof String) {
-          processor.setStylesheetParam(key, processor.createXString((String)o));
-        }
-        else if (o.getClass().getName().equals("[Ljava.lang.String;")) {
+        if (o.getClass().getName().equals("[Ljava.lang.String;")) {
           // This situation occurs for some requests from cell phones
-          String[] sa = (String[])o;
-          processor.setStylesheetParam(key, processor.createXString(sa[0]));
+          o = ((String[])o)[0];
         }
-        else if (o instanceof Boolean) {
-          processor.setStylesheetParam(key, processor.createXBoolean(((Boolean)o).booleanValue()));
-        }
-        else if (o instanceof Double) {
-          processor.setStylesheetParam(key, processor.createXNumber(((Double)o).doubleValue()));
-        }
+        transformer.setParameter(key,o);
       }
     }
   }  
@@ -794,23 +755,67 @@ public class XSLT {
    * @param stylesheetURI the URI of the XSLT stylesheet
    * @return the StlyesheetRoot object
    * @throws SAXException
-   * @throws ResourceMissingException
    */
-  public static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException {
-    // First, check the cache...
-    StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
-    if (stylesheetRoot == null) {
-      // Get the StylesheetRoot and cache it
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-      stylesheetRoot = processor.processStylesheet(stylesheetURI);
-      if (stylesheetRootCacheEnabled) {
-        stylesheetRootCache.put(stylesheetURI, stylesheetRoot);
-        LogService.instance().log(LogService.INFO, "Caching StylesheetRoot for: " + stylesheetURI);
+  public static Templates getTemplates(String stylesheetURI) throws SAXException, PortalException {
+      // First, check the cache...
+      Templates temp = (Templates)stylesheetRootCache.get(stylesheetURI);
+      if (temp == null) {
+          // Get the Templates and cache them
+          try {
+              TemplatesHandler thand = getSAXTFactory().newTemplatesHandler();
+              XMLReader reader = XMLReaderFactory.createXMLReader();
+              reader.setContentHandler(thand);
+              try {
+                  reader.parse(stylesheetURI);
+              } catch (IOException ioe) {
+                  throw new ResourceMissingException(stylesheetURI,"Stylesheet","Unable to read stylesheet from the specified location. Please check the stylesheet URL");
+              }
+              temp = thand.getTemplates();
+              if (stylesheetRootCacheEnabled) {
+                  stylesheetRootCache.put(stylesheetURI, temp);
+                  LogService.instance().log(LogService.INFO, "Caching templates for: " + stylesheetURI);
+              }
+          } catch (TransformerConfigurationException tce) {
+              LogService.instance().log(LogService.ERROR, "XSLT::getTamplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
+              throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");
+          }
       }
-    }
-    return  stylesheetRoot;
+      return temp;
   }
-  
+
+
+  /**
+   * This method returns a Transformer for a given stylesheet.
+   * @param stylesheetURI the URI of the XSLT stylesheet
+   * @return <code>Transformer</code>
+   * @throws SAXException
+   */
+  public static Transformer getTransformer(String stylesheetURI) throws SAXException, PortalException {
+      Transformer t=null;
+      try {
+          t=getTemplates(stylesheetURI).newTransformer();
+      } catch (TransformerConfigurationException tce) {
+          LogService.instance().log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      }
+      return t;
+  }
+
+  /**
+   * This method returns a TransformerHandler for a given stylesheet.
+   * @param stylesheetURI the URI of the XSLT stylesheet
+   * @return <code>Transformer</code>
+   * @throws SAXException
+   */
+  public static TransformerHandler getTransformerHandler(String stylesheetURI) throws SAXException, PortalException {
+      TransformerHandler th=null;
+      try {
+          th=getSAXTFactory().newTransformerHandler(getTemplates(stylesheetURI));
+      } catch (TransformerConfigurationException tce) {
+          LogService.instance().log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+      }
+      return th;
+  }
+
   /**
    * This method caches compiled stylesheet set objects, keyed by the stylesheet list's URI.
    * @param stylesheetListURI the URI of the XSLT stylesheet list file (.ssl)
