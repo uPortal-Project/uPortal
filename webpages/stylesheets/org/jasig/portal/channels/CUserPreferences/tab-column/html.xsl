@@ -473,7 +473,7 @@ $Revision$
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr align="center">
         <xsl:choose>
-          <xsl:when test="$action = 'newChannel' and $position='after'">
+          <xsl:when test="$action = 'newChannel' and $position='after' and $elementID=@ID">
             <td class="uportal-background-highlight">
               <a href="{$baseActionURL}?action=newChannel&amp;position=after&amp;elementID={@ID}" class="uportal-text-small">
                 <img alt="Click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
