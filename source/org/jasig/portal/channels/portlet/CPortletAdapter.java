@@ -702,8 +702,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, response);
                         
         } catch (Throwable t) {
-            t.printStackTrace();
-            log.error( t);
+            log.error(t, t);
         } finally {
             PortletContainerServices.release();
         }
