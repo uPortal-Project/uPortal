@@ -171,17 +171,6 @@ public class PortalSessionManager extends HttpServlet {
                     // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
                     res.sendRedirect(redirectURL);
 
-                    /*
-                      int index = myReq.requestURI.indexOf("worker");
-                      if ( index != -1) {
-                      String worker = myReq.requestURI.substring(index+7);
-                      worker = worker.substring(0, worker.indexOf('/'));
-                      workerTask (req, res, worker);
-                      } else {
-                      // initial request, requires forwarding
-
-                      }
-                    */
                 } else {
                     // delete old request
                     Boolean forwarded = (Boolean)session.getAttribute("forwarded");
