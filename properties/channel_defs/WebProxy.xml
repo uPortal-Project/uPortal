@@ -48,6 +48,7 @@
 					<restriction type="enumeration">
 						<value default="true">none</value>
 						<value>marked</value>
+						<value>application</value>
 						<value>all</value>
 					</restriction>
 				</type>
