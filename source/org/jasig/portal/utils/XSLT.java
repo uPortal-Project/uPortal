@@ -37,10 +37,8 @@ package  org.jasig.portal.utils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Locale;
+import java.io.BufferedInputStream;
+import java.util.*;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -67,6 +65,9 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -114,6 +115,7 @@ public class XSLT {
   protected Result xmlResult;
   protected HashMap stylesheetParams;
   protected String xslURI;
+  protected ResourceBundle l18n;
 
 
   /**
@@ -286,7 +288,13 @@ public class XSLT {
    */
   public void transform() throws PortalException {
     try {
-      Transformer trans = getTransformer(this.xslURI);
+      Transformer trans;
+      if(l18n == null){
+          trans = getTransformer(this.xslURI);
+      }
+      else{
+          trans = getTransformer(this.xslURI,l18n);
+      }
       setStylesheetParams(trans, stylesheetParams);
       trans.transform(xmlSource, xmlResult);
     } catch (PortalException pe) {
@@ -352,6 +360,40 @@ public class XSLT {
     }
   }
 
+    public void setResourceBundle(ResourceBundle bundle){
+        this.l18n=bundle;
+    }
+
+    /**
+       * This method caches compiled stylesheet objects, keyed by the stylesheet's URI and locale.
+       * @param stylesheetURI the URI of the XSLT stylesheet
+       * @param l18n the localized strings to add to the xsl
+       * @return the StlyesheetRoot object
+       * @throws SAXException
+       */
+    public static Templates getTemplates(String stylesheetURI, ResourceBundle l18n) throws SAXException, PortalException, TransformerConfigurationException {
+        String lookup = new StringBuffer(stylesheetURI).append(l18n.getLocale().toString()).toString();
+        Templates temp = (Templates)stylesheetRootCache.get(lookup);
+        if(temp == null) {
+            Document xsl = null;
+            try {
+                xsl = DocumentFactory.getDocumentFromStream(
+                                    new BufferedInputStream(ResourceLoader.getResourceAsStream(DocumentFactory.class, stylesheetURI),2048));
+            }
+            catch(IOException e) {
+                throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
+            }
+            addLocalization(xsl, l18n);
+            Source src = new DOMSource(xsl);
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            temp = tFactory.newTemplates(src);
+            if(stylesheetRootCacheEnabled) {
+                stylesheetRootCache.put(lookup, temp);
+            }
+        }
+        return temp;
+    }
+
   /**
    * This method caches compiled stylesheet objects, keyed by the stylesheet's URI.
    * @param stylesheetURI the URI of the XSLT stylesheet
@@ -392,6 +434,22 @@ public class XSLT {
       }
     }
     return temp;
+  }
+
+   /**
+   * This method returns a localized Transformer for a given stylesheet.
+   * @param stylesheetURI the URI of the XSLT stylesheet
+   * @return <code>Transformer</code>
+   * @throws SAXException
+   */
+  public static Transformer getTransformer(String stylesheetURI, ResourceBundle l18n) throws SAXException, PortalException {
+    Transformer t = null;
+    try {
+      t = getTemplates(stylesheetURI,l18n).newTransformer();
+    } catch (TransformerConfigurationException tce) {
+      LogService.log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+    }
+    return t;
   }
 
 
@@ -492,6 +550,67 @@ public class XSLT {
     String xslUri = set.getStylesheetURI(title, browserInfo);
     return xslUri;
   }
+
+   /**
+   * Writes a set of key/value pairs from a resourcebundle as global variables
+   * in an xsl stylesheet
+   *
+   * @param xsl the xsl stylesheet as a DOM document
+   * @param localization the resource bundle of key/value pairs to be written to xsl variables
+   */
+   protected static void addLocalization(Document xsl, ResourceBundle localization) {
+        ArrayList keys = new ArrayList();
+        Enumeration en = localization.getKeys();
+        while(en.hasMoreElements()){
+            keys.add(en.nextElement());
+        }
+        //String test = "test";
+        Element root = xsl.getDocumentElement();
+        Node ft = root.getFirstChild();
+        boolean foundFT = false;
+        NodeList nl = root.getChildNodes();
+        for(int i=0;i<nl.getLength();i++){
+            Node n = nl.item(i);
+            if(n.getNodeType() == n.ELEMENT_NODE){
+                Element e = (Element)n;
+                //System.out.println("Checking Element "+e.getNamespaceURI()+":"+e.getLocalName());
+                if(!foundFT && e.getNamespaceURI().equals("http://www.w3.org/1999/XSL/Transform")
+                    && e.getLocalName().equals("template")){
+                    //System.out.println("found first template in position "+i);
+                    ft = n;
+                    foundFT = true;
+                }
+                if(e.getNamespaceURI().equals("http://www.w3.org/1999/XSL/Transform")
+                    && e.getLocalName().equals("variable")){
+                    String name = e.getAttribute("name");
+                    //System.out.println(name+" = "+e.getAttribute("select"));
+                    //test = e.getAttribute("select");
+                    if(keys.contains(name)){
+                        e.removeAttribute("select");
+                        if (e.hasChildNodes()){
+                            NodeList cl = e.getChildNodes();
+                            for(int j=cl.getLength()-1;j>=0;j--){
+                                e.removeChild(cl.item(j));
+                            }
+                        }
+                       e.setAttribute("select","'"+localization.getString(name)+"'");
+                        keys.remove(name);
+                    }
+                }
+            }
+        }
+
+        for(int z=0;z<keys.size();z++){
+            String k = (String)keys.get(z);
+            String v = localization.getString(k);
+            Element e = xsl.createElementNS("http://www.w3.org/1999/XSL/Transform","xsl:variable");
+            e.setAttribute("name",k);
+            e.setAttribute("select","'"+v+"'");
+            //System.out.println(e.getAttribute("select"));
+            root.insertBefore(e,ft);
+        }
+
+    }
 }
 
 
