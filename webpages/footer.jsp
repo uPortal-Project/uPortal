@@ -37,12 +37,11 @@
 <br/>
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr bgcolor="<%= layoutBean.getActiveTabColor(request, response, out) %>">
-    <td colspan="8">&nbsp;</td>
+    <td colspan="7">&nbsp;</td>
   </tr>
   <tr>
     <td align="left"><img src="images/MyIBS.gif" width=100 height=50 border="0" alt="MyIBS"></td>
-    <td align="center"><font size="-1" color="#63188C">MyIBS</font></td>
     <td align="center"><font size="-1" color="#63188C"><a href="mailto:">Feedback</a></font><td>
-    <td align="right"><a href="http://www.mis2.udel.edu/ja-sig/portal.html"><img src="images/powered_by_uPortal1_6.gif" width="149" border="0" alt="Powered By uPortal"></a></td>
+    <td align="right"><a href="http://www.udel.edu/uPortal"><img src="images/powered_by_uPortal1_6.gif" width="156" height="43" border="0" alt="Powered By uPortal"></a></td>
   </tr>
 </table>
