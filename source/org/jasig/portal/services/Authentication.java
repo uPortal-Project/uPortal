@@ -106,7 +106,7 @@ public class Authentication {
          // Add the authenticated username to the person object
          // the login name may have been provided or reset by the security provider
          // so this needs to be done after authentication.
-         person.setAttribute(person.USERNAME, securityContext.getPrincipal().getUID());
+         person.setAttribute(IPerson.USERNAME, securityContext.getPrincipal().getUID());
          // Retrieve the additional descriptor from the security context
          IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
          // Process the additional descriptor if one was created
@@ -143,7 +143,7 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation((String)person.getAttribute(person.USERNAME));
+            Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
             // Add each of the attributes to the IPerson
             Enumeration en = attribs.keys();
             while (en.hasMoreElements()) {
@@ -165,7 +165,7 @@ public class Authentication {
             }
             // If still no FullName use an unrecognized string
             if (person.getFullName() == null) {
-               person.setFullName("Unrecognized person: " + person.getAttribute(person.USERNAME));
+               person.setFullName("Unrecognized person: " + person.getAttribute(IPerson.USERNAME));
             }
          }
          // Find the uPortal userid for this user or flunk authentication if not found
@@ -241,7 +241,7 @@ public class Authentication {
          principalInstance.setUID(username);
          // prime userid in person object before authenticated so can be
          // displayed after failure if desired
-         person.setAttribute(person.USERNAME, principalInstance.getUID());
+         person.setAttribute(IPerson.USERNAME, principalInstance.getUID());
       }
       // Retrieve and populate an instance of the credentials object
       IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
