@@ -196,22 +196,26 @@ public class CChannelManager extends BaseChannel {
         String timeout = runtimeData.getParameter("timeout");
         String javaClass = runtimeData.getParameter("class");
         if (name != null)
-          channelDef.setName(name);
+          channelDef.setName(name.trim());
         if (description != null)
-          channelDef.setDescription(description);
+          channelDef.setDescription(description.trim());
         if (title != null)
-          channelDef.setTitle(title);
+          channelDef.setTitle(title.trim());
         if (timeout != null)
-          channelDef.setTimeout(timeout);
+          channelDef.setTimeout(timeout.trim());
         if (javaClass != null)
-          channelDef.setJavaClass(javaClass);
+          channelDef.setJavaClass(javaClass.trim());
       // Custom parameters
       } else if (capture.equals("customSettings")) {
         String subAction = runtimeData.getParameter("uPCM_subAction");
         if (subAction != null) {
           String name = runtimeData.getParameter("name");
+          if (name != null)
+            name = name.trim();
           if (subAction.equals("addParameter")) {
             String value = runtimeData.getParameter("value");
+            if (value != null)
+              value = value.trim();
             String override = runtimeData.getParameter("override");
             channelDef.addParameter(name, value, (override != null ? "yes" : "no"));
           }
