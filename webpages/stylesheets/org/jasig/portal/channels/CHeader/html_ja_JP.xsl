@@ -41,8 +41,11 @@ $Revision$
   <xsl:param name="locale">ja_JP</xsl:param>
   <xsl:template match="header">
     <xsl:if test="$authenticated != 'false'">
-      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">ホーム </a> | <xsl:if test="chan-mgr-chanid">
-      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> チャネル管理 </a> | </xsl:if>
+      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">ホーム </a> | 
+      <a href="{$baseActionURL}?uP_fname=layout-sitemap" class="uportal-navigation-category"> Site Map </a> |
+      <xsl:if test="chan-mgr-chanid">
+      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> チャネル管理 </a> | 
+      </xsl:if>
       <a href="{$baseActionURL}?uP_fname={preferences-chanid}" class="uportal-navigation-category"> 設定 </a> | <a href="Logout" class="uportal-navigation-category"> ログアウト </a>
     </xsl:if>
   </xsl:template>

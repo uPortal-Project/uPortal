@@ -773,6 +773,14 @@ $Revision$
           <img alt="インターフェイス画像" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td class="uportal-channel-text" width="100%">
+          <a href="{$baseActionURL}?action=resetLayout" onClick="return confirm('You are about to replace your current layout with a default layout.  You cannot undo these changes.  Do you want to continue?')">Revert to default layout</a>
+        </td>
+      </tr>      
+      <tr>
+        <td valign="top">
+          <img alt="インターフェイス画像" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+        </td>
+        <td class="uportal-channel-text" width="100%">
           <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">プロファイル管理（上級者用）</a>
         </td>
       </tr>

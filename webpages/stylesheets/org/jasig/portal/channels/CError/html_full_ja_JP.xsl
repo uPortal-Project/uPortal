@@ -12,12 +12,12 @@
     <table border="0" width="100%" cellspacing="0" cellpadding="4">
       <tr>
         <td colspan="2" nowrap="nowrap" align="center" class="uportal-background-med">
-          <p class="uportal-channel-title">エラーレ�?ート</p>
+          <p class="uportal-channel-title">エラーレポート</p>
         </td>
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">�?ャ�?ル ID：</p>
+          <p class="uportal-channel-error">チャネル ID：</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:value-of select="channel/id"/>
@@ -28,7 +28,7 @@
           <p class="uportal-channel-error">メッセージ：</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(message) or message = ''">メッセージ�?�利用�?��??�?��?�ん</xsl:if>
+          <xsl:if test="not(message) or message = ''">メッセージは利用できません</xsl:if>
           <xsl:value-of select="message"/>
         </td>
       </tr>
@@ -38,14 +38,14 @@
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:choose>
-            <xsl:when test="@code='4'">�?ャ�?ル�?�タイムアウト（コード 4）</xsl:when>
-            <xsl:when test="@code='1'">レンダリング�?�失敗（コード 1）</xsl:when>
-            <xsl:when test="@code='2'">�?期化�?�失敗（コード 2）</xsl:when>
-            <xsl:when test="@code='3'">ランタイムデータ�?��?�得�?�失敗（コード 3）</xsl:when>
-            <xsl:when test="@code='0'">何ら�?��?�エラー（コード 0）</xsl:when>
-            <xsl:when test="@code='5'">PCS �?��?�得�?�失敗（コード 5）</xsl:when>
-            <xsl:when test="@code='6'">権�?�?��?��?�ユーザ（コード 6）</xsl:when>
-            <xsl:when test="@code='7'">利用�?�?�能（コード 7）</xsl:when>
+            <xsl:when test="@code='4'">チャネルのタイムアウト（コード 4）</xsl:when>
+            <xsl:when test="@code='1'">レンダリングの失敗（コード 1）</xsl:when>
+            <xsl:when test="@code='2'">初期化の失敗（コード 2）</xsl:when>
+            <xsl:when test="@code='3'">ランタイムデータの取得に失敗（コード 3）</xsl:when>
+            <xsl:when test="@code='0'">何らかのエラー（コード 0）</xsl:when>
+            <xsl:when test="@code='5'">PCS の取得に失敗（コード 5）</xsl:when>
+            <xsl:when test="@code='6'">権限のないユーザ（コード 6）</xsl:when>
+            <xsl:when test="@code='7'">利用不可能（コード 7）</xsl:when>
             <xsl:when test="@code='-1'">uPortal エラー（コード -1）</xsl:when>
           </xsl:choose>
         </td>
@@ -57,7 +57,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
-              <img border="0" width="16" height="16" alt="�?ャ�?ル�?�リトライ">
+              <img border="0" width="16" height="16" alt="チャネルのリトライ">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
               </img>
@@ -71,7 +71,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
-              <img border="0" width="16" height="16" alt="�?ャ�?ル�?��?起動">
+              <img border="0" width="16" height="16" alt="チャネルの再起動">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
               </img>
@@ -97,7 +97,7 @@
                 <a>
                   <xsl:attribute name="href">
                     <xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
-                  <img border="0" width="16" height="16" alt="スタックトレース�?�表示">
+                  <img border="0" width="16" height="16" alt="スタックトレースの表示">
                     <xsl:attribute name="src">
                       <xsl:value-of select="string($baseMediaURL)"/>error_show_trace.gif</xsl:attribute>
                   </img>
@@ -121,25 +121,25 @@
   <xsl:template match="exception">
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-        <p class="uportal-channel-error">�?題種別：</p>
+        <p class="uportal-channel-error">問題種別：</p>
       </td>
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
         <xsl:choose>
           <xsl:when test="@code='-1'">ランタイム例外（コード -1）</xsl:when>
-          <xsl:when test="@code='1'">一般的�?�レンダリング�?題（コード 1）</xsl:when>
+          <xsl:when test="@code='1'">一般的なレンダリング問題（コード 1）</xsl:when>
           <xsl:when test="@code='2'">内部タイムアウト（コード 2）</xsl:when>
-          <xsl:when test="@code='3'">権�?�?��?題（コード 3）</xsl:when>
-          <xsl:when test="@code='4'">リソース�?��?足（コード 4）</xsl:when>
+          <xsl:when test="@code='3'">権限の問題（コード 3）</xsl:when>
+          <xsl:when test="@code='4'">リソースの不足（コード 4）</xsl:when>
         </xsl:choose>
       </td>
     </tr>
     <xsl:if test="@code='2'">
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">タイムアウト制�?</p>
+          <p class="uportal-channel-error">タイムアウト制限</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(timeout/@value)">タイムアウト制�?�?�利用�?��??�?��?�ん</xsl:if>
+          <xsl:if test="not(timeout/@value)">タイムアウト制限は利用できません</xsl:if>
           <xsl:value-of select="timeout/@value"/>
         </td>
       </tr>
@@ -147,19 +147,19 @@
     <xsl:if test="@code='4'">
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">リソース�?�説明</p>
+          <p class="uportal-channel-error">リソースの説明</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(resource/description) or resource/description = ''">リソース�?�説明�?�利用�?��??�?��?�ん</xsl:if>
+          <xsl:if test="not(resource/description) or resource/description = ''">リソースの説明は利用できません</xsl:if>
           <xsl:value-of select="resource/description"/>
         </td>
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">リソース�?� URI</p>
+          <p class="uportal-channel-error">リソースの URI</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(resource/uri) or resource/uri = ''">リソース�?� URI �?�利用�?��??�?��?�ん</xsl:if>
+          <xsl:if test="not(resource/uri) or resource/uri = ''">リソースの URI は利用できません</xsl:if>
           <xsl:value-of select="resource/uri"/>
         </td>
       </tr>
@@ -169,7 +169,7 @@
         <p class="uportal-channel-error">エラーメッセージ</p>
       </td>
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
-        <xsl:if test="not(message) or message = ''">エラーメッセージ�?�利用�?��??�?��?�ん</xsl:if>
+        <xsl:if test="not(message) or message = ''">エラーメッセージは利用できません</xsl:if>
         <xsl:value-of select="message"/>
       </td>
     </tr>
@@ -218,4 +218,5 @@
       </tr>
     </table>
   </xsl:template>
+  
 </xsl:stylesheet>
