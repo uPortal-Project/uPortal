@@ -3558,10 +3558,20 @@
       </row>
 
       <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile for AL</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers presenting aggregated layouts</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
+      </row>
+
+      <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Web Browser Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
@@ -3570,16 +3580,6 @@
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>Guest Internet Explorer Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -3590,8 +3590,8 @@
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My Netscape Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
@@ -3600,16 +3600,6 @@
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>My Internet Explorer Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
         <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -3620,7 +3610,7 @@
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
@@ -3630,7 +3620,7 @@
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
@@ -3640,7 +3630,7 @@
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
@@ -3650,12 +3640,13 @@
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
+
     </rows>
   </table>
 
@@ -4178,6 +4169,13 @@
         <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>
+      <row>
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_NAME</name><value>AL Tabs and columns</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns</value></column>
+      </row>      
     </rows>
   </table>
 
@@ -4210,15 +4208,30 @@
         <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
         <column><name>DEVICE_TYPE</name><value>cellphone</value></column>
         <column><name>SERIALIZER_NAME</name><value>WML</value></column>
-<!-- Cell phone doesn't use tab-column structure stylesheet ! -->
-<!--        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column> -->
+        <!-- Cell phone doesn't use tab-column structure stylesheet ! -->
+        <!-- <column><name>UP_MODULE_CLASS</name><value> (none) </value></column> -->
       </row>
+      <row>
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_NAME</name><value>Integrated preferences</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables with integrated user preferences mode</value></column>
+        <column><name>STRUCT_SS_ID</name><value>3</value></column>
+        <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/AL_TabColumn/integratedModes/sample_icon.gif</value></column>
+        <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/AL_TabColumn/integratedModes/sample_full.gif</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>DEVICE_TYPE</name><value>workstation</value></column>
+        <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
+        <!-- <column><name>UP_MODULE_CLASS</name><value> (none) </value></column> -->
+      </row>      
     </rows>
   </table>
 
   <table>
     <name>UP_SS_THEME_PARM</name>
      <rows>
+       <!-- For nested-tables theme -->
        <row>
          <column><name>SS_ID</name><value>1</value></column>
          <column><name>PARAM_NAME</name><value>skin</value></column>
@@ -4233,12 +4246,29 @@
          <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
          <column><name>TYPE</name><value>3</value></column>
         </row>
+        
+        <!-- For integratedModes theme -->
+       <row>
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>skin</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>immII</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row>
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>minimized</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
+         <column><name>TYPE</name><value>3</value></column>
+        </row>        
      </rows>
   </table>
 
   <table>
     <name>UP_SS_STRUCT_PAR</name>
      <rows>
+       <!-- For tab-column structure -->
        <row>
          <column><name>SS_ID</name><value>1</value></column>
          <column><name>PARAM_NAME</name><value>activeTab</value></column>
@@ -4253,6 +4283,22 @@
          <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
          <column><name>TYPE</name><value>2</value></column>
         </row>
+        
+       <!-- For AL_TabColumn structure -->
+       <row>
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>lastSessionTabID</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>no lastSessionTabID parameter</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>The ID of the tab that is active after login</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row>
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>width</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>100%</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
+         <column><name>TYPE</name><value>2</value></column>
+        </row>        
      </rows>
   </table>
 
