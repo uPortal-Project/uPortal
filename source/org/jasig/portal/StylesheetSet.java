@@ -18,7 +18,7 @@ import org.xml.sax.helpers.*;
  * of stylesheets in memory and select one according
  * to the request/title/media parameters.
  * @author Peter Kharchenko
- * @version $Revision 1.1$
+ * @version $Revision$
  */
 
 public class StylesheetSet extends SAXFilterImpl 

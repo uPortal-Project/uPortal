@@ -16,7 +16,7 @@ import java.util.*;
  *  <li> DefaultDetachWidth </li>
  *  <li> DefaultDetachHeight </li>
  * </ul>
- * @version $Revision 1.1$ 
+ * @version $Revision$ 
  * @author Peter Kharchenko
  */
 

@@ -11,7 +11,7 @@ package org.jasig.portal;
  *  <li> detachButtonEvent - occurs when a detach button on the channel frame has been hit </li>
  *  <li> minimizeButtonEvent - occurs when a minimize button on the channel frame has been hit </li>
  * </ul>
- * @version 0.1
+ * @version $Revision$
  */
 
 public class LayoutEvent {

@@ -3,7 +3,7 @@
 * defined in SAX2 API. Current filter implementation allows to build
 * filters on top of the SAX1 DocumentHandler interface. 
 * @author Peter Kharchenko
-* @version $Reivision: 1.1$
+* @version $Revision$
 */
 
 package org.jasig.portal;
