@@ -367,20 +367,10 @@ public class TabColumnPrefsState extends BaseState
           Document doc = this.ulm.getUserLayoutDOM();
           // Keep track of the new column id incase the user clicks on cancel button
           this.newColumnId = ulnd.getId();
-          Node nNewColumnNode = XPathAPI.selectSingleNode(doc, "//*[@ID='"+ulnd.getId()+"']");
+          Element nE = (Element)doc.getElementById(ulnd.getId());
           // Find out how many siblings this node contains
-          NodeList nSiblingsIncludingSelf = nNewColumnNode.getParentNode().getChildNodes();
-          // Simply divide the number of columns by 100 and produce an evenly numbered column widths
-          int columns = nSiblingsIncludingSelf.getLength();
-          int columnSize = 100 / columns;
-          int remainder = 100 % columns;
-          // Traverse through the columns and reset with the new caculated value
-          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
-          for (int i=0; i < nSiblingsIncludingSelf.getLength(); i++){
-              Element c = (Element) nSiblingsIncludingSelf.item(i);
-              String nId = c.getAttribute("ID");
-              ssup.setFolderAttributeValue(nId, "width", (i == (nSiblingsIncludingSelf.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
-          }            
+          NodeList nSiblingsIncludingSelf = nE.getParentNode().getChildNodes();
+          this.setEvenlyAssignedColumnWidths(nSiblingsIncludingSelf);
       }
   }
 
@@ -524,7 +514,45 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void deleteElement(String elementId) throws Exception
   {
-      ulm.deleteNode(elementId);
+      // Need to check if we are about to delete a column, if so, need to reset other columns to appropriate width's
+      Document doc = this.ulm.getUserLayoutDOM();
+      Element childElement=(Element)doc.getElementById(elementId);
+      // determine if this is a column
+      String whatIsThis = childElement.getAttribute("name");
+      if (whatIsThis != null && whatIsThis.startsWith("Column")){
+        userPrefs.getStructureStylesheetUserPreferences().removeFolder(childElement.getAttribute("ID"));
+        // get the id of the parent (tab)
+        String tabId = ((Element)childElement.getParentNode()).getAttribute("ID");
+        // Found a column .. lets remove the column selected first
+        ulm.deleteNode(elementId);
+        // get the updated xml document
+        doc = this.ulm.getUserLayoutDOM();
+        // Find out how many siblings this node contains
+        NodeList nSiblingsIncludingSelf = ((Element)doc.getElementById(tabId)).getChildNodes();
+        this.setEvenlyAssignedColumnWidths(nSiblingsIncludingSelf);
+        this.saveUserPreferences();
+        
+      } else {
+        // this is a tab, go ahead and delete it
+        ulm.deleteNode(elementId);
+      }
+  }
+
+  /**
+ * @param siblingsIncludingSelf
+ */
+  private void setEvenlyAssignedColumnWidths(NodeList siblingsIncludingSelf) {
+    // Simply divide the number of columns by 100 and produce an evenly numbered column widths
+    int columns = siblingsIncludingSelf.getLength();
+    int columnSize = 100 / columns;
+    int remainder = 100 % columns;
+    // Traverse through the columns and reset with the new caculated value
+    StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+    for (int i=0; i < siblingsIncludingSelf.getLength(); i++){
+        Element c = (Element) siblingsIncludingSelf.item(i);
+        String nId = c.getAttribute("ID");
+        ssup.setFolderAttributeValue(nId, "width", (i == (siblingsIncludingSelf.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
+    }            
   }
 
   private final void updateTabLock(String elementId, boolean locked) throws Exception
