@@ -256,15 +256,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
-        /* put new user in group "everyone" */
+        /* put new user in groups that template is in */
         try{
           IEntityGroup everyone = GroupService.getEveryoneGroup();
           IGroupMember me = new EntityImpl(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
-          everyone.addMember(me);
-          everyone.updateMembers();
+
+          IGroupMember template = new EntityImpl(String.valueOf(templateUID), Class.forName("org.jasig.portal.security.IPerson"));
+          java.util.Iterator templateGroups =  template.getContainingGroups();
+	  while (templateGroups.hasNext())
+	  {
+		IEntityGroup eg = (IEntityGroup) templateGroups.next();
+                eg.addMember(me);
+                eg.updateMembers();
+	  }
         }
         catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to everyone group: ", e);
+          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
         }
         try
         {
