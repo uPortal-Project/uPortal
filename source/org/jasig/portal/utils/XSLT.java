@@ -83,8 +83,8 @@ import org.w3c.dom.Node;
 public class XSLT {
   // These flags should be set to true for production to
   // ensure that pre-compiled stylesheets and stylesheet sets are cached.
-  private static boolean stylesheetRootCacheEnabled = PropertiesManager.getBooleanProperty("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
-  private static boolean stylesheetSetCacheEnabled = PropertiesManager.getBooleanProperty("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
+  private static boolean stylesheetRootCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
+  private static boolean stylesheetSetCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
   private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
   private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
   private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
