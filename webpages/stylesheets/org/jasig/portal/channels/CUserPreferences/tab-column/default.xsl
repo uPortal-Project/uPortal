@@ -390,7 +390,7 @@ $Revision$
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
-                        <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
+                        <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
                           <img alt="Click to move this column right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
@@ -1381,5 +1381,6 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
+
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
