@@ -50,5 +50,6 @@ public interface IWriteable {
     public void write(int i) throws IOException;
     public void flush() throws IOException;
     public void close() throws IOException;
-
+    public void write(int[] iBuf, int off, int len) throws IOException;
+    public void write(int[] iBuf) throws IOException;
 }
