@@ -77,8 +77,8 @@ public class PortletURLManager {
 	
 	private Map params = new HashMap();
 
-	static Map windowStates = new HashMap();
-	static Map portletModes = new HashMap();
+	private static Map windowStates = new HashMap();
+	private static Map portletModes = new HashMap();
 	
 	private PortletWindow windowOfAction;
 	private ChannelRuntimeData runtimeData;
@@ -115,6 +115,7 @@ public class PortletURLManager {
 	
 	private void analizeRequestInformation() {
 		params.clear();
+		String windowId = windowOfAction.getId().toString();
 		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
 		  String[] values = runtimeData.getParameterValues(paramName);
@@ -122,7 +123,11 @@ public class PortletURLManager {
 		  if ( ACTION.equals(paramName) ) {
 		    if ( "true".equals(values[0]) )
 		      isAction = true;		  
-		  } else if ( UP_ROOT.equals(paramName) ) {
+		  } else if ( UP_HELP_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
+			  setMode ( windowOfAction, PortletMode.HELP ); 
+		  } else if ( UP_EDIT_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
+		      setMode ( windowOfAction, PortletMode.EDIT ); 
+	      } else if ( UP_ROOT.equals(paramName) ) {
 		     if ( !ROOT.equals(values[0]) )
 		      setState ( windowOfAction, WindowState.MAXIMIZED); 
 		     else if ( getPrevState(windowOfAction).equals(WindowState.MAXIMIZED) )
