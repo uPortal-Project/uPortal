@@ -36,9 +36,11 @@
 package org.jasig.portal;
 
 import javax.servlet.http.*;
+
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.jasig.portal.security.IPerson;
 
 /**
  * A set of runtime data acessable by a channel.
@@ -52,15 +54,15 @@ import java.util.Map;
  * @version $Revision$
  */
 
-
-public class ChannelRuntimeData extends Hashtable{
-
-
+public class ChannelRuntimeData extends Hashtable
+{
     private HttpServletRequest request;
     private String baseActionURL;
 
+    private IPerson m_person;
 
-    public ChannelRuntimeData() {
+    public ChannelRuntimeData()
+    {
 	super();
 
 	// set the default values for the parameters here
@@ -70,28 +72,37 @@ public class ChannelRuntimeData extends Hashtable{
 
 
     // the set methods ...
+    public void setPerson(IPerson person)
+    {
+      m_person = person;
+    }
 
     public void setBaseActionURL(String baURL) { baseActionURL=baURL; }
     public void setHttpRequest(HttpServletRequest req) { request=req; }
 
-    public void setParameters(Map params) {
+    public void setParameters(Map params)
+    {
 	// copy a Map
 	this.putAll(params);
-    };
+    }
 
-    public void setParameter(String pName,String pValue) {
+    public void setParameter(String pName,String pValue)
+    {
 	this.put(pName,pValue);
     }
 
-
     // the get methods ...
+    public IPerson getPerson()
+    {
+      return(m_person);
+    }
+
     public String getBaseActionURL() { return baseActionURL; }
     public HttpServletRequest getHttpRequest() { return request; }
 
     // Parameters are strings !
     public synchronized String setParameter (Object key, String value) {return (String) super.put (key, value);}
     public synchronized String getParameter (Object key) {return (String) super.get (key);}
-
 
     // if you need to pass objects, use this
     public synchronized Object put (Object key, Object value) {return super.put (key, value);}
