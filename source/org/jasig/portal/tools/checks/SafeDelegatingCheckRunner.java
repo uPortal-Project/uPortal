@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.spring.PortalApplicationContextFacade;
 
 /**
@@ -22,6 +24,8 @@ import org.jasig.portal.spring.PortalApplicationContextFacade;
 public class SafeDelegatingCheckRunner
     implements ICheckRunner {
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * The name of the Spring bean we expect will be an instance of ICheckRunner
      * to which we will be delegating.
@@ -53,6 +57,7 @@ public class SafeDelegatingCheckRunner
                 
                 
             } catch (Throwable t) {
+                log.error("Failed to obtain Spring-configured ICheckRunner named [" + CHECKS_KEY + "].", t);
                 CheckResult delegateFailedResult = CheckResult.createFailure("The Spring-configured ICheckRunner threw an exception: " + t, "Examine the configuration of the Spring bean named [" + SafeDelegatingCheckRunner.CHECKS_KEY + "]");
                 CheckAndResult delegateFailedCheckAndResult = new CheckAndResult("Check that the configured ICheckRunner delegate did not throw any Throwable.", delegateFailedResult);
                 results.add(delegateFailedCheckAndResult);
