@@ -55,8 +55,8 @@ Background</b></a></p>
       <h4>Contents</h4>
       <blockquote><a href="#Introduction">Introduction</a><br>
         <a href="#Whats_In_This_Document">What's In This Document?</a><br>
-        <a href="#What_Does_it_Contain">Goals and Rationale of the
-Composite Service</a><br>
+        <a href="#Goals_and_Rationale_of_the_Composite">Goals and
+Rationale of the Composite Service</a><br>
         <a href="#The_Service_Design">The Service Design</a><br>
         <a href="#Groups_Keys_and_Service_Names">Groups, Keys and
 Service Names</a><br>
@@ -71,11 +71,10 @@ Service Names</a><br>
 mechanism was needed for <i>grouping</i> portal users, chiefly for the
 purpose of authorization. &nbsp;The <code>org.jasig.portal.groups</code>
 package evolved in response. &nbsp;It defines an api for managing groups
-of portal <i>entities</i> such as IPersons and
-ChannelDefinitions.&nbsp; The groups framework does not actually
-operate on IPersons or ChannelDefinitions; it manipulates stub objects
-whose keys and types point to the underlying entities.&nbsp; The stubs
-are implementations of <code>org.jasig.portal.groups.IEntity</code>,
+of portal <i>entities</i> such as IPersons and ChannelDefinitions.&nbsp;
+The groups framework does not actually operate on IPersons or
+ChannelDefinitions; it manipulates stub objects whose keys and types
+point to the underlying entities.&nbsp; The stubs are implementations of <code>org.jasig.portal.groups.IEntity</code>,
 and their only concern is their group memberships.&nbsp; A stub knows
 nothing about its underlying entity except its key and type.&nbsp; The
 groups it belongs to are implementations of <code>org.jasig.portal.groups.IEntityGroup</code>.&nbsp;
@@ -139,17 +138,16 @@ database, can be associated with <span style="font-style: italic;">Permissions</
 In this way, portal authorization can be driven from LDAP and managed
 from within the portal. &nbsp; </p>
       <p>The composite groups system is a framework for creating and
-managing group adaptors.&nbsp; Its job is to aggregate group
-information from a variety of sources and present it in a consistent
-form to clients who can remain  unaware of its origins.&nbsp; In fact,
-a group service client never interacts  directly even with the
-composite group service.&nbsp; A client makes a request  to the service
-fa&ccedil;ade to obtain a group member, and the group member  acts as
-an entry point into the composite group system. &nbsp; Once the client
-has a reference to a new or pre-existing group member, it makes
-subsequent requests to the group member itself, and from then on it can
-ignore  the service of origin of any group member it navigates to.
-&nbsp; </p>
+managing group adaptors.&nbsp; Its job is to aggregate group information
+from a variety of sources and present it in a consistent form to clients
+who can remain  unaware of its origins.&nbsp; In fact, a group service
+client never interacts  directly even with the composite group
+service.&nbsp; A client makes a request  to the service fa&ccedil;ade to
+obtain a group member, and the group member  acts as an entry point
+into the composite group system. &nbsp; Once the client has a reference
+to a new or pre-existing group member, it makes subsequent requests to
+the group member itself, and from then on it can ignore  the service of
+origin of any group member it navigates to. &nbsp; </p>
       <h4><a name="The_Service_Design"></a>The Service Design</h4>
       <i>The Service Hierarchy.</i>&nbsp; The composite group service
 api is divided among 3 service types, <code>IComponentGroupService</code>,<code>ICompositeGroupService</code>
@@ -163,7 +161,7 @@ delegating requests for group services.&nbsp; The <code>IIndividualGroupService<
 defines responsibilities for a specific group service that reads and
 possibly writes groups.&nbsp; It is the<i> leaf component</i> in the
 composite.&nbsp; Together, they form the following class hierarchy:
-      <blockquote><code>IComponentGroupService</code><br>
+ <blockquote><code>IComponentGroupService</code><br>
         <code> &nbsp; ICompositeGroupService extends
 IComponentGroupService</code><br>
         <code> &nbsp;&nbsp;&nbsp; IIndividualGroupService extends
@@ -186,12 +184,12 @@ portals.&nbsp; &nbsp; </p>
         <code> }</code> <br>
       </blockquote>
       <p> The reference implementation is a true composite only at
-service start-up, when each <code>IComponentGroupService</code>
-performs a recursive retrieval    of its components.&nbsp; Once the
-elements of this composite   have been retrieved,   the composite
-service keeps its components in a one-dimensional   collection.
-&nbsp;Since it does not contain nested  group services, the  reference
-composite group service does not have a direct  implementation of <code>IComponentGroupService</code>
+service start-up, when each <code>IComponentGroupService</code> performs
+a recursive retrieval    of its components.&nbsp; Once the elements of
+this composite   have been retrieved,   the composite service keeps its
+components in a one-dimensional   collection. &nbsp;Since it does not
+contain nested  group services, the  reference composite group service
+does not have a direct  implementation of <code>IComponentGroupService</code>
 but only implementations  of its  subtypes, <code>ICompositeGroupService</code>
 and <code>IIndividualGroupService</code>.    &nbsp;</p>
       <p><i> ICompositeGroupService.</i>&nbsp; An <code>ICompositeGroupService</code>
@@ -291,24 +289,23 @@ Service Names</h4>
       <p><i>Component Services and Their Names.</i>&nbsp; Once it has
 been assembled, the composite structure of the group service is
 reflected in the names  given   to component services, which are
-instances of <code>javax.naming.Name</code> with a node  for each  
-nested service.&nbsp; Assuming a node separator of ".", a service named
-"columbia"  contained by a service named "remoteChannels" would be
-named "remoteChannels.columbia".&nbsp; Since a component cannot be
-expected to know in advance which components will contain it, the
-fully-qualified service name of a given component may not be known
-until the composite is fully assembled.&nbsp; In the reference
-implementation, the service name is built up node by node as the
-composite is composed.&nbsp; <br>
+instances of <code>javax.naming.Name</code> with a node  for each nested
+service.&nbsp; Assuming a node separator of ".", a service named
+"columbia" contained by a service named "remoteChannels" would be named
+"remoteChannels.columbia".&nbsp; Since a component cannot be expected to
+know in advance which components will contain it, the fully-qualified
+service name of a given component may not be known until the composite
+is fully assembled.&nbsp; In the reference implementation, the service
+name is built up node by node as the composite is composed.&nbsp; <br>
       </p>
       <p><span style="font-style: italic;">Group Keys.</span>&nbsp; A
 group's composite service key is the concatenation of its
-fully-qualified service name and its key in the local service.&nbsp;
-The nodes of the service name, and the final node of the name and the
-local key, are separated by a <span style="font-style: italic;">node
-separator</span>.&nbsp; For example, a group with a local key of
-"English_Department" in a service named "ldap" with a node separator of
-"%" would have a key of "ldap%English_Department".&nbsp; <br>
+fully-qualified service name and its key in the local service.&nbsp; The
+nodes of the service name, and the final node of the name and the local
+key, are separated by a <span style="font-style: italic;">node separator</span>.&nbsp;
+For example, a group with a local key of "English_Department" in a
+service named "ldap" with a node separator of "%" would have a key of
+"ldap%English_Department".&nbsp; <br>
       </p>
       <p><span style="font-style: italic;">Node Separators.</span>&nbsp;
 The default node separator is the period, or ".", but it can be any <code>String</code>
@@ -323,8 +320,8 @@ Names.</span>&nbsp; The significance of the service name in a group key
 is that    it directs us to the specific service that can answer the
 request for the group and it further qualifies the local key, which may
 not be unique across different services.&nbsp; Thus, a client  wishing
-to  find a group called "English_Department" in a component  service
-named  "ldap" needs to ask the composite service for "<span
+to find a group called "English_Department" in a component  service
+named "ldap" needs to ask the composite service for "<span
  style="font-style: italic;">ldap</span>.English101" rather than "<span
  style="font-style: italic;">sis</span>.English101" or simply
 "English101".&nbsp; The ldap service  may know the group by its local
@@ -349,16 +346,15 @@ component group services   are obligated to know the entity  by that
 key.&nbsp; Thus, to get containing groups   for IPerson &#8220;kweiner&#8221;,  the
 client would ask the service fa&ccedil;ade for an IGroupMember for
 IPerson "kweiner", not for "ldap.kweiner" or "local.kweiner",     and
-then ask the group member for its containing groups.&nbsp; The
-composite service would ask each of its components to get containing
-groups for group member IPerson kweiner, and each component service
-would be obligated to retrieve membership information    for IPerson
-kweiner, rather than for IPerson ldap.kweiner, IPerson local.kweiner,
-etc.&nbsp; If the source of entities for a component group service
-stores entity keys in a different format, e.g., "kw1" rather than
-"kweiner", the group service must translate these keys from their
-native format to the format understood by the other component
-services.&nbsp; &nbsp;<br>
+then ask the group member for its containing groups.&nbsp; The composite
+service would ask each of its components to get containing groups for
+group member IPerson kweiner, and each component service would be
+obligated to retrieve membership information    for IPerson kweiner,
+rather than for IPerson ldap.kweiner, IPerson local.kweiner, etc.&nbsp;
+If the source of entities for a component group service stores entity
+keys in a different format, e.g., "kw1" rather than "kweiner", the group
+service must translate these keys from their native format to the
+format understood by the other component services.&nbsp; &nbsp;<br>
       </p>
       <h4><a name="Assembling_the_Composite"></a>Assembling the
 Composite</h4>
@@ -469,8 +465,8 @@ leaf service by prepending the name of the top-level component    to the
 service name, and then adds each leaf component to its service Map.
 &nbsp;</p>
       <p> At the end of the process, non-leaf components have been
-eliminated, and the composite service may have multiple instances of
-the same <code>IIndividualGroupService</code> implementation, each
+eliminated, and the composite service may have multiple instances of the
+same <code>IIndividualGroupService</code> implementation, each
 customized by its own service descriptor. &nbsp; </p>
       <h4><a name="Configuring_the_Composite"></a>Configuring the
 Composite</h4>
@@ -481,7 +477,7 @@ elements via: </p>
       <blockquote><code>public Map getAttributes();<br>
 public List getServiceDescriptors()<br>
         </code></blockquote>
-      <p> uPortal 2.2 ships with the following configuration:<br>
+      <p> uPortal 2.3 ships with the following configuration:<br>
       </p>
       <hr style="width: 100%; height: 2px;">
       <blockquote><small>&lt;?xml version="1.0"?&gt;<br>
@@ -603,13 +599,12 @@ implementation (and still use the configuration file.)&nbsp; <br>
       <p>The <code>nodeSeparator</code> attribute is optional and
 defaults to ".".&nbsp; For a description of its use and why you might
 want to change it, see <a href="#Groups_Keys_and_Service_Names">Group
-Keys and Service Names</a>.&nbsp; Changing the nodeSeparator changes
-the format of the composite group key.&nbsp; If you have any
-pre-existing data in the portal database when you change the
-nodeSeparator, you must also change the format of any hard-coded
-composite group keys, replacing the old nodeSeparator with the
-new.&nbsp;  In the reference portal database, composite group keys are
-found in the following tables:<br>
+Keys and Service Names</a>.&nbsp; Changing the nodeSeparator changes the
+format of the composite group key.&nbsp; If you have any pre-existing
+data in the portal database when you change the nodeSeparator, you must
+also change the format of any hard-coded composite group keys, replacing
+the old nodeSeparator with the new.&nbsp;  In the reference portal
+database, composite group keys are found in the following tables:<br>
       </p>
       <div style="margin-left: 40px;"><code>UP_PERMISSION.PRINCIPAL_KEY</code><br>
       <code>UP_GROUP_FRAGMENT.GROUP_KEY</code><br>
@@ -694,10 +689,10 @@ change this   value only if you were substituting your own
 implementation of <code>IEntityStore</code> for the reference
 implementation. &nbsp;</p>
       <p><i>group_store_factory</i> is the factory class name for the
-group store, the adaptor that connects the group service with the
-native source of groups    information.&nbsp; Although entity stores
-can be shared, each   service will    almost certainly have its own
-group store.&nbsp; The "local"  group   store, <code>RDBMEntityGroupStore</code>,
+group store, the adaptor that connects the group service with the native
+source of groups    information.&nbsp; Although entity stores can be
+shared, each   service will    almost certainly have its own group
+store.&nbsp; The "local"  group   store, <code>RDBMEntityGroupStore</code>,
 refers to tables   in the reference portal database, contains sql
 statements and retrieves   group  information via jdbc.&nbsp; The "ldap"
 group store, <code>org.jasig.portal.groups.ldap.LDAPGroupStore</code>,
@@ -742,7 +737,7 @@ because they do their own caching. &nbsp;</p>
       <i>Additional services</i>.&nbsp; Comment in one or more of the
 other group service declarations if you want to supplement the local
 groups with groups from other sources, (or create your own service):
-      <blockquote> &nbsp;<small> &lt;service&gt;</small><br>
+ <blockquote> &nbsp;<small> &lt;service&gt;</small><br>
         <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;<span
  style="font-weight: bold;">ldap</span>&lt;/name&gt;</small><br>
         <small> &nbsp;&nbsp;&nbsp;
@@ -845,14 +840,14 @@ change in an external group source.<br>
       <br>
       <span style="font-style: italic;">Key Caches.</span>&nbsp; Groups
 cache the keys of their members so they do not have to keep
-re-retrieving membership information.&nbsp; These caches are
-initialized when a group is first asked for its members.&nbsp; If a
-group has a large number of members, this process is expensive, so it
-is not performed unless <code>getMembers()</code> is actually
-called.&nbsp; For example, if <code>contains()</code> is called on a
-group that has not yet been initialized, the group will delegate this
-method to its store to spare it the expense of initialization just to
-answer if it contains a single group member.&nbsp; <br>
+re-retrieving membership information.&nbsp; These caches are initialized
+when a group is first asked for its members.&nbsp; If a group has a
+large number of members, this process is expensive, so it is not
+performed unless <code>getMembers()</code> is actually called.&nbsp; For
+example, if <code>contains()</code> is called on a group that has not
+yet been initialized, the group will delegate this method to its store
+to spare it the expense of initialization just to answer if it contains
+a single group member.&nbsp; <br>
       <h4><a name="Alternate_Group_Stores"></a>Alternate Group Stores</h4>
       <p>The composite design anticipates that a group system will have
 multiple sources of groups.&nbsp; The group information that ships with
@@ -884,16 +879,16 @@ system files.&nbsp; <br>
         <li>configure the composite service</li>
       </ul>
       <p>Most portals will at least use groups to manage authorization,
-so this is a common starting point. &nbsp;Many institutions will rely
-on an LDAP service as the primary source of group information and
+so this is a common starting point. &nbsp;Many institutions will rely on
+an LDAP service as the primary source of group information and
 supplement it with  information from the portal database. &nbsp;Others
 may require additional information from human resources, student
 information or other systems. &nbsp;uPortal currently ships with 4
 adaptors, 1 for the reference portal database (<code>RDBMEntityGroupStore</code>)
 and 3 alternate stores (see above.)&nbsp; If you only intend to use
-these 4 sources, you do not have to write a custom group store.
-&nbsp;If you do need to draw groups from another source,   you will
-have to implement the <code>IEntityGroupStore</code> and <code>IEntitySearcher</code>
+these 4 sources, you do not have to write a custom group store. &nbsp;If
+you do need to draw groups from another source,   you will have to
+implement the <code>IEntityGroupStore</code> and <code>IEntitySearcher</code>
 interfaces. &nbsp;You should not have to write a custom group serivce
 (an <code>IIndividualGroupService</code>) unless you need to change the
 transactional rules of the service. &nbsp;Of course, you can always
