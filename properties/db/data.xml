@@ -1159,7 +1159,7 @@
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/ibs.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/uniconnews.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1373,7 +1373,7 @@
         <column><name>CHAN_ID</name><value>17</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_xml</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/examples/jsp/num/numguess.jsp</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/jsp-examples/num/numguess.jsp</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1424,7 +1424,7 @@
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_xml</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/examples/servlets/index.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/servlets-examples/index.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
