@@ -25,9 +25,10 @@ import org.jasig.portal.services.StatsRecorder;
  * @version 1.0
  */
 public class UserLayoutManagerFactory {
-    private static final Log log = LogFactory.getLog(UserLayoutManagerFactory.class);
     
-    static Class coreUserLayoutManagerImpl=SimpleUserLayoutManager.class;
+	private static final Log log = LogFactory.getLog(UserLayoutManagerFactory.class);
+    
+    private static Class coreUserLayoutManagerImpl=SimpleUserLayoutManager.class;
 
     static {
         // Retrieve the class name of the core IUserLayoutManager implementation
