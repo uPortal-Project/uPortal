@@ -114,7 +114,7 @@ public class Deployer {
         if (warFileName.endsWith(".war"))
             warFileName = warFileName.substring(0, warFileName.lastIndexOf("."));
 
-        System.out.println("deploying '" + warFileName + "' ...");
+        System.out.print("Deploying '" + warFileName + "' ... ");
 
         String destination = webAppsDir + warFileName;
 
@@ -141,7 +141,7 @@ public class Deployer {
 
         }
 
-        System.out.println("finished!");
+        System.out.println("Finished!");
     }
 
     public static void prepareWebArchive(String webAppsDir, String warFile) throws Exception, IOException {
@@ -153,8 +153,7 @@ public class Deployer {
         if (webModule.endsWith(".war"))
             webModule = webModule.substring(0, webModule.lastIndexOf("."));
 
-        System.out.println("prepare web archive '" + webModule + "' ...");
-
+        System.out.print("Preparing web archive '" + webModule + "' ... ");
 
         File portletXml = new File(webAppsDir + webModule + webInfDir + "portlet.xml");
         File webXml = new File(webAppsDir + webModule + webInfDir + "web.xml");
@@ -333,12 +332,12 @@ public class Deployer {
 
             copy(strFrom, webAppsDir + webModule + strTo);
         } catch (Exception e) {
-
+            System.out.println();
             e.printStackTrace(System.out);
             throw new Exception();
         }
 
-        System.out.println("finished!");
+        System.out.println("Finished!");
     }
 
     public static void copy(String from, String to) throws IOException {
