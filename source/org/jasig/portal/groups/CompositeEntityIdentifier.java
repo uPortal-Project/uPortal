@@ -48,7 +48,6 @@ import javax.naming.NamingException;
  *
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
  */
 public class CompositeEntityIdentifier extends org.jasig.portal.EntityIdentifier 
 implements IGroupConstants

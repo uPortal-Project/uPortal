@@ -51,8 +51,7 @@ import org.jasig.portal.services.LogService;
  *
  * @author Dan Ellentuck
  * @version $Revision$
- * @see org.jasig.portal.concurrency.caching.ICacheableEntity
- * @see org.jasig.portal.concurrency.LRUCache
+ * @see org.jasig.portal.concurrency.caching.LRUCache
  */
 public class ReferenceEntityCache implements IEntityCache
 {

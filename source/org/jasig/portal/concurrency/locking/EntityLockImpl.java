@@ -49,7 +49,6 @@ import org.jasig.portal.concurrency.LockingException;
   *
   * @author Dan Ellentuck
   * @version $Revision$
-  * @see org.jasig.portal.concurrency.IEntityLockingService
   * @see org.jasig.portal.concurrency.IEntityLock
 */
 public class EntityLockImpl implements IEntityLock {

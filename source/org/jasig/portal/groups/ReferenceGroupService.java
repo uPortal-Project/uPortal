@@ -53,7 +53,8 @@ import org.jasig.portal.services.LogService;
 
 /**
  * Reference group service.
- * @author: Dan Ellentuck
+ * 
+ * @author Dan Ellentuck
  * @version $Revision$
  */
 public class ReferenceGroupService implements ILockableGroupService

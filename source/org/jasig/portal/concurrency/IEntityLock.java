@@ -47,7 +47,6 @@ import java.util.Date;
   * @author Dan Ellentuck
   * @version $Revision$
   * @see org.jasig.portal.concurrency.IEntityLockService
-  * @see org.jasig.portal.concurrency.groups.EntityTypes
 */
 public interface IEntityLock {
 

@@ -52,7 +52,8 @@ import org.jasig.portal.services.LogService;
 
 /**
  * Reference individual, or leaf, group service.
- * @author: Dan Ellentuck
+ * 
+ * @author Dan Ellentuck
  * @version $Revision$
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService

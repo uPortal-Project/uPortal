@@ -44,10 +44,11 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 
 /**
+ * GroupMemberImpl summary first sentence goes here.
+ * 
  * @author Dan Ellentuck
  * @version $Revision$
  * @see IGroupMember
- * @see IGroupMemberFactory
  */
 public abstract class GroupMemberImpl implements IGroupMember
 {

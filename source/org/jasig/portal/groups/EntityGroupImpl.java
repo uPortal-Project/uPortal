@@ -685,8 +685,8 @@ private void setMemberKeysInitialized(boolean newMemberKeysInitialized) {
     memberKeysInitialized = newMemberKeysInitialized;
 }
 /**
- * @Exception GroupsException is thrown if a sibling group with the same name already exists.
  * @param newName java.lang.String
+ * @exception GroupsException is thrown if a sibling group with the same name already exists. 
  */
 public void setName(java.lang.String newName) throws GroupsException
 {
