@@ -200,7 +200,7 @@
                        Version: 19Jun2001
                        URL: http://www.servlets.com/cos/
 
-  oro.jar              A set of text-processing Java classes that provide Perl5 
+  oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
                        Version: 2.0.4
                        URL: http://jakarta.apache.org/oro/
@@ -566,5 +566,43 @@
     </java>
   </target>
 
+
+<!-- ==================== regchantype Target ============================== -->
+
+<!--
+
+  The "regchantype" target runs uPortal's RegisterChannelType program to
+  create an entry for a new generic channel in the UP_CHAN_TYPE table.
+  To run this target, you must specify the class, name, description, and
+  uri parameters in the command line.  For example:
+
+  ant regchantype
+    -Dclass=org.jasig.portal.channels.CImage
+    -Dname="Image Channel"
+    -Ddescription="Displays image with optional title and subtitle"
+    -Duri=/org/jasig/portal/channels/CImage/CImage.cpd
+
+-->
+
+
+  <target name="regchantype" depends="compile">
+    <echo message="Invoking RegisterChannelType"/>
+    <property name="class" value=" "/>
+    <property name="name" value=" "/>
+    <property name="description" value=" "/>
+    <property name="uri" value=" "/>
+    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+      <arg value="${class}"/>
+      <arg value="${name}"/>
+      <arg value="${description}"/>
+      <arg value="${uri}"/>
+    </java>
+  </target>
 
 </project>
