@@ -57,6 +57,8 @@ import org.jasig.portal.container.om.common.DisplayNameSetImpl;
 import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ParameterSetImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeSetImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
@@ -136,6 +138,7 @@ public class PortletApplicationUnmarshaller {
             portletDefinition.setServletDefinition(webApplicationDefinition.getServletDefinitionList().get(portletName));
             portletDefinition.setPortletApplicationDefinition(portletApplicationDefinition);
             portletDefinition.setExpirationCache(XML.getChildElementText(portletE, "expiration-cache"));
+            portletDefinition.setInitSecurityRoleRefSet(getSecurityRoleRefs(portletE));
             
             portletDefinitions.add(portletDefinitionId, portletDefinition);
         }        
@@ -211,6 +214,20 @@ public class PortletApplicationUnmarshaller {
             preferences.setPreferencesValidator(XML.getChildElementText(portletPreferencesE, "preferences-validator"));
         }
         return preferences;
+    }
+
+    private SecurityRoleRefSetImpl getSecurityRoleRefs(Element portletE) {
+        SecurityRoleRefSetImpl securityRoleRefs = new SecurityRoleRefSetImpl();
+        NodeList securityRoleRefsNL = portletE.getElementsByTagName("security-role-ref");
+        for (int i = 0; i < securityRoleRefsNL.getLength(); i += 1) {
+            Element securityRoleRefE = (Element)securityRoleRefsNL.item(i);
+            SecurityRoleRefImpl securityRoleRef = new SecurityRoleRefImpl();
+            securityRoleRef.setDescription(XML.getChildElementText(securityRoleRefE, "description"));
+            securityRoleRef.setRoleName(XML.getChildElementText(securityRoleRefE, "role-name"));
+            securityRoleRef.setRoleLink(XML.getChildElementText(securityRoleRefE, "role-link"));
+            securityRoleRefs.add(securityRoleRef);
+        }
+        return securityRoleRefs;
     }
     
     private ContentTypeSet getContentTypes(Element portletE) {
