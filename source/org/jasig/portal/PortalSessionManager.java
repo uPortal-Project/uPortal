@@ -62,7 +62,7 @@ import  com.oreilly.servlet.multipart.ParamPart;
 public class PortalSessionManager extends HttpServlet {
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
-  private static int sizeLimit = 3000000;       // Should be channel specific
+  private static int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
 
