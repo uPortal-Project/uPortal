@@ -166,8 +166,8 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
       return this.UID;
     }
 
-    public String getGlobalUID() {
-      return this.globalUID + "";
+    public int getGlobalUID() {
+      return this.globalUID;
     }
 
     // This is supposed to be the person's "human readable" name. We should

@@ -178,7 +178,7 @@ public class CUserPreferences implements IPrivilegedChannel
                     if(systemProfile)
                         profile=updb.getSystemProfileByName(profileName);
                     else
-                        profile=updb.getUserProfileByName(ulm.getPerson().getID(),profileName);
+                        profile=updb.getUserProfileById(ulm.getPerson().getID(),profileName);
                 } else {
                     profile=up.getProfile();
                 }

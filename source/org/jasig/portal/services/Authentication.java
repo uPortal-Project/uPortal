@@ -75,9 +75,9 @@ public class Authentication
       if (addInfo == null || !(addInfo instanceof PersonImpl))
       {
         m_Person = new PersonImpl ();
-        m_Person.setID(sUserName);
+        m_Person.setID(me.getGlobalUID());
         m_Person.setFullName(me.getFullName());
-        m_Person.setAttribute("globalUID", me.getGlobalUID());
+        m_Person.setAttribute("globalUID", me.getGlobalUID()+"");
       }
       else
       {

@@ -215,9 +215,9 @@ class ManageProfilesState extends BaseState {
                             if(profileType.equals("system")) systemProfile=true;
                             // find the UserProfile
                             if(systemProfile) {
-                                profile=context.getUserPreferencesDB().getSystemProfileByName(profileName);
+                                profile=context.getUserPreferencesDB().getSystemProfileByName("system");
                             } else {
-                                profile=context.getUserPreferencesDB().getUserProfileByName(context.getPerson().getID(),profileName);
+                                profile=context.getUserPreferencesDB().getUserProfileById(context.getPerson().getID(),profileName);
                             }
                             if(profile==null) {
                                 // failed to find the specified profile, return to the base state

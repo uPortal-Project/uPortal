@@ -43,8 +43,8 @@ import java.util.Enumeration;
  */
 public interface IPerson extends IAdditionalDescriptor
 {
-  public void setID(String sID);
-  public String getID();
+  public void setID(int sID);
+  public int getID();
 
   public void setFullName(String sFullName);
   public String getFullName();

@@ -128,9 +128,8 @@
 		<name>UP_USER_PROFILES</name>
 		<columns>
 			<column>
-				<name>USER_NAME</name>
-				<type>VARCHAR</type>
-				<param>15</param>
+				<name>ID</name>
+				<type>INTEGER</type>
 			</column>
 			<column>
 				<name>PROFILE_NAME</name>
@@ -158,9 +157,8 @@
 		<name>UP_USER_SS_PREFS</name>
 		<columns>
 			<column>
-				<name>USER_NAME</name>
-				<type>VARCHAR</type>
-				<param>15</param>
+				<name>ID</name>
+				<type>INTEGER</type>
 			</column>
 			<column>
 				<name>PROFILE_NAME</name>
@@ -252,9 +250,8 @@
 		<name>UP_USER_UA_MAP</name>
 		<columns>
 			<column>
-				<name>USER_NAME</name>
-				<type>VARCHAR</type>
-				<param>15</param>
+				<name>ID</name>
+				<type>INTEGER</type>
 			</column>
 			<column>
 				<name>USER_AGENT</name>

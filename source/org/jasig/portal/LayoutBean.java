@@ -151,25 +151,26 @@ public class LayoutBean
         uLayoutManager = new UserLayoutManager (req, getPerson(req));
       }
       if(uLayoutManager.userAgentUnmapped()) {
-	  // do the redirect
-	  // for debug purposes, we do the fake mapping to the "netscape" layout
-	  IUserPreferencesDB updb=new UserPreferencesDBImpl();
-	  IPerson person=getPerson(req);
-	  if(person==null) {
-	      person=new org.jasig.portal.security.provider.PersonImpl();
-	      person.setID("guest");
-	  }
-	  // establish mapping
-	  updb.setUserBrowserMapping(person.getID(),req.getHeader("user-Agent"),"netscape");
-	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : establishing UA mapping for user=\""+person.getID()+"\" and UA=\""+req.getHeader("user-Agent")+"\".");
-	  uLayoutManager = new UserLayoutManager(req,getPerson(req));
+          // do the redirect
+          // for debug purposes, we do the fake mapping to the "netscape" layout
+          IUserPreferencesDB updb=new UserPreferencesDBImpl();
+          IPerson person=getPerson(req);
+          if(person==null) {
+              int guestUserId = 1;
+              person=new org.jasig.portal.security.provider.PersonImpl();
+              person.setID(guestUserId);
+          }
+          // establish mapping
+          updb.setUserBrowserMapping(person.getID(),req.getHeader("user-Agent"),"netscape");
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : establishing UA mapping for user=\""+person.getID()+"\" and UA=\""+req.getHeader("user-Agent")+"\".");
+          uLayoutManager = new UserLayoutManager(req,getPerson(req));
       }
 
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
       //  basically things that directly affect the userLayout structure)
       processUserLayoutParameters (req, uLayoutManager);
-      
+
 
 
 
@@ -268,22 +269,22 @@ public class LayoutBean
       */
 
       Node rElement=uLayoutManager.getRoot ();
-      
+
       Hashtable supTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
       Hashtable tupTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
-      
+
       for (Enumeration e = supTable.keys (); e.hasMoreElements ();) {
-	  String pName= (String) e.nextElement ();
-	  String pValue= (String) supTable.get (pName);
-	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting sparam \""+pName+"\"=\""+pValue+"\".");
-	  uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
+          String pName= (String) e.nextElement ();
+          String pValue= (String) supTable.get (pName);
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting sparam \""+pName+"\"=\""+pValue+"\".");
+          uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
       }
 
       for (Enumeration e = tupTable.keys (); e.hasMoreElements ();) {
-	  String pName= (String) e.nextElement ();
-	  String pValue= (String) tupTable.get (pName);
-	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting tparam \""+pName+"\"=\""+pValue+"\".");
-	  sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
+          String pName= (String) e.nextElement ();
+          String pValue= (String) tupTable.get (pName);
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting tparam \""+pName+"\"=\""+pValue+"\".");
+          sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
 
 
@@ -301,8 +302,8 @@ public class LayoutBean
 
 
     public void outputContent(HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out) {
-	// at this point the response can be commited
-	
+        // at this point the response can be commited
+
 
     }
 
@@ -321,33 +322,33 @@ public class LayoutBean
   {
       String[] values;
       if((values=req.getParameterValues("uP_help_target"))!=null) {
-	  for(int i=0;i<values.length;i++) {
-	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
-	  }
+          for(int i=0;i<values.length;i++) {
+              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
+          }
       }
-      
+
       if((values=req.getParameterValues("uP_about_target"))!=null) {
-	  for(int i=0;i<values.length;i++) {
-	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.ABOUT_BUTTON_EVENT));
-	  }
+          for(int i=0;i<values.length;i++) {
+              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.ABOUT_BUTTON_EVENT));
+          }
       }
 
       if((values=req.getParameterValues("uP_edit_target"))!=null) {
-	  for(int i=0;i<values.length;i++) {
-	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
-	  }
+          for(int i=0;i<values.length;i++) {
+              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
+          }
       }
 
       if((values=req.getParameterValues("uP_detach_target"))!=null) {
-	  for(int i=0;i<values.length;i++) {
-	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.DETACH_BUTTON_EVENT));
-	  }
+          for(int i=0;i<values.length;i++) {
+              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.DETACH_BUTTON_EVENT));
+          }
       }
-      
+
       if((values=req.getParameterValues("uP_remove_target"))!=null) {
-	  for(int i=0;i<values.length;i++) {
-	      man.removeChannel(values[i]);
-	  }
+          for(int i=0;i<values.length;i++) {
+              man.removeChannel(values[i]);
+          }
       }
   }
 }

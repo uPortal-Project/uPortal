@@ -9,8 +9,8 @@ package org.jasig.portal;
 import org.w3c.dom.*;
 
 public interface IUserLayoutDB {
-    public Document getUserLayout(String userName,String media);
-    public void setUserLayout(String userName,String media,Document layoutXML);
+    public Document getUserLayout(int userId,String media);
+    public void setUserLayout(int userId,String media,Document layoutXML);
 }
 
 

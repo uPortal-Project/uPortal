@@ -59,7 +59,7 @@ public interface IPrincipal {
    * security mechanism.
    *
    */
-  public String getGlobalUID();
+  public int getGlobalUID();
 
   /**
    * Returns the human-readable name of the principal. This should be either

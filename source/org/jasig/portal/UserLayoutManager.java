@@ -93,36 +93,37 @@ public class UserLayoutManager {
   {
     String fs = System.getProperty ("file.separator");
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
+    int guestId = 1; // belongs in a properties file
 
     uLayoutXML = null;
 
     try
     {
-	this.person=person;
+        this.person=person;
         // read uLayoutXML
         if (this.person == null) {
-	    // determine the default user
-	    this.person=new org.jasig.portal.security.provider.PersonImpl();
-	    this.person.setID("guest");
-	}
+            // determine the default user
+            this.person=new org.jasig.portal.security.provider.PersonImpl();
+            this.person.setID(guestId);
+        }
 
         // load user preferences
         IUserPreferencesDB updb=new UserPreferencesDBImpl();
 
-	// determine user profile
-	String userAgent=req.getHeader("user-Agent");
-	UserProfile upl=updb.getUserProfile(this.person.getID(),userAgent);
-	if(upl!=null) {
-	    IUserLayoutDB uldb = new UserLayoutDBImpl();
-	    uLayoutXML = uldb.getUserLayout(this.person.getID(),upl.getProfileName());
-	    if(uLayoutXML==null) Logger.log(Logger.ERROR,"UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\""+this.person.getID()+"\", profile=\""+upl.getProfileName()+"\".");
-	    this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(),upl));
-	} else {
-	    // there is no user-defined mapping for this particular browser.
-	    // user should be redirected to a browser-registration page.
-	    unmapped_user_agent=true;
-	    Logger.log(Logger.DEBUG,"UserLayoutManager::UserLayoutManager() : unable to find a profile for user \""+this.person.getID()+"\" and userAgent=\""+userAgent+"\".");
-	};
+        // determine user profile
+        String userAgent=req.getHeader("user-Agent");
+        UserProfile upl=updb.getUserProfile(this.person.getID(),userAgent);
+        if(upl!=null) {
+            IUserLayoutDB uldb = new UserLayoutDBImpl();
+            uLayoutXML = uldb.getUserLayout(this.person.getID(),upl.getProfileName());
+            if(uLayoutXML==null) Logger.log(Logger.ERROR,"UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\""+this.person.getID()+"\", profile=\""+upl.getProfileName()+"\".");
+            this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(),upl));
+        } else {
+            // there is no user-defined mapping for this particular browser.
+            // user should be redirected to a browser-registration page.
+            unmapped_user_agent=true;
+            Logger.log(Logger.DEBUG,"UserLayoutManager::UserLayoutManager() : unable to find a profile for user \""+this.person.getID()+"\" and userAgent=\""+userAgent+"\".");
+        };
     }
     catch (Exception e)
     {
@@ -134,84 +135,84 @@ public class UserLayoutManager {
     /* This function processes request parameters related to
      * setting Structure/Theme stylesheet parameters and attributes.
      * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr uP_tcattr)
-     * It also processes layout root requests (uP_root) 
+     * It also processes layout root requests (uP_root)
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
-	
-	// layout root setting
-	String root;
-	if((root=req.getParameter("uP_root"))!=null) {
-	    complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",root);
-	}
 
-	// other params
+        // layout root setting
+        String root;
+        if((root=req.getParameter("uP_root"))!=null) {
+            complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",root);
+        }
+
+        // other params
         String[] sparams=req.getParameterValues("uP_sparam");
-	if(sparams!=null) {
-	    for(int i=0;i<sparams.length;i++) {
-		String pValue=req.getParameter(sparams[i]);
-		complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i],pValue);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sparam \""+sparams[i]+"\"=\""+pValue+"\".");
-	    }
-	}
+        if(sparams!=null) {
+            for(int i=0;i<sparams.length;i++) {
+                String pValue=req.getParameter(sparams[i]);
+                complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i],pValue);
+                Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sparam \""+sparams[i]+"\"=\""+pValue+"\".");
+            }
+        }
 
         String[] tparams=req.getParameterValues("uP_tparam");
-	if(tparams!=null) {
-	    for(int i=0;i<tparams.length;i++) {
-		String pValue=req.getParameter(tparams[i]);
-		complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i],pValue);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tparam \""+tparams[i]+"\"=\""+pValue+"\".");
-	    }
-	}
+        if(tparams!=null) {
+            for(int i=0;i<tparams.length;i++) {
+                String pValue=req.getParameter(tparams[i]);
+                complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i],pValue);
+                Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tparam \""+tparams[i]+"\"=\""+pValue+"\".");
+            }
+        }
 
-	// attribute processing
+        // attribute processing
 
-	// structure transformation 
-	String[] sfattrs=req.getParameterValues("uP_sfattr");
-	if(sfattrs!=null) {
-	    for(int i=0;i<sfattrs.length;i++) {
-		String aName=sfattrs[i];
-		String[] aNode=req.getParameterValues(aName+"_folderId");
-		if(aNode!=null && aNode.length>0) {
-		    for(int j=0;j<aNode.length;j++) {
-			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
-			complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j],aName,aValue);
-			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sfattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
-		    }
-		}
-	    }
-	}
+        // structure transformation
+        String[] sfattrs=req.getParameterValues("uP_sfattr");
+        if(sfattrs!=null) {
+            for(int i=0;i<sfattrs.length;i++) {
+                String aName=sfattrs[i];
+                String[] aNode=req.getParameterValues(aName+"_folderId");
+                if(aNode!=null && aNode.length>0) {
+                    for(int j=0;j<aNode.length;j++) {
+                        String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+                        complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j],aName,aValue);
+                        Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sfattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+                    }
+                }
+            }
+        }
 
-	String[] scattrs=req.getParameterValues("uP_scattr");
-	if(scattrs!=null) {
-	    for(int i=0;i<scattrs.length;i++) {
-		String aName=scattrs[i];
-		String[] aNode=req.getParameterValues(aName+"_channelId");
-		if(aNode!=null && aNode.length>0) {
-		    for(int j=0;j<aNode.length;j++) {
-			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
-			complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
-			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting scattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
-		    }
-		}
-	    }
-	}
+        String[] scattrs=req.getParameterValues("uP_scattr");
+        if(scattrs!=null) {
+            for(int i=0;i<scattrs.length;i++) {
+                String aName=scattrs[i];
+                String[] aNode=req.getParameterValues(aName+"_channelId");
+                if(aNode!=null && aNode.length>0) {
+                    for(int j=0;j<aNode.length;j++) {
+                        String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+                        complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
+                        Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting scattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+                    }
+                }
+            }
+        }
 
 
-	// theme stylesheet attributes
-	String[] tcattrs=req.getParameterValues("uP_tcattr");
-	if(tcattrs!=null) {
-	    for(int i=0;i<tcattrs.length;i++) {
-		String aName=tcattrs[i];
-		String[] aNode=req.getParameterValues(aName+"_channelId");
-		if(aNode!=null && aNode.length>0) {
-		    for(int j=0;j<aNode.length;j++) {
-			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
-			complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
-			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tcattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
-		    }
-		}
-	    }
-	}
+        // theme stylesheet attributes
+        String[] tcattrs=req.getParameterValues("uP_tcattr");
+        if(tcattrs!=null) {
+            for(int i=0;i<tcattrs.length;i++) {
+                String aName=tcattrs[i];
+                String[] aNode=req.getParameterValues(aName+"_channelId");
+                if(aNode!=null && aNode.length>0) {
+                    for(int j=0;j<aNode.length;j++) {
+                        String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+                        complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
+                        Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tcattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+                    }
+                }
+            }
+        }
     }
 
 
@@ -220,8 +221,8 @@ public class UserLayoutManager {
 
 
 
-    public IPerson getPerson() { 
-	return person; 
+    public IPerson getPerson() {
+        return person;
     }
 
     public boolean userAgentUnmapped() { return unmapped_user_agent; }
@@ -351,9 +352,9 @@ public class UserLayoutManager {
         NodeList folderElements=argumentedUserLayoutXML.getElementsByTagName("folder");
         if(folderElements==null)
             Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
-	for(Enumeration fe=complete_fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
-	    String attributeName=(String) fe.nextElement();
-	    for(int i=folderElements.getLength()-1;i>=0;i--) {
+        for(Enumeration fe=complete_fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
+            String attributeName=(String) fe.nextElement();
+            for(int i=folderElements.getLength()-1;i>=0;i--) {
                 Element folderElement=(Element) folderElements.item(i);
                 folderElement.setAttribute(attributeName,complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),attributeName));
                 //		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
@@ -363,8 +364,8 @@ public class UserLayoutManager {
         NodeList channelElements=argumentedUserLayoutXML.getElementsByTagName("channel");
         if(channelElements==null)
             Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
-	for(Enumeration ce=complete_fsup.getChannelAttributeNames(); ce.hasMoreElements();) {
-	    String attributeName=(String) ce.nextElement();
+        for(Enumeration ce=complete_fsup.getChannelAttributeNames(); ce.hasMoreElements();) {
+            String attributeName=(String) ce.nextElement();
             for(int i=channelElements.getLength()-1;i>=0;i--) {
                 Element channelElement=(Element) channelElements.item(i);
                 channelElement.setAttribute(attributeName,complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),attributeName));
@@ -401,42 +402,42 @@ public class UserLayoutManager {
     }
 
     private UserPreferences getUserPreferences() {
-	return up;
+        return up;
     }
 
     public UserProfile getCurrentProfile() {
-	return this.getUserPreferences().getProfile();
+        return this.getUserPreferences().getProfile();
     }
 
-    
+
     private ThemeStylesheetDescription getThemeStylesheetDescription() {
-	if (this.tsd==null) {
-	    ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
-	    tsd=csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetName());
-	}
-	return tsd;
+        if (this.tsd==null) {
+            ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+            tsd=csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetName());
+        }
+        return tsd;
     }
 
     private StructureStylesheetDescription getStructureStylesheetDescription() {
-	if (this.ssd==null) {
-	    ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
-	    ssd=csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetName());
-	}
-	return ssd;
+        if (this.ssd==null) {
+            ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+            ssd=csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetName());
+        }
+        return ssd;
     }
 
     /*
      * Returns structure stylesheet defined by the user profile
      */
     public XSLTInputSource getStructureStylesheet() {
-	return new XSLTInputSource(UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
+        return new XSLTInputSource(UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
     }
 
     /*
      * Returns theme stylesheet defined by the user profile
      */
     public XSLTInputSource getThemeStylesheet() {
-	return new XSLTInputSource(UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
+        return new XSLTInputSource(UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
     }
 
     /*
@@ -444,7 +445,7 @@ public class UserLayoutManager {
      * in the user profile
      */
     public String getMimeType() {
-	return this.getThemeStylesheetDescription().getMimeType();
+        return this.getThemeStylesheetDescription().getMimeType();
     }
 
     /*
@@ -452,9 +453,9 @@ public class UserLayoutManager {
      * in the user profile
      */
     public String getSerializerName() {
-	return this.getThemeStylesheetDescription().getSerializerName();
+        return this.getThemeStylesheetDescription().getSerializerName();
     }
-    
+
 
   public Node getNode (String elementID)
   {
@@ -475,12 +476,12 @@ public class UserLayoutManager {
     // helper function that allows to determine the name of a channel or
     // folder in the current user layout given their ID.
     public String getNodeName(String nodeID) {
-	Element node=argumentedUserLayoutXML.getElementById(nodeID);
-	if(node!=null) {
-	    return node.getAttribute("name");
-	} else return null;
+        Element node=argumentedUserLayoutXML.getElementById(nodeID);
+        if(node!=null) {
+            return node.getAttribute("name");
+        } else return null;
     }
-	
+
 
   public void removeChannel (String str_ID)
   {

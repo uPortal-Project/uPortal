@@ -51,7 +51,7 @@ public class PersonImpl implements IPerson
 {
   protected Hashtable m_Attributes = null;
   protected String m_FullName = null;
-  protected String m_ID = null;
+  protected int m_ID =-1;
 
   /**
    * Returns an attribute for a key.  For multivalue attributes, this will be
@@ -98,7 +98,7 @@ public class PersonImpl implements IPerson
    * Returns the user's ID that was used for authentication.
    * @return User's ID.
    */
-  public String getID ()
+  public int getID ()
   {
     return m_ID;
   }
@@ -107,7 +107,7 @@ public class PersonImpl implements IPerson
    * Sets the user's ID.
    * @param sID User's ID as supplied for authentication
    */
-  public void setID (String sID)
+  public void setID (int sID)
   {
     m_ID = sID;
   }

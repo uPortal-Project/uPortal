@@ -110,9 +110,9 @@ public class ReferenceAuthorization implements IAuthorization
       return(false);
     }
 
-    String sUserName = person.getID();
+    int userId = person.getID();
 
-    if(sUserName == null)
+    if(userId == -1)
     {
       return(false);
     }
@@ -127,9 +127,9 @@ public class ReferenceAuthorization implements IAuthorization
       conn = rdbmServices.getConnection();
       Statement stmt = conn.createStatement();
 
-      String query = "select * from portal_user_roles where " +
-                     "upper(user_name)=upper('" + sUserName + "') and " +
-                     "upper(role)=upper('" + (String)role.getRoleTitle() + "')";
+      String query = "SELECT * FROM PORTAL_USER_ROLES WHERE " +
+                     "ID=" + userId + "') AND " +
+                     "UPPER(ROLE)=UPPER('" + (String)role.getRoleTitle() + "')";
 
       ResultSet rs = stmt.executeQuery(query);
 
@@ -242,13 +242,12 @@ public class ReferenceAuthorization implements IAuthorization
 
   public boolean canUserPublish(IPerson person)
   {
-    if(person == null || person.getID() == null)
+    if(person == null || person.getID() == -1)
     {
       // Possibly throw security exception
       return(false);
     }
 
-    String sUserName = person.getID();
     boolean canPublish = isUserInRole(person, new RoleImpl(s_channelPublisherRole));
     return(canPublish);
   }
@@ -256,13 +255,11 @@ public class ReferenceAuthorization implements IAuthorization
   // For the subscribe mechanism to use
   public Vector getAuthorizedChannels(IPerson person)
   {
-    if(person == null || person.getID() == null)
+    if(person == null || person.getID() == -1)
     {
       // Possibly throw security exception
       return(null);
     }
-
-    String sUserName = person.getID();
 
     return(new Vector());
   }
@@ -270,12 +267,10 @@ public class ReferenceAuthorization implements IAuthorization
   public boolean canUserSubscribe(IPerson person, int channelID)
   {
     // Fail immediatly if the inputs aren't reasonable
-    if(person == null || person.getID() == null)
+    if(person == null || person.getID() == -1)
     {
       return(false);
     }
-
-    String sUserName = person.getID();
 
     // Get all of the channel roles
     Vector chanRoles = getChannelRoles(channelID);
@@ -364,15 +359,15 @@ public class ReferenceAuthorization implements IAuthorization
   // For the render mechanism to use
   public Vector getUserRoles(IPerson person)
   {
-    if(person == null || person.getID() == null)
+    if(person == null || person.getID() == -1)
     {
       return(null);
     }
 
-    String sUserName = person.getID();
+    int userId = person.getID();
 
     // Check the smart cache for the roles first
-    Vector userRoles = (Vector)userRolesCache.get(sUserName);
+    Vector userRoles = (Vector)userRolesCache.get(new Integer(userId));
     if( userRoles != null )
     {
       return(userRoles);
@@ -392,8 +387,8 @@ public class ReferenceAuthorization implements IAuthorization
       conn = rdbmServices.getConnection();
       Statement stmt = conn.createStatement();
 
-      String query = "select role from portal_user_roles where " +
-      "user_name='" + sUserName + "'";
+      String query = "SELECT ROLE FROM PORTAL_USER_ROLES WHERE " +
+      "ID='" + userId + "'";
 
       ResultSet rs = stmt.executeQuery(query);
 
@@ -402,7 +397,7 @@ public class ReferenceAuthorization implements IAuthorization
         userRoles.addElement(rs.getString("ROLE"));
       }
 
-      userRolesCache.put(sUserName, userRoles);
+      userRolesCache.put(new Integer(userId), userRoles);
       return(userRoles);
     }
     catch(Exception e)
@@ -419,7 +414,7 @@ public class ReferenceAuthorization implements IAuthorization
   // For the administration mechanism to use
   public void addUserRoles(IPerson person, Vector roles)
   {
-    if(person == null || person.getID() == null || roles == null || roles.size() < 1)
+    if(person == null || person.getID() == -1 || roles == null || roles.size() < 1)
     {
       return;
     }
@@ -439,7 +434,7 @@ public class ReferenceAuthorization implements IAuthorization
 
       for(int i = 0; i < roles.size(); i++)
       {
-        insert = "insert into portal_user_roles (user_name, role) values (" + person.getID() + ", " + roles.elementAt(i) + ")";
+        insert = "INSERT INTO PORTAL_USER_ROLES (ID, ROLE) VALUES (" + person.getID() + ", " + roles.elementAt(i) + ")";
         insertCount = stmt.executeUpdate(insert);
 
         if(insertCount != 1)
@@ -463,7 +458,7 @@ public class ReferenceAuthorization implements IAuthorization
 
   public void removeUserRoles(IPerson person, Vector roles)
   {
-    if(person == null || person.getID() == null || roles == null || roles.size() < 1)
+    if(person == null || person.getID() == -1 || roles == null || roles.size() < 1)
     {
       return;
     }
@@ -483,7 +478,7 @@ public class ReferenceAuthorization implements IAuthorization
 
       for(int i = 0; i < roles.size(); i++)
       {
-        delete = "delete from portal_user_roles where " + "user_name = " + person.getID() + " and " + "role = " + roles.elementAt(i);
+        delete = "DELETE FROM PORTAL_USER_ROLES WHERE ID=" + person.getID() + " AND ROLE=" + roles.elementAt(i);
         deleteCount = stmt.executeUpdate(delete);
 
         if(deleteCount != 1)
