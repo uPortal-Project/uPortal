@@ -48,14 +48,16 @@ public interface IServant extends IChannel{
     /** Allows the Master Channel to ascertain if the Servant has accomplished the requested task 
      * (Note that the way which a certain task is requested is not specified by this interface; 
      * normally it will be documented by a particular IServant and require some particular 
-     * runtimeData and/or staticData parameters passed to the Servant by the Master)
+     * configuration paramaters used to initialize the servant)
+     * @return boolean
      */    
     public boolean isFinished();
     
     /** Many servant channels will fulfil their function
      * by providing some set of 1 or more Objects to the Master
-     * Channel.  This method should only be called by the Master once
-     * "isFinished" returns true
+     * Channel.  
+     * @return Object[]
+     *  the expected Object type should be documented by the IServant implementation
      */    
     public Object[] getResults();
     
