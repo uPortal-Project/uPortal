@@ -38,7 +38,7 @@ package org.jasig.portal.container.binding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.portlet.PortletMode;
@@ -196,7 +196,7 @@ public class PortletApplicationUnmarshaller {
             for (int i = 0; i < preferenceNL.getLength(); i += 1) {
                 Element preferenceE = (Element)preferenceNL.item(i);
                 String name = XML.getChildElementText(preferenceE, "name");
-                Collection values = new ArrayList(1); // There is usually just one value
+                List values = new ArrayList(1); // There is usually just one value
                 NodeList valueNL = preferenceE.getElementsByTagName("value");
                 for (int j = 0; j < valueNL.getLength(); j += 1) {
                     Element valueE = (Element)valueNL.item(j);

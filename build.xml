@@ -237,14 +237,14 @@
                        URL: http://jakarta.apache.org/commons/logging.html
                        
   portlet-api.jar      Portlet API based on JSR-168.
-                       Version: (from jakarta-pluto CVS on March 31, 2004)
+                       Version: (from jakarta-pluto CVS on April 13, 2004)
                        URL: http://www.jcp.org/en/jsr/detail?id=168
   
   pluto.jar            Reference Implementation of the Java Portlet Specfication.
                        This Portlet container provides a runtime environment for 
                        portlets implemented according to the Portlet API.
                        The project is still in the Apache Incubator.
-                       Version: (from jakarta-pluto CVS on March 31, 2004)
+                       Version: (from jakarta-pluto CVS on April 13, 2004)
                        URL: http://jakarta.apache.org/pluto/
 
   jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of

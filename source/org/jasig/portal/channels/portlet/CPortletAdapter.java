@@ -38,7 +38,6 @@ package org.jasig.portal.channels.portlet;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -216,7 +215,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     // are denoted by a comma-delimited String.  This is a little messy,
                     // but we want to minimize changes to the framework in order to support
                     // the portlet-to-channel adapter.
-                    Collection values = new ArrayList(1);
+                    List values = new ArrayList(1);
                     values.add(prefVal);
                     preferences.add(prefName, values);
                 }

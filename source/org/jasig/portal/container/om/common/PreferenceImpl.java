@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceCtrl;
@@ -90,7 +91,7 @@ public class PreferenceImpl implements Preference, PreferenceCtrl, Serializable 
         this.name = name;
     }
 
-    public void setValues(Collection values) {
+    public void setValues(List values) {
         this.values = ( values != null ) ? values : new ArrayList();
     }
 

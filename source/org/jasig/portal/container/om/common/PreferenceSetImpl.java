@@ -36,9 +36,9 @@
 package org.jasig.portal.container.om.common;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PreferencesValidator;
@@ -96,7 +96,7 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
     
     // PreferenceSetCtrl methods
     
-    public Preference add(String name, Collection values) {
+    public Preference add(String name, List values) {
         return add(name, values, false);
     }
 
@@ -126,7 +126,7 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
         preferences.clear();
     }
     
-    public Preference add(String name, Collection values, boolean readOnly) {
+    public Preference add(String name, List values, boolean readOnly) {
         PreferenceImpl preference = new PreferenceImpl();
         preference.setName(name);
         preference.setValues(values);
