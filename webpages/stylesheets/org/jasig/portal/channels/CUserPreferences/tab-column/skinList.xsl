@@ -47,11 +47,11 @@
     <tr>
       <td align="center" class="uportal-channel-text" valign="middle">
         <xsl:choose>
-          <xsl:when test="$currentSkin=Skin-Folder-Name">
-            <input type="radio" name="skinName" value="{Skin-Folder-Name}" checked="checked"/>
+          <xsl:when test="$currentSkin=Skin">
+            <input type="radio" name="skinName" value="{Skin}" checked="checked"/>
           </xsl:when>
           <xsl:otherwise>
-            <input type="radio" name="skinName" value="{Skin-Folder-Name}"/>
+            <input type="radio" name="skinName" value="{Skin}"/>
           </xsl:otherwise>
         </xsl:choose>
       </td>
@@ -62,7 +62,7 @@
 	    <xsl:value-of disable-output-escaping="yes" select="Skin-Description" />
       </td>
       <td align="center" valign="top">
-        <img alt="sample icon" src="{$mediaPath}/{Skin-Thumbnail-File}" width="120" height="90" border="0"/>
+        <img alt="sample icon" src="{$mediaPath}/{Skin}_thumb.gif" width="120" height="90" border="0"/>
       </td>
     </tr>  
   </xsl:template>
