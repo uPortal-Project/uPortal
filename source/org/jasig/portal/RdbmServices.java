@@ -31,21 +31,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-
 
 package  org.jasig.portal;
 
 import  org.jasig.portal.services.LogService;
-import  javax.servlet.*;
-import  javax.servlet.jsp.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.sql.*;
-
+import  java.io.InputStream;
+import  java.util.Properties;
+import  java.sql.Connection;
+import  java.sql.SQLException;
+import  java.sql.DriverManager;
 
 /**
  * Provides database access
@@ -65,7 +60,7 @@ public class RdbmServices {
   }
 
   /**
-   * put your documentation comment here
+   * Loads the JDBC properties from rdbm.properties file.
    */
   protected static void loadProps () {
     try {
@@ -92,18 +87,18 @@ public class RdbmServices {
     Connection conn = null;
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
-          Class.forName(sJdbcDriver).newInstance();
+        Class.forName(sJdbcDriver).newInstance();
         conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
         prevErrorMsg = "";
       } catch (ClassNotFoundException cnfe) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the logs/rdbm.properties file and your classpath.");
-        return  null;
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the rdbm.properties file and your classpath.");
+        return null;
       } catch (InstantiationException ie) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
-        return  null;
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the rdbm.properties file.");
+        return null;
       } catch (IllegalAccessException iae) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
-        return  null;
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the rdbm.properties file.");
+        return null;
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
