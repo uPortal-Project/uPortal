@@ -93,7 +93,7 @@ import org.jasig.portal.utils.CommonUtils;
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 
   private static final int LOST_FOLDER_ID = -1;
-
+  private static final String NODE_SEPARATOR = "-";
 
   protected static final String FRAGMENT_UPDATE_SQL = "UPDATE UP_FRAGMENTS SET NEXT_NODE_ID=?,PREV_NODE_ID=?,CHLD_NODE_ID=?,PRNT_NODE_ID=?,"+
                                                                "EXTERNAL_ID=?,CHAN_ID=?,NAME=?,TYPE=?,HIDDEN=?,IMMUTABLE=?,UNREMOVABLE=?,GROUP_KEY=?,"+
@@ -1376,7 +1376,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     Connection con = RDBMServices.getConnection();
 
 	try {
- 
+
        RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
        Statement stmt = con.createStatement();
@@ -1581,7 +1581,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     return fragments;
   } catch ( Exception e ) {
-  	  throw new PortalException(e);  
+  	  throw new PortalException(e);
   }
  }
 
@@ -1601,14 +1601,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
 
     ALFragment layout = (ALFragment) fragment;
-  
+
    try {
-  
+
        RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
 
        Statement stmt = con.createStatement();
-       
+
 	     boolean isOwner = false;
 	     boolean isNewFragment = false;
 		 // Check if the user was an owner
@@ -1617,26 +1617,26 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		  if ( rs.getInt(1) == userId )
 		    isOwner = true;
 		 } else
-		    isNewFragment = true;  
+		    isNewFragment = true;
 		 if ( rs != null ) rs.close();
-		 
+
 		 if ( !isOwner && !isNewFragment )
 		  throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
-		  
+
 	  ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
-	  String fragmentRootId = rootNode.getFirstChildNodeId();	  
+	  String fragmentRootId = rootNode.getFirstChildNodeId();
 
       // Check if the fragment is new
       if ( isNewFragment ) {
-      	
-		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
+
+		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+
 		"VALUES (?,?,?,?,?,?)";
 		PreparedStatement ps = con.prepareStatement(sqlInsert);
 		ps.setInt(1,CommonUtils.parseInt(fragmentId));
 		if ( fragmentRootId != null )
 		 ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
 		else
-		 ps.setNull(2,Types.INTEGER); 
+		 ps.setNull(2,Types.INTEGER);
 		ps.setInt(3,userId);
 		ps.setString(4,layout.getName());
 		ps.setString(5,layout.getDescription());
@@ -1644,8 +1644,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      	ps.executeUpdate();
      	ps.close();
       } else {
-		 	 
-		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
+
+		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";
 		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
 		 ps.setString(1,layout.getName());
 		 ps.setString(2,layout.getDescription());
@@ -1653,12 +1653,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		 if ( fragmentRootId != null )
 		  ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
 	     else
-		  ps.setNull(4,Types.INTEGER); 
+		  ps.setNull(4,Types.INTEGER);
 		 ps.setInt(5,userId);
 		 ps.setInt(6,CommonUtils.parseInt(fragmentId));
 		 ps.executeUpdate();
 		 ps.close();
-        }  
+        }
 
       // Clear the previous data related to the user layout
       stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
@@ -1678,12 +1678,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
          ALNode node = layout.getNode(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
-         
+
          // Setting the fragment ID
          node.getNodeDescription().setFragmentId(fragmentId);
 
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
-        
+
          if (  CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 )
            addUserLayoutNode(userId,0,node,psAddFragmentNode,psAddFragmentRestriction,null,null);
 
@@ -1725,12 +1725,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	 * @exception PortalException if an error occurs
 	 */
    public void deleteFragment (IPerson person, String fragmentId) throws PortalException {
-   	
+
 	   int userId = person.getID();
 	   Connection con = RDBMServices.getConnection();
-  
+
 	try {
-		
+
 	    RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
 		Statement stmt = con.createStatement();
@@ -1740,23 +1740,23 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		if ( rs.next() ) {
 		 if ( rs.getInt(1) == userId )
 			isOwner = true;
-		} 
+		}
 	     if ( rs != null ) rs.close();
-		 
+
 		 if ( !isOwner )
 			throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
-		
-		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);	
-			
-		stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);	
-	 
-		String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
+
+		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
+
+		stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
+
+		String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
 		PreparedStatement ps = con.prepareStatement(sqlUpdate);
 		ps.setInt(1,userId);
 		ps.setInt(2,CommonUtils.parseInt(fragmentId));
 		ps.executeUpdate();
 		ps.close();
-		
+
 		if ( stmt != null ) stmt.close();
 
 	    // Commit all the changes
@@ -1774,8 +1774,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				   errorMessage += ":" + sqle.getMessage();
 				}
 				 throw new PortalException(errorMessage);
-			  }	
-   	
+			  }
+
    }
 
 
@@ -2055,7 +2055,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 IALFolderDescription folderDesc = new ALFolderDescription();
                 // If children exist in the folder
                 if ( childId > 0 )
-                 childIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+childId):(childId+"");
+                 childIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+childId):(childId+"");
                 ((ALFolder)node).setFirstChildNodeId(childIdStr);
                 String type = rs.getString(8);
                 int intType;
@@ -2093,14 +2093,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // Setting the node id
               if ( fragmentId > 0 && fragmentNodeId <= 0 )
-               nodeDesc.setId(fragmentId+":"+structId);
+               nodeDesc.setId(fragmentId+NODE_SEPARATOR+structId);
               else
                nodeDesc.setId((structId!=LOST_FOLDER_ID)?(structId+""):IALFolderDescription.LOST_FOLDER_ID);
 
               // Setting the next node id
               if ( nextId != 0 ) {
                  //node.setNextNodeId((nextId!=LOST_NODE_ID)?(nextId+""):IALFolderDescription.LOST_FOLDER_ID);
-               String nextIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+nextId):(nextId+"");
+               String nextIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+nextId):(nextId+"");
                node.setNextNodeId(nextIdStr);
               }
 
@@ -2113,7 +2113,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                parentId = IALFolderDescription.LOST_FOLDER_ID;
                                break;
                default:
-                               parentId = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+prntId):(prntId+"");
+                               parentId = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+prntId):(prntId+"");
 
               }
 
@@ -2123,7 +2123,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               // Setting the previous node id
               if ( prevId != 0 ) {
                 //node.setPreviousNodeId((prevId!=LOST_NODE_ID)?(prevId+""):IALFolderDescription.LOST_FOLDER_ID);
-               String prevIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+prevId):(prevId+"");
+               String prevIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+prevId):(prevId+"");
                node.setPreviousNodeId(prevIdStr);
               }
 
@@ -2133,12 +2133,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             String fragmentNodeIdStr = nodeDesc.getFragmentNodeId();
             String fragmentIdStr = nodeDesc.getFragmentId();
             String nodeIdStr = structId+"";
-            String key = fragmentId+":"+structId;
+            String key = fragmentId+NODE_SEPARATOR+structId;
 
               // Putting the node into the layout hashtable with an appropriate key
               node.setNodeDescription(nodeDesc);
               if ( fragmentNodeIdStr != null ) {
-               fragmentNodes.put(fragmentIdStr+":"+fragmentNodeIdStr,node);
+               fragmentNodes.put(fragmentIdStr+NODE_SEPARATOR+fragmentNodeIdStr,node);
               } else {
                   if ( fragmentIdStr != null && fragmentNodes.containsKey(key) ) {
                     ALNode fragNode = (ALNode) fragmentNodes.get(key);
@@ -2387,7 +2387,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          for ( Enumeration fragmentIds = pushFragmentRoots.keys(); fragmentIds.hasMoreElements() ;) {
             String strFragmentId = fragmentIds.nextElement().toString();
             String strFragmentRootId = pushFragmentRoots.get(strFragmentId).toString();
-            String key = strFragmentId+":"+strFragmentRootId;
+            String key = strFragmentId+NODE_SEPARATOR+strFragmentRootId;
             ALNode node = (ALNode) layoutData.get(key);
             if ( node != null ) {
                 IALNodeDescription nodeDesc = node.getNodeDescription();
@@ -2497,9 +2497,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           firstStructId = rs.getInt(1);
           layout.setName(rs.getString(2));
 		  layout.setDescription(rs.getString(3));
-		  if ("Y".equals(rs.getString(4))) 
+		  if ("Y".equals(rs.getString(4)))
 		     layout.setPushedFragment();
-		  else   
+		  else
 		     layout.setPulledFragment();
         } finally {
           rs.close();
@@ -2512,11 +2512,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         layoutData.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
         layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
-        
+
 	    // Setting the first layout node ID to the root folder
 	    if ( firstStructId > 0 )
 		 rootNode.setFirstChildNodeId(firstStructId+"");
-		else 
+		else
 	     rootNode.setFirstChildNodeId(null);
 
         // The query for getting information of the fragments
