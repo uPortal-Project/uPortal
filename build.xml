@@ -430,7 +430,7 @@
     <!-- Copy the contents of the build directory -->
     <mkdir     dir="${deploy.home}"/>
     <copy    todir="${deploy.home}">
-      <fileset dir="${build.home}"/>
+      <fileset dir="${build.home}" excludes="stylesheets/**"/>
     </copy>
 
     <!-- Copy external dependencies as required -->
@@ -780,10 +780,10 @@ Example:
 
   Example:
 
-  ant regstylesheet
+  ant addstylesheet
     -DstylesheetType=-t
-    -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
-    -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
+    -DstylesheetUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl
+    -DdescriptionUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf
 
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
@@ -818,9 +818,9 @@ Example:
   Example:
 
   ant modstylesheet
-    -DstylesheetType=-t
-    -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
-    -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
+    -DstylesheetType=-s
+    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
+    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
     -DstylesheetId=1
 
   where -s = specify structure stylesheet
