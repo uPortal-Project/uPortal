@@ -56,6 +56,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.security.IPerson;
@@ -144,7 +145,11 @@ public class RemoteChannel implements IRemoteChannel {
     IChannel channel = null;
     String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();
 
+    // Locate the channel by "fname" (functional name)
     ChannelDefinition channelDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
+    if (channelDef == null)
+      throw new ResourceMissingException("fname:" + fname, fname + " channel", "Unable to find a channel with functional name '" + fname + "'");
+
     String javaClass = channelDef.getJavaClass();
     String uid = messageContext.getProperty(SimpleSessionHandler.SESSION_ID) + "/" + instanceId;
     channel = ChannelFactory.instantiateChannel(javaClass, uid);
@@ -210,7 +215,7 @@ public class RemoteChannel implements IRemoteChannel {
     channelDef = (ChannelDefinition)session.get(CHANNEL_DEFINITION_ID_PREFIX + instanceId);
 
     if (channel == null || channelDef == null)
-      throw new PortalException("No channel found for instance ID '" + instanceId);
+      throw new ResourceMissingException("id:" + instanceId, instanceId + " channel", "Unable to find a channel with instance ID '" + instanceId + "'");
 
     // Set up channel runtime data and give it to channel
     ChannelRuntimeData runtimeData = new ChannelRuntimeData();
@@ -280,7 +285,7 @@ public class RemoteChannel implements IRemoteChannel {
     IChannel channel = (IChannel)session.get(CHANNEL_INSTANCE_ID_PREFIX + instanceId);  
 
     if (channel == null)
-      throw new PortalException("No channel found for instance ID '" + instanceId);
+      throw new ResourceMissingException("id:" + instanceId, instanceId + " channel", "Unable to find a channel with instance ID '" + instanceId + "'");
 
     // Pass the channel its event
     channel.receiveEvent(event);
