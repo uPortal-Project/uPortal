@@ -605,8 +605,7 @@
 
 -->
 
-  <target name="javadoc" depends="compile"
-   description="Create Javadoc API documentation">
+  <target name="javadoc" description="Create Javadoc API documentation">
 
     <mkdir dir="${dist.home}/docs/api"/>
     <javadoc sourcepath="source"
