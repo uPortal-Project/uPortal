@@ -127,7 +127,7 @@
 					<option value="3">ends with</option>
 					<option value="4" selected="selected">contains</option>
 				</select>
-				<input type="text" size="10" name="grpQuery"/>
+				<input type="text" size="10" name="grpQuery" class="uportal-input-text"/>
 				<input type="submit" class="uportal-button" value="Go"/>
 				</td>
 				</tr>
