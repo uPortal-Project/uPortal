@@ -52,9 +52,9 @@
         </xsl:if>
         <xsl:apply-templates select="content"/>
         <table width="100%" border="0" cellpadding="1" cellspacing="0">
-          <tr>
+          <tr><td>
             <xsl:apply-templates select="footer"/>
-          </tr>
+          </td></tr>
         </table>
       </body>
     </html>
