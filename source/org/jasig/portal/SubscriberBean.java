@@ -93,13 +93,10 @@ public class SubscriberBean extends GenericPortalBean{
         {
           String sChannelXml = rs.getString ("CHANNEL_XML");
 
-          // Tack on the full path to layout.dtd
-          //int iInsertBefore = sChannelXml.indexOf (layoutbean.sLayoutDtd);
-          //sChannelXml = sChannelXml.substring (0, iInsertBefore) + layoutbean.sPathToLayoutDtd + sChannelXml.substring (iInsertBefore);
-
           String xmlFilePackage = "org.jasig.portal.layout";
           channelXml = Xml.openDocument (xmlFilePackage, new StringReader (sChannelXml));
         }
+
         stmt.close ();
 
       return channelXml;
@@ -114,7 +111,6 @@ public class SubscriberBean extends GenericPortalBean{
     }
     return null;
   }
-
 
   /**
    * Returns a channel instance
@@ -153,7 +149,8 @@ public class SubscriberBean extends GenericPortalBean{
 
     Collections.sort(instanceIDs);
     int iHighest = -1;
-    if (instanceIDs.size() > 0) {
+    if (instanceIDs.size() > 0)
+    {
        iHighest = ((Integer)instanceIDs.get (instanceIDs.size () - 1)).intValue ();
     }
     String sInstanceID = "c" + (iHighest + 1);
@@ -199,7 +196,7 @@ public class SubscriberBean extends GenericPortalBean{
 
         out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
         out.println ("  <tr>");
-        out.println ("    <td bgcolor=cccccc>");
+        out.print ("    <td bgcolor=cccccc>");
 
         // Channel heading
         IXml layoutXml = layoutbean.getLayoutXml (req, layoutbean.getUserName (req));
@@ -208,9 +205,9 @@ public class SubscriberBean extends GenericPortalBean{
         out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
         out.println ("        <tr>");
         out.println ("          <td>");
-        out.println ("            <font face=arial color=#000000><b>&nbsp;" + ch.getName() + "</b></font>");
+        out.println ("            <span class=\"PortalText\"><b>&nbsp;" + ch.getName() + "</b></span>");
         out.println ("          </td>");
-        out.println ("          <td nowrap valign=center align=right>");
+        out.println ("          <td nowrap valign=\"middle\" align=right>");
         out.println ("            &nbsp;");
 
         // Channel control buttons
@@ -243,10 +240,8 @@ public class SubscriberBean extends GenericPortalBean{
             out.println ("              <tr>");
             out.println ("                <td valign=top>");
 
-
               // Render channel contents
               ch.render (req, res, out);
-
 
             out.println ("                </td>");
             out.println ("              </tr>");
@@ -344,7 +339,9 @@ public class SubscriberBean extends GenericPortalBean{
       setRegistry();
 
       if (registry==null)
+      {
         debug("registry is null!!");
+      }
 
       Enumeration e = registry.keys();
       int chanID = -1;
@@ -354,6 +351,9 @@ public class SubscriberBean extends GenericPortalBean{
       // Go through each catagory
       while(e.hasMoreElements())
       {
+        // Make sure the buffer is clear
+        StringWriter w = new StringWriter();
+
         // Do not display the catagory if the user cannot
         //  subscribe to any channels under it
         channelList = new String();
@@ -363,7 +363,7 @@ public class SubscriberBean extends GenericPortalBean{
         Vector v = (Vector)registry.get(cat);
 
         // Output the catagory name
-        channelList += "<br><b>" + cat + "</b><br>";
+        w.write("<span class=\"PortalText\"><b>" + cat + "</b><br></span>\n");
 
         Enumeration enum = v.elements();
 
@@ -390,17 +390,24 @@ public class SubscriberBean extends GenericPortalBean{
           {
             canSubscribe = true;
 
-            channelList += chan[1] + "&nbsp;" +
-                           "<a href=\"personalizeLayout.jsp?action=addChannel&column=0&chan_id=" + chan[0] + "\">" +
-                           "<IMG SRC=\"images/add.gif\" WIDTH=\"20\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Add Channel\"></a>&nbsp;"+
-                           "<a href=\"previewChannel.jsp?chan_id=" + chan[0] + "\">" +
-                           "<IMG SRC=\"images/preview.gif\" WIDTH=\"16\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Preview Channel\"></a><br>";
+            w.write("<span class=\"PortalText\">\n");
+            w.write("<a href=\"personalizeLayout.jsp?action=addChannel&column=0&chan_id=" + chan[0] + "\">");
+            w.write("<IMG SRC=\"images/add.gif\" WIDTH=\"20\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Add Channel\"></a>&nbsp;");
+            w.write("<a href=\"previewChannel.jsp?chan_id=" + chan[0] + "\">");
+            w.write("<IMG SRC=\"images/preview.gif\" WIDTH=\"16\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Preview Channel\"></a>");
+            w.write("&nbsp;<span class=\"PortalText\">" + chan[1] + "</span><br>\n");
+            w.write("</span>\n");
           }
         }
 
         if(canSubscribe)
         {
-          out.println(channelList);
+          out.println(w.toString());
+
+          if(e.hasMoreElements())
+          {
+            out.write("<br>");
+          }
         }
       }
     }
