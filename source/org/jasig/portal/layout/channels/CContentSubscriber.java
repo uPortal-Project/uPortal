@@ -37,7 +37,6 @@ package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.CommonUtils;
