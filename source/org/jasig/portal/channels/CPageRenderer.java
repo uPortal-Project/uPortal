@@ -92,6 +92,13 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     try
     {
       m_sUrl = (String) chConfig.get ("url");
+
+      if(m_sUrl == null)
+      {
+        out.print("Cannot render channel: URL is null");
+        return;
+      }
+
       // if the URL has only two slashes, terminate it with a third
       if (m_sUrl.substring(m_sUrl.indexOf("/")+1).lastIndexOf("/") ==
 	  m_sUrl.substring(m_sUrl.indexOf("/")+1).indexOf("/"))
