@@ -112,7 +112,7 @@ public abstract class ALNode implements IALNode {
     public void setNodeDescription(IALNodeDescription nd) {
         nodeDescription = nd;
     }
-    public INodeDescription getNodeDescription() {
+    public IALNodeDescription getNodeDescription() {
         return nodeDescription;
     }
     /**

@@ -7,6 +7,8 @@ package org.jasig.portal.layout.al.common.restrictions;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
@@ -16,6 +18,7 @@ import org.jasig.portal.layout.al.IAggregatedLayout;
 import org.jasig.portal.layout.al.common.IUserLayout;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
+import org.jasig.portal.layout.al.IALNodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.NodeType;
@@ -305,37 +308,30 @@ public class ALRestrictionManager implements IALRestrictionManager {
   }
 
 
-
-    
-
-  public boolean checkUpdateRestrictions(INodeDescription nodeDescription) throws PortalException {
+  public boolean checkUpdateRestrictions(INodeDescription nodeDescription, INodeId nodeId ) throws PortalException {
   	   
-  	    // TODO
-  	
-        /*IALNodeDescription nodeDesc=(IALNodeDescription)nodeDescription;
-        INodeId nodeId = nodeDesc.getId();
-
+        IALNodeDescription nodeDesc=(IALNodeDescription) nodeDescription;
+        
         if ( nodeId == null ) return false;
+        
         IALNode node = layout.getLayoutNode(nodeId);
-        IALNodeDescription currentNodeDesc = (IALNodeDescription) node.getNodeDescription();
-        // If the node Ids do no match to each other then return false
-        if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
+        IALNodeDescription currentNodeDesc = node.getNodeDescription();
 
         // Checking the immutable node restriction
         //if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
-        if ( currentNodeDesc.isImmutable() )
+        if ( node.isImmutable() )
             return false;
 
         // Checking the immutable parent node related restriction
-        if ( getRestriction((ALNode)node.getParentNode(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH) != null &&
-             checkRestriction(node.getParentNode().getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,"true") )
+        if ( getRestriction((IALNode)node.getParentNode(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH) != null &&
+             checkRestriction(((ILayoutNode)node.getParentNode()).getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,"true") )
             return false;
 
         // Checking the immutable children node related restrictions
-        if ( node.getNodeType() == NodeType.FOLDER ) {
-            ALFolder folder = (ALFolder) node;
+        if ( node.getType().equals(NodeType.FOLDER) ) {
+            IALFolder folder = (IALFolder) node;
             //Loop for all children
-            for ( node = (ALNode) folder.getFirstChildNode(); node != null; node = (ALNode) node.getNextSiblingNode() )
+            for ( node = (IALNode) folder.getFirstChildNode(); node != null; node = (IALNode) node.getNextSiblingNode() )
              if ( getRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH) != null &&
                   checkRestriction(node.getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,"true") )
                   return false;
@@ -343,7 +339,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
        // if a new node description doesn't contain any restrictions the old restrictions will be used
         if ( nodeDesc.getRestrictions() == null )
-          nodeDesc.setRestrictions(currentNodeDesc.getRestrictions());
+          nodeDesc.setRestrictions(node.getRestrictions());
+        
         Hashtable rhash = nodeDesc.getRestrictions();
         // Setting the new node description to the node
         node.setNodeDescription(nodeDesc);
@@ -359,7 +356,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
 
         // Checking parent related restrictions for the children
-        Collection restrictions = ((ALNode)node.getParentNode()).getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
+        Collection restrictions = ((IALNode)node.getParentNode()).getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
         for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( !restriction.checkRestriction(node) ) {
@@ -370,8 +367,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
 
         // Checking child related restrictions for the parent
-        if ( node.getNodeType() == NodeType.FOLDER ) {
-         for ( ALNode child = (ALNode) node.getFirstChildNode(); child != null; ) {
+        if ( node.getType().equals(NodeType.FOLDER) ) {
+         for ( IALNode child = (IALNode) ((IALFolder)node).getFirstChildNode(); child != null; ) {
           restrictions = child.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
           for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
@@ -380,13 +377,12 @@ public class ALRestrictionManager implements IALRestrictionManager {
             return false;
            }
           }
-          child=(ALNode) child.getNextSiblingNode();
+          child=(IALNode) child.getNextSiblingNode();
          }
         }
 
-        return true; */
+        return true;
   	
-  	    return true;
     }  
   	
 

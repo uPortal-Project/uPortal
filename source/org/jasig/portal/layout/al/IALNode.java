@@ -12,8 +12,12 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
  * aggregation and restriction information.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  * @version 1.0
  */
 public interface IALNode extends ILayoutNode, IALNodeDescription {
+	
+	public void setNodeDescription(IALNodeDescription nd);
+    public IALNodeDescription getNodeDescription();
     
 }

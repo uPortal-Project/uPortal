@@ -100,9 +100,10 @@ public interface IRestrictionManager {
   /**
    * Checks the necessary restrictions while updating a node.
    * @param nodeDescription a <code>IUserLayoutNodeDescription</code> node description of a node to be updated
+   * @param nodeId a node id
    * @return a boolean value
    * @exception PortalException if an error occurs
    */
-  public boolean checkUpdateRestrictions(INodeDescription nodeDescription) throws PortalException;
+  public boolean checkUpdateRestrictions(INodeDescription nodeDescription, INodeId nodeId) throws PortalException;
   
 }
