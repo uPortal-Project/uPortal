@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.layout.InfrastructureUserLayoutManagerWrapper;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
@@ -164,8 +165,10 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
     /* This function processes request parameters related to
      * setting Structure/Theme stylesheet parameters and attributes.
-     * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr uP_tcattr)
-     * It also processes layout root requests (uP_root)
+     * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr
+     * uP_tcattr)
+     * It also processes layout root requests (uP_root) and
+     * (up_fname)
      * @param req current <code>HttpServletRequest</code>
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
@@ -205,7 +208,30 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
             }
         }
-        // other params
+        
+        // fname and root are mutually exclusive and
+        // should not be used in the same request,
+        // as an fname is treated as the root target.
+        String fname = req.getParameter("uP_fname");
+        if (fname != null) {
+            // get a subscribe id for the fname
+            String subId = ulm.getSubscribeId(fname);
+            if ( ulm instanceof InfrastructureUserLayoutManagerWrapper ){
+                // get wrapper implementation for focusing
+                InfrastructureUserLayoutManagerWrapper iulm =
+                    (InfrastructureUserLayoutManagerWrapper) ulm;
+                // .. and now set it as the focused id                
+                iulm.setFocusedId(subId);
+            }
+            
+            complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",
+                                                                                  subId);
+            LogService.log(LogService.DEBUG,
+                           "UserPreferencesManager::processUserPreferencesParameters() : " +
+                           "setting sfname \" userLayoutRoot" + "\"=\"" + subId + "\".");
+        }
+
+        // other params    
         String[] sparams = req.getParameterValues("uP_sparam");
         if (sparams != null) {
             for (int i = 0; i < sparams.length; i++) {
