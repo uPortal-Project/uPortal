@@ -33,21 +33,20 @@
  *
  */
 
+package org.jasig.portal;
 
-package  org.jasig.portal;
-
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.utils.XSLT;
-import  org.jasig.portal.services.LogService;
-import  javax.servlet.*;
-import  javax.servlet.jsp.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.text.*;
-import  java.net.*;
-import  org.w3c.dom.*;
-
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import javax.servlet.*;
+import javax.servlet.jsp.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.net.*;
+import org.w3c.dom.*;
 
 /**
  * A multithreaded version of a UserInstance.
@@ -68,18 +67,15 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     }
     Map stateTable;
 
-
     // manages layout and preferences
     GuestUserPreferencesManager uLayoutManager;
-
 
     public GuestUserInstance(IPerson person) {
         super(person);
         // instantiate state table
-	stateTable=Collections.synchronizedMap(new HashMap());
+	      stateTable=Collections.synchronizedMap(new HashMap());
         uLayoutManager=new GuestUserPreferencesManager(person);
     }
-
 
     /**
      * Register arrival of a new session.
@@ -87,7 +83,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param req a <code>HttpServletRequest</code> value
      */
     public void registerSession(HttpServletRequest req) throws PortalException {
-	IState newState=new IState();
+	      IState newState=new IState();
         newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
         newState.p_rendering_lock=new Object();
         uLayoutManager.registerSession(req);
@@ -99,16 +95,15 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param sessionId a <code>String</code> value
      */
     public void unbindSession(String sessionId) {
-	IState state=(IState)stateTable.get(sessionId);
-	if(state==null) {
-	    LogService.instance().log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-	    return;
-	}
+        IState state=(IState)stateTable.get(sessionId);
+        if(state==null) {
+            LogService.instance().log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            return;
+        }
         state.channelManager.finishedSession();
         uLayoutManager.unbindSession(sessionId);
-	stateTable.remove(sessionId);
+        stateTable.remove(sessionId);
     }
-
 
     /**
      * This notifies UserInstance that it has been unbound from the session.
@@ -119,6 +114,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
         this.unbindSession(bindingEvent.getSession().getId());
         LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+
+        // Record the destruction of the session
+        StatsRecorder.recordSessionDestroyed(person);
     }
 
     /**
@@ -128,6 +126,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
         LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+
+        // Record the creation of the session
+        StatsRecorder.recordSessionCreated(person);
     }
 
     /**
@@ -138,11 +139,11 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
         String sessionId=req.getSession(false).getId();
-	IState state=(IState)stateTable.get(sessionId);
-	if(state==null) {
-	    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-	    return;
-	}
+        IState state=(IState)stateTable.get(sessionId);
+        if(state==null) {
+            LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            return;
+        }
         // instantiate user layout manager and check to see if the profile mapping has been established
         if (state.p_browserMapper != null) {
             try {
