@@ -40,30 +40,33 @@ Version $Revision$
 
 <xsl:param name="baseActionURL">default</xsl:param>
 <xsl:param name="locale">en_US</xsl:param>
-
+<xsl:param name="guessSuggest">default</xsl:param>
+<xsl:param name="theAnswerWasX">default</xsl:param>
+<xsl:param name="youHaveMadeXGuesses">default</xsl:param>
+<xsl:param name="youGotItAfterXTries">default</xsl:param>
+<xsl:param name="YourGuessOfGuessWasIncorrect">default</xsl:param>
+<xsl:param name="IAmThinkingOfANumberBetweenXAndY">default</xsl:param>
 <xsl:template match="content">
   <xsl:choose>
     <xsl:when test="suggest">
-      Your guess of <xsl:value-of select="guess"/> was incorrect.
-      Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
-      You have made <xsl:value-of select="guesses"/> guesses.
+      <xsl:value-of select="$YourGuessOfGuessWasIncorrect"/>
+      <xsl:value-of select="$TRY_AGAIN"/> -- <xsl:value-of select="$guessSuggest"/><br />
+      <xsl:value-of select="$youHaveMadeXGuesses"/>
     </xsl:when>
     <xsl:when test="answer">
-      You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries!
-      The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
-      <p>Please play again...</p>
+      <xsl:value-of select="$youGotItAfterXTries"/><br />
+      <xsl:value-of select="$theAnswerWasX"/><br />
+      <p><xsl:value-of select="$PLEASE_PLAY_AGAIN"/></p>
     </xsl:when>
-    <xsl:otherwise>This is a number guessing game.<br /></xsl:otherwise>
+    <xsl:otherwise><xsl:value-of select="$THIS_IS_A_NUMBER_GUESSING_GAME"/><br /></xsl:otherwise>
   </xsl:choose> 
   
-  I am thinking of a number between 
-  <xsl:value-of select="minNum"/> and 
-  <xsl:value-of select="maxNum"/>.<br />
-  What's your guess?
+  <xsl:value-of select="$IAmThinkingOfANumberBetweenXAndY"/><br />
+  <xsl:value-of select="$WHATS_YOUR_GUESS"/>
     <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
-      <input type="submit" value="Submit" class="uportal-button"/>
+      <input type="submit" value="{$SUBMIT}" class="uportal-button"/>
     </form>
 </xsl:template>
 
