@@ -37,6 +37,7 @@ package org.jasig.portal.services;
 
 import org.jasig.portal.services.stats.IStatsRecorderFactory;
 import org.jasig.portal.services.stats.IStatsRecorder;
+import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
 import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
 import org.jasig.portal.services.stats.RecordLoginWorkerTask;
 import org.jasig.portal.services.stats.RecordLogoutWorkerTask;
@@ -45,10 +46,14 @@ import org.jasig.portal.services.stats.RecordSessionDestroyedWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelDefinitionPublishedWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelDefinitionModifiedWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelDefinitionRemovedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelAddedToLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelRemovedFromLayoutWorkerTask;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.PropertiesManager;
 
@@ -88,7 +93,8 @@ public class StatsRecorder {
   
   /**
    * Creates an instance of this stats recorder service.
-   * @return StatsRecorder instance
+   * @return statsRecorderInstance, a <code>StatsRecorder</code>
+   * instance
    */
   private final static synchronized StatsRecorder instance() {
     if (statsRecorderInstance == null) { 
@@ -96,6 +102,15 @@ public class StatsRecorder {
     }
     return statsRecorderInstance;
   }
+  
+  /**
+   * Creates an instance of a 
+   * <code>StatsRecorderLayoutEventListener</code>.
+   * @return layoutEventListener, a new stats recorder layout event listener instance
+   */
+  public final static StatsRecorderLayoutEventListener newLayoutEventListener(IPerson person, UserProfile profile) {
+    return new StatsRecorderLayoutEventListener(person, profile);
+  }  
   
   /**
    * Record the successful login of a user.
@@ -170,5 +185,29 @@ public class StatsRecorder {
     StatsRecorderWorkerTask task = new RecordChannelDefinitionRemovedWorkerTask(person, channelDef);
     task.setStatsRecorder(instance().statsRecorder);
     WorkTracker workTracker = instance().threadPool.execute(task);
-  }   
+  }  
+  
+  /**
+   * Record that a channel is being added to a user layout
+   * @param person, the person adding the channel
+   * @param profile, the profile of the layout to which the channel is being added
+   * @param channelDesc, the channel being subscribed to
+   */
+  public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelAddedToLayoutWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }    
+  
+  /**
+   * Record that a channel is being removed from a user layout
+   * @param person, the person removing the channel
+   * @param profile, the profile of the layout to which the channel is being added
+   * @param channelDesc, the channel being removed from a user layout
+   */
+  public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelRemovedFromLayoutWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }
 }
