@@ -69,6 +69,10 @@ import org.jasig.portal.security.IPerson;
 
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.layout.LayoutEventListener;
+import org.jasig.portal.layout.LayoutEvent;
+import org.jasig.portal.layout.LayoutMoveEvent;
+
 
 import tyrex.naming.MemoryContext;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -85,7 +89,7 @@ import org.jasig.portal.serialize.CachingSerializer;
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
-public class ChannelManager {
+public class ChannelManager implements LayoutEventListener {
     private IUserPreferencesManager upm;
     private PortalControlStructures pcs;
 
@@ -678,6 +682,7 @@ public class ChannelManager {
      *
      * @param channelSubscribeId a <code>String</code> value
      */
+    /*
     public void removeChannel(String channelSubscribeId) {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
@@ -691,6 +696,17 @@ public class ChannelManager {
             } catch (PortalException gre) {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::removeChannel(): exception raised when trying to remove a channel : "+gre);
             }
+        }
+    }
+    */
+
+    public void removeChannel(String channelSubscribeId) {
+        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
+        if(ch!=null) {
+            channelCacheTable.remove(ch);
+            ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
+            channelTable.remove(ch);
+            LogService.log(LogService.DEBUG,"ChannelManager::removeChannel(): removed channel with subscribe id="+channelSubscribeId);
         }
     }
 
@@ -879,4 +895,20 @@ public class ChannelManager {
         return cr;        
 
     }
+
+    // LayoutEventListener interface implementation
+    public void channelAdded(LayoutEvent ev) {}
+    public void channelUpdated(LayoutEvent ev) {}
+    public void channelMoved(LayoutMoveEvent ev) {}
+    public void channelDeleted(LayoutMoveEvent ev) {
+        this.removeChannel(ev.getNodeDescription().getId());
+    }
+
+    public void folderAdded(LayoutEvent ev) {}
+    public void folderUpdated(LayoutEvent ev) {}
+    public void folderMoved(LayoutMoveEvent ev) {}
+    public void folderDeleted(LayoutMoveEvent ev) {}
+
+    public void layoutLoaded() {}
+    public void layoutSaved() {}
 }

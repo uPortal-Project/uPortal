@@ -183,6 +183,7 @@ public class UserInstance implements HttpSessionBindingListener {
         // if we got to this point, we can proceed with the rendering
         if (channelManager == null) {
             channelManager = new ChannelManager(uPreferencesManager);
+            uPreferencesManager.getUserLayoutManager().addLayoutEventListener(channelManager);
             p_rendering_lock=new Object();
         }
         renderState (req, res, this.channelManager, uPreferencesManager,p_rendering_lock);
@@ -257,22 +258,23 @@ public class UserInstance implements HttpSessionBindingListener {
                         // set a new root
                         uPElement.setMethodNodeId(newRootNodeId);
                     }
+                    IUserLayoutManager ulm=upm.getUserLayoutManager();
 
                     // determine uPElement (optimistic prediction) --end
 
                     // set up the channel manager
+
                     channelManager.startRenderingCycle(req, res, uPElement);
                     // process events that have to be handed directly to the userPreferencesManager.
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
-                        processUserLayoutParameters(req,channelManager);
+                        processUserLayoutParameters(req,channelManager,ulm);
                     } catch (PortalException pe) {
                         LogService.instance().log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
                     }
 
                     // after this point the layout is determined
-                    IUserLayoutManager ulm=upm.getUserLayoutManager();
 
                     UserPreferences userPreferences=upm.getUserPreferences();
                     StructureStylesheetDescription ssd= upm.getStructureStylesheetDescription();
@@ -643,7 +645,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param channelManager a <code>ChannelManager</code> value
      * @exception PortalException if an error occurs
      */
-    private void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager) throws PortalException {
+    private void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm) throws PortalException {
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
@@ -665,7 +667,7 @@ public class UserInstance implements HttpSessionBindingListener {
         }
         if ((values = req.getParameterValues("uP_remove_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.removeChannel(values[i]);
+                ulm.deleteNode(values[i]);
             }
         }
     }
