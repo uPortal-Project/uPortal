@@ -27,7 +27,6 @@ import java.util.Vector;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
-import org.jasig.portal.channels.CError;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -37,6 +36,8 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channels.error.CError;
+import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -2833,7 +2834,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				 String errMsg = "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.";
 				 cd.addParameter("CErrorChanId",publishId,String.valueOf(false));
 				 cd.addParameter("CErrorMessage",errMsg,String.valueOf(false));
-				 cd.addParameter("CErrorErrorId",CError.CHANNEL_MISSING_EXCEPTION+"",String.valueOf(false));
+				 cd.addParameter("CErrorErrorId",ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode()+"",String.valueOf(false));
 				 channelDef = cd;
                }	
 
