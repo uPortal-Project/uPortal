@@ -8,9 +8,7 @@
 
 	<!-- Take the baseActionURL and the location of the images as parameters -->
 	<xsl:param name="baseActionURL">default</xsl:param>
-	<xsl:param name="imagesURL">
-		d:/projects/columbia/portal/webpages/stylesheets/org/jasig/portal/channels/CBookmarks/
-	</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 
 	<!-- Find out whether you are adding a folder or a bookmark -->
 	<xsl:param name="EditMode">AddBookmark</xsl:param>

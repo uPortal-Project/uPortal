@@ -6,21 +6,18 @@
 	<xsl:output method="xml" indent="no"/>
 	
 	<xsl:param name="baseActionURL">default</xsl:param>
-	
-	<xsl:param name="imagesURL">
-		d:/projects/columbia/portal/webpages/stylesheets/org/jasig/portal/channels/CBookmarks/
-	</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 	
 	<xsl:template match="/">
 		<div>
 			<xsl:call-template name="BookmarkTree"/>
-			<a href="{$baseActionURL}&amp;command=AddBookmark">[Add Bookmark]</a>
+			<a href="{$baseActionURL}uP_root=me&amp;command=AddBookmark">[Add Bookmark]</a>
 			<img src="{$imagesURL}trans20x20.gif" width="10" height="20"/>
-			<a href="{$baseActionURL}&amp;command=AddFolder">[Add Folder]</a>
+			<a href="{$baseActionURL}uP_root=me&amp;command=AddFolder">[Add Folder]</a>
 			<br/>
-			<a href="{$baseActionURL}&amp;command=DeleteBookmark">[Delete Bookmark]</a>
+			<a href="{$baseActionURL}uP_root=me&amp;command=DeleteBookmark">[Delete Bookmark]</a>
 			<img src="{$imagesURL}trans20x20.gif" width="10" height="20"/>
-			<a href="{$baseActionURL}&amp;command=DeleteFolder">[Delete Folder]</a>
+			<a href="{$baseActionURL}uP_root=me&amp;command=DeleteFolder">[Delete Folder]</a>
 		</div>
 	</xsl:template>
 

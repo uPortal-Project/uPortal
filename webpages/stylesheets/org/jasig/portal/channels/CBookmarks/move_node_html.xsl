@@ -3,11 +3,8 @@
 
 	<xsl:import href="bookmark_tree_html.xsl" /> 
 	
-	<xsl:output method="xml" indent="no"/>
-	
 	<xsl:param name="baseActionURL">default</xsl:param>
-	
-	<xsl:param name="imagesURL">stylesheets/org/jasig/portal/channels/CBookmarks/</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 	
 	<!-- This parameter tells the stylesheet which nodes to put radio buttons next to -->
 	<xsl:param name="EditMode">none</xsl:param>

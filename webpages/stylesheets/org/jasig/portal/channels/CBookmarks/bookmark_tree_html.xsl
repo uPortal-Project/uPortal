@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:param name="baseActionURL">
-		default
-	</xsl:param>
 
-	<xsl:param name="imagesURL">
-		d:/projects/columbia/portal/webpages/stylesheets/org/jasig/portal/channels/CBookmarks/
-	</xsl:param>
+  <xsl:param name="baseActionURL">default</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 
 	<xsl:template name="BookmarkTree" match="xbel">
 		<xsl:param name="TreeMode">View</xsl:param>
@@ -24,7 +20,7 @@
 			
 			<xsl:if test="$TreeMode='AddFolder' or $TreeMode='AddBookmark'">
 				<tr>
-					<td><input type="radio" name="FolderRadioButton" value="RootLevel"/></td>
+					<td><input type="radio" name="FolderRadioButton" value="RootLevel" checked="true"/></td>
 					<td>Root Level</td>
 				</tr>
 			</xsl:if>
@@ -54,13 +50,13 @@
 				<!-- Display an open or closed folder icon and the folder title -->
 				<xsl:choose>
 					<xsl:when test="@folded='yes'">
-						<a href="{$baseActionURL}&amp;command=unfold&amp;ID={@id}">
+						<a href="{$baseActionURL}command=unfold&amp;ID={@id}">
 							<img src="{$imagesURL}closedFolder.gif" width="20" height="20" border="0" alt="Closed Folder"/>
 							<xsl:value-of select="title"/>
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<a href="{$baseActionURL}&amp;command=fold&amp;ID={@id}">
+						<a href="{$baseActionURL}command=fold&amp;ID={@id}">
 							<img src="{$imagesURL}openFolder.gif" width="20" height="20" border="0" alt="Open Folder"/>
 							<xsl:value-of select="title"/>
 						</a>
