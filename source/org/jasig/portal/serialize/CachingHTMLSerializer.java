@@ -138,6 +138,7 @@ public final class CachingHTMLSerializer
      * @param text a <code>String</code> value
      */
     public void printRawCharacters(String text) throws IOException{
+        content();
         _printer.printText(text);
         //        _printer.flush();
     }
