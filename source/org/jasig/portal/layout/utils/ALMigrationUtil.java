@@ -53,10 +53,13 @@ public class ALMigrationUtil {
   private static final int DELETE = 2;
   private static final int DEFAULT_SS_ID = 1;
   private static IUserLayoutStore ulsdb = null;
+  private static Properties props = null;
 
-  public ALMigrationUtil() {
+  public ALMigrationUtil() throws Exception {
     if ( ulsdb == null )
      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+    if ( props == null )
+     props = ResourceLoader.getResourceAsProperties( ALMigrationUtil.class, "/properties/al.properties");
   }
 
   public void registerStylesheet ( String stylesheetURI, String stylesheetDescriptionURI, int stylesheetId, boolean isTheme, int command ) {
@@ -64,7 +67,7 @@ public class ALMigrationUtil {
             switch ( command ) {
              case DELETE:
                if ( stylesheetId > 1 ) {
-                 updateUserProfile ( DEFAULT_SS_ID );
+                 updateUserProfile ( CommonUtils.parseInt(props.getProperty("defaultSystemStylesheetId"),DEFAULT_SS_ID) );
                  if (isTheme)
                     ulsdb.removeThemeStylesheetDescription(stylesheetId);
                  else
@@ -130,6 +133,12 @@ public class ALMigrationUtil {
       return -1;
   }
 
+  public String getProperty ( String name ) {
+     if ( props != null )
+       return props.getProperty(name);
+     return null;
+  }
+
   public static void main(String[] args) {
 
     if ( args.length != 1 ) {
@@ -137,18 +146,23 @@ public class ALMigrationUtil {
      return;
     }
 
-    String themeURI = "/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.xsl";
+    /*String themeURI = "/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.xsl";
     String themeDescriptionURI = "/org/jasig/portal/layout/AL_TabColumn/integratedModes/integratedModes.sdf";
     String structureURI = "/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl";
-    String structureDescriptionURI = "/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf";
+    String structureDescriptionURI = "/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf";*/
+
     int command = ("delete".equalsIgnoreCase(args[0]))?DELETE:ADD;
-
-    ALMigrationUtil al = new ALMigrationUtil();
-    int stylesheetId = al.getSystemStylesheetId();
-    al.registerStylesheet( structureURI, structureDescriptionURI, stylesheetId, false, command );
-    al.registerStylesheet( themeURI, themeDescriptionURI, stylesheetId, true, command );
-
+    try {
+     ALMigrationUtil al = new ALMigrationUtil();
+     String themeURI = al.getProperty("themeStylesheetURI");
+     String themeDescriptionURI = al.getProperty("themeStylesheetDescURI");
+     String structureURI = al.getProperty("structureStylesheetURI");
+     String structureDescriptionURI = al.getProperty("structureStylesheetDescURI");
+     int stylesheetId = al.getSystemStylesheetId();
+     al.registerStylesheet( structureURI, structureDescriptionURI, stylesheetId, false, command );
+     al.registerStylesheet( themeURI, themeDescriptionURI, stylesheetId, true, command );
+    } catch ( Exception e ) {
+        e.printStackTrace();
+      }
   }
 }
-
-
