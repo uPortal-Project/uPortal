@@ -166,13 +166,15 @@ public class CPublisher implements IPrivilegedChannel {
    */
   public void setRuntimeData (final org.jasig.portal.ChannelRuntimeData rd) throws org.jasig.portal.PortalException {
     this.runtimeData = rd;
-    //catID = runtimeData.getParameter("catID");
-    String role = "student";                    //need to get from current user
     // Should obtain implementation in a different way!
     chanReg = RdbmServices.getChannelRegistryStoreImpl();
     //get fresh copy of both since we don't really know if changes have been made
     if (channelTypes == null)
-      channelTypes = chanReg.getTypesXML(role);
+      try {
+        channelTypes = chanReg.getChannelTypesXML();
+      } catch (Exception e) {
+        throw new GeneralRenderingException(e.getMessage());
+      }
     action = runtimeData.getParameter("action");
     if (runtimeData.getParameter("currentStep") != null)
       currentStep = runtimeData.getParameter("currentStep");

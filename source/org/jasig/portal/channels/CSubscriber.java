@@ -139,14 +139,16 @@ public class CSubscriber
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
     String catID = null;
-    //catID = runtimeData.getParameter("catID");
-    String role = "student";                    //need to get from current user
-    //chanReg = new ChannelRegistryImpl();
     //get fresh copies of both since we don't really know if changes have been made
     if (userLayoutXML == null)
       userLayoutXML = (DocumentImpl) ulm.getUserLayoutCopy();
-    if(channelRegistry == null)
-	channelRegistry = chanReg.getRegistryXML(catID, role);
+    if(channelRegistry == null) {
+        try {
+	channelRegistry = chanReg.getChannelRegistryXML();
+        } catch (java.sql.SQLException sqle) {
+          LogService.instance().log(LogService.ERROR, sqle);
+        }
+    }
     action = runtimeData.getParameter("action");
     if (action != null) {
       try {
