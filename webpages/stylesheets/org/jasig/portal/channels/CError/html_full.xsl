@@ -180,13 +180,34 @@
           <p class="uportal-channel-title">Stack Trace</p>
         </td>
       </tr>
+      <xsl:if test="exception/stack/innerException">
       <tr>
-        <td valign="top" align="left" class="uportal-channel-code">
-          <p class="uportal-channel-code">
-            <xsl:value-of select="exception/stack"/>
-          </p>
+        <td valign="top" align="left" class="uportal-background-light">
+          <span class="uportal-channel-error">Inner exception:</span>
         </td>
       </tr>
+      <tr>
+        <td valign="top" align="left" class="uportal-channel-code">
+          <span class="uportal-channel-code">
+            <xsl:value-of select="exception/stack/innerException"/>
+          </span>
+        </td>
+      </tr>
+      </xsl:if>
+      <xsl:if test="exception/stack/outerException">
+      <tr>
+        <td valign="top" align="left" class="uportal-background-light">
+          <span class="uportal-channel-error">Outer exception:</span>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" align="left" class="uportal-channel-code">
+          <span class="uportal-channel-code">
+            <xsl:value-of select="exception/stack/outerException"/>
+          </span>
+        </td>
+      </tr>
+      </xsl:if>
       <tr>
         <td valign="top" align="left" class="uportal-background-med">
           <img border="0" src="transparent.gif" width="1" height="1"/>
