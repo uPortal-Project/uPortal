@@ -2138,7 +2138,7 @@ Version $Revision$
     </xsl:choose>
     <!-- Check if the parent node is immutable before allowing move -->
     <xsl:choose>
-      <xsl:when test="/layout/@immutable='false'">
+      <xsl:when test="/layout/@immutable='false' and @mode!='fragment'">
         <img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
         <a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=Tab Move">
           <img alt="Move this tab" title="Move this tab" src="{$mediaPathIcons}/moveicon.gif" width="22" height="18" border="0"/>
@@ -2154,7 +2154,7 @@ Version $Revision$
     <!-- </a> -->
     <!-- Check if the node is unremovable before allowing delete -->
     <xsl:choose>
-      <xsl:when test="/layout/@immutable='false' and @unremovable='false'">
+      <xsl:when test="/layout/@immutable='false' and @unremovable='false' and @mode!='fragment'">
         <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
           <img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
         </a>
