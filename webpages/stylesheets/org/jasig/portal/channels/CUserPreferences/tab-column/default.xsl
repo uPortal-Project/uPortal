@@ -53,14 +53,6 @@ $Revision$
 
   <xsl:template match="layout">
 
-    <html>
-      <head>
-        <title>Default uP Screen</title>
-        <link type="text/css" rel="stylesheet" href="{$mediaPath}\imm.css" />
-      </head>
-
-      <body>
-
       <!-- Uncomment for debug values
       $activeTab: <xsl:value-of select="$activeTab"/><br/>
       $action: <xsl:value-of select="$action"/><br/>
@@ -101,8 +93,6 @@ $Revision$
 
 <!--End Layout Table -->
 
-      </body>
-    </html>
 
   </xsl:template>
 
@@ -129,13 +119,13 @@ $Revision$
                       </xsl:attribute>
                     </xsl:otherwise>
                   </xsl:choose>
-                  <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                  <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                   <xsl:value-of select="@name" />
-                  <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                  <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                 </a>
               </td>
               <td class="uportal-background-dark">
-                <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </xsl:when>
             <xsl:otherwise>
@@ -149,7 +139,7 @@ $Revision$
                   </xsl:otherwise>
                 </xsl:choose>
 
-                <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
 
                 <a class="uportal-navigation-category-selected">
                   <xsl:choose>
@@ -170,11 +160,11 @@ $Revision$
                   </span>
                 </a>
 
-                <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
 
               <td class="uportal-background-dark">
-                <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </xsl:otherwise>
           </xsl:choose>
@@ -188,15 +178,15 @@ $Revision$
 
             <td nowrap="nowrap" bgcolor="#CCCCCC" class="uportal-background-highlight">
 
-              <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
 
 
-              <img alt="interface image" src="{$mediaPath}\newtab.gif" width="59" height="20" />
+              <img alt="interface image" src="{$mediaPath}/newtab.gif" width="59" height="20" />
 
 
 
-              <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
             </td>
 
@@ -212,7 +202,7 @@ $Revision$
 
                 <a href="{$baseActionURL}?action=newTab" class="uportal-text-small">
 
-                  <img alt="click to add a new tab" src="{$mediaPath}\newtab.gif" width="59" height="20" border="0" />
+                  <img alt="click to add a new tab" src="{$mediaPath}/newtab.gif" width="59" height="20" border="0" />
 
                 </a>
 
@@ -228,7 +218,7 @@ $Revision$
 
         <td width="100%">
 
-          <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
+          <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
 
         </td>
 
@@ -288,62 +278,62 @@ $Revision$
 
           <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]/folder">
             <td width="10">
-              <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+              <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
             </td>
 
             <td width="20">
-              <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+              <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
             </td>
 
             <td width="10">
-              <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
+              <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
             </td>
 
             <td width="">
-              <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+              <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
             </td>
           </xsl:for-each>
           
           <td width="10">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td width="20">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td width="10">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
           </td>
         </xsl:when>
 
         <xsl:otherwise>
           <td width="10">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
           
           <td width="20">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td width="10">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
           </td>
 
           <td width="100%">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td width="10">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td width="20">
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
           </td>
 
           <td>
-            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="20" />
+            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
           </td>
         </xsl:otherwise>
       </xsl:choose>
@@ -437,22 +427,22 @@ $Revision$
 
         <tr>
           <td>
-            <img alt="interface image" src="{$mediaPath}\leftarrow.gif" width="20" height="20" />
+            <img alt="interface image" src="{$mediaPath}/leftarrow.gif" width="20" height="20" />
           </td>
           <td bgcolor="#CCCCCC" width="100%" align="center">
             <xsl:choose>
               <xsl:when test="($action = 'selectColumn' or $action = 'moveColumn') and $elementID=@ID">
-                <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
               </xsl:when>
               <xsl:otherwise>
                 <a href="{$baseActionURL}?action=selectColumn&amp;elementID={@ID}" class="uportal-text-small">
-                  <img alt="click to select this column [{@ID}]" src="{$mediaPath}\selectcolumn.gif" width="79" height="20" border="0" />
+                  <img alt="click to select this column [{@ID}]" src="{$mediaPath}/selectcolumn.gif" width="79" height="20" border="0" />
                 </a>
               </xsl:otherwise>
             </xsl:choose>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}\rightarrow.gif" width="20" height="20" />
+            <img alt="interface image" src="{$mediaPath}/rightarrow.gif" width="20" height="20" />
           </td>
         </tr>
 
@@ -512,7 +502,7 @@ $Revision$
 
     <td>
 
-      <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+      <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
     </td>
 
@@ -526,7 +516,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=newColumn&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to add a new column in this location [after {@ID}]" src="{$mediaPath}\newcolumn.gif" width="20" height="100" border="0" />
+            <img alt="click to add a new column in this location [after {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0" />
 
           </a>
 
@@ -542,7 +532,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=moveColumnHere&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to move the selected column to this location [after {@ID}]" src="{$mediaPath}\movecolumn.gif" border="0" />
+            <img alt="click to move the selected column to this location [after {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0" />
 
           </a>
 
@@ -556,7 +546,7 @@ $Revision$
 
         <td bgcolor="#CCCCCC" width="20">
 
-          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
 
         </td>
 
@@ -570,7 +560,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=newColumn&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to add a new column in this location [after {@ID}]" src="{$mediaPath}\newcolumn.gif" width="20" height="100" border="0" />
+            <img alt="click to add a new column in this location [after {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0" />
 
           </a>
 
@@ -584,7 +574,7 @@ $Revision$
 
     <td>
 
-      <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+      <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
     </td>
 
@@ -600,7 +590,7 @@ $Revision$
 
     <td>
 
-      <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+      <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
     </td>
 
@@ -618,7 +608,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=newColumn&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to add a new column in this location [before {@ID}]" src="{$mediaPath}\newcolumn.gif" width="20" height="100" border="0" />
+            <img alt="click to add a new column in this location [before {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0" />
 
           </a>
 
@@ -634,7 +624,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=moveColumnHere&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to move the selected column to this location [before {@ID}]" src="{$mediaPath}\movecolumn.gif" border="0" />
+            <img alt="click to move the selected column to this location [before {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0" />
 
           </a>
 
@@ -648,7 +638,7 @@ $Revision$
 
         <td bgcolor="#CCCCCC" width="20">
 
-          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
 
         </td>
 
@@ -662,7 +652,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=newColumn&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to add a new column in this location [before {@ID}]" src="{$mediaPath}\newcolumn.gif" width="20" height="100" border="0" />
+            <img alt="click to add a new column in this location [before {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0" />
 
           </a>
 
@@ -692,7 +682,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}\newchannel.gif" border="0" />
+                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
 
               </a>
 
@@ -708,7 +698,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to move the selected channel to this location [before {@ID}]" src="{$mediaPath}\movechannel.gif" border="0" />
+                <img alt="click to move the selected channel to this location [before {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
 
               </a>
 
@@ -722,7 +712,7 @@ $Revision$
 
             <td>
 
-              <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
+              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
 
             </td>
 
@@ -736,7 +726,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}\newchannel.gif" border="0" />
+                <img alt="click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
 
               </a>
 
@@ -794,7 +784,7 @@ $Revision$
 
           <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" class="uportal-text-small">
 
-            <img alt="click to select this channel [{@ID}]" src="{$mediaPath}\selectchannel.gif" width="120" height="90" border="0" />
+            <img alt="click to select this channel [{@ID}]" src="{$mediaPath}/selectchannel.gif" width="120" height="90" border="0" />
 
           </a>
 
@@ -828,7 +818,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}\newchannel.gif" border="0" />
+                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
 
               </a>
 
@@ -844,7 +834,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to move the selected channel to this location [after {@ID}]" src="{$mediaPath}\movechannel.gif" border="0" />
+                <img alt="click to move the selected channel to this location [after {@ID}]" src="{$mediaPath}/movechannel.gif" border="0" />
 
               </a>
 
@@ -858,7 +848,7 @@ $Revision$
 
             <td>
 
-              <img alt="interface image" src="{$mediaPath}\transparent.gif" width="20" height="20" />
+              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20" />
 
             </td>
 
@@ -872,7 +862,7 @@ $Revision$
 
               <a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
 
-                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}\newchannel.gif" border="0" />
+                <img alt="click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0" />
 
               </a>
 
@@ -896,7 +886,7 @@ $Revision$
 
   <xsl:template name="optionMenuDefault">Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the 
 
-  <img alt="interface image" src="{$mediaPath}\newchannel.gif" width="79" height="20" />
+  <img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20" />
 
 
 
@@ -917,7 +907,7 @@ $Revision$
     <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
       <tr>
         <td valign="top">
-          <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
         </td>
         <td width="100%">
           <a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTab}">Make this the default "Active Tab" (the tab that is selected when you log into the portal)</a>
@@ -927,7 +917,7 @@ $Revision$
       <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@immutable = 'true')">
         <tr>
           <td valign="top">
-            <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+            <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
           </td>
           <td>
             <form name="formRenameTab" method="post" action="{$baseActionURL}">
@@ -935,12 +925,12 @@ $Revision$
                 <tr>
                   <td nowrap="nowrap">
                     <a href="#">Rename the tab:
-                    <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                     </a>
                   </td>
                   <td width="100%">
                     <input type="text" name="tabName" value="{$tabName}" class="uportal-input-text" size="30" />
-                    <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                     <input type="submit" name="RenameTab" value="Rename" class="uportal-button" />
                     <input type="hidden" name="action" value="renameTab" />
                     <input type="hidden" name="elementID" value="{$activeTabID}" />
@@ -954,7 +944,7 @@ $Revision$
 
       <tr>
         <td valign="top">
-          <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
         </td>
         <td>
           <a href="#">Move this tab to a different position: (select below then click Move button)</a>
@@ -962,7 +952,7 @@ $Revision$
       </tr>
       <tr>
         <td valign="top">
-          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
         </td>
         <td>
           <form name="formMoveTab" method="post" action="{$baseActionURL}">
@@ -972,17 +962,17 @@ $Revision$
                   <xsl:choose>
                     <xsl:when test="@ID=$activeTabID">
                       <td class="uportal-background-light">
-                        <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                       </td>
                       <td nowrap="nowrap" class="uportal-background-content">
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name" />
                         </span>
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                       </td>
                       <td class="uportal-background-light">
-                        <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                       </td>
                     </xsl:when>
 
@@ -990,11 +980,11 @@ $Revision$
                       <xsl:choose>
                         <xsl:when test="position() = last()">
                           <td nowrap="nowrap" class="uportal-background-med">
-                            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                             <span class="uportal-text-small">
                               <xsl:value-of select="@name" />
                             </span>
-                            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                           </td>
                           <td nowrap="nowrap" class="uportal-background-light">
                             <input type="radio" name="method_ID" value="appendAfter_{@ID}" />
@@ -1003,11 +993,11 @@ $Revision$
 
                         <xsl:otherwise>
                           <td nowrap="nowrap" class="uportal-background-med">
-                            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                             <span class="uportal-text-small">
                               <xsl:value-of select="@name" />
                             </span>
-                            <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                            <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                           </td>
                         </xsl:otherwise>
 
@@ -1020,11 +1010,11 @@ $Revision$
                       </td>
 
                       <td nowrap="nowrap" class="uportal-background-med">
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name" />
                         </span>
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                       </td>
 
                       <td nowrap="nowrap" class="uportal-background-light">
@@ -1038,11 +1028,11 @@ $Revision$
                       </td>
 
                       <td nowrap="nowrap" class="uportal-background-med">
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name" />
                         </span>
-                        <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                        <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                       </td>
                     </xsl:otherwise>
 
@@ -1051,7 +1041,7 @@ $Revision$
                 </xsl:for-each>
 
                 <td width="100%">
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                   <input type="submit" name="MoveTab" value="Move" class="uportal-button" />
                   <input type="hidden" name="action" value="moveTab" />
                   <input type="hidden" name="elementID" value="{$activeTabID}" />
@@ -1068,7 +1058,7 @@ $Revision$
 
           <td valign="top">
 
-            <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+            <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
           </td>
 
@@ -1102,7 +1092,7 @@ $Revision$
 
         <td valign="top">
 
-          <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
         </td>
 
@@ -1152,7 +1142,7 @@ $Revision$
 
                 <td class="uportal-channel-text">
 
-                  <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
                 </td>
 
@@ -1172,7 +1162,7 @@ $Revision$
 
                 <td class="uportal-channel-text">
 
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
 
                 </td>
 
@@ -1186,7 +1176,7 @@ $Revision$
 
                       <td nowrap="nowrap" align="center">
 
-                        <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
 
                       </td>
 
@@ -1228,7 +1218,7 @@ $Revision$
 
                         <td nowrap="nowrap">
 
-                          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
 
                         </td>
 
@@ -1260,7 +1250,7 @@ $Revision$
 
                   <td class="uportal-channel-text">
 
-                    <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
                   </td>
 
@@ -1286,7 +1276,7 @@ $Revision$
 
                   <td class="uportal-channel-text">
 
-                    <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
                   </td>
 
@@ -1320,7 +1310,7 @@ $Revision$
 
                 <td class="uportal-channel-text">
 
-                  <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
 
                 </td>
 
@@ -1370,15 +1360,15 @@ $Revision$
               <xsl:if test="not(/layout/descendant::channel[@ID=$elementID]/@immutable = 'true')">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                   </td>
                   <td width="100%" class="uportal-channel-text">
                     <a href="#">Rename this channel:</a>
-                    <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                     <input type="hidden" name="action" value="renameChannel" />
                     <input type="hidden" name="elementID" value="{$elementID}" />
                     <input type="text" name="channelName" class="uportal-input-text" value="{$channelName}" size="30" />
-                    <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                     <input type="submit" name="RenameTab" value="Rename" class="uportal-button" />
                   </td>
                 </tr>
@@ -1390,7 +1380,7 @@ $Revision$
               <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                   </td>
                   <td width="100%" class="uportal-channel-text">
                     <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">Move this channel to a different location</a>
@@ -1403,7 +1393,7 @@ $Revision$
               <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                   </td>
                   <td width="100%" class="uportal-channel-text">
                     <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Delete this channel</a>
@@ -1419,7 +1409,7 @@ $Revision$
 
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                 </td>
 
                 <td width="100%" class="uportal-channel-text">
@@ -1453,7 +1443,7 @@ $Revision$
                 </td>
 
                 <td class="uportal-channel-text">Name the tab: 
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                   <input type="text" name="tabName" class="uportal-input-text" size="30" />
                 </td>
               </tr>
@@ -1461,7 +1451,7 @@ $Revision$
               <tr>
                 <td class="uportal-channel-text" align="right">
                   <strong>
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="16" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="16" />
                   2.</strong>
                 </td>
                 <td class="uportal-channel-text">Select a position for the tab:</td>
@@ -1469,7 +1459,7 @@ $Revision$
 
               <tr>
                 <td class="uportal-channel-text" align="right">
-                  <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                  <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                 </td>
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -1480,11 +1470,11 @@ $Revision$
                         </td>
 
                         <td nowrap="nowrap" class="uportal-background-med">
-                          <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
+                          <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                           <span class="uportal-text-small">
                             <xsl:value-of select="@name" />
                           </span>
-                          <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                          <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                         </td>
                       </xsl:for-each>
 
@@ -1514,7 +1504,7 @@ $Revision$
 
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" />
+                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" />
                 </td>
                 <td width="100%" class="uportal-channel-text">
                   <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
@@ -1548,14 +1538,14 @@ $Revision$
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                 </td>
 
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr valign="top">
                       <td nowrap="nowrap" align="center">
-                        <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                       </td>
 
                       <input type="hidden" name="action" value="columnWidth" />
@@ -1569,7 +1559,7 @@ $Revision$
                             <strong>New Column</strong>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                           </td>
                         </xsl:if>
 
@@ -1580,7 +1570,7 @@ $Revision$
                         </td>
 
                         <td nowrap="nowrap">
-                          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                         </td>
 
                         <xsl:if test="$position='after' and $elementID=@ID">
@@ -1590,14 +1580,14 @@ $Revision$
                             <strong>New Column</strong>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" />
                           </td>
                         </xsl:if>
 
                       </xsl:for-each>
 
                       <td width="100%" align="left" nowrap="nowrap">
-                        <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                       </td>
                     </tr>
 
@@ -1614,7 +1604,7 @@ $Revision$
                 </td>
 
                 <td class="uportal-channel-text">Submit the choices: 
-                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
                   <input type="submit" name="submitNewColumn" value="Submit" class="uportal-button" />
                 </td>
               </tr>
@@ -1627,7 +1617,7 @@ $Revision$
 
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" />
+                  <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" />
                 </td>
 
                 <td class="uportal-channel-text" width="100%">
@@ -1656,7 +1646,7 @@ $Revision$
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
 
               <td class="uportal-channel-text">
@@ -1672,7 +1662,7 @@ $Revision$
 
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
@@ -1700,7 +1690,7 @@ $Revision$
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
               <td class="uportal-channel-text">
                 <a href="#">Select one of the highlighted locations below, or select a different tab on which to place this column</a>
@@ -1713,7 +1703,7 @@ $Revision$
             </tr>
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
@@ -1740,7 +1730,7 @@ $Revision$
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
               <td class="uportal-channel-text">
                 <a href="#">Select one of the highlighted locations below, or select a different tab on which to place this channel</a>
@@ -1753,7 +1743,7 @@ $Revision$
             </tr>
             <tr>
               <td class="uportal-channel-text">
-                <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" border="0" />
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
