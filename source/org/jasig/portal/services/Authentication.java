@@ -171,6 +171,7 @@ public class Authentication {
         person.setID(newUID);
       } catch (AuthorizationException ae) {
         LogService.instance().log(LogService.ERROR, ae);
+        throw new PortalSecurityException("Authentication Service: Exception retrieving UID");
       }
     }
   }
