@@ -832,7 +832,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
           else {
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + rs.getInt(dbOffset + 1) + ").");
+                + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
           if (RDBMServices.supportsOuterJoins && !rs.next()) {
             break;
@@ -1015,6 +1015,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
+            String temp1=rs.getString(1); // Access columns left to right
+            String temp2=rs.getString(2);
             int param_type = rs.getInt(3);
             int structId = rs.getInt(4);
             if (rs.wasNull()) {
@@ -1028,23 +1030,23 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               // stylesheet param
               LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                  + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
+                  + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 2) {
               // folder attribute
-              ssup.setFolderAttributeValue(getStructId(structId,chanId), rs.getString(1), rs.getString(2));
+              ssup.setFolderAttributeValue(getStructId(structId,chanId), temp1, temp2);
               //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else if (param_type == 3) {
               // channel attribute
-              ssup.setChannelAttributeValue(getStructId(structId,chanId), rs.getString(1), rs.getString(2));
+              ssup.setChannelAttributeValue(getStructId(structId,chanId), temp1, temp2);
               //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read channel attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else {
               // unknown param type
               LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                  + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
+                  + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
             }
           }
         } finally {
@@ -1717,11 +1719,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               if (rs.wasNull()) {
                 chanId = 0;
               }
+              String temp5=rs.getString(5); // Some JDBC drivers require columns accessed in order
+              String temp6=rs.getString(6); // Access 5 and 6 now, save till needed.
               ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
               layoutStructure.put(new Integer(structId), ls);
               lastStructId = structId;
               if (!ls.isChannel()) {
-                ls.addFolderData(rs.getString(5), rs.getString(6));
+                ls.addFolderData(temp5, temp6); // Plug in saved column values
               } else {
                 chanIds.add(new Integer(chanId)); // For later
               }
@@ -1838,6 +1842,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
+            String temp3 = rs.getString(3);
+            String temp4 = rs.getString(4);
             int layoutId = rs.getInt(5);
             if (rs.wasNull()) {
               layoutId = 0;
@@ -1850,7 +1856,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (rs.wasNull()) {
               themeSsId = 0;
             }
-            return new UserProfile(profileId, rs.getString(3), rs.getString(4), layoutId,
+            return new UserProfile(profileId, temp3,temp4, layoutId,
                 structSsId, themeSsId);
           }
           else {
