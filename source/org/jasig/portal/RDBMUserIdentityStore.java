@@ -51,7 +51,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
  * SQL implementation for managing creation and removal of User Portal Data
- * @author Susan Bramhall, Yale University (modify by Julien Marchal, University Nancy 2)
+ * @author Susan Bramhall, Yale University (modify by Julien Marchal, University Nancy 2; Eric Dalquist - edalquist@unicon.net)
  */
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
@@ -255,7 +255,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            if (createPortalData) {
                //If we are allowed to modify the database
                
-               if (portalUser.hasLoggedInBefore()) {
+               if (portalUser != null) {
                    //If the user has logged in we may have to update their template user information
 
                    boolean hasSavedLayout = userHasSavedLayout(portalUser.getUserId());
@@ -282,10 +282,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                    
                    // Add new user to all appropriate tables
                    int newPortalUID = addNewUser(newUID, person, templateUser);
+                   portalUser = new PortalUser();
                    portalUser.setUserId(newPortalUID);
                }
            }
-           else if (!portalUser.hasLoggedInBefore()) {
+           else if (portalUser == null) {
                //If this is a new user and we can't create them
                throw new AuthorizationException("No portal information exists for user " + userName);
            }
@@ -316,8 +317,15 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
   }
   
+  /**
+   * Gets the PortalUser data store object for the specified user name.
+   * 
+   * @param userName The user's name
+   * @return A PortalUser object or null if the user doesn't exist.
+   * @throws Exception
+   */
   protected PortalUser getPortalUser(String userName) throws Exception {
-      PortalUser portalUser = portalUser = new PortalUser();
+      PortalUser portalUser = null;
         
       Connection con = null;
       try {
@@ -335,6 +343,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(userName=" + userName + "): " + query);
                   rs = pstmt.executeQuery();
                   if (rs.next()) {
+                      portalUser = new PortalUser();
                       portalUser.setUserId(rs.getInt("USER_ID"));
                       portalUser.setUserName(userName);
                       portalUser.setDefaultUserId(rs.getInt("USER_DFLT_USR_ID"));
@@ -361,6 +370,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       return templateName;
   }
 
+  /**
+   * Gets the TemplateUser data store object for the specified template user name.
+   * 
+   * @param templateUserName The template user's name
+   * @return A TemplateUser object or null if the user doesn't exist.
+   * @throws Exception
+   */
   protected TemplateUser getTemplateUser(String templateUserName) throws Exception {
       TemplateUser templateUser = null;
         
@@ -817,7 +833,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   protected class PortalUser {
       String userName;
-      int userId = -1;
+      int userId;
       int defaultUserId;
       public String getUserName() { return userName; }
       public int getUserId() { return userId; }
@@ -825,7 +841,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       public void setUserName(String userName) { this.userName = userName; }
       public void setUserId(int userId) { this.userId = userId; }
       public void setDefaultUserId(int defaultUserId) { this.defaultUserId = defaultUserId; }
-      public boolean hasLoggedInBefore() { return userId >= 0; }
   }    
   
   protected class TemplateUser {
