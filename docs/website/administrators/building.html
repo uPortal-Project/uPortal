@@ -39,13 +39,15 @@
    
 <h3>Building and Deploying uPortal</h3>
 <h5>Overview</h5>
-<p>Compiling and deploying <i>uPortal</i> is managed using the <i>Ant</i> build 
-tool. <i>Ant</i> uses a file called <tt>build.xml</tt> for managing what is compiled 
-and copies all necessary files into the uPortal context. The <i>uPortal</i> context 
-can then be deployed as a complete web application running in a servlet container 
-such as <i>Tomcat</i> or <i>IBM Websphere</i>. The <tt>build.xml</tt> file uses 
-several properties defined in a file called<tt> build.properties</tt>. Both of 
-these files can be found in the <tt>uPortal_rel-2-0-2</tt> directory.</p>
+            <p>Compiling and deploying <i>uPortal</i> is managed using the <i>Ant</i> 
+               build tool. <i>Ant</i> uses a file called <tt>build.xml</tt> for 
+               managing what is compiled and copies all necessary files into the 
+               uPortal context. The <i>uPortal</i> context can then be deployed 
+               as a complete web application running in a servlet container such 
+               as <i>Tomcat</i> or <i>IBM Websphere</i>. The <tt>build.xml</tt> 
+               file uses several properties defined in a file called<tt> build.properties</tt>. 
+               Both of these files can be found in the <tt>uPortal_rel-2-1-3</tt> 
+               directory.</p>
 <h5>Obtaining the Ant build tool</h5>
 <p>If using the <i>uPortal-only</i> release you will need to download the <i>Ant</i> 
 build tool. It is available from <a href="http://jakarta.apache.org/ant">http://jakarta.apache.org/ant</a>. 
@@ -54,9 +56,9 @@ environment such that it is available form the standard search path. It is recom
 that an <tt>ANT_HOME</tt> environment be set, and <tt>ANT_HOME/bin</tt> added 
 to the <tt>PATH</tt> environment variable. </p>
 <h5>Obtaining external dependency libraries</h5>
-<p>If using the <i>quick-start</i> release,  all of the external dependency libraries (jar files)
-are included, and can be found in <tt>uPortal_2-0-2-quick-start/uPortal_rel-2-0-2/lib</tt> directory.
-</p>
+            <p>If using the <i>quick-start</i> release, all of the external dependency 
+               libraries (jar files) are included, and can be found in <tt>uPortal_2-1-3-quick-start/uPortal_rel-2-1-3/lib</tt> 
+               directory. </p>
 
 <p>If using the <i>uPortal-only</i> release you will have to obtain all of the necessary external
 dependency libraries before attempting to compile <i>uPortal</i>. </p>
@@ -85,12 +87,13 @@ which may be modified. Leave them alone for now. Typically you should not need
 to modify the <tt>build.xml</tt> file at all. 
 </ol>
 <h5>Compiling uPortal</h5>
-<p>Now your ready to compile <i>uPortal</i>. Go to the <tt>uPortal_rel-2-0-2</tt> 
-directory and just type <tt>ant</tt>. <i>Ant</i> will first create a <tt>build</tt> 
-directory, then invoke the java compiler and store all of the compiled class files 
-into <tt>build/WEB-INF/classes</tt>. It will also copy many other files into the 
-<tt>build</tt> directory including stylesheet files, images, and property files. 
-If everything worked you should see a message which reads:</p>
+            <p>Now your ready to compile <i>uPortal</i>. Go to the <tt>uPortal_rel-2-1-3</tt> 
+               directory and just type <tt>ant</tt>. <i>Ant</i> will first create 
+               a <tt>build</tt> directory, then invoke the java compiler and store 
+               all of the compiled class files into <tt>build/WEB-INF/classes</tt>. 
+               It will also copy many other files into the <tt>build</tt> directory 
+               including stylesheet files, images, and property files. If everything 
+               worked you should see a message which reads:</p>
 <p>
 BUILD SUCCESSFUL
 </p>
@@ -102,14 +105,15 @@ file and try again.
 application into a servlet container. It will copy everything that it compiled 
 and stored in the <tt>build</tt> directory into a directory specified in the <tt>build.properties</tt> 
 files as <tt>deploy.home</tt>. </p>
-<p>If using the <it>uPortal-only</it> release you will first need to obtain a 
-servlet container. The Tomcat servlet container is recommended. Tomcat can be 
-downloaded from <a href="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</a>. 
-Uncompress the archive file to a location where the web application server will 
-run. For example, on Unix, extracting the Tomcat version 4.0.4 zip file into the 
-<tt>/usr/local</tt> directory will create a directory called <tt>/usr/local/jakarta-tomcat-4.0.4</tt> 
-which is usually refered to with an environment variable called <tt>TOMCAT_HOME</tt>. 
-</p>
+            <p>If using the <it>uPortal-only</it> release you will first need 
+               to obtain a servlet container. The Tomcat servlet container is 
+               recommended. Tomcat can be downloaded from <a href="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</a>. 
+               Uncompress the archive file to a location where the web application 
+               server will run. For example, on Unix, extracting the Tomcat version 
+               4.1.24 zip file into the <tt>/usr/local</tt> directory will create 
+               a directory called <tt>/usr/local/jakarta-tomcat-4.1.24</tt> which 
+               is usually refered to with an environment variable called <tt>TOMCAT_HOME</tt>. 
+            </p>
 <p> Before deploying <i>uPortal</i> you may need to modify the <tt>build.properties</tt>. 
 Edit the file and find the <tt>deploy.home</tt> property. Change the value such 
 that it points to the location where <i>uPortal </i>will be deployed. For a <i>Tomcat</i> 
@@ -119,9 +123,10 @@ for example:
 <blockquote>
 <tt>deploy.home=/usr/local/jakarta-tomcat-4.0.4/webapps/uPortal</tt>
 </blockquote>
-<p> <b>Note</b>: if you are working with the quick-start release, the deployment 
-directory is relative to the <tt>uPortal_rel-2-0-2</tt> directory (<tt>../tomcat-4.0.4/webapps/uPortal</tt>) 
-and should not be changed. </p>
+            <p> <b>Note</b>: if you are working with the quick-start release, 
+               the deployment directory is relative to the <tt>uPortal_rel-2-1-3</tt> 
+               directory (<tt>../tomcat-4.1.24/webapps/uPortal</tt>) and should 
+               not be changed. </p>
 <p> Now you're ready to deploy <i>uPortal</i> to the servlet container. Simply 
 type <tt>&quot;ant deploy</tt>&quot; to invoke the &quot;deploy&quot; target. 
 If everything worked correctly you will see a BUILD SUCCESSFULL message.
