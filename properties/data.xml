@@ -1710,12 +1710,23 @@
       <row>
         <column><name>USER_ID</name><value>0</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
+      
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>2</value></column>
+        <column><name>PROFILE_NAME</name><value>WML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for WAP cell phones</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>2</value></column>
+      </row>
+            
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
