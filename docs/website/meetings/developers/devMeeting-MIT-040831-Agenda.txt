@@ -1,4 +1,4 @@
-uPortal Development Meeting Agenda
+uPortal Developers Meeting Agenda
 =============================================================
 August 30-31, 2004 at Massachusetts Institute of Technology
 
