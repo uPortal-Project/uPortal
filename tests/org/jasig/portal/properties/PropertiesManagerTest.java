@@ -5,6 +5,8 @@
 package org.jasig.portal.properties;
 
 
+import java.util.Properties;
+
 import junit.framework.TestCase;
 
 /**
@@ -30,8 +32,9 @@ public class PropertiesManagerTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        this.systemPropertyValue = System.getProperty(PropertiesManager.PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE);
-        System.setProperty(PropertiesManager.PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE, TEST_FILE);
+        Properties testProperties = new Properties();
+        testProperties.load(PropertiesManagerTest.class.getResourceAsStream(TEST_FILE));
+        PropertiesManager.setProperties(testProperties);
     }
     
     protected void tearDown() throws Exception {
