@@ -56,6 +56,7 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
     protected Vector eventArguments;
 
     protected boolean buffering;
+    protected boolean outputAtDocumentEnd;
 
     // types of SAX events
     public static final int STARTDOCUMENT = 0;
@@ -81,6 +82,7 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
   public SAXBufferImpl ()
   {
     buffering = true;
+    outputAtDocumentEnd=false;
     eventTypes = new Vector ();
     eventArguments = new Vector ();
   }
@@ -91,10 +93,8 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
    */
   public SAXBufferImpl (DocumentHandler handler)
   {
-    buffering = false;
-    this.outDocumentHandler = handler;
-    if(handler instanceof LexicalHandler)
-        this.outLexicalHandler=(LexicalHandler) handler;
+      this();
+      this.setDocumentHandler(handler);
   }
 
   public SAXBufferImpl (DocumentHandler handler, boolean bufferSetting)
@@ -211,6 +211,16 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
       Logger.log (Logger.ERROR, "SAXBufferImpl:stopBuffering() : trying to ouput buffer to a null DocumentHandler.");
     }
 
+   
+    /**
+     * Tells buffer to automatically output itself once
+     * an end of a document is reached.
+     * @param setting a <code>boolean</code> value
+     */
+    public void setOutputAtDocumentEnd(boolean setting) {
+        this.outputAtDocumentEnd=setting;
+    }
+
     public synchronized void clearBuffer() {
         // clean out the vectors
         eventTypes.clear();
@@ -232,8 +242,11 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
   public void setDocumentHandler (DocumentHandler handler)
   {
     this.outDocumentHandler=handler;
-    if(handler instanceof LexicalHandler)
+    if(handler instanceof LexicalHandler) {
         this.outLexicalHandler=(LexicalHandler) handler;
+    } else {
+        this.outLexicalHandler=null;
+    }
   }
 
     public LexicalHandler getLexicalHandler() { return outLexicalHandler; }
@@ -274,6 +287,9 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
     if (buffering)
     {
       eventTypes.add (new Integer (ENDDOCUMENT));
+      if(outputAtDocumentEnd) {
+          this.outputBuffer();
+      }
     }
     else
     {
