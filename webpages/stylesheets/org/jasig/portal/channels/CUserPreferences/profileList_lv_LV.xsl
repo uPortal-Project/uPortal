@@ -50,23 +50,23 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
         <td nowrap="nowrap" valign="bottom" align="left">
-          <span class="uportal-channel-table-header">Sist\u0113mas profili</span></td>
+          <span class="uportal-channel-table-header">Sistēmas profili</span></td>
           <td nowrap="nowrap" valign="bottom" align="left">
           <strong>
             <a href="{$baseActionURL}?action=expandAll&amp;profileType=system">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
-              <img alt="Par\u0101d\u012Bt deta\u013Cas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+              <img alt="Parādīt detaļas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
-              <span class="uportal-text-small">R\u0101d\u012Bt deta\u013Cas visiem</span>
+              <span class="uportal-text-small">Rādīt detaļas visiem</span>
             </a>
           </strong></td>
 <td nowrap="nowrap" valign="bottom" align="left" width="100%">
           <strong>
             <a href="{$baseActionURL}?action=condenseAll&amp;profileType=system">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
-              <img alt="Pasl\u0113pt deta\u013Cas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+              <img alt="Paslēpt detaļas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
-              <span class="uportal-text-small">Ner\u0101d\u012Bt deta\u013Cas nevienam</span>
+              <span class="uportal-text-small">Nerādīt detaļas nevienam</span>
             </a>
           </strong>
         </td>
@@ -103,7 +103,7 @@
             <td rowspan="4" align="left" valign="top" class="uportal-background-content">
               <strong>
                 <a href="{$baseActionURL}?action=changeView&amp;view=condensed&amp;profileId={@id}&amp;profileType=system">
-                  <img alt="Pasl\u0113pt deta\u013Cas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+                  <img alt="Paslēpt detaļas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
                 </a>
               </strong>
             </td>
@@ -113,7 +113,7 @@
                 <xsl:value-of select="@name"/>
               </strong>
               <xsl:if test="$profileId = @id and $profileType ='system'">
-                <br/>[\u0160is profils ir piek\u0101rtots pašreiz\u0113jai p\u0101rl\u016Bkprogrammai]</xsl:if>
+                <br/>[Šis profils ir piekārtots pašreizējai pārlūkprogrammai]</xsl:if>
             </td>
           </tr>
           <tr align="left" valign="top" class="uportal-channel-text">
@@ -123,23 +123,23 @@
             </td>
           </tr>
           <tr align="left" valign="top" class="uportal-channel-text">
-            <td>Darb\u012Bbas:</td>
+            <td>Darbības:</td>
             <td width="100%" nowrap="nowrap">
               <p>
                 <a href="{$baseActionURL}?userPreferencesAction=managePreferences&amp;profileId={@id}&amp;profileType=system">
-                  <img alt="Redi\u0123\u0113t iestat\u012Bjumus šim profilam" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
-                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Redi\u0123\u0113t iestat\u012Bjumus šim profilam</a>
+                  <img alt="Rediģēt iestatījumus šim profilam" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Rediģēt iestatījumus šim profilam</a>
                 <br/>
                 <xsl:if test="$allowSystemProfileMap = 'true' and not($profileId = @id and $profileType ='system')">
                   <a href="{$baseActionURL}?action=map&amp;profileId={@id}&amp;profileType=system">
-                    <img alt="Piek\u0101rtot šo profilu manai pašreiz\u0113jai p\u0101rl\u016Bkprogrmai" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
-                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Piek\u0101rtot šo profilu manai pašreiz\u0113jai p\u0101rl\u016Bkprogrmai</a>
+                    <img alt="Piekārtot šo profilu manai pašreizējai pārlūkprogrmai" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Piekārtot šo profilu manai pašreizējai pārlūkprogrmai</a>
                   <br/>
                 </xsl:if>
                 <xsl:if test="/profiles/user">
                   <a href="{$baseActionURL}?action=copy&amp;profileId={@id}&amp;profileType=system">
-                    <img alt="Kop\u0113t šo profilu manos person\u012Bgajos profilos" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
-                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Kop\u0113t šo profilu manos person\u012Bgajos profilos</a>
+                    <img alt="Kopēt šo profilu manos personīgajos profilos" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Kopēt šo profilu manos personīgajos profilos</a>
                 </xsl:if>
               </p>
             </td>
@@ -149,7 +149,7 @@
           <tr align="left" valign="top" class="uportal-channel-text">
             <td rowspan="2" class="uportal-background-content">
               <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
-                <img alt="Par\u0101d\u012Bt deta\u013Cas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+                <img alt="Parādīt detaļas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
                 <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               </a>
             </td>
@@ -160,7 +160,7 @@
                 </strong>
               </a>
               <xsl:if test="$profileId = @id and $profileType ='system'">
-                <br/>[\u0160is profils ir piek\u0101rtots pašreiz\u0113jai p\u0101rl\u016Bkprogrammai]</xsl:if>
+                <br/>[Šis profils ir piekārtots pašreizējai pārlūkprogrammai]</xsl:if>
             </td>
           </tr>
         </xsl:otherwise>
@@ -184,21 +184,21 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
         <td nowrap="nowrap" valign="bottom" align="left">
-          <span class="uportal-channel-table-header">Person\u012Bgie profili</span></td>
+          <span class="uportal-channel-table-header">Personīgie profili</span></td>
           <td nowrap="nowrap" valign="bottom" align="left"><strong>
             <a href="{$baseActionURL}?action=expandAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
-              <img alt="Par\u0101d\u012Bt deta\u013Cas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+              <img alt="Parādīt detaļas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
-              <span class="uportal-text-small">R\u0101d\u012Bt deta\u013Cas visiem</span>
+              <span class="uportal-text-small">Rādīt detaļas visiem</span>
             </a>
           </strong></td>
           <td nowrap="nowrap" valign="bottom" align="left" width="100%"><strong>
             <a href="{$baseActionURL}?action=condenseAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
-              <img alt="Pasl\u0113pt deta\u013Cas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+              <img alt="Paslēpt detaļas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
-              <span class="uportal-text-small">Ner\u0101d\u012Bt deta\u013Cas nevienam</span>
+              <span class="uportal-text-small">Nerādīt detaļas nevienam</span>
             </a>
           </strong>
         </td>
@@ -238,7 +238,7 @@
             <td rowspan="4" align="left" valign="top" class="uportal-background-content">
               <strong>
                 <a href="{$baseActionURL}?action=changeView&amp;view=condensed&amp;profileId={@id}&amp;profileType=user">
-                  <img alt="Pasl\u0113pt deta\u013Cas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+                  <img alt="Paslēpt detaļas" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
                 </a>
               </strong>
             </td>
@@ -248,7 +248,7 @@
                 <xsl:value-of select="@name"/>
               </strong>
               <xsl:if test="$profileId = @id and $profileType ='user'">
-                <br/>[\u0160is profils ir piek\u0101rtots pašreiz\u0113jai p\u0101rl\u016Bkprogrammai]</xsl:if>
+                <br/>[Šis profils ir piekārtots pašreizējai pārlūkprogrammai]</xsl:if>
             </td>
           </tr>
           <tr align="left" valign="top" class="uportal-channel-text">
@@ -258,36 +258,36 @@
             </td>
           </tr>
           <tr align="left" valign="top" class="uportal-channel-text">
-            <td>Darb\u012Bbas:</td>
+            <td>Darbības:</td>
             <td width="100%" nowrap="nowrap">
               <p>
                 <a href="{$baseActionURL}?userPreferencesAction=managePreferences&amp;profileId={@id}&amp;profileType=user">
-                  <img alt="Redi\u0123\u0113t iestat\u012Bjumus šim profilam" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
-                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Redi\u0123\u0113t iestat\u012Bjumus šim profilam</a>
+                  <img alt="Rediģēt iestatījumus šim profilam" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Rediģēt iestatījumus šim profilam</a>
                 <br/>
                 <a href="{$baseActionURL}?action=edit&amp;profileId={@id}&amp;profileType=user">
-                  <img alt="Redi\u0123\u0113t šo person\u012Bgo profilu" src="{$baseMediaURL}/profile_edit.gif" width="16" height="16" border="0"/>
-                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Redi\u0123\u0113t šo person\u012Bgo profilu</a>
+                  <img alt="Rediģēt šo personīgo profilu" src="{$baseMediaURL}/profile_edit.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Rediģēt šo personīgo profilu</a>
                 <br/>
                 <xsl:if test="not($profileId = @id and $profileType ='user')">
                   <a href="{$baseActionURL}?action=map&amp;profileId={@id}&amp;profileType=user">
-                    <img alt="Piek\u0101rtot šo profilu manai pašreiz\u0113jai p\u0101rl\u016Bkprogrmai" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
-                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Piek\u0101rtot šo profilu manai pašreiz\u0113jai p\u0101rl\u016Bkprogrmai</a>
+                    <img alt="Piekārtot šo profilu manai pašreizējai pārlūkprogrmai" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Piekārtot šo profilu manai pašreizējai pārlūkprogrmai</a>
                   <br/>
                 </xsl:if>
                 <a href="{$baseActionURL}?action=copy&amp;profileId={@id}&amp;profileType=user">
-                  <img alt="Kop\u0113t šo person\u012Bgo profilu" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
-                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Kop\u0113t šo person\u012Bgo profilu</a>
+                  <img alt="Kopēt šo personīgo profilu" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Kopēt šo personīgo profilu</a>
                 <br/>
                 <xsl:if test="$allowAdvancedProfileMapping = 'true'">
                   <a href="{$baseActionURL}?action=map_adv&amp;profileId={@id}&amp;profileType=user">
-                    <img alt="Augst\u0101ka l\u012Bme\u0146a profila piek\u0101rtošana" src="{$baseMediaURL}/profile_map_adv.gif" width="16" height="16" border="0"/>
-                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Augst\u0101ka l\u012Bme\u0146a profila piek\u0101rtošana</a>
+                    <img alt="Augstāka līmeņa profila piekārtošana" src="{$baseMediaURL}/profile_map_adv.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Augstāka līmeņa profila piekārtošana</a>
                   <br/>
                 </xsl:if>
-                <a href="{$baseActionURL}?action=delete&amp;profileId={@id}&amp;profileType=user" onClick="return confirm('Vai J\u016Bs tieš\u0101m gribat izdz\u0113st šo profilu??')">
-                  <img alt="Dz\u0113st šo profilu" src="{$baseMediaURL}/profile_delete.gif" width="16" height="16" border="0"/>
-                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Dz\u0113st šo profilu</a>
+                <a href="{$baseActionURL}?action=delete&amp;profileId={@id}&amp;profileType=user" onClick="return confirm('Vai Jūs tiešām gribat izdzēst šo profilu??')">
+                  <img alt="Dzēst šo profilu" src="{$baseMediaURL}/profile_delete.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Dzēst šo profilu</a>
               </p>
             </td>
           </tr>
@@ -296,7 +296,7 @@
           <tr align="left" valign="top" class="uportal-channel-text">
             <td rowspan="2" class="uportal-background-content">
               <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
-                <img alt="Par\u0101d\u012Bt deta\u013Cas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+                <img alt="Parādīt detaļas" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
                 <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               </a>
             </td>
@@ -307,7 +307,7 @@
                 </strong>
               </a>
               <xsl:if test="$profileId = @id and $profileType ='user'">
-                <br/>[\u0160is profils ir piek\u0101rtots pašreiz\u0113jai p\u0101rl\u016Bkprogrammai]</xsl:if>
+                <br/>[Šis profils ir piekārtots pašreizējai pārlūkprogrammai]</xsl:if>
             </td>
           </tr>
         </xsl:otherwise>
@@ -337,8 +337,8 @@
       <tr class="uportal-background-content">
         <td class="uportal-channel-text">
           <a href="{$baseActionURL}?action=newProfile">
-            <img alt="Izveidot jaunu person\u012Bgo profilu" src="{$baseMediaURL}/profile_new.gif" width="16" height="16" border="0"/>
-            <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Izveidot jaunu person\u012Bgo profilu</a>
+            <img alt="Izveidot jaunu personīgo profilu" src="{$baseMediaURL}/profile_new.gif" width="16" height="16" border="0"/>
+            <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Izveidot jaunu personīgo profilu</a>
         </td>
       </tr>
     </table>

@@ -17,8 +17,8 @@
 <table width="100%" border="0"><tr><td align="left">profila nosaukums: <xsl:value-of select="$profileName"/></td><td align="right">
 <input type="submit" name="submit" value="manage"/>
 <select name="userPreferencesAction">
-<option selected="" value="layout">kan\u0101li un mapes</option>
-<option value="gpref">glob\u0101lie iestat\u012Bjumi</option>
+<option selected="" value="layout">kanāli un mapes</option>
+<option value="gpref">globālie iestatījumi</option>
 <option value="manageProfiles">profili</option>
 </select>
 </td>
@@ -26,7 +26,7 @@
 </form>
 <!-- end of the header table -->
 
-<p align="center">Stilu lapas parametru redi\u0123\u0113šana:</p>
+<p align="center">Stilu lapas parametru rediģēšana:</p>
 <form method="post">
 <xsl:attribute name="action"><xsl:value-of select="$baseActionURL"/></xsl:attribute>
 <input type="hidden" name="action" value="submitEditValues"/>
@@ -36,21 +36,21 @@
 <tr><td><b>parameter</b></td><td><b>value</b></td><td><b>apraksts</b></td></tr>
 
 <!-- eventually this should check if there are any parameters at all of this class before drawing a table row-->
-<!-- process strukt\u016Bras stilu lapas parametri-->
-<tr><td colspan="3" align="right">strukt\u016Bras stilu lapas parametri</td></tr>
+<!-- process struktūras stilu lapas parametri-->
+<tr><td colspan="3" align="right">struktūras stilu lapas parametri</td></tr>
 <xsl:for-each select="structureparameters/parameter">
 <xsl:call-template name="processParameter"/>
 </xsl:for-each>
 
-<!-- process t\u0113mas stila lapas parametri-->
-<tr><td colspan="3" align="right">t\u0113mas stila lapas parametri</td></tr>
+<!-- process tēmas stila lapas parametri-->
+<tr><td colspan="3" align="right">tēmas stila lapas parametri</td></tr>
 <xsl:for-each select="themeparameters/parameter">
 <xsl:call-template name="processParameter"/>
 </xsl:for-each>
 </table>
 
 <p align="center">
-<input type="submit" name="submit" value="Saglab\u0101t"/>
+<input type="submit" name="submit" value="Saglabāt"/>
 <input type="submit" name="submit" value="Atcelt"/>
 </p>
 </form>

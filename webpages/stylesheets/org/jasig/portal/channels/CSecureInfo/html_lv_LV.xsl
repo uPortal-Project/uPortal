@@ -14,8 +14,8 @@
         <td>
           <img src="{$baseMediaURL}transparent.gif" width="16" height="16"/>
         </td>
-        <td class="uportal-channel-subtitle" width="100%">Uzman\u012Bbu!:<br/><span class="uportal-channel-error">
-	    \u0160\u012B kan\u0101la att\u0113lo\u0161anai ju0101lieto https protokols.</span>
+        <td class="uportal-channel-subtitle" width="100%">Uzmanību!:<br/><span class="uportal-channel-error">
+	    Šī kanāla attēlošanai jālieto https protokols.</span>
           <br/>
           <br/>
         </td>

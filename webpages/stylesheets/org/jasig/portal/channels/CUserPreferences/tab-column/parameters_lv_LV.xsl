@@ -19,7 +19,7 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Kan\u0101la iestat\u012Bjumi:</strong> J\u016Bsu izv\u0113l\u0113tajam kan\u0101lam iesp\u0113jams main\u012Bt iestat\u012Bjumus.</td>
+            <strong>Kanāla iestatījumi:</strong> Jūsu izvēlētajam kanālam iespējams mainīt iestatījumus.</td>
         </tr>
         <tr>
           <td>
@@ -29,14 +29,14 @@
                   <xsl:choose>
                     <xsl:when test="not(/userPrefParams/channelDef)">
                       <tr class="uportal-channel-table-header" valign="bottom">
-                        <td width="100%">Izveidot\u0101 kan\u0101la iestat\u012Bjumi</td>
+                        <td width="100%">Izveidotā kanāla iestatījumi</td>
                       </tr>
                       <tr class="uportal-channel-table-header">
                         <td align="center">
                           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                             <tr>
                               <td>
-                                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                                <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                               </td>
                             </tr>
                           </table>
@@ -61,17 +61,17 @@
 
                       <tr class="uportal-channel-table-header" valign="bottom">
                         <td align="center" nowrap="nowrap">
-                          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
 
-                        <td width="100%">Kan\u0101la iestat\u012Bjumi</td>
+                        <td width="100%">Kanāla iestatījumi</td>
                       </tr>
                       <tr class="uportal-channel-table-header">
                         <td align="center" colspan="4">
                           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                             <tr>
                               <td>
-                                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                                <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                               </td>
                             </tr>
                           </table>
@@ -84,14 +84,14 @@
                 </xsl:when>
                 <xsl:otherwise>
                   <tr class="uportal-channel-table-header" valign="bottom">
-                    <td width="100%">K\u013C\u016Bdas pazi\u0146ojums</td>
+                    <td width="100%">Kļūdas paziņojums</td>
                   </tr>
                   <tr class="uportal-channel-table-header">
                     <td align="center">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
                           <td>
-                            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                            <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                           </td>
                         </tr>
                       </table>
@@ -108,7 +108,7 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPTCUP_submit" value="Iepriek\u0161\u0113jais" onclick="document.parameters.uPTCUP_action.value='back'" class="uportal-button"/>
+            <input type="submit" name="uPTCUP_submit" value="Iepriekšējais" onclick="document.parameters.uPTCUP_action.value='back'" class="uportal-button"/>
             <input type="submit" name="uPTCUP_submit" value="Gatavs" onclick="document.parameters.uPTCUP_action.value='finished'" class="uportal-button"/>
             <input type="submit" name="uPTCUP_submit" value="Atcelt" onclick="document.parameters.uPTCUP_action.value='cancel'" class="uportal-button"/>
           </td>
@@ -142,7 +142,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
               <tr>
                 <td>
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                 </td>
               </tr>
             </table>
@@ -436,12 +436,12 @@
   </xsl:template>
 
   <xsl:template match="example">
-    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
   </xsl:template>
 
   <xsl:template match="units">
-    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">
       <xsl:value-of select="."/>
     </span>

@@ -53,7 +53,7 @@ $Revision$
       <tr class="uportal-background-light">
         <td class="uportal-channel-text">
           <p>
-            <span class="uportal-channel-subtitle-reversed">So\u013Ci, lai pievienotu jaunu kan\u0101lu:</span>
+            <span class="uportal-channel-subtitle-reversed">Soļi, lai pievienotu jaunu kanālu:</span>
           </p>
           <!--Begin Steps table -->
           <table width="100%" border="0" class="uportal-channel-text">
@@ -66,7 +66,7 @@ $Revision$
                         <td>
                           <strong>1.</strong>
                         </td>
-                        <td width="100%">Izv\u0113l\u0113ties kategoriju:</td>
+                        <td width="100%">Izvēlēties kategoriju:</td>
                       </tr>
                     </table>
                     <!--Category Selection Table -->
@@ -89,10 +89,10 @@ $Revision$
                                   <option value=" ">__________</option>
                                   <xsl:choose>
                                     <xsl:when test="$catID = 'all'">
-                                      <option value="all" selected="selected">Izv\u0113l\u0113ties visu</option>
+                                      <option value="all" selected="selected">Izvēlēties visu</option>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                      <option value="all">Izv\u0113l\u0113ties visu</option>
+                                      <option value="all">Izvēlēties visu</option>
                                       <option value=" " selected="selected"/>
                                     </xsl:otherwise>
                                   </xsl:choose>
@@ -137,7 +137,7 @@ $Revision$
                                       </xsl:for-each>
                                       <xsl:if test="position() = 1">
                                         <option value=" ">_____________</option>
-                                        <option value="all">Izv\u0113l\u0113ties visu</option>
+                                        <option value="all">Izvēlēties visu</option>
                                       </xsl:if>
                                     </select>
                                     <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
@@ -157,7 +157,7 @@ $Revision$
                                 <td>
                                   <strong>1a.</strong>
                                 </td>
-                                <td width="100%">Izv\u0113l\u0113ties apak\u0161kategoriju of "<xsl:value-of select="//category[@ID=$catID]/@name"/>" or select a channel from step 2:</td>
+                                <td width="100%">Izvēlēties apakškategoriju of "<xsl:value-of select="//category[@ID=$catID]/@name"/>" or select a channel from step 2:</td>
                               </tr>
                             </table>
                             <table width="100%" border="0">
@@ -175,7 +175,7 @@ $Revision$
                                         </option>
                                       </xsl:for-each>
                                       <option value=" ">____________________</option>
-                                      <option value=" " selected="selected">Izv\u0113l\u0113ties apak\u0161kategoriju</option>
+                                      <option value=" " selected="selected">Izvēlēties apakškategoriju</option>
                                     </select>
                                     <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
                                   </td>
@@ -254,7 +254,7 @@ $Revision$
                             <td>
                               <strong>3.</strong>
                             </td>
-                            <td>Pievienot izv\u0113l\u0113to kan\u0101lu:<input type="submit" name="addChannel" value="Pievienot" class="uportal-button"/></td>
+                            <td>Pievienot izvēlēto kanālu:<input type="submit" name="addChannel" value="Pievienot" class="uportal-button"/></td>
                           </tr>
                         </form>
                       </table>
@@ -270,7 +270,7 @@ $Revision$
                 </tr>
                 <tr>
                   <td colspan="3" class="uportal-channel-warning">
-                    <b>Kan\u0101la re\u0123istra dati \u0161obr\u012Bd nav pieejami...</b>
+                    <b>Kanāla reģistra dati šobrīd nav pieejami...</b>
                   </td>
                 </tr>
               </xsl:otherwise>

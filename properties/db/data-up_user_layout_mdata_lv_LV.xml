@@ -5,37 +5,37 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Ciemi\0146a izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Ciemiņa izkārtojums</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Demonstr\0101cijas izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Demonstrācijas izkārtojums</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Administratora izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Administratora izkārtojums</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Darbinieku izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Darbinieku izkārtojums</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Pasniedz\0113ju izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Pasniedzēju izkārtojums</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>LAYOUT_TITLE</name><value>Studentu izk\0101rtojums</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Studentu izkārtojums</value></column>
       </row>
     </rows>
   </table>

@@ -58,7 +58,7 @@ $Revision$
             <xsl:value-of select="$baseActionURL"/>?startItem=<xsl:value-of select="$startItem + $itemsPerScreen"/>
           </xsl:attribute>
           <xsl:call-template name="nav-text">
-            <xsl:with-param name="label" select="string('N\u0101kamais')"/>
+            <xsl:with-param name="label" select="string('Nākamais')"/>
           </xsl:call-template>
         </a>
       </xsl:if>
@@ -70,7 +70,7 @@ $Revision$
             <xsl:value-of select="$baseActionURL"/>?startItem=<xsl:value-of select="$startItem - $itemsPerScreen"/>
           </xsl:attribute>
           <xsl:call-template name="nav-text">
-            <xsl:with-param name="label" select="string('Iepriekš\u0113jais')"/>
+            <xsl:with-param name="label" select="string('Iepriekšējais')"/>
           </xsl:call-template>
         </a>
       </xsl:if>

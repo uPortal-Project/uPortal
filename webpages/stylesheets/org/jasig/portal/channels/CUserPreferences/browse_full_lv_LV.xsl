@@ -49,10 +49,10 @@
 
     <table align="center" border="1" cellspacing="0" cellpadding="5">
       <tr>
-        <th><input type="submit" name="moveTo" value="P\u0101rvietot uz..."/></th>
-        <th>P\u0101rk\u0101rtot</th>
+        <th><input type="submit" name="moveTo" value="Pārvietot uz..."/></th>
+        <th>Pārkārtot</th>
         <th>Nosaukums</th>
-        <th>Redi\u0123\u0113t</th>
+        <th>Rediģēt</th>
       </tr>
 
       <xsl:choose>
@@ -73,7 +73,7 @@
     <p align="center">
     <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="action" value="saveChanges"/>
-      <input type="submit" name="saveChanges" value="Saglab\u0101t izmai\u0146as"/>    
+      <input type="submit" name="saveChanges" value="Saglabāt izmaiņas"/>    
     </form>
     </p><p/>
   </xsl:if>    
@@ -87,10 +87,10 @@
 
   <xsl:choose>
     <xsl:when test="name()='layout'">
-      Mani kan\u0101li
+      Mani kanāli
     </xsl:when>
     <xsl:otherwise>    
-      <a href="{$baseActionURL}?action=browse&amp;folderID=root">Mani kan\u0101li</a>
+      <a href="{$baseActionURL}?action=browse&amp;folderID=root">Mani kanāli</a>
     </xsl:otherwise>
   </xsl:choose>
 

@@ -8,7 +8,7 @@
         <form name="form1" method="post" action="{$baseActionURL}">
           <table width="100%" border="0" cellpadding="0" cellspacing="0">
             <tr>
-              <td colspan="4" class="uportal-channel-table-header" valign="top">Redi\u0123\u0113t profilu</td>
+              <td colspan="4" class="uportal-channel-table-header" valign="top">Rediģēt profilu</td>
             </tr>
 
             <tr>
@@ -81,7 +81,7 @@
 
   <xsl:template match="themestylesheets">
     <tr>
-      <td class="uportal-label" colspan="4" valign="top">T\u0113ma:</td>
+      <td class="uportal-label" colspan="4" valign="top">Tēma:</td>
     </tr>
 
     <tr>
@@ -100,16 +100,16 @@
       <td colspan="4" valign="top">
         <table width="100%" border="0" cellspacing="0" cellpadding="5">
           <tr valign="top">
-            <td align="center" class="uportal-channel-subtitle">Atlas\u012Bt</td>
+            <td align="center" class="uportal-channel-subtitle">Atlasīt</td>
 
-            <td align="center" class="uportal-channel-subtitle">Ier\u012Bces tips</td>
+            <td align="center" class="uportal-channel-subtitle">Ierīces tips</td>
 
             <td width="100%" class="uportal-channel-subtitle">
               <div align="center">Nosaukums/Apraksts</div>
             </td>
 
             <td class="uportal-channel-subtitle" align="center">
-              <div align="center">Piem\u0113rs</div>
+              <div align="center">Piemērs</div>
             </td>
           </tr>
 
@@ -155,7 +155,7 @@
 
       <xsl:choose>
         <xsl:when test="sampleiconuri =''">
-          <td align="center" valign="middle" class="uportal-text-small">Nav piem\u0113ra
+          <td align="center" valign="middle" class="uportal-text-small">Nav piemēra
           <br />
 
           Pieejams</td>
@@ -175,7 +175,7 @@
 
           <br />
 
-          Nospiest, lai palielin\u0101tu</td>
+          Nospiest, lai palielinātu</td>
         </xsl:otherwise>
       </xsl:choose>
     </tr>
@@ -209,7 +209,7 @@
 
       <xsl:choose>
         <xsl:when test="sampleiconuri =''">
-          <td align="center" valign="middle" class="uportal-text-small">Nav piem\u0113ra
+          <td align="center" valign="middle" class="uportal-text-small">Nav piemēra
           <br />
 
           Pieejams</td>
@@ -229,7 +229,7 @@
 
           <br />
 
-          Nospiest, lai palielin\u0101tu</td>
+          Nospiest, lai palielinātu</td>
         </xsl:otherwise>
       </xsl:choose>
     </tr>

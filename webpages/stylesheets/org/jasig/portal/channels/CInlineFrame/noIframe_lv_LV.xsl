@@ -5,8 +5,8 @@
 <xsl:param name="locale">lv_LV</xsl:param>
 
 <xsl:template match="iframe" >
-  \u0160\u012B p\u0101rl\u016Bkprogramma neatbalsta iek\u013Cautos kadrus.<br/> 
-  <a href="{url}" target="_blank">Nospiest \u0161eit, lai apskat\u012Btu saturu </a> atsevi\u0161\u0137\u0101 log\u0101.
+  Šī pārlūkprogramma neatbalsta iekļautos kadrus.<br/> 
+  <a href="{url}" target="_blank">Nospiest šeit, lai apskatītu saturu </a> atsevišķā logā.
 </xsl:template>
 
 </xsl:stylesheet>

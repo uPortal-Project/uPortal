@@ -70,9 +70,9 @@ Version $Revision$
         </tr>
       <tr class="uportal-background-light" align="left" valign="top">
         <td class="uportal-channel-table-header">Slejas nosaukums</td>
-        <td class="uportal-channel-table-header">Atsl\u0113ga</td>
+        <td class="uportal-channel-table-header">Atslēga</td>
         <td class="uportal-channel-table-header">Tips</td>
-        <td class="uportal-channel-table-header">Izm\u0113rs</td>
+        <td class="uportal-channel-table-header">Izmērs</td>
         <td class="uportal-channel-table-header">Apraksts</td>
       </tr>
       <xsl:apply-templates select="columns/column"/>

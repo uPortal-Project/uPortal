@@ -65,16 +65,16 @@
           </script>
           <tr>
             <td colspan="2">
-              <input class="uportal-button" type="button" onClick="javascript:change(this.form,true);" value="Izv\u0113l\u0113ties visu"/>
+              <input class="uportal-button" type="button" onClick="javascript:change(this.form,true);" value="Izvēlēties visu"/>
               <xsl:text> </xsl:text>
-              <input class="uportal-button" type="button" onClick="javascript:change(this.form,false);" value="Neizv\u0113l\u0113ties neko"/>
+              <input class="uportal-button" type="button" onClick="javascript:change(this.form,false);" value="Neizvēlēties neko"/>
             </td>
           </tr>
         </xsl:template>
 
         <xsl:template name="notAuthorized">
           <span class="uportal-channel-warning">
-          <xsl:text>J\u016Bs neesat ties\u012Bgs lietot \u0161o kan\u0101lu</xsl:text>
+          <xsl:text>Jūs neesat tiesīgs lietot šo kanālu</xsl:text>
           </span>
         </xsl:template>
 
@@ -94,7 +94,7 @@
                     </xsl:call-template>
                     <br/>
                     <em>
-                    	<xsl:text> Pie\u0161\u0137irt ties\u012Bbas lietot\u0101jam vai grupai:</xsl:text>
+                    	<xsl:text> Piešķirt tiesības lietotājam vai grupai:</xsl:text>
                     </em>
                     </span>
                 </td></tr>
@@ -107,12 +107,12 @@
 
                         	<tr>
                         	<td rowspan="2" align="center" valign="middle"><span class="uportal-channel-strong">
-                        		<xsl:text>Apak\u0161sist\u0113ma:</xsl:text></span><br/>
+                        		<xsl:text>Apakšsistēma:</xsl:text></span><br/>
                         		<span class="uportal-channel-text">
                         		<xsl:value-of select="@name"/></span></td>
                         	<td colspan="{count($activities)}" class="uportal-background-med" align="center">
                         		<span class="uportal-channel-strong">
-                        		<xsl:text>Darb\u012Bbas:</xsl:text>
+                        		<xsl:text>Darbības:</xsl:text>
                         		</span>
                         	</td></tr>
                             <tr>
@@ -125,7 +125,7 @@
                             <tr>
                             <td class="uportal-background-light">
                             	<span class="uportal-channel-strong">
-                            	<xsl:text>M\u0113r\u0137i:</xsl:text>
+                            	<xsl:text>Mērķi:</xsl:text>
                             	</span>
                             </td>
                             <td class="uportal-background-dark">
@@ -186,7 +186,7 @@
                     <span class="uportal-channel-text">
                     <br/>
                     <em>
-                    	<xsl:text> Pie\u0161\u0137irt ties\u012Bbas \u0161\u012Bs apak\u0161sist\u0113mas m\u0113r\u0137iem: </xsl:text>
+                    	<xsl:text> Piešķirt tiesības šīs apakšsistēmas mērķiem: </xsl:text>
                     </em>
                     </span>
                 </td></tr>
@@ -197,12 +197,12 @@
 
                         	<tr>
                         	<td rowspan="2" align="center" valign="middle"><span class="uportal-channel-strong">
-                        		<xsl:text>M\u0113r\u0137is:</xsl:text></span><br/>
+                        		<xsl:text>Mērķis:</xsl:text></span><br/>
                         		<span class="uportal-channel-text">
                         		<xsl:value-of select="@name"/></span></td>
                         	<td colspan="{count($activities)}" class="uportal-background-med" align="center">
                         		<span class="uportal-channel-strong">
-                        		<xsl:text>Darb\u012Bbas:</xsl:text>
+                        		<xsl:text>Darbības:</xsl:text>
                         		</span>
                         	</td></tr>
                             <tr>
@@ -215,7 +215,7 @@
                             <tr>
                             <td class="uportal-background-light">
                             	<span class="uportal-channel-strong">
-                            	<xsl:text>Ties\u012Bbu \u012Bpa\u0161nieki:</xsl:text>
+                            	<xsl:text>Tiesību īpašnieki:</xsl:text>
                             	</span>
                             </td>
                             	<td class="uportal-background-dark">
@@ -297,7 +297,7 @@
                             <xsl:attribute name="selected">selected</xsl:attribute>
                         </xsl:if>
                         <xsl:if test="$perm and ($perm[@principal!=$principalkey]/@type)">
-                            <xsl:text>P\u0101rmantot\u0101ji </xsl:text>
+                            <xsl:text>Pārmantotāji </xsl:text>
                             <xsl:choose>
                             	<xsl:when test="($perm[@principal!=$principalkey]/@type='GRANT') and ($perm[@principal!=$principalkey]/@type='DENY')">
                             		<xsl:text>Abi</xsl:text>
@@ -312,7 +312,7 @@
                         <xsl:if test="(($perm) and ($perm[@principal=$principalkey]/@type='GRANT') and not($perm[@principal=$principalkey]/@type='DENY'))">
                             <xsl:attribute name="selected">selected</xsl:attribute>
                         </xsl:if>
-                        <xsl:text>PIE\u0160\u0136IRT</xsl:text>
+                        <xsl:text>PIEŠĶIRTT</xsl:text>
                     </option>
                     <option>
                         <xsl:if test="(($perm) and ($perm[@principal=$principalkey]/@type='DENY') and not($perm[@principal=$principalkey]/@type='GRANT'))">
@@ -362,7 +362,7 @@
             <xsl:call-template name="hr"/>
             <tr><td colspan="2">
                 <input type="hidden" name="uP_root" value="me"/>
-                <input type="submit" value="Apstiprin\u0101t" class="uportal-button"/>
+                <input type="submit" value="Apstiprināt" class="uportal-button"/>
                 <xsl:text> </xsl:text>
                 <input type="reset" value="Atjaunot formu" class="uportal-button"/>
             </td></tr>

@@ -12,12 +12,12 @@
     <table border="0" width="100%" cellspacing="0" cellpadding="4">
       <tr>
         <td colspan="2" nowrap="nowrap" align="center" class="uportal-background-med">
-          <p class="uportal-channel-title">K\u013C\u016Bdas pazi\u0146ojums</p>
+          <p class="uportal-channel-title">Kļūdas paziņojums</p>
         </td>
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Kan\u0101la ID:</p>
+          <p class="uportal-channel-error">Kanāla ID:</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:value-of select="channel/id"/>
@@ -25,28 +25,28 @@
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Pazi\u0146ojums:</p>
+          <p class="uportal-channel-error">Paziņojums:</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(message) or message = ''">Pazi\u0146ojums nav pieejams</xsl:if>
+          <xsl:if test="not(message) or message = ''">Paziņojums nav pieejams</xsl:if>
           <xsl:value-of select="message"/>
         </td>
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">K\u013C\u016Bdas tips:</p>
+          <p class="uportal-channel-error">Kļūdas tips:</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:choose>
-            <xsl:when test="@code='4'">Kan\u0101lam iest\u0101jies taimauts (kods 4)</xsl:when>
-            <xsl:when test="@code='1'">Kan\u0101ls nesp\u0113j par\u0101d\u012Bt datus (kods 1)</xsl:when>
-            <xsl:when test="@code='2'">Kan\u0101ls nesp\u0113j s\u0101kt darboties (kods 2)</xsl:when>
-            <xsl:when test="@code='3'">Kan\u0101ls nesp\u0113j pie\u0146emt darb\u012Bbas datus (kods 3)</xsl:when>
-            <xsl:when test="@code='0'">Visp\u0101r\u0113j\u0101 k\u013C\u016Bda (kods 0)</xsl:when>
-            <xsl:when test="@code='5'">Kan\u0101ls nesp\u0113j pie\u0146emt PSP (Person\u0101lie sakaru pakalpojumi) (kods 5)</xsl:when>
-            <xsl:when test="@code='6'">Lietot\u0101jam nav piek\u013Cuves ties\u012Bbu (kods 6)</xsl:when>
-            <xsl:when test="@code='7'">Kan\u0101ls nav pieejams (kods 7)</xsl:when>
-            <xsl:when test="@code='-1'">uPortal k\u013C\u016Bda (kods -1)</xsl:when>
+            <xsl:when test="@code='4'">Kanālam iestājies taimauts (kods 4)</xsl:when>
+            <xsl:when test="@code='1'">Kanāls nespēj parādīt datus (kods 1)</xsl:when>
+            <xsl:when test="@code='2'">Kanāls nespēj sākt darboties (kods 2)</xsl:when>
+            <xsl:when test="@code='3'">Kanāls nespēj pieņemt darbības datus (kods 3)</xsl:when>
+            <xsl:when test="@code='0'">Vispārējā kļūda (kods 0)</xsl:when>
+            <xsl:when test="@code='5'">Kanāls nespēj pieņemt PSP (Personālie sakaru pakalpojumi) (kods 5)</xsl:when>
+            <xsl:when test="@code='6'">Lietotājam nav piekļuves tiesību (kods 6)</xsl:when>
+            <xsl:when test="@code='7'">Kanāls nav pieejams (kods 7)</xsl:when>
+            <xsl:when test="@code='-1'">uPortal kļūda (kods -1)</xsl:when>
           </xsl:choose>
         </td>
       </tr>
@@ -57,7 +57,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Izm\u0113\u0123in\u0101t kan\u0101lu no jauna">
+              <img border="0" width="16" height="16" alt="Izmēģināt kanālu no jauna">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
               </img>
@@ -71,7 +71,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
-              <img border="0" width="16" height="16" alt="P\u0101rstart\u0113t kan\u0101lu">
+              <img border="0" width="16" height="16" alt="Pārstartēt kanālu">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
               </img>
@@ -97,7 +97,7 @@
                 <a>
                   <xsl:attribute name="href">
                     <xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
-                  <img border="0" width="16" height="16" alt="Par\u0101d\u012Bt steka trasi">
+                  <img border="0" width="16" height="16" alt="Parādīt steka trasi">
                     <xsl:attribute name="src">
                       <xsl:value-of select="string($baseMediaURL)"/>error_show_trace.gif</xsl:attribute>
                   </img>
@@ -121,15 +121,15 @@
   <xsl:template match="exception">
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-        <p class="uportal-channel-error">Probl\u0113mas tips:</p>
+        <p class="uportal-channel-error">Problēmas tips:</p>
       </td>
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
         <xsl:choose>
-          <xsl:when test="@code='-1'">Izpildlaika k\u013C\u016Bda (kods -1)</xsl:when>
-          <xsl:when test="@code='1'">Kan\u0101ls nepar\u0101d\u0101s (kods 1)</xsl:when>
-          <xsl:when test="@code='2'">Iekš\u0113jais taimauts (kods 2)</xsl:when>
-          <xsl:when test="@code='3'">Autoriz\u0101cijas probl\u0113ma (kods 3)</xsl:when>
-          <xsl:when test="@code='4'">Resursa tr\u016Bkums (kods 4)</xsl:when>
+          <xsl:when test="@code='-1'">Izpildlaika kļūda (kods -1)</xsl:when>
+          <xsl:when test="@code='1'">Kanāls neparādās (kods 1)</xsl:when>
+          <xsl:when test="@code='2'">Iekšējais taimauts (kods 2)</xsl:when>
+          <xsl:when test="@code='3'">Autorizācijas problēma (kods 3)</xsl:when>
+          <xsl:when test="@code='4'">Resursa trūkums (kods 4)</xsl:when>
         </xsl:choose>
       </td>
     </tr>
@@ -166,10 +166,10 @@
     </xsl:if>
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-        <p class="uportal-channel-error">K\u013C\u016Bdas pazi\u0146ojums</p>
+        <p class="uportal-channel-error">Kļūdas paziņojums</p>
       </td>
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
-        <xsl:if test="not(message) or message = ''">K\u013C\u016Bdas pazi\u0146ojums nav pieejams</xsl:if>
+        <xsl:if test="not(message) or message = ''">Kļūdas paziņojums nav pieejams</xsl:if>
         <xsl:value-of select="message"/>
       </td>
     </tr>

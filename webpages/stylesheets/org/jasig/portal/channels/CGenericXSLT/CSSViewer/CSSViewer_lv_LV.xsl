@@ -47,12 +47,12 @@ Version $Revision$
     <table width="100%" border="0" cellpadding="4" class="uportal-background-content">
       <tr class="uportal-background-light" align="left" valign="top">
         <td class="uportal-channel-table-header">Elementi</td>
-        <td class="uportal-channel-table-header">Piem\u0113rs vai apraksts</td>
+        <td class="uportal-channel-table-header">Piemērs vai apraksts</td>
       </tr>
       <xsl:apply-templates select="elements/member"/>
       <tr class="uportal-background-light" align="left" valign="top">
         <td class="uportal-channel-table-header">Klases</td>
-        <td class="uportal-channel-table-header">Piem\u0113rs vai apraksts</td>
+        <td class="uportal-channel-table-header">Piemērs vai apraksts</td>
       </tr>
       <xsl:apply-templates select="classes/member"/>
     </table>

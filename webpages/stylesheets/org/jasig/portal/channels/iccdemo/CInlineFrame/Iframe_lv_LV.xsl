@@ -12,7 +12,7 @@
 </span>
 </p>
 </xsl:for-each>
-  Pa\u0161reiz\u0113jais URL: <xsl:value-of select="url"/><br/>
+  Pašreizējais URL: <xsl:value-of select="url"/><br/>
   <iframe src="{url}" height="{height}" frameborder="no" width="100%">dummyText</iframe>
 </xsl:template>
 

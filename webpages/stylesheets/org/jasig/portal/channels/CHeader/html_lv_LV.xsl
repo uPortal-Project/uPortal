@@ -41,12 +41,12 @@ $Revision$
   <xsl:param name="locale">lv_LV</xsl:param>
   <xsl:template match="header">
     <xsl:if test="$authenticated != 'false'">
-      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">S\u0101kumlapa </a> | 
+      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">Home </a> | 
       <a href="{$baseActionURL}?uP_fname=layout-sitemap" class="uportal-navigation-category"> Site Map </a> |
       <xsl:if test="chan-mgr-chanid">
-      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> Kan\u0101la administrators </a> | 
+      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> Kanālu administrators </a> | 
       </xsl:if>
-      <a href="{$baseActionURL}?uP_fname={preferences-chanid}" class="uportal-navigation-category"> Iestat\u012Bjumi </a> | <a href="Logout" class="uportal-navigation-category"> Iziet </a>
+      <a href="{$baseActionURL}?uP_fname={preferences-chanid}" class="uportal-navigation-category"> Iestatījumi </a> | <a href="Logout" class="uportal-navigation-category"> Iziet </a>
     </xsl:if>
   </xsl:template>
 </xsl:stylesheet>

@@ -27,11 +27,11 @@
           <column><name>NAME</name><value>Sleja 2</value></column>
         </row>
           <!-- uPortal Home Page -->
-      <!-- Da\017E\0101di -->
+      <!-- Dažādi -->
       <row>
         <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Da\017E\0101di</value></column>
+        <column><name>NAME</name><value>Dažādi</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -43,11 +43,11 @@
           <column><name>LOCALE</name><value>lv_LV</value></column>
           <column><name>NAME</name><value>Sleja 2</value></column>
         </row>
-      <!-- Zi\0146as -->
+      <!-- Ziņas -->
       <row>
         <column><name>STRUCT_ID</name><value>14</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Zi\0146as</value></column>
+        <column><name>NAME</name><value>Ziņas</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>15</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -63,7 +63,7 @@
       <row>
         <column><name>STRUCT_ID</name><value>25</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
 
       <!-- Demo Layout -->
@@ -96,11 +96,11 @@
           <column><name>LOCALE</name><value>lv_LV</value></column>
           <column><name>NAME</name><value>Sleja 2</value></column>
         </row>
-      <!-- Izstr\0101de -->
+      <!-- Izstrāde -->
       <row>
         <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Izstr\0101de</value></column>
+        <column><name>NAME</name><value>Izstrāde</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>11</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -113,22 +113,22 @@
           <column><name>NAME</name><value>Sleja 2</value></column>
         </row>
 
-       <!-- CWebProxy piem\0113ri -->
+       <!-- CWebProxy piemēri -->
        <row>
         <column><name>STRUCT_ID</name><value>21</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>CWebProxy piem\0113ri</value></column>
+        <column><name>NAME</name><value>CWebProxy piemēri</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>25</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>LOCALE</name><value>lv_LV</value></column>
           <column><name>NAME</name><value>Sleja 2</value></column>
         </row>
-       <!-- CWebProxy piem\0113ri -->
+       <!-- CWebProxy piemēri -->
        <row>
         <column><name>STRUCT_ID</name><value>31</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>ICC demonstr\0101cija</value></column>
+        <column><name>NAME</name><value>ICC demonstrācija</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>32</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -145,7 +145,7 @@
       <row>
         <column><name>STRUCT_ID</name><value>27</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
       <!-- Admin Layout -->
       <!-- layout root node -->
@@ -216,28 +216,28 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>27</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>21</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>CWebProxy piem\0113ri</value></column>
+        <column><name>NAME</name><value>CWebProxy piemēri</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>10</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Izstr\0101de</value></column>
+        <column><name>NAME</name><value>Izstrāde</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>33</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Administr\0101cijas r\012Bki</value></column>
+        <column><name>NAME</name><value>Administrācijas rīki</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -281,14 +281,14 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>27</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>4</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Galvenais darbinieku \0161\0137irklis</value></column>
+        <column><name>NAME</name><value>Galvenais darbinieku šķirklis</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -317,14 +317,14 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>27</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>4</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Galvenais pasniedz\0113ju \0161\0137irklis</value></column>
+        <column><name>NAME</name><value>Galvenais pasniedzēju šķirklis</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -360,14 +360,14 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>27</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>K\0101jenes mape</value></column>
+        <column><name>NAME</name><value>Kājenes mape</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>4</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>NAME</name><value>Galvenais studentu \0161\0137irklis</value></column>
+        <column><name>NAME</name><value>Galvenais studentu šķirklis</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>

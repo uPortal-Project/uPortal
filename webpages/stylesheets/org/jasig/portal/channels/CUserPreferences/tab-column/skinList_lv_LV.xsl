@@ -15,7 +15,7 @@
         <form name="form1" method="post" action="{$baseActionURL}">
         <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
           <tr class="uportal-channel-text">
-            <td><strong>Noform\u0113juma izv\u0113le:</strong> Izv\u0113l\u0113ties noform\u0113jumu un nospiest [Piem\u0113rot].</td>
+            <td><strong>Noformējuma izvēle:</strong> Izvēlēties noformējumu un nospiest [Piemērot].</td>
           </tr>
           <tr class="uportal-channel-text">
             <td>
@@ -23,20 +23,20 @@
                 <tr class="uportal-channel-table-header">
                   <td nowrap="nowrap">Opcija</td>
                   <td>
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td nowrap="nowrap">S\u012Bkt\u0113ls</td>
+                  <td nowrap="nowrap">Sīktēls</td>
                   <td>
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td width="100%"><img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+                  <td width="100%"><img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
                 </tr>
                 <tr class="uportal-channel-table-header">
                   <td colspan="5">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"/>
+                          <img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -51,7 +51,7 @@
           <tr>
             <td>
               <input type="hidden" name="action" value="completeEdit"/>
-              <input type="submit" name="submitSave" value="Piem\u0113rot" class="uportal-button"/>
+              <input type="submit" name="submitSave" value="Piemērot" class="uportal-button"/>
               <input type="submit" name="submitCancel" value="Atcelt" class="uportal-button"/>              
             </td>
           </tr>
@@ -72,11 +72,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </td>
-      <td><img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td>
         <img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
       </td>
-      <td><img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr valign="top">
@@ -88,7 +88,7 @@
             </td>
           </tr>
           <tr valign="top">
-            <td nowrap="nowrap" class="uportal-channel-table-header">Apraksts:<img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"/></td>
+            <td nowrap="nowrap" class="uportal-channel-table-header">Apraksts:<img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"/></td>
             <td class="uportal-channel-text">
               <xsl:value-of select="skin-description"/>
             </td>
@@ -101,7 +101,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
           <tr>
             <td>
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/>
             </td>
           </tr>
         </table>

@@ -101,11 +101,11 @@ $Revision$
               <td nowrap="nowrap" class="uportal-background-light">
                 <xsl:choose>
                       <xsl:when test="ancestor-or-self::*[@immutable='true']">
-                      <img alt="\u0160is \u0161\u0137irklis ir blo\u0137\u0113ts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      <img alt="Šis šķirklis ir bloķēts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
                       </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Nospiest, lai pārvietotu šo šķirkli pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -133,16 +133,16 @@ $Revision$
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="ancestor-or-self::*[@immutable='true']">
-                      <img alt="\u0160is \u0161\u0137irklis ir blo\u0137\u0113ts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      <img alt="Šis šķirklis ir bloķēts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
                       </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo šķirkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo šķirkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -153,7 +153,7 @@ $Revision$
                 </xsl:choose>
               </td>
               <td class="uportal-background-dark">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
               </td>
             </xsl:when>
             <xsl:otherwise>
@@ -161,7 +161,7 @@ $Revision$
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Nospiest, lai pārvietotu šo šķirkli pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -199,16 +199,16 @@ $Revision$
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="ancestor-or-self::*[@immutable='true']">
-                      <img alt="\u0160is \u0161\u0137irklis ir blo\u0137\u0113ts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      <img alt="Šis šķirklis ir bloķēts" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
                       </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo šķirkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o \u0161\u0137irkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo šķirkli pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -219,7 +219,7 @@ $Revision$
                 </xsl:choose>
               </td>
               <td class="uportal-background-dark">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
               </td>
             </xsl:otherwise>
           </xsl:choose>
@@ -227,23 +227,23 @@ $Revision$
         <xsl:choose>
           <xsl:when test="$action = 'newTab'">
             <td nowrap="nowrap" bgcolor="#CCCCCC" class="uportal-background-highlight">
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/newtab.gif" width="59" height="20"/>
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/newtab.gif" width="59" height="20"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
             </td>
           </xsl:when>
           <xsl:otherwise>
             <xsl:if test="not($action='moveColumn' or $action='moveChannel')">
               <td nowrap="nowrap" bgcolor="#CCCCCC">
                 <a href="{$baseActionURL}?action=newTab" class="uportal-text-small">
-                  <img alt="Nospiest, lai pievienotu \u0161eit jaunu \u0161\u0137irkli" src="{$mediaPath}/newtab.gif" width="59" height="20" border="0"/>
+                  <img alt="Nospiest, lai pievienotu šeit jaunu šķirkli" src="{$mediaPath}/newtab.gif" width="59" height="20" border="0"/>
                 </a>
               </td>
             </xsl:if>
           </xsl:otherwise>
         </xsl:choose>
         <td width="100%">
-          <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+          <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
         </td>
       </tr>
     </table>
@@ -282,49 +282,49 @@ $Revision$
         <xsl:when test="/layout/folder/folder[attribute::ID=$activeTabID]/folder">
           <xsl:for-each select="/layout/folder/folder[attribute::ID=$activeTabID]/folder">
             <td width="10">
-              <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+              <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
             </td>
             <td width="20">
-              <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+              <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
             </td>
             <td width="10">
-              <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+              <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
             </td>
             <td width="">
-              <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+              <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
             </td>
           </xsl:for-each>
           <td width="10">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="20">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="10">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
           </td>
         </xsl:when>
         <xsl:otherwise>
           <td width="10">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="20">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="10">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
           </td>
           <td width="100%">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="10">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td width="20">
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
           </td>
           <td>
-            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
           </td>
         </xsl:otherwise>
       </xsl:choose>
@@ -385,16 +385,16 @@ $Revision$
           <td class="uportal-background-light" width="100%" align="center">
             <xsl:choose>
               <xsl:when test="($action = 'selectColumn' or $action = 'moveColumn') and $elementID=@ID">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:choose>
                   <xsl:when test="not(position()=1) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="\u0160\u012B sleja ir blo\u0137\u0113ta" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                  <img alt="Šī sleja ir bloķēta" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Nospiest, lai p\u0101rvietotu \u0161o sleju pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Nospiest, lai pārvietotu šo sleju pa kreisi" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -402,22 +402,22 @@ $Revision$
                   </xsl:otherwise>
                 </xsl:choose>
                 <a href="{$baseActionURL}?action=selectColumn&amp;elementID={@ID}" class="uportal-text-small">
-                  <img alt="Nospiest, lai iez\u012Bm\u0113tu \u0161o sleju" src="{$mediaPath}/selectcolumn.gif" width="79" height="20" border="0"/>
+                  <img alt="Nospiest, lai iezīmētu šo sleju" src="{$mediaPath}/selectcolumn.gif" width="79" height="20" border="0"/>
                 </a>
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="ancestor-or-self::*[@immutable='true']">
-                      <img alt="\u0160\u012B sleja ir blo\u0137\u0113ta" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      <img alt="Šī sleja ir bloķēta" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
                       </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o sleju pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo sleju pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o sleju pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo sleju pa labi" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -452,44 +452,44 @@ $Revision$
   <xsl:template name="closeContentRow">
     <!-- Close Content Row-->
     <td>
-      <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+      <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
     </td>
     <xsl:choose>
       <xsl:when test="$action = 'newColumn' and $position='after'">
         <td class="uportal-background-highlight" width="20">
           <a href="{$baseActionURL}?action=newColumn&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai pievienotu \u0161eit jaunu sleju [p\u0113c {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
+            <img alt="Nospiest, lai pievienotu šeit jaunu sleju [pēc {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
           </a>
         </td>
       </xsl:when>
       <xsl:when test="$action = 'moveColumn' and not(@ID=$elementID)">
         <td class="uportal-background-highlight" width="20">
           <a href="{$baseActionURL}?action=moveColumnHere&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai p\u0101rvietotu \u0161eit iez\u012Bm\u0113to sleju [p\u0113c {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0"/>
+            <img alt="Nospiest, lai pārvietotu šeit iezīmēto sleju [pēc {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0"/>
           </a>
         </td>
       </xsl:when>
       <xsl:when test="$action = 'moveColumn' and @ID=$elementID">
         <td class="uportal-background-light" width="20" valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
         </td>
       </xsl:when>
       <xsl:otherwise>
         <td class="uportal-background-light" width="20" valign="top">
           <a href="{$baseActionURL}?action=newColumn&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai pievienotu \u0161eit jaunu sleju [p\u0113c {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
+            <img alt="Nospiest, lai pievienotu šeit jaunu sleju [pēc {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
           </a>
         </td>
       </xsl:otherwise>
     </xsl:choose>
     <td>
-      <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+      <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
     </td>
     <!-- Close Content Row-->
   </xsl:template>
   <xsl:template name="controlColumn">
     <td>
-      <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+      <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
     </td>
   </xsl:template>
   <xsl:template name="newColumn">
@@ -497,26 +497,26 @@ $Revision$
       <xsl:when test="$action = 'newColumn' and $position='before' and $elementID=@ID">
         <td class="uportal-background-highlight" width="20">
           <a href="{$baseActionURL}?action=newColumn&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai pievienotu \u0161eit jaunu sleju [pirms {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
+            <img alt="Nospiest, lai pievienotu šeit jaunu sleju [pirms {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
           </a>
         </td>
       </xsl:when>
       <xsl:when test="$action = 'moveColumn' and not(@ID=$elementID or preceding-sibling::folder[1]/@ID=$elementID)">
         <td class="uportal-background-highlight" width="20">
           <a href="{$baseActionURL}?action=moveColumnHere&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai p\u0101rvietotu \u0161eit iez\u012Bm\u0113to sleju [pirms {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0"/>
+            <img alt="Nospiest, lai pārvietotu šeit iezīmēto sleju [pirms {@ID}]" src="{$mediaPath}/movecolumn.gif" border="0"/>
           </a>
         </td>
       </xsl:when>
       <xsl:when test="$action = 'moveColumn' and (@ID=$elementID or preceding-sibling::folder[1]/@ID=$elementID)">
         <td class="uportal-background-light" width="20" valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
         </td>
       </xsl:when>
       <xsl:otherwise>
         <td class="uportal-background-light" width="20" valign="top">
           <a href="{$baseActionURL}?action=newColumn&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="Nospiest, lai pievienotu \u0161eit jaunu sleju" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
+            <img alt="Nospiest, lai pievienotu šeit jaunu sleju" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
           </a>
         </td>
       </xsl:otherwise>
@@ -527,7 +527,7 @@ $Revision$
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr>
         <td>
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
         </td>
       </tr>
       <tr align="center">
@@ -535,26 +535,26 @@ $Revision$
           <xsl:when test="$action = 'newChannel' and $position='before' and $elementID=@ID">
             <td class="uportal-background-highlight">
               <a href="{$baseActionURL}?action=newChannel&amp;position=before&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai pievienotu \u0161eit jaunu kan\u0101lu [pirms {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
+                <img alt="Nospiest, lai pievienotu šeit jaunu kanālu [pirms {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
           </xsl:when>
           <xsl:when test="$action = 'moveChannel' and not(@ID=$elementID or preceding-sibling::channel[1]/@ID=$elementID)">
             <td class="uportal-background-highlight">
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai p\u0101rvietotu \u0161eit iez\u012Bm\u0113to kan\u0101lu [pirms {@ID}]" src="{$mediaPath}/movechannel.gif" border="0"/>
+                <img alt="Nospiest, lai pārvietotu šeit iezīmēto kanālu [pirms {@ID}]" src="{$mediaPath}/movechannel.gif" border="0"/>
               </a>
             </td>
           </xsl:when>
           <xsl:when test="$action = 'moveChannel' and (@ID=$elementID or preceding-sibling::channel[1]/@ID=$elementID)">
             <td>
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
             </td>
           </xsl:when>
           <xsl:otherwise>
             <td>
               <a href="{$baseActionURL}?action=newChannel&amp;position=before&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai pievienotu \u0161eit jaunu kan\u0101lu" src="{$mediaPath}/newchannel.gif" border="0"/>
+                <img alt="Nospiest, lai pievienotu šeit jaunu kanālu" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
           </xsl:otherwise>
@@ -562,7 +562,7 @@ $Revision$
       </tr>
       <tr>
         <td>
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
         </td>
       </tr>
     </table>
@@ -582,7 +582,7 @@ $Revision$
                 <TD ALIGN="CENTER" CLASS="uportal-channel-text"><B>
                 <A HREF="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
                 
-                  <xsl:if test="@name = ''">Kan\u0101lam nav nosaukuma</xsl:if>
+                  <xsl:if test="@name = ''">Kanālam nav nosaukuma</xsl:if>
                   <xsl:value-of select="@name"/>
                 </A>
                 </B></TD>
@@ -594,12 +594,12 @@ $Revision$
 	        <TD VALIGN="TOP" style="background-image: url({$mediaPath}/channel/chan_box_bg.gif)">
 	        <DIV ALIGN="RIGHT">
 		<A HREF="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
-		  <IMG SRC="{$mediaPath}/channel/chan_select.gif" ALT="Nospiest, lai iez\u012Bm\u0113tu \u0161o kan\u0101lu" WIDTH="16" HEIGHT="16" BORDER="0" VSPACE="2"/>
+		  <IMG SRC="{$mediaPath}/channel/chan_select.gif" ALT="Nospiest, lai iezīmētu šo kanālu" WIDTH="16" HEIGHT="16" BORDER="0" VSPACE="2"/>
 		</A>
     <xsl:choose>
 <xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])">
-		<A HREF="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Vai J\u016Bs patie\u0161\u0101m v\u0113laties no\u0146emt \u0161o kan\u0101lu??')" onMouseover="window.status=''; return true;">
-		  <IMG SRC="{$mediaPath}/channel/chan_remove.gif" ALT="Nospiest, lai no\u0146emtu \u0161o kan\u0101lu" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="2" VSPACE="2"/>
+		<A HREF="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Vai Jūs patiešām vēlaties noņemt šo kanālu??')" onMouseover="window.status=''; return true;">
+		  <IMG SRC="{$mediaPath}/channel/chan_remove.gif" ALT="Nospiest, lai noņemtu šo kanālu" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="2" VSPACE="2"/>
 		</A>
         </xsl:when>
         <xsl:otherwise>
@@ -612,11 +612,11 @@ $Revision$
 <!-- Move Channel Up -->
                 <xsl:choose>
                   <xsl:when test="not(position()=1) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="\u0160is kan\u0101ls ir blo\u0137\u0113ts" src="{$mediaPath}/channel/arrow_up_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                  <img alt="Šis kanāls ir bloķēts" src="{$mediaPath}/channel/arrow_up_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                      <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz aug\u0161u" src="{$mediaPath}/channel/arrow_up.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                      <img alt="Nospiest, lai pārvietotu šo kanālu uz augšu" src="{$mediaPath}/channel/arrow_up.gif" WIDTH="16" HEIGHT="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -629,18 +629,18 @@ $Revision$
 <!-- Move Channel Left -->
                 <xsl:choose>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="\u0160is kan\u0101ls ir blo\u0137\u0113ts" src="{$mediaPath}/channel/arrow_left_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                  <img alt="Šis kanāls ir bloķēts" src="{$mediaPath}/channel/arrow_left_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/preceding-sibling::folder[1]/channel[1]/@ID">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz iepriek\u0161\u0113jo sleju" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz iepriekšējo sleju" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz iepriek\u0161\u0113jo sleju" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz iepriekšējo sleju" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -654,18 +654,18 @@ $Revision$
 <!-- Right Arrow -->
                 <xsl:choose>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="\u0160is kan\u0101ls ir blo\u0137\u0113ts" src="{$mediaPath}/channel/arrow_right_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                  <img alt="Šis kanāls ir bloķēts" src="{$mediaPath}/channel/arrow_right_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/following-sibling::folder[1]/channel[1]/@ID">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz n\u0101kamo sleju" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz nākamo sleju" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz n\u0101kamo sleju" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz nākamo sleju" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -681,18 +681,18 @@ $Revision$
 <!-- Down Arrow -->
                 <xsl:choose>
                   <xsl:when test="not(position()=last()) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="\u0160is kan\u0101ls ir blo\u0137\u0113ts" src="{$mediaPath}/channel/arrow_down_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                  <img alt="Šis kanāls ir bloķēts" src="{$mediaPath}/channel/arrow_down_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::channel[not(@hidden='true')][2]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz leju" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz leju" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                          <img alt="Nospiest, lai p\u0101rvietotu \u0161o kan\u0101lu uz leju" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
+                          <img alt="Nospiest, lai pārvietotu šo kanālu uz leju" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -716,26 +716,26 @@ $Revision$
           <xsl:when test="$action = 'newChannel' and $position='after' and $elementID=@ID">
             <td class="uportal-background-highlight">
               <a href="{$baseActionURL}?action=newChannel&amp;position=after&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai pievienotu \u0161eit jaunu kan\u0101lu [p\u0113c {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
+                <img alt="Nospiest, lai pievienotu šeit jaunu kanālu [pēc {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
           </xsl:when>
           <xsl:when test="$action = 'moveChannel' and not(@ID=$elementID)">
             <td class="uportal-background-highlight">
               <a href="{$baseActionURL}?action=moveChannelHere&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai p\u0101rvietotu \u0161eit iez\u012Bm\u0113to kan\u0101lu [p\u0113c {@ID}]" src="{$mediaPath}/movechannel.gif" border="0"/>
+                <img alt="Nospiest, lai pārvietotu šeit iezīmēto kanālu [pēc {@ID}]" src="{$mediaPath}/movechannel.gif" border="0"/>
               </a>
             </td>
           </xsl:when>
           <xsl:when test="$action = 'moveChannel' and @ID=$elementID">
             <td>
-              <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
+              <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
             </td>
           </xsl:when>
           <xsl:otherwise>
             <td>
               <a href="{$baseActionURL}?action=newChannel&amp;position=after&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Nospiest, lai pievienotu \u0161eit jaunu kan\u0101lu [p\u0113c {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
+                <img alt="Nospiest, lai pievienotu šeit jaunu kanālu [pēc {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
           </xsl:otherwise>
@@ -746,14 +746,14 @@ $Revision$
   </xsl:template>
   <xsl:template name="optionMenuDefault">
     <p>
-      <span class="uportal-channel-subtitle-reversed">Iestat\u012Bjumu modific\u0113\u0161anas opcijas:</span>
+      <span class="uportal-channel-subtitle-reversed">Iestatījumu modificēšanas opcijas:</span>
     </p>
     <table class="uportal-channel-text" width="100%">
       <tr>
-        <td colspan="2">P\u0101rsl\u0113gt \u0161\u0137irk\u013Cus vai ar\u012B izv\u0113l\u0113ties elementu no akt\u012Bv\u0101 \u0161\u0137irk\u013Ca, nospie\u017Eot k\u0101du no pel\u0113kaj\u0101m pog\u0101m. Piem\u0113ram, nospiest vienu no<img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="6" height="6" border="0"/>
-        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/newchannel.gif" width="79" height="20"/>
-        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="6" height="6" border="0"/>
-         pog\u0101m, lai pievienotu jaunu kan\u0101lu.</td>
+        <td colspan="2">Pārslēgt šķirkļus vai arī izvēlēties elementu no aktīvā šķirkļa, nospiežot kādu no pelēkajām pogām. Piemēram, nospiest vienu no<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="6" height="6" border="0"/>
+        <img alt="saskarnes attēls" src="{$mediaPath}/newchannel.gif" width="79" height="20"/>
+        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="6" height="6" border="0"/>
+         pogām, lai pievienotu jaunu kanālu.</td>
       </tr>
       <tr>
         <td colspan="2">
@@ -762,15 +762,15 @@ $Revision$
       </tr>
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td class="uportal-channel-text">
-          <a href="{$baseActionURL}?action=manageSkins">Izv\u0113l\u0113ties noform\u0113jumu</a>
+          <a href="{$baseActionURL}?action=manageSkins">Izvēlēties noformējumu</a>
         </td>
       </tr>
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td class="uportal-channel-text" width="100%">
           <a href="{$baseActionURL}?action=resetLayout" onClick="return confirm('You are about to replace your current layout with a default layout.  You cannot undo these changes.  Do you want to continue?')">Revert to default layout</a>
@@ -778,10 +778,10 @@ $Revision$
       </tr>      
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td class="uportal-channel-text" width="100%">
-          <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">P\u0101rvald\u012Bt profilus</a>
+          <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">Pārvaldīt profilus</a>
         </td>
       </tr>
     </table>
@@ -790,33 +790,33 @@ $Revision$
     <!-- Begin Mod Tab Options -->
     <xsl:variable name="tabName" select="/layout/folder/folder[@ID=$activeTabID]/@name"/>
     <p>
-      <span class="uportal-channel-subtitle-reversed">\u0160\u0137irk\u013Ca modific\u0113\u0161anas opcijas:</span>
+      <span class="uportal-channel-subtitle-reversed">Šķirkļa modificēšanas opcijas:</span>
     </p>
     <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td width="100%">
-          <a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTab}">Uzst\u0101d\u012Bt \u0161o \u0161\u0137irkli par noklus\u0113to ”Akt\u012Bvo \u0161\u0137irkli” (\u0161\u0137irkli, kur\u0161 ir akt\u012Bvs, piesl\u0113dzoties port\u0101lam)</a>
+          <a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTab}">Uzstādīt šo šķirkli par noklusēto ”Aktīvo šķirkli” (šķirkli, kurš ir aktīvs, pieslēdzoties portālam)</a>
         </td>
       </tr>
       <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@immutable = 'true')">
         <tr>
           <td valign="top">
-            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+            <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
           </td>
           <td>
             <form name="formRenameTab" method="post" action="{$baseActionURL}">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-channel-text">
                 <tr>
                   <td nowrap="nowrap">
-                    <a href="#">P\u0101rsaukt \u0161\u0137irkli:<img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/></a>
+                    <a href="#">Pārsaukt šķirkli:<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/></a>
                   </td>
                   <td width="100%">
                     <input type="text" name="tabName" value="{$tabName}" class="uportal-input-text" size="30"/>
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                    <input type="submit" name="RenameTab" value="P\u0101rsaukt" class="uportal-button"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                    <input type="submit" name="RenameTab" value="Pārsaukt" class="uportal-button"/>
                     <input type="hidden" name="action" value="renameTab"/>
                     <input type="hidden" name="elementID" value="{$activeTabID}"/>
                   </td>
@@ -828,15 +828,15 @@ $Revision$
       </xsl:if>
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td>
-          <a href="#">P\u0101rvietot \u0161o \u0161\u0137irkli uz citu poz\u012Bciju: (izv\u0113l\u0113ties zem\u0101k un nospiest pogu ”P\u0101rvietot”)</a>
+          <a href="#">Pārvietot šo šķirkli uz citu pozīciju: (izvēlēties zemāk un nospiest pogu ”Pārvietot”)</a>
         </td>
       </tr>
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
         </td>
         <td>
           <form name="formMoveTab" method="post" action="{$baseActionURL}">
@@ -846,28 +846,28 @@ $Revision$
                   <xsl:choose>
                     <xsl:when test="@ID=$activeTabID">
                       <td class="uportal-background-light">
-                        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                       </td>
                       <td nowrap="nowrap" class="uportal-background-content">
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name"/>
                         </span>
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                       </td>
                       <td class="uportal-background-light">
-                        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                       </td>
                     </xsl:when>
                     <xsl:when test="preceding-sibling::*[@hidden = 'false'][1]/@ID=$activeTabID">
                       <xsl:choose>
                         <xsl:when test="position() = last()">
                           <td nowrap="nowrap" class="uportal-background-med">
-                            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                             <span class="uportal-text-small">
                               <xsl:value-of select="@name"/>
                             </span>
-                            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                           </td>
                           <td nowrap="nowrap" class="uportal-background-light">
                             <input type="radio" name="method_ID" value="appendAfter_{@ID}"/>
@@ -875,11 +875,11 @@ $Revision$
                         </xsl:when>
                         <xsl:otherwise>
                           <td nowrap="nowrap" class="uportal-background-med">
-                            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                             <span class="uportal-text-small">
                               <xsl:value-of select="@name"/>
                             </span>
-                            <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                            <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                           </td>
                         </xsl:otherwise>
                       </xsl:choose>
@@ -889,11 +889,11 @@ $Revision$
                         <input type="radio" name="method_ID" value="insertBefore_{@ID}"/>
                       </td>
                       <td nowrap="nowrap" class="uportal-background-med">
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name"/>
                         </span>
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                       </td>
                       <td nowrap="nowrap" class="uportal-background-light">
                         <input type="radio" name="method_ID" value="appendAfter_{@ID}"/>
@@ -904,17 +904,17 @@ $Revision$
                         <input type="radio" name="method_ID" value="insertBefore_{@ID}"/>
                       </td>
                       <td nowrap="nowrap" class="uportal-background-med">
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                         <span class="uportal-text-small">
                           <xsl:value-of select="@name"/>
                         </span>
-                        <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                        <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                       </td>
                     </xsl:otherwise>
                   </xsl:choose>
                 </xsl:for-each>
                 <td width="100%">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                   <input type="submit" name="MoveTab" value="Move" class="uportal-button"/>
                   <input type="hidden" name="action" value="moveTab"/>
                   <input type="hidden" name="elementID" value="{$activeTabID}"/>
@@ -928,17 +928,17 @@ $Revision$
       <xsl:if test="$showLockUnlock = 'true'">
         <tr>
           <td valign="top">
-            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+            <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
           </td>
           <xsl:choose>
             <xsl:when test="/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'true'">
               <td>
-                <a href="{$baseActionURL}?action=unlockTab&amp;elementID={$activeTabID}">Atblo\u0137\u0113t \u0161\u0137irkli</a>
+                <a href="{$baseActionURL}?action=unlockTab&amp;elementID={$activeTabID}">Atbloķēt šķirkli</a>
               </td>
             </xsl:when>
             <xsl:when test="/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'false'">
               <td>
-                <a href="{$baseActionURL}?action=lockTab&amp;elementID={$activeTabID}">Blo\u0137\u0113t \u0161\u0137irkli</a>
+                <a href="{$baseActionURL}?action=lockTab&amp;elementID={$activeTabID}">Bloķēt šķirkli</a>
               </td>
             </xsl:when>
           </xsl:choose>
@@ -947,10 +947,10 @@ $Revision$
       <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'true')">
         <tr>
           <td valign="top">
-            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+            <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
           </td>
           <td>
-            <a href="{$baseActionURL}?action=deleteTab&amp;elementID={$activeTabID}">Dz\u0113st \u0161\u0137irkli</a>
+            <a href="{$baseActionURL}?action=deleteTab&amp;elementID={$activeTabID}">Dzēst šķirkli</a>
           </td>
         </tr>
       </xsl:if>
@@ -961,7 +961,7 @@ $Revision$
       </tr>
       <tr>
         <td valign="top">
-          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
         <td>
           <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -977,26 +977,26 @@ $Revision$
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
             <p>
-              <span class="uportal-channel-subtitle-reversed">Slejas modific\u0113\u0161anas opcijas:</span>
+              <span class="uportal-channel-subtitle-reversed">Slejas modificēšanas opcijas:</span>
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                 </td>
                 <td width="100%" class="uportal-channel-text">
-                  <a href="#">Main\u012Bt sleju platumus (sleju platumu summai j\u0101b\u016Bt 100\%):</a>
+                  <a href="#">Mainīt sleju platumus (sleju platumu summai jābūt 100\%):</a>
                 </td>
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                 </td>
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr valign="top">
                       <td nowrap="nowrap" align="center">
-                        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                       </td>
                       <input type="hidden" name="action" value="columnWidth"/>
                       <xsl:for-each select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
@@ -1011,7 +1011,7 @@ $Revision$
                           </xsl:choose>
                         </td>
                         <td nowrap="nowrap">
-                          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                         </td>
                       </xsl:for-each>
                       <td width="100%" align="left" nowrap="nowrap">
@@ -1025,10 +1025,10 @@ $Revision$
               <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=moveColumn&amp;elementID={$elementID}">P\u0101rvietot sleju uz citu poz\u012Bciju</a>
+                    <a href="{$baseActionURL}?action=moveColumn&amp;elementID={$elementID}">Pārvietot sleju uz citu pozīciju</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1036,10 +1036,10 @@ $Revision$
               <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=deleteColumn&amp;elementID={$elementID}">Dz\u0113st sleju</a>
+                    <a href="{$baseActionURL}?action=deleteColumn&amp;elementID={$elementID}">Dzēst sleju</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1050,7 +1050,7 @@ $Revision$
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                 </td>
                 <td class="uportal-channel-text">
                   <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1070,23 +1070,23 @@ $Revision$
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
             <p>
-              <span class="uportal-channel-subtitle-reversed">Kan\u0101la modific\u0113\u0161anas opcijas:</span>
+              <span class="uportal-channel-subtitle-reversed">Kanāla modificēšanas opcijas:</span>
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <!-- We aren't going to allow renaming a channel at the moment...
               <xsl:if test="not(/layout/folder/descendant::channel[@ID=$elementID]/@immutable = 'true')">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="#">P\u0101rsaukt kan\u0101lu:</a>
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
+                    <a href="#">Pārsaukt kanālu:</a>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                     <input type="hidden" name="action" value="renameChannel" />
                     <input type="hidden" name="elementID" value="{$elementID}" />
                     <input type="text" name="channelName" class="uportal-input-text" value="{$channelName}" size="30" />
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
-                    <input type="submit" name="RenameTab" value="P\u0101rsaukt" class="uportal-button" />
+                    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
+                    <input type="submit" name="RenameTab" value="Pārsaukt" class="uportal-button" />
                   </td>
                 </tr>
               </xsl:if>
@@ -1095,20 +1095,20 @@ $Revision$
               <xsl:if test="not(/layout/folder/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">P\u0101rvietot kan\u0101lu uz citu poz\u012Bciju</a>
+                    <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">Pārvietot kanālu uz citu pozīciju</a>
                   </td>
                 </tr>
               </xsl:if>
               <xsl:if test="//channel[@ID=$elementID]/parameter/@override = 'yes'">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}">Modific\u0113t kan\u0101la parametrus</a>
+                    <a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}">Modificēt kanāla parametrus</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1116,10 +1116,10 @@ $Revision$
               <xsl:if test="not(/layout/folder/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Dz\u0113st kan\u0101lu</a>
+                    <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Dzēst kanālu</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1130,7 +1130,7 @@ $Revision$
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                 </td>
                 <td width="100%" class="uportal-channel-text">
                   <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1148,25 +1148,25 @@ $Revision$
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
             <p>
-              <span class="uportal-channel-subtitle-reversed">So\u013Ci, lai pievienotu jaunu \u0161\u0137irkli:</span>
+              <span class="uportal-channel-subtitle-reversed">Soļi, lai pievienotu jaunu šķirkli:</span>
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="uportal-channel-text" align="right">
                   <strong>1.</strong>
                 </td>
-                <td class="uportal-channel-text">Name the tab:<img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/><input type="text" name="tabName" class="uportal-input-text" size="30"/></td>
+                <td class="uportal-channel-text">Name the tab:<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/><input type="text" name="tabName" class="uportal-input-text" size="30"/></td>
               </tr>
               <tr>
                 <td class="uportal-channel-text" align="right">
                   <strong>
-                    <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="16"/>2.</strong>
+                    <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="16"/>2.</strong>
                 </td>
-                <td class="uportal-channel-text">Izv\u0113l\u0113ties \u0161\u0137irk\u013Ca poz\u012Bciju:</td>
+                <td class="uportal-channel-text">Izvēlēties šķirkļa pozīciju:</td>
               </tr>
               <tr>
                 <td class="uportal-channel-text" align="right">
-                  <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                  <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                 </td>
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -1176,11 +1176,11 @@ $Revision$
                           <input type="radio" name="method_ID" value="insertBefore_{@ID}"/>
                         </td>
                         <td nowrap="nowrap" class="uportal-background-med">
-                          <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
+                          <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                           <span class="uportal-text-small">
                             <xsl:value-of select="@name"/>
                           </span>
-                          <img alt="Saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
+                          <img alt="Saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
                         </td>
                       </xsl:for-each>
                       <td width="100%">
@@ -1194,7 +1194,7 @@ $Revision$
                 <td class="uportal-channel-text" align="right">
                   <strong>3.</strong>
                 </td>
-                <td class="uportal-channel-text">Iesniegt izv\u0113les:<input type="hidden" name="action" value="addTab"/><input type="submit" name="Submit" value="Iesniegt" class="uportal-button"/></td>
+                <td class="uportal-channel-text">Iesniegt izvēles:<input type="hidden" name="action" value="addTab"/><input type="submit" name="Submit" value="Iesniegt" class="uportal-button"/></td>
               </tr>
               <tr>
                 <td colspan="2" class="uportal-channel-text">
@@ -1203,7 +1203,7 @@ $Revision$
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
                 </td>
                 <td width="100%" class="uportal-channel-text">
                   <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1221,24 +1221,24 @@ $Revision$
         <tr class="uportal-background-light">
           <td class="uportal-channel-text">
             <p>
-              <span class="uportal-channel-subtitle-reversed">So\u013Ci, lai pievienotu jaunu sleju:</span>
+              <span class="uportal-channel-subtitle-reversed">Soļi, lai pievienotu jaunu sleju:</span>
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="uportal-channel-text">
                   <strong>1.</strong>
                 </td>
-                <td class="uportal-channel-text">Uzst\u0101d\u012Bt sleju platumus (sleju platumu summai j\u0101b\u016Bt 100\%):</td>
+                <td class="uportal-channel-text">Uzstādīt sleju platumus (sleju platumu summai jābūt 100\%):</td>
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                 </td>
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr valign="top">
                       <td nowrap="nowrap" align="center">
-                        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                       </td>
                       <input type="hidden" name="action" value="columnWidth"/>
                       <xsl:for-each select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
@@ -1249,14 +1249,14 @@ $Revision$
                             <strong>New Column</strong>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                            <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                           </td>
                         </xsl:if>
                         <td nowrap="nowrap" align="center" class="uportal-text-small">
                           <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" maxlength="" class="uportal-input-text"/>
                           <br/>Column</td>
                         <td nowrap="nowrap">
-                          <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                          <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                         </td>
                         <xsl:if test="$position='after' and $elementID=@ID">
                           <td nowrap="nowrap" align="center" class="uportal-text-small">
@@ -1265,12 +1265,12 @@ $Revision$
                             <strong>New Column</strong>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                            <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                           </td>
                         </xsl:if>
                       </xsl:for-each>
                       <td width="100%" align="left" nowrap="nowrap">
-                        <img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                     <tr valign="top" class="uportal-text-small">
@@ -1282,7 +1282,7 @@ $Revision$
                 <td class="uportal-channel-text">
                   <strong>2.</strong>
                 </td>
-                <td class="uportal-channel-text">Iesniegt izv\u0113les:<img alt="saskarnes att\u0113ls" src="{$mediaPath}/transparent.gif" width="10" height="10"/><input type="submit" name="submitNewColumn" value="Iesniegt" class="uportal-button"/></td>
+                <td class="uportal-channel-text">Iesniegt izvēles:<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="10" height="10"/><input type="submit" name="submitNewColumn" value="Iesniegt" class="uportal-button"/></td>
               </tr>
               <tr>
                 <td class="uportal-channel-text" colspan="2">
@@ -1291,7 +1291,7 @@ $Revision$
               </tr>
               <tr>
                 <td class="uportal-channel-text">
-                  <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                  <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
                 </td>
                 <td class="uportal-channel-text" width="100%">
                   <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1308,15 +1308,15 @@ $Revision$
       <tr class="uportal-background-light">
         <td class="uportal-channel-text">
           <p>
-            <span class="uportal-channel-subtitle-reversed">Slejas p\u0101rvieto\u0161anas opcijas:</span>
+            <span class="uportal-channel-subtitle-reversed">Slejas pārvietošanas opcijas:</span>
           </p>
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-channel-text">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
               </td>
               <td class="uportal-channel-text">
-                <a href="#">Izv\u0113l\u0113ties vienu no iez\u012Bm\u0113taj\u0101m poz\u012Bcij\u0101m vai ar\u012B citu \u0161\u0137irkli, kur novietot sleju</a>
+                <a href="#">Izvēlēties vienu no iezīmētajām pozīcijām vai arī citu šķirkli, kur novietot sleju</a>
               </td>
             </tr>
             <tr>
@@ -1326,7 +1326,7 @@ $Revision$
             </tr>
             <tr>
               <td class="uportal-channel-text">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1342,15 +1342,15 @@ $Revision$
       <tr class="uportal-background-light">
         <td class="uportal-channel-text">
           <p>
-            <span class="uportal-channel-subtitle-reversed">Kan\u0101la p\u0101rvieto\u0161anas opcijas:</span>
+            <span class="uportal-channel-subtitle-reversed">Kanāla pārvietošanas opcijas:</span>
           </p>
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-channel-text">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
               </td>
               <td class="uportal-channel-text">
-                <a href="#">Izv\u0113l\u0113ties vienu no iez\u012Bm\u0113taj\u0101m poz\u012Bcij\u0101m vai ar\u012B citu \u0161\u0137irkli, kur novietot kan\u0101lu</a>
+                <a href="#">Izvēlēties vienu no iezīmētajām pozīcijām vai arī citu šķirkli, kur novietot kanālu</a>
               </td>
             </tr>
             <tr>
@@ -1360,7 +1360,7 @@ $Revision$
             </tr>
             <tr>
               <td class="uportal-channel-text">
-                <img alt="saskarnes att\u0113ls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                <img alt="saskarnes attēls" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?action=cancel">Atcelt un atgriezties</a>
@@ -1376,7 +1376,7 @@ $Revision$
       <tr class="uportal-background-light">
         <td class="uportal-channel-text">
           <p>
-            <span class="uportal-channel-subtitle-reversed">Tiek zi\u0146ots par \u0161\u0101du k\u013C\u016Bdu:</span>
+            <span class="uportal-channel-subtitle-reversed">Tiek ziņots par šādu kļūdu:</span>
           </p>
           <xsl:value-of select="$errorMessage"/>
         </td>

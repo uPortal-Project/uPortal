@@ -6,8 +6,8 @@
   <xsl:template match="profiles">
         <div align="center">
           <center>
-	<p class="uportal-channel-warning">P\u0101rl\u016Bkprogrammas versija, k\u0101du J\u016Bs pašlaik izmantojat, uPort\u0101l\u0101 iepriekš nav lietota.<br/>
-L\u016Bdzu, izv\u0113lieties atbilstošu profilu!</p>
+	<p class="uportal-channel-warning">Pārlūkprogrammas versija, kādu Jūs pašlaik izmantojat, uPortālā iepriekš nav lietota.<br/>
+Lūdzu, izvēlieties atbilstošu profilu!</p>
             <table border="0" width="100%" cellspacing="0" cellpadding="2">
               <xsl:apply-templates select="system"/>
             </table>
@@ -18,12 +18,12 @@ L\u016Bdzu, izv\u0113lieties atbilstošu profilu!</p>
   <xsl:template match="system">
     <tr>
       <td class="uportal-background-med" valign="top" colspan="5">
-        <p class="uportal-channel-title">Sist\u0113mas profili</p>
+        <p class="uportal-channel-title">Sistēmas profili</p>
       </td>
     </tr>
     <tr>
       <td class="uportal-background-light" valign="bottom" align="center">
-        <p class="uportal-channel-subtitle">Darb\u012Bba</p>
+        <p class="uportal-channel-subtitle">Darbība</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
         <img alt="interface image" border="0" width="10" height="10">
@@ -49,7 +49,7 @@ L\u016Bdzu, izv\u0113lieties atbilstošu profilu!</p>
           <td class="uportal-text" valign="top" align="center">
             <a>
               <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Piek\u0101rtot pašreiz\u0113jo p\u0101rl\u016Bkprogrammu šim profilam">
+              <img border="0" width="16" height="16" alt="Piekārtot pašreizējo pārlūkprogrammu šim profilam">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
               </img>
             </a>

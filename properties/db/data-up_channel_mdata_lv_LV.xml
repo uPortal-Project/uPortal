@@ -4,30 +4,30 @@
       <row>
         <column><name>CHAN_ID</name><value>1</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Dienas karikat\u016Bra</value></column>
-        <column><name>CHAN_NAME</name><value>Dienas karikat\u016Bra</value></column>
-        <column><name>CHAN_DESC</name><value>Dienas karikat\u016Bra. Autors: Teds Gofs, www.tedgoff.com</value></column>
+        <column><name>CHAN_TITLE</name><value>Dienas karikatūra</value></column>
+        <column><name>CHAN_NAME</name><value>Dienas karikatūra</value></column>
+        <column><name>CHAN_DESC</name><value>Dienas karikatūra. Autors: Teds Gofs, www.tedgoff.com</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>2</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>StockCharts.com</value></column>
         <column><name>CHAN_NAME</name><value>StockCharts.com</value></column>
-        <column><name>CHAN_DESC</name><value>StockCharts.com kan\u0101ls</value></column>
+        <column><name>CHAN_DESC</name><value>StockCharts.com kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>4</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Personu atrib\016Bti</value></column>
-        <column><name>CHAN_NAME</name><value>Personu atrib\016Bti</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101liem pieejamie personu atrib\016Bti</value></column>
+        <column><name>CHAN_TITLE</name><value>Personu atribūti</value></column>
+        <column><name>CHAN_NAME</name><value>Personu atribūti</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāliem pieejamie personu atribūti</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>5</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>uPortal-atbalst\012Bt\0101s lapas</value></column>
-        <column><name>CHAN_NAME</name><value>uPortal-atbalst\012Bt\0101s lapas</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal demonstr\0101cijas kan\0101ls</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal-atbalstītās lapas</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal-atbalstītās lapas</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal demonstrācijas kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
@@ -39,72 +39,72 @@
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>uPortal izstr\0101d\0101t\0101ja uzzi\0146as</value></column>
-        <column><name>CHAN_NAME</name><value>uPortal izstr\0101d\0101t\0101ja uzzi\0146as</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal izstr\0101d\0101t\0101ja uzzi\0146u kan\0101ls</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal izstrādātāja uzziņas</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal izstrādātāja uzziņas</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal izstrādātāja uzziņu kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>8</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>uPortal m\0101jas lapa</value></column>
-        <column><name>CHAN_NAME</name><value>uPortal m\0101jas lapa</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal m\0101jas lapas kan\0101ls</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal mājas lapa</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal mājas lapa</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal mājas lapas kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>9</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Sp\0113le "M\012Bnu izn\012Bcin\0101t\0101js"</value></column>
-        <column><name>CHAN_NAME</name><value>Sp\0113le "M\012Bnu izn\012Bcin\0101t\0101js"</value></column>
-        <column><name>CHAN_DESC</name><value>Sp\0113les "M\012Bnu izn\012Bcin\0101t\0101js" s\012Bklietotne</value></column>
+        <column><name>CHAN_TITLE</name><value>Spēle "Mīnu iznīcinātājs"</value></column>
+        <column><name>CHAN_NAME</name><value>Spēle "Mīnu iznīcinātājs"</value></column>
+        <column><name>CHAN_DESC</name><value>Spēles "Mīnu iznīcinātājs" sīklietotne</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>10</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>Header</value></column>
         <column><name>CHAN_NAME</name><value>Header</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal galvenes kan\0101ls</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal galvenes kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>11</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Dienas v\0101rds</value></column>
-        <column><name>CHAN_NAME</name><value>Dienas v\0101rds</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "Dienas v\0101rds"</value></column>
+        <column><name>CHAN_TITLE</name><value>Dienas vārds</value></column>
+        <column><name>CHAN_NAME</name><value>Dienas vārds</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "Dienas vārds"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>12</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>Salon.com</value></column>
         <column><name>CHAN_NAME</name><value>Salon.com</value></column>
-        <column><name>CHAN_DESC</name><value>Salon.com kan\0101ls</value></column>
+        <column><name>CHAN_DESC</name><value>Salon.com kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>13</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>Motley Fool</value></column>
         <column><name>CHAN_NAME</name><value>The Motley Fool</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "Motley Fool"</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "Motley Fool"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>14</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>V\0101rdu min\0113\0161anas sp\0113le</value></column>
-        <column><name>CHAN_NAME</name><value>V\0101rdu min\0113\0161anas sp\0113le</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "V\0101rdu min\0113\0161anas sp\0113le"</value></column>
+        <column><name>CHAN_TITLE</name><value>Vārdu minēšanas spēle</value></column>
+        <column><name>CHAN_NAME</name><value>Vārdu minēšanas spēle</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "Vārdu minēšanas spēle"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>15</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>CSS skat\012Bt\0101js</value></column>
-        <column><name>CHAN_NAME</name><value>CSS skat\012Bt\0101js</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "CSS skat\012Bt\0101js"</value></column>
+        <column><name>CHAN_TITLE</name><value>CSS skatītājs</value></column>
+        <column><name>CHAN_NAME</name><value>CSS skatītājs</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "CSS skatītājs"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>16</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Lietot\0101ja parametru noteic\0113js</value></column>
-        <column><name>CHAN_NAME</name><value>Lietot\0101ja parametru noteic\0113js</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "Lietot\0101ja parametru noteic\0113js"</value></column>
+        <column><name>CHAN_TITLE</name><value>Lietotāja parametru noteicējs</value></column>
+        <column><name>CHAN_NAME</name><value>Lietotāja parametru noteicējs</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "Lietotāja parametru noteicējs"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>17</value></column>
@@ -116,80 +116,80 @@
       <row>
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Tomcat'a servers\012Bklietotnes piem\0113ri</value></column>
-        <column><name>CHAN_NAME</name><value>Tomcat'a servers\012Bklietotnes piem\0113ri</value></column>
-        <column><name>CHAN_DESC</name><value>Tomcat'a servers\012Bklietotnes piem\0113ri</value></column>
+        <column><name>CHAN_TITLE</name><value>Tomcat'a serversīklietotnes piemēri</value></column>
+        <column><name>CHAN_NAME</name><value>Tomcat'a serversīklietotnes piemēri</value></column>
+        <column><name>CHAN_DESC</name><value>Tomcat'a serversīklietotnes piemēri</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>19</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>K\0101jene</value></column>
-        <column><name>CHAN_NAME</name><value>K\0101jene</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal k\0101jenes kan\0101ls</value></column>
+        <column><name>CHAN_TITLE</name><value>Kājene</value></column>
+        <column><name>CHAN_NAME</name><value>Kājene</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal kājenes kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>20</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>uPortal izstr\0101des gr\0101matas</value></column>
-        <column><name>CHAN_NAME</name><value>uPortal izstr\0101des gr\0101matas</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal izstr\0101d\0101t\0101jiem noder\012Bgas gr\0101matas</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal izstrādes grāmatas</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal izstrādes grāmatas</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal izstrādātājiem noderīgas grāmatas</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>22</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>uPortal datu v\0101rdn\012Bca</value></column>
-        <column><name>CHAN_NAME</name><value>uPortal datu v\0101rdn\012Bca</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal datu v\0101rdn\012Bca - uPortal lietoto tabulu un atrib\016Btu skaidrojumi</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal datu vārdnīca</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal datu vārdnīca</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal datu vārdnīca - uPortal lietoto tabulu un atribūtu skaidrojumi</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>23</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>CURLSelector</value></column>
-        <column><name>CHAN_NAME</name><value>Kan\0101ls "ICC URL selektors"</value></column>
-        <column><name>CHAN_DESC</name><value>Starpkan\0101lu sakaru demonstr\0101cija - kan\0101ls "URL selektors"</value></column>
+        <column><name>CHAN_NAME</name><value>Kanāls "ICC URL selektors"</value></column>
+        <column><name>CHAN_DESC</name><value>Starpkanālu sakaru demonstrācija - kanāls "URL selektors"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>24</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>CViewer</value></column>
-        <column><name>CHAN_NAME</name><value>Kan\0101ls "ICC skat\012Bt\0101js"</value></column>
-        <column><name>CHAN_DESC</name><value>Starpkan\0101lu sakaru demonstr\0101cija - kan\0101ls "Skat\012Bt\0101js"</value></column>
+        <column><name>CHAN_NAME</name><value>Kanāls "ICC skatītājs"</value></column>
+        <column><name>CHAN_DESC</name><value>Starpkanālu sakaru demonstrācija - kanāls "Skatītājs"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>25</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>CHistory</value></column>
-        <column><name>CHAN_NAME</name><value>Kan\0101ls "ICC v\0113sture"</value></column>
-        <column><name>CHAN_DESC</name><value>Starpkan\0101lu sakaru demonstr\0101cija - kan\0101ls "V\0113sture"</value></column>
+        <column><name>CHAN_NAME</name><value>Kanāls "ICC vēsture"</value></column>
+        <column><name>CHAN_DESC</name><value>Starpkanālu sakaru demonstrācija - kanāls "Vēsture"</value></column>
       </row>
 
       <row>
         <column><name>CHAN_ID</name><value>90</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Kan\0101lu administrators</value></column>
-        <column><name>CHAN_NAME</name><value>Kan\0101lu administrators</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101lu administr\0101cija</value></column>
+        <column><name>CHAN_TITLE</name><value>Kanālu administrators</value></column>
+        <column><name>CHAN_NAME</name><value>Kanālu administrators</value></column>
+        <column><name>CHAN_DESC</name><value>Kanālu administrācija</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>92</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Lietot\0101ja iestat\012Bjumi</value></column>
-        <column><name>CHAN_NAME</name><value>Lietot\0101ja iestat\012Bjumi</value></column>
-        <column><name>CHAN_DESC</name><value>Kan\0101ls "Lietot\0101ja iestat\012Bjumi"</value></column>
+        <column><name>CHAN_TITLE</name><value>Lietotāja iestatījumi</value></column>
+        <column><name>CHAN_NAME</name><value>Lietotāja iestatījumi</value></column>
+        <column><name>CHAN_DESC</name><value>Kanāls "Lietotāja iestatījumi"</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>94</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>Grupu administrators</value></column>
         <column><name>CHAN_NAME</name><value>Grupu administrators</value></column>
-        <column><name>CHAN_DESC</name><value>Administr\0113\0161anas r\012Bks for grupu un dal\012Bbu veido\0161anai un p\0101rvald\012B\0161anai</value></column>
+        <column><name>CHAN_DESC</name><value>Administrēšanas rīks for grupu un dalību veidošanai un pārvaldīšanai</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>95</value></column>
         <column><name>LOCALE</name><value>lv_LV</value></column>
-        <column><name>CHAN_TITLE</name><value>Ties\012Bbu administrators</value></column>
-        <column><name>CHAN_NAME</name><value>Ties\012Bbu administrators</value></column>
-        <column><name>CHAN_DESC</name><value>Administr\0113\0161anas r\012Bks ties\012Bbu p\0101rvald\012B\0161anai</value></column>
+        <column><name>CHAN_TITLE</name><value>Tiesību administrators</value></column>
+        <column><name>CHAN_NAME</name><value>Tiesību administrators</value></column>
+        <column><name>CHAN_DESC</name><value>Administrēšanas rīks tiesību pārvaldīšanai</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>96</value></column>
@@ -203,7 +203,7 @@
         <column><name>LOCALE</name><value>lv_LV</value></column>
         <column><name>CHAN_TITLE</name><value>Login</value></column>
         <column><name>CHAN_NAME</name><value>Login</value></column>
-        <column><name>CHAN_DESC</name><value>uPortal piesl\0113g\0161an\0101s kan\0101ls</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal pieslēgšanās kanāls</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>80</value></column>

@@ -60,7 +60,7 @@ $Revision$
   </xsl:template>
   <xsl:template match="failure">
     <tr class="uportal-background-light">
-      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">Ievad\u012Bt\u0101 lietot\u0101ja v\u0101rda/paroles kombin\u0101cija nav atrasta. L\u016Bdzu, m\u0113\u0123iniet v\u0113lreiz!<span class="uportal-channel-warning"></span>
+      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">Ievadītā lietotāja vārda/paroles kombinācija nav atrasta. Lūdzu, mēģiniet vēlreiz!<span class="uportal-channel-warning"></span>
       </td>
       <td colspan="1" rowspan="1">
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
@@ -69,7 +69,7 @@ $Revision$
   </xsl:template>
   <xsl:template match="error">
     <tr class="uportal-background-light">
-      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">K\u013C\u016Bda radusies autentific\u0113šanas laik\u0101. Pašlaik port\u0101ls nevar j\u016Bs pie\u0146emt. V\u0113l\u0101k m\u0113\u0123iniet v\u0113lreiz!<span class="uportal-channel-warning"></span>
+      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">Kļūda radusies autentificēšanas laikā. Pašlaik portāls nevar jūs pieņemt. Vēlāk mēģiniet vēlreiz!<span class="uportal-channel-warning"></span>
       </td>
       <td colspan="1" rowspan="1">
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
@@ -111,8 +111,8 @@ $Revision$
                   <td class="uportal-channel-text" nowrap="nowrap" colspan="1" rowspan="1">
                     <strong>
                       <xsl:choose>
-                        <xsl:when test="$unauthenticated='true'">Laipni l\u016Bdzam - l\u016Bdzu, ievadiet lietot\u0101ja v\u0101rdu un paroli! </xsl:when>
-                        <xsl:otherwise>Laipni l\u016Bdzam <xsl:value-of select="full-name"/> </xsl:otherwise>
+                        <xsl:when test="$unauthenticated='true'">Laipni lūdzam - lūdzu, ievadiet lietotāja vārdu un paroli! </xsl:when>
+                        <xsl:otherwise>Laipni lūdzam, <xsl:value-of select="full-name"/> </xsl:otherwise>
                       </xsl:choose>
                     </strong>
                   </td>
@@ -135,12 +135,12 @@ $Revision$
                     <!--Right Content Cell [1]-->
                     <xsl:choose>
                       <xsl:when test="$unauthenticated='true'">
-                        <span class="uportal-label">V\u0101rds:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="text" name="userName" size="15">
+                        <span class="uportal-label">Vārds:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="text" name="userName" size="15">
                             <xsl:attribute name="value">
                               <xsl:value-of select="/login-status/failure/@attemptedUserName"/>
-                            </xsl:attribute></input>Parole:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="password" name="password" size="15"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input type="submit" value="Piesl\u0113gties" name="Login" class="uportal-button"/></span>
+                            </xsl:attribute></input>Parole:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="password" name="password" size="15"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input type="submit" value="Pieslēgties" name="Login" class="uportal-button"/></span>
                       </xsl:when>
-                      <xsl:otherwise>Pašlaik j\u016Bs esat piesl\u0113dzies / piesl\u0113gusies.</xsl:otherwise>
+                      <xsl:otherwise>Pašlaik jūs esat pieslēdzies / pieslēgusies.</xsl:otherwise>
                     </xsl:choose>
                   </td>
                   <td class="uportal-text-small" nowrap="nowrap" colspan="1" rowspan="1">
@@ -154,13 +154,13 @@ $Revision$
 
 
 var months=new Array(13);
-months[1]='Janv\u0101ris';
-months[2]='Febru\u0101ris';
+months[1]='Janvāris';
+months[2]='Februāris';
 months[3]='Marts';
-months[4]='Apr\u012Blis';
+months[4]='Aprīlis';
 months[5]='Maijs';
-months[6]='J\u016Bnijs';
-months[7]='J\u016Blijs';
+months[6]='Jūnijs';
+months[7]='Jūlijs';
 months[8]='Augusts';
 months[9]='Septembris';
 months[10]='Oktobris';

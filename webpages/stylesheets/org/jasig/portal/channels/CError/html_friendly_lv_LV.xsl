@@ -17,17 +17,17 @@
         <td>
           <img src="{$baseMediaURL}transparent.gif" width="16" height="16"/>
         </td>
-        <td class="uportal-channel-subtitle" width="100%">K\u013C\u016Bda:<br/><span class="uportal-channel-error">
+        <td class="uportal-channel-subtitle" width="100%">Kļūda:<br/><span class="uportal-channel-error">
               <xsl:choose>
-                <xsl:when test="@code='4'">Kan\u0101lam iest\u0101jies taimauts</xsl:when>
-              <xsl:when test="@code='1'">Kan\u0101ls nesp\u0113j par\u0101d\u012Bt datus</xsl:when>
-              <xsl:when test="@code='2'">Kan\u0101ls nesp\u0113j s\u0101kt darboties</xsl:when>
-              <xsl:when test="@code='3'">Kan\u0101ls nesp\u0113j pie\u0146emt datus</xsl:when>
-              <xsl:when test="@code='0'">Kan\u0101l\u0101 ir visp\u0101r\u0113ja k\u013C\u016Bda</xsl:when>
-              <xsl:when test="@code='5'">Kan\u0101ls nesp\u0113j pie\u0146emt PSP (Person\u0101lie sakaru pakalpojumi)</xsl:when>
-              <xsl:when test="@code='6'">Jums nav piek\u013Cuves ties\u012Bbu šim kan\u0101lam</xsl:when>
-              <xsl:when test="@code='7'">Kan\u0101ls nav pieejams</xsl:when>
-              <xsl:when test="@code='-1'">Kan\u0101l\u0101 ir visp\u0101r\u0113j\u0101 uPortal k\u013C\u016Bda</xsl:when></xsl:choose></span>
+                <xsl:when test="@code='4'">Kanālam iestājies taimauts</xsl:when>
+              <xsl:when test="@code='1'">Kanāls nespēj parādīt datus</xsl:when>
+              <xsl:when test="@code='2'">Kanāls nespēj sākt darboties</xsl:when>
+              <xsl:when test="@code='3'">Kanāls nespēj pieņemt datus</xsl:when>
+              <xsl:when test="@code='0'">Kanālā ir vispārēja kļūda</xsl:when>
+              <xsl:when test="@code='5'">Kanāls nespēj pieņemt PSP (Personālie sakaru pakalpojumi)</xsl:when>
+              <xsl:when test="@code='6'">Jums nav piekļuves tiesību šim kanālam</xsl:when>
+              <xsl:when test="@code='7'">Kanāls nav pieejams</xsl:when>
+              <xsl:when test="@code='-1'">Kanālā ir vispārējā uPortal kļūda</xsl:when></xsl:choose></span>
           <br/>
           <br/>
 
@@ -35,7 +35,7 @@
             <a href="{$baseActionURL}?action=retry">
               <img src="{$baseMediaURL}error_refresh.gif" border="0" width="16" height="16" alt="Refresh the channel"/>
               <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
-              <span class="uportal-label">Atjaunot kan\u0101lu</span>
+              <span class="uportal-label">Atjaunot kanālu</span>
             </a>
 
             <br/>
@@ -45,7 +45,7 @@
             <a href="{$baseActionURL}?action=restart">
               <img src="{$baseMediaURL}error_reboot.gif" border="0" width="16" height="16" alt="Reboot the channel"/>
               <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
-              <span class="uportal-label">P\u0101rstart\u0113t kan\u0101lu</span>
+              <span class="uportal-label">Pārstartēt kanālu</span>
             </a>
           </xsl:if>
         </td>

@@ -30,7 +30,7 @@
 			}
 		}
 		function grpDeleteGroup(path){
-			if (window.confirm('Vai j\u016Bs tie\u0161\u0101m gribat neatgriezeniski izdz\u0113st \u0161o grupu, ar vis\u0101m t\u0101s ties\u012Bb\u0101m un dal\u012Bb\u0101m??')){
+			if (window.confirm('Vai jūs tiešām gribat neatgriezeniski izdzēst šo grupu, ar visām tās tiesībām un dalībām??')){
 				this.location.href=path;
 			}
 		}
@@ -53,7 +53,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:text>
-                    Izv\u0113l\u0113ties grupas un ent\u012Btijas:
+                    Izvēlēties grupas un entītijas:
                   </xsl:text>
                 </xsl:otherwise>
               </xsl:choose>
@@ -137,7 +137,7 @@
 					<tr>
 					<td colspan="5" class="uportal-channel-text">
 					<input type="checkbox" name="grpCommandArg" value="{//group[@id=$highlightedGroupID]/@key}"/>
-					<em>mekl\u0113t tikai \u0161aj\u0101 grup\u0101</em>
+					<em>meklēt tikai šajā grupā</em>
 					</td>
 					</tr>
 				</xsl:if>
@@ -213,11 +213,11 @@
 						<xsl:if test="count(descendant::*[@selected='true'])">
 						  <xsl:text>
 						  </xsl:text>
-						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="Izv\u0113le pabeigta" />
+						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="Izvēle pabeigta" />
 						</xsl:if>
 					  <xsl:text>
 					  </xsl:text>
-					  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Cancel';" value="Atcelt izv\u0113li" />
+					  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Cancel';" value="Atcelt izvēli" />
 					</xsl:if>
 				  </td>
 				</tr>
@@ -233,20 +233,20 @@
           	<xsl:choose>
           		<xsl:when test="$mode='select'"/>
           		<xsl:when test="$group/@searchResults='true'">
-          			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Dz\u0113st grupu" title="Dz\u0113st grupu"/></a>
+          			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Dzēst grupu" title="Dzēst grupu"/></a>
           		</xsl:when>
           		<xsl:when test="$mode='edit'">
-          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Pabeigt grupas redi\u0123\u0113\u0161anu" title="Pabeigt grupas redi\u0123\u0113\u0161anu"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Pabeigt grupas rediģēšanu" title="Pabeigt grupas rediģēšanu"/></a>
           			<xsl:if test="$group/@canDelete='true'">
-						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Dz\u0113st grupu" title="Dz\u0113st grupu"/></a>
+						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Dzēst grupu" title="Dzēst grupu"/></a>
 					</xsl:if>
           		</xsl:when>
           		<xsl:when test="($group/@editable='true') and ($group/@canUpdate='true' or $group/@canAssignPermissions='true' or $group/@canManageMembers='true' or $group/@canCreateGroup='true')">
-          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Redi\u0123\u0113t grupu" title="Redi\u0123\u0113t grupu"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Rediģēt grupu" title="Rediģēt grupu"/></a>
           		</xsl:when>
           	</xsl:choose>
           	
-          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="Aizv\u0113rt grupu" title="Aizv\u0113rt grupu"/></a>
+          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="Aizvērt grupu" title="Aizvērt grupu"/></a>
           </td>
   </xsl:template>
   
@@ -350,15 +350,15 @@
 				<td></td>
 				<td nowrap="nowrap" colspan="2">
 					<xsl:if test="$group/@canUpdate='true'">
-						<input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Update';" value="Kori\u0123\u0113t" class="uportal-button" />
+						<input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Update';" value="Koriģēt" class="uportal-button" />
 						<input type="reset" value="Reset Form"  class="uportal-button" />
 					  </xsl:if>
 					 <img src="{$spacerIMG}" width="15" height="1"/>
 					<xsl:if test="not($highlightedGroupID='0') and not($grpKey='null') and $group/@canAssignPermissions='true'">
-						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Pie\u0161\u0137irt ties\u012Bbas" class="uportal-button" />
+						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Piešķirt tiesības" class="uportal-button" />
 					  </xsl:if>
 					<xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
-						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="Pievienot dal\u012Bbniekus" class="uportal-button" />
+						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="Pievienot dalībniekus" class="uportal-button" />
 					</xsl:if>
 				</td>
 			</tr>
@@ -392,7 +392,7 @@
 	  	<table width="100%" border="0">
     			<tr>
     				<td class="uportal-channel-strong">
-    					<xsl:text>Dal\u012Bbnieki</xsl:text>
+    					<xsl:text>Dalībnieki</xsl:text>
     				</td>
     				<td width="50%">
 					<img src="{$spacerIMG}" width="16" height="16" border="0"/>
@@ -578,7 +578,7 @@
     <xsl:if test="$mode='select'">
             <tr>
               <td colspan="2">
-                <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Select';"  value="Izv\u0113l\u0113ties iez\u012Bm\u0113tos" class="uportal-button" />
+                <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Select';"  value="Izvēlēties iezīmētos" class="uportal-button" />
                 
               </td>
             </tr>
@@ -625,7 +625,7 @@
                         </table>
                 </xsl:when>
                 <xsl:otherwise>
-                        <em>Nav pieejama papildus inform\u0101cija</em>
+                        <em>Nav pieejama papildus informācija</em>
                 </xsl:otherwise>
         </xsl:choose>
         </td>

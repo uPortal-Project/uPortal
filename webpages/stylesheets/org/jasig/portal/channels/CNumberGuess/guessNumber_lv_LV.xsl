@@ -44,22 +44,22 @@ Version $Revision$
 <xsl:template match="content">
   <xsl:choose>
     <xsl:when test="suggest">
-      J\u016Bsu min\u0113jums <xsl:value-of select="guess"/> ir nepareizs.
-      M\u0113\u0123in\u0101t v\u0113lreiz <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
-      J\u016Bs esat izteicis <xsl:value-of select="guesses"/> min\u0113jumus.
+      Jūsu minējums <xsl:value-of select="guess"/> ir nepareizs.
+      Mēģināt vēlreiz <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
+      Jūs esat izteicis <xsl:value-of select="guesses"/> minējumus.
     </xsl:when>
     <xsl:when test="answer">
-      Jums ir izdevies p\u0113c <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> m\u0113\u0123in\u0101jumiem!
-      Pareiz\u0101 atbilde ir <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
-      <p>L\u016Bdzu, sp\u0113l\u0113jiet v\u0113lreiz...</p>
+      Jums ir izdevies pēc <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> mēģinājumiem!
+      Pareizā atbilde ir <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
+      <p>Lūdzu, spēlējiet vēlreiz...</p>
     </xsl:when>
-    <xsl:otherwise>\u0160\u012B ir skait\u013Cu min\u0113šanas sp\u0113le.<br /></xsl:otherwise>
+    <xsl:otherwise>Šī ir skaitļu minēšanas spēle.<br /></xsl:otherwise>
   </xsl:choose> 
   
-  Iedom\u0101jieties skaitli no 
-  <xsl:value-of select="minNum"/> l\u012Bdz 
+  Iedomājieties skaitli no 
+  <xsl:value-of select="minNum"/> līdz 
   <xsl:value-of select="maxNum"/>.<br />
-  K\u0101ds ir j\u016Bsu min\u0113jums?
+  Kāds ir jūsu minējums?
     <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
