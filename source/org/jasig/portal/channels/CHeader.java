@@ -81,10 +81,18 @@ public class CHeader extends BaseChannel
   public ChannelCacheKey generateKey () {
     ChannelCacheKey k = new ChannelCacheKey();
     StringBuffer sbKey = new StringBuffer(1024);
-    // guest pages are cached system-wide
-    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+
     sbKey.append("org.jasig.portal.CHeader: ");
-    sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+
+    if(staticData.getPerson().isGuest()) {
+        // guest users are cached system-wide. 
+        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+        sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+    } else {
+        // otherwise cache is instance-specific
+        k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+    }
+    sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
     sbKey.append("stylesheetURI:");
     try {
@@ -140,7 +148,7 @@ public class CHeader extends BaseChannel
     timeStampShortEl.appendChild(doc.createTextNode(getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
-    if (!staticData.getPerson().isGuest()) {
+    if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
@@ -207,8 +215,8 @@ public class CHeader extends BaseChannel
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-    if (staticData.getPerson().isGuest()) {
-      xslt.setStylesheetParameter("guest", "true");
+    if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
+      xslt.setStylesheetParameter("authenticated", "true");
     }
     xslt.transform();
   }
