@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Guide to Working with Portlets in uPortal 2.3</title>
+  <meta http-equiv="content-type">
+  <link href="../../uportal.css" rel="stylesheet">
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="bottom" colspan="3"><img
+ src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
+ height="87" width="592"> </td>
+    </tr>
+    <tr>
+      <td><img src="../../images/spacer.gif" alt="." border="0"
+ height="4" width="1"> </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="0" cellpadding="5" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td valign="top" width="150" bgcolor="#ccccff"> <img
+ src="../../images/spacer.gif" border="0" height="4"> <br>
+      <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
+Home</b></a></p>
+      <p><a class="sidelinks" href="../../index.html"><b> About uPortal</b></a></p>
+      <p><a class="sidelinks" href="../../docs.html"><b> Documentation</b></a></p>
+      <p><a class="sidelinks" href="../../administrators/index.html"><b>
+Getting Started</b></a></p>
+      <p><a class="sidelinks" href="../../developers/index.html"><b>
+Developers</b></a></p>
+	
+      <p><a class="sidelinks" href="../index.html"><b> Implementors</b></a></p>
+	
+      <p><a class="sidelinks" href="../../users/index.html"><b> Users</b></a></p>
+      <p><a class="sidelinks" href="../../architecture/index.html"><b>
+Background</b></a></p>
+      <p><a class="sidelinks" href="../../release/index.html"><b> Release</b></a></p>
+      <p><img src="../../images/mellon.gif" alt="" border="0"
+ width="145" height="93"> </p>
+      </td>
+<!-- main body goes in this table cell  (see BELOW)   --> <td
+ valign="top"> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> <a
+ href="workingWithPortlets_prt.html"> <img
+ src="../../images/print_this.gif" border="0" width="86" height="20"
+ alt="Printable version of this document" align="right"> </a> <br>
+<!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+<h1 style="text-align: center;">Guide to Working with Portlets in
+uPortal 2.3</h1>
+<h2>Contents</h2>
+<a href="#Introduction">Introduction</a><br>
+<a href="#Servlet_Container_Issues">Servlet Container Issues</a><br>
+<a href="#Sample_Portlets">Sample Portlets</a><br>
+<a href="#Deploying_Portlets">Deploying Portlets</a><br>
+<a href="#Publishing_Portlets">Publishing Portlets</a><br>
+<a href="#Portlet_Caching">Portlet Caching</a><br>
+<a href="#Future_of_Portlets_in_uPortal">Future of Portlets in uPortal</a><br>
+<h2><a name="Introduction"></a>Introduction</h2>
+uPortal is committed to supporting open standards including the <a
+ href="http://www.jcp.org/en/jsr/detail?id=168">Java Portlet
+Specification</a>, initially known as
+JSR 168.&nbsp; Portlets are designed to be the basic building block of
+a Portal.&nbsp; The uPortal analog to a Portlet has thus far been the
+Channel which is based on the <code>org.jasig.portal.IChannel</code>
+java
+interface.&nbsp; To provide a runtime environment for Portlets, uPortal
+has chosen to use a Portlet Container from the Apache Jakarta project
+called <a href="http://jakarta.apache.org/pluto/">Pluto</a>.&nbsp;
+Pluto is the reference implementation of the Java Portlet
+Specification.&nbsp; uPortal 2.3 embeds the Pluto container and
+includes a Portlet-to-Channel adapter that makes it possible to install
+and render Portlets along with its native Channels.&nbsp; The End-User
+of uPortal can not tell the difference between a Portlet and a Channel.
+<br>
+<br>
+Pluto, when downloaded separately from Apache, is distributed with
+several components:<br>
+<ul>
+  <li>Portlet API (JSR-168)</li>
+  <li>Portlet Container</li>
+  <li>Portal Driver</li>
+  <li>Test Suite Portlet</li>
+</ul>
+uPortal includes the Portlet API, Portlet Container, and Test Suite
+Portlet, but not Pluto's Portal Driver which is not meant to be a fully
+functional portal.&nbsp; uPortal acts as the Portal Driver.&nbsp; This
+guide gives you an overview of the uPortal 2.3 Portlet environment.<br>
+<h2><a name="Servlet_Container_Issues"></a>Servlet Container Issues</h2>
+uPortal, with its implementation of Pluto, requires that the web
+application context representing the deployed portal web application be
+set as "cross context" because Pluto dispatches the Portlet request
+objects to the individual Portlet applications which run in their own
+web application context.&nbsp; Each servlet container should provide a
+means to enable this "cross context" setting.&nbsp; It can be
+accomplished in the Tomcat&nbsp; servlet container in the following
+ways:<br>
+<ol>
+  <li>For Tomcat 5, you can include an XML file in the <code>conf/Catalina/{hostname}</code>
+directory that contains the <code>&lt;Context&gt;</code> element
+definition.&nbsp; uPortal 2.3 automatically deploys such a file <code>properties/uPortal.xml</code>
+to <code>conf/Catalina/localhost/uPortal.xml</code>.&nbsp; This, of
+course, assumes that your context name is <code>uPortal</code> and
+your hostname is <code>localhost</code>.</li>
+  <li>For Tomcat 4, you can include a similar XML file in the <code>webapps</code>
+directory.</li>
+  <li>For either Tomcat 4 or 5, you can alternatively edit the <code>conf/server.xml</code>
+file, adding a <code>&lt;Context&gt;</code> element for your portal
+application with the <code>crossContext</code> attribute set to true:<code><br>
+&lt;Context path="/uPortal" docBase="uPortal" crossContext="true"&gt;<br>
+&lt;/Context&gt;</code></li>
+</ol>
+<strong>Note: uPortal 2.3 will not be able to run Portlets in Tomcat
+5.0.19 because of a Tomcat bug that is documented <a
+ href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=27309">here</a>.<br>
+<span style="font-weight: bold;"></span></strong>
+<h2><a name="Sample_Portlets"></a>Sample Portlets</h2>
+uPortal 2.3 comes with 3 sample Portlets that are preinstalled: <br>
+<ol>
+  <li>Test Suite Portlet - comes with Pluto [<a
+ href="http://jakarta.apache.org/pluto/multiproject/testsuite/">Info</a>]<br>
+  </li>
+  <li>RSS Portlet - comes from <a
+ href="http://portlet-opensrc.sourceforge.net/">Portlet Open Source
+Trading Site (POST)</a> [<a
+ href="http://prdownloads.sourceforge.net/portlet-opensrc/RssPortlet.zip?download">Download</a>]<br>
+  </li>
+  <li>Google Portlet - comes from <a
+ href="http://portlet-opensrc.sourceforge.net/">Portlet Open Source
+Trading Site (POST)</a> [<a
+ href="http://prdownloads.sourceforge.net/portlet-opensrc/GooglePortlet.zip?download">Download</a>]<br>
+  </li>
+</ol>
+To use these Portlets, log into uPortal with user name and password
+demo/demo and navigate to the tab called Portlet Examples.&nbsp; You
+should see 2 instances of the Test Suite Portlet in the first and
+second columns and the RSS and Google Portlets in the third
+column.&nbsp; The Test Suite Portlet tests the Portal Driver's
+implementation of the Portlet Container.&nbsp; The RSS Portlet and
+Google Portlet are just Portlet examples and were contributed to POST
+by <a href="http://www.plumtree.com/">Plumtree Software</a>.<br>
+<br>
+Note: The Google Portlet will not be fully functional until you
+configure a license key in the <code>&lt;init-param&gt;</code> element
+of Google Portlet's <code>portlet.xml</code> file.&nbsp; To obtain a
+license key, visit <a href="http://www.google.com/apis/">Google Web
+APIs</a> and follow instructions to set up an account.<br>
+<h2><a name="Deploying_Portlets"></a>Deploying Portlets</h2>
+The sample portlets mentioned above were all deployed as part of
+uPortal's <code>initportal</code> ant target.&nbsp; The ant target
+subtask of <code>initportal</code> that performs the deployment of
+Portlet Applications is <code>deployPortletApp</code>.&nbsp; The <code>deployPortletApp</code>
+target runs the portlet deployer tool, <code>org.jasig.portal.container.deploy.Deployer</code>.
+This tool takes a Portlet WAR file, rewrites the <code>web.xml</code>
+file (a requirement of the Pluto Portlet Container), and deploys the
+results to the servlet container.&nbsp; You can deploy multiple
+portlets at once by placing them in uPortal's <code>lib/portlets</code>
+directory and specifying <code>all</code> as the porletApp.&nbsp; For
+example:<br>
+&nbsp; <br>
+<code>&nbsp;&nbsp;&nbsp; ant deployPortletApp -DportletApp=all<br>
+</code><br>
+You can also deploy one Portlet application at a time by specifying the
+location of the Portlet application WAR file:<code><br>
+<br>
+&nbsp;&nbsp;&nbsp; ant deployPortletApp
+-DportletApp=C:/TEMP/myPortlet.war</code><br>
+<h2><a name="Publishing_Portlets"></a>Publishing Portlets</h2>
+uPortal will build a Portlet Registry based on all the Portlets that
+are deployed into the servlet container.&nbsp; It does this by
+examining all the installed web applications, looking for the ones that
+contain a <code>portlet.xml</code> file, and parsing that <code>portlet.xml</code>
+file to find out what Portlet Application Definitions and Portlet
+Defiinitions are available.<br>
+<br>
+To publish a Portlet in uPortal, you need to know the Portlet
+Definition ID and any necessary parameters.&nbsp; The Portlet
+Definition ID is in the form of <code>[portlet-context-name].[portlet-name]</code>.&nbsp;
+For example, for the Pluto Test Suite Portlet, the application was
+bundled as <code>testsuite.war</code> and the Portlet name from <code>portal.xml</code>
+was <code>TestPortlet1</code>.&nbsp; Therefore the Portlet Definition
+ID for this Portlet would be <code>testsuite.TestPortlet1</code>.<br>
+<br>
+Once you know the Portlet Definition ID, you can publish the Portlet
+either via the Channel Manager publishing GUI or by creating a channel
+definition XML file and placing it in uPortal's <code>properties/chanpub</code>
+directory.&nbsp; That directory already contains sample channel
+definition XML files for the 3 included sample Portlets that are
+described above.&nbsp; If you choose to publish the Portlet using the
+GUI, select the Portlet channel type and follow instructions to enter
+the required parameters.&nbsp; In both cases, you are actually
+publishing a Portlet-to-Channel adapter which knows how to find and
+render the appropriate Portlet based on the Portlet Definition ID.<br>
+<h2><a name="Portlet_Caching"></a>Portlet Caching</h2>
+In order to make the Portlet-to-Channel adapter as efficient as
+possible, a caching strategy was implemented that is beyond the scope
+of the Portlet's control.&nbsp; It works as follows:&nbsp; uPortal will
+cache the contents of a Portlet screen until one of the following
+occurs:<br>
+<ul>
+  <li>The user clicks on a link or button within the Portlet.</li>
+  <li>The user clicks on a button within the Portlet control bar, i.e.
+Edit, Help, About, etc.</li>
+  <li>The Portlet is focused or unfocused, i.e. the Portlet alternates
+between being the root of the layout and not the root of the layout.</li>
+  <li>A PortalEvent is sent to the Portlet.</li>
+</ul>
+When one of these activities occurs, it usually triggers a state change
+within the Portlet, and the new screen is cached until one of these
+activities happens again.&nbsp; Therefore, simply clicking refresh on
+your browser will not cause the Portlet to render itself again.&nbsp;
+The optional Portlet caching settings mentioned in the Portlet
+Specification are not implemented at this time.<br>
+<h2><a name="Future_of_Portlets_in_uPortal"></a>Future of Portlets in
+uPortal</h2>
+uPortal 3.0 will continue to support Portlets using the Pluto Portlet
+Container.&nbsp; The Portlet will eventually replace the Channel as the
+primary portal module.&nbsp; This means that terminology within uPortal
+will change to reflect the use of Portlets rather than Channels.&nbsp;
+Also the rendering architecture of uPortal will be simplified to handle
+the Portlet natively, rather than through an adapter.&nbsp; The
+Channel, of course, will still be supported though a Channel-to-Portlet
+adapter.&nbsp; uPortal 3.0 is still in its early design stages.&nbsp;
+More will be added to this section as the design matures.<br>
+<br>
+<br>
+<!-- end cut this section to put into jasig table cell format --> <br>
+<!-- end of main body table cell --> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> 	 </td>
+    </tr>
+  </tbody>
+</table>
+<!-- page footer -->
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><img height="3" src="../../images/spacer.gif"
+ width="1" border="0" alt="."> <br>
+      <font face="Verdana, Arial, sans-serif" size="1"><a
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../index.html"> About uPortal</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../faq.html">FAQ</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../download.html">Download</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../docs.html">Documentation</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img height="13"
+ alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../license.html">License</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
+    </tr>
+  </tbody>
+</table>
+<!-- end page footer --> <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>
