@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,37 +38,40 @@
 
 package org.jasig.portal.layout;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
+import org.jasig.portal.RDBMUserLayoutStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMUserLayoutStore;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
-import org.jasig.portal.layout.restrictions.PriorityRestriction;
-import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.jasig.portal.layout.*;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.layout.restrictions.*;
+import org.jasig.portal.groups.*;
+
+
+import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
+import  java.sql.PreparedStatement;
+import  java.sql.Types;
+import  java.sql.Timestamp;
+import  java.sql.SQLException;
+import  java.util.List;
+import  java.util.Vector;
+import  java.util.Collections;
+import  java.util.ArrayList;
+import  java.util.Date;
+import  java.util.Enumeration;
+import  java.util.Iterator;
+import  java.util.HashMap;
+import  java.util.Hashtable;
 
 
 
@@ -219,7 +222,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         PreparedStatement  psAddChannelParam = null, psAddChannel = null;
 
-        if ( "channel".equals(node.getNodeType()) ) {
+        if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
           int subscribeId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId());
           if ( subscribeId > 0 ) {
            rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
@@ -271,7 +274,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       IALNodeDescription nodeDesc = node.getNodeDescription();
 
-      boolean isFolder = node.getNodeType().equals("folder");
+      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
       int nodeId = CommonUtils.parseInt(nodeDesc.getId());
@@ -657,7 +660,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       int count = 0;
 
-      boolean isFolder = node.getNodeType().equals("folder");
+      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
       IALNodeDescription nodeDesc = node.getNodeDescription();
       int nodeId = CommonUtils.parseInt(nodeDesc.getId());
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
@@ -980,7 +983,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
 
-      boolean isFolder = node.getNodeType().equals("folder");
+      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
       int tmpValue = -1;
@@ -1240,7 +1243,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                boolean channelParamsExist = false;
 
-               if ( "channel".equals(node.getNodeType()) ) {
+               if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
                 int subscribeId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelSubscribeId());
                   ResultSet rsChan = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
                   try {
@@ -1604,7 +1607,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 }
 
               // Setting node description attributes
-              if ("folder".equalsIgnoreCase(node.getNodeType()))
+              if ( node.getNodeType() == ALFolder.FOLDER_TYPE )
                  nodeDesc.setName(rs.getString(7));
               nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
               nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
@@ -1673,7 +1676,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     nodeDesc.setId(fragNode.getId());
                     nodeDesc.setFragmentNodeId(fragNode.getFragmentNodeId());
                     fragNode.setNodeDescription(nodeDesc);
-                    if ( "folder".equalsIgnoreCase(fragNode.getNodeType()) ) {
+                    if ( fragNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
                     }
                     layout.put(nodeDesc.getId(),fragNode);
@@ -1683,7 +1686,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // If there is a channel we need to get its parameters
               IALChannelDescription channelDesc = null;
-              if ("channel".equalsIgnoreCase(node.getNodeType())) {
+              if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
                 channelDesc = (IALChannelDescription) nodeDesc;
                 chanIds.add(nodeDesc.getId());
               }
@@ -1731,7 +1734,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               } else { // Do second SELECT later on for structure parameters
 
                   // Adding the channel ID to the String buffer
-                  if ("channel".equalsIgnoreCase(node.getNodeType())) {
+                  if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
                    structParms.append(sepChar + chanId);
                    sepChar = ",";
                   }
@@ -1948,7 +1951,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 } else
                     rootNode.setFirstChildNodeId(newId);
 
-                if ( "folder".equalsIgnoreCase(node.getNodeType()) ) {
+                if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
                     //Changing the parent Ids for all the children
                     for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
                         ALNode child = (ALNode) layout.get(nextIdStr);
@@ -1965,7 +1968,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         for ( Enumeration fragmentNodesEnum = fragmentNodes.keys(); fragmentNodesEnum.hasMoreElements() ;) {
                String key = fragmentNodesEnum.nextElement().toString();
                ALNode node  = (ALNode ) fragmentNodes.get(key);
-               if ( "folder".equalsIgnoreCase(node.getNodeType()) ) {
+               if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
                    String parentId = node.getId();
                  for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
                      ALNode child = (ALNode) layout.get(nextIdStr);

@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 
 package org.jasig.portal.layout;
 
+import java.util.*;
 
 /**
  * <p>Title: UserLayoutFolder </p>
@@ -48,6 +49,8 @@ package org.jasig.portal.layout;
 
 
 public class ALChannel extends ALNode {
+
+    public static final int CHANNEL_TYPE = 1;
 
     public ALChannel() {
         super();
@@ -61,7 +64,7 @@ public class ALChannel extends ALNode {
      * Gets the node type
      * @return a node type
      */
-    public String getNodeType() {
-        return "channel";
+    public int getNodeType() {
+        return CHANNEL_TYPE;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,33 +43,31 @@ package org.jasig.portal.layout;
  * @version 1.0
  */
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
-import org.jasig.portal.layout.restrictions.PriorityRestriction;
-import org.jasig.portal.layout.restrictions.RestrictionTypes;
-import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
-import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
+
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.CommonUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.jasig.portal.UserProfile;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+import org.w3c.dom.Document;
+import javax.xml.parsers.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
+import org.jasig.portal.*;
+import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.utils.CommonUtils;
+
+
+import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
+import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
+import org.jasig.portal.layout.restrictions.RestrictionTypes;
+import org.jasig.portal.layout.restrictions.PriorityRestriction;
 
 
 
@@ -292,7 +290,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
       // Checking children related restrictions on the children if they exist
       restrictions = node.getRestrictionsByPath("children");
-      boolean isFolder = node.getNodeType().equals(FOLDER);
+      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
       if ( isFolder ) {
        for ( int i = 0; i < restrictions.size(); i++ ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
@@ -373,7 +371,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     ALNode parentNode = getLayoutNode(parentId);
 
-    if ( !FOLDER.equals(parentNode.getNodeType()) )
+    if ( !(parentNode.getNodeType()==ALFolder.FOLDER_TYPE) )
       throw new PortalException ("The target parent node should be a folder!");
 
     if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
@@ -507,7 +505,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     // Checking restrictions for the node
     if ( !checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,(parentDepth+1)+"") )
             return false;
-    if ( FOLDER.equals(node.getNodeType()) ) {
+    if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
      for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; nextId = node.getNextNodeId() ) {
       node = getLayoutNode(nextId);
       if ( !checkDepthRestrictions(nextId,node.getParentNodeId(),parentDepth+1) )
@@ -865,7 +863,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
          AttributesImpl attributes = new AttributesImpl();
 
          // If we have a folder
-         if ( node.getNodeType().equals(FOLDER) ) {
+         if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
 
            // Start document if we have the root node
            if (nodeId.equals(rootNodeId)) contentHandler.startDocument();
@@ -1043,8 +1041,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
           IALNodeDescription nodeDesc = layoutNode.getNodeDescription();
           Element markingMoveLeaf = null, markingAddLeaf = null;
 
-          String nodeType = layoutNode.getNodeType();
-          Element newNode = domLayout.createElement(nodeType);
+          Element newNode = domLayout.createElement((node.getNodeType()==ALFolder.FOLDER_TYPE)?FOLDER:CHANNEL);
 
           layoutNode.addNodeAttributes(newNode);
 
@@ -1075,7 +1072,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
           // Adding restrictions to the node
           nodeDesc.addRestrictionChildren(newNode,domLayout);
-          if (nodeType.equals(FOLDER)) {
+          if ( layoutNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
            // Loop for all children
            String firstChildId = ((ALFolder)layoutNode).getFirstChildNodeId();
             for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
@@ -1083,7 +1080,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
              appendDescendants(domLayout,newNode,nextNodeId);
              nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
             }
-          } else if ( nodeType.equals(CHANNEL) ) {
+          } else if ( layoutNode.getNodeType() == ALChannel.CHANNEL_TYPE ) {
               ALChannelDescription channelDesc = (ALChannelDescription) nodeDesc;
               // Adding channel parameters
               channelDesc.addParameterChildren(newNode,domLayout);
@@ -1202,7 +1199,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
              layoutNode.setPreviousNodeId(prevNode.getAttribute("ID") );
 
           // Setting the first child node ID
-          if ( FOLDER.equals(layoutNode.getNodeType()) ) {
+          if ( layoutNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
             String id = ((Element)node.getFirstChild()).getAttribute("ID");
             if ( id != null && id.length() > 0 )
              ((ALFolder)layoutNode).setFirstChildNodeId(id);
@@ -1212,7 +1209,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
           layout.put(nodeDesc.getId(), layoutNode);
 
           // Recurrence for all children
-          for ( int i = 0; i < childNodes.getLength() && (layoutNode.getNodeType().equals(FOLDER)); i++ ) {
+          for ( int i = 0; i < childNodes.getLength() && (layoutNode.getNodeType()==ALFolder.FOLDER_TYPE); i++ ) {
             Element childNode = (Element) childNodes.item(i);
             if ( isNodeFolderOrChannel ( childNode ) )
              setUserLayoutDOM ( childNode, nodeDesc.getId() );
@@ -1471,7 +1468,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
           ALNode node = getLayoutNode(nodeId);
 
-          if (node.getNodeType().equals(FOLDER)) {
+          if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
            // Loop for all children
             String firstChildId = ((ALFolder)node).getFirstChildNodeId();
             for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
@@ -1485,7 +1482,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
                  // Checking the hidden parent node related restriction
                  canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.HIDDEN_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isHidden()));
               // Checking the hidden children node related restrictions
-              if ( currentNode.getNodeType().equals(FOLDER) ) {
+              if ( currentNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
@@ -1503,7 +1500,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
                  // Checking the immutable parent node related restriction
                  canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isImmutable()));
               // Checking the immutable children node related restrictions
-              if ( currentNode.getNodeType().equals(FOLDER) ) {
+              if ( currentNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
@@ -1521,7 +1518,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
                  // Checking the unremovable parent node related restriction
                  canChange &= checkRestriction(currentNode.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,"children",CommonUtils.boolToStr(nodeDesc.isUnremovable()));
               // Checking the unremovable children node related restrictions
-              if ( currentNode.getNodeType().equals(FOLDER) ) {
+              if ( currentNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
                ALFolder folder = (ALFolder) node;
                //Loop for all children
                for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
@@ -1589,7 +1586,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
             return false;
 
         // Checking the immutable children node related restrictions
-        if ( node.getNodeType().equals(FOLDER) ) {
+        if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
             ALFolder folder = (ALFolder) node;
             //Loop for all children
             for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
@@ -1626,7 +1623,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         }
 
         // Checking child related restrictions for the parent
-        if ( node.getNodeType().equals(FOLDER) ) {
+        if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
          for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
           ALNode child = getLayoutNode(nextId);
           restrictions = child.getRestrictionsByPath("parent");
