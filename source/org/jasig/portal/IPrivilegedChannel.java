@@ -31,9 +31,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
+
+package  org.jasig.portal;
+
 
 /**
  * Channels implementing this interface are considered "privileged" because
@@ -59,12 +63,15 @@ package org.jasig.portal;
  * @see IChannel
  * @see PortalControlStructures
  */
-public interface IPrivilegedChannel extends IChannel
+public interface IPrivilegedChannel extends IXMLChannel
 {
-    /**
-     * Passes portal control structure to the channel.
-     * @see PortalControlStructures
-     */
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException;
+
+  /**
+   * Passes portal control structure to the channel.
+   * @see PortalControlStructures
+   */
+  public void setPortalControlStructures (PortalControlStructures pcs) throws PortalException;
 }
+
+
 
