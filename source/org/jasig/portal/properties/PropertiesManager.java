@@ -44,7 +44,7 @@ public class PropertiesManager {
     
     public static final String PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE = "portal.properties";
     private static final String PORTAL_PROPERTIES_FILE_NAME = "/properties/portal.properties";
-    private static final Properties props = new Properties();
+    private static Properties props = null;
     
     /**
      * A set of the names of properties that clients of this class attempt to access
@@ -54,8 +54,16 @@ public class PropertiesManager {
      */
     private static final Set missingProperties = Collections.synchronizedSet(new HashSet());
     
-    static {
-        loadProps();
+    /**
+     * Setter method to set the underlying Properties.
+     * This is a public method to allow poor-man's static dependency injection of the Properties from wherever you want to get them.
+     * If Properties have not been injected before any accessor method is invoked, PropertiesManager will invoke loadProperties() to attempt
+     * to load its own properties.  You might call this from a context listener, say.
+     * If Properties have already been loaded or injected, this method will overwrite them.
+     * @param props - Properties to be injected.
+     */
+    public static synchronized void setProperties(Properties props){
+        PropertiesManager.props = props;
     }
     
     /**
@@ -64,14 +72,16 @@ public class PropertiesManager {
      * later on.
      */
     protected static void loadProps() {
+        Properties properties = new Properties();
         try {
             String pfile = System.getProperty(PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE);
             if (pfile == null) {
                 pfile = PORTAL_PROPERTIES_FILE_NAME;
             }
-            props.load(PropertiesManager.class.getResourceAsStream(pfile));
-        } catch (IOException ioe) {
-            log.error("Unable to read portal.properties file.", ioe);
+            properties.load(PropertiesManager.class.getResourceAsStream(pfile));
+            PropertiesManager.props = properties;
+        } catch (Throwable t) {
+            log.error("Unable to read portal.properties file.", t);
         }
     }
     
@@ -89,6 +99,8 @@ public class PropertiesManager {
         if (log.isTraceEnabled()){
             log.trace("entering getProperty(" + name + ")");
         }
+        if (PropertiesManager.props == null)
+            loadProps();
       String val = getPropertyUntrimmed(name);
       val = val.trim();
       if (log.isTraceEnabled()){
@@ -108,6 +120,8 @@ public class PropertiesManager {
      * @throws MissingPropertyException - (undeclared) if the requested property is not found
      */
     public static String getPropertyUntrimmed(String name) throws MissingPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
       String val = props.getProperty(name);
       if (val == null) {
         boolean alreadyReported = registerMissingProperty(name);
@@ -128,6 +142,8 @@ public class PropertiesManager {
      * @throws MissingPropertyException - when no property of the given name is declared.
      */
     public static boolean getPropertyAsBoolean(String name) throws MissingPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
       boolean retValue = false;
       String value = getProperty(name);
       if (value != null) {
@@ -159,6 +175,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as a byte
      */
     public static byte getPropertyAsByte(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Byte.parseByte(getProperty(name));
         } catch (NumberFormatException nfe) {
@@ -175,6 +193,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as a short or is not set.
      */
     public static short getPropertyAsShort(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Short.parseShort(getProperty(name));
         } catch (NumberFormatException nfe){
@@ -190,6 +210,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as an int
      */
     public static int getPropertyAsInt(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Integer.parseInt(getProperty(name));
         } catch (NumberFormatException nfe){
@@ -205,6 +227,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as a long
      */
     public static long getPropertyAsLong(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Long.parseLong(getProperty(name));
         } catch (NumberFormatException nfe) {
@@ -220,6 +244,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as a float
      */
     public static float getPropertyAsFloat(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Float.parseFloat(getProperty(name));
         } catch (NumberFormatException nfe) {
@@ -236,6 +262,8 @@ public class PropertiesManager {
      * @throws BadPropertyException - if the property cannot be parsed as a double or is not set.
      */
     public static double getPropertyAsDouble(String name) throws MissingPropertyException, BadPropertyException {
+        if (PropertiesManager.props == null)
+            loadProps();
         try {
             return Double.parseDouble(getProperty(name));
         } catch (NumberFormatException nfe) {
@@ -270,6 +298,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static String getProperty(String name, String defaultValue) {
+        if (PropertiesManager.props == null)
+            loadProps();
         String returnValue = defaultValue;
         try {
             returnValue = getProperty(name);
@@ -292,6 +322,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static String getPropertyUntrimmed(String name, String defaultValue) {
+        if (PropertiesManager.props == null)
+            loadProps();
         String returnValue = defaultValue;
         try {
             returnValue = getPropertyUntrimmed(name);
@@ -317,6 +349,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static boolean getPropertyAsBoolean(final String name, final boolean defaultValue){
+        if (PropertiesManager.props == null)
+            loadProps();
         boolean returnValue = defaultValue;
         try {
             returnValue = getPropertyAsBoolean(name);
@@ -339,6 +373,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static byte getPropertyAsByte(final String name, final byte defaultValue) {
+        if (PropertiesManager.props == null)
+            loadProps();
         byte returnValue = defaultValue;
         try {
             returnValue = getPropertyAsByte(name);
@@ -358,6 +394,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static short getPropertyAsShort(String name, short defaultValue){
+        if (PropertiesManager.props == null)
+            loadProps();
         short returnValue = defaultValue;
         try {
             returnValue = getPropertyAsShort(name);
@@ -377,6 +415,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static int getPropertyAsInt(String name, int defaultValue){
+        if (PropertiesManager.props == null)
+            loadProps();
         int returnValue = defaultValue;
         try {
             returnValue = getPropertyAsInt(name);
@@ -396,6 +436,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static long getPropertyAsLong(String name, long defaultValue) {
+        if (PropertiesManager.props == null)
+            loadProps();
         long returnValue = defaultValue;
         try {
             returnValue = getPropertyAsLong(name);
@@ -415,6 +457,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static float getPropertyAsFloat(String name, float defaultValue) {
+        if (PropertiesManager.props == null)
+            loadProps();
         float returnValue = defaultValue;
         try {
             returnValue = getPropertyAsFloat(name);
@@ -434,6 +478,8 @@ public class PropertiesManager {
      * @since uPortal 2.4
      */
     public static double getPropertyAsDouble(String name, double defaultValue){
+        if (PropertiesManager.props == null)
+            loadProps();
         double returnValue = defaultValue;
         try {
             returnValue = getPropertyAsDouble(name);
