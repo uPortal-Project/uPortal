@@ -65,18 +65,16 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     private HttpServletRequest request = null;
     private String responseContentType = null;
     private static final int KNOWN_MIME_TYPES = 15;
-    private PortletURLManager urlManager;
     
     public DynamicInformationProviderImpl(HttpServletRequest request, ServletConfig servletConfig ) {
         this.request = request;	
-		urlManager = new PortletURLManagerImpl();
         if ( servletConfig != null && staticInfoProvider == null )
 		staticInfoProvider = InformationProviderAccess.getStaticProvider();
         responseContentType = "text/html";
     }
 
     // DynamicInformationProvider methods
-    
+      
     public String getResponseContentType() {
         return responseContentType;
     }
@@ -89,13 +87,11 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 
 
 	public PortletURLManager getPortletURLManager(PortletWindow portletWindow) {
-		PortletURLManager urlManager = new PortletURLManagerImpl();
-		urlManager.setWindowOfAction(portletWindow);
-		return urlManager;
+		return new PortletURLManager(portletWindow);
 	}
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
-        return new PortletURLProviderImpl(this, portletWindow, urlManager );
+        return new PortletURLProviderImpl(this, portletWindow);
     }
 
     public ResourceURLProvider getResourceURLProvider(PortletWindow portletWindow) {
@@ -107,19 +103,19 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletMode getPortletMode(PortletWindow portletWindow) {
-        return urlManager.getMode(portletWindow);
+        return PortletURLManager.getMode(portletWindow);
     }
 
     public PortletMode getPreviousPortletMode(PortletWindow portletWindow) {
-        return urlManager.getPrevMode(portletWindow);
+        return PortletURLManager.getPrevMode(portletWindow);
     }
 
     public WindowState getWindowState(PortletWindow portletWindow) {
-        return urlManager.getState(portletWindow);
+        return PortletURLManager.getState(portletWindow);
     }
 
     public WindowState getPreviousWindowState(PortletWindow portletWindow) {
-        return urlManager.getPrevState(portletWindow);
+        return PortletURLManager.getPrevState(portletWindow);
     }
 
     public boolean isPortletModeAllowed(PortletMode mode) {

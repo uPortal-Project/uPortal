@@ -54,39 +54,31 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     private DynamicInformationProviderImpl provider;
     private PortletWindow portletWindow;
-    private PortletMode portletMode;
-    private WindowState windowState;
-    private boolean action;
     private boolean secure;
     private boolean clearParameters;
-    private Map parameters;
     private PortletURLManager urlManager;
 
-    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortletURLManager urlManager ) {
+    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
-        this.urlManager = urlManager;
-		this.urlManager.setWindowOfAction(portletWindow);
+        urlManager = new PortletURLManager(portletWindow);
     }
     
     // PortletURLProvider methods
 
     public void setPortletMode(PortletMode mode) {
-	  if ( mode != null && !urlManager.getMode(portletWindow).equals(mode) ) {	
-		 this.portletMode = mode;
-		 urlManager.setMode(portletWindow, portletMode);
+	  if ( mode != null ) {	
+		 urlManager.setNextMode(mode);
 	  }		 
     }
 
     public void setWindowState(WindowState state) {
-      if ( state != null && !urlManager.getState(portletWindow).equals(state) ) {	
-         this.windowState = state;
-		 urlManager.setState(portletWindow, windowState);
+      if ( state != null ) {	
+		 urlManager.setNextState(state);
       }		 
     }
 
     public void setAction() {
-    	action = true;
 		urlManager.setAction();
     }
 
@@ -100,7 +92,6 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public void setParameters(Map parameters) {
-        this.parameters = parameters;
 		urlManager.setParameters(parameters);
     }
 

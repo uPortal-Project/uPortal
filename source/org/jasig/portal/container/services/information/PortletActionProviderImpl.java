@@ -41,8 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletActionProvider;
-import org.apache.pluto.services.information.PortletURLProvider;
-import org.apache.pluto.services.information.InformationProviderAccess;
 
 /**
  * Implementation of Apache Pluto PortletActionProvider.
@@ -63,15 +61,13 @@ public class PortletActionProviderImpl implements PortletActionProvider {
     // PortletActionProvider methods
     public void changePortletMode(PortletMode mode) {	
 		if ( mode != null ) {
-		  PortletURLProvider provider = InformationProviderAccess.getDynamicProvider(request).getPortletURLProvider(portletWindow);	
-		  provider.setPortletMode(mode);
+			PortletURLManager.setMode(portletWindow,mode);
 		}  
     }
 
     public void changePortletWindowState(WindowState state) {
-		if ( state != null ) {
-	     PortletURLProvider provider = InformationProviderAccess.getDynamicProvider(request).getPortletURLProvider(portletWindow);	
-	     provider.setWindowState(state);
+		if ( state != null ) {	
+		  PortletURLManager.setState(portletWindow,state);
 	    }  
     }
 
