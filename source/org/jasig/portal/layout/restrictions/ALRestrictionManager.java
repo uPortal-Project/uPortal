@@ -15,8 +15,8 @@ import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.IALNodeDescription;
 import org.jasig.portal.layout.IAggregatedLayout;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.ILayoutNode;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

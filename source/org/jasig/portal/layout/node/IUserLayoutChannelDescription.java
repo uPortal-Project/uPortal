@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

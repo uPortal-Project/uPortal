@@ -5,7 +5,6 @@
 
 package org.jasig.portal.layout.node;
 
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

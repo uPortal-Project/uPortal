@@ -5,7 +5,6 @@
 
 package org.jasig.portal.layout.node;
 
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 
 /**

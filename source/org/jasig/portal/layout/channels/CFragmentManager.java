@@ -21,7 +21,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.ALFragment;
 import org.jasig.portal.layout.IALFolderDescription;
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;

@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.RestrictionTypes;

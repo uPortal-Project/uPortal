@@ -6,8 +6,8 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.ILayoutNode;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 
 /**
  * ImmutableRestriction checks the restriction on the "immutable" property for a given ALNode object.

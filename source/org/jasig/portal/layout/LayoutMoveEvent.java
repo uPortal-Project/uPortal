@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+
 /**
  * A layout event involving old parent reference. 
  * Used to related "move" and "delete" node events.

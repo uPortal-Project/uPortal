@@ -12,6 +12,7 @@ import org.jasig.portal.SingleDocumentUserLayoutStoreMock;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;

@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+
 
 /**
  * UserLayoutFolder summary sentence goes here.
