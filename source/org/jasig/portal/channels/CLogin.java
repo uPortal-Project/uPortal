@@ -55,8 +55,8 @@ public class CLogin implements ISpecialChannel
   private String media;
   private static final String fs = File.separator;
   private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
-  private boolean bFirstTime = true;
   private boolean bAuthenticated = false;
+  private boolean bAuthorizationAttemptFailed = false;
 
   public ChannelSubscriptionProperties getSubscriptionProperties()
   {
@@ -69,8 +69,13 @@ public class CLogin implements ISpecialChannel
   {
     HttpSession session = pcs.getHttpSession();
     IPerson person = (IPerson)session.getAttribute("up_person");
+    String authorizationAttempted = (String)session.getAttribute("up_authorizationAttempted");
+
     if (person != null)
       bAuthenticated = true;
+
+    if (authorizationAttempted != null)
+      bAuthorizationAttemptFailed = true;
   }
 
   public ChannelRuntimeProperties getRuntimeProperties()
@@ -102,15 +107,19 @@ public class CLogin implements ISpecialChannel
   {
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append("<login-status>\n");
-    if (!bFirstTime && !bAuthenticated)
+
+    if (bAuthorizationAttemptFailed && !bAuthenticated)
        sb.append("  <failure/>\n");
+
     sb.append("</login-status>\n");
 
-    bFirstTime = false;
-    try {
-	XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
-    } catch (Exception e) {
-	throw new GeneralRenderingException(e.getMessage());
+    try
+    {
+        XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
+    }
+    catch (Exception e)
+    {
+        throw new GeneralRenderingException(e.getMessage());
     }
   }
 }
