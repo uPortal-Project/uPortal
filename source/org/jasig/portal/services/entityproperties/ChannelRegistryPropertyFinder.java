@@ -51,27 +51,37 @@ import org.jasig.portal.services.LogService;
  */
 public class ChannelRegistryPropertyFinder
         implements IEntityPropertyFinder {
-    protected static final String[] names;
-    protected static Class chan = null;
-    static {
-        /* this array should hold the desired attributes of a channel element
-         as defined in channelRegistry.dtd
-         */
-        names = new String[5];
-        names[0] = "Name";
-        names[1] = "Title";
-        names[2] = "Description";
-        names[3] = "Functional Name";
-        names[4] = "Timeout";
-        try {
-            chan = Class.forName("org.jasig.portal.ChannelDefinition");
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder - static:");
-            LogService.log(LogService.ERROR, e);
-        }
-    }
+   protected static String[] names;
+   protected static Class chan = null;
+   protected static boolean INITIALIZED = false;
+
+ /**
+    * Lazily initialize the static variables.
+    */
+   public static void init (){
+      if (INITIALIZED){
+         return;
+      }
+      /* this array should hold the desired attributes of a channel element
+      as defined in channelRegistry.dtd
+      */
+      names = new String[5];
+      names[0] = "Name";
+      names[1] = "Title";
+      names[2] = "Description";
+      names[3] = "Functional Name";
+      names[4] = "Timeout";
+      try {
+         chan = Class.forName("org.jasig.portal.ChannelDefinition");
+      } catch (Exception e) {
+         LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder - static:");
+         LogService.log(LogService.ERROR, e);
+      }
+      INITIALIZED = true;
+   }
 
     public ChannelRegistryPropertyFinder() {
+       init();
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
