@@ -406,7 +406,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xsl.serialize (doc);
             log.debug(outString.toString());
         } catch (Exception e) {
-            log.debug(e);
+            log.debug(e, e);
         }
         // end of debug block
 
@@ -421,10 +421,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xslt.setStylesheetParameter("allowReinstantiation", allowRel);
             xslt.transform();
         } catch (Exception e) {
-            StringWriter sw=new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            sw.flush();
-            log.error( "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
+            log.error( "CError::renderXML() : Things are bad. Error channel threw Exception.", e);
         }
     }
 
