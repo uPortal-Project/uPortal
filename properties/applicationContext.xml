@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!--
+	 | The default application context for uPortal. Other spring configurations
+	 | should be added to the list if they have beans that need to be avalable
+	 | in the uPortal application context.
+	 +-->
+	 
+	<bean id='checkRunner' class="org.jasig.portal.tools.checks.BasicCheckRunner">
+		<property name="checks">
+			<list>
+				<bean class="org.jasig.portal.tools.checks.SpringBeanCheck">
+					<!-- check that a bean named personAttributeDao is present and is of type
+						IPersonAttributeDao. -->
+					<constructor-arg index="0" type="java.lang.String">
+						<value>personAttributeDao</value>
+					</constructor-arg>
+					<constructor-arg index="1" type="java.lang.String">
+						<value>org.jasig.portal.services.persondir.support.IPersonAttributeDao</value>
+					</constructor-arg>
+				</bean>
+				<bean class="org.jasig.portal.tools.checks.XalanVersionCheck">
+					<constructor-arg index="0" type="java.lang.String">
+						<value>Xalan Java 2.6.0</value>
+					</constructor-arg>
+				</bean>
+				<bean class="org.jasig.portal.tools.checks.TimeCheck"/>
+			</list>
+		</property>
+	</bean>
+</beans>
