@@ -115,20 +115,27 @@
    </xsl:template>
 
    <xsl:template match="input">
+      <xsl:param name="src-uri">
+       <xsl:choose>
+       <xsl:when test="@src">
+         <xsl:choose>
+            <!--handles relative URIs for src attributes-->
+            <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
+              <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="@src"/>
+            </xsl:otherwise>
+         </xsl:choose>
+       </xsl:when>
+       </xsl:choose>
+      </xsl:param>
+
       <xsl:copy>
       <xsl:choose>
         <xsl:when test="@src">
-          <xsl:param name="src-uri">
-            <xsl:choose>
-              <!--handles relative URIs for src attributes-->
-              <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
-                <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="@src"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:param>
+          <!-- moved to top <xsl:param name="src-uri">... -->
+            
           <xsl:copy-of select="attribute::*[not(name()='src')]" />
           <xsl:attribute name="src">
             <xsl:value-of select="$src-uri"/>
