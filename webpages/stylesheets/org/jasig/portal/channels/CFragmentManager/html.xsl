@@ -137,7 +137,7 @@ Version $Revision$
             </tr>
         </table>
         <!--~-->
-        <!--fragment template - draws the leaf nodes and expands and contracts selectedID-->
+        <!--fragment template - draws the leaf nodes and expands and contracts uPcFM_selectedID-->
         <!--~-->
         <xsl:apply-templates select="fragment">
             <xsl:sort select="name"/>
@@ -586,7 +586,7 @@ Version $Revision$
                                         <tr align="left" valign="top">
                                             <td colspan="3">
                                                 <input type="hidden" name="uPcFM_action" value="save"/>
-                                                <input type="hidden" name="uPcFM_selectedID" value="{$selectedID}"/>
+                                                <input type="hidden" name="uPcFM_selectedID" value="{$uPcFM_selectedID}"/>
                                                 <input name="fragment_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
