@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+  <HEAD> 
+	 <TITLE>uPortal</TITLE> <LINK HREF="uportal.css" REL="stylesheet"> 
+  </HEAD> 
+  <BODY BGCOLOR="#ffffff"> 
+	 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+		<TBODY> 
+		  <TR> 
+			 <TD VALIGN="bottom" ALIGN="left" COLSPAN="3"><IMG HEIGHT="87"
+				ALT="uPortal by JA-SIG" SRC="images/uportal-head.gif" WIDTH="592"
+				BORDER="0"></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD BGCOLOR="#ff6600" COLSPAN="3"><IMG HEIGHT="2" ALT=""
+				SRC="images/spacer.gif" WIDTH="1" BORDER="0"></TD> 
+		  </TR> 
+		  <TR VALIGN="top"> 
+			 <TD WIDTH="150"> 
+				<TABLE CELLSPACING="0" CELLPADDING="5" WIDTH="100%"
+				 BGCOLOR="#ccccff" BORDER="0"> 
+				  <TBODY> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="index.html">Home</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="index.html">About uPortal</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="faq.html">FAQ</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="download.html">Download</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="docs.html">Documentation</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="getinv.html">Getting Involved</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="cvs.html">Code Repository</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="bugs.html">Reporting Bugs</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD><A HREF="license.html">License</A></TD> 
+					 </TR> 
+					 <TR> 
+						<TD>&nbsp;</TD> 
+						<TD> <HR ALIGN="left" WIDTH="95">
+						  <A HREF="http://www.jasig.org/">JA-SIG Home</A></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR></TD> 
+			 <TD WIDTH="10">&nbsp;</TD> 
+			 <TD><BR> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="3"><B>Installation</B></FONT> </P> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="3"><B>Requirements</B></FONT> </P> 
+				<TABLE BORDER="0"> 
+				  <TBODY> 
+					 <TR> 
+						<TD WIDTH="94%" HEIGHT="211"> 
+						  <UL> 
+							 <LI>A Java Servlet Engine/Container. Must be compatible
+								with the Servlet 2.2 and JSP 1.1 API Note that uPortal is developed under
+								Tomcat (<A HREF="http://jakarta.apache.org/">http://jakarta.apache.org/</A>) so
+								this is the most desirable platform. Resin has also been used
+								successfully.<BR><BR> </LI> 
+							 <LI>JDK 1.1.8 or higher Java Virtual Machine. uPortal has
+								been tested on the SUN Virtual Machine. It has not been tested on the Microsoft
+								VM.<BR><BR> </LI> 
+							 <LI>Netscape Navigator 4.x or Internet Explorer 4.x as a
+								minimum. Mozilla or Internet Explorer 5.x should also work fine. <BR><BR></LI> 
+							 <LI>The ObjectSpace DXML classes. uPortal requires these
+								classes to process XML. The dXML jar file is no longer available from
+								ObjectSpace, but is included with the uPortal distributions available from the
+								<A HREF="download.html">Download</A> section on this website.<BR><BR></LI> 
+							 <LI>The XML Parser For Java classes. DXML requires these
+								classes for XML parsing. The classes can be downloaded from
+								<A
+								 HREF="http://www.alphaworks.ibm.com/tech/xml4j">http://www.alphaworks.ibm.com/tech/xml4j</A>.<BR><BR>
+								</LI> 
+							 <LI>A JDBC compliant database. uPortal is developed using
+								the HypersonicSQL database (<A
+								HREF="http://sourceforge.net/projects/hsql/">http://sourceforge.net/projects/hsql/</A>
+								and <A
+								HREF="http://sourceforge.net/projects/hsqldb">http://sourceforge.net/projects/hsqldb</A>).
+								Oracle, InstantDB and MySQL have also been used. Any JDBC compliant database
+								should work with some modification to the CREATE scripts and some SQL
+								statements. </LI> 
+						  </UL></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="3"><B>Setup</B></FONT> </P> 
+				<TABLE WIDTH="84%" BORDER="0"> 
+				  <TBODY> 
+					 <TR> 
+						<TD WIDTH="94%" HEIGHT="211"> 
+						  <UL> 
+							 <LI>uPortal is 100% Java and should therefore run on any
+								platform.<BR><BR></LI> 
+							 <LI>Move the "webpages" directory to "/webpages" under
+								your web server. If you already have a "webpages" directory simply add the
+								files there.<BR><BR> </LI> 
+							 <LI>Put all required class packages along with the
+								uPortal classes in the classpath of the servlet engine. <BR><BR></LI> 
+							 <LI>Run Hypersonic (hsql) in client/server mode by
+								initiating the RunWebServer script. After starting hsql, run the
+								DatabaseManager applet and log into hsql as client/server using the default
+								login. Load the scripts from the 'scripts' directory. Execute the scripts to
+								create and populate the tables. <BR><BR></LI> 
+							 <LI>Set the portal base directory in the web.xml file.
+								Here is an example: 
+								<PRE>		&lt;web-app&gt;
+  		&lt;context-param&gt;
+    			&lt;param-name&gt;portalBaseDir&lt;/param-name&gt;
+    			&lt;param-value&gt;D:\Projects\JA-SIG\portal\&lt;/param-value&gt;
+  		&lt;/context-param&gt;
+		&lt;/web-app&gt;
+			</PRE> </LI> 
+							 <LI>Start the servlet engine and load index.jsp in a web
+								browser. </LI> 
+						  </UL><BR></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR> </TD> 
+		  </TR> 
+		</TBODY> 
+	 </TABLE><!-- page footer -->
+	 <P> </P> 
+	 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+		<TBODY> 
+		  <TR> 
+			 <TD ALIGN="CENTER">&nbsp;</TD> 
+		  </TR> 
+		  <TR> 
+			 <TD BGCOLOR="#ff6600" ALIGN="CENTER"><IMG HEIGHT="2"
+				SRC="images/spacer.gif" WIDTH="1" BORDER="0" ALT="."></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="images/spacer.gif" WIDTH="1"
+				BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
+				SIZE="1"><A HREF="index.html">About uPortal</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="faq.html">FAQ</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="download.html">Download</A><BR> <A HREF="docs.html">Documentation</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="getinv.html">Get Involved</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="cvs.html">Code Repository</A><BR><A HREF="bugs.html">Bug Reporting</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="license.html">uPortal License</A>
+				<IMG HEIGHT="13" ALT="*" SRC="images/diamond-lo.gif" WIDTH="8" BORDER="0">
+				<A HREF="http://www.jasig.org/">JA-SIG Home</A></FONT></TD> 
+		  </TR> 
+		</TBODY> 
+	 </TABLE><!-- end page footer -->
+  </BODY>
+</HTML>
