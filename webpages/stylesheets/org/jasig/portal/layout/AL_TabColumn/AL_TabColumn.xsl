@@ -50,7 +50,7 @@ Version $Revision$
     <!--<xsl:param name="selectedID" select="'10'"/>-->
     <xsl:param name="userLayoutRoot" select="'root'"/>
     <!--<xsl:param name="userLayoutRoot" select="'29'"/>-->
-    <xsl:param name="newNodeID" select="''"/>
+    <xsl:param name="newNodeID"/>
     <xsl:param name="focusedTabID">
         <!--Check if lastSession-->
         <xsl:choose>
@@ -64,7 +64,7 @@ Version $Revision$
     </xsl:param>
     <xsl:variable name="validFocusedTabID">
         <xsl:choose>
-            <xsl:when test="not($newNodeID='')">
+            <xsl:when test="$newNodeID = /layout/folder/folder[@type='regular' and @hidden='false']/@ID">
                 <xsl:value-of select="$newNodeID"/>
             </xsl:when>
             <xsl:when test="$focusedTabID = /layout/folder/folder[@type='regular' and @hidden='false']/@ID">
