@@ -110,6 +110,13 @@
         <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
         <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
       </row>
+      <row>
+        <column><name>GROUP_ID</name><value>15</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Guests</value></column>
+        <column><name>DESCRIPTION</name><value>A group of people representing un-authenticated users</value></column>
+      </row>
 
       <!-- ChannelDefinition groups -->
 

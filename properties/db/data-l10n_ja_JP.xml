@@ -9,36 +9,36 @@
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>すべての構成員</value></column>
-        <column><name>DESCRIPTION</name><value>教職員・学生等の構成員すべて</value></column>
+        <column><name>GROUP_NAME</name><value>�?��?��?��?�構�?員</value></column>
+        <column><name>DESCRIPTION</name><value>教�?�員・学生等�?�構�?員�?��?��?�</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>1</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>学生</value></column>
-        <column><name>DESCRIPTION</name><value>学部生・大学院生等の学生</value></column>
+        <column><name>DESCRIPTION</name><value>学部生・大学院生等�?�学生</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>2</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>教員</value></column>
-        <column><name>DESCRIPTION</name><value>教授，助教授，講師，助手等の大学教員</value></column>
+        <column><name>DESCRIPTION</name><value>教授，助教授，講師，助手等�?�大学教員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>3</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>職員</value></column>
-        <column><name>DESCRIPTION</name><value>大学職員</value></column>
+        <column><name>GROUP_NAME</name><value>�?�員</value></column>
+        <column><name>DESCRIPTION</name><value>大学�?�員</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>4</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>開発要員</value></column>
-        <column><name>DESCRIPTION</name><value>IT 関係の開発要員</value></column>
+        <column><name>GROUP_NAME</name><value>開発�?員</value></column>
+        <column><name>DESCRIPTION</name><value>IT 関係�?�開発�?員</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>5</value></column>
@@ -73,21 +73,21 @@
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>入学予定学生</value></column>
-        <column><name>DESCRIPTION</name><value>入学が決まっている学生</value></column>
+        <column><name>DESCRIPTION</name><value>入学�?�決�?��?��?��?�る学生</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>10</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>事務職員</value></column>
-        <column><name>DESCRIPTION</name><value>事務職員</value></column>
+        <column><name>GROUP_NAME</name><value>事務�?�員</value></column>
+        <column><name>DESCRIPTION</name><value>事務�?�員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>11</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>支援職員</value></column>
-        <column><name>DESCRIPTION</name><value>補助職員等の支援職員</value></column>
+        <column><name>GROUP_NAME</name><value>支�?��?�員</value></column>
+        <column><name>DESCRIPTION</name><value>補助�?�員等�?�支�?��?�員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>12</value></column>
@@ -107,8 +107,15 @@
         <column><name>GROUP_ID</name><value>14</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>ポータル管理者</value></column>
-        <column><name>DESCRIPTION</name><value>スーパーユーザ権限を持つシステム管理者グループ</value></column>
+        <column><name>GROUP_NAME</name><value>�?ータル管�?�者</value></column>
+        <column><name>DESCRIPTION</name><value>スーパーユーザ権�?を�?�?�システム管�?�者グループ</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>15</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Guests</value></column>
+        <column><name>DESCRIPTION</name><value>A group of people representing un-authenticated users</value></column>
       </row>
 
       <!-- ChannelDefinition groups -->
@@ -117,8 +124,8 @@
         <column><name>GROUP_ID</name><value>50</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>すべてのカテゴリ</value></column>
-        <column><name>DESCRIPTION</name><value>すべてのチャネルカテゴリ</value></column>
+        <column><name>GROUP_NAME</name><value>�?��?��?��?�カテゴリ</value></column>
+        <column><name>DESCRIPTION</name><value>�?��?��?��?��?ャ�?ルカテゴリ</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>51</value></column>
@@ -145,50 +152,50 @@
         <column><name>GROUP_ID</name><value>54</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>チャネルタイプ</value></column>
-        <column><name>DESCRIPTION</name><value>IChannel インタフェースを使用している Java クラス</value></column>
+        <column><name>GROUP_NAME</name><value>�?ャ�?ルタイプ</value></column>
+        <column><name>DESCRIPTION</name><value>IChannel インタフェースを使用�?��?��?�る Java クラス</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>55</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>WebProxy チャネル</value></column>
-        <column><name>DESCRIPTION</name><value>HTML または XHTML Web ページへの HTTP プロクシとして機能するチャネル</value></column>
+        <column><name>GROUP_NAME</name><value>WebProxy �?ャ�?ル</value></column>
+        <column><name>DESCRIPTION</name><value>HTML �?��?��?� XHTML Web ページ�?��?� HTTP プロクシ�?��?��?�機能�?�る�?ャ�?ル</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>56</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>Applet チャネル</value></column>
+        <column><name>GROUP_NAME</name><value>Applet �?ャ�?ル</value></column>
         <column><name>DESCRIPTION</name><value>Java アプレットを表示</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>57</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>XSLT チャネル</value></column>
-        <column><name>DESCRIPTION</name><value>XSLT 変換を行うチャネル</value></column>
+        <column><name>GROUP_NAME</name><value>XSLT �?ャ�?ル</value></column>
+        <column><name>DESCRIPTION</name><value>XSLT 変�?�を行�?��?ャ�?ル</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>58</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>RSS チャネル</value></column>
-        <column><name>DESCRIPTION</name><value>リッチサイトサマリ（コンテンツ配信用の XML 標準規格）</value></column>
+        <column><name>GROUP_NAME</name><value>RSS �?ャ�?ル</value></column>
+        <column><name>DESCRIPTION</name><value>リッ�?サイトサマリ（コンテンツ�?信用�?� XML 標準�?格）</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>59</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>画像チャネル</value></column>
-        <column><name>DESCRIPTION</name><value>キャプション付画像を表示</value></column>
+        <column><name>GROUP_NAME</name><value>画�?�?ャ�?ル</value></column>
+        <column><name>DESCRIPTION</name><value>キャプション付画�?を表示</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>60</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>インラインフレームチャネル</value></column>
-        <column><name>DESCRIPTION</name><value>Web ページをフレーム内またはインラインフレームに表示．IE 5 以上 と Netscap 6 以上のみ利用可能．</value></column>
+        <column><name>GROUP_NAME</name><value>インラインフレーム�?ャ�?ル</value></column>
+        <column><name>DESCRIPTION</name><value>Web ページをフレーム内�?��?��?�インラインフレーム�?�表示．IE 5 以上 �?� Netscap 6 以上�?��?�利用�?�能．</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>61</value></column>
@@ -201,8 +208,8 @@
         <column><name>GROUP_ID</name><value>62</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>ビジネス</value></column>
-        <column><name>DESCRIPTION</name><value>ビジネスまたは会社のニュース</value></column>
+        <column><name>GROUP_NAME</name><value>ビジ�?ス</value></column>
+        <column><name>DESCRIPTION</name><value>ビジ�?ス�?��?��?�会社�?�ニュース</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>63</value></column>
@@ -260,21 +267,21 @@
         <row>
           <column><name>USER_NAME</name><value>staff</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)YGvCb8TdruiHaXdY9OvhRJ0MhwZYVTHa</value></column>
-          <column><name>FIRST_NAME</name><value>職員</value></column>
+          <column><name>FIRST_NAME</name><value>�?�員</value></column>
           <column><name>LAST_NAME</name><value>ユーザ</value></column>
           <column><name>EMAIL</name><value>staff.user@jasig.org</value></column>
         </row>
         <row>
           <column><name>USER_NAME</name><value>developer</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)thUo6uSm62Jpj/ybqVyFy6bxJVWLgTnx</value></column>
-          <column><name>FIRST_NAME</name><value>開発要員</value></column>
+          <column><name>FIRST_NAME</name><value>開発�?員</value></column>
           <column><name>LAST_NAME</name><value>ユーザ</value></column>
           <column><name>EMAIL</name><value>developer.user@jasig.org</value></column>
         </row>
         <row>
           <column><name>USER_NAME</name><value>admin</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)OP2Z89LDMIY6gHAwfoFPRSQWDl5Z16Vt</value></column>
-          <column><name>FIRST_NAME</name><value>管理者</value></column>
+          <column><name>FIRST_NAME</name><value>管�?�者</value></column>
           <column><name>LAST_NAME</name><value>ユーザ</value></column>
           <column><name>EMAIL</name><value>admin.user@jasig.org</value></column>
         </row>
