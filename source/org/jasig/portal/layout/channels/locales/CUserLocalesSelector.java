@@ -44,7 +44,6 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,9 +81,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
             userLocale = LocaleManager.parseLocale(localeString);
             try {
                 lm.updateUserLocales(new Locale[] { userLocale });
-                System.out.println ( "Before loading...");
                 upm.getUserLayoutManager().loadUserLayout();
-                System.out.println ( "After loading...");
             } catch (Exception e) {
                 throw new PortalException(e);
             }
@@ -131,9 +128,6 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
         }
 
         doc.appendChild(localesE);
-
-        System.out.println(XML.serializeNode(doc));
-
         XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
