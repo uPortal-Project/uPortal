@@ -1283,13 +1283,18 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      // if the node is being moved to itself that operation must be prevented	
      if ( nodeId.equals(nextSiblingId) )
             return false; 	
+            
+	 ALNode node = getLayoutNode(nodeId);       
+     // if the node is being moved to its current position - nothing should change	
+	 if ( CommonUtils.nvl(node.getNextNodeId()).equals(CommonUtils.nvl(nextSiblingId)) )
+		    return true;        
 
      // Checking restrictions if the parent is not the lost folder
      if ( !parentId.equals(IALFolderDescription.LOST_FOLDER_ID) )
       if ( !canMoveNode(nodeId,parentId,nextSiblingId) )
             return false;
 
-     ALNode node = getLayoutNode(nodeId);
+     
      ALFolder targetFolder = getLayoutFolder(parentId);
      ALFolder sourceFolder = getLayoutFolder(node.getParentNodeId());
      String sourcePrevNodeId = node.getPreviousNodeId();
