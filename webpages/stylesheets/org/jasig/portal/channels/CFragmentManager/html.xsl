@@ -43,8 +43,9 @@ Version $Revision$
     <!--~-->
     <!--actions: 'defaultView', 'properties', 'publish', 'new', 'save' -->
     <!--~-->
-    <xsl:param name="uPcFM_action" select="'properties'"/>
-    <xsl:param name="uPcFM_selectedID" select="'f005'"/>
+    <xsl:param name="uPcFM_action" select="'defaultView'"/>
+    <!-- <xsl:param name="uPcFM_selectedID" select="''"/> -->
+     <xsl:param name="uPcFM_selectedID"/>
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CFragmentManager'"/>
     <!--~-->
     <!--root template-->
