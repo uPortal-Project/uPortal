@@ -38,16 +38,17 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  org.apache.xalan.xslt.*;
-import  org.w3c.dom.*;
-import  org.xml.sax.*;
-import  org.apache.xalan.xslt.*;
-import  java.net.*;
-import  org.xml.sax.helpers.*;
+import org.jasig.portal.services.LogService;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.util.*;
+import org.apache.xalan.xslt.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
+import org.apache.xalan.xslt.*;
+import java.net.*;
+import org.xml.sax.helpers.*;
 
 
 /**
@@ -82,7 +83,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * put your documentation comment here
    * @param   String uri
    */
-  public StylesheetSet (String uri) {
+  public StylesheetSet (String uri) throws PortalException {
     try {
       Parser parser = ParserFactory.makeParser("org.apache.xerces.parsers.SAXParser");
       StylesheetSet dummy = new StylesheetSet();
@@ -93,9 +94,10 @@ public class StylesheetSet extends SAXFilterImpl {
         parser.parse(new org.xml.sax.InputSource(is));
       is.close();
       this.title_table = dummy.getTitleTable();
+    } catch (FileNotFoundException fnfe) {
+      throw new ResourceMissingException(uri, "The stylesheet list (.ssl) file", fnfe.getMessage());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, "SytlesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : "
-          + uri + ". " + e);
+      throw new GeneralRenderingException("Unable to read and/or parse stylesheet list file." + e);
     }
   }
 
@@ -181,8 +183,8 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param media
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title, BrowserInfo bi) {
-      String media=getMedia(bi);
+  public XSLTInputSource getStylesheet (String title, BrowserInfo bi) throws PortalException {
+    String media = getMedia(bi);
     Hashtable media_table = (Hashtable)title_table.get(title);
     if (media_table == null)
       return  null;
@@ -219,7 +221,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public String getStylesheetURI (HttpServletRequest req) throws GeneralRenderingException {
+  public String getStylesheetURI (HttpServletRequest req) throws PortalException {
     return  (getStylesheetURI(getMedia(req)));
   }
 
@@ -228,7 +230,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param bi
    * @return 
    */
-  public String getStylesheetURI (BrowserInfo bi) throws GeneralRenderingException {
+  public String getStylesheetURI (BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(getMedia(bi));
   }
 
@@ -238,7 +240,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public String getStylesheetURI (String title, HttpServletRequest req) throws GeneralRenderingException {
+  public String getStylesheetURI (String title, HttpServletRequest req) throws PortalException {
     return  getStylesheetURI(title, getMedia(req));
   }
 
@@ -248,7 +250,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param bi
    * @return 
    */
-  public String getStylesheetURI (String title, BrowserInfo bi) throws GeneralRenderingException {
+  public String getStylesheetURI (String title, BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(title, getMedia(bi));
   }
 
@@ -264,7 +266,7 @@ public class StylesheetSet extends SAXFilterImpl {
       if (media_table == null) {
         return  null;
       }
-      Logger.log(Logger.DEBUG, "media=\"" + media + "\"");
+      LogService.instance().log(LogService.DEBUG, "media=\"" + media + "\"");
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
@@ -288,7 +290,7 @@ public class StylesheetSet extends SAXFilterImpl {
    */
   protected StylesheetDescription getStylesheetDescription (String media) throws GeneralRenderingException {
     if (media == null) {
-      Logger.log(Logger.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
+      LogService.instance().log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
       throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
     }
     // search for a non-alternate stylesheet for a particular media
@@ -321,8 +323,8 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title, HttpServletRequest req) {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+  public XSLTInputSource getStylesheet (String title, HttpServletRequest req) throws PortalException {
+    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     return  getStylesheet(title, getMedia(req));
   }
 
@@ -331,7 +333,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public XSLTInputSource getStylesheet (HttpServletRequest req) throws GeneralRenderingException {
+  public XSLTInputSource getStylesheet (HttpServletRequest req) throws PortalException {
     StylesheetDescription sd = getStylesheetDescription(getMedia(req));
     if (sd != null) {
       return  new XSLTInputSource(sd.getURI());
@@ -347,7 +349,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @return 
    */
   public XSLTInputSource getStylesheetByMedia (String media) throws GeneralRenderingException {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new XSLTInputSource(sd.getURI());
@@ -395,9 +397,9 @@ public class StylesheetSet extends SAXFilterImpl {
    * put your documentation comment here
    * @param uri
    */
-  public void setMediaProps (String uri) {
+  public void setMediaProps (String uri) throws PortalException {
     if (uri == null) {
-      uri = "file://" + GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
+      uri = "properties/media.properties";
     }
     uri = UtilitiesBean.fixURI(uri);
     try {
@@ -407,12 +409,10 @@ public class StylesheetSet extends SAXFilterImpl {
         props = new OrderedProps(url.openStream());
       } 
       else {
-        Logger.log(Logger.ERROR, "StylesheetSet::setMediaProps() : unable to read the following URL \"" + url.toString()
-            + "\"");
+        throw new ResourceMissingException(uri, "The media.properties file", "Unable to understand the media.properties URI");
       }
-    } catch (IOException ioe1) {
-      Logger.log(Logger.ERROR, "SytlesheetSet::setMediaProps() : Exception occurred while media properties file: " + uri
-          + ". " + ioe1);
+    } catch (IOException ioe) {
+        throw new ResourceMissingException(uri, "The media.properties file", ioe.getMessage());
     }
   }
 
@@ -429,7 +429,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  protected String getMedia (HttpServletRequest req) {
+  protected String getMedia (HttpServletRequest req) throws PortalException {
     // Try to set the 
     if (props == null) {
       this.setMediaProps(null);
@@ -447,7 +447,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param bi
    * @return 
    */
-  protected String getMedia (BrowserInfo bi) {
+  protected String getMedia (BrowserInfo bi) throws PortalException {
     if (props == null)
       this.setMediaProps((String)null);
     if (props != null)
