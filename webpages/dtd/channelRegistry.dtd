@@ -17,6 +17,7 @@
   detachable (true|false) "true"
   editable (true|false) "true"
   hasHelp (true|false) "true"
+  hasAbout (true|false) "true"
   removable (true|false) "true"
   class CDATA #REQUIRED>
 
