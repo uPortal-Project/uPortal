@@ -685,8 +685,6 @@ public class CChannelManager extends BaseChannel {
     protected CPDWorkflowSection (String chanTypeID) throws PortalException {
       super();
       cpdDoc = ChannelRegistryManager.getCPD(chanTypeID);
-      // This doc will be modified so it must be cloned first!
-      cpdDoc = XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)cpdDoc);
     }
 
     protected void addToStep(Element element, String stepID) {
