@@ -22,6 +22,8 @@
         <META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"></META>
         <META HTTP-EQUIV="pragma" CONTENT="no-cache"></META>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
       <body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" class="uportal-background-content">
@@ -45,6 +47,8 @@
       <head>
         <title>uPortal 2.1+</title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
       <body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
