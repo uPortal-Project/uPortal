@@ -108,7 +108,7 @@ public class PortletURLManager {
 	  isAction = nextAction = false;
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
-	  if ( windowOfAction != null && runtimeData != null )
+	  if ( windowOfAction != null && runtimeData != null && request != null )
 		analizeRequestInformation();
 	}
 	
