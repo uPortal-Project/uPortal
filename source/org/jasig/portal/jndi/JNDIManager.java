@@ -67,21 +67,21 @@ import  org.w3c.dom.Node;
  *    +--services--*[service name]*...
  *    |
  *    +--users--*[userID]*
- *                |
- *                +--layouts--*[layoutId]*
- *                |               |
- *                |               +--channel-ids
- *                |               |      |
- *                |               |      +--*[fname]*--[chanId]
- *                |               |
- *                |               +--sessions--*[sessionId]*
- *                |
- *                |
- *                +--sessions--*[sessionId]*
- *                                  |
- *                                  +--channel-obj--*[chanId]*...
- *                                  |
- *                                  +--[layoutId]
+ *    |             |
+ *    |             +--layouts--*[layoutId]*
+ *    +             |               |
+ * sessions         |               +--channel-ids
+ *    |             |               |      |
+ * *[sessionId]*    |               |      +--*[fname]*--[chanId]
+ *                  |               |
+ *                  |               +--sessions--*[sessionId]*
+ *                  |
+ *                  |
+ *                  +--sessions--*[sessionId]*
+ *                                    |
+ *                                    +--channel-obj--*[chanId]*...
+ *                                    |
+ *                                    +--[layoutId]
  *
  * Notation:
  *  [something] referes to a value of something
@@ -118,6 +118,9 @@ public class JNDIManager {
       // Create a subcontext for user specific bindings
       context.createSubcontext("users");
 
+      // Create a subcontext for session listings
+      context.createSubcontext("sessions");
+
       LogService.log(LogService.DEBUG, "JNDIManager::initializePortalContext() : initialized portal JNDI context");
 
     } catch (Exception e) {
@@ -131,8 +134,24 @@ public class JNDIManager {
    * @param sessionID
    */
   public static void initializeSessionContext (HttpSession session, String userId,String layoutId, Document userLayout) throws InternalPortalException {
-      // save userId in the session
-      session.setAttribute("userId",userId);
+
+      Context topContext=null;
+
+      // get initial context
+      try {
+          topContext=(Context)getContext();
+      } catch (NamingException ne) {
+          LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Unable to obtain initial context - " + ne.getMessage());
+          return;
+      }
+
+      // bind userId to /sessions context
+      try {
+          Context tsessionContext=(Context)topContext.lookup("/sessions");
+          tsessionContext.bind(session.getId(),userId);
+      } catch (NamingException ne) {
+          LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Unable to obtain /sessions context - " + ne.getMessage());
+      }
 
       // bind listener
       session.setAttribute("JNDISessionListener", new JNDISessionListener());
@@ -142,7 +161,7 @@ public class JNDIManager {
       Context usersContext = null;
       try {
           // get /users context
-          usersContext = (Context)getContext().lookup("/users");
+          usersContext = (Context)topContext.lookup("/users");
       } catch (NamingException ne) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not find /users context - " + ne.getMessage());
           throw  new InternalPortalException(ne);
@@ -327,7 +346,7 @@ public class JNDIManager {
       Context usersContext = null;
       try {
           // get users context
-        usersContext = (Context)context.lookup("users");
+        usersContext = (Context)context.lookup("/users");
       } catch (NamingException ne) {
         LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not get /users context "
             + ne.getMessage());
@@ -336,8 +355,39 @@ public class JNDIManager {
       if (usersContext == null) {
         return;
       }
-      String userId=(String)bindingEvent.getSession().getAttribute("userId");
 
+      String sessionId=bindingEvent.getSession().getId();      
+
+      // obtain /sessions context
+      Context tsessionsContext=null;
+      try {
+        tsessionsContext = (Context)context.lookup("/sessions");
+      } catch (NamingException ne) {
+          LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not get /sessions context "+ne.getMessage());
+          return;
+      }
+
+      String userId=null;
+      // obtain userId by looking at /sessions bindings
+      try {
+          userId=(String)tsessionsContext.lookup(sessionId);
+      } catch (NamingException ne) {
+          LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Session "+sessionId+" does is not registered under /sessions context ! "+ne.getMessage());
+          return;
+      } 
+      if(userId==null) {
+          // could do a /users/[userId]/sessions/* traversal here instead
+          LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Unable to determine userId for a session "+sessionId+" ... giving up on JNDI cleanup.");
+          return;
+      }
+
+      // unbind userId binding in /sessions
+      try {
+          tsessionsContext.unbind(sessionId);
+      } catch (NamingException ne) {
+          LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Problems unbinding /sessions/"+sessionId+" "+ne.getMessage());
+      } 
+      
       Context userIdContext=null;
       try {
           userIdContext=(Context) usersContext.lookup(userId);
@@ -354,7 +404,6 @@ public class JNDIManager {
           return;
       }
 
-      String sessionId=bindingEvent.getSession().getId();
       Context sessionIdContext=null;
       try {
           sessionIdContext=(Context) sessionsContext.lookup(sessionId);
