@@ -101,8 +101,7 @@ public class UserLayoutManager {
       String userAgent = req.getHeader("User-Agent");
       UserProfile upl = updb.getUserProfile(this.person.getID(), userAgent);
       if (upl != null) {
-        IUserLayoutDB uldb = new UserLayoutDBImpl();
-        uLayoutXML = uldb.getUserLayout(this.person.getID(), upl.getProfileId());
+        uLayoutXML = GenericPortalBean.getDbImplObject().getUserLayout(this.person.getID(), upl.getProfileId());
         if (uLayoutXML == null)
           Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
               this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
@@ -337,11 +336,10 @@ public class UserLayoutManager {
    * Resets both user layout and user preferences.
    * Note that if any of the two are "null", old values will be used.
    */
-  public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) {
+  public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws Exception {
     if (newLayout != null) {
       uLayoutXML = newLayout;
-      IUserLayoutDB uldb = new UserLayoutDBImpl();
-      uldb.setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+      GenericPortalBean.getDbImplObject().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
     }
     if (newPreferences != null) {
       IUserPreferencesDB updb = new UserPreferencesDBImpl();
