@@ -88,16 +88,10 @@ public class RestrictedPerson implements IPerson {
         this.person.setAttribute(key, value);
     }
 
-    /**
-     * RestrictedPerson's implementation of setFullName does nothing.
-     */
     public void setFullName(String sFullName) {
         this.person.setFullName(sFullName);
     }
 
-    /**
-     * RestrictedPerson's implementation of setID does nothing.
-     */
     public void setID(int sID) {
         this.person.setID(sID);
     }
@@ -119,11 +113,6 @@ public class RestrictedPerson implements IPerson {
         // when this method is invoked.
     }
 
-    /**
-     * RestrictedPerson's implementation of getEntityIdentifier always returns null,
-     * as part of the restrictedness of this IPerson implementation.
-     * @return null
-     */
     public EntityIdentifier getEntityIdentifier() {
         return this.person.getEntityIdentifier();
     }
