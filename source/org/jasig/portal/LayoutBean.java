@@ -26,7 +26,6 @@ public class LayoutBean extends GenericPortalBean
   private static String sPathToLayoutDtd = null;
   private static String sLayoutDtd = "layout.dtd";
   private Hashtable htChannelInstances = new Hashtable ();
-  private static Object dummyObject = new Object (); // For syncronizing code
 
   /**
    * Default constructor
@@ -144,40 +143,37 @@ public class LayoutBean extends GenericPortalBean
 
     try
     {    
-      synchronized (dummyObject)
+      HttpSession session = req.getSession (false);
+      layoutXml = (IXml) session.getAttribute ("layoutXml");
+          
+      if (layoutXml != null)
+        return layoutXml;
+          
+      if (sUserName == null)
+        sUserName = "guest";
+                    
+      con = rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
+            
+      String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      Logger.log (Logger.DEBUG, sQuery);
+        
+      ResultSet rs = stmt.executeQuery (sQuery);
+          
+      if (rs.next ())
       {
-        HttpSession session = req.getSession (false);
-        layoutXml = (IXml) session.getAttribute ("layoutXml");
+        String sLayoutXml = rs.getString ("LAYOUT_XML");
+            
+        // Tack on the full path to layout.dtd
+        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
+        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
 
-        if (layoutXml != null)
-          return layoutXml;
-
-        if (sUserName == null)
-          sUserName = "guest";
-
-        con = rdbmService.getConnection ();
-        Statement stmt = con.createStatement();
-
-        String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
-        Logger.log (Logger.DEBUG, sQuery);
-
-        ResultSet rs = stmt.executeQuery (sQuery);
-
-        if (rs.next ())
-        {
-          String sLayoutXml = rs.getString ("LAYOUT_XML");
-
-          // Tack on the full path to layout.dtd
-          int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-          sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-          String xmlFilePackage = "org.jasig.portal.layout";
-          layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-          session.setAttribute ("layoutXml", layoutXml);
-        }
-        stmt.close ();
+        String xmlFilePackage = "org.jasig.portal.layout";
+        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
+        session.setAttribute ("layoutXml", layoutXml);
       }
-
+      stmt.close ();
+        
       return layoutXml;
     }
     catch (Exception e)
@@ -198,28 +194,25 @@ public class LayoutBean extends GenericPortalBean
     
     try 
     { 
-      synchronized (dummyObject)
-      {
-        if (sUserName == null)
-          sUserName = "guest";
+      if (sUserName == null)
+        sUserName = "guest";
           
-        con = rdbmService.getConnection ();
-        Statement stmt = con.createStatement();
+      con = rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
           
-        StringWriter sw = new StringWriter ();
-        layoutXml.saveDocument (sw);
-        String sLayoutXml = sw.toString();
+      StringWriter sw = new StringWriter ();
+      layoutXml.saveDocument (sw);
+      String sLayoutXml = sw.toString();
         
-        // Remove path to layout dtd before saving
-        int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
-        int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
+      // Remove path to layout dtd before saving
+      int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
+      int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
+      sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
           
-        String sUpdate = "UPDATE USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-        int iUpdated = stmt.executeUpdate (sUpdate);
-        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-        stmt.close ();
-      }
+      String sUpdate = "UPDATE USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
+      int iUpdated = stmt.executeUpdate (sUpdate);
+      Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
+      stmt.close ();
     }
     catch (Exception e)
     {
@@ -245,33 +238,30 @@ public class LayoutBean extends GenericPortalBean
     
     try 
     {    
-      synchronized (dummyObject)
-      {
-        HttpSession session = req.getSession (false);      
-        con = rdbmService.getConnection ();
-        Statement stmt = con.createStatement();
+      HttpSession session = req.getSession (false);      
+      con = rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
           
-        String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
-        Logger.log (Logger.DEBUG, sQuery);
+      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      Logger.log (Logger.DEBUG, sQuery);
       
-        ResultSet rs = stmt.executeQuery (sQuery);
+      ResultSet rs = stmt.executeQuery (sQuery);
         
-        if (rs.next ())
-        {
-          String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
+      if (rs.next ())
+      {
+        String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
           
-          // Tack on the full path to layout.dtd
-          int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-          sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
+        // Tack on the full path to layout.dtd
+        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
+        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
 
-          String xmlFilePackage = "org.jasig.portal.layout";
-          layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-          session.setAttribute ("layoutXml", layoutXml);
-        }
-        stmt.close ();
+        String xmlFilePackage = "org.jasig.portal.layout";
+        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
+        session.setAttribute ("layoutXml", layoutXml);
       }
+      stmt.close ();
       
-      return layoutXml;
+    return layoutXml;
     }
     catch (Exception e)
     {
