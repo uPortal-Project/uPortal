@@ -127,6 +127,16 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
         super.put(key,valueArray);
     }
 
+    public synchronized com.oreilly.servlet.multipart.Part[]  setParameterValues(String pName, com.oreilly.servlet.multipart.Part[] values) {
+        return (com.oreilly.servlet.multipart.Part[]) super.put(pName,values);
+    }
+
+    public synchronized void setParameter (String key, com.oreilly.servlet.multipart.Part value)
+    {
+        com.oreilly.servlet.multipart.Part[] valueArray=new com.oreilly.servlet.multipart.Part[1];
+        valueArray[0]=value;
+        super.put(key,valueArray);
+    }
       // the get methods ...
 
   public String getBaseActionURL ()
@@ -162,16 +172,51 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
     response.sendRedirect(redirectHost + redirectURL);
   }
 
+  /**
+   * Return the String corresponding to the key
+   * @param object name
+   * @return null if Object, String otherwise
+   */
   public synchronized String getParameter (String key)
   {
       String[] value_array=this.getParameterValues(key);
       if((value_array!=null) && (value_array.length>0)) return value_array[0];
       else return null;
   }
+  /**
+   * Return the object corresponding to the key
+   * @param object name
+   * @return Object
+   */
+  public synchronized Object getObjectParameter (String key)
+  {
+      Object[] value_array=this.getParameterValues(key);
+      if((value_array!=null) && (value_array.length>0)) return value_array[0];
+      else return null;
+  }
+
+  /**
+   * Return the String[] corresponding to the key
+   * @param object name
+   * @return null if Object[], otherwise String[]
+   */
 
   public String[] getParameterValues(String parameter)
   {
-    return (String[]) super.get (parameter);
+    Object[] pars = (Object[]) super.get(parameter);
+    if (pars instanceof String[]) {
+      return (String[]) pars;
+    } else {
+      return null;
+    }
+  }
+  /**
+   * Return the Object[] corresponding to the key
+   * @param object name
+   * @return Object[]
+   */
+  public Object[] getObjectParameterValues(String parameter){
+      return (Object[]) super.get(parameter);
   }
 
   /**
