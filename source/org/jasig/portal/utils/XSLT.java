@@ -349,7 +349,7 @@ public class XSLT {
         TemplatesHandler thand = getSAXTFactory().newTemplatesHandler();
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setContentHandler(thand);
-	reader.parse(stylesheetURI);
+        reader.parse(stylesheetURI);
         temp = thand.getTemplates();
         if (stylesheetRootCacheEnabled) {
           stylesheetRootCache.put(stylesheetURI, temp);
@@ -438,6 +438,20 @@ public class XSLT {
   public static String getStylesheetURI (String sslUri, BrowserInfo browserInfo) throws PortalException {
     StylesheetSet set = getStylesheetSet(sslUri);
     String xslUri = set.getStylesheetURI(browserInfo);
+    return xslUri;
+  }
+
+  /**
+   * Returns a stylesheet URI exactly as it appears in a stylesheet list file.
+   * @param sslUri the stylesheet list file URI
+   * @param title the stylesheet title
+   * @param browserInfo the browser information
+   * @return the stylesheet URI as a string
+   * @throws org.jasig.portal.PortalException
+   */
+  public static String getStylesheetURI (String sslUri, String title, BrowserInfo browserInfo) throws PortalException {
+    StylesheetSet set = getStylesheetSet(sslUri);
+    String xslUri = set.getStylesheetURI(title, browserInfo);
     return xslUri;
   }
 }
