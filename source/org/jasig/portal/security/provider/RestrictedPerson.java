@@ -101,7 +101,7 @@ public class RestrictedPerson implements IPerson {
      * @return null
      */
     public EntityIdentifier getEntityIdentifier() {
-        return null;
+        return this.person.getEntityIdentifier();
     }
 }
 
