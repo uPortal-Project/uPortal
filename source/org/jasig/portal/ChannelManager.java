@@ -678,28 +678,10 @@ public class ChannelManager implements LayoutEventListener {
 
 
     /**
-     * Removes channel instance from the user layout and internal caches.
+     * Removes channel instance from the internal caches.
      *
      * @param channelSubscribeId a <code>String</code> value
      */
-    /*
-    public void removeChannel(String channelSubscribeId) {
-        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
-        if(ch!=null) {
-            try {
-                if(upm.getUserLayoutManager().deleteNode(channelSubscribeId)) {
-                    // clean up channel cache
-                    channelCacheTable.remove(ch);
-                    ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
-                    channelTable.remove(ch);
-                }
-            } catch (PortalException gre) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::removeChannel(): exception raised when trying to remove a channel : "+gre);
-            }
-        }
-    }
-    */
-
     public void removeChannel(String channelSubscribeId) {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
