@@ -3513,10 +3513,10 @@
 
       <row>
         <column><name>TYPE_ID</name><value>5</value></column>
-        <column><name>TYPE_NAME</name><value>Remote Channel Proxy</value></column>
-        <column><name>TYPE</name><value>org.jasig.portal.channels.remotechannel.CRemoteChannel</value></column>
-        <column><name>TYPE_DESCR</name><value>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal</value></column>
-        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/remotechannel/CRemoteChannel.cpd</value></column>
+        <column><name>TYPE_NAME</name><value>WSRP Consumer</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.wsrp.CConsumer</value></column>
+        <column><name>TYPE_DESCR</name><value>WSRP consumer implementation</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/wsrp/CConsumer.cpd</value></column>
       </row>
 
       <row>
