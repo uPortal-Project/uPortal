@@ -317,7 +317,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             // it has already been processed
                             String[] skipParams = new String[]
                                 {"uP_detach_target"};
-                            
+
                             try {
                                 URLUtil.redirect(req, res, newRootNodeId,
                                     true, skipParams, CHARACTER_SET);
@@ -367,7 +367,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
-                    // set up the proxy rewrite flag for rewriting certain elemnts in serializer 
+                    // set up the proxy rewrite flag for rewriting certain elemnts in serializer
                     if (req.isSecure()) {
 	                    markupSerializer.setProxying(PROXY_ENABLED,PROXY_REWRITE_PREFIX);
                     }
@@ -743,9 +743,10 @@ public class UserInstance implements HttpSessionBindingListener {
         }
 
         if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
-            ulm.markMoveTargets(values[0]);
+            if ( values[0].trim().length() == 0 ) values[0] = null;
+             ulm.markMoveTargets(values[0]);
         } else {
-            ulm.markMoveTargets(null);
+             ulm.markMoveTargets(null);
           }
 
         if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
