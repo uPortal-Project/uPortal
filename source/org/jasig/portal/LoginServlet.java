@@ -122,6 +122,12 @@ public class LoginServlet extends HttpServlet {
    */
   public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
   	CommonUtils.setNoCache(response);
+  	/* Grab the target functional name, if any, off the login request.
+	 * Also any arguments for the target
+  	 * We will pass them  along after authentication.
+  	 */
+  	String targetFname = request.getParameter("uP_fname");
+  	String targetArgs = request.getParameter("uP_args");
   	// Clear out the existing session for the user
     request.getSession().invalidate();
   	//  Retrieve the user's session
@@ -149,7 +155,19 @@ public class LoginServlet extends HttpServlet {
     // Check to see if the person has been authenticated
     if (person != null && person.getSecurityContext().isAuthenticated()) {
       // Send the now authenticated user back to the PortalSessionManager servlet
-      response.sendRedirect(request.getContextPath() + '/' + redirectString);
+    	String redirectTarget = null;
+
+			if (targetFname == null){
+				redirectTarget = request.getContextPath() + "/" + redirectString;
+			} else {
+				redirectTarget = request.getContextPath() + "/" +
+				"tag.idempotent." +  redirectString + "?uP_fname=" + targetFname;
+				if (targetArgs != null) {
+				redirectTarget = redirectTarget + "&uP_args=" + targetArgs;
+				}
+			} 
+    	    	
+      response.sendRedirect(redirectTarget);
     }
     else {
       if ( request.getMethod().equals("POST") )	
