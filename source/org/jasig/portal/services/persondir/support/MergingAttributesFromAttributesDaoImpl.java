@@ -6,9 +6,11 @@
 package org.jasig.portal.services.persondir.support;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jasig.portal.services.persondir.support.merger.AttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
@@ -138,5 +140,28 @@ public class MergingAttributesFromAttributesDaoImpl implements AttributesFromAtt
      */
     public void setRecoverExceptions(boolean recoverExceptions) {
         this.recoverExceptions = recoverExceptions;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.services.persondir.support.AttributesFromAttributesDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        /*
+         * This implementation is not always correct.
+         * It handles the basic case where the Set of attributes returned by this
+         * implementation is the union of the attributes declared by all of the
+         * underlying implementations to be merged.  Of course, an AttributeMerger
+         * might provide for a merging policy such that the attributes resulting from
+         * invoking this AttributesFromAttributesDao implementation are not the union
+         * of the attributes declared by the underlying AttributesFromAttributesDaos.
+         */
+        Set attributeNames = new HashSet();
+        for (Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
+            AttributesFromAttributesDao dao = (AttributesFromAttributesDao) iter.next();
+            Set attributes = dao.getAttributeNames();
+            if (attributes != null)
+                attributeNames.addAll(attributes);
+        }
+        return attributeNames;
     }
 }

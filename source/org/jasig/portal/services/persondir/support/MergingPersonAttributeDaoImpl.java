@@ -81,6 +81,15 @@ public class MergingPersonAttributeDaoImpl
      * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
      */
     public Set getAttributeNames() {
+        /*
+         * This implementation is not always correct.
+         * It handles the basic case where the Set of attributes returned by this
+         * implementation is the union of the attributes declared by all of the
+         * underlying implementations to be merged.  Of course, an AttributeMerger
+         * might provide for a merging policy such that the attributes resulting from
+         * invoking this PersonAttributeDao implementation are not the union
+         * of the attributes declared by the underlying PersonAttributeDaos.
+         */
         final Set attrNames = new HashSet();
         
         for (final Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
