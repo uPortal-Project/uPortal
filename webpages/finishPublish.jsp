@@ -113,10 +113,6 @@
 
         <table border="0" width="50%">
           <tr>
-            <td width="30%">Publisher's Email Address:</td>
-            <td><%= publish.getPubEmail() %></td>
-          </tr>
-          <tr>
             <td>Channel Name:</td>
             <td><%= publish.getChanName() %></td>
           </tr>

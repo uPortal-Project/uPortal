@@ -72,12 +72,11 @@
     <% session.setAttribute ("headerTitle", "Publish Channel"); %>
     <%@ include file="header.jsp" %>
 
-    <%--make sure we got an email and channel type--%>
+    <%-- Make sure we got a channel type --%>
     <%
       String sChanType = publish.getChanType();
-      String sPubEmail = publish.getPubEmail();
 
-      if((sChanType == null) || (sPubEmail == null) || (sChanType.equals("")) || (sPubEmail.equals("")))
+      if((sChanType == null) || (sChanType.equals("")))
       {
     %>
         <p>You failed to enter required information.<br></p>
@@ -87,14 +86,6 @@
             {
           %>
               <li><b>Channel Type</b></li>
-          <%
-            }
-          %>
-          <%
-            if((sPubEmail == null) || (sPubEmail.equals("")))
-            {
-          %>
-              <li><b>Email Address</b></li>
           <%
             }
           %>
@@ -112,7 +103,7 @@
           <td colspan="5"><p><font size=4><b>Specify Channel Parameters</b></font></p></td>
         </tr>
         <tr>
-          <td><p><font size="3"><b>Step 3.</b></font><br></td>
+          <td><p><font size="3"><b>Step 2.</b></font><br></td>
         </tr>
       </table>
 
