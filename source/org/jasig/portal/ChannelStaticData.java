@@ -41,7 +41,16 @@ public class ChannelStaticData extends Hashtable {
    * @return instance of the IAuthorizationPrincipal for the IPerson
    */
   public IAuthorizationPrincipal getAuthorizationPrincipal() {
-    EntityIdentifier pid = getPerson().getEntityIdentifier();
+    return getAuthorizationPrincipal( getPerson() );
+  }
+
+  /**
+   * Returns an instance of the IAuthorizationPrincipal for the IPerson
+   * @param person a IPerson instance
+   * @return instance of the IAuthorizationPrincipal for the IPerson
+   */
+  public static IAuthorizationPrincipal getAuthorizationPrincipal( IPerson person ) {
+    EntityIdentifier pid = person.getEntityIdentifier();
     IAuthorizationPrincipal ap = null;
     try
     {
