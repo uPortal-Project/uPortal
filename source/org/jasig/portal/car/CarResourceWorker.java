@@ -52,6 +52,7 @@ import org.jasig.portal.IWorkerRequestProcessor;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.RequestParamWrapper;
 
 /**
  * Class to handle incoming portal requests with specified worker of
@@ -188,8 +189,8 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
                 if ( vals == null )
                 {
                     pw.print( " " + parm + "(-)" );
-                    if ( req instanceof PortalSessionManager.RequestParamWrapper )
-                        vals = ((PortalSessionManager.RequestParamWrapper)req).getObjectParameterValues(parm);
+                    if ( req instanceof RequestParamWrapper )
+                        vals = ((RequestParamWrapper)req).getObjectParameterValues(parm);
                     if ( vals == null )
                         pw.print( " " + parm + "(both)=[]" );
                     else

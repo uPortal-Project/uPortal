@@ -199,7 +199,7 @@ public class StandaloneChannelRenderer
                 String pName= (String) en.nextElement();
                 Object[] val= (Object[]) req.getParameterValues(pName);
                 if (val == null) {
-                    val = ((PortalSessionManager.RequestParamWrapper)req).getObjectParameterValues(pName);
+                    val = ((RequestParamWrapper)req).getObjectParameterValues(pName);
                 }
                 targetParams.put (pName, val);
             }
