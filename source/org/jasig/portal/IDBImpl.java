@@ -30,9 +30,8 @@ public interface IDBImpl {
   public void deleteUserProfile(int userId,int profileId) throws Exception;
 
   /* ChannelRegistry */
-  public String getNextChannelId() throws Exception;
-  public void addChannel(String id, String title, Document doc) throws Exception;
-  public void addChannel(String id, String title, Document doc, String catID[]) throws Exception;
+  public void addChannel(int id, String title, Document doc) throws Exception;
+  public void addChannel(int id, String title, Document doc, String catID[]) throws Exception;
   public Element getRegistryXML(org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception;
   public void getTypesXML(Document types, Element root, String role) throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;

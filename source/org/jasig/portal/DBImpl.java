@@ -388,38 +388,7 @@ public class DBImpl implements IDBImpl {
      *   ChannelRegistry
      *
      */
-    public String getNextChannelId() throws Exception
-    {
-        //System.out.println("Enterering ChannelRegistryImpl::getNextId()");
-        RdbmServices rdbmService = new RdbmServices ();
-        Connection con = rdbmService.getConnection();
-        Statement stmt = null;
-        String catid = null;
-
-        try {
-            stmt = con.createStatement ();
-            String sQuery = "SELECT MAX(CHAN_ID)+1 FROM UP_CHANNELS";
-            Logger.log (Logger.DEBUG, "DBImpl::getNextChannelId(): " + sQuery);
-
-            ResultSet rs = stmt.executeQuery(sQuery);
-
-            int nextID = 0;
-
-            if(rs.next())
-            {
-                nextID = rs.getInt(1);
-                catid = String.valueOf(nextID);
-            }
-        }
-        finally{
-          if (stmt != null) {
-            stmt.close ();
-          }
-          rdbmService.releaseConnection(con);
-        }
-        return catid;
-    }
-    public void addChannel(String id, String title, Document doc, String catID[]) throws Exception
+    public void addChannel(int id, String title, Document doc, String catID[]) throws Exception
     {
       Statement stmt = null;
 
@@ -452,7 +421,7 @@ public class DBImpl implements IDBImpl {
             rdbmService.releaseConnection(con);
         }
     }
-    public void addChannel(String id, String title, Document doc)  throws Exception {
+    public void addChannel(int id, String title, Document doc)  throws Exception {
         //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
 
         Statement stmt = null;

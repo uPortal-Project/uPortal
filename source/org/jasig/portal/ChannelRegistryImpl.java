@@ -165,7 +165,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param chanXML XML that describes the channel
  * @param role an array of roles
  */
-    public void addChannel(String id, String title, Document doc, String catID[]) {
+    public void addChannel(int id, String title, Document doc, String catID[]) {
 
          try {
           IDBImpl dbImpl = new DBImpl();
@@ -181,7 +181,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * This would be called by a publish channel.
  * @param chanXML XML that describes the channel
  */
-    public void addChannel(String id, String title, Document doc) {
+    public void addChannel(int id, String title, Document doc) {
         //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
 
         try {
@@ -198,16 +198,13 @@ public class ChannelRegistryImpl implements IChannelRegistry {
 /** A method for getting the next available channel ID.
  * This would be called by a publish channel.
  */
-    public String getNextId() {
-        //System.out.println("Enterering ChannelRegistryImpl::getNextId()");
-        try {
-          IDBImpl dbImpl = new DBImpl();
-          return dbImpl.getNextChannelId();
-        }
-        catch (Exception e){
-            Logger.log (Logger.ERROR, e);
-            return null;
-        }
+    public int getNextId() throws PortalException {
+      DBCounterImpl dbCounter = new DBCounterImpl();
+      Integer nextID = dbCounter.getIncrementIntegerId("UP_CHANNEL");
+      if (nextID == null) {
+        throw new GeneralRenderingException("Unable to allocate new channel ID");
+      }
+      return nextID.intValue();
   }
 
 /** A method for removing a channel from the registry.

@@ -81,7 +81,7 @@ public class CPublisher implements IPrivilegedChannel
   private static final int PUBROLES = 6;
   private static final int NAME = 7;
   private static final int PREVIEW  = 8;
-  
+
   //number of extra steps
   private static final int EXTRA = 2;
 
@@ -99,7 +99,7 @@ public class CPublisher implements IPrivilegedChannel
   private boolean modified = false; // modification flag
   public static Vector vReservedParams = getReservedParams();
   private Hashtable hParams = null;
-  
+
 
   /** Construct a CPublisher.
    */
@@ -222,7 +222,7 @@ public class CPublisher implements IPrivilegedChannel
   private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException
   {
     String xsl = set.getStylesheetURI(stylesheetName, media);
-      
+
     try{
     if (xsl != null)
     {
@@ -261,7 +261,7 @@ public class CPublisher implements IPrivilegedChannel
     catch (Exception e) {}
   }
 
-  private void preparePublish ()
+  private void preparePublish () throws PortalException
   {
     mode = PUBLISH;
     if (hParams==null) hParams = new Hashtable();
@@ -310,9 +310,9 @@ public class CPublisher implements IPrivilegedChannel
   }
   }
 
-    private void publishChannel () {
+    private void publishChannel () throws PortalException {
 
-        String nextID = chanReg.getNextId();
+        int nextID = chanReg.getNextId();
         Document doc = new DocumentImpl();
         Element chan = doc.createElement("channel");
 
@@ -324,19 +324,19 @@ public class CPublisher implements IPrivilegedChannel
         chan.setAttribute("removable", "true");
         chan.setAttribute("detachable", "true");
         chan.setAttribute("class", (String)hParams.get("class"));
-        
+
         String cName = (String)hParams.get("chanName");
         if(cName == null) cName = "new channel";
-        
+
         chan.setAttribute("name", cName);
-        
-        if (nextID!=null) chan.setAttribute("ID", "chan"+nextID);
+
+        chan.setAttribute("ID", "chan"+nextID);
 
         Enumeration e = hParams.keys();
         while (e.hasMoreElements()) {
             String name = (String)e.nextElement();
             String value = (String) hParams.get(name);
-            
+
             if(!vReservedParams.contains(name)){
             Element el = doc.createElement("parameter");
             el.setAttribute("name", XMLEscaper.escape(name));
@@ -366,14 +366,14 @@ public class CPublisher implements IPrivilegedChannel
 /** Method for setting the portal control structures that a privledged channel has access to
  * @param p1 a handle to the PortalControlStructures
  * @throws PortalException a generic portal exception
- */  
+ */
   public void setPortalControlStructures(final org.jasig.portal.PortalControlStructures p1) throws org.jasig.portal.PortalException {
   }
-  
+
 /** Method for approving a channel by setting the <CODE>APPROVED</CODE> field to 1
  */
   public void approveChannel() {
-    
+
     String sChanId = runtimeData.getParameter("CHAN_ID");
 
     try
@@ -399,7 +399,7 @@ public class CPublisher implements IPrivilegedChannel
     }
 
   }
-  
+
   private Document getRoles()
   {
     Document roleDoc = null;
@@ -426,5 +426,5 @@ public class CPublisher implements IPrivilegedChannel
     }
     return roleDoc;
   }
-  
+
 }
