@@ -41,6 +41,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
@@ -101,14 +102,14 @@ import org.jasig.portal.layout.UserLayoutFolderDescription;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-final class TabColumnPrefsState extends BaseState
+class TabColumnPrefsState extends BaseState
 {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl";
 
   private IUserLayoutManager ulm;
-
+  private PortalControlStructures pcs;
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
   private static IUserLayoutStore ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
@@ -201,6 +202,10 @@ final class TabColumnPrefsState extends BaseState
     }
   }
 
+  public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException  {
+    this.pcs = pcs;
+  }  
+  
   public void renderXML(ContentHandler out) throws PortalException
   {
     if (this.internalState != null)
@@ -474,8 +479,6 @@ final class TabColumnPrefsState extends BaseState
    */
   private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
   {
-      //ken: the meaning of destinationElement eludes me here ... I'll just guess -peterk.
-
       UserLayoutChannelDescription channel=new UserLayoutChannelDescription(newChannel);
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
@@ -492,6 +495,10 @@ final class TabColumnPrefsState extends BaseState
           }
           ulm.addNode(channel,ulm.getParentId(destinationElementId),siblingId);
       }
+      
+      // Make sure ChannelManager knows about the new channel
+      pcs.getChannelManager().instantiateChannel(channel.getId());
+      
       ulm.saveUserLayout();
   }
 
@@ -504,13 +511,25 @@ final class TabColumnPrefsState extends BaseState
    */
   private final void addChannel(String selectedChannelSubscribeId, String position, String destinationElementId) throws Exception
   {
+System.out.println("addChannel1");
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     Element newChannel = channelRegistry.getElementById(selectedChannelSubscribeId);
     addChannel(newChannel, position, destinationElementId);
   }
 
+ /**
+   * Removes a channel element from the layout
+   * @param channelSubscribeId the ID attribute of the channel to remove
+   */
+  private final void deleteChannel(String channelSubscribeId) throws Exception
+  {
+    pcs.getChannelManager().removeChannel(channelSubscribeId);
+    deleteElement(channelSubscribeId);
+  }  
+  
   /**
-   * Removes a tab, column, or channel element from the layout
+   * Removes a tab or column element from the layout.  To remove
+   * a channel element, call deleteChannel().
    * @param elementId the ID attribute of the element to remove
    */
   private final void deleteElement(String elementId) throws Exception
@@ -955,7 +974,7 @@ final class TabColumnPrefsState extends BaseState
           {
             String channelSubscribeId = runtimeData.getParameter("elementID");
 
-            deleteElement(channelSubscribeId);
+            deleteChannel(channelSubscribeId);
           }
           catch (Exception e)
           {
