@@ -28,7 +28,7 @@
     <content>
       <xsl:choose>
         <xsl:when test="$userLayoutRoot = 'root'">
-          <xsl:apply-templates select="folder[@type='regular']"/>
+          <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
         </xsl:when>
         <xsl:otherwise>
           <column>
