@@ -80,11 +80,16 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
     }
 
     public PortletDefinition getPortletDefinition(ObjectID portletGUID) {
+        // I think this method should throw an exception,
+        // but Pluto currently defines it to throw no exception.
         String portletDefinitionId = portletGUID.toString();
         String contextName = portletDefinitionId.substring(0, portletDefinitionId.indexOf("."));
         PortletApplicationDefinition portletApplicationDefinition = portletApplicationDefinitionList.get(ObjectIDImpl.createFromString(contextName));
-        PortletDefinitionList portletDefinitionList = portletApplicationDefinition.getPortletDefinitionList();
-        PortletDefinition portletDefinition = portletDefinitionList.get(ObjectIDImpl.createFromString(portletDefinitionId));
+        PortletDefinition portletDefinition = null;
+        if (portletApplicationDefinition != null) {
+            PortletDefinitionList portletDefinitionList = portletApplicationDefinition.getPortletDefinitionList();
+            portletDefinition = portletDefinitionList.get(ObjectIDImpl.createFromString(portletDefinitionId));
+        }
         return portletDefinition;
     }
 
