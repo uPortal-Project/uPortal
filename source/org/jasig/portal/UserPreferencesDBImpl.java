@@ -83,7 +83,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_UA_MAP WHERE ID='"+userId+"' AND USER_AGENT='"+userAgent+"'";
+            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_UA_MAP WHERE ID="+userId+" AND USER_AGENT='"+userAgent+"'";
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
@@ -105,7 +105,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE ID='"+userId+"' AND USER_AGENT='"+userAgent+"'";
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
-            sQuery = "INSERT INTO UP_USER_UA_MAP (ID,USER_AGENT,PROFILE_NAME) VALUES ('"+userId+"','"+userAgent+"','"+profileName+"')";
+            sQuery = "INSERT INTO UP_USER_UA_MAP (ID,USER_AGENT,PROFILE_NAME) VALUES ("+userId+",'"+userAgent+"','"+profileName+"')";
             Logger.log(Logger.DEBUG, sQuery);
             rs=stmt.executeQuery(sQuery);
          } catch (Exception e) {
@@ -146,7 +146,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             try {
                 con=rdbmService.getConnection();
                 Statement stmt=con.createStatement();
-                String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE ID='"+userId+"' AND PROFILE_NAME='"+profileName+"'";
+                String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE ID="+userId+" AND PROFILE_NAME='"+profileName+"'";
                 Logger.log(Logger.DEBUG,sQuery);
                 ResultSet rs=stmt.executeQuery(sQuery);
                 if(rs.next()) {
@@ -167,7 +167,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE ID='"+userId+"'";
+            String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE ID="+userId;
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             while(rs.next()) {
@@ -196,16 +196,16 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
             // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_PROFILES WHERE ID='"+userId+"' AND PROFILE_NAME='"+profile.getProfileName()+"'";
+            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_PROFILES WHERE ID="+userId+" AND PROFILE_NAME='"+profile.getProfileName()+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='"+profile.getThemeStylesheetName()+"', STRUCTURE_SS_NAME='"+profile.getStructureStylesheetName()+"', DESCRIPTION='"+profile.getProfileDescription()+"' WHERE ID = '"+userId+"' AND PROFILE_NAME='"+profile.getProfileName()+"'";
+                sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='"+profile.getThemeStylesheetName()+"', STRUCTURE_SS_NAME='"+profile.getStructureStylesheetName()+"', DESCRIPTION='"+profile.getProfileDescription()+"' WHERE ID = "+userId+" AND PROFILE_NAME='"+profile.getProfileName()+"'";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
             else {
-                sQuery = "INSERT INTO UP_USER_PROFILES (ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ('"+userId+"','"+profile.getProfileName()+"','"+profile.getStructureStylesheetName()+"','"+profile.getThemeStylesheetName()+"','"+profile.getProfileDescription()+"')";
+                sQuery = "INSERT INTO UP_USER_PROFILES (ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("+userId+",'"+profile.getProfileName()+"','"+profile.getStructureStylesheetName()+"','"+profile.getThemeStylesheetName()+"','"+profile.getProfileDescription()+"')";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
                 stmt.executeQuery(sQuery);
             }
@@ -236,7 +236,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID='"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID="+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getStylesheetNames() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             String str_upXML=null;
@@ -266,7 +266,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID='"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID="+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getThemeStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             String str_upXML=null;
@@ -309,16 +309,16 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
             // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID='"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID="+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE ID = '"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE ID = "+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
             else {
-                sQuery = "INSERT INTO UP_USER_SS_PREFS (ID,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userId+"','"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
+                sQuery = "INSERT INTO UP_USER_SS_PREFS (ID,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ("+userId+",'"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
                 stmt.executeQuery(sQuery);
             }
@@ -349,16 +349,16 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
             // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID='"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE ID="+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE ID = '"+userId+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
+                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE ID = "+userId+" AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
             else {
-                sQuery = "INSERT INTO UP_USER_SS_PREFS (ID,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userId+"','"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
+                sQuery = "INSERT INTO UP_USER_SS_PREFS (ID,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ("+userId+",'"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
                 stmt.executeQuery(sQuery);
             }
