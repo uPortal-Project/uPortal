@@ -8,9 +8,14 @@ package org.jasig.portal.utils;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -23,38 +28,56 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
+import org.w3c.dom.UserDataHandler;
 
 /**
- * An implementation of IPortalDocument that decorates a generic
- * <code>Document</code> object. This is used to locally store and manage
- * the ID element mappings regardless of the DOM implementation.
+ * An implementation of IPortalDocument that wraps a standard
+ * <code>Document</code> object.
  *
  * @see org.w3c.dom.Document for decorator method descriptions.
  *
  * @author Nick Bolton
  * @version $Revision$
+ * @deprecated use w3c DOM level 3 Documents directly instead.
  */
 public class PortalDocumentImpl implements IPortalDocument {
 
-    private Hashtable identifiers = new Hashtable(1024);
-    private final Hashtable keys = new Hashtable(1024);
-
+    private static final Log log = LogFactory.getLog(PortalDocumentImpl.class);
+    
     public Document document = null;
 
     PortalDocumentImpl() {
-        document = DocumentFactory.__getNewDocument();
+        try {
+            this.document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        } catch (Exception e) {
+            log.fatal("Error instantiating a Document.", e);
+            throw new RuntimeException("Error instantiating a document.", e);
+        }
     }
 
     PortalDocumentImpl(Document doc) {
-        document = doc;
+        this.document = doc;
     }
     
+    /**
+     * Get a Hashtable mapping from identifier Strings to the identified nodes.
+     * @return a Hashtable from Strings to nodes.
+     */
     public final Hashtable getIdentifiers() {
-        return identifiers;   
+        
+        // TODO implement this
+        // likely implementation is to traverse Document, read all identifiers, and
+        // generate the Hashtable.
+        
+        // log a stack trace that will help us figure out who is calling us.
+        log.fatal("Invocation of PortalDocumentImpl.getIdentifiers()", new RuntimeException());
+        
+        return new Hashtable(); 
     }
     
     public final void setIdentifiers( Hashtable identifiers ) {
-        this.identifiers = identifiers;   
+         log.fatal("Invocation of PortalDocumentImpl.setIdentifiers()", new RuntimeException());
+         throw new UnsupportedOperationException("setIdentifiers not supported.");
     }
     
     /**
@@ -67,20 +90,7 @@ public class PortalDocumentImpl implements IPortalDocument {
      */
     public void putIdentifier(String key, Element element)
     throws DOMException {
-        if (element == null) {
-            removeElement(key);
-            return;
-        }
-
-        if (element.getOwnerDocument() != document) {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Trying to cache an element that doesn't belong to ");
-            msg.append("this document.");
-            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR,
-                msg.toString());
-        }
-
-        identifiers.put(key, element);
+        throw new UnsupportedOperationException("Attempt to put identifier [" + key + "]");
     }
 
     /**
@@ -92,319 +102,304 @@ public class PortalDocumentImpl implements IPortalDocument {
      * @param sourceDoc The source doc to copy from.
      */
     public void copyCache(IPortalDocument sourceDoc) {
-        for (Node n = this.getFirstChild(); n != null; n = n.getNextSibling()) {
-            preserveCache(sourceDoc, n);
-        }
-        keys.clear();
+        throw new UnsupportedOperationException("copyCache() no longer implemented.");
     }
 
-    private void removeElement(String key) {
-        Element elem = getElementById(key);
-        if ( elem != null )
-         keys.remove(XML.serializeNode(elem));
-        identifiers.remove(key); 
-    }
+  
 
-    private void preserveCache(IPortalDocument sourceDoc, Node node) {
-        if (node instanceof Element) {
-            Element element = (Element) node;
-            String serializedNode = XML.serializeNode(element);
-            String key = ((PortalDocumentImpl)sourceDoc).
-                getElementKey(serializedNode);
-
-            if (key != null) {
-                putIdentifier(key, element);
-            }
-        }
-
-        node = node.getFirstChild();
-        while (node != null) {
-            preserveCache(sourceDoc, node);
-            node = node.getNextSibling();
-        }
-    }
-
-    private String getElementKey(String serializedNode) {
-        String key = null;
-        if ( keys.isEmpty() ) {
-         Iterator itr = identifiers.keySet().iterator();   
-         while (itr.hasNext()) {
-            String id = (String) itr.next();
-            Element element = (Element) identifiers.get(key);
-            String value = XML.serializeNode(element);
-            keys.put(value,id);
-            if ( serializedNode.equals(value) )
-             key = id;          
-         }   
-        } else 
-            key = (String) keys.get(serializedNode); 
-          return key;
-    }
 
     // decorator methods
 
-    /**
-     * This method was overloaded to provide local element caching.
-     */
+ 
     public Element getElementById(String key) {
-        return (Element)identifiers.get(key);
+        return this.document.getElementById(key);
     }
 
     public DocumentType getDoctype() {
-        return document.getDoctype();
+        return this.document.getDoctype();
     }
 
     public DOMImplementation getImplementation() {
-        return document.getImplementation();
+        return this.document.getImplementation();
     }
 
     public Element getDocumentElement() {
-        return document.getDocumentElement();
+        return this.document.getDocumentElement();
     }
 
     public Element createElement(String tagName) throws DOMException {
-        return document.createElement(tagName);
+        return this.document.createElement(tagName);
     }
 
     public DocumentFragment createDocumentFragment() {
-        return document.createDocumentFragment();
+        return this.document.createDocumentFragment();
     }
 
     public Text createTextNode(String data) {
-        return document.createTextNode(data);
+        return this.document.createTextNode(data);
     }
 
     public Comment createComment(String data) {
-        return document.createComment(data);
+        return this.document.createComment(data);
     }
 
     public CDATASection createCDATASection(String data) throws DOMException {
-        return document.createCDATASection(data);
+        return this.document.createCDATASection(data);
     }
 
     public ProcessingInstruction createProcessingInstruction(String target,
         String data) throws DOMException {
-        return document.createProcessingInstruction(target, data);
+        return this.document.createProcessingInstruction(target, data);
     }
 
     public Attr createAttribute(String name) throws DOMException {
-        return document.createAttribute(name);
+        return this.document.createAttribute(name);
     }
 
     public EntityReference createEntityReference(String name)
-    throws DOMException {
-        return document.createEntityReference(name);
+        throws DOMException {
+        
+        return this.document.createEntityReference(name);
     }
 
     public NodeList getElementsByTagName(String tagname) {
-        return document.getElementsByTagName(tagname);
+        return this.document.getElementsByTagName(tagname);
     }
 
     public Node importNode(Node importedNode, boolean deep)
     throws DOMException {
-        return document.importNode(importedNode, deep);
+        return this.document.importNode(importedNode, deep);
     }
 
     public Element createElementNS(String namespaceURI, String qualifiedName)
     throws DOMException {
-        return document.createElementNS(namespaceURI, qualifiedName);
+        return this.document.createElementNS(namespaceURI, qualifiedName);
     }
 
     public Attr createAttributeNS(String namespaceURI, String qualifiedName)
     throws DOMException {
-        return document.createAttributeNS(namespaceURI, qualifiedName);
+        return this.document.createAttributeNS(namespaceURI, qualifiedName);
     }
 
     public NodeList getElementsByTagNameNS(String namespaceURI,
         String localName) {
-        return document.getElementsByTagNameNS(namespaceURI, localName);
+        return this.document.getElementsByTagNameNS(namespaceURI, localName);
     }
 
     public String getNodeName() {
-        return document.getNodeName();
+        return this.document.getNodeName();
     }
 
     public String getNodeValue() throws DOMException {
-        return document.getNodeValue();
+        return this.document.getNodeValue();
     }
 
     public void setNodeValue(String nodeValue) throws DOMException {
-        document.setNodeValue(nodeValue);
+        this.document.setNodeValue(nodeValue);
     }
 
     public short getNodeType() {
-        return document.getNodeType();
+        return this.document.getNodeType();
     }
 
     public Node getParentNode() {
-        return document.getParentNode();
+        return this.document.getParentNode();
     }
 
     public NodeList getChildNodes() {
-        return document.getChildNodes();
+        return this.document.getChildNodes();
     }
 
     public Node getFirstChild() {
-        return document.getFirstChild();
+        return this.document.getFirstChild();
     }
 
     public Node getLastChild() {
-        return document.getLastChild();
+        return this.document.getLastChild();
     }
 
     public Node getPreviousSibling() {
-        return document.getPreviousSibling();
+        return this.document.getPreviousSibling();
     }
 
     public Node getNextSibling() {
-        return document.getNextSibling();
+        return this.document.getNextSibling();
     }
 
     public NamedNodeMap getAttributes() {
-        return document.getAttributes();
+        return this.document.getAttributes();
     }
 
     public Document getOwnerDocument() {
-        return document.getOwnerDocument();
+        return this.document.getOwnerDocument();
     }
 
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
-        return document.insertBefore(newChild, refChild);
+        return this.document.insertBefore(newChild, refChild);
     }
 
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
-        return document.replaceChild(newChild, oldChild);
+        return this.document.replaceChild(newChild, oldChild);
     }
 
     public Node removeChild(Node oldChild) throws DOMException {
-        return document.removeChild(oldChild);
+        return this.document.removeChild(oldChild);
     }
 
     public Node appendChild(Node newChild) throws DOMException {
-        return document.appendChild(newChild);
+        return this.document.appendChild(newChild);
     }
 
     public boolean hasChildNodes() {
-        return document.hasChildNodes();
+        return this.document.hasChildNodes();
     }
 
     public Node cloneNode(boolean deep) {
-        Document newDoc = (Document)document.cloneNode(deep);
-        PortalDocumentImpl newNode = new PortalDocumentImpl(newDoc);
-
-        // only copy the identifiers if it's a deep cloning. Otherwise,
-        // the children won't exist and you'd have an identifier mapping
-        // that was invalid.
-        if (deep) {
-            //newNode.copyCache(this);
-            final Hashtable hash = new Hashtable(1024);
-            hash.putAll(identifiers);
-            newNode.setIdentifiers(hash);
-        }
-        return newNode;
+        return this.document.cloneNode(deep);
     }
 
     public void normalize() {
-        document.normalize();
+        this.document.normalize();
     }
 
     public boolean isSupported(String feature, String version) {
-        return document.isSupported(feature, version);
+        return this.document.isSupported(feature, version);
     }
 
     public String getNamespaceURI() {
-        return document.getNamespaceURI();
+        return this.document.getNamespaceURI();
     }
 
     public String getPrefix() {
-        return document.getPrefix();
+        return this.document.getPrefix();
     }
 
     public void setPrefix(String prefix) throws DOMException {
-        document.setPrefix(prefix);
+        this.document.setPrefix(prefix);
     }
 
     public String getLocalName() {
-        return document.getLocalName();
+        return this.document.getLocalName();
     }
 
     public boolean hasAttributes() {
-        return document.hasAttributes();
-    }
-
-    // used for debugging
-
-    void checkCache() {
-        String key;
-        Element element;
-
-        System.out.println("CHECKING CACHE for: " + this + " (" +
-            this.hashCode() + ")");
-
-        Iterator itr = identifiers.keySet().iterator();
-        while (itr.hasNext()) {
-            key = (String)itr.next();
-            element = (Element)identifiers.get(key);
-            if (element.getOwnerDocument() != document) {
-                System.out.println("ERROR: element does not belong to this document: " + key);
-            }
-        }
-        System.out.println("DONE CHECKING CACHE for: " + this + " (" +
-            this.hashCode() + ")\n");
-    }
-
-    void checkCaches(PortalDocumentImpl doc2) {
-        String key;
-        Element element1;
-        Element element2;
-        String xml1;
-        String xml2;
-
-        System.out.println("CHECKING CACHES for: " + this + " (" +
-            this.hashCode() + ") and " + doc2 + "( " + doc2.hashCode() + ")");
-
-        this.checkCache();
-        doc2.checkCache();
-
-        Iterator itr = this.identifiers.keySet().iterator();
-        while (itr.hasNext()) {
-            key = (String)itr.next();
-            element1 = (Element)this.identifiers.get(key);
-            element2 = (Element)doc2.identifiers.get(key);
-            if (element2 == null) {
-                System.out.println(
-                    "ERROR: Mapping does not exist in doc2 for key: " + key);
-                continue;
-            }
-            xml1 = XML.serializeNode(element1);
-            xml2 = XML.serializeNode(element2);
-            if (!xml1.equals(xml2)) {
-                System.out.println("ERROR: xml differs for key: " + key);
-                System.out.println("xml1...\n" + xml1);
-                System.out.println("xml2...\n" + xml2);
-            } else {
-                System.out.println("ok key: " + key);
-            }
-        }
-        System.out.println("DONE CHECKING CACHES for: " + this + " (" +
-            this.hashCode() + ") and " + doc2 + "( " + doc2.hashCode() + ")");
-    }
-
-    void dumpCache() {
-        String key;
-        Node node;
-        System.out.println("Element Map size: " + identifiers.size());
-
-        Iterator itr = identifiers.keySet().iterator();
-        while(itr.hasNext()) {
-            key = (String)itr.next();
-            node = (Node)identifiers.get(key);
-            System.out.println("key/node: " + key + "/" + node +
-                " (" + node.hashCode() + ")");
-        }
+        return this.document.hasAttributes();
     }
     
     public String toString() {
         return XML.serializeNode(this);
+    }
+
+    public Node adoptNode(Node arg0) throws DOMException {
+        return this.document.adoptNode(arg0);
+    }
+
+    public short compareDocumentPosition(Node arg0) throws DOMException {
+        return this.document.compareDocumentPosition(arg0);
+    }
+ 
+    public boolean equals(Object obj) {
+        return this.document.equals(obj);
+    }
+
+    public String getBaseURI() {
+        return this.document.getBaseURI();
+    }
+
+    public String getDocumentURI() {
+        return this.document.getDocumentURI();
+    }
+
+    public DOMConfiguration getDomConfig() {
+        return this.document.getDomConfig();
+    }
+
+    public Object getFeature(String arg0, String arg1) {
+        return this.document.getFeature(arg0, arg1);
+    }
+
+    public String getInputEncoding() {
+        return this.document.getInputEncoding();
+    }
+
+    public boolean getStrictErrorChecking() {
+        return this.document.getStrictErrorChecking();
+    }
+ 
+    public String getTextContent() throws DOMException {
+        return this.document.getTextContent();
+    }
+
+    public Object getUserData(String arg0) {
+        return this.document.getUserData(arg0);
+    }
+
+    public String getXmlEncoding() {
+        return this.document.getXmlEncoding();
+    }
+
+    public boolean getXmlStandalone() {
+        return this.document.getXmlStandalone();
+    }
+
+    public String getXmlVersion() {
+        return this.document.getXmlVersion();
+    }
+
+    public int hashCode() {
+        return this.document.hashCode();
+    }
+
+    public boolean isDefaultNamespace(String arg0) {
+        return this.document.isDefaultNamespace(arg0);
+    }
+
+    public boolean isEqualNode(Node arg0) {
+        return this.document.isEqualNode(arg0);
+    }
+
+    public boolean isSameNode(Node arg0) {
+        return this.document.isSameNode(arg0);
+    }
+
+    public String lookupNamespaceURI(String arg0) {
+        return this.document.lookupNamespaceURI(arg0);
+    }
+
+    public String lookupPrefix(String arg0) {
+        return this.document.lookupPrefix(arg0);
+    }
+
+    public void normalizeDocument() {
+        this.document.normalizeDocument();
+    }
+
+    public Node renameNode(Node arg0, String arg1, String arg2)
+            throws DOMException {
+        return this.document.renameNode(arg0, arg1, arg2);
+    }
+
+    public void setDocumentURI(String arg0) {
+        this.document.setDocumentURI(arg0);
+    }
+
+    public void setStrictErrorChecking(boolean arg0) {
+        this.document.setStrictErrorChecking(arg0);
+    }
+
+    public void setTextContent(String arg0) throws DOMException {
+        this.document.setTextContent(arg0);
+    }
+
+    public Object setUserData(String arg0, Object arg1, UserDataHandler arg2) {
+        return this.document.setUserData(arg0, arg1, arg2);
+    }
+    
+    public void setXmlStandalone(boolean arg0) throws DOMException {
+        this.document.setXmlStandalone(arg0);
+    }
+    
+    public void setXmlVersion(String arg0) throws DOMException {
+        this.document.setXmlVersion(arg0);
     }
 }
