@@ -126,6 +126,10 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         ((DescriptionSetImpl)descriptions).add(description, locale);
     }
 
+    public void setServletDefinitionList(ServletDefinitionList servletDefinitions) {
+        this.servletDefinitions = servletDefinitions;
+    }
+
     public void setContextRoot(String contextPath) {
         this.contextPath = contextPath;
     }
