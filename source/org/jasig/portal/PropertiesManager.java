@@ -70,8 +70,10 @@ public class PropertiesManager {
   }
 
   /**
-   * Returns the value of a property for a given name. A runtime exception is
-   * throws in the property cannot be found
+   * Returns the value of a property for a given name.
+   * Any whitespace is trimmed off the beginning and
+   * end of the property value. A runtime exception is thrown 
+   * if the property cannot be found.
    * @param name the name of the requested property
    * @return value the value of the property matching the requested name
    */
@@ -79,6 +81,8 @@ public class PropertiesManager {
     String val = props.getProperty(name);
     if (val == null)
       throw new RuntimeException("Property " + name + " not found!");
+    else
+      val = val.trim();
     return val;
   }
 
