@@ -525,6 +525,8 @@ public class DBImpl
     RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
+        addChannel(id, title, doc);
+        
       stmt = con.createStatement();
 
       // Set autocommit false for the connection
