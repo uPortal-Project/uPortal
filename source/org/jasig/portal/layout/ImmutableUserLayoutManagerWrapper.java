@@ -61,12 +61,10 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public IUserLayout getUserLayout() throws PortalException {
-        // TODO: Implement this!
-        return null;
+        return man.getUserLayout();
     }
 
     public void setUserLayout(IUserLayout userLayout) throws PortalException {
-        // TODO: Implement this!
     }
 
     public void getUserLayout(ContentHandler ch) throws PortalException {
