@@ -83,7 +83,7 @@ directory as our source file (this was done for simplicity).</p>
    &lt;!-- The security role is something SUN says should be included, but causes
    problems with uPortal, so Ive commented it out.
    &lt;security-role&gt;
-   &lt;role-name>user&gt;/role-name>
+   &lt;role-name>user&lt;/role-name>
    &lt;/security-role&gt;
    --&gt;
 
@@ -99,7 +99,7 @@ modifiable to fit your application.</p>
 <p class="subhead2">Create the Portlet descriptor file</p>
 <p align="center">portlet.xml</p>
 <pre style="background-color:#EEEEEE">
-&lt;xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" version="1.0"&gt; 
    &lt;portlet&gt; 
       &lt;portlet-name&gt;HelloWorld&lt;/portlet-name&gt; 
@@ -107,7 +107,7 @@ modifiable to fit your application.</p>
       &lt;expiration-cache&gt;0&lt;/expiration-cache&gt; 
       &lt;supports&gt; 
          &lt;mime-type&gt;text/html&lt;/mime-type&gt; 
-         &lt;portlet-mode&gt;VIEW&lt;portlet-mode&gt; 
+         &lt;portlet-mode&gt;VIEW&lt;/portlet-mode&gt; 
       &lt;/supports&gt; 
       &lt;supported-locale&gt;en&lt;/supported-locale&gt;
       &lt;portlet-info&gt; 
