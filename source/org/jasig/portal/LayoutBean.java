@@ -311,18 +311,6 @@ public class LayoutBean
           processor.setStylesheetParam (pName,processor.createXString (pValue));
       }
 
-      // Peter, this is just temporary until you get the CHeader channel working.
-      // I just needed a way for the Welcome message to change when a user logged in.
-      // Just delete it at any time.
-      IPerson person = getPerson(req);
-      String userDisplayName;
-      if(person != null)
-	  userDisplayName = person.getFullName();
-      else
-	  userDisplayName = "Guest";
-      processor.setStylesheetParam("userName", processor.createXString(userDisplayName));
-      // End of temporary section
-
       processor.setStylesheet(ts);
       // initialize a filter to fill in channel attributes for the
       // "theme" (second) transformation.
