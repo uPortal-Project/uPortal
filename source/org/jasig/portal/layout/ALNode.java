@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.node.ILayoutNode;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.w3c.dom.Element;
@@ -26,7 +25,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 
-public abstract class ALNode implements ILayoutNode {
+public abstract class ALNode implements IALNode {
 
      protected String parentNodeId;
      protected String nextNodeId;
