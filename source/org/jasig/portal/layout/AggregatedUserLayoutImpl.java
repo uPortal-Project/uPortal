@@ -1614,13 +1614,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription nodeDesc) throws PortalException {
 
-        System.out.println ( "################ -1" );
-
         // Checking restrictions
         if ( !canUpdateNode(nodeDesc) )
               return false;
-
-        System.out.println ( "################ -2" );
 
           ALNode node = getLayoutNode(nodeDesc.getId());
           IALNodeDescription oldNodeDesc = node.getNodeDescription();
