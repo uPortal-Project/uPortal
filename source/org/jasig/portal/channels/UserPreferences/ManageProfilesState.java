@@ -251,7 +251,7 @@ class ManageProfilesState extends BaseState {
       }
       edEl.appendChild(sEl);
       /*  try {
-       LogService.instance().log(LogService.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+       LogService.instance().log(LogService.DEBUG,org.jasig.portal.utils.XML.serializeNode(doc));
        } catch (Exception e) {
        LogService.instance().log(LogService.ERROR,e);
        }

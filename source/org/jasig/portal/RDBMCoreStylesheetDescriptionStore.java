@@ -100,44 +100,6 @@ public class RDBMCoreStylesheetDescriptionStore
     return  list;
   }
 
-  // functions that allow access to the entire CoreStylesheetDescription object.
-  // These functions are used when working with the stylesheet, and not for browsing purposes.
-  /*
-   public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName) {
-   StructureStylesheetDescription fssd=null;
-   try {
-   String[] db = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetDescription(stylesheetName);
-   String dbStylesheetName=db[0];
-   String dbStylesheetDescriptionText=db[1];
-   String dbURI=db[2];
-   String dbDescriptionURI=db[3];
-   fssd=new StructureStylesheetDescription();
-   // obtain DOM of the description file
-   DOMParser parser=new DOMParser();
-   parser.parse(UtilitiesBean.fixURI(dbDescriptionURI));
-   Document stylesheetDescriptionXML=parser.getDocument();
-   String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
-   String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet name = "+xmlStylesheetName);
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet description = "+xmlStylesheetDescriptionText);
-   if(!xmlStylesheetName.equals(dbStylesheetName))
-   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
-   if(!xmlStylesheetDescriptionText.equals(dbStylesheetDescriptionText))
-   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
-   fssd.setStylesheetName(xmlStylesheetName);
-   fssd.setStylesheetURI(dbURI);
-   fssd.setStylesheetDescriptionURI(dbDescriptionURI);
-   fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-   // populate parameter and attriute tables
-   this.populateParameterTable(stylesheetDescriptionXML,fssd);
-   this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
-   this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
-   } catch (Exception e) {
-   LogService.instance().log(LogService.ERROR,e);
-   }
-   return fssd;
-   }
-   */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) {
     StructureStylesheetDescription fssd = null;
     try {
@@ -163,49 +125,6 @@ public class RDBMCoreStylesheetDescriptionStore
     return  fssd;
   }
 
-  /*
-   public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName) {
-   ThemeStylesheetDescription sssd=null;
-   try {
-   String[] db = UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetDescription(stylesheetName);
-   String dbStylesheetName=db[0];
-   String dbStylesheetDescriptionText=db[1];
-   String dbURI=db[2];
-   String dbDescriptionURI=db[3];
-   sssd=new ThemeStylesheetDescription();
-   // obtain DOM of the description file
-   DOMParser parser=new DOMParser();
-   parser.parse(UtilitiesBean.fixURI(dbDescriptionURI));
-   Document stylesheetDescriptionXML=parser.getDocument();
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
-   String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
-   String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
-   if(!xmlStylesheetName.equals(dbStylesheetName))
-   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
-   if(!xmlStylesheetDescriptionText.equals(dbStylesheetDescriptionText))
-   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
-   sssd.setStylesheetName(xmlStylesheetName);
-   sssd.setStylesheetURI(dbURI);
-   sssd.setStylesheetDescriptionURI(dbDescriptionURI);
-   sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-   sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimeType"));
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
-   sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
-   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
-   sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML,"UPManagerClass"));
-   sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML,"samplePictureURI"));
-   sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML,"sampleIconURI"));
-   sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML,"deviceType"));
-   // populate parameter and attriute tables
-   this.populateParameterTable(stylesheetDescriptionXML,sssd);
-   this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
-   } catch (Exception e) {
-   LogService.instance().log(LogService.ERROR,e);
-   }
-   return sssd;
-   }
-   */
   public void removeStructureStylesheetDescription (int stylesheetId) {
     try {
       UserLayoutStoreFactory.getUserLayoutStoreImpl().removeStructureStylesheetDescription(stylesheetId);

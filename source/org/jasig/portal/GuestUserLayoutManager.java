@@ -36,19 +36,19 @@
 
 package  org.jasig.portal;
 
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.utils.BooleanLock;
+import org.jasig.portal.utils.XML;
 import org.jasig.portal.services.LogService;
-import  java.sql.*;
-import  org.w3c.dom.*;
-
-import  javax.servlet.*;
-import  javax.servlet.jsp.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.text.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collections;
 
 
 /**
@@ -394,7 +394,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
-        return  UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl)state.uLayoutXML);
+        return  XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)state.uLayoutXML);
     }
 
     public Document getUserLayoutCopy () {

@@ -70,16 +70,13 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import org.jasig.portal.utils.XMLEscaper;
 
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-import org.xml.sax.ext.LexicalHandler;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.traversal.NodeIterator;
@@ -941,7 +938,7 @@ final class TabColumnPrefsState extends BaseState
           }
 
           //if (action.equals("moveChannelHere"))
-          //System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
+          //  System.out.println(org.jasig.portal.utils.XML.serializeNode(userLayout));
 
           // Begin SAX chain
           emptytr.transform(new DOMSource(userLayout), new SAXResult(saif));

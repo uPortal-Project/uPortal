@@ -148,20 +148,6 @@ public class CChannelManager extends BaseChannel {
     // Temporary mediaPath param - makes it easier for Justin and I to work together
     xslt.setStylesheetParameter("mediaPath", "media/org/jasig/portal/channels/CChannelManager");
     xslt.transform();
-
-    // Remove this!!!
-    try {
-      if (false) {
-        System.out.println("-----------------------------------------------");
-        System.out.println("baseActionURL=" + runtimeData.getBaseActionURL());
-        System.out.println("action=" + action);
-        System.out.println("stepID=" + stepID);
-        System.out.println("fixedStepID=" + fixStepID(stepID));
-        System.out.println(org.jasig.portal.UtilitiesBean.dom2PrettyString(channelManagerDoc));
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   private String fixStepID (String stepID) {

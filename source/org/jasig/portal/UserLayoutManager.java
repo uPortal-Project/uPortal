@@ -36,21 +36,17 @@
 
 package  org.jasig.portal;
 
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.jndi.JNDIManager;
-import  org.jasig.portal.jndi.PortalNamingException;
-import  org.jasig.portal.utils.BooleanLock;
-import  java.sql.*;
-import  org.w3c.dom.*;
-import  javax.servlet.*;
-import  javax.servlet.jsp.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.text.*;
-import  java.net.*;
-
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.jndi.PortalNamingException;
+import org.jasig.portal.utils.BooleanLock;
+import org.jasig.portal.utils.XML;
+import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * UserLayoutManager is responsible for keeping: user id, user layout, user preferences
@@ -288,11 +284,11 @@ public class UserLayoutManager implements IUserLayoutManager {
     }
 
     /**
-     * put your documentation comment here
-     * @return
+     * Gets a cloned copy of the user layout
+     * @return a clone of the user layout document
      */
-    public Document getUserLayoutCopy () {
-        return  UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl)uLayoutXML);
+    public Document getUserLayoutCopy() {
+        return XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)uLayoutXML);
     }
 
     public UserPreferences getUserPreferencesCopy () {
