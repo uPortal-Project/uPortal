@@ -198,7 +198,6 @@ public class DbLoader
         System.out.println("Done!");
         long endTime = System.currentTimeMillis();
         System.out.println("Elapsed time: " + ((endTime - startTime) / 1000f) + " seconds");
-        exit();
       }
       else
         System.out.println("DbLoader couldn't obtain a database connection.  See the portal log for details.");
