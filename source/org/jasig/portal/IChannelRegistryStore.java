@@ -84,6 +84,13 @@ public interface IChannelRegistryStore {
   public void deleteChannelType(ChannelType chanType) throws Exception;
 
   /**
+   * Create a new ChannelDefinition object.
+   * @return channelDefinition, the new channel definition
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition newChannelDefinition() throws Exception;
+
+  /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
    * @return channelDefinition, a definition of the channel
