@@ -102,7 +102,12 @@ public class ReferencePermissionManager extends PermissionManager {
       updateStatement.append("null, null");
       updateStatement.append(")");
       Statement statement = connection.createStatement();
-      statement.executeUpdate(updateStatement.toString());
+      try {
+        LogService.log(LogService.DEBUG, "ReferencePermissionManager::setPermission() :" + updateStatement.toString());
+        statement.executeUpdate(updateStatement.toString());
+      } finally {
+        statement.close();
+      }
     } catch (Exception e) {
       // Log the exception
       LogService.log(LogService.ERROR, e);
@@ -152,7 +157,7 @@ public class ReferencePermissionManager extends PermissionManager {
       queryString.append("SELECT * FROM UP_PERMISSION WHERE OWNER = '");
       queryString.append(m_owner.toUpperCase());
       queryString.append("'");
-      queryString.append(" AND PRINCIPAL = '");
+      queryString.append(" AND PRINCIPAL_KEY = '");
       queryString.append(principal.toUpperCase());
       queryString.append("'");
       queryString.append(" AND ACTIVITY = '");
@@ -167,27 +172,35 @@ public class ReferencePermissionManager extends PermissionManager {
 
       // Create a JDBC statement to the database
       Statement statement = connection.createStatement();
+      try {
 
-      // DEBUG
-      if(DEBUG) LogService.log(LogService.DEBUG, queryString.toString());
+        // DEBUG
+        LogService.log(LogService.DEBUG, "ReferencePermissionManager::getPermissions() :" + queryString.toString());
 
-      // Execute the query
-      ResultSet rs = statement.executeQuery(queryString.toString());
+        // Execute the query
+        ResultSet rs = statement.executeQuery(queryString.toString());
+        try {
+          // Create an array list to store the retrieved permissions
+          ArrayList permissions = new ArrayList();
+          while (rs.next()) {
+            Permission permission = new ReferencePermission(m_owner);
+            permission.setPrincipal(rs.getString("PRINCIPAL_KEY"));
+            permission.setActivity(rs.getString("ACTIVITY"));
+            permission.setTarget(rs.getString("TARGET"));
+            permission.setType(rs.getString("PERMISSION_TYPE"));
+            permission.setEffective(rs.getDate("EFFECTIVE"));
+            permission.setExpires(rs.getDate("EXPIRES"));
+            permissions.add(permission);
+          }
 
-      // Create an array list to store the retrieved permissions
-      ArrayList permissions = new ArrayList();
-      while (rs.next()) {
-        Permission permission = new ReferencePermission(m_owner);
-        permission.setPrincipal(rs.getString("PRINCIPAL"));
-        permission.setActivity(rs.getString("ACTIVITY"));
-        permission.setTarget(rs.getString("TARGET"));
-        permission.setType(rs.getString("PERMISSION_TYPE"));
-        permission.setEffective(rs.getDate("EFFECTIVE"));
-        permission.setExpires(rs.getDate("EXPIRES"));
-        permissions.add(permission);
+          // Return the array of permissions
+          return  ((Permission[])permissions.toArray(new Permission[0]));
+        } finally {
+          rs.close();
+        }
+      } finally {
+        statement.close();
       }
-      // Return the array of permissions
-      return  ((Permission[])permissions.toArray(new Permission[0]));
     } catch (Exception e) {
       throw  new AuthorizationException(e.getMessage());
     } finally {
