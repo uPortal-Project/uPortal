@@ -40,7 +40,7 @@ Version $Revision$
   <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
   <xsl:param name="locale" select="'en_US'"/>
   <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CContentSubscriber'"/>
-  <xsl:param name="channelState" select="'browse'"/>
+  <xsl:param name="channelState" select="'search'"/>
   <!--~-->
   <!-- parameters for content search -->
   <!--~-->
@@ -1149,7 +1149,7 @@ Version $Revision$
               </strong>
             </td>
             <xsl:variable name="indentWidth">
-              <xsl:value-of select="count(ancestor::*)*10"/>
+              <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
@@ -1190,7 +1190,7 @@ Version $Revision$
               </strong>
             </td>
             <xsl:variable name="indentWidth">
-              <xsl:value-of select="count(ancestor::*)*10"/>
+              <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
@@ -1235,13 +1235,15 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <xsl:variable name="indentWidth">
-              <xsl:value-of select="count(ancestor::*)*10"/>
+              <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}">
+                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
+                <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1265,11 +1267,11 @@ Version $Revision$
           <tr>
             <td width="100%">
               <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                <tr class="uportal-channel-text" valign="top" align="left">
+                <tr class="uportal-channel-text" valign="top" align="right">
                   <td nowrap="nowrap">Type:</td>
                   <td width="100%">Individual Channel</td>
                 </tr>
-                <tr class="uportal-channel-text" valign="top" align="left">
+                <tr class="uportal-channel-text" valign="top" align="right">
                   <td nowrap="nowrap">Description:</td>
                   <td width="100%">
                     <xsl:value-of select="@description"/>
@@ -1303,7 +1305,7 @@ Version $Revision$
                   </td>
                 </tr>
                 Language Selector temporarily removed until i18n is more inclusive  -->
-                <tr class="uportal-channel-text" valign="top" align="left">
+                <tr class="uportal-channel-text" valign="top" align="right">
                   <td nowrap="nowrap">Actions:</td>
                   <td width="100%">
                     <table width="100%" border="0" cellspacing="3" cellpadding="3">
@@ -1359,7 +1361,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <xsl:variable name="indentWidth">
-              <xsl:value-of select="count(ancestor::*)*10"/>
+              <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
