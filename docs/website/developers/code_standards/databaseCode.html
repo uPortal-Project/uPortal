@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>uPortal Database Code Standards</title>
+<LINK HREF="../../uportal.css" REL="stylesheet">
+</head>
+<body>
+<h1>uPortal Database Code Standards</h1>
+
+Please use this template when writing code to access the uPortal database.<br><br>
+
+This explicitly closes the result set, statement, and connection objects.
+There is no guarantee as to when the garbage collector
+will run, if at all, so until that happens there are resources being consumed that
+are no longer needed, including scarce resources like cursors.
+It is much better to release the resources when done with them rather than letting 
+the JVM do it.<br><br>
+
+<pre>
+Connection con = null;
+try {
+    con = rdbmService.getConnection();
+    RDBMPreparedStatement pstmt = null;
+    try {
+        String query = "SELECT ...";
+        pstmt = new RDBMServices.PreparedStatement(con, query);
+        pstmt.setXXXXX(1, someValue);
+        pstmt.setXXXXX(2, someValue); // etc
+        ResultSet rs = null;
+        try {
+            LogService.log(LogService.DEBUG, query);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+               ...
+            }
+        } finally {
+            rs.close();
+        }
+    } finally {
+        pstmt.close();
+    }
+} finally {
+    rdbmService.releaseConnection(con);
+}
+</pre>
+</body>
+</html>
