@@ -50,9 +50,16 @@ import org.jasig.portal.security.*;
 /**
  * @author Ken Weiner
  */
-public class AuthenticationBean extends GenericPortalBean
-                               implements IAuthenticationBean
+public class AuthenticationBean extends GenericPortalBean implements IAuthenticationBean
 {
+  protected org.jasig.portal.security.IPerson m_Person = null;
+
+  /**
+   * Authenticate a user.
+   * @param sUserName User name
+   * @param sPassword User password
+   * @return true if successful, otherwise false.
+   */
   public boolean authenticate (String sUserName, String sPassword)
   {
     SecurityContext ic;
@@ -67,6 +74,36 @@ public class AuthenticationBean extends GenericPortalBean
     op.setCredentials(sPassword);
     ic.authenticate();
 
-    return (ic.isAuthenticated());
+    boolean bAuthenticated = ic.isAuthenticated ();
+
+    if(bAuthenticated)
+    {
+      AdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
+
+      if (addInfo == null || !(addInfo instanceof PersonImpl))
+      {
+        m_Person = new PersonImpl ();
+        m_Person.setID(sUserName);
+        m_Person.setFullName(me.getFullName());
+      }
+      else
+      {
+        m_Person = (IPerson)addInfo;
+      }
+    }
+
+    return (bAuthenticated);
+  }
+
+  /**
+   * Returns a Person object that can be used to hold site-specific attributes
+   * about the logged on user.  This information is established during
+   * authentication.
+   * @return An object that implements the
+   * <code>org.jasig.portal.security.Person</code> interface.
+   */
+  public IPerson getPerson ()
+  {
+    return m_Person;
   }
 }

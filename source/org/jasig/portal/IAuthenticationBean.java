@@ -35,12 +35,10 @@
 
 package org.jasig.portal;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import com.objectspace.xml.*;
+import org.jasig.portal.security.IPerson;
 
 public interface IAuthenticationBean
 {
   public boolean authenticate (String sUserName, String sPassword);
+  public IPerson getPerson ();
 }
