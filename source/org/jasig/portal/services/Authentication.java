@@ -60,7 +60,6 @@ import  java.util.Iterator;
 public class Authentication {
   protected org.jasig.portal.security.IPerson m_Person = null;
   protected ISecurityContext ic = null;
-  protected static PropertiesManager m_propertiesManager = new PropertiesManager();
 
   /**
    * Attempts to authenticate a given IPerson based on a set of principals and credentials
@@ -126,7 +125,7 @@ public class Authentication {
         }
       }
       // Populate the person object using the PersonDirectory if applicable
-      if (m_propertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
+      if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
         // Username attribute comes from principal
         // It is either what was typed in or supplied by the security provider
         person.setAttribute("username", username);
@@ -160,10 +159,10 @@ public class Authentication {
       // The reference implemenatation sets the uPortalTemplateUserName to the default in
       // the portal.properties file.
       // A more likely template would be staff or faculty or undergraduate.
-      boolean autocreate = m_propertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+      boolean autocreate = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
       // If we are going to be auto creating accounts then we must find the default template to use
       if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
-        String defaultTemplateUserName = m_propertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
+        String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
         person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
       }
       try {
