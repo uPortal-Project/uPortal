@@ -109,8 +109,10 @@ public class DocumentFactory {
             return doc;
         } finally {
             try {
+                if(stream != null)
                 stream.close();
             } catch (IOException e) {
+                LogService.log(LogService.ERROR, "DocumentFactory:getDocumentFromStream()::unable to close InputStream "+e);
             }
         }
     }
@@ -123,8 +125,10 @@ public class DocumentFactory {
             return doc;
         } finally {
             try {
+                if(stream != null)
                 stream.close();
             } catch (IOException e) {
+                LogService.log(LogService.ERROR, "DocumentFactory:getDocumentFromStream()::unable to close InputStream "+e);
             }
         }
     }
