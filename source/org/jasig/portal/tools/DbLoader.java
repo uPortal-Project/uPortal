@@ -35,6 +35,7 @@
 
 package org.jasig.portal.tools;
 
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.utils.DTDResolver;
@@ -62,14 +63,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
-import org.xml.sax.AttributeList;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.ContentHandler;
-import org.apache.xerces.dom.DocumentImpl;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -138,6 +136,7 @@ public class DbLoader
     try
     {
       setPortalBaseDir();
+      System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
       propertiesUri = UtilitiesBean.fixURI("properties" + File.separator + "dbloader.xml");
       con = rdbmService.getConnection ();
 
@@ -170,7 +169,7 @@ public class DbLoader
             //domParser.setFeature ("http://xml.org/sax/features/validation", true);
             //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
             tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
-            tablesDoc=domParser.parse(tablesUri);
+            tablesDoc = domParser.parse(tablesUri);
         } catch (ParserConfigurationException pce) {
             System.out.println("Unable to instantiate DOM parser. Pease check your JAXP configuration.");
             pce.printStackTrace();
@@ -191,7 +190,11 @@ public class DbLoader
 
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
         tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
-        XSLT.transform(tablesDoc, new URL(tablesXslUri), new TableHandler());
+        XSLT xslt = new XSLT();
+        xslt.setXML(tablesDoc);
+        xslt.setXSL(tablesXslUri);
+        xslt.setTarget(new TableHandler());
+        xslt.transform();
 
         // data.xml --> INSERT sql statements
         readData(parser);
@@ -387,8 +390,8 @@ public class DbLoader
 
   private static String getLocalDataTypeName (String genericDataTypeName)
   {
-   
-    
+
+
     String localDataTypeName = null;
 
     try
@@ -401,11 +404,11 @@ public class DbLoader
 
       // Check for a mapping in DbLoader.xml
       localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
-      
+
       if (localDataTypeName != null)
             return localDataTypeName;
 
-      
+
       // Find the type code for this generic type name
       int dataTypeCode = getJavaSqlType(genericDataTypeName);
 
@@ -428,7 +431,7 @@ public class DbLoader
 
       if (localDataTypeName != null)
           return localDataTypeName;
-          
+
       // No matching type found, report an error
       System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
       System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
@@ -590,53 +593,53 @@ public class DbLoader
       System.out.println("");
     }
 
-    public void startElement (String uri, String name, String qName, Attributes atts)
+    public void startElement (String namespaceURI, String localName, String qName, Attributes atts)
     {
       charBuff = new StringBuffer();
 
-      if (name.equals("properties"))
+      if (qName.equals("properties"))
         properties = new Properties();
-      else if (name.equals("db-type-mapping"))
+      else if (qName.equals("db-type-mapping"))
         dbTypeMapping = new DbTypeMapping();
-      else if (name.equals("type"))
+      else if (qName.equals("type"))
         type = new Type();
     }
 
-    public void endElement (String uri, String name, String qName)
+    public void endElement (String namespaceURI, String localName, String qName)
     {
-      if (name.equals("drop-tables")) // drop tables ("true" or "false")
+      if (qName.equals("drop-tables")) // drop tables ("true" or "false")
         properties.setDropTables(charBuff.toString());
-      else if (name.equals("create-tables")) // create tables ("true" or "false")
+      else if (qName.equals("create-tables")) // create tables ("true" or "false")
         properties.setCreateTables(charBuff.toString());
-      else if (name.equals("populate-tables")) // populate tables ("true" or "false")
+      else if (qName.equals("populate-tables")) // populate tables ("true" or "false")
         properties.setPopulateTables(charBuff.toString());
-      else if (name.equals("tables-uri")) // tables URI
+      else if (qName.equals("tables-uri")) // tables URI
         properties.setTablesUri(charBuff.toString());
-      else if (name.equals("tables-xsl-uri")) // tables xsl URI
+      else if (qName.equals("tables-xsl-uri")) // tables xsl URI
         properties.setTablesXslUri(charBuff.toString());
-      else if (name.equals("data-uri")) // data xml URI
+      else if (qName.equals("data-uri")) // data xml URI
         properties.setDataUri(charBuff.toString());
-      else if (name.equals("create-script")) // create script ("true" or "false")
+      else if (qName.equals("create-script")) // create script ("true" or "false")
         properties.setCreateScript(charBuff.toString());
-      else if (name.equals("script-file-name")) // script file name
+      else if (qName.equals("script-file-name")) // script file name
         properties.setScriptFileName(charBuff.toString());
-      else if (name.equals("statement-terminator")) // statement terminator
+      else if (qName.equals("statement-terminator")) // statement terminator
         properties.setStatementTerminator(charBuff.toString());
-      else if (name.equals("db-type-mapping"))
+      else if (qName.equals("db-type-mapping"))
         properties.addDbTypeMapping(dbTypeMapping);
-      else if (name.equals("db-name")) // database name
+      else if (qName.equals("db-name")) // database name
         dbTypeMapping.setDbName(charBuff.toString());
-      else if (name.equals("db-version")) // database version
+      else if (qName.equals("db-version")) // database version
         dbTypeMapping.setDbVersion(charBuff.toString());
-      else if (name.equals("driver-name")) // driver name
+      else if (qName.equals("driver-name")) // driver name
         dbTypeMapping.setDriverName(charBuff.toString());
-      else if (name.equals("driver-version")) // driver version
+      else if (qName.equals("driver-version")) // driver version
         dbTypeMapping.setDriverVersion(charBuff.toString());
-      else if (name.equals("type"))
+      else if (qName.equals("type"))
         dbTypeMapping.addType(type);
-      else if (name.equals("generic")) // generic type
+      else if (qName.equals("generic")) // generic type
         type.setGeneric(charBuff.toString());
-      else if (name.equals("local")) // local type
+      else if (qName.equals("local")) // local type
         type.setLocal(charBuff.toString());
     }
 
@@ -774,7 +777,7 @@ public class DbLoader
       System.out.println();
     }
 
-    public void startElement (String url, String localName, String qName, Attributes atts)
+    public void startElement (String namespaceURI, String localName, String qName, Attributes atts)
     {
       if (qName.equals("statement"))
       {
@@ -802,7 +805,7 @@ public class DbLoader
       }
     }
 
-    public void endElement (String url, String localName, String qName)
+    public void endElement (String namespaceURI, String localName, String qName)
     {
       if (qName.equals("statement"))
       {
@@ -875,52 +878,52 @@ public class DbLoader
       System.out.println("");
     }
 
-    public void startElement (String uri, String name, String qName, Attributes atts)
+    public void startElement (String namespaceURI, String localName, String qName, Attributes atts)
     {
-        if (name.equals("data"))
+        if (qName.equals("data"))
           insideData = true;
-        else if (name.equals("table"))
+        else if (qName.equals("table"))
         {
           insideTable = true;
           table = new Table();
         }
-        else if (name.equals("name"))
+        else if (qName.equals("name"))
           insideName = true;
-        else if (name.equals("row"))
+        else if (qName.equals("row"))
         {
           insideRow = true;
           row = new Row();
         }
-        else if (name.equals("column"))
+        else if (qName.equals("column"))
         {
           insideColumn = true;
           column = new Column();
         }
-        else if (name.equals("value"))
+        else if (qName.equals("value"))
           insideValue = true;
     }
 
-    public void endElement (String uri, String name, String qName)
+    public void endElement (String namespaceURI, String localName, String qName)
     {
-        if (name.equals("data"))
+        if (qName.equals("data"))
           insideData = false;
-        else if (name.equals("table"))
+        else if (qName.equals("table"))
           insideTable = false;
-        else if (name.equals("name"))
+        else if (qName.equals("name"))
           insideName = false;
-        else if (name.equals("row"))
+        else if (qName.equals("row"))
         {
           insideRow = false;
 
           if (populateTables)
             insertRow(table, row);
         }
-        else if (name.equals("column"))
+        else if (qName.equals("column"))
         {
           insideColumn = false;
           row.addColumn(column);
         }
-        else if (name.equals("value"))
+        else if (qName.equals("value"))
           insideValue = false;
     }
 
