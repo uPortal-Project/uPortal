@@ -40,7 +40,7 @@ Version $Revision$
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <xsl:param name="locale" select="'en_US'"/>
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CContentSubscriber'"/>
-    <xsl:param name="channel-state" select="'browse'"/>
+    <xsl:param name="channel-state" select="'search'"/>
     <!--~-->
     <!-- parameters for content search -->
     <!--~-->
@@ -815,56 +815,57 @@ Version $Revision$
                             </td>
                         </tr>
                     </table>
-                    <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                        <tr class="uportal-channel-text">
-                            <td>
-                                <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt=""/>
-                            </td>
-                            <td align="left" valign="top">
-                                <span class="uportal-label">Search for</span>:<br/>
-                                <table border="0" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td>
-                                            <input name="search-category" type="checkbox" value="true">
-                                                <xsl:if test="search-category='true'">
-                                                    <xsl:attribute name="checked">checked</xsl:attribute>
-                                                </xsl:if>
-                                            </input>
-                                        </td>
-                                        <td>
-                                            <span class="uportal-text-small">Categories</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input name="search-channel" type="checkbox" value="true">
-                                                <xsl:if test="search-channel='true'">
-                                                    <xsl:attribute name="checked">checked</xsl:attribute>
-                                                </xsl:if>
-                                            </input>
-                                        </td>
-                                        <td>
-                                            <span class="uportal-text-small">Channels</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input name="search-fragment" type="checkbox" value="true">
-                                                <xsl:if test="search-fragment='true'">
-                                                    <xsl:attribute name="checked">checked</xsl:attribute>
-                                                </xsl:if>
-                                            </input>
-                                        </td>
-                                        <td class="uportal-text-small">
-                                            <span>Fragments</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td>
-                                <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-                            </td>
-                            <!-- <td align="left" valign="top">
+                    <form name="search-form" action="{$baseActionURL}" method="post">
+                        <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+                            <tr class="uportal-channel-text">
+                                <td>
+                                    <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt=""/>
+                                </td>
+                                <td align="left" valign="top">
+                                    <span class="uportal-label">Search for</span>:<br/>
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <input name="search-category" type="checkbox" value="true">
+                                                    <xsl:if test="$search-category='true'">
+                                                        <xsl:attribute name="checked">checked</xsl:attribute>
+                                                    </xsl:if>
+                                                </input>
+                                            </td>
+                                            <td>
+                                                <span class="uportal-text-small">Categories</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input name="search-channel" type="checkbox" value="true">
+                                                    <xsl:if test="$search-channel='true'">
+                                                        <xsl:attribute name="checked">checked</xsl:attribute>
+                                                    </xsl:if>
+                                                </input>
+                                            </td>
+                                            <td>
+                                                <span class="uportal-text-small">Channels</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input name="search-fragment" type="checkbox" value="true">
+                                                    <xsl:if test="$search-fragment='true'">
+                                                        <xsl:attribute name="checked">checked</xsl:attribute>
+                                                    </xsl:if>
+                                                </input>
+                                            </td>
+                                            <td class="uportal-text-small">
+                                                <span>Fragments</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+                                </td>
+                                <!-- <td align="left" valign="top">
                 <span class="uportal-label">whos</span>
                 <br/>
                 <table border="0" cellpadding="0" cellspacing="0">
@@ -886,10 +887,10 @@ Version $Revision$
                   </tr>
                 </table>
               </td> -->
-                            <!-- <td>
+                                <!-- <td>
                 <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td> -->
-                            <!-- <td align="center" valign="top">
+                                <!-- <td align="center" valign="top">
                 <br/>
                 <select name="select5" class="uportal-input-text">
                   <option value="contains" selected="selected">contains</option>
@@ -898,35 +899,35 @@ Version $Revision$
                   <option value="endsWith">ends with</option>
                 </select>
               </td> -->
-                            <!-- <td>
+                                <!-- <td>
                 <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td> -->
-                            <td align="center" valign="top">
-                                <br/>
-                                <input name="search-query" type="text" class="uportal-input-text" value="{$search-query}" size="40"/>
-                            </td>
-                            <td>
-                                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-                            </td>
-                            <td width="100%" align="left" valign="top">
-                                <br/>
-                                <input type="hidden" name="uPcCS_action" value="search"/>
-                                <input type="hidden" name="channel-state" value="search"/>
-                                <input name="Submit" type="submit" class="uportal-button" value="Search"/>
-                            </td>
-                        </tr>
-                        <tr class="uportal-background-content" valign="top" align="left">
-                            <td colspan="10">
-                                <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
-                                    <tr>
-                                        <td>
-                                            <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+                                <td align="center" valign="top">
+                                    <br/>
+                                    <input name="search-query" type="text" class="uportal-input-text" value="{$search-query}" size="40"/>
+                                </td>
+                                <td>
+                                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+                                </td>
+                                <td width="100%" align="left" valign="top">
+                                    <br/>
+                                    <input type="hidden" name="channel-state" value="search"/>
+                                    <input name="Submit" type="submit" class="uportal-button" value="Search"/>
+                                </td>
+                            </tr>
+                            <tr class="uportal-background-content" valign="top" align="left">
+                                <td colspan="10">
+                                    <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                        <tr>
+                                            <td>
+                                                <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
                 </td>
                 <td class="uportal-background-content">
                     <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
@@ -1163,7 +1164,7 @@ Version $Revision$
     <!--~-->
     <xsl:template match="category">
         <xsl:choose>
-            <xsl:when test="@view='expanded'">
+            <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
                     <tr class="uportal-channel-text" valign="top" align="left">
                         <td class="uportal-navigation-category">
