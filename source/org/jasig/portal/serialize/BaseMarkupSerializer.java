@@ -283,8 +283,12 @@ public abstract class BaseMarkupSerializer
         for ( i = 0 ; i < _elementStates.length ; ++i )
             _elementStates[ i ] = new ElementState();
         _format = format;
-        
-        _allowDisableOutputEscaping = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.BaseMarkupSerializer.allow_disable_output_escaping");
+       
+       try { 
+         _allowDisableOutputEscaping = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.BaseMarkupSerializer.allow_disable_output_escaping");
+       } catch ( Exception e ) {
+       	 _allowDisableOutputEscaping = false;  
+       }
     }
 
 
