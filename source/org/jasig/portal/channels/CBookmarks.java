@@ -647,9 +647,11 @@ public class CBookmarks extends BaseChannel {
         }
         // Pass the baseActionURL down to the stylesheet
         processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
+        
         // Pass the location of the image files down to the stylesheet
-        String imagesURL = "stylesheets/org/jasig/portal/channels/CBookmarks/";
-        processor.setStylesheetParam("imagesURL", processor.createXString(imagesURL));
+        //String imagesURL = "stylesheets/org/jasig/portal/channels/CBookmarks/";
+        //processor.setStylesheetParam("imagesURL", processor.createXString(imagesURL));
+        
         // Perform the XSLT transformation and store the result in a string writer
         processor.process(new XSLTInputSource(inputXML), stylesheet, new XSLTResultTarget(stringWriter));
         // Cache the result of the XSLT transformation
