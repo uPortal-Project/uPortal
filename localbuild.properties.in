@@ -1,0 +1,39 @@
+#
+# Copy this file to localbuild.properties and modify to suit your environment
+#
+# IMPORTANT: Always audit the "clean" target of build.xml to make sure it will do
+#            what you expect !
+
+
+# directory in which javadocs are generated
+# comment docdest to suppress javadoc target
+#docdest=./docs
+#docdest=F:/resin/html/portal-2/docs
+
+# directory for classes that are used by the jsp's
+#dest=F:/resin/classes
+#dest=F:/resin/html/portal-2/WEB-INF/classes
+
+# Location for properties, stylesheets, etc.
+#basedir=F:/resin/data/portal-2
+
+
+# points to a place where jsp,html,gif,WEB-INF etc. are copied
+#htmldest=F:/resin/html/portal-2/
+
+
+# and of course the classpath, comment-out to use your environment CLASSPATH
+#classpath=/usr/local/java/jars/xalan.jar;/usr/local/java/jars/xerces.jar;/usr/local/java/jars/dxml.jar;/usr/local/java/jars/servlet.jar"
+#classpath=%CLASSPATH%:F:/resin/classes
+
+# jspdest used for realclean
+# this is a directory that will simply be deleted when realclean is called
+# leave commented-out for no action
+#jspdest=F:/resin/work/_jsp/_portal-2
+
+# sql properties for running scripts and populating the database
+# comment the dbdriver to suppress sql target
+#dbdriver=org.hsql.jdbcDriver
+#dburl=jdbc:HypersonicSQL:F:/hypersonicsql/demo/portal
+#dblogin=sa
+#dbpass=
