@@ -1222,6 +1222,7 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
     private String xslTag = "listFolders";
     private int iFldrsStartAt;
     private int iFldrsEndAt;
+    private String pageIndex = null;
 
     private String newFolderButtonTxt = "New";
     private String createFolderButtonTxt = "Create";
@@ -1364,9 +1365,21 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
       return display();
     }
 
+    public void setPageIndex(String pageIndex) {
+      this.pageIndex = pageIndex;
+    }
+    public void doit(ChannelRuntimeData rd) {
+      if (DEBUG) System.err.println("doit for " + weAre);
+      runtimeData = rd;
+      String value;
+      if ((value = runtimeData.getParameter("page")) != null){
+        setPageIndex(value);
+      }
+    }
+
     public StringWriter display() {
       StringWriter xml = new StringWriter();
-      int iTotalFldrs = imapFolders.size();
+      int totalFldrs = imapFolders.size();
 
       if (DEBUG) System.err.println("renderString for " + xslTag);
       xml.write("<" + xslTag + ">\n");
@@ -1378,25 +1391,59 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
         printHeader ("Folders", xml);
 
         // Pagination controls
+        if (pageIndex != null) {
+            if (pageIndex.equals("last")) {
+              iFldrsEndAt = totalFldrs;
+              if (iFldrsEndAt - userPrefs.iFldrsPerPage < 1) {
+                iFldrsStartAt = 1;
+              } else {
+                iFldrsStartAt = iFldrsEndAt - userPrefs.iFldrsPerPage;
+              }
+            } else {
+              try {
+                iFldrsStartAt = Integer.parseInt(pageIndex);
+              } catch (Exception e) {
+                iFldrsStartAt = totalFldrs - userPrefs.iFldrsPerPage;
+              }
+            }
+          }
+
+          if (iFldrsStartAt > totalFldrs) {
+            iFldrsStartAt = totalFldrs - userPrefs.iFldrsPerPage;
+          }
+          if (iFldrsStartAt < 1) {
+            iFldrsStartAt = 1;
+          }
+          iFldrsEndAt = iFldrsStartAt + userPrefs.iFldrsPerPage;
+          if (iFldrsEndAt > totalFldrs) {
+            iFldrsEndAt = totalFldrs;
+          }
+          if (iFldrsStartAt > iFldrsEndAt - userPrefs.iFldrsPerPage) {
+            iFldrsStartAt = iFldrsEndAt - userPrefs.iFldrsPerPage;
+          }
+          if (iFldrsStartAt < 1) {
+            iFldrsStartAt = 1;
+          }
+
         xml.write("<pagination action=\"" + weAre + "\" bgcolor=\"" + userPrefs.sControlColor + "\"");
-        if (iFldrsStartAt > userPrefs.iFldrsPerPage + 1) {
+        if (iFldrsStartAt > userPrefs.iFldrsPerPage) {
           xml.write(" first=\"1\"");
         }
 
-        if (iFldrsStartAt > userPrefs.iFldrsPerPage + 2){
+        if (iFldrsStartAt > 1){
           xml.write(" prev=\"" + (iFldrsStartAt - userPrefs.iFldrsPerPage) + "\"");
         }
 
         xml.write(" start=\"" + iFldrsStartAt +
              "\" end=\"" + iFldrsEndAt +
-             "\" total=\"" + iTotalFldrs + "\"");
+             "\" total=\"" + totalFldrs + "\"");
 
-        if (iFldrsEndAt < iTotalFldrs){
+        if (iFldrsEndAt < totalFldrs){
           xml.write(" next=\"" + (iFldrsStartAt + userPrefs.iFldrsPerPage) + "\"");
         }
 
-        if (iFldrsEndAt < iTotalFldrs && iFldrsEndAt + userPrefs.iFldrsPerPage < iTotalFldrs){
-          xml.write(" last=\"" + (iTotalFldrs - userPrefs.iFldrsPerPage) + "\"");
+        if (iFldrsEndAt < totalFldrs && iFldrsEndAt + userPrefs.iFldrsPerPage < totalFldrs){
+          xml.write(" last=\"" + (totalFldrs - userPrefs.iFldrsPerPage) + "\"");
         }
         xml.write("/>\n");
 
@@ -2967,7 +3014,9 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
 
     public void add (Folder folder) throws MessagingException {
       addFolder (folder.getName ());
-      folder.close (false); // Don't need it any more
+      if (folder.isOpen()) {
+        folder.close (false); // Don't need it any more
+      }
     }
 
     private void addFolder (String folderName) {
