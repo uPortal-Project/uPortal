@@ -39,6 +39,7 @@ import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -49,11 +50,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
+//import javax.xml.parsers.SAXParserFactory;
+//import javax.xml.parsers.SAXParser;
 
 
 /**
@@ -102,6 +103,7 @@ public class DbLoader
   private static final String space = " ";
   private static Connection con = null;
   private static Statement stmt = null;
+  private static PreparedStatement pstmt = null;
   private static RdbmServices rdbmService = null;
 
   public DbLoader()
@@ -117,10 +119,17 @@ public class DbLoader
 
       if (con != null)
       {
+        long startTime = System.currentTimeMillis();
+
         XMLReader parser = getXMLReader();
+        doInfo();
         doProperties(parser);
         doTables(parser);
         doData(parser);
+
+        System.out.println("Done!");
+        long endTime = System.currentTimeMillis();
+        System.out.println("Elapsed time: " + ((endTime - startTime) / 1000f) + " seconds");
       }
       else
         System.out.println("DbLoader couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
@@ -160,6 +169,18 @@ public class DbLoader
     XMLReader xr = new org.apache.xerces.parsers.SAXParser();
 
     return xr;
+  }
+
+  private static void doInfo () throws SQLException
+  {
+    DatabaseMetaData dbMetaData = con.getMetaData();
+    String dbName = dbMetaData.getDatabaseProductName();
+    String dbVersion = dbMetaData.getDatabaseProductVersion();
+    String driverName = dbMetaData.getDriverName();
+    String driverVersion = dbMetaData.getDriverVersion();
+    System.out.println("Starting DbLoader...");
+    System.out.println("Database: " + dbName + ", version: " + dbVersion);
+    System.out.println("Driver: " + driverName + ", version: " + driverVersion);
   }
 
   private static void doProperties (XMLReader parser) throws SAXException, IOException
@@ -209,12 +230,12 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.println("Opening " + propertiesUri);
+      System.out.print("Parsing " + propertiesUri + "...");
     }
 
     public void endDocument ()
     {
-      System.out.println("Closing " + propertiesUri);
+      System.out.println("");
     }
 
     public void startElement (String uri, String name, String qName, Attributes atts)
@@ -435,12 +456,12 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.println("Opening " + PropertiesHandler.properties.getTablesUri());
+      System.out.print("Parsing " + PropertiesHandler.properties.getTablesUri() + "...");
     }
 
     public void endDocument ()
     {
-      System.out.println("Closing " + PropertiesHandler.properties.getTablesUri());
+      System.out.println("");
     }
 
     public void startElement (String uri, String name, String qName, Attributes atts)
@@ -673,10 +694,11 @@ public class DbLoader
 
     private void replaceTable (Table table)
     {
+      System.out.print("...");
       String dropTableStatement = prepareDropTableStatement(table);
       String createTableStatement = prepareCreateTableStatement(table);
-      System.out.println(dropTableStatement);
-      System.out.println(createTableStatement);
+      //System.out.println(dropTableStatement);
+      //System.out.println(createTableStatement);
 
       try
       {
@@ -739,12 +761,12 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.println("Opening " + PropertiesHandler.properties.getDataUri());
+      System.out.print("Parsing " + PropertiesHandler.properties.getDataUri() + "...");
     }
 
     public void endDocument ()
     {
-      System.out.println("Closing " + PropertiesHandler.properties.getDataUri());
+      System.out.println("");
     }
 
     public void startElement (String uri, String name, String qName, Attributes atts)
@@ -805,7 +827,7 @@ public class DbLoader
         column.setValue(new String(ch, start, length));
     }
 
-    private String prepareInsertStatement (String tableName, Row row)
+    private String prepareInsertStatement (String tableName, Row row, boolean preparedStatement)
     {
       StringBuffer sb = new StringBuffer("INSERT INTO ");
       sb.append(table.getName()).append(" (");
@@ -829,10 +851,18 @@ public class DbLoader
       while (iterator.hasNext())
       {
         Column column = (Column)iterator.next();
-        sb.append("'");
-        String value = column.getValue();
-        sb.append(value != null ? value.trim() : "");
-        sb.append("'").append(", ");
+
+        if (preparedStatement)
+           sb.append("?");
+        else
+        {
+          sb.append("'");
+          String value = column.getValue();
+          sb.append(value != null ? value.trim() : "");
+          sb.append("'");
+        }
+
+        sb.append(", ");
       }
 
       // Delete comma and space after last value (kind of sloppy, but it works)
@@ -846,22 +876,110 @@ public class DbLoader
 
     private void insertRow (Table table, Row row)
     {
-      String insertStatement = prepareInsertStatement(table.getName(), row);
-      System.out.println(insertStatement);
+      System.out.print("...");
+      boolean supportsPreparedStatements = supportsPreparedStatements();
+
+      if (supportsPreparedStatements)
+      {
+        try
+        {
+          String preparedStatement = prepareInsertStatement(table.getName(), row, true);
+          //System.out.println(preparedStatement);
+          pstmt = con.prepareStatement(preparedStatement);
+          pstmt.clearParameters ();
+
+          // Loop through parameters and set them, checking for any that excede 4k
+          ArrayList columns = row.getColumns();
+          Iterator iterator = columns.iterator();
+
+          for (int i = 1; iterator.hasNext(); i++)
+          {
+            Column column = (Column)iterator.next();
+            String value = column.getValue();
+
+            if (value != null)
+            {
+              value = value.trim(); // portal can't read xml properly without this, don't know why yet
+              int valueLength = value.length();
+
+              if (valueLength <= 4000)
+                pstmt.setString(i, value);
+              else
+              {
+                try
+                {
+                  pstmt.setString(i, value);
+                }
+                catch (SQLException sqle)
+                {
+                  // For Oracle and maybe other databases...
+                  pstmt.setCharacterStream(i, new StringReader(value), valueLength);
+                }
+              }
+            }
+            else
+              pstmt.setString(i, "");
+          }
+          pstmt.executeUpdate();
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        finally
+        {
+          try { pstmt.close();  } catch (Exception e) { }
+        }
+      }
+      else
+      {
+        // If prepared statements aren't supported, try a normal insert statement
+        String insertStatement = prepareInsertStatement(table.getName(), row, false);
+        //System.out.println(insertStatement);
+
+        try
+        {
+          stmt = con.createStatement();
+          stmt.executeUpdate(insertStatement);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        finally
+        {
+          try { stmt.close(); } catch (Exception e) { }
+        }
+      }
+    }
+
+    private static boolean supportsPreparedStatements()
+    {
+      boolean supportsPreparedStatements = true;
 
       try
       {
-        stmt = con.createStatement();
-        stmt.executeUpdate(insertStatement);
+        // Issue a prepared statement to see if database/driver accepts them.
+        // The assumption is that if a SQLException is thrown, it doesn't support them.
+        // I don't know of any other way to check if the database/driver accepts
+        // prepared statements.  If you do, please change this method!
+        pstmt = con.prepareStatement("SELECT * FROM UP_USERS WHERE USER_NAME=?");
+        pstmt.clearParameters ();
+        pstmt.setString(1, "DUMMY_VALUE");
+        pstmt.execute();
       }
-      catch (Exception e)
+      catch (SQLException sqle)
       {
-        e.printStackTrace();
+        supportsPreparedStatements = false;
+        sqle.printStackTrace();
+        exit();
       }
       finally
       {
-        try { stmt.close(); } catch (Exception e) { }
+        try { pstmt.close(); } catch (Exception e) { }
       }
+
+      return supportsPreparedStatements;
     }
 
     class Table
