@@ -57,6 +57,7 @@ import  org.apache.xml.serialize.XMLSerializer;
 import  org.jasig.portal.security.IRole;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.channels.CError;
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -295,6 +296,10 @@ public class RDBMUserLayoutStore
         channel.setAttribute("detachable", detachable ? "true" : "false");
         return channel;
       }
+
+      private final Element nodeParameter(DocumentImpl doc, String name, int value) {
+        return nodeParameter(doc, name, Integer.toString(value));
+      }
       private final Element nodeParameter(DocumentImpl doc, String name, String value) {
         Element parameter = doc.createElement("parameter");
         parameter.setAttribute("name", name);
@@ -318,12 +323,13 @@ public class RDBMUserLayoutStore
       /**
        * Display a message where this channel should be
        */
-      public Element getDocument(DocumentImpl doc, String idTag, String statusMsg) {
+      public Element getDocument(DocumentImpl doc, String idTag, String statusMsg, int errorId) {
         Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false,
                                   false, false);
         addParameters(doc, channel);
         channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
         channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
+        channel.appendChild(nodeParameter(doc, "CErrorErrorId", errorId));
         return channel;
       }
       /**
@@ -845,7 +851,7 @@ public class RDBMUserLayoutStore
             + chanId);
           if (channel != null) {
             structure = channel.getDocument(doc, channelPrefix + structId,
-              "You do not have permission to use this channel.");
+              "You do not have permission to access this channel.", CError.CHANNEL_AUTHORIZATION_EXCEPTION);
           }
         }
 
@@ -853,7 +859,8 @@ public class RDBMUserLayoutStore
           // Can't find channel
           ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
           structure = cd.getDocument(doc, channelPrefix + structId,
-           "This channel no longer exists. You should remove it from your layout.");
+           "This channel no longer exists. You should remove it from your layout.",
+           CError.CHANNEL_MISSING_EXCEPTION);
         }
       } else {
         structure = doc.createElement("folder");

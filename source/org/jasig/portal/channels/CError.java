@@ -73,13 +73,15 @@ import java.util.Hashtable;
 public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable
 {
 
-    // codes defining the sage at which the exception was thrown
+    // codes defining the stage at which the exception was thrown
     public static final int GENERAL_ERROR=0;
     public static final int RENDER_TIME_EXCEPTION=1;
     public static final int SET_STATIC_DATA_EXCEPTION=2;
     public static final int SET_RUNTIME_DATA_EXCEPTION=3;
     public static final int TIMEOUT_EXCEPTION=4;
     public static final int SET_PCS_EXCEPTION=5;
+    public static final int CHANNEL_AUTHORIZATION_EXCEPTION=6;
+    public static final int CHANNEL_MISSING_EXCEPTION=7;
 
     // codes defining exception types
     public static final int GENERAL_RENDERING_EXCEPTION=1;
@@ -144,6 +146,10 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public void setStaticData (ChannelStaticData sd) {
       this.str_message = sd.getParameter("CErrorMessage");
       this.str_channelID = sd.getParameter("CErrorChanId");
+      String value;
+      if ((value = sd.getParameter("CErrorErrorId")) != null) {
+        this.errorID = Integer.parseInt(value);
+      }
       placeHolder = true;  // Should only get here if we are a "normal channel"
     }
 
