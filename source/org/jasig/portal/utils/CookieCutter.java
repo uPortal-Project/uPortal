@@ -250,20 +250,19 @@ public class CookieCutter
                cookie.setMaxAge(Integer.parseInt(token.substring(token.indexOf("=")+1).trim()) );
                ageSet = true;
             }
-            if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
+            else if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
             {
                cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
                domainSet = true;
                cookie.domainIsSet();
             }
-            if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
+            else if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
             {
                cookie.setPath(token.substring(token.indexOf("=")+1).trim());
                pathSet = true;
                cookie.pathIsSet();
             }
-            if ( !portSet && ((token.indexOf("Port") != -1 || token.indexOf("PORT") != -1)
-                                                           || token.indexOf("port") != -1) )
+            else if ( !portSet && token.toLowerCase().indexOf("port")!=-1)
             {
                if (token.indexOf("=")==-1)
                  cookie.setPort(port);
