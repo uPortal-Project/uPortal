@@ -4,6 +4,7 @@
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="skinsPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:param>
   <xsl:param name="currentSkin">java</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
 
   <xsl:template match="/">
@@ -20,11 +21,11 @@
             <td>
               <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr class="uportal-channel-table-header">
-                  <td>Option</td>
+                  <td nowrap="nowrap">Option</td>
                   <td>
                     <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td>Thumbnail</td>
+                  <td nowrap="nowrap">Thumbnail</td>
                   <td>
                     <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
