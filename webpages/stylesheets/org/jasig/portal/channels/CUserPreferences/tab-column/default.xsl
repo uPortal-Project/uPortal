@@ -855,7 +855,7 @@ $Revision$
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=modifyChannelParams&amp;elementID={$elementID}">Modify this channel's parameters</a>
+                    <a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}">Modify this channel's parameters</a>
                   </td>
                 </tr>
               </xsl:if>
