@@ -33,9 +33,11 @@
 >
 <!ELEMENT controls EMPTY>
 <!ATTLIST controls
+	timeout (#PCDATA) 5000
 	minimized (true | false) "true"
 	detachable (true | false) "true"
 	editable (true | false) "true"
 	hasHelp (true | false) "true"
+	hasAbout (true | false) "true"
 	removable (true | false) "true"
 >
