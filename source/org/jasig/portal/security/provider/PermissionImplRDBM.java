@@ -522,6 +522,7 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
  */
 private int primDelete(IPermission perm, PreparedStatement ps) throws SQLException
 {
+    ps.clearParameters();
     ps.setString(1, perm.getOwner());
     ps.setString(2, perm.getPrincipal());
     ps.setString(3, perm.getActivity());
@@ -581,6 +582,7 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLExcepti
 
     // UPDATE COLUMNS:
 
+    ps.clearParameters();
     // TYPE:
     if ( perm.getType() == null )
         { ps.setNull(1, Types.VARCHAR); }
