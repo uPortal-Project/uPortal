@@ -141,6 +141,52 @@ public interface IChannelRegistryStore {
   public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception;
 
   /**
+   * Creates a new channel category.
+   * @param category, the channel category to create
+   * @return channelCategory the new channel category
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory newChannelCategory() throws Exception;
+
+  /**
+   * Gets an existing channel category.
+   * @param channelCategoryId the id of the category to get
+   * @return channelCategory the new channel category
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory getChannelCategory(int channelCategoryId) throws Exception;
+
+  /**
+   * Persists a channel category.
+   * @param channelCategory, the channel category to persist
+   * @throws java.lang.Exception
+   */
+  public void saveChannelCategory(ChannelCategory category) throws Exception;
+
+  /**
+   * Deletes a channel category.
+   * @param channelCategory, the channel category to delete
+   * @throws java.lang.Exception
+   */
+  public void deleteChannelCategory(ChannelCategory category) throws Exception;
+
+  /**
+   * Makes one category a child of another.
+   * @param child, the source category
+   * @param parent, the destination category
+   * @throws java.lang.Exception
+   */
+  public void addCategoryToCategory(ChannelCategory source, ChannelCategory destination) throws Exception;
+
+  /**
+   * Makes one category a child of another.
+   * @param child, the category to remove
+   * @param parent, the category to remove from
+   * @throws java.lang.Exception
+   */
+  public void removeCategoryFromCategory(ChannelCategory child, ChannelCategory parent) throws Exception;
+
+  /**
    * Associates a channel definition with a category.
    * @param channelDef, the channel definition
    * @param category, the channel category to which to associate the channel definition

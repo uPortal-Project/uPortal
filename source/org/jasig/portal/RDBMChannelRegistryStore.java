@@ -683,16 +683,88 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Creates a new channel category.
    * @param category, the channel category to create
-   * @throws org.jasig.portal.PortalException
+   * @return channelCategory the new channel category
+   * @throws org.jasig.portal.groups.GroupsException
    */
-   /*
-  public void addCategory(ChannelCategory category) throws PortalException {
+  public ChannelCategory newChannelCategory() throws GroupsException {
     IEntityGroup categoryGroup = GroupService.newGroup(ChannelDefinition.class);
+    categoryGroup.setName(""); // name cannot be null
+    categoryGroup.setCreatorID("0"); // creatorId cannot be null
+    categoryGroup.update();
+    int id = Integer.parseInt(categoryGroup.getKey());
+    return new ChannelCategory(id);
+  }
+
+  /**
+   * Gets an existing channel category.
+   * @param channelCategoryId the id of the category to get
+   * @return channelCategory the new channel category
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelCategory getChannelCategory(int channelCategoryId) throws GroupsException {
+    String key = String.valueOf(channelCategoryId);
+    IEntityGroup categoryGroup = GroupService.findGroup(key);
+    ChannelCategory category = new ChannelCategory(channelCategoryId);
+    category.setName(categoryGroup.getName());
+    category.setDescription(categoryGroup.getDescription());
+    return category;
+  }
+
+  /**
+   * Persists a channel category.
+   * @param channelCategory, the channel category to persist
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public void saveChannelCategory(ChannelCategory category) throws GroupsException {
+    String key = String.valueOf(category.getId());
+    IEntityGroup categoryGroup = GroupService.findGroup(key);
     categoryGroup.setName(category.getName());
     categoryGroup.setDescription(category.getDescription());
+    String creatorId = String.valueOf(category.getCreatorId());
+    categoryGroup.setCreatorID(creatorId);
     categoryGroup.update();
   }
-  */
+
+  /**
+   * Deletes a channel category.
+   * @param channelCategory, the channel category to delete
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public void deleteChannelCategory(ChannelCategory category) throws GroupsException {
+    String key = String.valueOf(category.getId());
+    IEntityGroup categoryGroup = GroupService.findGroup(key);
+    categoryGroup.delete();
+  }
+
+  /**
+   * Makes one category a child of another.
+   * @param child, the source category
+   * @param parent, the destination category
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public void addCategoryToCategory(ChannelCategory child, ChannelCategory parent) throws GroupsException {
+    String childKey = String.valueOf(child.getId());
+    IEntityGroup childGroup = GroupService.findGroup(childKey);
+    String parentKey = String.valueOf(parent.getId());
+    IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+    parentGroup.addMember(childGroup);
+    parentGroup.updateMembers();
+  }
+
+  /**
+   * Makes one category a child of another.
+   * @param child, the category to remove
+   * @param parent, the category to remove from
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public void removeCategoryFromCategory(ChannelCategory child, ChannelCategory parent) throws GroupsException {
+    String childKey = String.valueOf(child.getId());
+    IEntityGroup childGroup = GroupService.findGroup(childKey);
+    String parentKey = String.valueOf(parent.getId());
+    IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+    parentGroup.removeMember(childGroup);
+    parentGroup.updateMembers();
+  }
 
   /**
    * Associates a channel definition with a category.
