@@ -1,7 +1,5 @@
-package org.jasig.portal.groups;
-
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +32,7 @@ package org.jasig.portal.groups;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jasig.portal.groups;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,7 +48,7 @@ import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
 
 /**
- * Factory for <code>EntityGroupImpl</code>.
+ * Store for <code>EntityGroupImpl</code>.
  * @author Dan Ellentuck
  * @version $Revision$
  */
@@ -724,32 +723,28 @@ private static java.lang.String prependMemberTableAlias(String column)
  * Insert the entity into the database.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
-private void primAdd(IEntityGroup group) throws SQLException, GroupsException
+private void primAdd(IEntityGroup group, Connection conn) throws SQLException, GroupsException
 {
-    java.sql.Connection conn = null;
-
     try
     {
-
-        conn = RDBMServices.getConnection();
         java.sql.PreparedStatement ps = conn.prepareStatement(getInsertGroupSql());
         try
         {
-                Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
-                ps.setString(1, group.getKey());
-                ps.setString(2, group.getCreatorID());
-                ps.setInt   (3, typeID.intValue());
-                ps.setString(4, group.getName());
-                ps.setString(5, group.getDescription());
+            Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+            ps.setString(1, group.getKey());
+            ps.setString(2, group.getCreatorID());
+            ps.setInt   (3, typeID.intValue());
+            ps.setString(4, group.getName());
+            ps.setString(5, group.getDescription());
 
-                int rc = ps.executeUpdate();
+            int rc = ps.executeUpdate();
 
-                if ( rc != 1 )
-                {
-                        String errString = "Problem adding " + group;
-                        LogService.log (LogService.ERROR, errString);
-                        throw new GroupsException(errString);
-                  }
+            if ( rc != 1 )
+            {
+                String errString = "Problem adding " + group;
+                LogService.log (LogService.ERROR, errString);
+                throw new GroupsException(errString);
+            }
         }
         finally
             { ps.close(); }
@@ -758,10 +753,6 @@ private void primAdd(IEntityGroup group) throws SQLException, GroupsException
     {
         LogService.log (LogService.ERROR, sqle);
         throw sqle;
-    }
-    finally
-    {
-        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -808,13 +799,10 @@ private void primDelete(IEntityGroup group) throws SQLException
  * Update the entity in the database.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
-private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
+private void primUpdate(IEntityGroup group, Connection conn) throws SQLException, GroupsException
 {
-    java.sql.Connection conn = null;
-
     try
     {
-        conn = RDBMServices.getConnection();
         java.sql.PreparedStatement ps = conn.prepareStatement(getUpdateGroupSql());
 
         try
@@ -844,27 +832,19 @@ private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
         LogService.log (LogService.ERROR, sqle);
         throw sqle;
     }
-    finally
-    {
-        RDBMServices.releaseConnection(conn);
-    }
 }
 /**
- * Insert and delete group membership rows inside a transaction.
+ * Insert and delete group membership rows.  The transaction is maintained by
+ * the caller.
  * @param group org.jasig.portal.groups.EntityGroupImpl
  */
-private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
+private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java.sql.SQLException
 {
     String groupKey = egi.getKey();
     String memberKey = null;
     String isGroup = null;
-    Connection conn = null;
-
     try
     {
-        conn = RDBMServices.getConnection();
-        setAutoCommit(conn, false);
-
         if ( egi.hasDeletes() )
         {
             PreparedStatement psDelete = conn.prepareStatement(getDeleteMemberSql());
@@ -907,22 +887,11 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
                 { psAdd.close(); }
         }
 
-        commit(conn);
-
     }
     catch (SQLException sqle)
     {
-
-        rollback(conn);
-
         LogService.log (LogService.ERROR, sqle);
         throw sqle;
-    }
-
-    finally
-    {
-        setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -953,20 +922,46 @@ throws GroupsException
     return singleton;
 }
 /**
- * Commit this entity to the backing store.
+ * Commit this entity AND ITS MEMBERSHIPS to the underlying store.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void update(IEntityGroup group) throws GroupsException
 {
+    Connection conn = null;
+    boolean exists = existsInDatabase(group);
     try
     {
-        if ( existsInDatabase(group) )
-            { primUpdate(group); }
-        else
-            { primAdd(group); }
+        conn = RDBMServices.getConnection();
+        setAutoCommit(conn, false);
+
+        try
+        {
+            if ( exists )
+                { primUpdate(group, conn); }
+            else
+                { primAdd(group, conn); }
+            primUpdateMembers((EntityGroupImpl)group, conn);
+            commit(conn);
+        }
+
+        catch (Exception ex)
+        {
+            rollback(conn);
+            throw new GroupsException("Problem updating " + this + ex);
+        }
     }
-    catch (Exception ex)
-        { throw new GroupsException("Problem updating " + this + ex); }
+
+    catch ( SQLException sqlex )
+        { throw new GroupsException(sqlex.getMessage()); }
+
+    finally
+    {
+        try { setAutoCommit(conn, true); }
+        catch (SQLException sqle)
+            { throw new GroupsException(sqle.getMessage()); }
+
+        RDBMServices.releaseConnection(conn);
+    }
 }
 /**
  * Insert and delete group membership rows inside a transaction.
@@ -974,13 +969,35 @@ public void update(IEntityGroup group) throws GroupsException
  */
 public void updateMembers(IEntityGroup eg) throws GroupsException
 {
+    Connection conn = null;
     EntityGroupImpl egi = (EntityGroupImpl) eg;
     if ( egi.isDirty() )
+    try
     {
+        conn = RDBMServices.getConnection();
+        setAutoCommit(conn, false);
+
         try
-            { primUpdateMembers(egi); }
+        {
+            primUpdateMembers(egi, conn);
+            commit(conn);
+        }
         catch ( SQLException sqle )
-            { throw new GroupsException("Problem updating memberships for " + egi + " " + sqle.getMessage()); }
+        {
+            rollback(conn);
+            throw new GroupsException("Problem updating memberships for " + egi + " " + sqle.getMessage());
+        }
+    }
+
+    catch ( SQLException sqlex )
+        { throw new GroupsException(sqlex.getMessage()); }
+
+    finally
+    {
+        try { setAutoCommit(conn, true); }
+        catch (SQLException sqle)
+            { throw new GroupsException(sqle.getMessage()); }
+        RDBMServices.releaseConnection(conn);
     }
 }
 }

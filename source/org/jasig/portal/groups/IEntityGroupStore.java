@@ -38,12 +38,12 @@ package org.jasig.portal.groups;
 /**
  * Interface for finding and maintaining <code>IEntityGroups</code>.
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01 
+ * @version 1.0, 11/29/01
  */
-public interface IEntityGroupStore 
+public interface IEntityGroupStore
 {
 /**
- * Delete this <code>IEntityGroup</code> from the data store.  
+ * Delete this <code>IEntityGroup</code> from the data store.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void delete(IEntityGroup group) throws GroupsException;
@@ -54,14 +54,14 @@ public void delete(IEntityGroup group) throws GroupsException;
  */
 public IEntityGroup find(String key) throws GroupsException;
 /**
- * Returns an <code>Iterator</code> over the <code>Collection</code> of 
+ * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntityGroups</code> that the <code>IGroupMember</code> belongs to.
  * @return java.util.Iterator
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
 public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
 /**
- * Returns an <code>Iterator</code> over the <code>Collection</code> of 
+ * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntityGroups</code> that are members of this <code>IEntityGroup</code>.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
@@ -72,7 +72,8 @@ public java.util.Iterator findMemberGroups(IEntityGroup group) throws GroupsExce
  */
 public IEntityGroup newInstance(Class entityType) throws GroupsException;
 /**
- * Adds or updates the <code>IEntityGroup</code> to the data store, as appropriate.  
+ * Adds or updates the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the
+ * data store, as appropriate.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void update(IEntityGroup group) throws GroupsException;
