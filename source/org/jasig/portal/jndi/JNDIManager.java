@@ -183,6 +183,7 @@ public class JNDIManager {
       Context layoutsContext=null;
       try {
           userIdContext=(Context)usersContext.lookup(userId);
+
           // lookup layouts and sessions contexts
           try {
               layoutsContext=(Context)userIdContext.lookup("layouts");
@@ -239,66 +240,71 @@ public class JNDIManager {
       } catch (Exception e) {};
 
       try {
-          Context layoutIdContext=layoutsContext.createSubcontext(layoutId);
-
-          // bind layouts/[layoutId]/sessions/[sessionId] context
-          Context lsessionsContext=layoutIdContext.createSubcontext("sessions");
-          lsessionsContext.createSubcontext(sessionId);
-
-          LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): created context /users/"+userId+"/layouts/"+layoutId);
-
+          // check if the layout id binding already exists
           try {
-              Context channel_idsContext = (Context)layoutIdContext.createSubcontext("channel-ids");
-              // Get the list of channels in the user's layout
-              NodeList channelNodes = userLayout.getElementsByTagName("channel");
-              Node fname = null;
-              Node instanceid = null;
-              // Parse through the channels and populate the JNDI
-              for (int i = 0; i < channelNodes.getLength(); i++) {
-                  // Attempt to get the fname and instance ID from the channel
-                  fname = channelNodes.item(i).getAttributes().getNamedItem("fname");
-                  instanceid = channelNodes.item(i).getAttributes().getNamedItem("ID");
-                  if (fname != null && instanceid != null) {
-                      //System.out.println("fname found -> " + fname);
-                      // Create a new composite name from the fname
-                      CompositeName cname = new CompositeName(fname.getNodeValue());
-                      // Get a list of the name components
-                      Enumeration e = cname.getAll();
-                      // Get the root of the context
-                      Context nextContext = channel_idsContext;
-                      // Add all of the subcontexts in the fname
-                      String subContextName = new String();
-                      while (e.hasMoreElements()) {
-                          subContextName = (String)e.nextElement();
-                          if (e.hasMoreElements()) {
-                              // Bind a new sub context if the current name component is not the leaf
-                              nextContext = nextContext.createSubcontext(subContextName);
-                          } else {
-                              //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
-                              LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): bound "+instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
+              Context layoutIdContext=(Context)layoutsContext.lookup(layoutId);
+              // assume layouts/[layoutId]/ has already been populated
 
-                              nextContext.rebind(subContextName, instanceid.getNodeValue());
+              // bind layouts/[layoutId]/sessions/[sessionId]
+              try {
+                  Context lsessionsContext=(Context)userIdContext.lookup("layouts/"+layoutId+"/sessions");
+                  lsessionsContext.createSubcontext(sessionId);
+
+                  LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): created /users/"+userId+"/layouts/"+layoutId+"/sessions/"+sessionId);
+
+              } catch (Exception e) {
+                  LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed ! "+e.getMessage());
+                  throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed !",e);
+              }
+          } catch (NamingException nne) {
+              // given layout id has not been registered yet
+              Context layoutIdContext=layoutsContext.createSubcontext(layoutId);
+
+              // bind layouts/[layoutId]/sessions/[sessionId] context
+              Context lsessionsContext=layoutIdContext.createSubcontext("sessions");
+              lsessionsContext.createSubcontext(sessionId);
+
+              LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): created context /users/"+userId+"/layouts/"+layoutId);
+
+              try {
+                  Context channel_idsContext = (Context)layoutIdContext.createSubcontext("channel-ids");
+                  // Get the list of channels in the user's layout
+                  NodeList channelNodes = userLayout.getElementsByTagName("channel");
+                  Node fname = null;
+                  Node instanceid = null;
+                  // Parse through the channels and populate the JNDI
+                  for (int i = 0; i < channelNodes.getLength(); i++) {
+                      // Attempt to get the fname and instance ID from the channel
+                      fname = channelNodes.item(i).getAttributes().getNamedItem("fname");
+                      instanceid = channelNodes.item(i).getAttributes().getNamedItem("ID");
+                      if (fname != null && instanceid != null) {
+                          //System.out.println("fname found -> " + fname);
+                          // Create a new composite name from the fname
+                          CompositeName cname = new CompositeName(fname.getNodeValue());
+                          // Get a list of the name components
+                          Enumeration e = cname.getAll();
+                          // Get the root of the context
+                          Context nextContext = channel_idsContext;
+                          // Add all of the subcontexts in the fname
+                          String subContextName = new String();
+                          while (e.hasMoreElements()) {
+                              subContextName = (String)e.nextElement();
+                              if (e.hasMoreElements()) {
+                                  // Bind a new sub context if the current name component is not the leaf
+                                  nextContext = nextContext.createSubcontext(subContextName);
+                              } else {
+                                  //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
+                                  LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): bound "+instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
+
+                                  nextContext.rebind(subContextName, instanceid.getNodeValue());
+                              }
                           }
                       }
                   }
+              } catch (NamingException ne) {
+                  LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context. "+ne.getMessage());
+                  throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context.",ne);
               }
-          } catch (NamingException ne) {
-              LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context. "+ne.getMessage());
-              throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context.",ne);
-          }
-      } catch (NameAlreadyBoundException nabe) {
-          // assume layouts/[layoutId]/ has already been populated
-
-          // bind layouts/[layoutId]/sessions/[sessionId]
-          try {
-              Context lsessionsContext=(Context)userIdContext.lookup("layouts/"+layoutId+"/sessions");
-              lsessionsContext.createSubcontext(sessionId);
-
-              LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): created /users/"+userId+"/layouts/"+layoutId+"/sessions/"+sessionId);
-
-          } catch (Exception e) {
-              LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed ! "+e.getMessage());
-              throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed !",e);
           }
       } catch (Exception e) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId+"  "+e.getMessage());
