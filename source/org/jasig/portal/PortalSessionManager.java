@@ -29,7 +29,7 @@ import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.ResourceLoader;
-
+import java.util.Date;
 
 /**
  * This is an entry point into the uPortal.
@@ -39,26 +39,26 @@ import org.jasig.portal.utils.ResourceLoader;
 public class PortalSessionManager extends HttpServlet {
 
     private static final Log log = LogFactory.getLog(PortalSessionManager.class);
-    
-    /** 
+
+    /**
      * Default value for ALLOW_REPEATED_REQUESTS.
      * This value will be used when the corresponding property cannot be loaded.
      */
     private static final boolean DEFAULT_ALLOW_REPEATED_REQUESTS = false;
-    
+
     /**
      * Default value for whether to cache URLs.
      * This value will be used when the corresponding property cannot be loaded.
      */
     private static final boolean DEFAULT_URL_CACHING = true;
-    
+
     /**
      * Default SAX driver name.
      * This will be used when the System property is not set and
      * the corresponding portal.properties property is not set.
      */
     private static final String DEFAULT_SAX_DRIVER = "org.apache.xerces.parsers.SAXParser";
-    
+
   public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
   public static final String IDEMPOTENT_URL_TAG="idempotent";
 
@@ -66,7 +66,7 @@ public class PortalSessionManager extends HttpServlet {
   private static ServletContext servletContext = null;
   private static PortalSessionManager instance = null;
   private static boolean fatalError = false;
-  
+
   public static final ErrorID initPortalContext = new ErrorID("config","JNDI","Cannot initialize JNDI context");
 
   /**
@@ -86,7 +86,8 @@ public class PortalSessionManager extends HttpServlet {
 
   // random number generator
   private static final Random randomGenerator = new Random();
-  
+
+  public static final Date startedAt = new Date();
   static {
     log.info( "uPortal started");
   }
@@ -104,19 +105,19 @@ public class PortalSessionManager extends HttpServlet {
       if (sc == null) {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
-      
+
       // Supply PortletContainer with ServletConfig
       CPortletAdapter.setServletConfig(sc);
-      
+
       servletContext = sc.getServletContext();
 
       try {
           JNDIManager.initializePortalContext();
       } catch (Exception pe) {
-      	  ExceptionHelper.genericTopHandler(initPortalContext,pe);
-      	  fatalError=true;
+          ExceptionHelper.genericTopHandler(initPortalContext,pe);
+          fatalError=true;
       }
-      
+
       // Turn off URL caching if it has been requested
       if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching", DEFAULT_URL_CACHING)) {
          // strangely, we have to instantiate a URLConnection to turn off caching, so we'll get something we know is there
@@ -146,6 +147,7 @@ public class PortalSessionManager extends HttpServlet {
       if (System.getProperty("org.xml.sax.driver") == null) {
           System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver", DEFAULT_SAX_DRIVER));
       }
+
     }
   }
 
@@ -170,7 +172,7 @@ public class PortalSessionManager extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
         res.setHeader("uPortal-version", Version.getProduct() + "_" + Version.getReleaseTag());
-        
+
         if (fatalError) {
             try {
                 res.sendRedirect("error/fatal.htm");
@@ -178,15 +180,15 @@ public class PortalSessionManager extends HttpServlet {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
             }
             return;
-        } 
-        
+        }
+
         // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
         try {
             req.setCharacterEncoding("UTF-8");
         } catch (UnsupportedEncodingException uee) {
             log.error("Unable to set UTF-8 character encoding!", uee);
         }
-        
+
         HttpSession session = req.getSession(false);
 
         if (session != null) {
@@ -206,7 +208,7 @@ public class PortalSessionManager extends HttpServlet {
                 UPFileSpec upfs=new UPFileSpec(req);
 
                 String tag=upfs.getTagId();
-                
+
                 // see if the tag was registered
                 if ( tag != null ) {
                     request_verified = true;
@@ -226,16 +228,16 @@ public class PortalSessionManager extends HttpServlet {
                     // Retrieve the user's UserInstance object
                     userInstance = UserInstanceManager.getUserInstance(req);
                 } catch(Exception e) {
-                	ExceptionHelper.genericTopHandler(Errors.bug,e);
-                	ExceptionHelper.generateErrorPage(res,e);
-                	return;
+                  ExceptionHelper.genericTopHandler(Errors.bug,e);
+                  ExceptionHelper.generateErrorPage(res,e);
+                  return;
                 }
-                
+
                 final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
-                
-                //If the request is for a portlet and an action request run that portlet's processAction 
+
+                //If the request is for a portlet and an action request run that portlet's processAction
                 final boolean didAction = userInstance.processPortletActionIfNecessary(wrappedRequest, res);
-                
+
                 //If an action was performed a redirect will be issued to the HttpResponse so this request won't render anything
                 if (didAction)
                     return;
@@ -253,24 +255,26 @@ public class PortalSessionManager extends HttpServlet {
                     if(!requestTags.add(newTag)) {
                         log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
-                    
-					userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+
+                    long startTime = System.currentTimeMillis();
+          userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+
                 }
             } catch (Exception e) {
-            	ExceptionHelper.genericTopHandler(Errors.bug,e);
-				ExceptionHelper.generateErrorPage(res,e);
-            	return;
+              ExceptionHelper.genericTopHandler(Errors.bug,e);
+        ExceptionHelper.generateErrorPage(res,e);
+              return;
            }
 
         } else {
-           try {	
+           try {
              //throw new ServletException("Session object is null !");
-        	 res.sendRedirect(req.getContextPath() + "/Login" );
+           res.sendRedirect(req.getContextPath() + "/Login" );
            } catch (Exception e) {
-        	  ExceptionHelper.genericTopHandler(Errors.bug,e);
-			  ExceptionHelper.generateErrorPage(res,e);
-        	  return;
-             } 	
+            ExceptionHelper.genericTopHandler(Errors.bug,e);
+        ExceptionHelper.generateErrorPage(res,e);
+            return;
+             }
         }
 
     }

@@ -9,18 +9,21 @@
  | a reference Spring application contexts configured in this file.
  +-->
 <beans>
-	<!--
-	 | The default application context for uPortal. Other spring configurations
-	 | should be added to the list if they have beans that need to be avalable
-	 | in the uPortal application context.
-	 +-->
-	<bean id="org.jasig.portal" lazy-init="true"
-		class="org.springframework.context.support.ClassPathXmlApplicationContext">
-		<constructor-arg>
-			<list>
-				<value>properties/personDirectory.xml</value>
-				<value>properties/applicationContext.xml</value>
-			</list>
-		</constructor-arg>
-	</bean>
+  <!--
+   | The default application context for uPortal. Other spring configurations
+   | should be added to the list if they have beans that need to be avalable
+   | in the uPortal application context.
+   +-->
+  <bean id="org.jasig.portal" lazy-init="true"
+    class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <constructor-arg>
+      <list>
+        <value>properties/personDirectory.xml</value>
+        <value>properties/applicationContext.xml</value>
+        <!--
+        <value>properties/jmxContext.xml</value>
+        -->
+      </list>
+    </constructor-arg>
+  </bean>
 </beans>

@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -59,9 +60,9 @@ import org.xml.sax.XMLReader;
  * @version $Revision$
  */
 public class UserInstance implements HttpSessionBindingListener {
-    
+
     private static final Log log = LogFactory.getLog(UserInstance.class);
-    
+
     public static final int guestUserId = 1;
 
     // To debug structure and/or theme transformations, set these to true
@@ -192,7 +193,7 @@ public class UserInstance implements HttpSessionBindingListener {
         if (isPortletAction) {
             this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
         }
-        
+
         return isPortletAction;
     }
 
@@ -209,6 +210,7 @@ public class UserInstance implements HttpSessionBindingListener {
         uPreferencesManager = upm;
         // process possible worker dispatch
         if(!processWorkerDispatch(req,res,channelManager)) {
+            final long startTime = System.currentTimeMillis();
             synchronized(rendering_lock) {
                 // This function does ALL the content gathering/presentation work.
                 // The following filter sequence is processed:
@@ -624,6 +626,8 @@ public class UserInstance implements HttpSessionBindingListener {
                     throw pe;
                 } catch (Exception e) {
                     throw new PortalException(e);
+                } finally {
+                  FrameworkMBeanImpl.setLastRender(System.currentTimeMillis() - startTime);
                 }
             }
         }
@@ -671,19 +675,19 @@ public class UserInstance implements HttpSessionBindingListener {
          channelManager.finishedSession();
          if ( uPreferencesManager != null )
           uPreferencesManager.getUserLayoutManager().removeLayoutEventListener(channelManager);
-     }    
+     }
      if( uPreferencesManager != null ) {
        uPreferencesManager.finishedSession(bindingEvent);
-       try {      
-        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager(); 
-		if ( ulm instanceof TransientUserLayoutManagerWrapper )
-		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();   
+       try {
+        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
+    if ( ulm instanceof TransientUserLayoutManagerWrapper )
+      ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
         if ( !(ulm instanceof IAggregatedUserLayoutManager) )
-          ulm.saveUserLayout();    
+          ulm.saveUserLayout();
        } catch ( Exception e ) {
-		  log.error("UserInstance::valueUnbound(): Error occured while saving the user layout ", e);    
+      log.error("UserInstance::valueUnbound(): Error occured while saving the user layout ", e);
          }
-     } 
+     }
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
         GroupService.finishedSession(person);
@@ -715,14 +719,14 @@ public class UserInstance implements HttpSessionBindingListener {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-	   IAggregatedUserLayoutManager alm = getAggregatedLayoutManager(ulm);
+     IAggregatedUserLayoutManager alm = getAggregatedLayoutManager(ulm);
        String newNodeId = null;
 
         // Sending the theme stylesheets parameters based on the user security context
         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
         StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
-        
+
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
         structPrefs.putParameterValue("authenticated", authenticated);
         String userName = person.getFullName();
@@ -736,7 +740,7 @@ public class UserInstance implements HttpSessionBindingListener {
         } catch (Exception e) {
             log.error("Exception determining publish rights for " + this.person, e);
         }
-        
+
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
@@ -776,15 +780,15 @@ public class UserInstance implements HttpSessionBindingListener {
               themePrefs.putParameterValue("channelPublishID",contentPublishId);
              }
             } else if ( nodeType == IUserLayoutNodeDescription.FOLDER && (value = req.getParameter("fragmentPublishID")) != null ) {
-				String contentPublishId = value.trim();
-				String fragmentRootId = CommonUtils.nvl(req.getParameter("fragmentRootID"));
-				if ( contentPublishId.length() > 0 && fragmentRootId.length() > 0 ) {
-				  IALFolderDescription folderDesc = (IALFolderDescription) nodeDesc;	
-               	  folderDesc.setFragmentId(contentPublishId);
-				  folderDesc.setFragmentNodeId(fragmentRootId);
-				} 
-				//themePrefs.putParameterValue("uP_fragmentPublishID",contentPublishId);	
-            }	
+        String contentPublishId = value.trim();
+        String fragmentRootId = CommonUtils.nvl(req.getParameter("fragmentRootID"));
+        if ( contentPublishId.length() > 0 && fragmentRootId.length() > 0 ) {
+          IALFolderDescription folderDesc = (IALFolderDescription) nodeDesc;
+                   folderDesc.setFragmentId(contentPublishId);
+          folderDesc.setFragmentNodeId(fragmentRootId);
+        }
+        //themePrefs.putParameterValue("uP_fragmentPublishID",contentPublishId);
+            }
             newNodeDescription = nodeDesc;
             ulm.markAddTargets(newNodeDescription);
         } else {
@@ -799,21 +803,21 @@ public class UserInstance implements HttpSessionBindingListener {
             value = values1[0];
          if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
           if (  newNodeDescription != null ) {
-            if ( CommonUtils.nvl(value).trim().length() == 0 ) 
+            if ( CommonUtils.nvl(value).trim().length() == 0 )
              value = null;
-            
+
             // Adding a new node
             newNodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
-            
+
             // if the new node is a fragment being added - we need to re-load the layout
             if ( newNodeDescription instanceof IALFolderDescription ) {
-              IALFolderDescription folderDesc = (IALFolderDescription) newNodeDescription;	
+              IALFolderDescription folderDesc = (IALFolderDescription) newNodeDescription;
               if ( folderDesc.getFragmentNodeId() != null ) {
                 ulm.saveUserLayout();
                 ulm.loadUserLayout();
-              }  
+              }
             }
-			 
+
           }
          }
             newNodeDescription = null;
@@ -856,27 +860,27 @@ public class UserInstance implements HttpSessionBindingListener {
            ulm.markMoveTargets(null);
            newNodeDescription = null;
         }
-        
-		param = req.getParameter("uP_reload_layout");
-		if ( param != null && param.equals("true") ) {
-		  ulm.loadUserLayout();
-		}
-        
-		param = req.getParameter("uPcFM_action");
-		if ( param != null ) { 
-		  if ( alm != null ) {		
-			String fragmentId = req.getParameter("uP_fragmentID"); 
-			if ( param.equals("edit") && fragmentId != null ) {
-		         if ( CommonUtils.parseInt(fragmentId) > 0 ) 
-		           alm.loadFragment(fragmentId); 
-		         else 
-		           alm.loadUserLayout();
-		    } else if ( param.equals("save") ) {
-			       alm.saveFragment();
-			}
-		  }	  
-		}
-		
+
+    param = req.getParameter("uP_reload_layout");
+    if ( param != null && param.equals("true") ) {
+      ulm.loadUserLayout();
+    }
+
+    param = req.getParameter("uPcFM_action");
+    if ( param != null ) {
+      if ( alm != null ) {
+      String fragmentId = req.getParameter("uP_fragmentID");
+      if ( param.equals("edit") && fragmentId != null ) {
+             if ( CommonUtils.parseInt(fragmentId) > 0 )
+               alm.loadFragment(fragmentId);
+             else
+               alm.loadUserLayout();
+        } else if ( param.equals("save") ) {
+             alm.saveFragment();
+      }
+      }
+    }
+
 
         //Propagate minimize/maximize events to the channels
         String[] tcattrs = req.getParameterValues("uP_tcattr");
@@ -908,24 +912,24 @@ public class UserInstance implements HttpSessionBindingListener {
             }
         }
 
-		// If we have created a new node we need to let the structure XSL know about it
-		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
-		// Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
-		if ( alm != null )
-		  structPrefs.putParameterValue("current_structure",alm.isFragmentLoaded()?"fragment":"layout");
+    // If we have created a new node we need to let the structure XSL know about it
+    structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
+    // Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
+    if ( alm != null )
+      structPrefs.putParameterValue("current_structure",alm.isFragmentLoaded()?"fragment":"layout");
 
 
       } catch ( Exception e ) {
           throw new PortalException(e);
         }
     }
-    
+
     private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
-		if ( ulm instanceof TransientUserLayoutManagerWrapper )
-			 ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-		if ( ulm instanceof IAggregatedUserLayoutManager )	
-			 return (IAggregatedUserLayoutManager) ulm;
-		     return null;	 
+    if ( ulm instanceof TransientUserLayoutManagerWrapper )
+       ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+    if ( ulm instanceof IAggregatedUserLayoutManager )
+       return (IAggregatedUserLayoutManager) ulm;
+         return null;
     }
 
     /**
