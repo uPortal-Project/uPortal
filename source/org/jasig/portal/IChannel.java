@@ -35,9 +35,6 @@
 
 package org.jasig.portal;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
 import org.xml.sax.DocumentHandler;
 
 /**
@@ -47,12 +44,10 @@ import org.xml.sax.DocumentHandler;
  */
 public interface IChannel
 {
-  // following section allows portal to pass parameter/settings information to the channel
-
   /**
    * Passes ChannelStaticData to the channel.
    * This is done during channel instantiation time.
-   * see org.jasig.portal.StaticData
+   * see org.jasig.portal.ChannelStaticData
    * @param sd channel static data
    * @see ChannelStaticData
    */
@@ -74,16 +69,12 @@ public interface IChannel
    */
   public void receiveEvent (PortalEvent ev);
 
-  // following section allows channel to pass parameter/settings information to the portal
-
   /**
    * Acquires ChannelRuntimeProperites from the channel.
    * This function may be called by the portal framework throughout the session.
    * @see ChannelRuntimeProperties
    */
   public ChannelRuntimeProperties getRuntimeProperties ();
-
-  // rendering Layer
 
   /**
    * Ask channel to render its content.
