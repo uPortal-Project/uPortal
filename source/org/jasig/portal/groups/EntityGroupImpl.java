@@ -150,6 +150,14 @@ protected void checkProspectiveMemberGroupName(String newName) throws GroupsExce
         throw new GroupsException(this + " already contains a group named " + newName + ".");
 }
 /**
+ * Clear out caches for pending adds and deletes of group members.
+ */
+private void clearPendingUpdates()
+{
+    addedMembers = null;
+    removedMembers = null;
+}
+/**
  * Checks if <code>GroupMember</code> gm is a member of this.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
@@ -590,6 +598,7 @@ public void update() throws GroupsException
         { getFactory().update(this); }
     catch (Exception ex)
         { throw new GroupsException(ex.toString()); }
+    clearPendingUpdates();
 }
 /**
  * Delegate to the factory.
@@ -600,7 +609,6 @@ public void updateMembers() throws GroupsException
         { getFactory().updateMembers(this); }
     catch (Exception ex)
         { throw new GroupsException("Problem updating memberships for " + this + " " + ex); }
-    addedMembers = null;
-    removedMembers = null;
+    clearPendingUpdates();
 }
 }
