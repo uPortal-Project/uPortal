@@ -2,8 +2,6 @@
 
 <?xml-stylesheet href="CGenericXSLT/RSS/rss-0_9_webbrowser.xsl"  type="text/xsl" media="netscape"?>
 <?xml-stylesheet href="CGenericXSLT/RSS/rss-0_9_webbrowser.xsl"  type="text/xsl" media="explorer"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-0_9_webbrowser.xsl"  type="text/xsl" media="opera"?>
 
-
-<document>
-
-</document>
+<document/>

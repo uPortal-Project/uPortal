@@ -28,6 +28,12 @@ Mozilla/4.*=1
 # Mozilla browsers and Netscape 6
 Mozilla/5.*=1
 
+# Opera 5.x browsers
+Opera/5.*=1
+
+# Opera 6.x browsers
+Opera/6.*=1
+
 # UP browser
 UP.Browser/3.1-(UPG1|SH) UP.Link/3.2=2
 
