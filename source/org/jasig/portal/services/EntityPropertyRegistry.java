@@ -60,7 +60,7 @@ public class EntityPropertyRegistry {
     protected IEntityPropertyStore store;
     protected int storePrecedence;
     protected IEntityPropertyFinder[] finders;
-    protected Class[] finderTypes;
+    protected Object[] finderTypes;
     protected Class propsType;
 
     protected EntityPropertyRegistry() {
@@ -85,11 +85,18 @@ public class EntityPropertyRegistry {
             }
         }
         finders = new IEntityPropertyFinder[top + 1];
-        finderTypes = new Class[top + 1];
+        finderTypes = new Object[top + 1];
         for (int i = 0; i < ff.getLength(); i++) {
             Element f = (Element)ff.item(i);
-            finders[Integer.parseInt(f.getAttribute("precedence"))] = (IEntityPropertyFinder)Class.forName(f.getAttribute("impl")).newInstance();
-            finderTypes[Integer.parseInt(f.getAttribute("precedence"))] = Class.forName(f.getAttribute("type"));
+            int p = Integer.parseInt(f.getAttribute("precedence"));
+            finders[p] = (IEntityPropertyFinder)Class.forName(f.getAttribute("impl")).newInstance();
+            String type = f.getAttribute("type");
+            if (type.equals("*")){
+              finderTypes[p] = type;
+            }
+            else{
+              finderTypes[p] = Class.forName(type);
+            }
         }
         propsType = Class.forName("org.jasig.portal.services.entityproperties.EntityProperties");
     }
@@ -163,7 +170,7 @@ public class EntityPropertyRegistry {
                     finder = store;
                 }
                 else {
-                    if (entityID.getType().equals(finderTypes[i])) {
+                    if ((finderTypes[i]!=null) && (finderTypes[i].equals("*") || entityID.getType().equals((Class) finderTypes[i]))) {
                         finder = finders[i];
                     }
                     else {
