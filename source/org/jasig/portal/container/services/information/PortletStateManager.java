@@ -338,18 +338,12 @@ public class PortletStateManager {
 		Iterator keys = params.keySet().iterator();
 		while ( keys.hasNext() ) {
 			String name = (String) keys.next();
-			 String value = (String) params.get(name);
-			 /*if ( windowOfAction != null && name.indexOf(MULTI) > 0 && name.startsWith(getKey(windowOfAction)) ) {
-			    String[] values = decodeValues(value);
-			    for ( int i = 0; i < values.length; i++ ) {
-				 url.append(decodeMultiName(windowOfAction,name)).append("=").append(values[i]);
+			Object value = params.get(name);
+            String[] values = (value instanceof String[])? (String[]) value : new String[] {value.toString()};
+			for ( int i = 0; i < values.length; i++ ) {
+				 url.append(name).append("=").append(values[i]);
 				 url.append("&");
-			    } 
-			 } else {*/
-			     url.append(name).append("=").append((String)value); 
-			     url.append("&");   
-			  // }    	 
-			
+			} 
 		}
    
 		String strURL = url.toString();
