@@ -73,7 +73,7 @@
       </td>
       <td><img alt="interface image" src="transparent.gif" width="1" height="1"/></td>
       <td>
-        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}_thumb.gif" width="120" border="0"/>
+        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}/{skin}_thumb.gif" width="120" border="0"/>
       </td>
       <td><img alt="interface image" src="transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
