@@ -196,6 +196,11 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     // This channel is not editable
   }
   
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    // This channel has no help
+  }
+
   /**
    * A class for caching RSS Xml objects.  Each object will be
    * cached for a specified amount of time (specified in seconds)
@@ -244,6 +249,5 @@ public class CRSSChannel implements org.jasig.portal.IChannel
         m_Value = value;
       }
     }
-  }
-
+  }  
 }

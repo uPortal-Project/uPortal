@@ -277,4 +277,8 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
   }  
   
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    // This channel has no help
+  }
 }

@@ -62,6 +62,34 @@ public class CAuthorization implements org.jasig.portal.IChannel
   }
   
   /**
+   * Called when user clicks this channel's help button
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    try
+    {
+      out.println ("<p><font face=\"Arial,Helvetica,sans-serif\">Please sign in with the following user name and password:</font>");
+      out.println ("<p><p>");
+      out.println ("<table border=0 cellspacing=5 cellpadding=5>");
+      out.println ("  <tr><th align=right><font face=\"Arial,Helvetica,sans-serif\">User name:</font></th><td><tt>demo</tt></td></tr>");
+      out.println ("  <tr><th align=right><font face=\"Arial,Helvetica,sans-serif\">Password:</font></th><td><tt>demo</tt></td></tr>");
+      out.println ("</table>");
+
+      out.println ("<form action=\"layout.jsp\" method=post>");
+      out.println ("<input type=submit name=submit value=\"Try Again\">");
+      out.println ("</form>");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace ();
+    }
+    
+  }
+  
+  /**
    * Called by this channels render method.  Outputs an html form prompting
    * for user name and password.
    * @param the servlet request object

@@ -63,4 +63,9 @@ public class CSearch implements org.jasig.portal.IChannel
   {
     // This channel is not editable
   }
+  
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    // This channel has no help
+  }
 }

@@ -19,4 +19,5 @@ public interface IChannel
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out);
 }

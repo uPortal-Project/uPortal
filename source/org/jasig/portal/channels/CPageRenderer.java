@@ -220,4 +220,9 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     }
     return null;
   }
+  
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    // This channel has no help
+  }
 }
