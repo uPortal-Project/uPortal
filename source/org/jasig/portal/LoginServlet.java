@@ -109,8 +109,9 @@ public class LoginServlet extends HttpServlet {
   	String targetFname = request.getParameter("uP_fname");
   	String targetArgs = request.getParameter("uP_args");
   	// Clear out the existing session for the user
-    request.getSession().invalidate();
-  	//  Retrieve the user's session
+    if (request.getSession(false) != null)
+        request.getSession().invalidate();
+    //  Retrieve the user's session
     request.getSession(true);
   	IPerson person = null;
     try {
