@@ -33,7 +33,7 @@
  *
  */
 
-package  org.jasig.portal.utils;
+package org.jasig.portal.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,86 +57,92 @@ public class DocumentFactory {
     protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
     protected DocumentBuilderFactory dbFactory = null;
 
-
-  protected static synchronized DocumentFactory instance(){
-      if (_instance==null){
-          _instance = new DocumentFactory();
-      }
-      return _instance;
-  }
-
-  protected DocumentFactory() {
-
-    try{
-      dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-      dbFactory.setNamespaceAware(true);
-      dbFactory.setValidating(false);
+    protected static synchronized DocumentFactory instance() {
+        if (_instance == null) {
+            _instance = new DocumentFactory();
+        }
+        return _instance;
     }
-    catch (Exception e){
-      LogService.log(LogService.ERROR,"DocumentFactory: unable to initialize DocumentBuilderFactory");
-      LogService.log(LogService.ERROR,e);
-    }
-  }
-  
-  /**
-   * Returns a new copy of a Document implementation. This will
-   * return an <code>IPortalDocument</code> implementation.
-   * @return an empty org.w3c.dom.Document implementation
-   */
-  public static Document getNewDocument() {
-    IPortalDocument doc = null;
-    try {
-        String className = PropertiesManager.getProperty(
-          "org.jasig.portal.utils.IPortalDocument.implementation");
-        doc = (IPortalDocument)Class.forName(className).newInstance();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-      throw new RuntimeException(
-        "org.jasig.portal.utils.DocumentFactory could not create new " +
-        "IPortalDocument: " + e.getMessage());
-    }
-    return doc;
-  }
 
-  /**
-   * Returns a new copy of a Document implementation.
-   * @return an empty org.w3c.dom.Document implementation
-   */
-  static Document __getNewDocument() {
-    Document doc = newDocumentBuilder().newDocument();
-    return doc;
-  }
+    protected DocumentFactory() {
 
-     public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
-      try{
-        DocumentBuilder builder = newDocumentBuilder();
-        Document doc = builder.parse(stream);
+        try {
+            dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setNamespaceAware(true);
+            dbFactory.setValidating(false);
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, "DocumentFactory: unable to initialize DocumentBuilderFactory");
+            LogService.log(LogService.ERROR, e);
+        }
+    }
+
+    /**
+     * Returns a new copy of a Document implementation. This will
+     * return an <code>IPortalDocument</code> implementation.
+     * @return an empty org.w3c.dom.Document implementation
+     */
+    public static Document getNewDocument() {
+        IPortalDocument doc = null;
+        try {
+            String className = PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation");
+            doc = (IPortalDocument)Class.forName(className).newInstance();
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+            throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: " + e.getMessage());
+        }
         return doc;
-      }
-      finally{
-          try {
-              stream.close();
-          }
-          catch(IOException e) {
-          }
-      }
-  }
-
-    public static javax.xml.parsers.DocumentBuilder newDocumentBuilder(){
-      DocumentBuilder builder = (DocumentBuilder) localDocBuilder.get();
-      return builder;
     }
 
-    protected static class LocalDocumentBuilder extends ThreadLocal{
-      protected Object initialValue(){
-          Object r = null;
-          try{
-            r = instance().dbFactory.newDocumentBuilder();
-          }
-          catch(Exception e){
-              LogService.log(LogService.ERROR,e);
-          }
-          return r;
-      }
-  }
+    /**
+     * Returns a new copy of a Document implementation.
+     * @return an empty org.w3c.dom.Document implementation
+     */
+    static Document __getNewDocument() {
+        Document doc = newDocumentBuilder().newDocument();
+        return doc;
+    }
+
+    public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
+        try {
+            DocumentBuilder builder = newDocumentBuilder();
+            Document doc = builder.parse(stream);
+            return doc;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public static Document getDocumentFromStream(InputStream stream, EntityResolver er) throws IOException, SAXException {
+        try {
+            DocumentBuilder builder = newDocumentBuilder();
+            builder.setEntityResolver(er);
+            Document doc = builder.parse(stream);
+            return doc;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public static DocumentBuilder newDocumentBuilder() {
+        DocumentBuilder builder = (DocumentBuilder)localDocBuilder.get();
+        return builder;
+    }
+
+    protected static class LocalDocumentBuilder extends ThreadLocal {
+        protected Object initialValue() {
+            Object r = null;
+            try {
+                r = instance().dbFactory.newDocumentBuilder();
+            } catch (Exception e) {
+                LogService.log(LogService.ERROR, e);
+            }
+            return r;
+        }
+    }
 }

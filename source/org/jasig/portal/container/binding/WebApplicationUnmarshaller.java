@@ -45,6 +45,7 @@ import org.apache.pluto.om.common.ParameterSet;
 import org.apache.pluto.om.common.SecurityRoleSet;
 import org.apache.pluto.om.servlet.ServletDefinitionList;
 import org.apache.pluto.om.servlet.WebApplicationDefinition;
+import org.jasig.portal.container.deploy.WebAppDtdResolver;
 import org.jasig.portal.container.om.common.DescriptionSetImpl;
 import org.jasig.portal.container.om.common.DisplayNameSetImpl;
 import org.jasig.portal.container.om.common.ParameterImpl;
@@ -74,6 +75,7 @@ import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 /**
@@ -83,13 +85,15 @@ import org.xml.sax.SAXException;
  */
 public class WebApplicationUnmarshaller {
 
-    private InputStream inputStream = null;
-    private String contextName = null;
-    private Document doc = null; // Might want to consider SAX instead of DOM parsing
-    private WebApplicationDefinitionImpl webApplicationDefinition = null;
+    private InputStream inputStream;
+    private String contextName;
+    private Document doc; // Might want to consider SAX instead of DOM parsing
+    private WebApplicationDefinitionImpl webApplicationDefinition;
+    private static EntityResolver webAppDtdResolver;
     
     public WebApplicationUnmarshaller() {
         this.webApplicationDefinition = new WebApplicationDefinitionImpl();
+        webAppDtdResolver = new WebAppDtdResolver();
     }
 
     /**
@@ -102,7 +106,7 @@ public class WebApplicationUnmarshaller {
      */
     public void init(InputStream inputStream, String contextName) throws IOException, SAXException {
         this.inputStream = inputStream;
-        this.doc = DocumentFactory.getDocumentFromStream(inputStream);
+        this.doc = DocumentFactory.getDocumentFromStream(inputStream, webAppDtdResolver);
         this.contextName = contextName;
     }
     
