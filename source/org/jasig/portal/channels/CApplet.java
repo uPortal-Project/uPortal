@@ -35,10 +35,12 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
-import org.apache.xalan.xslt.*;
+import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.services.LogService;
 import org.xml.sax.DocumentHandler;
-import java.io.*;
+import java.io.StringWriter;
+import java.net.URL;
 
 /** <p>Displays an applet. To pass in applet parameters, construct
  * channel parameters whose keys start with the string "APPLET."</p>
@@ -51,59 +53,9 @@ import java.io.*;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CApplet implements IChannel
+public class CApplet extends BaseChannel
 {
-  ChannelStaticData staticData = null;
-  ChannelRuntimeData runtimeData = null;
-  StylesheetSet set = null;
-
-  private static final String fs = File.separator;
-  private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
-  String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CApplet";
-
-  /** Constructs a CApplet.
-   */
-  public CApplet ()
-  {
-    this.staticData = new ChannelStaticData ();
-    this.runtimeData = new ChannelRuntimeData ();
-    this.set = new StylesheetSet (stylesheetDir + fs + "CApplet.ssl");
-    this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
-  }
-
-  /** Returns channel runtime properties
-   * @return handle to runtime properties
-   */
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
-    // Channel will always render, so the default values are ok
-    return new ChannelRuntimeProperties ();
-  }
-
-  /** Processes layout-level events coming from the portal
-   * @param ev a portal layout event
-   */
-  public void receiveEvent (PortalEvent ev)
-  {
-    // no events for this channel
-  }
-
-  /** Receive static channel data from the portal
-   * @param sd static channel data
-   */
-  public void setStaticData (ChannelStaticData sd)
-  {
-    this.staticData = sd;
-  }
-
-  /** Receives channel runtime data from the portal and processes actions
-   * passed to it.  The names of these parameters are entirely up to the channel.
-   * @param rd handle to channel runtime data
-   */
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
-    this.runtimeData = rd;
-  }
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CApplet/CApplet.ssl");
 
   /** Output channel content to the portal
    * @param out a sax document handler
@@ -112,58 +64,39 @@ public class CApplet implements IChannel
   {
     try
     {
-      if (set != null)
+      StringWriter w = new StringWriter ();
+      w.write ("<?xml version='1.0'?>\n");
+      w.write ("<applet code=\"" + staticData.getParameter ("code") + "\"\n");
+      w.write ("        codebase=\"" + staticData.getParameter ("codeBase") + "\"\n");
+      w.write ("        width=\"" + staticData.getParameter ("width") + "\"\n");
+      w.write ("        height=\"" + staticData.getParameter ("height")  + "\"\n");
+      w.write ("        align=\"top\"\n");
+      w.write ("        border=\"0\"\n");
+      w.write ("        archive=\"" + staticData.getParameter ("archive") + "\">\n");
+
+      // Take all parameters whose names start with "APPLET." and pass them
+      // to the applet (after stripping "APPLET.")
+      java.util.Enumeration allKeys = staticData.keys ();
+
+      while (allKeys.hasMoreElements ())
       {
-        StringWriter w = new StringWriter ();
-        w.write ("<?xml version='1.0'?>\n");
-        w.write ("<applet code=\"" + staticData.getParameter ("code") + "\"\n");
-        w.write ("        codebase=\"" + staticData.getParameter ("codeBase") + "\"\n");
-        w.write ("        width=\"" + staticData.getParameter ("width") + "\"\n");
-        w.write ("        height=\"" + staticData.getParameter ("height")  + "\"\n");
-        w.write ("        align=\"top\"\n");
-        w.write ("        border=\"0\"\n");
-        w.write ("        archive=\"" + staticData.getParameter ("archive") + "\">\n");
+        String p = (String) allKeys.nextElement();
 
-        // Take all parameters whose names start with "APPLET." and pass them
-        // to the applet (after stripping "APPLET.")
-        java.util.Enumeration allKeys = staticData.keys ();
-
-        while (allKeys.hasMoreElements ())
+        if (p.startsWith ("APPLET."))
         {
-          String p = (String) allKeys.nextElement();
-
-          if (p.startsWith ("APPLET."))
-          {
-            String name = p.substring (7); // skip "APPLET."
-            String value = (String) staticData.getParameter (p);
-            w.write ("  <param name=\"" + name + "\" value=\"" + value + "\"/>\n");
-          }
+          String name = p.substring (7); // skip "APPLET."
+          String value = (String) staticData.getParameter (p);
+          w.write ("  <param name=\"" + name + "\" value=\"" + value + "\"/>\n");
         }
-
-              w.write ("</applet>\n");
-
-        processXML (w.toString (), out);
       }
+
+      w.write ("</applet>\n");
+
+      XSLT.transform(w.toString(), new URL(sslLocation), out, "main", runtimeData.getBrowserInfo());
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
-  }
-
-  private void processXML (String sXml, DocumentHandler out) throws org.xml.sax.SAXException
-  {
-    XSLTInputSource xmlSource = new XSLTInputSource (new StringReader(sXml));
-    XSLTInputSource xslSource = set.getStylesheet("main", runtimeData.getBrowserInfo());
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-    if (xslSource != null)
-    {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
-      processor.process (xmlSource, xslSource, xmlResult);
-    }
-    else
-      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CApplet: unable to find a stylesheet for rendering");
   }
 }
