@@ -393,7 +393,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     if ( !(parentNode.getNodeType()==IUserLayoutNodeDescription.FOLDER ) )
       throw new PortalException ("The target parent node should be a folder!");
 
-    if ( !checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") ) {
+    if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
 
 
      // Checking children related restrictions
@@ -443,8 +443,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     ALNode oldParentNode = getLayoutNode(node.getParentNodeId());
     ALNode newParentNode = getLayoutNode(newParentId);
 
-    if ( !checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") &&
-         !checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") ) {
+    if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
+         checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
@@ -1635,7 +1635,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
 
         // Checking the immutable node restriction
-        if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
+        if ( !checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") )
             return false;
         // Checking the immutable parent node related restriction
         if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )

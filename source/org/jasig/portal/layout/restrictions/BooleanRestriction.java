@@ -62,6 +62,10 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
            super();
          }
 
+         private boolean strToBool ( String boolStr ) {
+           return ("Y".equals(boolStr))?true:false;
+         }
+
           /**
             * Parses the restriction expression of the current node
             * @exception PortalException
@@ -71,10 +75,10 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
             String restrictionExp = getRestrictionExpression();
             int commaIndex = restrictionExp.indexOf(',');
             if ( commaIndex < 0 ) {
-             boolValue1 = boolValue2 = CommonUtils.strToBool(restrictionExp);
+             boolValue1 = boolValue2 = strToBool(restrictionExp);
             } else {
-             boolValue1 = CommonUtils.strToBool(restrictionExp.substring(0,commaIndex));
-             boolValue2 = CommonUtils.strToBool(restrictionExp.substring(commaIndex+1));
+             boolValue1 = strToBool(restrictionExp.substring(0,commaIndex));
+             boolValue2 = strToBool(restrictionExp.substring(commaIndex+1));
             }
           } catch ( Exception e ) {
              throw new PortalException(e.getMessage());
