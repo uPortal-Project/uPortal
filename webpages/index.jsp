@@ -30,9 +30,6 @@ else
   }
 }
 %>
-<%
-org.jasig.portal.Logger.setSession(session);
-%>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.LayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 

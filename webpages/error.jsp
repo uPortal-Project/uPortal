@@ -9,7 +9,6 @@
 <body>
 
 <%
- org.jasig.portal.Logger.setSession(session);
 if (exception != null)
 { 
   Logger.log (Logger.ERROR, exception);
