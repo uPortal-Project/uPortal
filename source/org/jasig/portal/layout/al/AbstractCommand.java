@@ -10,7 +10,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
 /**
  * @author Michael Ivanov: mvi at immagic.com
  */
-public abstract class AbstractCommand implements ILayoutCommand {
+public abstract class AbstractCommand implements IALCommand {
     
 	private INodeId nodeId;
     

@@ -16,6 +16,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @version $Revision$
  */
 public class UpdateCommand extends AbstractCommand {
+	
     private INodeDescription nodeDescription;
     
     public UpdateCommand() { 
@@ -35,7 +36,7 @@ public class UpdateCommand extends AbstractCommand {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.common.ILayout)
      */
-    public boolean execute(IAggregatedLayout manager) throws PortalException {
+    public boolean execute(IALCommands manager) throws PortalException {
         return manager.updateNode(this.getNodeId(),nodeDescription);
     }
     /**

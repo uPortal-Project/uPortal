@@ -12,12 +12,13 @@ import org.jasig.portal.PortalException;
  * layout operation.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * 
  */
-public interface ILayoutCommand {
+public interface IALCommand {
     /**
      * Execute command on a given manager
      * @param manager
      * @return
      */
-    public boolean execute(IAggregatedLayout manager) throws PortalException;
+    public boolean execute(IALCommands manager) throws PortalException;
 }

@@ -35,7 +35,7 @@ public class MoveCommand extends AbstractCommand {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayout)
      */
-    public boolean execute(IAggregatedLayout manager) throws PortalException {
+    public boolean execute(IALCommands manager) throws PortalException {
         return manager.moveNode(getNodeId(),parentId,nextNodeId);
     }
     

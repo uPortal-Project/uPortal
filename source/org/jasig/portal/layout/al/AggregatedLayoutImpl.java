@@ -24,7 +24,7 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
  */
-public class AggregatedLayoutImpl implements  IAggregatedLayout {
+public class AggregatedLayoutImpl implements  IAggregatedLayout, IALCommands {
 	
     private IALCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;

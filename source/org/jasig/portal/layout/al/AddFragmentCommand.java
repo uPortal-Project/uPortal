@@ -14,7 +14,8 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
  */
-public class AddFragmentCommand implements ILayoutCommand {
+public class AddFragmentCommand implements IALCommand {
+	
     private IFragmentId fragmentId;
 	private INodeId parentId;
     private INodeId nextNodeId; 
@@ -37,7 +38,7 @@ public class AddFragmentCommand implements ILayoutCommand {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayout)
      */
-    public boolean execute(IAggregatedLayout manager) throws PortalException {
+    public boolean execute(IALCommands manager) throws PortalException {
         return (manager.addFragment(fragmentId,parentId,nextNodeId)!=null);
     }
     

@@ -37,8 +37,8 @@ public class SimpleLayoutCommandManager implements IALCommandManager {
         commands.clear();
         // execute commands
         for (Iterator iter = existingCommands.iterator(); iter.hasNext();) {
-            ILayoutCommand command = (ILayoutCommand) iter.next();
-            command.execute(this.layoutManager);
+            IALCommand command = (IALCommand) iter.next();
+            command.execute((IALCommands)layoutManager);
         }
     }
     /* (non-Javadoc)
