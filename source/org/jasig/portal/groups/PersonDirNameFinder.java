@@ -40,6 +40,7 @@ package  org.jasig.portal.groups;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.portal.services.PersonDirectory;
@@ -111,13 +112,24 @@ public class PersonDirNameFinder
     private String primGetName (String key) throws java.sql.SQLException {
         String name = key;
         Hashtable userInfo = pd.getUserDirectoryInformation(name);
-        String displayName = (String)userInfo.get("displayName");
-        if ((displayName != null)&& !(displayName.trim().equals(""))) {
-            name = displayName;
+        Object displayName = userInfo.get("displayName");
+        String displayNameStr = "";
+        if (displayName != null)
+        {
+            if (displayName instanceof java.util.List)
+            {
+                List displayNameList = (List) displayName;
+                if (! displayNameList.isEmpty() )
+                    { displayNameStr = (String)displayNameList.get(0); } 
+            }
+            else displayNameStr = (String)displayName;
+        
+            if (! displayNameStr.trim().equals("")) 
+                { name = displayNameStr; }
         }
-  
         return  name;
     }
+
 
     /**
      * @return java.util.Map
