@@ -79,8 +79,8 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
 
    /**
     * The execute() method is the main method for the CreateMember command.
-    * @param ChannelRuntimeData runtimeData
-    * @param ChannelStaticData staticData
+    * @param runtimeData
+    * @param staticData
     */
    public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Start");
@@ -90,8 +90,9 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
       String newGrpName = runtimeData.getParameter("grpName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
-            "will be added to parent element = " + parentID);
+            " will be added to parent element = " + parentID);
       IEntityGroup parentGroup = null;
+      Class parentEntityType;
       Element parentElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentID);
       String parentKey = parentElem.getAttribute("key");
       String retMsg;
@@ -103,21 +104,29 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          return;
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Parent element was found!");
-      // The parent could be an IGroupMember or an IInitialGroupContext.
-      if (!parentIsInitialGroupContext) {
-         parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
-         if (parentGroup == null) {
-            retMsg = "Unable to retrieve Parent Entity Group!";
-            runtimeData.setParameter("commandResponse", retMsg);
-            return;
-         }
-      }
       try {
+         // The parent could be an IGroupMember or an IInitialGroupContext.
+         if (!parentIsInitialGroupContext) {
+            parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
+            if (parentGroup == null) {
+               retMsg = "Unable to retrieve Parent Entity Group!";
+               runtimeData.setParameter("commandResponse", retMsg);
+               return;
+            }
+            else {
+               parentEntityType = parentGroup.getEntityType();
+            }
+         }
+         else {
+            /** @todo A list will be presented to the user who will select the type
+             *  of group to create */
+            parentEntityType = Class.forName((String) GroupsManagerXML.getEntityTypes().get("IPerson"));
+         }
          Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
                + newGrpName);
          // Next line creates a group that will hold iEntities
          String userID = runtimeData.getParameter("username");
-         IEntityGroup childEntGrp = GroupService.newGroup(parentGroup.getEntityType());
+         IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
          childEntGrp.setName(newGrpName);
          childEntGrp.setCreatorID(userID);
          childEntGrp.update();
@@ -142,7 +151,6 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
                GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
                      xmlDoc);
 
-               /** @todo xmlCache: */
                ((Element)parentNode).setAttribute("hasMembers", "true");
             }
          }
@@ -181,11 +189,8 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       } catch (Exception e) {
          retMsg = "Unable to create group";
          runtimeData.setParameter("commandResponse", retMsg);
-         Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + e);
+         Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Finished");
    }
 }
-
-
-

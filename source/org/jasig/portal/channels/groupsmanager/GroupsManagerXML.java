@@ -65,9 +65,6 @@ import  org.apache.xerces.dom.DocumentImpl;
 
 /**
  * @todo
- * xmlCache: should eventually check an element cache and clone the cached
- * element OR if cached element does not exist created one and use it
- *
  * refactor: reexamine common functions in GroupsManagerXML, Utility,
  * GroupsManagerCommand, and wrapper classes to come up consistent approach
  *
@@ -88,10 +85,10 @@ public class GroupsManagerXML
     * Returns a DocumentImpl for all InitialContexts for which the user has
     * permissions. This method is called when CGroupsManager is instantiated.
     * @param rd
-    * @return
+    * @param sd
+    * @return DocumentImpl
     */
    public static DocumentImpl getGroupsManagerXml (ChannelRuntimeData rd, ChannelStaticData sd) {
-      //getGroupsXML(ChannelRuntimeData rd)
       String rkey = null;
       IEntityGroup entGrp = null;
       IGroupMember aGroupMember = null;
@@ -101,6 +98,13 @@ public class GroupsManagerXML
       viewDoc.appendChild(viewRoot);
       Element apRoot = getAuthorizationXml(viewDoc, sd);
       viewRoot.appendChild(apRoot);
+
+      /** @todo take output create xml element and append to xmlDoc
+       *  rename vars and_or rethink flow */
+      //HashMap entTypes = getEntityTypes();
+      Element etRoot = getEntityTypesXml(viewDoc);
+      viewRoot.appendChild(etRoot);
+
       Element igcRoot = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
       igcRoot.setAttribute("expanded", "true");
       Element rdfElem = createRdfElement(ROOT_GROUP_TITLE, ROOT_GROUP_DESCRIPTION,
@@ -152,7 +156,7 @@ public class GroupsManagerXML
     * @param isContextExpanded
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public static Element getGroupMemberXml (IGroupMember gm, boolean isContextExpanded,
          Element anElem, DocumentImpl aDoc) {
@@ -188,7 +192,8 @@ public class GroupsManagerXML
    /**
     * Returns an IEntity for the key.
     * @param aKey
-    * @return
+    * @param aType
+    * @return IEntity
     */
    public static IEntity retrieveEntity (String aKey, String aType) {
       IEntity ent = null;
@@ -203,26 +208,50 @@ public class GroupsManagerXML
    }
 
    /**
-    * Returns an IGroupMember name, for a key and class
+    * Returns a name from the EntityNameFinderService, for a key and classname
+    * @param className
     * @param aKey
-    * @param typClassName
-    * @return
+    * @return String
     */
-   public static String getGroupMemberName (String aKey, String typClassName) {
-      String gmName = "";
+   public static String getEntityName (String className, String aKey) {
+      String entName = "";
       try {
-         gmName = EntityNameFinderService.instance().getNameFinder(Class.forName(typClassName)).getName(aKey);
+         entName = getEntityName(Class.forName(className), aKey);
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupsManagerXML.getGroupMemberName(): ERROR retrieving entity "
+         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(): ERROR retrieving entity "
                + e.toString());
       }
-      return  gmName;
+      return entName;
+   }
+
+   /**
+    * Returns a name from the EntityNameFinderService, for a key and class
+    * @param typClass
+    * @param aKey
+    * @return String
+    */
+   public static String getEntityName (Class typClass, String aKey) {
+      String entName = "";
+      String msg;
+      long time1 = Calendar.getInstance().getTime().getTime();
+      long time2 = 0;
+      try {
+         entName = EntityNameFinderService.instance().getNameFinder(typClass).getName(aKey);
+      } catch (Exception e) {
+         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(): ERROR retrieving entity "
+               + e.toString());
+      }
+      time2 = Calendar.getInstance().getTime().getTime();
+      msg = "GroupsManagerXML.getEntityName() timer: " + String.valueOf(time2 - time1) + " ms total";
+      Utility.logMessage("DEBUG", msg);
+
+      return  entName;
    }
 
    /**
     * Returns an IEntityGroup for the key.
     * @param aKey
-    * @return
+    * @return IEntityGroup
     */
    public static IEntityGroup retrieveGroup (String aKey) {
       Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroup(): About to search for Group: "
@@ -245,7 +274,7 @@ public class GroupsManagerXML
     * Returns the next sequential identifier which is used to uniquely
     * identify an element. This identifier is held in the Element "id" attribute.
     * "0" is reserved for the Group containing the Initial Contexts for the user.
-    * @return
+    * @return String
     */
    public static synchronized String getNextUid () {
       // max size of int = (2 to the 32 minus 1) = 2147483647
@@ -263,7 +292,7 @@ public class GroupsManagerXML
     * @param name
     * @param xmlDoc
     * @param setGrpDefault
-    * @return
+    * @return Element
     */
    public static Element createElement (String name, DocumentImpl xmlDoc, boolean setGrpDefault) {
       //* Maybe I should have all parms in a java.util.HashMap
@@ -290,7 +319,7 @@ public class GroupsManagerXML
     * @param description
     * @param creator
     * @param xmlDoc
-    * @return
+    * @return Element
     */
    public static Element createRdfElement (String title, String description, String creator,
          DocumentImpl xmlDoc) {
@@ -322,11 +351,9 @@ public class GroupsManagerXML
    /**
     * Returns an element holding the user's permissions used to determine access
     * privileges in the Groups Manager channel.
-    * @param title
-    * @param description
-    * @param creator
     * @param xmlDoc
-    * @return
+    * @param sd
+    * @return Element
     */
    public static Element getAuthorizationXml (DocumentImpl xmlDoc, ChannelStaticData sd) {
       IAuthorizationPrincipal ap = sd.getAuthorizationPrincipal();
@@ -339,7 +366,7 @@ public class GroupsManagerXML
          try {
             name = EntityNameFinderService.instance().getNameFinder(ap.getType()).getName(name);
          } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            Utility.logMessage("ERROR", e.toString());
          }
          apRoot.setAttribute("name", name);
       }
@@ -360,4 +387,58 @@ public class GroupsManagerXML
       }
       return  apRoot;
    }
+
+   /**
+    * Returns a HashMap of entity types. These are the entity types that can be added
+    * to a group. We determine this by retrieving all entity types from the EntityTypes
+    * class and using the GroupService class to determine which types have a root
+    * group.
+    * @return HashMap
+    */
+   public static HashMap getEntityTypes() {
+      HashMap entTypes = new HashMap(5);
+      String entName;
+      String entClassName;
+      Iterator entTypesItr = EntityTypes.singleton().getAllEntityTypes();
+      while (entTypesItr.hasNext()) {
+         Class entType = (Class) entTypesItr.next();
+         entClassName = entType.getName();
+         entName = entClassName.substring(entClassName.lastIndexOf('.') + 1);
+         try {
+            if (GroupService.getRootGroup(entType) != null) {
+               entTypes.put(entName, entClassName);
+               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Added : " + entName + " -- " + entClassName);
+            }
+            else {
+               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Did NOT Add : " + entName + " -- " + entClassName);
+            }
+         }
+         catch (Exception e) {
+            // an exception means we do not want to add this entity to the list
+            Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes [Exception] Did NOT Add : " + entName + " -- " + entClassName);
+         }
+      }
+      return entTypes;
+   }
+
+   /**
+    * Returns an element holding the entity types used in uPortal.
+    * @param xmlDoc
+    * @return Element
+    */
+   public static Element getEntityTypesXml (DocumentImpl xmlDoc) {
+      Element etRoot = xmlDoc.createElement("entityTypes");
+      HashMap entTypes = getEntityTypes();
+      Iterator entTypeKeys = entTypes.keySet().iterator();
+      while (entTypeKeys.hasNext()) {
+         Object key = entTypeKeys.next();
+         String entType = (String) entTypes.get(key);
+         Element etElem = xmlDoc.createElement("entityType");
+         etElem.setAttribute("name", (String) key);
+         etElem.setAttribute("type", entType);
+         etRoot.appendChild(etElem);
+      }
+      return  etRoot;
+   }
+
 }

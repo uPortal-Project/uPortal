@@ -51,37 +51,37 @@ public interface IInitialGroupContext {
 
    /**
     * Returns the ownerID
-    * @return
+    * @return String
     */
    public String getOwnerID ();
 
    /**
     * Returns the ownerType.
-    * @return
+    * @return String
     */
    public String getOwnerType ();
 
    /**
     * Returns the groupID
-    * @return
+    * @return String
     */
    public String getGroupID ();
 
    /**
     * Returns the ordinal used for display positioning.
-    * @return
+    * @return int
     */
    public int getOrdinal ();
 
    /**
     * Returns expanded
-    * @return
+    * @return boolean
     */
    public boolean isExpanded ();
 
    /**
     * Returns the dateCreated
-    * @return
+    * @return Timestamp
     */
    public java.sql.Timestamp getDateCreated ();
 
@@ -105,18 +105,19 @@ public interface IInitialGroupContext {
 
    /**
     * Sets expanded
-    * @param boolean expanded
+    * @param expanded
     */
    public void setExpanded (boolean expanded);
 
    /**
     * put your documentation comment here
-    * @param String expanded
+    * @param expanded
     */
    public void setExpanded (String expanded);
 
    /**
     * Makes the changes persistent.
+    * @exception ChainedException
     */
    public void update () throws ChainedException;
 }

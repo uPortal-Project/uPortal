@@ -72,7 +72,7 @@ public class GroupsManagerWrapperFactory
 
    /**
     * Instantiates the singleton if not already instantiated and returns it.
-    * @return
+    * @return GroupsManagerWrapperFactory
     */
    public static synchronized GroupsManagerWrapperFactory instance () {
       Utility.logMessage("DEBUG", "GroupsManagerWrapperFactory.instance(): about to get instance");
@@ -87,7 +87,7 @@ public class GroupsManagerWrapperFactory
    /**
     * Returns the instance of a wrapper object bound to a name.
     * @param name
-    * @return
+    * @return IGroupsManagerWrapper
     */
    public static IGroupsManagerWrapper get (String name) {
       return  (IGroupsManagerWrapper)bindings.get(name);
@@ -95,7 +95,7 @@ public class GroupsManagerWrapperFactory
 
    /**
     * Returns the names of the bound wrapper objects. Used for debugging.
-    * @return
+    * @return String[]
     */
    public static String[] getKeys () {
       Set keyset = bindings.keySet();

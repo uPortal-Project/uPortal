@@ -68,6 +68,7 @@ public class RDBMInitialGroupContextStore
 
    /**
     * UserGroupHomeImpl constructor comment.
+    * @exception ChainedException
     */
    public RDBMInitialGroupContextStore () throws ChainedException
    {
@@ -115,8 +116,9 @@ public class RDBMInitialGroupContextStore
 
    /**
     * Find the inital contexts  with this ownerID.
+    * @param owner
     * @return java.util.Iterator
-    * @param String creatorID
+    * @exception ChainedException
     */
    public java.util.Iterator findInitialGroupContextsForOwner (IGroupMember owner) throws ChainedException {
       java.sql.Connection conn = null;
@@ -158,8 +160,9 @@ public class RDBMInitialGroupContextStore
 
    /**
     * Answer if the IInitialGroupContext entity exists in the database.
-    * @return boolean
     * @param igc IInitialGroupContext
+    * @return boolean
+    * @exception ChainedException
     */
    private boolean existsInDatabase (IInitialGroupContext igc) throws ChainedException {
       IInitialGroupContext igcRet = this.find(igc.getOwnerID(), igc.getGroupID());
@@ -168,9 +171,10 @@ public class RDBMInitialGroupContextStore
 
    /**
     * Find and return an instance of the inital group context.
+    * @param ownerID
+    * @param groupID
     * @return org.jasig.portal.channels.groupsmanager.IInitialGroupContext
-    * @param String ownerID
-    * @param String groupID
+    * @exception ChainedException
     */
    public IInitialGroupContext find (String ownerID, String groupID) throws ChainedException {
       IInitialGroupContext igc = null;
@@ -204,13 +208,16 @@ public class RDBMInitialGroupContextStore
 
    /**
     * Cache entityTypes.
+    * @exception ChainedException
     */
    private void initialize () throws ChainedException {}
 
    /**
     * Find and return an instance of the group.
+    * @param rs
     * @return org.jasig.portal.groups.IEntityGroup
-    * @param key java.lang.Object
+    * @exception ChainedException
+    * @exception SQLException
     */
    private IInitialGroupContext instanceFromResultSet (java.sql.ResultSet rs) throws SQLException,
          ChainedException {
@@ -245,11 +252,9 @@ public class RDBMInitialGroupContextStore
     * @param groupID The id of the associated group.
     * @param ordinal Used to display the initial group contexts in a specified order.
     * @param expanded Indicates whether or not the inital group context will be expanded when the gui is first displayed.
-    *
+    * @param dateCreated
     * @return org.jasig.portal.groups.IEntityGroup
-    *
-    * @throws GroupsManagerException
-    *
+    * @exception ChainedException
     */
    public IInitialGroupContext newInstance (String ownerID, String ownerType, String groupID,
          int ordinal, boolean expanded, Timestamp dateCreated) throws ChainedException {
@@ -351,6 +356,7 @@ public class RDBMInitialGroupContextStore
 
    /**
     * Instantiates the singleton if not already instantiated and returns it.
+    * @exception ChainedException
     * @return org.jasig.portal.groups.EntityGroupStoreRDBM
     */
    public static synchronized RDBMInitialGroupContextStore singleton () throws ChainedException {
@@ -363,8 +369,7 @@ public class RDBMInitialGroupContextStore
    /**
     * Commits changes made to an Initial Group Context to the database.
     * @param igc The Initial Group Context to be committed.
-    *
-    * @throws GroupsManagerException
+    * @exception ChainedException
     */
    public void update (IInitialGroupContext igc) throws ChainedException {
       try {

@@ -66,12 +66,12 @@ public class InitialGroupContextImpl
 
    /**
     * Constructor
-    * @param    String owner
-    * @param    String ownerType
-    * @param    String group
-    * @param    int ord
-    * @param    boolean expanded
-    * @param    Timestamp created
+    * @param owner
+    * @param ownerType
+    * @param group
+    * @param ord
+    * @param expanded
+    * @param created
     */
    public InitialGroupContextImpl (String owner, String ownerType, String group, int ord,
          boolean expanded, Timestamp created) {
@@ -169,7 +169,7 @@ public class InitialGroupContextImpl
 
    /**
     * Sets expanded
-    * @param boolean newExpanded
+    * @param newExpanded
     */
    public void setExpanded (boolean newExpanded) {
       expanded = newExpanded;
@@ -177,7 +177,7 @@ public class InitialGroupContextImpl
 
    /**
     * Sets expanded
-    * @param String newExpanded
+    * @param newExpanded
     */
    public void setExpanded (String newExpanded) {
       if (newExpanded != null && (newExpanded.equals("y") || newExpanded.equals("1"))) {
@@ -200,6 +200,7 @@ public class InitialGroupContextImpl
 
    /**
     * Defers to the InitialGroupsContextStore class to perform the update
+    * @exception ChainedException
     */
    public void update () throws ChainedException {
       try {

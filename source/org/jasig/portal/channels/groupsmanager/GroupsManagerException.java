@@ -30,7 +30,7 @@ public class GroupsManagerException extends Exception {
 
    /**
     * put your documentation comment here
-    * @param       String message
+    * @param message
     */
    public GroupsManagerException (String message) {
       super(message);
@@ -38,8 +38,8 @@ public class GroupsManagerException extends Exception {
 
    /**
     * put your documentation comment here
-    * @param       String message
-    * @param       Throwable cause
+    * @param message
+    * @param cause
     */
    public GroupsManagerException (String message, Throwable cause) {
       super(message);
@@ -48,7 +48,7 @@ public class GroupsManagerException extends Exception {
 
    /**
     * put your documentation comment here
-    * @return
+    * @return Throwable
     */
    public Throwable getCause () {
       return  cause;

@@ -81,7 +81,7 @@ public abstract class GroupsManagerCommand
    /**
     * Returns the grpCommand parameter from runtimeData
     * @param runtimeData
-    * @return
+    * @return String
     */
    public String getCommand (org.jasig.portal.ChannelRuntimeData runtimeData) {
       return  (String)runtimeData.getParameter("grpCommand");
@@ -92,7 +92,7 @@ public abstract class GroupsManagerCommand
     * hold one element ID but could contain a string of delimited ids. (See
     * RemoveMember command).
     * @param runtimeData
-    * @return
+    * @return String
     */
    public String getCommandIds (org.jasig.portal.ChannelRuntimeData runtimeData) {
       return  (String)runtimeData.getParameter("grpCommandIds");
@@ -101,7 +101,7 @@ public abstract class GroupsManagerCommand
    /**
     * Returns the groupParentId parameter from staticData
     * @param staticData
-    * @return
+    * @return String
     */
    public String getParentId (ChannelStaticData staticData) {
       return  staticData.getParameter("groupParentId");
@@ -110,7 +110,7 @@ public abstract class GroupsManagerCommand
    /**
     * Returns the cached xml document from staticData
     * @param staticData
-    * @return
+    * @return DocumentImpl
     */
    public DocumentImpl getXmlDoc (ChannelStaticData staticData) {
       return  (DocumentImpl)staticData.get("xmlDoc");
@@ -120,7 +120,7 @@ public abstract class GroupsManagerCommand
     * Answers if the parentGroupId has been set. If it has not been set, this
     * would indicate that Groups Manager is in Servant mode.
     * @param staticData
-    * @return
+    * @return boolean
     */
    public boolean hasParentId (ChannelStaticData staticData) {
       String pk = getParentId(staticData);
@@ -142,8 +142,8 @@ public abstract class GroupsManagerCommand
     * start. After selection is completed, the function operates on the
     * collection on behalf of the parent. This is best illustrated by looking
     * at the AddMembers command and the DoneWithSelection command.
-    * @param ChannelStaticData staticData
-    * @return
+    * @param staticData
+    * @return boolean
     */
    public boolean parentIsInitialGroupContext (ChannelStaticData staticData) {
       return  ((hasParentId(staticData) && getParentId(staticData).equals("0")));
@@ -151,8 +151,8 @@ public abstract class GroupsManagerCommand
 
    /**
     * The method answers if the parent is an InitialGroupContext.
-    * @param String parentID
-    * @return
+    * @param parentID
+    * @return boolean
     */
    public boolean parentIsInitialGroupContext (String parentID) {
       return  (parentID != null && parentID.equals("0"));
@@ -161,7 +161,6 @@ public abstract class GroupsManagerCommand
    /**
     * clear out the selection list
     * @param staticData
-    * @return
     */
    public void clearSelected (ChannelStaticData staticData) {
       Element rootElem = getXmlDoc(staticData).getDocumentElement();

@@ -165,6 +165,7 @@ public class CGroupsManager
     * Acquires ChannelRuntimeProperites from the channel.
     * This function may be called by the portal framework throughout the session.
     * @see ChannelRuntimeProperties
+    * @return ChannelRuntimeProperties
     */
    public ChannelRuntimeProperties getRuntimeProperties () {
       return  new ChannelRuntimeProperties();
@@ -203,7 +204,7 @@ public class CGroupsManager
 
    /**
     * Get the viewDoc from staticData, or generate if null
-    *
+    * @return DocumentImpl
     */
    protected DocumentImpl getViewDoc () {
       DocumentImpl viewDoc = null;
@@ -233,6 +234,7 @@ public class CGroupsManager
    /**
     * Ask channel to render its content.
     * @param out the SAX ContentHandler to output content to
+    * @exception PortalException
     */
    public void renderXML (ContentHandler out) throws PortalException {
       long time1 = Calendar.getInstance().getTime().getTime();
@@ -286,12 +288,12 @@ public class CGroupsManager
             } catch (Exception e) {
                LogService.instance().log(LogService.ERROR, e);
             }
-            /*
+            // djf was commented out
             StringWriter sw = new StringWriter();
             XMLSerializer serial = new XMLSerializer(sw, new org.apache.xml.serialize.OutputFormat(viewDoc,"UTF-8", true));
             serial.serialize(viewDoc);
             LogService.log(LogService.DEBUG,"viewXMl ready:\n"+sw.toString());
-            */
+
             //Utility.logMessage("DEBUG","CGroupsManager::renderXML(): Servant services complete");
             //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
@@ -546,7 +548,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return String
     */
    public String getOwnerName () {
       return  "Groups Manager";
@@ -554,7 +556,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return String[]
     */
    public String[] getActivityTokens () {
       init();
@@ -563,7 +565,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return String
     */
    public String getOwnerToken () {
       return  OWNER;
@@ -572,7 +574,7 @@ public class CGroupsManager
    /**
     * put your documentation comment here
     * @param token
-    * @return
+    * @return String
     */
    public String getActivityName (String token) {
       return  (String)activities.get(token);
@@ -580,7 +582,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return String[]
     */
    public String[] getTargetTokens () {
       init();
@@ -590,7 +592,7 @@ public class CGroupsManager
    /**
     * put your documentation comment here
     * @param token
-    * @return
+    * @return String
     */
    public String getTargetName (String token) {
       return  (String)targets.get(token);
@@ -599,7 +601,7 @@ public class CGroupsManager
    /**
     * put your documentation comment here
     * @param o
-    * @return
+    * @return boolean
     */
    protected boolean hasValue (Object o) {
       boolean rval = false;
@@ -613,7 +615,7 @@ public class CGroupsManager
     * put your documentation comment here
     * @param o
     * @param test
-    * @return
+    * @return boolean
     */
    protected boolean hasValue (Object o, String test) {
       boolean rval = false;
@@ -627,7 +629,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return ChannelCacheKey
     */
    public ChannelCacheKey generateKey () {
       ChannelCacheKey cck;
@@ -646,7 +648,7 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @return
+    * @return String
     */
    private String vKey () {
       String vkey = runtimeData.getParameter("grpView") + " - " + runtimeData.getParameter("grpViewId")
@@ -657,7 +659,7 @@ public class CGroupsManager
    /**
     * put your documentation comment here
     * @param validity
-    * @return
+    * @return boolean
     */
    public boolean isCacheValid (Object validity) {
       boolean valid = false;

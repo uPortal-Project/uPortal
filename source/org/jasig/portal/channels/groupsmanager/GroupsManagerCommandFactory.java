@@ -80,7 +80,7 @@ public class GroupsManagerCommandFactory
 
    /**
     * Instantiates the singleton if not already instantiated and returns it.
-    * @return
+    * @return GroupsManagerCommandFactory
     */
    public static synchronized GroupsManagerCommandFactory instance () {
       Utility.logMessage("DEBUG", "GroupsManagerCommandFactory::instance(): about to get instance");
@@ -95,7 +95,7 @@ public class GroupsManagerCommandFactory
    /**
     * Returns the instance of a command object bound to a name.
     * @param name
-    * @return
+    * @return IGroupsManagerCommand
     */
    public static IGroupsManagerCommand get (String name) {
       String cmdsString = "";
@@ -112,7 +112,7 @@ public class GroupsManagerCommandFactory
 
    /**
     * Returns the names of the bound command objects. Used for debugging.
-    * @return
+    * @return String[]
     */
    public static String[] getKeys () {
       Set keyset = bindings.keySet();

@@ -58,7 +58,7 @@ import  org.apache.xerces.dom.DocumentImpl;
 public class GroupWrapper
       implements IGroupsManagerWrapper, GroupsManagerConstants {
    //SmartCache will hold group elements with a timeout of 5 minutes
-   protected static final SmartCache grpsElementCache = new SmartCache(300);
+   protected static final SmartCache GROUPS_ELEMENT_CACHE = new SmartCache(300);
 
    /** Creates new GroupWrapper */
    public GroupWrapper () {
@@ -70,9 +70,10 @@ public class GroupWrapper
     * set to "true", a cached element (no further work is required), or a new element
     * (all attributes have to be set after the EntityGroups is retrieved).
     * @param aKey
+    * @param aType
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc) {
       Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): START");
@@ -97,7 +98,7 @@ public class GroupWrapper
     * @param gm
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
       String nextID;
@@ -206,34 +207,33 @@ public class GroupWrapper
 
    /**
     * Returns the xml element cached for a given IEntityGroup key.
-    * @param String aKey
+    * @param aKey
     * @return Element
     */
    private Element getCachedElement (String aKey) {
       Utility.logMessage("DEBUG", "GroupWrapper::getCachedElement(): START, get KEY: " + aKey);
-      Element cachedElem = (Element)grpsElementCache.get(aKey);
+      Element cachedElem = (Element)GROUPS_ELEMENT_CACHE.get(aKey);
       return  (cachedElem == null ? cachedElem : (Element) cachedElem.cloneNode(false));
    }
 
    /**
     * Puts an element into the xml element cached.
-    * @param String aKey
-    * @param Element anElem
-    * @return
+    * @param aKey
+    * @param anElem
     */
    private void putCachedElement (String aKey, Element anElem) {
       Utility.logMessage("DEBUG", "GroupWrapper::putCachedElement(): START, put KEY: " + aKey + " ELEM: " + anElem);
       // has to be a deep copy because the group has an RDF element. This means the
       // element has to be cached before it is expanded with child elements.
       Element cachedElem = (Element) anElem.cloneNode(false);
-      grpsElementCache.put(aKey, cachedElem);
+      GROUPS_ELEMENT_CACHE.put(aKey, cachedElem);
       return;
    }
 
    /**
     * Returns either the cached element for a given IEntityGroup key or creates a
     * new element for the key.
-    * @param String aKey
+    * @param aKey
     * @param aDoc
     * @return Element
     */
@@ -258,7 +258,7 @@ public class GroupWrapper
     * populate the element with all required attributes. The only attribute that has
     * to be set from the EntityGroup is hasMembers. The others are can have default
     * values or values assigned without respect to the EntityGroup (eg. "id").
-    * @param Element anElem
+    * @param anElem
     * @return boolean
     */
    private boolean isElementFullyFormed (Element anElem) {

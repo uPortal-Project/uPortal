@@ -56,16 +56,18 @@ public interface IInitialGroupContextStore {
 
    /**
     * Find the inital contexts  with this ownerID.
+    * @param owner
     * @return java.util.Iterator
-    * @param String creatorID
+    * @exception ChainedException
     */
    java.util.Iterator findInitialGroupContextsForOwner (IGroupMember owner) throws ChainedException;
 
    /**
     * Find and return an instance of the inital group context.
+    * @param ownerID
+    * @param groupID
     * @return org.jasig.portal.channels.groupsmanager.IInitialGroupContext
-    * @param String ownerID
-    * @param String groupID
+    * @exception ChainedException
     */
    IInitialGroupContext find (String ownerID, String groupID) throws ChainedException;
 
@@ -76,11 +78,9 @@ public interface IInitialGroupContextStore {
     * @param groupID The id of the associated group.
     * @param ordinal Used to display the initial group contexts in a specified order.
     * @param expanded Indicates whether or not the inital group context will be expanded when the gui is first displayed.
-    *  *
+    * @param dateCreated
     * @return org.jasig.portal.groups.IEntityGroup
-    *  *
-    * @throws GroupsManagerException
-    *  *
+    * @exception ChainedException
     */
    IInitialGroupContext newInstance (String ownerID, String ownerType, String groupID,
          int ordinal, boolean expanded, Timestamp dateCreated) throws ChainedException;
@@ -88,8 +88,7 @@ public interface IInitialGroupContextStore {
    /**
     * Commits changes made to an Initial Group Context to the database.
     * @param igc The Initial Group Context to be committed.
-    *  *
-    * @throws GroupsManagerException
+    * @exception ChainedException
     */
    void update (IInitialGroupContext igc) throws ChainedException;
 }

@@ -62,7 +62,7 @@ public class ChainedException extends Exception {
 
    /**
     * Constructor for a message only
-    * @param       String message
+    * @param message
     */
    public ChainedException (String message) {
       super(message);
@@ -70,8 +70,8 @@ public class ChainedException extends Exception {
 
    /**
     * Constructor for a message and a Throwable
-    * @param       String message
-    * @param       Throwable cause
+    * @param message
+    * @param cause
     */
    public ChainedException (String message, Throwable cause) {
       super(message);
@@ -80,7 +80,7 @@ public class ChainedException extends Exception {
 
    /**
     * Return the underlying Throwable
-    * @return
+    * @return Throwable
     */
    public Throwable getCause () {
       return  cause;

@@ -75,7 +75,7 @@ import  org.jasig.portal.utils.*;
 
    /**
     * True when the servant is ready to pass control back to the master channel.
-    * @return
+    * @return boolean
     */
    public boolean isFinished () {
       boolean isFinished = false;
@@ -97,7 +97,7 @@ import  org.jasig.portal.utils.*;
    /**
     * Returns an array of objects representing the result set.
     * Note that these are IGroupMembers !!
-    * @return
+    * @return Object[]
     */
    public Object[] getResults () {
       Object[] results = null;

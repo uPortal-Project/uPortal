@@ -118,7 +118,6 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting person process");
             addGroupMemberToCollection(gmCollection, nEntityList);
             // null pointer exception
-            //Utility.logMessage("DEBUG", "results contains " + String.valueOf(princResults.length) + " items");
          } catch (org.jasig.portal.AuthorizationException ae) {
             Utility.logMessage("ERROR", "DoneWithSelection::execute():AuthorizationException /n "
                   + ae);
@@ -128,6 +127,13 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          }
          Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
                + hasParentId);
+         // check if selections were made
+         if (gmCollection.size() <1) {
+            cmdResponse = runtimeData.getParameter("commandResponse") + "\n No groups or people were selected! ";
+            runtimeData.setParameter("commandResponse", cmdResponse);
+            return;
+         }
+
          /** Presence of parentID means the process is not in servant mode. That is,
           * the master channel is the Groups Manager channel and AddMembers had
           * been selected
@@ -171,14 +177,13 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * This method processes the xml document looking for selected groupmembers.
     * It then creates an instance of IGroupMember for each selected
     * member and passes the collection back.
-    * @param Vector authCollection
-    * @param NodeList nListst
-    * @param String className
-    * @exception org.jasig.portal.AuthorizationException, ClassNotFoundException
+    * @param gmCollection
+    * @param nList
+    * @exception AuthorizationException
+    * @exception ClassNotFoundException
     */
    public void addGroupMemberToCollection (Vector gmCollection, NodeList nList) throws org.jasig.portal.AuthorizationException,
          ClassNotFoundException {
-      //AuthorizationService authService = AuthorizationService.instance();
       boolean addit;
       for (int i = 0; i < nList.getLength(); i++) {
          Element elem = (org.w3c.dom.Element)nList.item(i);
@@ -194,7 +199,6 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             }
             if (addit) {
                IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
-               //authService.newPrincipal(elem.getAttribute("key"),Class.forName(className));
                gmCollection.add(gm);
                Utility.logMessage("DoneWithSelection::addGroupMemberToCollection(): DEBUG",
                      "-got group " + elem.getAttribute("key"));
@@ -205,14 +209,14 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
 
    /**
     * This section adds the selected members to an IEntityGroup.
-    * @param Vector authCollection
-    * @param ChannelRuntimeData runtimeData
-    * @param Element parentElem
-    * @param DocumentImpl xmlDoc
+    * @param gmCollection
+    * @param runtimeData
+    * @param parentElem
+    * @param xmlDoc
     */
    public void addChildrenToGroup (Vector gmCollection, ChannelRuntimeData runtimeData,
-         Element parentElem, DocumentImpl xmlDoc) {
-      Node parentNode;
+      Element parentElem, DocumentImpl xmlDoc) {
+      Element parent;
       IEntityGroup parentGroup = null;
       IGroupMember childGm = null;
       Element childElem;
@@ -221,16 +225,13 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
       Iterator gmItr = gmCollection.iterator();
       while (gmItr.hasNext()) {
-         //IAuthorizationPrincipal aapp = (IAuthorizationPrincipal)authItr.next();
-         //childGm = Utility.retrieveGroupMemberForKeyAndType(aapp.getKey(), aapp.getType().getName());
          childGm = (IGroupMember) gmItr.next();
          try {
-            childName = EntityNameFinderService.instance().getNameFinder(childGm.getType()).getName(childGm.getKey());
+            childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
          }
          catch (Exception e){
             Utility.logMessage("ERROR", "DoneWithSelection::execute: erorr"+e);
          }
-         //childName = GroupsManagerXML.getGroupMemberName(aapp.getKey(), aapp.getType().getName());
          parentName = parentGroup.getName();
          Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
          try {
@@ -242,11 +243,11 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             Iterator parentNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
                   parentElem.getAttribute("key"));
             while (parentNodes.hasNext()) {
-               parentNode = (Node)parentNodes.next();
+               parent = (Element)parentNodes.next();
 
-               /** @todo xmlCache: */
                childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, xmlDoc);
-               parentNode.appendChild((Node)childElem);
+               parent.appendChild((Node)childElem);
+               parent.setAttribute("hasMembers", "true");
             }
          } catch (GroupsException ge) {
             // We let groups catch any error for the adds (ie. group member is already in the parent group).
@@ -260,15 +261,15 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
 
    /**
     * This section adds the selected members to an IInitialContextGroup.
-    * @param Vector authCollection
-    * @param ChannelRuntimeData runtimeData
-    * @param Element parentElem
-    * @param DocumentImpl xmlDoc
+    * @param gmCollection
+    * @param runtimeData
+    * @param parentElem
+    * @param xmlDoc
     */
    public void addChildrenToContext (Vector gmCollection, ChannelRuntimeData runtimeData,
          Element parentElem, DocumentImpl xmlDoc) {
       // Considerations:
-      // The parent node is myGroups and there is only one.
+      // The parent element is myGroups and there is only one.
       String childName = "";
       IGroupMember childGm = null;
       String userID = runtimeData.getParameter("username");
@@ -277,16 +278,13 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       boolean expanded = false;
       /** @todo should put this in the RDBM add method */
       java.sql.Timestamp dateCreated = new java.sql.Timestamp(System.currentTimeMillis());
-      Node parentNode;
       Element childElem;
       Iterator gmItr = gmCollection.iterator();
       while (gmItr.hasNext()) {
-         //IAuthorizationPrincipal aapp = (IAuthorizationPrincipal)authItr.next();
-         //childGm = Utility.retrieveGroupMemberForKeyAndType(aapp.getKey(), aapp.getType().getName());
          childGm = (IGroupMember) gmItr.next();
          String type = "";
          try{
-            childName = EntityNameFinderService.instance().getNameFinder(childGm.getType()).getName(childGm.getKey());
+            childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
             type = childGm.getType().getName();
          }
          catch (Exception e){
@@ -303,14 +301,13 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                      groupID, ordinal, expanded, dateCreated);
                // save to persistent source
                igc.update();
-               // add child to user's igc node
-               parentNode = (Node)parentElem;
 
-               /** @todo xmlCache: */
+               // add child to user's igc node
                IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(groupID);
                childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, false,
                      null, xmlDoc);
-               parentNode.appendChild((Node)childElem);
+               parentElem.appendChild((Node)childElem);
+               parentElem.setAttribute("hasMembers", "true");
             } catch (Exception e) {
                String cmdResponse = runtimeData.getParameter("commandResponse") + "\n Unable to add : "
                      + childName;

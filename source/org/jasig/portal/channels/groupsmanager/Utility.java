@@ -71,7 +71,7 @@ public class Utility
     * displayed if more than one element is found.
     * @param aDoc
     * @param id
-    * @return
+    * @return Element
     */
    public static Element getElementById (DocumentImpl aDoc, String id) {
       int i;
@@ -113,7 +113,7 @@ public class Utility
     * @param aDoc
     * @param tagname
     * @param key
-    * @return
+    * @return Iterator
     */
    public static java.util.Iterator getNodesByTagNameAndKey (DocumentImpl aDoc, String tagname,
          String key) {
@@ -136,8 +136,8 @@ public class Utility
    /**
     * Even though we know we will find a single element, we sometimes want
     * it returned in an iterator in order to streamline processing.
-    * @param DocumenatImpl aDoc
-    * @param String id
+    * @param aDoc
+    * @param id
     * @return iterator
     */
    public static java.util.Iterator getNodesById (DocumentImpl aDoc, String id) {
@@ -153,7 +153,7 @@ public class Utility
     * @param anElem
     * @param tagname
     * @param key
-    * @return
+    * @return Iterator
     */
    public static java.util.Iterator getNodesByTagNameAndKey (Element anElem, String tagname,
          String key) {
@@ -178,7 +178,7 @@ public class Utility
     * @param aDoc
     * @param tagname
     * @param id
-    * @return
+    * @return Element
     */
    public static Element getElementByTagNameAndId (DocumentImpl aDoc, String tagname,
          String id) {
@@ -204,7 +204,7 @@ public class Utility
     * @param aDoc
     * @param tagname
     * @param key
-    * @return
+    * @return Element
     */
    public static Element getExpandedElementForTagNameAndKey (DocumentImpl aDoc, String tagname,
          String key) {
@@ -225,7 +225,7 @@ public class Utility
     * Returns an element for a uniquely named tagname
     * @param aDoc
     * @param tagname
-    * @return
+    * @return Element
     */
    public static Element getUniqueElementByTagName (DocumentImpl aDoc, String tagname) {
       // Do I really need this method. I could just use the DocumentImpl.getElementsByTagName().
@@ -298,7 +298,7 @@ public class Utility
    /**
     * Prints a DocumentImpl as a string
     * @param aDoc
-    * @return
+    * @return String
     */
    public static String asString (DocumentImpl aDoc) {
       StringWriter sw = new StringWriter();
@@ -317,7 +317,7 @@ public class Utility
     * @param fromDelim
     * @param source
     * @param toDelim
-    * @return
+    * @return String
     */
    public static String parseStringDelimitedBy (String fromDelim, String source, String toDelim) {
       Utility.logMessage("DEBUG", "Utility::parseStringDelimitedBy(): fromDelim = " + fromDelim +
@@ -347,7 +347,7 @@ public class Utility
     * Returns the IGroupMember represented by an Element
     * @param aDoc
     * @param id
-    * @return
+    * @return IGroupMember
     */
    public static IGroupMember retrieveGroupMemberForElementId (DocumentImpl aDoc, String id) {
 
@@ -378,10 +378,9 @@ public class Utility
 
    /**
     * Retrieves a Group Member for the provided key and of the provided type.
-    * @param aDoc
     * @param key
-    * @param Type
-    * @return
+    * @param type
+    * @return IGroupMember
     */
    public static IGroupMember retrieveGroupMemberForKeyAndType (String key, String type) {
       IGroupMember gm = null;
@@ -407,11 +406,9 @@ public class Utility
     * @param groupID The Group ID referenced by this IInitialGroupContext.
     * @param ordinal Determined the order that the IInitialGroupContexts will be displayed.
     * @param expanded Determines whether the IInitialGroupContext will be expanded when first presented to the user.
-    *
+    * @param dateCreated
     * @return IInitialGroupContext
-    *
     * @throws org.jasig.portal.channels.groupsmanager.ChainedException
-    *
     */
    public static IInitialGroupContext createInitialGroupContext (String ownerID, String ownerType,
          String groupID, int ordinal, boolean expanded, Timestamp dateCreated) throws ChainedException {
@@ -421,11 +418,11 @@ public class Utility
 
    /**
     * Extracts the value of a key sandwiched by delimiters from a string.
-    * @param String className
-    * @param String methodName
-    * @param String msgKey
-    * @param String msg
-    * @return
+    * @param className
+    * @param methodName
+    * @param msgKey
+    * @param msg
+    * @return String
     */
    public static String formatMessage (String className, String methodName, String msgKey, String msg) {
       String formMsg = "";

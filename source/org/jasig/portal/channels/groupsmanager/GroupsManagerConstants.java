@@ -58,9 +58,12 @@ public interface GroupsManagerConstants {
    String GROUPS_PACKAGE = "org.jasig.portal.groups";
    String SECURITY_PACKAGE = "org.jasig.portal.security";
    String GROUP_CLASSNAME = GROUPS_PACKAGE + ".IEntityGroup";
+   String ENTITY_CLASSNAME = SECURITY_PACKAGE + ".IPerson";
    String OWNER = "org.jasig.portal.channels.groupsmanager.CGroupsManager";
    String ENTITY_TAGNAME = "entity";
    String GROUP_TAGNAME = "group";
+   //HashMap ENTITY_TYPES = GroupsManagerXML.getEntityTypes();
+
    // ROOT_ELEMENT_TAGNAME is the name of the root element holding the initial group
    // contexts in the groups management channel
    String ROOT_GROUP_TITLE = "My Groups";

@@ -64,9 +64,10 @@ public class EntityWrapper
    /**
     * Returns an xml element for a given IEntity key.
     * @param aKey
+    * @param aType
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc) {
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ENTITY_TAGNAME,
@@ -81,10 +82,9 @@ public class EntityWrapper
     * @param gm
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
-      /** @todo xml cache: */
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ENTITY_TAGNAME,
             aDoc, false));
       Utility.logMessage("DEBUG", "EntityWrapper.getXml(): START, Element: " + rootElem);
@@ -94,8 +94,8 @@ public class EntityWrapper
          rootElem.setAttribute("id", GroupsManagerXML.getNextUid());
          rootElem.setAttribute("key", gm.getKey());
          rootElem.setAttribute("type", gm.getType().getName());
-         rootElem.setAttribute("displayName", GroupsManagerXML.getGroupMemberName(ent.getKey(),
-               ent.getEntityType().getName()));
+         rootElem.setAttribute("displayName", GroupsManagerXML.getEntityName(ent.getEntityType(),
+               ent.getKey()));
          rootElem.setAttribute("selected", "false");
       } catch (Exception e) {
          Utility.logMessage("ERROR", "EntityWrapper.getXml(): ERROR retrieving entity "

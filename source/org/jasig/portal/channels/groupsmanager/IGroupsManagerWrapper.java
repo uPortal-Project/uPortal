@@ -58,9 +58,10 @@ public interface IGroupsManagerWrapper {
    /**
     * Return an element for an IEntity key
     * @param aKey
+    * @param aType
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc);
 
@@ -69,7 +70,7 @@ public interface IGroupsManagerWrapper {
     * @param gm
     * @param anElem
     * @param aDoc
-    * @return
+    * @return Element
     */
    public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc);
 }

@@ -71,8 +71,8 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
 
    /**
     * The execute() method is the main method for the RemoveMember command.
-    * @param ChannelRuntimeData runtimeData
-    * @param ChannelStaticData staticData
+    * @param runtimeData
+    * @param staticData
     */
    public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
@@ -147,10 +147,9 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
 
    /**
     * This section removes the selected member from an IEntityGroup.
-    * @param Vector authCollection
-    * @param ChannelRuntimeData runtimeData
-    * @param Element parentElem
-    * @param DocumentImpl xmlDoc
+    * @param parentGroup
+    * @param childGm
+    * @exception ChainedException
     */
    public void removeChildFromGroup (Object parentGroup, IGroupMember childGm) throws ChainedException {
       Utility.logMessage("DEBUG", "RemoveMember::removeChildrenFromGroup(): about to remove child");
