@@ -54,9 +54,17 @@ Version $Revision$
         </td>
 
         <td>
-          <a href="{image/link}" target="_blank">
-            <img alt="{image/title}: {image/description}" src="{image/url}" border="0"/>
-          </a>
+          <!-- Only display image if there is one -->
+          <xsl:choose>
+            <xsl:when test="image">
+              <a href="{image/link}" target="_blank">
+                <img alt="{image/title}: {image/description}" src="{image/url}" border="0"/>
+              </a>
+            </xsl:when>
+            <xsl:otherwise>
+              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" border="0"/>
+            </xsl:otherwise>
+          </xsl:choose>          
         </td>
       </tr>
     </table>
@@ -112,4 +120,4 @@ Version $Revision$
     </form>
   </xsl:template>
 </xsl:stylesheet>
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+
