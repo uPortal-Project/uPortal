@@ -146,6 +146,13 @@
                        the Xalan you are using.
                        Version: (depends on Xalan version) 
                        URL: http://xml.apache.org/xerces2-j/
+
+  xml-apis.jar         SAX, DOM, and JAVAX interfaces which have been recently 
+                       separated from the xalan and xerces jars.   
+                       Be sure to use the version of xml-apis.jar that comes with 
+                       the Xalan you are using.
+                       Version: (depends on Xalan version) 
+                       URL: http://xml.apache.org/xalan-j/
                        
   bsf.jar              Bean scripting framework (BSF) used by the CWebProxy channel.
                        Be sure to use the version of BSF that comes with 
@@ -164,7 +171,7 @@
   
   mail.jar             JavaMail, a set of abstract classes that model a mail system.
                        The CIMAPMail channel uses this API.
-                       Version: 1.1.3
+                       Version: 1.2
                        URL: http://java.sun.com/products/javamail/
   
   activation.jar       JavaBeans Activation Framework.  This library is required
@@ -183,8 +190,8 @@
                        URL: http://java.sun.com/products/jaas/
   
   cos.jar              Servlet support classes including file upload package 
-                       MultipartRequest and MultipartParser. Used by CIMAPMail
-                       for uploading attachments.
+                       MultipartRequest and MultipartParser. Used by the portal
+                       to make file uploads possible.
                        Version: 19Jun2001
                        URL: http://www.servlets.com/cos/
                        
@@ -204,6 +211,7 @@
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
   <property name="xerces.jar" value="(set this in build.properties!)"/>
+  <property name="xml-apis.jar" value="(set this in build.properties!)"/>
   <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
@@ -234,6 +242,7 @@
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <pathelement location="${xalan.jar}"/>
     <pathelement location="${xerces.jar}"/>
+    <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
     <pathelement location="${tyrex.jar}"/>
@@ -352,6 +361,7 @@
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
@@ -465,6 +475,7 @@
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
         <pathelement path="${xerces.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
