@@ -551,6 +551,20 @@
   </target>
 
 
+<!-- ==================== initportal Target ================================ -->
+
+<!--
+
+  The "initportal" target runs all the targets necessary to deploy the portal
+  and prepare the portal database.
+  
+-->
+  
+  <target name="initportal" description="Publish a channel" depends="deploy, db, i18n-db, pubchan, pushfragment">
+    <echo message="Initializing uPortal"/>    
+  </target>
+  
+  
 <!-- ==================== DbLoader Target ================================= -->
 
 <!--
@@ -1096,7 +1110,7 @@ Example:
   </target>
 
 
-<!-- ==================== publish Target ================================ -->
+<!-- ==================== pubchan Target ================================ -->
 
 <!--
 
