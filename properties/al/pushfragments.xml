@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragments>
-	<fragment id="3" name="The push fragment">
-		<description>The fragment example</description>
+	<fragment name="pfragment1.0">
+		<description>The push fragment example</description>
 		<groups>
 			<group>Students</group>
                         <group>Developers</group>
@@ -11,7 +11,7 @@
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
-		<folder name="The first folder" immutable="Y" unremovable="Y" hidden="N">
+		<folder name="The push fragment folder" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel id="11" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel id="12" immutable="Y" unremovable="Y" hidden="N"/>
