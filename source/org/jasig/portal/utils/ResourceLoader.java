@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Properties;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
@@ -61,6 +62,12 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 
 public class ResourceLoader {
+
+  private static DocumentBuilderFactory f;
+  static {
+    f = DocumentBuilderFactory.newInstance();
+    f.setNamespaceAware(true);
+  }
 
   /**
    * Finds a resource with a given name.  This is a convenience method for accessing a resource
@@ -163,9 +170,24 @@ public class ResourceLoader {
    */
   public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
     InputStream inputStream = getResourceAsStream(requestingClass, resource);
-    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+    return f.newDocumentBuilder().parse(inputStream);
   }
 
+  /**
+   * Get the contents of a URL as a java.util.Properties object
+   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
+   * @param resource a String describing the full or partial URL of the resource whose contents to load
+   * @return the actual contents of the resource as a Properties object
+   * @throws org.jasig.portal.ResourceMissingException
+   * @throws java.io.IOException
+   */
+  public static Properties getResourceAsProperties (Class requestingClass, String resource) throws ResourceMissingException, IOException {
+    InputStream inputStream = getResourceAsStream(requestingClass, resource);
+    Properties props = new Properties();
+    props.load(inputStream);
+    return props;
+  }  
+  
   /**
    * Get the contents of a URL as a String
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
@@ -183,6 +205,3 @@ public class ResourceLoader {
     return sbText.toString ();
   }
 }
-
-
-
