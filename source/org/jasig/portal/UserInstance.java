@@ -425,6 +425,12 @@ public class UserInstance implements HttpSessionBindingListener {
                         // prepare .uP element and detach flag to be passed to the stylesheets
                         // Including the context path in front of uPElement is necessary for phone.com browsers to work
                         sst.setParameter("baseActionURL", uPElement.getUPFile());
+                        // construct idempotent version of the uPElement
+                        UPFileSpec uPIdempotentElement=new UPFileSpec(uPElement);
+                        uPIdempotentElement.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                        sst.setParameter("baseIdempotentActionURL",uPElement.getUPFile());
+
+
                         Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
@@ -485,6 +491,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // set up of the parameters
                         tst.setParameter("baseActionURL", uPElement.getUPFile());
+                        tst.setParameter("baseIdempotentActionURL",uPIdempotentElement.getUPFile());
 
                         Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
