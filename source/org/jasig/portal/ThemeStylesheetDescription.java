@@ -11,14 +11,23 @@ import java.util.Vector;
 public class ThemeStylesheetDescription extends CoreXSLTStylesheetDescription {
     // vector holds the list of first stage stylesheets that can be used with the current stylesheet
     protected Vector structureStylesheets;
-    protected Vector mimeTypeList;
+    protected String mimeType;
+    protected String serializerName;
+    protected String customUPClassLocator;
+    
 
     public Vector getStructureStylesheetList() { return structureStylesheets; }
     public void setStructureStylesheetList(Vector list) {
 	structureStylesheets=list;
     }
 
-    public void setMimeTypeList(Vector mtl) { this.mimeTypeList=mtl; }
-    public Vector getMimeTypeList() { return mimeTypeList; }
+    public String getMimeType() { return this.mimeType; }
+    public void setMimeType(String type) { this.mimeType=type; }
+
+    public String getSerializerName() { return this.serializerName; }
+    public void setSerializerName(String name) { this.serializerName=name; }
+
+    public String getCustomUserPreferencesManager() { return customUPClassLocator; }
+    public void setCustomUserPreferencesManager(String classLocator) { customUPClassLocator=classLocator; }
 
 }

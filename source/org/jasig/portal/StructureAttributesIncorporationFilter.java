@@ -37,30 +37,23 @@ public class StructureAttributesIncorporationFilter extends SAXFilterImpl
     {
 	// recognizing "channel"   
 	if (name.equals ("channel")) {
-	    List al=fsup.getChannelAttributeNames();
-	    if(al.size()>0) {
-		AttributeListImpl attsImpl=new AttributeListImpl(atts);
-		String channelID = attsImpl.getValue ("ID");
-		
-		for(int i=0;i<al.size();i++) {
-		    String attrName=(String) al.get(i);
-		    attsImpl.addAttribute(attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
-		    Logger.log(Logger.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
-		}
-		super.startElement(name,attsImpl);
+	    AttributeListImpl attsImpl=new AttributeListImpl(atts);
+	    String channelID = attsImpl.getValue ("ID");
+	    for(Enumeration ca=fsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
+		String attrName=(String) ca.nextElement();
+		attsImpl.addAttribute(attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
+		Logger.log(Logger.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
 	    }
+	    super.startElement(name,attsImpl);
 	} else 	if (name.equals ("folder")) {
-	    List al=fsup.getFolderAttributeNames();
-	    if(al.size()>0) {
-		AttributeListImpl attsImpl=new AttributeListImpl(atts);
-		String folderID = attsImpl.getValue ("ID");
-		for(int i=0;i<al.size();i++) {
-		    String attrName=(String) al.get(i);
-		    attsImpl.addAttribute(attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
-		    Logger.log(Logger.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
-		}
-		super.startElement(name,attsImpl);
+	    AttributeListImpl attsImpl=new AttributeListImpl(atts);
+	    String folderID = attsImpl.getValue ("ID");
+	    for(Enumeration fe=fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
+		String attrName=(String) fe.nextElement();
+		attsImpl.addAttribute(attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
+		Logger.log(Logger.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
 	    }
+	    super.startElement(name,attsImpl);
 
 	} else 
 	    super.startElement (name, atts);

@@ -32,7 +32,7 @@ public class StructureStylesheetDescription extends CoreXSLTStylesheetDescriptio
 	else return null;
     }
 
-    public boolean containsAttribute(String attributeName) {
+    public boolean containsFolderAttribute(String attributeName) {
 	return folderAttributeTable.containsKey(attributeName);
     }
 

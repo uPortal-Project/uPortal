@@ -395,7 +395,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 // process a particular attribute
                 Element attributeElement=(Element) attributeElements.item(i);
                 String attributeName=attributeElement.getAttribute("name");
-                up.addChannelAttribute(attributeName,null);
+		String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
+                up.addChannelAttribute(attributeName,attributeDefaultValue);
                 NodeList channelElements=attributeElement.getElementsByTagName("channel");
                 for(int j=channelElements.getLength()-1;j>=0;j--) {
                     Element channelElement=(Element) channelElements.item(j);
@@ -416,7 +417,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 // process a particular attribute
                 Element attributeElement=(Element) attributeElements.item(i);
                 String attributeName=attributeElement.getAttribute("name");
-                up.addFolderAttribute(attributeName,null);
+		String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
+                up.addFolderAttribute(attributeName,attributeDefaultValue);
                 NodeList folderElements=attributeElement.getElementsByTagName("folder");
                 for(int j=folderElements.getLength()-1;j>=0;j--) {
                     Element folderElement=(Element) folderElements.item(j);
@@ -442,9 +444,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     private Element constructChannelAttributesElement(ThemeStylesheetUserPreferences up,Document doc) {
         Element attributesEl = doc.createElement("channelattributes");
-        List l=up.getChannelAttributeNames();
-        for(int i=0;i<l.size();i++) {
-            String attributeName=(String) l.get(i);
+        for(Enumeration ae=up.getChannelAttributeNames();ae.hasMoreElements();) {
+	    String attributeName=(String) ae.nextElement();
             Element attributeEl=doc.createElement("attribute");
             attributeEl.setAttribute("name",attributeName);
             for(Enumeration e=up.getChannels();e.hasMoreElements();) {
@@ -461,12 +462,11 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     private Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
         Element attributesEl = doc.createElement("folderattributes");
-        List l=up.getFolderAttributeNames();
-        for(int i=0;i<l.size();i++) {
-            String attributeName=(String) l.get(i);
+        for(Enumeration ae=up.getFolderAttributeNames();ae.hasMoreElements();) {
+	    String attributeName=(String) ae.nextElement();
             Element attributeEl=doc.createElement("attribute");
             attributeEl.setAttribute("name",attributeName);
-            for(Enumeration e=up.getCategories();e.hasMoreElements();) {
+            for(Enumeration e=up.getFolders();e.hasMoreElements();) {
                 String folderID=(String) e.nextElement();
                 Element folderEl=doc.createElement("folder");
                 folderEl.setAttribute("folderid",folderID);

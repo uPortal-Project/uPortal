@@ -38,9 +38,8 @@ public class ThemeAttributesIncorporationFilter extends SAXFilterImpl
 	if (name.equals ("channel")) {
 	    AttributeListImpl attsImpl=new AttributeListImpl(atts);
 	    String channelID = attsImpl.getValue ("ID");
-	    List al=ssup.getChannelAttributeNames();
-	    for(int i=0;i<al.size();i++) {
-		String attrName=(String) al.get(i);
+	    for(Enumeration ca=ssup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
+		String attrName=(String) ca.nextElement();
 		attsImpl.addAttribute(attrName,"CDATA",ssup.getChannelAttributeValue(channelID,attrName));
 		//		Logger.log(Logger.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
 	    }

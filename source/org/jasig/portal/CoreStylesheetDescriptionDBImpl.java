@@ -143,6 +143,8 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                     Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : Structure stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
 
                 fssd.setStylesheetName(xmlStylesheetName);
+		fssd.setStylesheetURI(dbURI);
+		fssd.setStylesheetDescriptionURI(dbDescriptionURI);
                 fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
 
                 // populate parameter and attriute tables
@@ -197,12 +199,20 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                     Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : Theme stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
 
                 sssd.setStylesheetName(xmlStylesheetName);
+		sssd.setStylesheetURI(dbURI);
+		sssd.setStylesheetDescriptionURI(dbDescriptionURI);
                 sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+		sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
+		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
+		sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
+		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
+		sssd.setCustomUserPreferencesManager(this.getRootElementTextValue(stylesheetDescriptionXML,"upmanager"));
 
                 // populate parameter and attriute tables
                 this.populateParameterTable(stylesheetDescriptionXML,sssd);
                 this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
                 sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
+		
 
             } else {
                 Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : Could not find a theme stage stylesheet with a name \""+stylesheetName+"\"");
@@ -270,9 +280,9 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
 
             // populate parameter and attriute tables
-            this.populateParameterTable(stylesheetDescriptionXML,fssd);
-            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
-            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
+	    //            this.populateParameterTable(stylesheetDescriptionXML,fssd);
+	    //            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
+	    //            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
 	    //            fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
 
 
@@ -308,12 +318,13 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
             sssd.setStylesheetName(xmlStylesheetName);
             sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+	    sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
 
             // populate parameter and attriute tables
-            this.populateParameterTable(stylesheetDescriptionXML,sssd);
-            this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
-            sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
-            sssd.setMimeTypeList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"mimetype"));
+            //this.populateParameterTable(stylesheetDescriptionXML,sssd);
+            //this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
+            //sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
+            //sssd.setMimeTypeList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"mimetype"));
 
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
@@ -326,11 +337,10 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
             for (Enumeration e = sssd.getStructureStylesheetList().elements() ; e.hasMoreElements() ;) {
 		String ssName=(String) e.nextElement();
-		for(Enumeration mt=sssd.getMimeTypeList().elements(); mt.hasMoreElements(); ) {
-		    sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('"+xmlStylesheetName+"','"+ssName+"','"+(String)mt.nextElement()+"');";
-		    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : "+sQuery);
-		    rs=stmt.executeQuery(sQuery);
-		}
+		String mimeType=sssd.getMimeType();
+		sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('"+xmlStylesheetName+"','"+ssName+"','"+mimeType+"');";
+		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : "+sQuery);
+		rs=stmt.executeQuery(sQuery);
             }
 
         } catch (Exception e) {
@@ -352,6 +362,21 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             return this.getTextChildNodeValue(name);;
         } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"name\" element was found udner the \"stylesheetdescription\" node!"); return null; }
     }
+
+    private String getRootElementTextValue(Document descr,String elementName) {
+        NodeList names=descr.getElementsByTagName(elementName);
+        Node name=null;
+        for(int i=names.getLength()-1;i>=0;i--) {
+            name=names.item(i);
+            if(name.getParentNode().getLocalName().equals("stylesheetdescription")) break;
+            else name=null;
+        }
+        if(name!=null) {
+            return this.getTextChildNodeValue(name);;
+        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getRootElementTextValue() : no \""+elementName+"\" element was found udner the \"stylesheetdescription\" node!"); return null; }
+    }
+
+
 
     private String getDescription(Document descr) {
         NodeList descriptions=descr.getElementsByTagName("description");

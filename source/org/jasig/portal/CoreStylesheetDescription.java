@@ -13,6 +13,8 @@ import java.util.Enumeration;
 public class CoreStylesheetDescription {
     protected String stylesheetName;
     protected String stylesheetWordDescription;
+    protected String stylesheetURI;
+    protected String stylesheetDescriptionURI;
     
     // hashtable of DescriptionDefaultValuePair objects
     Hashtable parameterTable;
@@ -23,6 +25,12 @@ public class CoreStylesheetDescription {
 
     public String getStylesheetName() { return stylesheetName; }
     public void setStylesheetName(String name) { stylesheetName=name; }
+
+    public String getStylesheetURI() { return this.stylesheetURI; }
+    public void setStylesheetURI(String uri) { this.stylesheetURI=uri; }
+
+    public String getStylesheetDescriptionURI() { return this.stylesheetDescriptionURI; }
+    public void setStylesheetDescriptionURI(String uri) { this.stylesheetDescriptionURI=uri; }
 
     public String getStylesheetWordDescription() { return stylesheetWordDescription; }
     public void setStylesheetWordDescription(String description) { stylesheetWordDescription=description; }

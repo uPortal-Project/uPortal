@@ -2,81 +2,113 @@ package org.jasig.portal;
 
 import java.util.*;
 
+/**
+ * User preferences for stylesheets performing theme transformation
+ * @author Peter Kharchenko
+ * @version $Revision$
+ */
+
 public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
-    protected ArrayList channelAttributeNames;
+    protected Hashtable channelAttributeNumbers;;
     protected Hashtable channelAttributeValues;
+    protected ArrayList defaultChannelAttributeValues;
 
     public ThemeStylesheetUserPreferences() {
 	super();
-	channelAttributeNames=new ArrayList();
+	channelAttributeNumbers=new Hashtable();
 	channelAttributeValues=new Hashtable();
+	defaultChannelAttributeValues=new ArrayList();
     }
 
     public ThemeStylesheetUserPreferences(ThemeStylesheetUserPreferences ssup) {
 	super(ssup);
-	this.channelAttributeNames=new ArrayList(ssup.channelAttributeNames);
+	this.channelAttributeNumbers=new Hashtable(ssup.channelAttributeNumbers);
 	this.channelAttributeValues=new Hashtable(ssup.channelAttributeValues);
+	this.defaultChannelAttributeValues=new ArrayList(ssup.defaultChannelAttributeValues);
     }
 
     public String getChannelAttributeValue(String channelID,String attributeName) {
-	int attributeNumber=channelAttributeNames.indexOf(attributeName);
-	if(attributeNumber==-1) {
+	Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+	if(attributeNumber==null) {
 	    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
 	    return null;
 	}
+	String value=null;
         List l=(List) channelAttributeValues.get(channelID);
 	if(l==null) { 
 	    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelID+"\".");
 	    return null;
-	} else return (String) l.get(attributeNumber);
+	} else {
+	    try {
+		value=(String) l.get(attributeNumber.intValue());
+	    } catch (IndexOutOfBoundsException e) {}
+	    if(value==null) {
+		try {
+		    value=(String) defaultChannelAttributeValues.get(attributeNumber.intValue());
+		} catch (IndexOutOfBoundsException e) {
+		    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+		    return null;
+		}
+	    }
+	}
+	return value;
     }
 
     // this should be modified to throw exceptions
     public void setChannelAttributeValue(String channelID,String attributeName,String attributeValue) {
-	int attributeNumber=channelAttributeNames.indexOf(attributeName);
-	if(attributeNumber==-1) {
+	Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+	if(attributeNumber==null) {
 	    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::setChannelAttribute() : Attempting to set a non-existing channel attribute \""+attributeName+"\".");
 	    return;
 	}
         List l=(List) channelAttributeValues.get(channelID);
 	if(l==null)
 	    l=this.createChannel(channelID);
-	l.set(attributeNumber,attributeValue); 
+	try {
+	    l.set(attributeNumber.intValue(),attributeValue); 
+	} catch (IndexOutOfBoundsException e) {
+	    // bring up the array to the right size
+	    for(int i=l.size();i<attributeNumber.intValue();i++) {
+		l.add((String)null);
+	    }
+	    l.add(attributeValue);
+	}
     }
 
     public void addChannelAttribute(String attributeName, String defaultValue) {
-	if(channelAttributeNames.indexOf(attributeName)!=-1) {
+	if(channelAttributeNumbers.get(attributeName)!=null) {
 	    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::addChannelAttribute() : Attempting to re-add an existing channel attribute \""+attributeName+"\".");
 	} else {
-	    channelAttributeNames.add(attributeName);
-	    for (Enumeration e = channelAttributeValues.elements() ; e.hasMoreElements() ;) 
-		((List) e.nextElement()).add(defaultValue);
+	    channelAttributeNumbers.put(attributeName,new Integer(defaultChannelAttributeValues.size()));
+	    // append to the end of the default value array
+	    defaultChannelAttributeValues.add(defaultValue);
 	}
+    }
+
+    public void setChannelAttributeDefaultValue(String attributeName, String defaultValue) {
+	Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+	defaultChannelAttributeValues.set(attributeNumber.intValue(),defaultValue);
     }
 
     public void removeChannelAttribute(String attributeName) {
-	int attributeNumber;
-	if((attributeNumber=channelAttributeNames.indexOf(attributeName))==-1) {
+	Integer attributeNumber;
+	if((attributeNumber=(Integer)channelAttributeNumbers.get(attributeName))==null) {
 	    Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::removeChannelAttribute() : Attempting to remove a non-existing channel attribute \""+attributeName+"\".");
 	} else {
-	    channelAttributeNames.remove(attributeNumber);
-	    for (Enumeration e = channelAttributeValues.elements() ; e.hasMoreElements() ;) 
-		((List) e.nextElement()).remove(attributeNumber);
+	    channelAttributeNumbers.remove(attributeName);
+	    // do not touch the arraylists
 	}
     }
 
-    public List getChannelAttributeNames() {
-	return channelAttributeNames;
+    public Enumeration getChannelAttributeNames() {
+	return channelAttributeNumbers.keys();
     }
     
     public void addChannel(String channelID) {
 	// check if the channel is there. In general it might be ok to use this functon to default
 	// all of the channel's parameters
 	
-	// prepare a null-filled ArrayList
-	ArrayList l=new ArrayList(channelAttributeNames.size());
-	for(int i=channelAttributeNames.size();i>0;i--) 
-	    l.add(null);
+	ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
 	    
 	if(channelAttributeValues.put(channelID,l)!=null) 
 	    Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::addChannel() : Readding an existing channel (channelID=\""+channelID+"\"). All values will be set to default.");
@@ -95,52 +127,21 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
 	return channelAttributeValues.containsKey(channelID);
     }
 
-    public void synchronizeWithDescription(CoreXSLTStylesheetDescription sd) {
+    public void synchronizeWithDescription(ThemeStylesheetDescription sd) {
 	super.synchronizeWithDescription(sd);
 	// check if all of the channel attributes in the preferences occur in the description
-	for(int i=channelAttributeNames.size()-1; i>=0 ; i--) {
-	    String pname=(String) channelAttributeNames.get(i);
-	    if(!sd.containsAttribute(pname)) {
+	for(Enumeration e=channelAttributeNumbers.keys(); e.hasMoreElements(); ) {
+	    String pname=(String) e.nextElement();
+	    if(!sd.containsChannelAttribute(pname)) {
 		this.removeChannelAttribute(pname);
 		Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::synchronizeWithDescription() : removing channel attribute "+pname);
 	    }
 	}
+	// need to do the reverse synch. here
     }
-    
-    public void completeWithDescriptionInformation(CoreXSLTStylesheetDescription sd) {
-	super.completeWithDescriptionInformation(sd);
-	for (Enumeration e = sd.getChannelAttributeNames() ; e.hasMoreElements() ;) {
-	    String pname=(String) e.nextElement();
-	    if(!channelAttributeNames.contains(pname)) {
-		this.addChannelAttribute(pname,sd.getChannelAttributeDefaultValue(pname));
-		Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::completeWithDescriptionInformation() : adding channel attribute "+pname);
-	    } else {
-		// go over every channel to make sure that the default attribute values are set
-		int attributeNumber=channelAttributeNames.indexOf(pname);
-		for (Enumeration ce = channelAttributeValues.elements() ; ce.hasMoreElements() ;) {
-		    if(attributeNumber==-1) {
-			Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::completeWithDescriptionInformation() : attempting to set a non-existing channel attribute \""+pname+"\".");
-			return;
-		    }
-		    // the following can be used only if the loop is changed to iteratve over .keys() 
-		    //		    String channelID=(String) ce.nextElement();
-		    //		    List l=(List) channelAttributeValues.get(channelID);
-		    List l=(List) ce.nextElement();
-		    if(l.get(attributeNumber)==null) {
-			l.set(attributeNumber,sd.getChannelAttributeDefaultValue(pname)); 
-			//			Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::completeWithDescriptionInformation() : setting attribute "+pname+" of channel "+channelID+" to default");
-		    }
-		}
-	    }
-	}
-    }	
-
-
 
     private ArrayList createChannel(String channelID) {
-	ArrayList l=new ArrayList(channelAttributeNames.size());
-	for(int i=channelAttributeNames.size();i>0;i--) 
-	    l.add(null);
+	ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
 	channelAttributeValues.put(channelID,l);
 	return l;
     }

@@ -32,7 +32,7 @@ public class CoreXSLTStylesheetDescription extends CoreStylesheetDescription {
 	else return null;
     }
 
-    public boolean containsAttribute(String attributeName) {
+    public boolean containsChannelAttribute(String attributeName) {
 	return channelAttributeTable.containsKey(attributeName);
     }
 
