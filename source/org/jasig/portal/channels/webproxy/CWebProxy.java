@@ -749,7 +749,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
       // before making the connection, ensure all spaces in the URI are encoded
       // not sure if any other characters will need to be re-encoded; will check it out
-      uri = uri.replaceAll(" ", "%20");
+      uri = uri.trim();
+      if (uri.indexOf(" ") != -1)
+      {
+        StringBuffer sbuff = new StringBuffer();
+        int i;
+        while( (i= uri.indexOf(" ")) != -1)
+        {
+          sbuff.append(uri.substring(0, i));
+          sbuff.append("%20");
+          uri = uri.substring(i+1);
+        }
+        sbuff.append(uri);
+        uri = sbuff.toString();
+      }
+
+      // String.replaceAll(String,String) - since jdk 1.4
+      //uri = uri.replaceAll(" ", "%20");
+
       URL url;
       if (state.localConnContext != null)
         url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(uri, state.runtimeData));
