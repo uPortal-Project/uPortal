@@ -273,7 +273,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       return (System.currentTimeMillis() - ((Long)validity).longValue() < 15*60*1000);
   }
 
-  private static String getKey(CState state)  
+  private static String getKey(CState state)
   {
     // Maybe not the best way to generate a key, but it seems to work.
     // If you know a better way, please change it!
@@ -281,9 +281,18 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     sbKey.append(systemCacheId).append(": ");
     sbKey.append("xmluri:").append(state.xmlUri).append(", ");
     sbKey.append("sslUri:").append(state.sslUri).append(", ");
-    sbKey.append("xslUri:").append(state.xslUri).append(", ");
-    sbKey.append("params:").append(state.runtimeData.toString()).append(", ");
-    sbKey.append("browserInfo:").append(state.runtimeData.getBrowserInfo());
+    
+    // xslUri may either be specified as a parameter to this channel or we will
+    // get it by looking in the stylesheet list file
+    String xslUriForKey = null;
+    try {
+      xslUriForKey = state.xslUri != null ? state.xslUri : XSLT.getStylesheetURI(state.sslUri, state.runtimeData.getBrowserInfo());
+    } catch (PortalException pe) {
+      xslUriForKey = "Not attainable!";
+    }
+    
+    sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+    sbKey.append("params:").append(state.runtimeData.toString());
     return sbKey.toString();
   }
 }
