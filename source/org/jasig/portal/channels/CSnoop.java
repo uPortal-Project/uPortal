@@ -35,6 +35,8 @@
 
 package org.jasig.portal.channels;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.ChannelRuntimeData;
@@ -44,8 +46,9 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.i18n.LocaleAwareXSLT;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -56,7 +59,7 @@ import org.xml.sax.ContentHandler;
  * IChannel because it needs access to the HttpServletRequest object.</p>
  * <p>This channel was partially developed at Columbia University
  * as an exercise.</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CSnoop implements IPrivilegedChannel {
@@ -125,6 +128,9 @@ public class CSnoop implements IPrivilegedChannel {
     HttpServletRequest request = pcs.getHttpServletRequest();
     Document doc = DocumentFactory.getNewDocument();
 
+    // <snooper>
+    Element snooperE = doc.createElement("snooper");
+    
     // <request-info>
     Element requestInfoE = doc.createElement("request-info");
 
@@ -225,14 +231,29 @@ public class CSnoop implements IPrivilegedChannel {
       headersE.appendChild(headerE);
     }    
     requestInfoE.appendChild(headersE);
+    snooperE.appendChild(requestInfoE);
 
-    doc.appendChild(requestInfoE);
+    // <channel-runtime-data>
+    Element channelRuntimeDataE = doc.createElement("channel-runtime-data");
+    
+    // <locales>
+    Locale[] locales = runtimeData.getLocales();
+    if (locales == null) { // Take this out if locales are guaranteed
+        locales = new Locale[] { Locale.getDefault() };
+    }
+    Element localesE = LocaleManager.xmlValueOf(locales).getDocumentElement();
+    channelRuntimeDataE.appendChild(doc.importNode(localesE, true));
+    
+    snooperE.appendChild(channelRuntimeDataE);
+    
+    doc.appendChild(snooperE);
     
     // Now perform the transformation
-    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
   }
 }
+

@@ -5,13 +5,29 @@
   <xsl:param name="locale">sv_SE</xsl:param>
 
   <xsl:template match="/">
+    <xsl:apply-templates select="snooper"/>
+  </xsl:template>
+
+  <xsl:template match="snooper">
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
-      <tr><td colspan="2" class="uportal-background-med">
-  	<span class="uportal-channel-table-caption">Information om anropet</span></td></tr>
+      <tr>
+        <td colspan="2" class="uportal-background-med">
+  	      <span class="uportal-channel-table-caption">Information om anropet</span>
+  	    </td>
+  	  </tr>
       <xsl:apply-templates select="request-info"/>
-      <tr><td colspan="2" class="uportal-background-med">
-  	<span class="uportal-channel-table-caption">HTTP Header-information</span></td></tr>
+      <tr>
+        <td colspan="2" class="uportal-background-med">
+  	      <span class="uportal-channel-table-caption">HTTP Header-information</span>
+  	    </td>
+  	  </tr>
       <xsl:apply-templates select="request-info/headers"/>   
+      <tr>
+        <td colspan="2" class="uportal-background-med">
+  	      <span class="uportal-channel-table-caption">Channel Runtime Data Info</span>
+        </td>
+      </tr>
+      <xsl:apply-templates select="channel-runtime-data"/>       
     </table>
   </xsl:template>
 
@@ -117,5 +133,37 @@
       </td>
     </tr>
   </xsl:template> 
+
+  <xsl:template match="channel-runtime-data">
+    <xsl:apply-templates select="locales"/>
+  </xsl:template>
+  
+  <xsl:template match="locales">
+    <tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Locales: </p></td>
+      <td class="uportal-channel-table-row-odd">
+        <table border="0" cellspacing="1" cellpadding="1">
+          <tr>
+            <td class="uportal-channel-table-row-odd"><u>Name</u></td>
+            <td class="uportal-channel-table-row-odd"><u>Code</u></td>
+            <td class="uportal-channel-table-row-odd"><u>Language</u></td>
+            <td class="uportal-channel-table-row-odd"><u>Country</u></td>
+            <td class="uportal-channel-table-row-odd"><u>Variant</u></td>
+          </tr>
+          <xsl:apply-templates select="locale"/>   
+        </table>
+      </td>
+    </tr>  
+  </xsl:template>  
+  
+  <xsl:template match="locale">
+    <tr>
+      <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="@displayName"/></td>
+      <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="@code"/></td>
+      <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="language/@displayName"/> (<xsl:value-of select="language/@iso2"/>, <xsl:value-of select="language/@iso3"/>)</td>
+      <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="country/@displayName"/> (<xsl:value-of select="country/@iso2"/>, <xsl:value-of select="country/@iso3"/>)</td>
+      <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="variant/@displayName"/> (<xsl:value-of select="variant/@code"/>)</td>
+    </tr>
+  </xsl:template>
 
 </xsl:stylesheet>
