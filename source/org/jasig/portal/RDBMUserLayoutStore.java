@@ -1524,8 +1524,8 @@ public class RDBMUserLayoutStore
     try {
       Statement stmt = con.createStatement();
       try {
-        String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
-            + "UP_USER.USER_NAME = '" + username + "'";
+        String query = "SELECT USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE "
+            + "USER_NAME = '" + username + "'";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
