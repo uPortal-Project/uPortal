@@ -14,12 +14,12 @@
 
 
   <xsl:template match="/">
-    <html>
+    <!--<html>
       <head>
         <link rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css" type="text/css"/>
       <xsl:comment></xsl:comment>
       </head>
-      <body>
+      <body>-->
 
         <xsl:choose>
           <xsl:when test="$action='selectChannelType'">
@@ -59,8 +59,8 @@
             <xsl:call-template name="defaultView"/>
           </xsl:otherwise>
         </xsl:choose>
-      </body>
-    </html>
+<!--      </body>
+    </html>-->
   </xsl:template>
   <xsl:template name="defaultView">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
