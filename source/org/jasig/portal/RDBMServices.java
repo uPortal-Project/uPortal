@@ -239,7 +239,7 @@ public class RDBMServices {
         if (conn != null && !conn.getAutoCommit()) {
           conn.rollback();
           conn.setAutoCommit(true);
-        }         
+        }
       } else {
         LogService.instance().log(LogService.ERROR, "The database '" + dbName + "' could not be found.");
       }
@@ -279,7 +279,7 @@ public class RDBMServices {
         if (conn != null && !conn.getAutoCommit()) {
           conn.rollback();
           conn.setAutoCommit(true);
-        } 
+        }
         prevErrorMsg = "";
       } catch (ClassNotFoundException cnfe) {
         LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the rdbm.properties file and your classpath.");
@@ -547,6 +547,23 @@ public class RDBMServices {
           lastIndex = index;
         }
        }
+    }
+
+    public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {
+      if (RDBMServices.supportsPreparedStatements) {
+        pstmt.setTimestamp(index, value);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value) + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
+      }
     }
 
     public ResultSet executeQuery() throws SQLException {
