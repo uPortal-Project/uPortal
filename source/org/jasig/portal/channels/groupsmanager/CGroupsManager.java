@@ -281,7 +281,6 @@ public class CGroupsManager
       sessionData.startRD = Calendar.getInstance().getTime().getTime();
       if(sessionData.servantChannel == null){
         if (hasValue(runtimeData.getParameter("grpCommand"))) {
-            GroupsManagerCommandFactory cf = GroupsManagerCommandFactory.instance();
             String theCommand = runtimeData.getParameter("grpCommand");
             Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): COMMAND PROCESS About to get the'"
                   + theCommand + "' command");

@@ -668,7 +668,6 @@ public class GroupsManagerXML
     * @return IGroupsManagerWrapper
     */
    public static IGroupsManagerWrapper getWrapper (String type) {
-      GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
       String tagname =  (type.equals(ENTITY_TAGNAME) || type.equals(ENTITY_CLASSNAME)) ?
          ENTITY_TAGNAME : GROUP_TAGNAME;
       IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.get(tagname);
