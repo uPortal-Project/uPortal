@@ -66,6 +66,7 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.security.InitialSecurityContextFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
 import org.apache.axis.handlers.SimpleSessionHandler;
@@ -99,6 +100,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Revision$
  */
 public class RemoteChannel implements IRemoteChannel {
+  private static final BoundedThreadPool renderThreadPool = new BoundedThreadPool(20, 150, 5);
 
   protected static final String MARKUP_FRAGMENT_ROOT = "channel";
   protected static final String PERSON_KEY = "org.jasig.portal.security.IPerson";
@@ -237,7 +239,7 @@ public class RemoteChannel implements IRemoteChannel {
     runtimeData.setUPFile(new UPFileSpec(null, UPFileSpec.RENDER_METHOD, "webServiceRoot", "singlet", null));
 
     // Start rendering
-    ChannelRenderer cr = new ChannelRenderer(channel, runtimeData);
+    ChannelRenderer cr = new ChannelRenderer(channel, runtimeData, renderThreadPool);
     cr.setTimeout(channelDef.getTimeout());
     cr.startRendering();
 
