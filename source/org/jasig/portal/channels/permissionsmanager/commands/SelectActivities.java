@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  * for CPermissionsManager
  *
  * @author Alex Vigdor
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 
 public class SelectActivities
@@ -41,7 +41,8 @@ public class SelectActivities
             HashMap ownerActs = new HashMap();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
-                log.info("checking key " + key);
+                if (log.isInfoEnabled())
+                    log.info("checking key " + key);
                 if (key.indexOf("activity//") == 0) {
                     String split1 = key.substring(10);
                     String owner = split1.substring(0, split1.indexOf("|"));
