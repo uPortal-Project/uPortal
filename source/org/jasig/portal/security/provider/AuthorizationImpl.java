@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.util.*;
 import org.jasig.portal.EntityTypes;
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -472,8 +473,50 @@ throws AuthorizationException
  */
 private void initialize() throws AuthorizationException
 {
-    setPermissionStore(new RDBMPermissionImpl());
-    setDefaultPermissionPolicy(new DefaultPermissionPolicy());
+    String eMsg = null;
+    String factoryName =
+      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation");
+    String policyName =
+      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation");
+
+    if ( factoryName == null )
+    {
+        eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new AuthorizationException(eMsg);
+    }
+
+    if ( policyName == null )
+    {
+        eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new AuthorizationException(eMsg);
+    }
+
+    try
+    {
+        permissionStore = (IPermissionStore)Class.forName(factoryName).newInstance();
+    }
+    catch (Exception e)
+    {
+        eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... " + e.getMessage();
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new AuthorizationException(eMsg);
+    }
+
+    try
+    {
+        defaultPermissionPolicy = (IPermissionPolicy)Class.forName(policyName).newInstance();
+    }
+    catch (Exception e)
+    {
+        eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new AuthorizationException(eMsg);
+    }
+
+//    setPermissionStore(new RDBMPermissionImpl());
+//    setDefaultPermissionPolicy(new DefaultPermissionPolicy());
 }
 /**
  * Factory method for an <code>IPermission</code>.
