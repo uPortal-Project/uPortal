@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,18 +35,12 @@
 
 package org.jasig.portal.security.provider;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.*;
 
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
+import javax.security.auth.login.*;
 
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.*;
+import org.jasig.portal.services.*;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -57,9 +51,10 @@ import org.jasig.portal.services.LogService;
  *
  */
 
-class JAASSecurityContext extends ChainingSecurityContext implements ISecurityContext {
+class JAASSecurityContext extends ChainingSecurityContext implements ISecurityContext, Serializable {
 
   private final int JAASSECURITYAUTHTYPE = 0xFF05;
+  private IAdditionalDescriptor additionalDescriptor;
 
   JAASSecurityContext() {
     super();
@@ -69,33 +64,16 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
     return this.JAASSECURITYAUTHTYPE;
   }
 
+  public IAdditionalDescriptor getAdditionalDescriptor() {
+    return additionalDescriptor;
+  }
+
   public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = false;
-    RDBMServices rdbmservices = new RDBMServices();
 
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 
-      Connection conn = null;
-      PreparedStatement stmt = null;
-      ResultSet rset = null;
-      String first_name = null, last_name = null;
-//      int globalUID;
-
       try {
-        String query = "SELECT ID, FIRST_NAME, LAST_NAME FROM PORTAL_USERS WHERE " +
-                       "PORTAL_USERS.USER_NAME = ?";
-
-        conn = RDBMServices.getConnection();
-        stmt = conn.prepareStatement(query);
-        stmt.setString(1, this.myPrincipal.UID);
-        rset = stmt.executeQuery();
-
-        if (rset.next()) {
-
-//          globalUID  = rset.getInt("ID");
-          first_name = rset.getString("FIRST_NAME");
-          last_name  = rset.getString("LAST_NAME");
-
           boolean isAuthenticated = false;
 
           // JAAS Stuff
@@ -108,26 +86,16 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
                                (new String(this.myOpaqueCredentials.credentialstring)).toCharArray())); // could not come up w/ a better way to do this
 
           lc.login();
+          additionalDescriptor = new JAASSubject(lc.getSubject());
 
           // the above will throw an exception if authentication does not succeed
 
-//          this.myPrincipal.globalUID = globalUID;
-          this.myPrincipal.FullName = first_name + " " + last_name;
           LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
 
-        } else {
-          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
-        }
-      } catch (SQLException e) {
-        LogService.log(LogService.ERROR, new PortalSecurityException ("error"));
       } catch (LoginException e) {
         LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + ": invalid password");
         LogService.log(LogService.DEBUG,"LoginException: " + e.getMessage());
-      } finally {
-        try { rset.close(); } catch (Exception e) { }
-        try { stmt.close(); } catch (Exception e) { }
-        RDBMServices.releaseConnection(conn);
       }
     } else {
       LogService.log (LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
