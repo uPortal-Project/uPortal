@@ -651,16 +651,16 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
-        Element root, int structId, MyPreparedStatement pstmtUserInRole) throws java.sql.SQLException, Exception {
+        Element root, int structId, UserInRole uir) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
           System.err.println("CreateLayout(" + structId + ")");
         }
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
-        Element structure = ls.getStructureDocument(doc, pstmtUserInRole);
+        Element structure = ls.getStructureDocument(doc, uir);
         root.appendChild(structure);
         if (!ls.isChannel()) {          // Folder
-          createLayout(layoutStructure, doc,  structure, ls.getChildId(), pstmtUserInRole);
+          createLayout(layoutStructure, doc,  structure, ls.getChildId(), uir);
         }
         structId = ls.getNextId();
       }
@@ -703,12 +703,63 @@ public class RDBMUserLayoutStore
     }
   }
 
+  private final class UserInRole {
+    MyPreparedStatement pstmtUserInRole;
+    MyPreparedStatement pstmtReadAll;
+    public UserInRole(Connection con, String roleIds) throws SQLException {
+      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR " +
+        "WHERE UC.CHAN_ID=? AND UR.ROLE_ID IN (" + roleIds + ") AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+      pstmtUserInRole = new MyPreparedStatement(con, sQuery);
+      sQuery = "SELECT COUNT(ROLE_ID) FROM UP_ROLE_CHAN WHERE CHAN_ID=?";
+      pstmtReadAll = new MyPreparedStatement(con, sQuery);
+    }
+    public boolean isAllowed(int chanId) throws SQLException {
+
+      // First see if everyone has access to this channel
+      pstmtReadAll.clearParameters();
+      pstmtReadAll.setInt(1, chanId);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::UserInRole::isAllowed(): " + pstmtReadAll);
+      ResultSet rs = pstmtReadAll.executeQuery();
+      try {
+        if (rs.next() && rs.getInt(1) == 0) { // none implies all
+          return true;
+        }
+      } finally {
+        rs.close();
+      }
+
+      // See if there is an explicit permission to the channel
+      pstmtUserInRole.clearParameters();
+      pstmtUserInRole.setInt(1, chanId);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::UserInRole::isAllowed(): " + pstmtUserInRole);
+      rs = pstmtUserInRole.executeQuery();
+      try {
+        if (rs.next()) {
+          return true;
+        }
+      } finally {
+        rs.close();
+      }
+
+      return false;
+    }
+
+    public void close() {
+      try {
+        if (pstmtUserInRole != null) {
+          pstmtUserInRole.close();
+        }
+      } catch (Exception e) {}
+      try {
+        if (pstmtReadAll != null) {
+          pstmtReadAll.close();
+        }
+      } catch (Exception e) {}
+    }
+  }
   /**
-   * UserLayout
-   * @param person, the user ID
-   * @param profileId, the profile ID
-   * @return a DOM object representing the user layout
-   * @throws Exception
+   * LayoutStructure
+   * Encapsulate the layout structure
    */
    protected final class LayoutStructure {
     private class StructureParameter {
@@ -731,6 +782,9 @@ public class RDBMUserLayoutStore
     boolean immutable;
     ArrayList parameters;
 
+    /**
+     *
+     */
     public LayoutStructure(int structId, int nextId,int childId,int chanId, String hidden, String unremovable, String immutable) {
       this.nextId = nextId;
       this.childId = childId;
@@ -764,33 +818,22 @@ public class RDBMUserLayoutStore
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc, MyPreparedStatement pstmtUserInRole) throws Exception {
+    public Element getStructureDocument(DocumentImpl doc, UserInRole uir) throws Exception {
       Element structure = null;
 
       if (isChannel()) {
-        pstmtUserInRole.clearParameters();
-        pstmtUserInRole.setInt(1, chanId);
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureDocument(): " + pstmtUserInRole);
-        ResultSet rs = pstmtUserInRole.executeQuery();
-        try {
-          if (rs.next()) {
-            structure = getChannel(chanId, doc, channelPrefix + structId);
-          } else {            // No access
-            ChannelDefinition channel= getChannel(chanId);
-            LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
-              + chanId + " (ignored)");
-            if (channel != null) {
+        if (uir.isAllowed(chanId)) {
+          structure = getChannel(chanId, doc, channelPrefix + structId);
+        } else {            // No access
+          ChannelDefinition channel= getChannel(chanId);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
+            + chanId);
+          if (channel != null) {
             structure = channel.getDocument(doc, channelPrefix + structId,
               "You do not have permission to use this channel.");
-           }
           }
-        } catch (SQLException sqle) {
-          // database error
-          LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureDocument(): " + sqle);
-          // Show message
-        } finally {
-          rs.close();
         }
+
         if (structure == null) {
           // Can't find channel
           ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
@@ -1008,12 +1051,11 @@ public class RDBMUserLayoutStore
              } finally {
               stmt.close();
             }
-           sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR " +
-              "WHERE UC.CHAN_ID=? AND UR.ROLE_ID IN (" + roleIds + ") AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-            MyPreparedStatement pstmtUserInRole = new MyPreparedStatement(con, sQuery);
+            UserInRole uir = new UserInRole(con, roleIds);
             try {
-              createLayout(layoutStructure, doc, root, firstStructId, pstmtUserInRole);
+              createLayout(layoutStructure, doc, root, firstStructId, uir);
             } finally {
+              uir.close();
             }
           }
         } finally {
