@@ -102,7 +102,8 @@ public class ReferencePermissionManager extends PermissionManager {
       Statement statement = connection.createStatement();
       statement.executeUpdate(updateStatement.toString());
     } catch (Exception e) {
-      e.printStackTrace();
+      // Log the exception
+      LogService.log(LogService.ERROR, e);
     } finally {
       RdbmServices.releaseConnection(connection);
     }
