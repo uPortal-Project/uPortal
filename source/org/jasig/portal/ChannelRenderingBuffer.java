@@ -87,7 +87,8 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
     super.endDocument ();
     
     // at this point we can release the buffer
-    this.outputBuffer (out);
+    this.setDocumentHandler(out);
+    this.stopBuffering();
   }
 
   public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException

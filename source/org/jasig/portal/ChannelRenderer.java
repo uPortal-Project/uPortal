@@ -139,8 +139,9 @@ public class ChannelRenderer
         // unplug the buffer :)
         try
         {
-          buffer.outputBuffer (out);
-	  return RENDERING_SUCCESSFUL;
+	    buffer.setDocumentHandler(out);
+	    buffer.stopBuffering();
+	    return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {
 	    // worst case scenario: partial content output :(
