@@ -38,6 +38,7 @@ package org.jasig.portal.utils;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.io.IOException;
+import org.jasig.portal.services.LogService;
 
 /**
  * Performs substitution operation on a stream of integer write requests.
@@ -50,8 +51,10 @@ public class SubstitutionIntegerFilter {
 
     final int[] substitute;
     final int[] target;
-    private int index;
-    private int[] accumulated;
+    private int matchindex;
+    private int[] buffer;
+    private int bufferindex;
+    private int maxBuffer = 2048;
 
     /**
      * Creates a new <code>SubstitutionIntegerFilter</code> instance.
@@ -64,45 +67,49 @@ public class SubstitutionIntegerFilter {
         this.out=out;
         this.substitute=substitute;
         this.target=target;
-        this.index=0;
-        this.accumulated=new int[target.length];
+        this.matchindex=0;
+        this.bufferindex=0;
+        this.buffer=new int[maxBuffer + target.length];
     }
 
     public void write(int number) throws IOException {
-        if(number==target[index]) {
-            if(index<target.length-1) {
-                // continue to match the pattern
-                accumulated[index]=number;
-                index++;
+        if(number==target[matchindex]) {
+            if(matchindex<target.length-1) {
+                // assume match will fail, but track buffered ints
+                addToBuffer(number);
+                matchindex++;
             } else {
-                // substitute
-                for(int j=0;j<substitute.length;j++) {
-                    out.write(substitute[j]);
+                // we have a match, roll back buffer and add substitute
+                bufferindex = bufferindex - matchindex;
+                for (int x =0; x<substitute.length;x++){
+                  addToBuffer(substitute[x]);
                 }
-                index=0;
+                matchindex=0;
             }
         } else {
-            // clear out the buffer
-            for(int j=0;j<index;j++) {
-                out.write(accumulated[j]);
-            }
-            index=0;
-            out.write(number);
+            matchindex=0;
+            addToBuffer(number);
         }
     }
 
     public void flush() throws IOException {
         // do internal flush
-        for(int j=0;j<index;j++) {
-            out.write(accumulated[j]);
-        }
-        index=0;
+        out.write(buffer,0,bufferindex);
+        bufferindex=0;
         out.flush();
     }
 
     public void close() throws IOException {
         this.flush();
         out.close();
+    }
+
+    protected void addToBuffer(int i) throws IOException{
+      // flush if buffer fills up, but only if we're not tracking a possible substitution
+        if ((bufferindex > (maxBuffer-2)) && matchindex==0){
+          flush();
+        }
+        buffer[bufferindex++] = i;
     }
 
 }
