@@ -71,6 +71,9 @@ public class MarkupService {
     private static final Map services = new WeakHashMap();
 
     private MarkupService(String baseEndpoint) throws Exception {
+        if (!baseEndpoint.endsWith("/")) {
+            baseEndpoint += "/";
+        }
         String serviceEndpoint = baseEndpoint + serviceName;
         pt = locator.getWSRPBaseService(new URL(serviceEndpoint));
     }

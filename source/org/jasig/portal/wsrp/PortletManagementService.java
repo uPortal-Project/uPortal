@@ -73,6 +73,9 @@ public class PortletManagementService {
     private static final Map services = new WeakHashMap();
 
     private PortletManagementService(String baseEndpoint) throws Exception {
+        if (!baseEndpoint.endsWith("/")) {
+            baseEndpoint += "/";
+        }
         String serviceEndpoint = baseEndpoint + serviceName;
         pt = locator.getWSRPPortletManagementService(new URL(serviceEndpoint));
     }

@@ -65,6 +65,9 @@ public class RegistrationService {
     private static final Map services = new WeakHashMap();
 
     private RegistrationService(String baseEndpoint) throws Exception {
+        if (!baseEndpoint.endsWith("/")) {
+            baseEndpoint += "/";
+        }
         String serviceEndpoint = baseEndpoint + serviceName;
         pt = locator.getWSRPRegistrationService(new URL(serviceEndpoint));
     }

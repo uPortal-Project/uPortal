@@ -36,8 +36,8 @@
 package org.jasig.portal.wsrp;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.xml.rpc.holders.BooleanHolder;
 
@@ -64,9 +64,12 @@ public class ServiceDescriptionService {
     WSRPServiceLocator locator = new WSRPServiceLocator();
     WSRP_v1_ServiceDescription_PortType pt = null;
     private static final String serviceName = "WSRPServiceDescriptionService";
-    private static final Map services = new HashMap();
+    private static final Map services = new WeakHashMap();
 
     private ServiceDescriptionService(String baseEndpoint) throws Exception {
+        if (!baseEndpoint.endsWith("/")) {
+            baseEndpoint += "/";
+        }
         String serviceEndpoint = baseEndpoint + serviceName;
         pt = locator.getWSRPServiceDescriptionService(new URL(serviceEndpoint));
     }
