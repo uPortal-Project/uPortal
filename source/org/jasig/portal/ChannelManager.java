@@ -250,7 +250,9 @@ public class ChannelManager {
         sd.setParameters (params);
         ch.setStaticData (sd);
         channelTable.put (chanID,ch);
-        sd.setPerson((IPerson) req.getAttribute("up_person"));
+	//        sd.setPerson((IPerson) req.getAttribute("up_person"));
+	// I don't understand how the above is supposed to work. I'll just get IPerson from the internal structures for now.
+	sd.setPerson(ulm.getPerson());
         sd.setSecurityContext((ISecurityContext) req.getAttribute("up_SecurityContext"));
         return ch;
     }
@@ -316,6 +318,7 @@ public class ChannelManager {
 		rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
             }
         }
+
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
         cr.setTimeout (timeOut);
         cr.startRendering ();
