@@ -216,7 +216,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               newUID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_USER");
               }
               catch (Exception e) {
-              LogService.log(LogService.ERROR, "RDBMUserIdentityStore error getting next sequence: " + e.getMessage());
+              LogService.log(LogService.ERROR, "RDBMUserIdentityStore error getting next sequence: ", e);
               throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
               }
             String Insert;
@@ -308,6 +308,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
     }
     catch (SQLException se) {
+      // Log the exception
+      LogService.log(LogService.ERROR, se);
       try {
         if (con.getMetaData().supportsTransactions())  con.rollback();
         }
@@ -319,7 +321,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         System.err.println("Vendor:  " + se.getErrorCode());}
 
         AuthorizationException ae = new AuthorizationException("SQL Database Error");
-        LogService.log(LogService.ERROR, ae);
         throw  (ae);
       }
     finally {
