@@ -92,7 +92,6 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
    public Object[] getResults () {
       CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
       ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData = sessionData.runtimeData;
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.get("Done");
       try{
          cmd.execute(sessionData);

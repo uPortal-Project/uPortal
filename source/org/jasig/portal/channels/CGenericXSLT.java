@@ -242,7 +242,6 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
           }
       }
 
-      String xml;
       Document xmlDoc;
       InputStream inputStream = null;
 

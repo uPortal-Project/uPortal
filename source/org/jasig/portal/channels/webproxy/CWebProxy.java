@@ -1012,7 +1012,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   }
 
   public String getName(String uid) {
-    ChannelState state = (ChannelState)stateTable.get(uid);
     return "proxyDL";
   }
 

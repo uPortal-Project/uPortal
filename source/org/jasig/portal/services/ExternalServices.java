@@ -298,7 +298,6 @@ public class ExternalServices {
       elementName = null;  // The element has ended.  Null it.
 
       if (qName.equals("service")) {
-        String name = svcItem.getName();
         String javaClass = svcItem.getJavaClass();
         Class[] classNames = null;
         Object[] args = null;
