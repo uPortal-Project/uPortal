@@ -77,9 +77,11 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     RDBMServices.PreparedStatement ps = null;
     RDBMServices.PreparedStatement ups = null;
     RDBMServices.PreparedStatement uis = null;
-    ResultSet rs = null;
-    ResultSet urs = null;
-    ResultSet uprs = null;
+    ResultSet rs = null; 
+    ResultSet urs = null; 
+    ResultSet uprs = null; 
+
+
         try {
             conn = RDBMServices.getConnection();
             uis = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_is_search);
@@ -131,12 +133,12 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
             LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
             LogService.log(LogService.ERROR, e);
         } finally {
-            RDBMServices.closeResultSet(rs);
-            RDBMServices.closeResultSet(urs);
-            RDBMServices.closeResultSet(uprs);
-            RDBMServices.closePreparedStatement(ps);
-            RDBMServices.closePreparedStatement(uis);
-            RDBMServices.closePreparedStatement(ups);
+            RDBMServices.closeResultSet(rs); 
+            RDBMServices.closeResultSet(urs); 
+            RDBMServices.closeResultSet(uprs); 
+            RDBMServices.closePreparedStatement(ps); 
+            RDBMServices.closePreparedStatement(uis); 
+            RDBMServices.closePreparedStatement(ups); 
             RDBMServices.releaseConnection(conn);
         }
       return (EntityIdentifier[]) ar.toArray(r);

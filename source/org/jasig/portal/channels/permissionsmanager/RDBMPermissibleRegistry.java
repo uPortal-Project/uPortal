@@ -74,8 +74,8 @@ public class RDBMPermissibleRegistry {
     private void init () {
         LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.init():: setting up registry");
         Connection conn = null;
-        ResultSet rs = null;
         Statement st = null;
+        ResultSet rs = null;
         try {
             conn = getConnection();
             st = conn.createStatement();
@@ -94,9 +94,9 @@ public class RDBMPermissibleRegistry {
         } catch (Exception e) {
             LogService.log(LogService.ERROR, e);
         } finally {
-            RDBMServices.closeResultSet(rs);
-            RDBMServices.closeStatement(st);
-            RDBMServices.releaseConnection(conn);
+            RDBMServices.closeResultSet(rs); 
+            RDBMServices.closeStatement(st); 
+            RDBMServices.releaseConnection(conn); 
         }
         registerKnownPermissibles();
     }
@@ -179,8 +179,8 @@ public class RDBMPermissibleRegistry {
                 } catch (Exception e) {
                     LogService.log(LogService.ERROR, e);
                 } finally {
-                    RDBMServices.closeStatement(st);
-                    RDBMServices.releaseConnection(conn);
+                    RDBMServices.closeStatement(st); 
+                    RDBMServices.releaseConnection(conn); 
                 }
             } catch (Throwable th) {
                 LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.registerPermissible(): error while registering "
@@ -205,8 +205,8 @@ public class RDBMPermissibleRegistry {
         } catch (Exception e) {
             LogService.log(LogService.DEBUG, e);
         } finally {
-            RDBMServices.closeStatement(st);
-            RDBMServices.releaseConnection(conn);
+            RDBMServices.closeStatement(st); 
+            RDBMServices.releaseConnection(conn); 
         }
     }
 
