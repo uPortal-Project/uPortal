@@ -115,7 +115,7 @@ public class TabColumnPrefsState extends BaseState
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
   protected static String SKINS_PATH = "media/org/jasig/portal/layout/tab-column/nested-tables";
-  
+
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
   // very good and should be improved.  For example, there needs to be a way to let a user know that
@@ -199,8 +199,8 @@ public class TabColumnPrefsState extends BaseState
 
   public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException  {
     this.pcs = pcs;
-  }  
-  
+  }
+
   public void renderXML(ContentHandler out) throws PortalException
   {
     if (this.internalState != null)
@@ -277,7 +277,7 @@ public class TabColumnPrefsState extends BaseState
   private final void moveTab(String sourceTabId, String method, String destinationTabId) throws PortalException {
       // determine root folder id
       String rootNodeId=ulm.getParentId(sourceTabId);
-      
+
       if(ulm.canMoveNode(sourceTabId,rootNodeId,destinationTabId)) {
           if(method.equals("insertBefore")) {
               ulm.moveNode(sourceTabId,rootNodeId,destinationTabId);
@@ -450,7 +450,7 @@ public class TabColumnPrefsState extends BaseState
   private final void moveChannel(String sourceChannelSubscribeId, String method, String destinationElementId) throws PortalException
   {
       //ken: the meaning of destinationElement eludes me here ... I'll just guess -peterk.
-      
+
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
           IUserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
@@ -493,10 +493,10 @@ public class TabColumnPrefsState extends BaseState
           }
           ulm.addNode(channel,ulm.getParentId(destinationElementId),siblingId);
       }
-      
+
       // Make sure ChannelManager knows about the new channel
       pcs.getChannelManager().instantiateChannel(channel.getId());
-      
+
       ulm.saveUserLayout();
   }
 
@@ -522,8 +522,8 @@ public class TabColumnPrefsState extends BaseState
   {
     pcs.getChannelManager().removeChannel(channelSubscribeId);
     deleteElement(channelSubscribeId);
-  }  
-  
+  }
+
   /**
    * Removes a tab or column element from the layout.  To remove
    * a channel element, call deleteChannel().
@@ -560,7 +560,7 @@ public class TabColumnPrefsState extends BaseState
   private final boolean isTab (String folderId) throws PortalException
   {
       // we could be a bit more careful here and actually check the type
-      return (ulm.getParentId(folderId)==ulm.getRootFolderId());
+      return ulm.getRootFolderId().equals(ulm.getParentId(folderId));
   }
 
   /**
@@ -655,7 +655,7 @@ public class TabColumnPrefsState extends BaseState
   protected class DefaultState extends BaseState
   {
     private static final boolean printXMLToLog = false;
-    
+
     protected TabColumnPrefsState context;
 
     public DefaultState(TabColumnPrefsState context)
@@ -922,8 +922,8 @@ public class TabColumnPrefsState extends BaseState
           if (subAction != null && subAction.equals("modifyChannelParams"))
           {
             IUserLayoutChannelDescription layoutChannel=(IUserLayoutChannelDescription)ulm.getNode(elementID);
-            String channelPublishId=layoutChannel.getChannelPublishId();            
-            
+            String channelPublishId=layoutChannel.getChannelPublishId();
+
             Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
             Element channel = (Element)channelRegistry.getElementById("chan" + channelPublishId);
             List overridableChanParams = getOverridableChannelParams(channelPublishId);
@@ -1013,21 +1013,21 @@ public class TabColumnPrefsState extends BaseState
           sstr.setParameter("elementID", elementID != null ? elementID : "none");
           sstr.setParameter("errorMessage", errorMessage);
 
-          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();          
+          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
           StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(th, ssup);
 
           // Put a duplicating filter before th
           StringWriter sw = null;
-          OutputFormat outputFormat = null;         
+          OutputFormat outputFormat = null;
           if (printXMLToLog) {
             sw = new StringWriter();
             outputFormat = new OutputFormat();
             outputFormat.setIndenting(true);
             XMLSerializer debugSerializer = new XMLSerializer(sw, outputFormat);
             SAX2DuplicatingFilterImpl dupFilter = new SAX2DuplicatingFilterImpl(th, debugSerializer);
-            dupFilter.setParent(saif);          
+            dupFilter.setParent(saif);
           }
-          
+
           // Incorporate channel registry document into userLayout if user is in the subscribe process
           if (action.equals("newChannel")) {
             Node channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson()).getDocumentElement();
@@ -1046,11 +1046,11 @@ public class TabColumnPrefsState extends BaseState
               //          emptytr.transform(new DOMSource(), new SAXResult(saif));
               ulm.getUserLayout((ContentHandler)saif);
           }
-          
+
           // Debug piece to print out the recorded pre-structure transformation XML
           if (printXMLToLog) {
             LogService.log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
-          }          
+          }
 
         } else {
           LogService.log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
