@@ -22,8 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
+import org.jasig.portal.groups.EntityTestingGroupImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -86,7 +86,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        for ( i=groupDefs.iterator(); i.hasNext(); )
        {
            GroupDefinition groupDef = (GroupDefinition) i.next();
-           IEntityGroup group = new EntityGroupImpl(groupDef.getKey(), IPerson.class);
+           IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPerson.class);
            group.setName(groupDef.getName());
            group.setDescription(groupDef.getDescription());
            cachePut(group);
