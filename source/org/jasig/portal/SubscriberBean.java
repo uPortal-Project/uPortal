@@ -44,7 +44,7 @@ public class SubscriberBean extends GenericPortalBean{
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement();
 
-        String sQuery = "SELECT ID, TITLE, CHANNEL_XML FROM PORTAL_CHANNELS WHERE ID=" + id ;
+        String sQuery = "SELECT CHAN_ID, TITLE, CHANNEL_XML FROM PORTAL_CHANNELS WHERE CHAN_ID=" + id ;
         Logger.log (Logger.DEBUG, sQuery);
         debug(sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
@@ -91,7 +91,7 @@ public class SubscriberBean extends GenericPortalBean{
   /**
    * Method for getting Channel Name
    * @param the servlet request object
-   * @return String the channel name
+   * @return the channel name
    */
    public String getChannelName(HttpServletRequest req)
    {
@@ -182,9 +182,10 @@ public class SubscriberBean extends GenericPortalBean{
   /**
    * Retrieves all available channels
    * @param the servlet request object
-   * @return ResultSet
+   * @param the servlet response object
+   * @param the JspWriter object
    */
-  public ResultSet getChannels (HttpServletRequest req)
+  public void getChannels (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     ResultSet rs = null;
     Statement stmt = null;
@@ -194,27 +195,25 @@ public class SubscriberBean extends GenericPortalBean{
         con = rdbmService.getConnection ();
         stmt = con.createStatement();
 
-        String sQuery = "SELECT ID, TITLE FROM PORTAL_CHANNELS" ;
+        String sQuery = "SELECT CHAN_ID, TITLE FROM PORTAL_CHANNELS" ;
         Logger.log (Logger.DEBUG, sQuery);
         debug(sQuery);
 
         rs = stmt.executeQuery (sQuery);
 
-      return rs;
-      
+        while(rs.next()) {
+        out.println("<a href=\"previewChannel.jsp?chan_id="+rs.getString("CHAN_ID")+"\">"+rs.getString("TITLE")+"</a><br>");
+        }
+        stmt.close();
     }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
     }
-    return null;
+    finally
+    {
+      rdbmService.releaseConnection (con);
+    }
   }
 
-  /**
-   * method for closing subscribe database connection
-   */
-  public void close()
-  {
-   rdbmService.releaseConnection(con);
-  }
 }
