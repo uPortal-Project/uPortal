@@ -44,15 +44,15 @@ Version $Revision$
    <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
 
    <xsl:template match="rss">
-      <html>
+<!--      <html>
          <head>
             <title>uPortal 2.0</title>
          </head>
 
-         <body>
+         <body> -->
             <xsl:apply-templates select="channel" />
-         </body>
-      </html>
+<!--         </body>
+      </html> -->
    </xsl:template>
 
    <xsl:template match="channel">
