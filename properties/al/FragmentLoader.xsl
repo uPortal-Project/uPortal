@@ -55,11 +55,18 @@
 							</value>
 						</column>
 
-                                                <column>
+                        <column>
 							<name>PUSHED_FRAGMENT</name>
-							<value>Y</value>
+							<xsl:choose>
+								<xsl:when test="@type='pulled'">
+									<value>N</value>
+								</xsl:when>
+								<xsl:otherwise>
+									<value>Y</value>
+								</xsl:otherwise>
+							</xsl:choose>
 						</column>
-                                                <column>
+                        <column>
 							<name>FRAGMENT_ROOT_ID</name>
 							<value>1</value>
 						</column>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragments>
 
-	<fragment name="uPortal">
+	<fragment name="uPortal" type="pushed">
 		<description>uPortal channels</description>
 		<groups>
 			<group>Guests</group>
@@ -20,7 +20,7 @@
 		</folder>
 	</fragment>
 	
-	<fragment name="news">
+	<fragment name="news" type="pushed">
 		<description>News channels</description>
 		<groups>
 			<group>Everyone</group>
@@ -41,7 +41,7 @@
 		</folder>
 	</fragment>	
 
-	<fragment name="entertainment">
+	<fragment name="entertainment" type="pushed">
 		<description>Entertaining channels</description>
 		<groups>
 			<group>Students</group>
@@ -61,7 +61,7 @@
 		</folder>
 	</fragment>
 	
-	<fragment name="developers">
+	<fragment name="developers" type="pushed">
 		<description>Channels geared towards uPortal developers</description>
 		<groups>
 			<group>Developers</group>
@@ -85,7 +85,7 @@
 		</folder>
 	</fragment>	
 
-	<fragment name="Portlet-examples">
+	<fragment name="Portlet-examples" type="pushed">
 		<description>Channels that demonstrate the portlet adapter</description>
 		<groups>
 			<group>Developers</group>
@@ -108,7 +108,7 @@
 		</folder>
 	</fragment>	
 
-	<fragment name="CWebProxy-examples">
+	<fragment name="CWebProxy-examples" type="pushed">
 		<description>Channels that demonstrate CWebProxy</description>
 		<groups>
 			<group>Developers</group>
@@ -128,7 +128,7 @@
 		</folder>
 	</fragment>	
 	
-	<fragment name="ICC-demo">
+	<fragment name="ICC-demo" type="pushed">
 		<description>Channels that demonstrate inter-channel communication</description>
 		<groups>
 			<group>Developers</group>
@@ -148,7 +148,7 @@
 		</folder>
 	</fragment>		
 
-	<fragment name="admin-tools">
+	<fragment name="admin-tools" type="pushed">
 		<description>Channels for portal administration</description>
 		<groups>
 			<group>Portal Administrators</group>

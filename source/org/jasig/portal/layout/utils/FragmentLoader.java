@@ -80,9 +80,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0
  */
-public class PushFragmentLoader {
+public class FragmentLoader {
 
-    static final String configXSL="/properties/al/PushFragmentLoader.xsl";
+    static final String configXSL="/properties/al/FragmentLoader.xsl";
 
     public static void main(String[] args) throws Exception {
 
@@ -123,13 +123,13 @@ public class PushFragmentLoader {
         // instantiate transfomer
         SAXTransformerFactory saxTFactory=(SAXTransformerFactory) TransformerFactory.newInstance();
 
-        System.out.println("DEBUG: reading XSLT from url="+PushFragmentLoader.class.getResource(configXSL));
+        System.out.println("DEBUG: reading XSLT from url="+FragmentLoader.class.getResource(configXSL));
 
         XMLReader reader = XMLReaderFactory.createXMLReader();
         // for some weird weird reason, the following way of instantiating the parser causes all elements to dissapear ...
         // nothing like a bizzare bug like that to take up your afternoon :(
         //        XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-        TransformerHandler thand=saxTFactory.newTransformerHandler(new StreamSource(PushFragmentLoader.class.getResourceAsStream(configXSL)));
+        TransformerHandler thand=saxTFactory.newTransformerHandler(new StreamSource(FragmentLoader.class.getResourceAsStream(configXSL)));
 
         // instantiate filter
         ConfigFilter filter=new ConfigFilter(thand,rNames);
@@ -138,7 +138,7 @@ public class PushFragmentLoader {
         thand.setResult(new StreamResult(outputDataFile));
         boolean isException = false;
         try {
-         reader.parse(new InputSource(PushFragmentLoader.class.getResourceAsStream(alConfigFile)));
+         reader.parse(new InputSource(FragmentLoader.class.getResourceAsStream(alConfigFile)));
         } catch ( Exception e ) {
 			isException = true;
 			System.out.println ( "The pushed fragment file \""+alConfigFile+"\" caused the exception: " );

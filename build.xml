@@ -661,7 +661,7 @@
 <!--
 
   The "initportal" target runs all the targets necessary to deploy the portal
-  and prepare the portal database: deploy, db, i18n-db, pubchan, pushfragment
+  and prepare the portal database: deploy, db, i18n-db, pubchan, pubfragments
   
 -->
   
@@ -674,8 +674,8 @@
     <antcall target="pubchan">
       <param name="channel" value="all"/>
     </antcall>   
-    <antcall target="pushfragment">
-      <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
+    <antcall target="pubfragments">
+      <param name="fragmentFile" value="/properties/al/fragments.xml"/>
     </antcall>
     <antcall target="deployPortletApp">
       <param name="portletApp" value="all"/>
@@ -898,23 +898,23 @@
 
 
 
-<!-- ========= The push fragment loader for aggregated layouts =========  -->
+<!-- ========= The fragment loader for aggregated layouts =========  -->
 <!--
      
-     The variable fragmentFile points to the XML file of the push fragments definition
+     The variable fragmentFile points to the XML file of the fragments definition
 
-     ant pushfragment -DfragmentFile=/properties/al/pushfragments.xml
+     ant fragment -DfragmentFile=/properties/al/fragments.xml
 
 -->
 
 
-  <target name="pushfragment" depends="compile"
-   description="Loads pushed fragments into the uPortal database">
-    <property name="tempDataXML" value="/properties/al/push.fragment.temp.data.xml"/>
+  <target name="pubfragments" depends="compile"
+   description="Loads fragments into the uPortal database">
+    <property name="tempDataXML" value="/properties/al/fragment.temp.data.xml"/>
     <property name="fragmentFile" value=" "/>
     <echo message="Resetting layout fragments configuration."/>
     <!-- create data.xml file -->
-    <java fork="true" dir="${basedir}" failonerror="true" classname="org.jasig.portal.layout.utils.PushFragmentLoader">
+    <java fork="true" dir="${basedir}" failonerror="true" classname="org.jasig.portal.layout.utils.FragmentLoader">
         <arg value="${fragmentFile}"/>
         <arg value="${build.home}/WEB-INF/classes/${tempDataXML}"/>
         <classpath>
@@ -923,7 +923,7 @@
         </classpath>
     </java>
     <!-- load data.xml file -->
-    <echo message="Loading new push-fragments into the database."/>
+    <echo message="Loading new fragments into the database."/>
     <java fork="true" dir="${build.home}/WEB-INF/classes"
           classname="org.jasig.portal.tools.dbloader.DbLoader">
         <arg value="-d"/>
