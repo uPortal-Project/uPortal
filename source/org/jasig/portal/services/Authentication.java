@@ -36,6 +36,7 @@
 package org.jasig.portal.services;
 
 import org.jasig.portal.security.*;
+import org.jasig.portal.security.provider.PersonImpl;
 
 /**
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -53,9 +54,9 @@ public class Authentication
    */
   public boolean authenticate (String sUserName, String sPassword)
   {
-    SecurityContext ic;
-    Principal me;
-    OpaqueCredentials op;
+    ISecurityContext ic;
+    IPrincipal me;
+    IOpaqueCredentials op;
 
     ic = new InitialSecurityContext("root");
     me = ic.getPrincipalInstance();
@@ -69,7 +70,7 @@ public class Authentication
 
     if(bAuthenticated)
     {
-      AdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
+      IAdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
 
       if (addInfo == null || !(addInfo instanceof PersonImpl))
       {
