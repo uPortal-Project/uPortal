@@ -36,13 +36,13 @@ public interface IChannelRenderer
     public final static String RCS_ID = "@(#) $Header$";
 
     /** <p>Channel rendering was successful.</p> */
-    int RENDERING_SUCCESSFUL = 0;
+    public static int RENDERING_SUCCESSFUL = 0;
 
     /** <p>Channel rendering failed.</p> */
-    int RENDERING_FAILED = 1;
+    public static int RENDERING_FAILED = 1;
 
     /** <p>Channel rendering timed-out.</p> */
-    int RENDERING_TIMED_OUT = 2;
+    public static int RENDERING_TIMED_OUT = 2;
 
     /**
      * <p>Starts the channel rendering process.</p>
