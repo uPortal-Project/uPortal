@@ -441,57 +441,49 @@ public class PersonDirectory {
 
       // Execute query substituting Username for parameter
       stmt = conn.prepareStatement(pdi.uidquery);
+      
       stmt.setString(1,username);
       rs = stmt.executeQuery();
-      if (rs.getFetchSize() == 1) {
-        // Get only the first row of the result set
-        rs.next();
-        // For each attribute, put its value and alias in the hashtable
-        for (int i=0;i<pdi.attributenames.length;i++) {
-          try {
-            String value = null;
-            String attName = pdi.attributenames[i];
-            if (attName != null && attName.length() != 0)
-              value = rs.getString(attName);
-            if (value!=null) {
-              attribs.put(pdi.attributealiases[i],value);
-            }
-          } catch (SQLException sqle) {
-            // Don't let error in a field prevent processing of others.
-            LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
-          }
-        }
-      } // If single row result set
-      else if (rs.getFetchSize() > 1) {
-        HashMap values = new HashMap();
-        while (rs.next()) {
-          // Get all rows of the result set
-          // For each attribute, put its value and alias in the hashtable
+      
+      // Place data from result set into a list of maps
+      // representing the name/value pairs from each row
+      List results = new ArrayList();
+      while (rs.next()) {
+          Map resultRow = new HashMap(pdi.attributenames.length);
           for (int i = 0; i < pdi.attributenames.length; i++) {
-            try {
-              String value = null;
               String attName = pdi.attributenames[i];
-              if (attName != null && attName.length() != 0){
-                value = rs.getString(attName);
+              if (attName != null && attName.length() > 0) {
+                  String attValue = rs.getString(attName);
+                  if (attValue != null) {
+                      resultRow.put(attName, attValue);
+                  }
               }
-              if (value != null) {
-                if (!values.containsKey(attName)){
-                    values.put(attName,new HashSet());
-                }
-                ((HashSet)values.get(attName)).add(value);
-              } // If value != null
-            } catch (SQLException sqle) {
-              // Don't let an error in a field prevent processing of others.
-              LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
-            } //try/catch block
-          } // For all atribute names loop
-        } // while rs.next()
-        if (values.size() > 0){
-          for (int i = 0; i < pdi.attributealiases.length; i++) {
-            attribs.put(pdi.attributealiases[i], new Vector((HashSet)values.get(pdi.attributenames[i])));
-          } 
-        }  //if values.size() > 0
-      } // if multi row result set
+          }
+          results.add(resultRow);
+      }
+      
+      // For each attribute name, gather the non-null values
+      // (one from each result row) and determine whether the 
+      // result is single or multi-valued.
+      for (int i = 0; i < pdi.attributenames.length; i++) {
+          String attAlias = pdi.attributealiases[i];
+          String attName = pdi.attributenames[i];
+          Set attValues = new HashSet();
+          for (Iterator iter = results.iterator(); iter.hasNext();) {
+              Map resultRow = (Map)iter.next();
+              String attValue = (String)resultRow.get(attName);
+              attValues.add(attValue);
+          }
+          if (attValues.size() == 1) {
+              // Single-valued result
+              String attValue = (String)attValues.iterator().next();
+              attribs.put(attAlias, attValue);
+          } else if (attValues.size() > 1) {
+              // Multi-valued result
+              attribs.put(attAlias, new ArrayList(attValues));
+          }
+      }
+      
     } catch (Exception e) {
       // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
