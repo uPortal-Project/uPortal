@@ -1,0 +1,239 @@
+DROP TABLE PORTAL_USERS;
+
+CREATE TABLE PORTAL_USERS (
+	ID INTEGER IDENTITY PRIMARY KEY,
+	USER_ID INTEGER, 
+	USER_NAME VARCHAR(15),
+	PASSWORD VARCHAR(15),
+	FIRST_NAME VARCHAR(15),
+	LAST_NAME VARCHAR(15),
+	LAYOUT_XML LONGVARCHAR,
+	DEFAULT_LAYOUT_XML LONGVARCHAR
+	);
+
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('guest', 'guest', 'Guest', 'Guest');
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('demo', 'demo', 'Demo', 'Dude');
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('prez', 'tenorsax', 'Lester', 'Young');
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('bird', 'ornathology', 'Charlie', 'Parker');
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('duke', 'strayhorn', 'Duke', 'Ellington');
+INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('trane', 'lovesupreme', 'John', 'Coltrane');
+
+UPDATE PORTAL_USERS SET LAYOUT_XML='
+<?xml version="1.0"?>
+<!DOCTYPE layout SYSTEM "layout.dtd">
+
+<layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
+  <tab name="Main">
+    <column width="20%">
+      <channel minimized="false" class="org.jasig.portal.channels.CAuthorization">
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="Clock" name="name"/>
+        <parameter value="Clock3D.class" name="code"/>
+        <parameter value="./" name="codeBase"/>
+        <parameter value="" name="archive"/>
+        <parameter value="200" name="width"/>
+        <parameter value="200" name="height"/>
+        <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ESPN Scoreboard" name="name"/>
+        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+        <parameter value="ScorePost.zip" name="archive"/>
+        <parameter value="128" name="width"/>
+        <parameter value="182" name="height"/>
+        <parameter value="cabbase>ScorePost.cab^bgcolor>#336699^text>#FFFFFF^data>/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat^ad data>/ad/scorepost/nhl.txt^target>_top^delay>3500^data time>30000^inactive data time>300000" name="params"/>
+      </channel>
+    </column>
+    <column width="50%">
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
+      </channel>
+    </column>
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="CA" name="state"/>
+        <parameter value="El Segundo" name="city"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ABC News" name="name"/>
+        <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
+        <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
+        <parameter value="MegaTicker.jar" name="archive"/>
+        <parameter value="141" name="width"/>
+        <parameter value="409" name="height"/>
+        <parameter value="cabbase>MegaTicker.cab^station>KABC" name="params"/>
+      </channel>
+    </column>
+  </tab>
+  <tab name="Misc">
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CAuthorization">
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
+      </channel>
+    </column>
+    <column width="70%">
+      <channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.yahoo.com" name="url"/>
+      </channel>
+    </column>
+  </tab>
+</layout>
+' WHERE USER_NAME='guest';
+
+UPDATE PORTAL_USERS SET LAYOUT_XML='
+<?xml version="1.0"?>
+<!DOCTYPE layout SYSTEM "layout.dtd">
+
+<layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
+  <tab name="Main">
+    <column width="20%">
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="Clock" name="name"/>
+        <parameter value="Clock3D.class" name="code"/>
+        <parameter value="./" name="codeBase"/>
+        <parameter value="" name="archive"/>
+        <parameter value="200" name="width"/>
+        <parameter value="200" name="height"/>
+        <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ESPN Scoreboard" name="name"/>
+        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+        <parameter value="ScorePost.zip" name="archive"/>
+        <parameter value="128" name="width"/>
+        <parameter value="182" name="height"/>
+        <parameter value="cabbase>ScorePost.cab^bgcolor>#336699^text>#FFFFFF^data>/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat^ad data>/ad/scorepost/nhl.txt^target>_top^delay>3500^data time>30000^inactive data time>300000" name="params"/>
+      </channel>
+    </column>
+    <column width="50%">
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
+      </channel>
+    </column>
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="CA" name="state"/>
+        <parameter value="El Segundo" name="city"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ABC News" name="name"/>
+        <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
+        <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
+        <parameter value="MegaTicker.jar" name="archive"/>
+        <parameter value="141" name="width"/>
+        <parameter value="409" name="height"/>
+        <parameter value="cabbase>MegaTicker.cab^station>KABC" name="params"/>
+      </channel>
+    </column>
+  </tab>
+  <tab name="Page 2">
+    <column width="100%">
+      <channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
+      </channel>
+    </column>
+  </tab>
+  <tab name="Misc">
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
+      </channel>
+    </column>
+    <column width="70%">
+      <channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.yahoo.com" name="url"/>
+      </channel>
+    </column>
+  </tab>
+</layout>
+' WHERE USER_NAME!='guest';
+
+UPDATE PORTAL_USERS SET DEFAULT_LAYOUT_XML='
+<?xml version="1.0"?>
+<!DOCTYPE layout SYSTEM "layout.dtd">
+
+<layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
+  <tab name="Main">
+    <column width="20%">
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="Clock" name="name"/>
+        <parameter value="Clock3D.class" name="code"/>
+        <parameter value="./" name="codeBase"/>
+        <parameter value="" name="archive"/>
+        <parameter value="200" name="width"/>
+        <parameter value="200" name="height"/>
+        <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ESPN Scoreboard" name="name"/>
+        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+        <parameter value="ScorePost.zip" name="archive"/>
+        <parameter value="128" name="width"/>
+        <parameter value="182" name="height"/>
+        <parameter value="cabbase>ScorePost.cab^bgcolor>#336699^text>#FFFFFF^data>/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat^ad data>/ad/scorepost/nhl.txt^target>_top^delay>3500^data time>30000^inactive data time>300000" name="params"/>
+      </channel>
+    </column>
+    <column width="50%">
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
+      </channel>
+    </column>
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="CA" name="state"/>
+        <parameter value="El Segundo" name="city"/>
+      </channel>
+      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ABC News" name="name"/>
+        <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
+        <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
+        <parameter value="MegaTicker.jar" name="archive"/>
+        <parameter value="141" name="width"/>
+        <parameter value="409" name="height"/>
+        <parameter value="cabbase>MegaTicker.cab^station>KABC" name="params"/>
+      </channel>
+    </column>
+  </tab>
+  <tab name="Page 2">
+    <column width="100%">
+      <channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
+      </channel>
+    </column>
+  </tab>
+  <tab name="Misc">
+    <column width="30%">
+      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
+      </channel>
+    </column>
+    <column width="70%">
+      <channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.yahoo.com" name="url"/>
+      </channel>
+    </column>
+  </tab>
+</layout>
+' WHERE USER_NAME!='guest';
