@@ -502,6 +502,10 @@
       deprecation="${compile.deprecation}"
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
+      <!-- To build with JDK 1.5 uncomment the following and 
+           copy xml-apis.jar from lib to lib/endorsed -->
+      <!--<compilerarg value="-Djava.endorsed.dirs=lib/endorsed"/>-->
+      
     </javac>
       
     <!-- Copy non-java resources -->
