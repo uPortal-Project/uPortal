@@ -17,6 +17,10 @@ import org.jasig.portal.layout.ALNode;
  */
 
 public abstract class ALRestriction extends UserLayoutRestriction {
+	
+  public ALRestriction() {
+	 super();
+  }	
 
   public ALRestriction( String name ) {
     super(name);

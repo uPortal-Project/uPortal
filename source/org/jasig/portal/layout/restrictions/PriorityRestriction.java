@@ -32,6 +32,10 @@ public class PriorityRestriction extends ALRestriction {
          public PriorityRestriction(String name) {
            super(name);
          }
+         
+         public PriorityRestriction() {
+            super();
+          }
 
          /**
            * Returns the maximum value of the given restriction

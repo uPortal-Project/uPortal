@@ -34,21 +34,28 @@ public class GroupRestriction extends ALRestriction {
          private IEntityGroup groups[];
          private static IGroupService groupService;
          private static IGroupServiceFactory groupServiceFactory;
-
-         public GroupRestriction(String name,String nodePath) throws PortalException {
-           super(nodePath);
+         
+         static {
            try {
             if ( groupServiceFactory == null )
              groupServiceFactory = new ReferenceGroupServiceFactory();
             if ( groupService == null )
              groupService = groupServiceFactory.newGroupService();
            } catch ( Exception e ) {
-             throw new PortalException(e.getMessage());
-            }
+             throw new RuntimeException(e.getMessage());
+           }
+         }  
+
+         public GroupRestriction(String name,String nodePath) throws PortalException {
+           super(name,nodePath);
          }
 
          public GroupRestriction(String name) throws PortalException {
-           this(name,LOCAL_RESTRICTION_PATH);
+           super(name);
+         }
+         
+         public GroupRestriction() throws PortalException {
+            super();
          }
 
           /**

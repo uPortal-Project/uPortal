@@ -45,6 +45,12 @@ public interface IUserLayoutRestriction {
    * @return a <code>String</code> name
    */
   public String getName();
+  
+  /**
+   * Sets the name of the current restriction
+   * @param a <code>String</code> name
+   */
+  public void setName( String name );
 
    /**
      * Gets the unique key of the current restriction

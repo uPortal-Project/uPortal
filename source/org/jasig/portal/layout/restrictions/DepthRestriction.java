@@ -34,6 +34,10 @@ public class DepthRestriction extends ALRestriction {
          public DepthRestriction(String name) {
             super(name);
          }
+         
+         public DepthRestriction() {
+            super();
+         }
 
           /**
             * Parses the restriction expression of the current node

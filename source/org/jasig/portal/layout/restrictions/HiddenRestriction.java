@@ -27,6 +27,11 @@ public class HiddenRestriction extends BooleanRestriction {
            super(name);
          }
 
+         public HiddenRestriction() {
+            super();
+         }
+
+         
          /**
            * Gets the boolean property value for the specified node
          */

@@ -32,6 +32,10 @@ public abstract class BooleanRestriction extends ALRestriction {
          public BooleanRestriction(String name) {
            super(name);
          }
+         
+         public BooleanRestriction() {
+            super();
+         }
 
          private boolean strToBool ( String boolStr ) {
            return ("Y".equalsIgnoreCase(boolStr))?true:false;

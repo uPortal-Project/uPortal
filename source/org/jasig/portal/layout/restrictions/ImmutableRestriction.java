@@ -26,6 +26,10 @@ public class ImmutableRestriction extends BooleanRestriction {
          public ImmutableRestriction(String name) {
            super(name);
          }
+         
+         public ImmutableRestriction() {
+            super();
+         }
 
 
          /**

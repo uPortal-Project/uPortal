@@ -9,6 +9,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.ResourceLoader;
 
 import java.util.Properties;
+import java.util.Enumeration;
 
 /**
  * UserLayoutRestrictionFactory class.
@@ -37,6 +38,14 @@ public class UserLayoutRestrictionFactory {
  	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + className +"'" );	
  	  try {	
  	 	IUserLayoutRestriction restriction = (IUserLayoutRestriction) Class.forName(className).newInstance();
+ 	 	for ( Enumeration classNames = activeRestrictions.elements(); classNames.hasMoreElements(); ) {
+ 	 	  String name = (String) classNames.nextElement();
+ 	 	  String cn = (String) classNames.nextElement();
+ 	 	  if ( className.equals(cn) ) {
+ 	 	  	 restriction.setName(name);
+ 	 	  	 break;
+ 	 	  }
+ 	 	}  
  	 	return restriction;
  	  } catch ( Exception e ) {
  	  	  throw new PortalException ( "createRestriction: " + e.toString() );

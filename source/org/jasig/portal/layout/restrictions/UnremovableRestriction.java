@@ -27,6 +27,10 @@ public class UnremovableRestriction extends BooleanRestriction {
          public UnremovableRestriction(String name) {
             super(name);
          }
+         
+         public UnremovableRestriction() {
+            super();
+         }
 
          /**
            * Gets the boolean property value for the specified node

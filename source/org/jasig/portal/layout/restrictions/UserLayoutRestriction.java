@@ -20,6 +20,10 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   private String name;	
   private String restrictionExpression;
   protected String nodePath;
+  
+  public UserLayoutRestriction() {
+     nodePath = LOCAL_RESTRICTION_PATH;
+  }
 
   public UserLayoutRestriction( String name ) {
      this(name,LOCAL_RESTRICTION_PATH);
