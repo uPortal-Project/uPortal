@@ -1738,8 +1738,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         String sql;
         if (localeAware) {
+            // This needs to be changed to get the localized strings
             sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
-          "ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.LOCALE";
+          "ULS.UNREMOVABLE,ULS.IMMUTABLE";
         }  else {
             sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
@@ -1787,8 +1788,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               int name_index, value_index;
               if (localeAware) {
                   ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocales()[0].toString());
-                  name_index=11;
-                  value_index=12;
+                  name_index=10;
+                  value_index=11;
               }  else {
                   ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
                   name_index=10;
