@@ -268,7 +268,7 @@ public class PublisherBean extends GenericPortalBean{
       con = rdbmService.getConnection ();
       stmt = con.createStatement();
 
-      String sQuery = "SELECT TYPE, NAME, DESC FROM PORTAL_CHAN_TYPES";
+      String sQuery = "SELECT TYPE, NAME, DESCR FROM PORTAL_CHAN_TYPES";
       Logger.log (Logger.DEBUG, sQuery);
 
         rs = stmt.executeQuery (sQuery);
