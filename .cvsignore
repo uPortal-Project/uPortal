@@ -44,3 +44,5 @@ uPortal20.jpx
 .#build.xml.1.12
 0Bak_build.xml
 Tomcat
+.project
+.classpath
