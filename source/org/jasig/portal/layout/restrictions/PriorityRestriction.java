@@ -59,7 +59,7 @@ public class PriorityRestriction extends UserLayoutRestriction {
          }
 
          public PriorityRestriction() {
-           super();
+           super(LOCAL_RESTRICTION);
          }
 
 
@@ -104,11 +104,16 @@ public class PriorityRestriction extends UserLayoutRestriction {
          protected void parseRestrictionExpression () throws PortalException {
           try {
             String restrictionExp = getRestrictionExpression();
-            StringTokenizer st = new StringTokenizer(restrictionExp,"-");
+            if ( restrictionExp.indexOf('-') > 0 ) {
+             StringTokenizer st = new StringTokenizer(restrictionExp,"-");
              String min = st.nextToken();
              String max = st.nextToken();
-             minPriority = CommonUtils.parseInt(min);
-             maxPriority = CommonUtils.parseInt(max);
+             minPriority = CommonUtils.parseInt(min,0);
+             maxPriority = CommonUtils.parseInt(max,Integer.MAX_VALUE);
+            } else {
+                minPriority = CommonUtils.parseInt(restrictionExp,0);
+                maxPriority = minPriority;
+              }
           } catch ( Exception e ) {
              throw new PortalException(e.getMessage());
             }
@@ -121,8 +126,8 @@ public class PriorityRestriction extends UserLayoutRestriction {
            * @exception PortalException
          */
          public boolean checkRestriction( String propertyValue ) throws PortalException {
-           int priority = CommonUtils.parseInt(propertyValue);
-           if ( (priority <= maxPriority && priority >= minPriority) || priority == 0 )
+           int priority = CommonUtils.parseInt(propertyValue,0);
+           if ( priority <= maxPriority && priority >= minPriority )
              return true;
              return false;
          }

@@ -101,6 +101,11 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   private static final String ADD_TARGET = "add_target";
   private static final String MOVE_TARGET = "move_target";
 
+  // The ID of the current loaded fragment
+  private String fragmentId;
+
+  // The IDs and names of the fragments which a user is owner of
+  private Hashtable fragments;
 
   // Channel and folder perfixes
   //private static final String CHANNEL_PREFIX="n";
@@ -290,7 +295,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       ALNode node = getLayoutNode(nodeId);
 
       // Checking restrictions on the node
-      Vector restrictions = node.getRestrictionsByPath("");
+      Vector restrictions = node.getRestrictionsByPath(UserLayoutRestriction.LOCAL_RESTRICTION);
       for ( int i = 0; i < restrictions.size(); i++ ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
 
@@ -590,10 +595,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public static PriorityRestriction getPriorityRestriction( ALNode node ) throws PortalException {
-     PriorityRestriction priorRestriction = getPriorityRestriction(node,null);
+     PriorityRestriction priorRestriction = getPriorityRestriction(node,UserLayoutRestriction.LOCAL_RESTRICTION);
      if ( priorRestriction == null ) {
        priorRestriction = (PriorityRestriction)
-         UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION,"0-"+java.lang.Integer.MAX_VALUE,null);
+         UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION,"0-"+java.lang.Integer.MAX_VALUE,UserLayoutRestriction.LOCAL_RESTRICTION);
      }
      return priorRestriction;
   }
@@ -639,13 +644,14 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean changeSiblingNodesPriorities(ALNode node, String parentNodeId, String nextNodeId, boolean justCheck ) throws PortalException {
+
     ALNode firstNode = null, nextNode = null;
     String firstNodeId = null;
     int priority = 0, nextPriority = 0, prevPriority = 0, range[] = null, prevRange[] = null, nextRange[] = null;
     PriorityRestriction priorityRestriction = null;
-    ALFolder parent = getLayoutFolder(parentNodeId);
     String nodeId = node.getId();
 
+    ALFolder parent = getLayoutFolder(parentNodeId);
     if ( parentNodeId != null ) {
         firstNodeId = parent.getFirstChildNodeId();
         // if the node is equal the first node in the sibling line we get the next node
@@ -691,11 +697,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     if ( nextNode == null ) {
 
       // Getting the last node
-      ALNode lastNode = null;
-      for ( String nextId = firstNodeId; nextId != null; ) {
-       lastNode =  getLayoutNode(nextId);
-       nextId = lastNode.getNextNodeId();
-      }
+      ALNode lastNode = getLastSiblingNode(firstNodeId);
 
       // if the node to be added is equal the last node in the sibling line
       if ( nodeId.equals(lastNode.getId()) )
@@ -724,9 +726,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
 
 
-
     // If we add a new node in a general case
-    if ( nextNode != null && !nextNode.equals(firstNode) ) {
+    if ( nextNode != null && !nextNode.equals(firstNode) && !node.equals(nextNode) ) {
 
       // Getting the last node
       ALNode prevNode = getLayoutNode(nextNode.getPreviousNodeId());
@@ -900,6 +901,43 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
    }
 
 
+   private void createFragmentList(Document document, Node rootNode) throws PortalException {
+     try {
+      Element alternateLayouts = document.createElement("alternateLayouts");
+      if ( fragments != null ) {
+       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
+        Element alternate = document.createElement("alternate");
+        String key = (String) fragEnum.nextElement();
+        alternate.setAttribute("ID",key);
+        alternate.setAttribute("name",(String) fragments.get(key));
+        alternateLayouts.appendChild(alternate);
+       }
+      }
+        rootNode.appendChild(alternateLayouts);
+     } catch ( Exception saxe ) {
+         throw new PortalException(saxe.getMessage());
+       }
+   }
+
+  private void createFragmentList(ContentHandler contentHandler) throws PortalException {
+     try {
+       contentHandler.startElement("","alternateLayouts","alternateLayouts",new AttributesImpl());
+      if ( fragments != null ) {
+       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
+        AttributesImpl attributes = new AttributesImpl();
+        String key = (String) fragEnum.nextElement();
+        attributes.addAttribute("","ID","ID","CDATA",key);
+        attributes.addAttribute("","name","name","CDATA",(String) fragments.get(key));
+        contentHandler.startElement("","alternate","alternate",attributes);
+        contentHandler.endElement("","alternate","alternate");
+       }
+      }
+       contentHandler.endElement("","alternateLayouts","alternateLayouts");
+     } catch ( SAXException saxe ) {
+         throw new PortalException(saxe.getMessage());
+       }
+  }
+
   /**
      * Output subtree of a user layout (with appropriate markings) defined by a particular node into
      * a <code>ContentHandler</code>
@@ -924,7 +962,12 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
            // Start document if we have the root node
            if (nodeId.equals(rootNodeId)) contentHandler.startDocument();
-           if (nodeId.equals(rootNodeId)) contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
+
+           if (nodeId.equals(rootNodeId)) {
+              contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
+              // Create a fragment list that the user owns
+              createFragmentList(contentHandler);
+           }
 
              ALFolder folder = (ALFolder) node;
              folderDescription = (IALFolderDescription) node.getNodeDescription();
@@ -1167,6 +1210,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         Document domLayout = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         Element layoutNode = domLayout.createElement(LAYOUT);
         domLayout.appendChild(layoutNode);
+        // Create a fragment list which the user owns
+        createFragmentList(domLayout,layoutNode);
         // Build the DOM
         appendDescendants(domLayout,layoutNode,rootNodeId);
         return domLayout;
@@ -1315,7 +1360,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     public void loadUserLayout() throws PortalException {
      try {
       if ( layoutStore != null ) {
+       fragmentId = null;
        layout = (Hashtable) layoutStore.getAggregatedUserLayout(person,userProfile);
+       fragments = (Hashtable) layoutStore.getFragments(person);
        // Checking restrictions and move "wrong" nodes to the lost folder
        moveWrongNodesToLostFolder();
       }
@@ -1327,13 +1374,40 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {
       try {
-        layoutStore.setAggregatedUserLayout(this.person,this.userProfile,this.layout);
+        if ( !isLayoutFragment() )
+         layoutStore.setAggregatedUserLayout(this.person,this.userProfile,this.layout);
       } catch ( Exception e ) {
         e.printStackTrace();
         throw new PortalException(e.getMessage());
       }
     }
 
+    public void loadFragment( String fragmentId ) throws PortalException {
+      try {
+        layout = (Hashtable) layoutStore.getFragment(person,fragmentId);
+        fragments = (Hashtable) layoutStore.getFragments(person);
+        this.fragmentId = fragmentId;
+        // Checking restrictions and move "wrong" nodes to the lost folder
+        moveWrongNodesToLostFolder();
+      } catch ( Exception e ) {
+        e.printStackTrace();
+        throw new PortalException(e.getMessage());
+      }
+    }
+
+    public void saveFragment() throws PortalException {
+      try {
+       if ( isLayoutFragment() )
+        layoutStore.setFragment(person,fragmentId,layout);
+      } catch ( Exception e ) {
+        e.printStackTrace();
+        throw new PortalException(e.getMessage());
+      }
+    }
+
+    private boolean isLayoutFragment() {
+      return ( fragmentId != null && CommonUtils.parseInt(fragmentId) > 0 );
+    }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         return getLayoutNode(nodeId).getNodeDescription();
@@ -1401,9 +1475,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      node.setNextNodeId(nextSiblingId);
      node.setPreviousNodeId(prevSiblingId);
 
+
      // TO UPDATE THE APPROPRIATE INFO IN THE DB
      // TO BE DONE !!!!!!!!!!!
-     boolean result = false;
+     boolean result = true;
      if ( autoCommit ) {
       if ( sourcePrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourcePrevNode);
       if ( sourceNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceNextNode);
@@ -1413,9 +1488,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceFolder);
       // Changing the node being moved
       result &= layoutStore.updateUserLayoutNode(person,userProfile,node);
-      return result;
      }
-      return true;
+
+      return result;
 
     }
 
@@ -1491,7 +1566,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         if ( nextNode != null )
              prevNode = getLayoutNode(nextNode.getPreviousNodeId());
         else
-             prevNode = getLastSiblingNode(parentFolder.getFirstChildNodeId());
+             prevNode = getLastSiblingNode( parentFolder.getFirstChildNodeId());
 
 
 
@@ -1520,7 +1595,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         if ( nextNode != null ) nextNode.setPreviousNodeId(nodeId);
 
         // Setting new child node ID to the parent node
-        if ( nextSiblingId != null && nextSiblingId.equals(parentFolder.getFirstChildNodeId()) )
+        if ( prevNode == null )
           parentFolder.setFirstChildNodeId(nodeId);
 
         // TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE

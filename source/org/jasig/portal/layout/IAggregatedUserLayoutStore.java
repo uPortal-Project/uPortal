@@ -40,9 +40,11 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
+import java.util.Hashtable;
+
 /**
  * IAggregatedUserLayoutStore defines the base methods working with aggregated user layout store.
- * 
+ *
  * @author Michael Ivanov
  * @version $Revision$
  */
@@ -102,13 +104,39 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
     public Object getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception;
 
     /**
-     * Persist user layout document.
-     * @param Person an <code>IPerson</code> object specifying the user
+     * Persists user layout document.
+     * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param layout a <code>Document</code> containing an aggregated user layout
+     * @param layout a <code>Object</code> containing an aggregated user layout
      * @exception Exception if an error occurs
      */
-    public void setAggregatedUserLayout (IPerson Person, UserProfile  profile, Object layout) throws Exception;
+    public void setAggregatedUserLayout (IPerson person, UserProfile  profile, Object layout) throws Exception;
 
+
+    /**
+     * Persists the fragment.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param fragmentId a fragment ID
+     * @param fragment a <code>Object</code> containing a fragment
+     * @exception Exception if an error occurs
+     */
+    public void setFragment (IPerson person, String fragmentId, Object fragment) throws Exception;
+
+    /**
+     * Returns the layout fragment as a user layout.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param fragmentId a fragment ID
+     * @return a <code>Object</code> object containing the internal representation of the user fragment
+     * @exception PortalException if an error occurs
+     */
+    public Object getFragment (IPerson person, String fragmentId ) throws Exception;
+
+     /**
+     * Returns the fragment IDs/names which the user is an owner of
+     * @param person an <code>IPerson</code> object specifying the user
+     * @return a <code>Object</code> object containing the fragment IDs
+     * @exception PortalException if an error occurs
+     */
+    public Object getFragments (IPerson person) throws Exception;
 
 }

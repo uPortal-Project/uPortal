@@ -37,11 +37,13 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.PortalException;
+
 /**
  * An aggregated-layout specific extension of the user layout manager interface
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version 1.1
  */
 public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 
@@ -51,12 +53,24 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      * @param restrictionMask a restriction mask
      */
     public void setRestrictionMask (int restrictionMask);
- 
- 
+
     /**
      * Sets a layout manager to auto-commit mode that allows to update the database immediately
      * @param autoCommit a boolean value
      */
     public void setAutoCommit (boolean  autoCommit);
+
+    /**
+     * Saves the current fragment if the layout is a fragment
+     * @exception PortalException if an error occurs
+     */
+    public void saveFragment() throws PortalException;
+
+     /**
+     * Loads the fragment as an user layout given by fragmentId
+     * @param fragmentId a fragment ID
+     * @exception PortalException if an error occurs
+     */
+    public void loadFragment( String fragmentId ) throws PortalException;
 
 }
