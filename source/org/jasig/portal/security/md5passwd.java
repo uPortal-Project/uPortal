@@ -108,12 +108,12 @@ public class md5passwd {
     if (cnt < 1) {
       stmt = conn.prepareStatement(INSERTSTMT);
       stmt.setString(1, user);
-      stmt.setString(2, "{MD5}"+encode(fin));
+      stmt.setString(2, "(MD5)"+encode(fin));
       stmt.executeUpdate();
     }
     else {
       stmt = conn.prepareStatement(UPDATESTMT);
-      stmt.setString(1, "{MD5}"+encode(fin));
+      stmt.setString(1, "(MD5)"+encode(fin));
       stmt.setString(2, user);
       stmt.executeUpdate();
     }

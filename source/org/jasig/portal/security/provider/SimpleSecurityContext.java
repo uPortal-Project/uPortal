@@ -85,7 +85,7 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
           first_name = rset.getString("FIRST_NAME");
           last_name  = rset.getString("LAST_NAME");
           md5_passwd = rset.getString("PASSWORD");
-          if (!md5_passwd.substring(0, 5).equals("{MD5}")) {
+          if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
             Logger.log(Logger.ERROR, "Password not an MD5 hash: " +
                 md5_passwd.substring(0, 5));
             return;

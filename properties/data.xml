@@ -153,7 +153,7 @@
 				</column>
 				<column>
 					<name>PASSWORD</name>
-					<value>{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value>
+					<value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value>
 				</column>
 			</row>
 		</rows>
