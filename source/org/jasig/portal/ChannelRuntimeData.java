@@ -60,6 +60,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private String httpRequestMethod=null;
     private String keywords=null;
     private boolean renderingAsRoot=false;
+    private boolean targeted = false;
     private static final String TRADITIONAL_MEDIA_BASE = "media/";
 
     /**
@@ -84,6 +85,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
       crd.httpRequestMethod = httpRequestMethod;
       crd.keywords = keywords;
       crd.renderingAsRoot = renderingAsRoot;
+      crd.targeted = targeted;
       crd.putAll(this);
       return crd;
     }
@@ -138,6 +140,15 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     public void setRenderingAsRoot(boolean rar) {
         renderingAsRoot = rar;
+    }
+
+    /**
+     * Sets whether or not the channel is currently targeted.  A channel is targeted
+     * if an incoming request specifies the channel's subscribe ID as the targeted node ID.
+     * @param targeted <code>true</code> if channel is targeted, otherwise <code>false</code>
+     */
+    public void setTargeted(boolean targeted) {
+        this.targeted = targeted;
     }
 
     /**
@@ -383,6 +394,15 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     public boolean isRenderingAsRoot() {
       return renderingAsRoot;
+    }
+    
+    /**
+     * Tells whether or not the channel is currently targeted.  A channel is targeted
+     * if an incoming request specifies the channel's subscribe ID as the targeted node ID.
+     * @return <code>true</code> if channel is targeted, otherwise <code>false</code>
+     */
+    public boolean isTargeted() {
+        return targeted;
     }
 
     /**

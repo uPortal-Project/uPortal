@@ -833,6 +833,9 @@ public class ChannelManager implements LayoutEventListener {
                 if (userLayoutRoot != null && !userLayoutRoot.equals("root")) {
                     rd.setRenderingAsRoot(true);
                 }
+                
+                // Indicate that this channel is targeted
+                rd.setTargeted(true);
 
                 try {
                     chObj.setRuntimeData(rd);
