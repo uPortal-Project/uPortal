@@ -18,11 +18,13 @@ import org.jasig.portal.GenericPortalBean;
  * This includes preview, listing all available channels
  * and placement on a users page.
  * @author John Laker
- * @version $Revision$
+ * @version %I%, %G%
  */
 public class SubscriberBean extends GenericPortalBean{
 
   private static Object dummyObject = new Object (); // For syncronizing code
+  RdbmServices rdbmService = new RdbmServices ();
+  Connection con = null;
 
   public SubscriberBean() {
   }
@@ -32,12 +34,10 @@ public class SubscriberBean extends GenericPortalBean{
    * Retrieves a handle to the channel xml
    * @param the servlet request object
    * @param the channel id
-   * @return handle to the layout xml
+   * @return handle to the channel xml
    */
   public IXml getChannelXml (HttpServletRequest req)
   {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
     IXml channelXml = null;
     int id  = Integer.parseInt(req.getParameter("chan_id"));
 
@@ -48,9 +48,9 @@ public class SubscriberBean extends GenericPortalBean{
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement();
 
-        String sQuery = "SELECT ID, TITLE, CHANNEL_XML FROM CHANNELS WHERE ID=" + id ;
+        String sQuery = "SELECT ID, TITLE, CHANNEL_XML FROM PORTAL_CHANNELS WHERE ID=" + id ;
         Logger.log (Logger.DEBUG, sQuery);
-
+        debug(sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
 
         if (rs.next ())
@@ -81,17 +81,16 @@ public class SubscriberBean extends GenericPortalBean{
   }
 
   /**
-   * Creates a channel instance and
-   * sends it to LayoutBean where it is added
-   * to user's layout.xml
+   * Returns a channel instance
+   * to be added to user's layout.xml
    * @param the servlet request object
+   * @return IChannel
    */
-   public void addChannel(HttpServletRequest req)
+   public org.jasig.portal.layout.IChannel getChannel(HttpServletRequest req)
    {
     IXml channelXml = getChannelXml (req);
     org.jasig.portal.layout.IChannel channel = (org.jasig.portal.layout.IChannel) channelXml.getRoot ();
-    LayoutBean layout = new LayoutBean();
-    layout.addChannel(req, channel);
+    return channel;
    }
 
   /**
@@ -101,8 +100,6 @@ public class SubscriberBean extends GenericPortalBean{
    */
   public ResultSet getChannels (HttpServletRequest req)
   {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
     ResultSet rs = null;
     Statement stmt = null;
 
@@ -113,8 +110,9 @@ public class SubscriberBean extends GenericPortalBean{
         con = rdbmService.getConnection ();
         stmt = con.createStatement();
 
-        String sQuery = "SELECT ID, TITLE FROM CHANNELS" ;
+        String sQuery = "SELECT ID, TITLE FROM PORTAL_CHANNELS" ;
         Logger.log (Logger.DEBUG, sQuery);
+        debug(sQuery);
 
         rs = stmt.executeQuery (sQuery);
       }
@@ -126,11 +124,14 @@ public class SubscriberBean extends GenericPortalBean{
     {
       Logger.log (Logger.ERROR, e);
     }
-    finally
-    {
-      try {stmt.close();} catch(Exception e) {}
-      rdbmService.releaseConnection (con);
-    }
     return null;
+  }
+
+  /**
+   * method for closing subscribe database connection
+   */
+  public void close()
+  {
+   rdbmService.releaseConnection(con);
   }
 }
