@@ -99,7 +99,7 @@ public class md5passwd {
     stmt.close();
     if (cnt < 1 && create == false) {
       System.out.println("No such user: " + user);
-      rdbm.releaseConnection(conn);
+      RDBMServices.releaseConnection(conn);
       return;
     }
 
@@ -133,7 +133,7 @@ public class md5passwd {
       stmt.executeUpdate();
     }
     stmt.close();
-    rdbm.releaseConnection(conn);
+	RDBMServices.releaseConnection(conn);
     System.out.println("Password Updated...");
     return;
   }

@@ -85,7 +85,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
         String query = "SELECT ID, FIRST_NAME, LAST_NAME FROM PORTAL_USERS WHERE " +
                        "PORTAL_USERS.USER_NAME = ?";
 
-        conn = rdbmservices.getConnection();
+        conn = RDBMServices.getConnection();
         stmt = conn.prepareStatement(query);
         stmt.setString(1, this.myPrincipal.UID);
         rset = stmt.executeQuery();
@@ -127,7 +127,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
       } finally {
         try { rset.close(); } catch (Exception e) { }
         try { stmt.close(); } catch (Exception e) { }
-        rdbmservices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
       }
     } else {
       LogService.log (LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
