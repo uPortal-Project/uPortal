@@ -60,7 +60,7 @@ $Revision$
       -->
 
       <!-- Navigate tabs -->
-      <card id="layout" title="uPortal 2.0">
+      <card id="layout" title="uPortal">
 
         <!-- Display all the header channels except the login channel -->
         <xsl:apply-templates select="header//channel[@name != 'Login']" mode="render-channel"/>
