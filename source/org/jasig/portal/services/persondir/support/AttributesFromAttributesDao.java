@@ -6,6 +6,7 @@
 package org.jasig.portal.services.persondir.support;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -49,6 +50,24 @@ public interface AttributesFromAttributesDao {
      * @throws IllegalArgumentException - if attributes is null
      */
     public Map attributesFromAttributes(Map attributes);
+    
+    /**
+     * Gets a {@link Set} of attribute names that this AttributesFromAttributesDao implementation
+     * expects will be the keys in the Map it returns for the attributesForUser() method. 
+     * No guarantee is made about the relationship of this Set to the set of keys
+     * in the map returned by attributesForUser() -- attributesForUser() may map
+     * attributes not declared in this Set and it may fail to map attributes declared in
+     * this Set.
+     * <br>
+     * Implementations may return <code>null</code> if they cannot provide
+     * a Set of attribute names and they should document at the implementation
+     * level the semantics of their implementation of this method.
+     * <br>
+     * Implementations may return an immutable {@link Set}.
+     * 
+     * @return A {@link Set} of possible attribute names for user queries.
+     */
+    public Set getAttributeNames();
     
 }
 
