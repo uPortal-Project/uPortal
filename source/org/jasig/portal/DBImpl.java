@@ -130,7 +130,7 @@ public class DBImpl implements IDBImpl
         String chanEditable = rs.getString("CHAN_EDITABLE");
         String chanHasHelp = rs.getString("CHAN_HAS_HELP");
         String chanHasAbout = rs.getString("CHAN_HAS_ABOUT");
-        String chanRemovable = rs.getString("CHAN_REMOVABLE");
+        String chanUnremovable = rs.getString("CHAN_UNREMOVABLE");
         String chanDetachable = rs.getString("CHAN_DETACHABLE");
         String chanName = rs.getString("CHAN_NAME");
 
@@ -149,7 +149,7 @@ public class DBImpl implements IDBImpl
         addChannelHeaderAttributeFlag("editable", chanEditable, channel, system);
         addChannelHeaderAttributeFlag("hasHelp", chanHasHelp, channel, system);
         addChannelHeaderAttributeFlag("hasAbout", chanHasAbout, channel, system);
-        addChannelHeaderAttributeFlag("removable", chanRemovable, channel, system);
+        addChannelHeaderAttributeFlag("unremovable", chanUnremovable, channel, system);
         addChannelHeaderAttributeFlag("detachable", chanDetachable, channel, system);
   }
   protected static final void createChannelNodeParameters(DocumentImpl doc, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
@@ -350,7 +350,7 @@ public class DBImpl implements IDBImpl
       String name = rs.getString("NAME");
       String type = rs.getString("TYPE");
       String hidden = rs.getString("HIDDEN");
-      String removable = rs.getString("REMOVABLE");
+      String unremovable = rs.getString("UNREMOVABLE");
       String immutable = rs.getString("IMMUTABLE");
 
       Element folder = doc.createElement("folder");
@@ -362,7 +362,7 @@ public class DBImpl implements IDBImpl
       addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder, system);
       addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
       addChannelHeaderAttribute("immutable", (immutable == null || immutable.equals("Y") ? "true" : "false"), folder, system);
-      addChannelHeaderAttribute("removable", (removable == null || removable.equals("Y") ? "true" : "false"), folder, system);
+      addChannelHeaderAttribute("unremovable", (unremovable == null || unremovable.equals("Y") ? "true" : "false"), folder, system);
 
       folder.appendChild(system);
       return folder;
@@ -536,12 +536,12 @@ public class DBImpl implements IDBImpl
       }
 
       sQuery = "INSERT INTO UP_LAYOUT_STRUCT " +
-      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,REMOVABLE) VALUES (" +
+      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES (" +
         userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," +
         "'" + structure.getAttribute("external_id") + "','" + chanId + "','" + structure.getAttribute("ID") + "'," +
         "'" + structure.getAttribute("name") + "','" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
-        "'" + dbBool(structure.getAttribute("removable")) + "')";
+        "'" + dbBool(structure.getAttribute("unremovable")) + "')";
       Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
       stmt.executeUpdate(sQuery);
 
@@ -657,14 +657,14 @@ public class DBImpl implements IDBImpl
       try {
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, " +
           "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_PRIORITY, CHAN_TIMEOUT, " +
-          "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_REMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
+          "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
         sInsert += "VALUES (" + id + ",'" + title + "','" + title + " Channel','" + channel.getAttribute("class") + "'," +
           "0,SYSDATE,0,SYSDATE" +
           ",'" + channel.getAttribute("priority") + "'" +
           ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable")) + "'" +
           ",'" + dbBool(channel.getAttribute("editable")) + "'" +
           ",'" + dbBool(channel.getAttribute("hasHelp")) + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" +
-          ",'" + dbBool(channel.getAttribute("removable")) + "'," +"'" + dbBool(channel.getAttribute("detachable")) + "'" +
+          ",'" + dbBool(channel.getAttribute("unremovable")) + "'," +"'" + dbBool(channel.getAttribute("detachable")) + "'" +
           ",'" + channel.getAttribute("name") + "')";
         Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
@@ -1992,14 +1992,17 @@ public class DBImpl implements IDBImpl
     try {
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='"
+        String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT, B.MIME_TYPE FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='"
             + structureStylesheetName + "' AND A.STYLESHEET_NAME=B.THEME_SS_NAME";
         Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
-          while (rs.next()) {
-            list.put(rs.getString("STYLESHEET_NAME"), rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
-          }
+	    while (rs.next()) {
+		String[] descr=new String[2];
+		descr[0]=rs.getString("STYLESHEET_DESCRIPTION_TEXT");
+		descr[1]=rs.getString("MIME_TYPE");
+		list.put(rs.getString("STYLESHEET_NAME"), descr);
+	    }
         } finally {
           rs.close();
         }
