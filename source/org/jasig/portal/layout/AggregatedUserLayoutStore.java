@@ -1826,7 +1826,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                       "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
-        String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
+        String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
