@@ -132,7 +132,7 @@ public Class getEntityType();
  */
 public String getKey();
 /**
- * @see getEntityType().
+ * @see #getEntityType()
  */
   public Class getLeafType();
 /**

@@ -44,7 +44,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * DepthRestriction checks the priority restriction for a given UserLayoutNode object
+ * DepthRestriction checks the priority restriction for a given UserLayoutNode object.
  * <p>
  * Company: Instructional Media &amp; Magic
  * 

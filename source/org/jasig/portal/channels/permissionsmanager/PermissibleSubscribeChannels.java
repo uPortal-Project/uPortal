@@ -86,7 +86,7 @@ public class PermissibleSubscribeChannels
 
     /**
      * put your documentation comment here
-     * @return
+     * @return an array of <code>String</code> activity tokens
      */
     public String[] getActivityTokens () {
         return  (String[])activities.keySet().toArray(new String[0]);

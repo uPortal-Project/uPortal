@@ -60,10 +60,10 @@ public class LayoutMoveEvent extends LayoutEvent {
     }
     
     /**
-     * Obtain an id of an OLD parent node (i.e. a node
-     * to which a given node used to be attached).
+     * Obtain an id of an OLD parent node.  This is the node
+     * to which a given node used to be attached.
      *
-     * @return an <code>String</code> value
+     * @return a <code>String</code> node id
      */
     public String getOldParentNodeId() {
         return this.oldParentNodeId;
