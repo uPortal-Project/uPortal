@@ -85,7 +85,7 @@ Version $Revision$
     <!--Create root element - call child templates-->
     <!-- -->
     <xsl:template match="layout">
-        <layout lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
+        <layout  unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
             <!--             <xsl:if test="$mode='preferences'">
                 <xsl:apply-templates select="fragments"/>
             </xsl:if> -->
