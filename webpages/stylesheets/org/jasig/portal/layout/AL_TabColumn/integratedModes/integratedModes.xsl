@@ -83,7 +83,7 @@
 		<script language="JavaScript"><![CDATA[
 
      function openBrWindow(theURL,winName,features)
-       {window.open(theURL,winName,features);} 
+       {window.open(theURL,winName,features);}
 
     ]]>
 		</script>
@@ -1091,7 +1091,7 @@
 								<td nowrap="nowrap">
 
 									<!-- Removed by request of Michael Ivanov as there is no "uP_request_move_targets" parameter if we choose to leave
-	
+
                   <xsl:choose>
                     <xsl:when test="$targetRestriction='channel' or $targetRestriction='column'">
                       <a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_move_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
@@ -1880,7 +1880,7 @@
 					<img src="{$mediaPathSkin}/transparent.gif" width="20" height="1"/>
 				</td>
 				<td nowrap="nowrap" class="uportal-background-selected">
-					<span class="uportal-channel-title">User 
+					<span class="uportal-channel-title">User
       Login</span>
 				</td>
 				<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -1994,7 +1994,7 @@
 					<img src="{$mediaPathSkin}/transparent.gif" width="20" height="1"/>
 				</td>
 				<td nowrap="nowrap" class="uportal-background-selected">
-					<span class="uportal-channel-title">User 
+					<span class="uportal-channel-title">User
       Preferences Actions</span>
 				</td>
 				<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -2041,6 +2041,8 @@
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New&#160;Column</a>
 						<span>&#160;|<xsl:text> </xsl:text></span>
 						<a href="{$baseActionURL}?uP_fname=contentsubscriber">Add&#160;Content</a>
+						<span>&#160;|<xsl:text> </xsl:text></span>
+						<a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">Publish&#160;Content</a>
 						<span>&#160;|<xsl:text> </xsl:text></span>
 						<a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
 						<span>&#160;|<xsl:text> </xsl:text></span>
