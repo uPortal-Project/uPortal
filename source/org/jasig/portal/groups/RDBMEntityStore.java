@@ -5,8 +5,6 @@
 
 package org.jasig.portal.groups;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityTypes;
 
 /**
@@ -16,8 +14,6 @@ import org.jasig.portal.EntityTypes;
  */
 public class RDBMEntityStore implements IEntityStore {
 private static IEntityStore singleton;
-
-private static final Log log = LogFactory.getLog(RDBMEntityStore.class);
 
 /**
  * RDBMEntityStore constructor.
