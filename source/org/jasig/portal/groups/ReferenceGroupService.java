@@ -518,7 +518,7 @@ throws GroupsException
   private EntityIdentifier[] filterEntities(EntityIdentifier[] entities, IEntityGroup ancestor) throws GroupsException{
     ArrayList ar = new ArrayList(entities.length);
     for(int i=0; i< entities.length;i++){
-      IGroupMember gm = GroupService.getGroupMember(entities[i]);
+      IGroupMember gm = this.getGroupMember(entities[i]);
       if (ancestor.deepContains(gm)){
         ar.add(entities[i]);
       }
