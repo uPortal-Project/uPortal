@@ -226,6 +226,8 @@ public class MediaManager
    * @return the serializer
    */
 
+  
+
   public BaseMarkupSerializer getSerializer (String mediaType, java.io.Writer out)
   {
     // I don't like this function, here's why :
@@ -293,7 +295,60 @@ public class MediaManager
     }
   }
 
-  /**
+    public BaseMarkupSerializer getSerializerByName(String serializerName, java.io.OutputStream out) {
+	if (serializerName.equals ("WML")) {
+	    OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
+	    frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
+	    return new XMLSerializer (out, frmt);
+	} 
+      else if (serializerName.equals ("PalmHTML")) {
+	  OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+	  return new PalmHTMLSerializer (out, frmt);
+      } 
+	else if (serializerName.equals ("XML")) {
+	    OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
+	    return new XMLSerializer (out, frmt);
+	}
+      else if (serializerName.equals ("XHTML")) {
+	  OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+	  return new XHTMLSerializer (out, frmt);
+      } 
+      else
+      {
+        // default case is HTML, such as that for netscape and explorer
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        return new HTMLSerializer (out, frmt);
+      }
+    }
+
+    public BaseMarkupSerializer getSerializerByName(String serializerName, java.io.Writer out) {
+	if (serializerName.equals ("WML")) {
+	    OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
+	    frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
+	    return new XMLSerializer (out, frmt);
+	} 
+      else if (serializerName.equals ("PalmHTML")) {
+	  OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+	  return new PalmHTMLSerializer (out, frmt);
+      } 
+	else if (serializerName.equals ("XML")) {
+	    OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
+	    return new XMLSerializer (out, frmt);
+	}
+      else if (serializerName.equals ("XHTML")) {
+	  OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+	  return new XHTMLSerializer (out, frmt);
+      } 
+      else
+      {
+        // default case is HTML, such as that for netscape and explorer
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        return new HTMLSerializer (out, frmt);
+      }
+    }
+    
+  
+ /**
    * Another version of getSerializer() with OutputStream as one of the parameters.
    * @param mediaType media type string
    * @param out output stream
