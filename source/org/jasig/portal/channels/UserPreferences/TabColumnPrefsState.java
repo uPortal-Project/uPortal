@@ -50,9 +50,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-
-import org.apache.xpath.XPathAPI;
-import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.ChannelStaticData;
@@ -68,7 +65,6 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channels.UserPreferences.TabColumnPrefsState.DefaultState;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutFolderDescription;
@@ -330,7 +326,7 @@ public class TabColumnPrefsState extends BaseState
   private final void removeNewColumn() {
       try {
           Document doc = this.ulm.getUserLayoutDOM();
-          Node nNewColumnNode = XPathAPI.selectSingleNode(doc, "//*[@ID='"+this.newColumnId+"']");    
+          Node nNewColumnNode = doc.getElementById(this.newColumnId);    
           if (nNewColumnNode != null){
             Node parent = nNewColumnNode.getParentNode();
             parent.removeChild(nNewColumnNode);
@@ -369,8 +365,9 @@ public class TabColumnPrefsState extends BaseState
           this.newColumnId = ulnd.getId();
           Element nE = (Element)doc.getElementById(ulnd.getId());
           // Find out how many siblings this node contains
-          NodeList nSiblingsIncludingSelf = nE.getParentNode().getChildNodes();
-          this.setEvenlyAssignedColumnWidths(nSiblingsIncludingSelf);
+          NodeList list = nE.getParentNode().getChildNodes();
+          if (list != null && list.getLength() > 0)
+              this.setEvenlyAssignedColumnWidths(list);
       }
   }
 
@@ -528,8 +525,9 @@ public class TabColumnPrefsState extends BaseState
         // get the updated xml document
         doc = this.ulm.getUserLayoutDOM();
         // Find out how many siblings this node contains
-        NodeList nSiblingsIncludingSelf = ((Element)doc.getElementById(tabId)).getChildNodes();
-        this.setEvenlyAssignedColumnWidths(nSiblingsIncludingSelf);
+        NodeList list = ((Element)doc.getElementById(tabId)).getChildNodes();
+        if (list != null && list.getLength() > 0)
+            this.setEvenlyAssignedColumnWidths(list);
         this.saveUserPreferences();
         
       } else {
@@ -541,17 +539,17 @@ public class TabColumnPrefsState extends BaseState
   /**
  * @param siblingsIncludingSelf
  */
-  private void setEvenlyAssignedColumnWidths(NodeList siblingsIncludingSelf) {
+  private void setEvenlyAssignedColumnWidths(NodeList list) {
     // Simply divide the number of columns by 100 and produce an evenly numbered column widths
-    int columns = siblingsIncludingSelf.getLength();
+    int columns = list.getLength();
     int columnSize = 100 / columns;
     int remainder = 100 % columns;
     // Traverse through the columns and reset with the new caculated value
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
-    for (int i=0; i < siblingsIncludingSelf.getLength(); i++){
-        Element c = (Element) siblingsIncludingSelf.item(i);
+    for (int i=0; i < list.getLength(); i++){
+        Element c = (Element) list.item(i);
         String nId = c.getAttribute("ID");
-        ssup.setFolderAttributeValue(nId, "width", (i == (siblingsIncludingSelf.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
+        ssup.setFolderAttributeValue(nId, "width", (i == (list.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
     }            
   }
 
