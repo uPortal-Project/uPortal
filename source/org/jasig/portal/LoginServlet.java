@@ -112,18 +112,7 @@ public class LoginServlet extends HttpServlet {
 
   }
 
-  /**
-   * Forwards request to doGet() method
-   * @param req
-   * @param res
-   * @exception ServletException
-   * @exception IOException
-   */
-  public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    // Just handle this request in the doGet() method
-    doGet(req, res);
-  }
-
+ 
   /**
    * Process the incoming HttpServletRequest
    * @param request
@@ -131,13 +120,13 @@ public class LoginServlet extends HttpServlet {
    * @exception ServletException
    * @exception IOException
    */
-  public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
   	CommonUtils.setNoCache(response);
   	// Clear out the existing session for the user
     request.getSession().invalidate();
-    // Retrieve the user's session
+  	//  Retrieve the user's session
     request.getSession(true);
-    IPerson person = null;
+  	IPerson person = null;
     try {
       // Get the person object associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
@@ -147,16 +136,15 @@ public class LoginServlet extends HttpServlet {
       HashMap credentials = getPropertyFromRequest (credentialTokens, request);
 
       // Attempt to authenticate using the incoming request
-      if ( person != null )
-       m_authenticationService.authenticate(principals, credentials, person);
+      m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
       LogService.log(LogService.ERROR, e);
       // Reset everything
       request.getSession(false).invalidate();
       // Add the authentication failure
-      if ( person != null )
-        request.getSession(true).setAttribute("up_authenticationError", "true");
+      request.getSession(true).setAttribute("up_authenticationError", "true");
+      person = null;
     }
     // Check to see if the person has been authenticated
     if (person != null && person.getSecurityContext().isAuthenticated()) {
@@ -164,8 +152,8 @@ public class LoginServlet extends HttpServlet {
       response.sendRedirect(request.getContextPath() + '/' + redirectString);
     }
     else {
-      if ( person != null )
-         request.getSession(false).setAttribute("up_authenticationAttempted", "true");
+      if ( request.getMethod().equals("POST") )	
+       request.getSession(false).setAttribute("up_authenticationAttempted", "true");
       // Preserve the attempted username so it can be redisplayed to the user by CLogin
       String attemptedUserName = request.getParameter("userName");
       if (attemptedUserName != null)
