@@ -87,9 +87,9 @@ Version $Revision$
         <label>RSS version (for stylesheet selection)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-            <value display="0.9">CGenericXSLT/RSS/RSS-0_9.ssl</value>
-            <value display="0.9x (rdf format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
-            <value display="1.0x (rdf format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+            <value display="0.9 (netscape simple RDF format)">CGenericXSLT/RSS/RSS-0_9.ssl</value>
+            <value display="0.9x (RSS format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+            <value display="1.0x (RDF format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
           </restriction>
         </type>
       </parameter>
