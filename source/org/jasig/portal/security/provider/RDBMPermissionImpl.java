@@ -498,8 +498,10 @@ private void primAdd(IPermission[] perms) throws Exception
     }
     finally
     {
-        RDBMServices.setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
+        try 
+            { RDBMServices.setAutoCommit(conn, true); }
+        finally
+            { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -577,8 +579,10 @@ private void primDelete(IPermission[] perms) throws Exception
     }
     finally
     {
-        RDBMServices.setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
+        try 
+            { RDBMServices.setAutoCommit(conn, true); }
+        finally 
+            { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -635,8 +639,10 @@ private void primUpdate(IPermission[] perms) throws Exception
     }
     finally
     {
-        RDBMServices.setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
+        try 
+            { RDBMServices.setAutoCommit(conn, true); }
+        finally 
+            { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
