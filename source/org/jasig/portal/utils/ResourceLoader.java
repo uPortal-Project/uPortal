@@ -49,6 +49,8 @@ import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.services.LogService;
 
 /**
  * <p>This utility provides methods for accessing resources.
@@ -67,6 +69,18 @@ public class ResourceLoader {
   static {
     f = DocumentBuilderFactory.newInstance();
     f.setNamespaceAware(true);
+    try{
+      String handler = PropertiesManager.getProperty("org.jasig.portal.utils.ResourceLoader.HttpsHandler");
+      if ((System.getProperty("java.protocol.handler.pkgs") != null) && 
+        !(System.getProperty("java.protocol.handler.pkgs").equals(""))){
+        handler = handler+"|"+System.getProperty("java.protocol.handler.pkgs");
+      }
+      System.setProperty("java.protocol.handler.pkgs",handler);
+    }
+    catch(Exception e){
+      LogService.instance().log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
+      LogService.instance().log(LogService.ERROR,e);
+    }
   }
 
   /**
