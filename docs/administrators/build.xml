@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!-- Author:   Bill Brooks                                                 -->
+<!-- Creation: Wed Nov 29 06:43:14 EST 2000                                -->
+<!-- Filename: build.xml                                                   -->
+<!-- Version:  $Revision$                                            -->
+<!-- Language: XML 1.0 / Ant 1.2 DTD                                       -->
+<!-- Copyright: (c)2000, 2001 Trustees of the California State University  -->
+<!-- Abstract: Build file for Ant 1.2, makes documents for uPortal         -->
+
+<project name="uPortalDocs" default="pdf" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="stylesheet_pdf" value="stylesheets/fo/jasig_docbook.xsl" />
+  <property name="stylesheet_html" value="stylesheets/html/jasig_docbook.xsl"/>
+  <property name="stylesheet_xhtml" value="stylesheets/xhtml/jasig_docbook.xsl"/>
+  <property name="xslt_trans" value="xalan" />
+
+  <target name="fo">
+    <style destdir="." extension=".fo" 
+           style="${stylesheet_pdf}"
+           processor="${xslt_trans}"
+           includes="*.xml"
+           excludes="build.xml" />
+  </target>
+
+  <target name="html">
+    <style destdir="." extension=".html"
+           style="${stylesheet_html}"
+           processor="${xslt_trans}"
+           includes="*.xml"
+           excludes="build.xml"/>
+  </target>
+
+  <target name="pdf" depends="fo">
+     <java classname="org.apache.fop.apps.CommandLine">
+       <arg line="uPortalFAQ.fo uPortalFAQ.pdf"/>
+     </java>
+  </target>
+
+  <target name="clean" >
+    <!-- Delete the .pdf and related files. -->
+    <delete>
+       <fileset dir="." includes="*.pdf,*.fo,*.html" />
+    </delete>
+  </target>
+
+</project>
