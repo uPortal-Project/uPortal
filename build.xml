@@ -540,18 +540,75 @@
   </target>
 
 
-
 <!-- ==================== DbLoader Target ================================= -->
 
 <!--
 
   The "db" target runs uPortal's DbLoader program to load the database.
-  WARNING: THIS WILL ERASE EXISTING uPORTAL TABLES!!!
+  WARNING: THIS MAY ERASE EXISTING uPORTAL TABLES!!!
+
+  The "db" target accepts command line arguments which override values
+  read from the dbloader.xml file:
+
+  The "db" target can be invoked thusly:
+
+  To use properties/mytables.xml instead of the tables file specified in
+  dbloader.xml:
+
+  ant db -Dusetable=-t -Dtablefile=properties/mytables.xml
+
+  To use properties/mydata.xml instead of the data file specified in
+  dbloader.xml:
+
+  ant db -Dusedata=-d -Ddatafile=properties/mydata.xml
+
+  Note: the tables and data files can both be overridden by combining the 
+  arguments.  The usetable and tablefile must be used in tandem and 
+  sequentially on the command line. Similarly, usedata and datafile must but
+  used in tandem.
+
+  Addtionally, several other boolean flags may be overridden.
+
+  To set createScript=true
+  ant db -Dcreatescript=-c
+
+  To set createScript=false
+  ant db -Dcreatescript=-nc
+
+  To set dropTables=true
+  ant db -Ddroptables=-D
+
+  To set dropTables=false
+  ant db -Ddroptables=-nD
+
+  To set createTables=true
+  ant db -Dcreatetables=-C
+
+  To set createTables=false
+  ant db -Dcreatetables=-nC
+
+  To set populateTables=true
+  ant db -Dpopulatetables=-P
+
+  To set populateTables=false
+  ant db -Dpopulatetables=-nP
+ 
+  The -c, -nc, -D, -nD, -C, -nC, -P, -nP arguements may all be used 
+  independantly or in any combination although it would not make sense to, 
+  for example, use both -c and -nc. 
 -->
 
 
   <target name="db" depends="compile">
     <echo message="Invoking DbLoader"/>
+    <property name="usetable" value=" "/>
+    <property name="tablefile" value=" "/>
+    <property name="usedata" value=" "/>
+    <property name="datafile" value=" "/>
+    <property name="createscript" value=" "/>
+    <property name="droptables" value=" "/>
+    <property name="createtables" value=" "/>
+    <property name="populatetables" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
@@ -561,6 +618,15 @@
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
+
+      <arg value="${usetable}"/>
+      <arg value="${tablefile}"/>
+      <arg value="${usedata}"/>
+      <arg value="${datafile}"/>
+      <arg value="${createscript}"/>
+      <arg value="${droptables}"/>
+      <arg value="${createtables}"/>
+      <arg value="${populatetables}"/>
     </java>
   </target>
 
@@ -596,6 +662,30 @@
     </java>
   </target>
 
+<!-- ==================== DbTest Target ================================= -->
+
+<!--
+
+  The "dbtest" target runs uPortal's DbTest program to display information
+  about the database defined in rdbm.properties
+
+  ant dbtest
+-->
+
+
+  <target name="dbtest" depends="compile">
+    <echo message="Invoking DbTest"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+    </java>
+  </target>
 
 <!-- ==================== md5passwd Target ================================ -->
 
