@@ -118,7 +118,7 @@ public class Utility
             ts2 = Calendar.getInstance().getTime().getTime();
          }
       }
-      LogService.instance().log(msgType, msg);
+      LogService.log(msgType, msg);
       return;
    }
 

@@ -49,7 +49,7 @@ public class ChannelStaticData extends Hashtable {
     }
     catch (AuthorizationException ae)
     {
-        LogService.instance().log(LogService.ERROR, "Could not get authorization service: " + ae);
+        LogService.log(LogService.ERROR, "Could not get authorization service: " + ae);
     }
     return ap;
   }

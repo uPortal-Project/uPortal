@@ -128,7 +128,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
          cmd.execute(sessionData);
       }
       catch(Exception e){
-         LogService.instance().log(LogService.ERROR,e);
+         LogService.log(LogService.ERROR,e);
          sessionData.feedback = "Error executing command Done: "+e.getMessage();
       }
       Object[] results = (Object[])staticData.get("princResults");

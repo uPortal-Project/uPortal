@@ -185,7 +185,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         UPFileSpec upfs=new UPFileSpec(req);
 	String channelTarget = upfs.getTargetNodeId();
 
-        LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+        LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
         Enumeration en = req.getParameterNames();
         if (en != null) {
             while (en.hasMoreElements()) {
@@ -208,7 +208,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         try {
             rd.setUPFile(new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
         } catch (Exception e) {
-            LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
+            LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }
 
 	return rd;

@@ -81,7 +81,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         }
       }
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "RDBMChannelRegistryStore: Error in static initializer", e);
+      LogService.log(LogService.ERROR, "RDBMChannelRegistryStore: Error in static initializer", e);
     }
   }
 
@@ -110,7 +110,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT * FROM UP_CHAN_TYPE WHERE TYPE_ID=" + channelTypeId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelType(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelType(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -150,7 +150,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelTypes(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelTypes(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           List channelTypesList = new ArrayList();
@@ -213,7 +213,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
            "'" + name + "', " +
            "'" + descr + "', " +
            "'" + cpdUri + "')";
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + insert);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + insert);
           int rows = stmt.executeUpdate(insert);
 
           // Commit the transaction
@@ -252,7 +252,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
            "TYPE_DESCR='" + descr + "', " +
            "TYPE_DEF_URI='" + cpdUri + "' " +
            "WHERE TYPE_ID=" + chanTypeId;
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + update);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + update);
           int rows = stmt.executeUpdate(update);
 
           // Commit the transaction
@@ -292,7 +292,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // First check to see if any channels are still referencing this channel type
         int chanTypeId = chanType.getId();
         String select = "SELECT * FROM UP_CHANNEL WHERE CHAN_TYPE_ID=" + chanTypeId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + select);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + select);
         ResultSet rs = stmt.executeQuery(select);
 
         // If there are channels referencing this channel type, throw an exception
@@ -306,7 +306,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Otherwise delete the channel type
         } else {
           String delete = "DELETE FROM UP_CHAN_TYPE WHERE TYPE_ID=" + chanTypeId;
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + delete);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + delete);
           int rows = stmt.executeUpdate(delete);
         }
 
@@ -366,7 +366,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         pstmtChannelParam = getChannelParamPstmt(con);
         pstmtChannel.clearParameters();
         pstmtChannel.setInt(1, channelPublishId);
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
         rs = pstmtChannel.executeQuery();
   
         if (rs.next()) {
@@ -409,7 +409,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             rs.close();
             pstmtChannelParam.clearParameters();
             pstmtChannelParam.setInt(1, channelPublishId);
-            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
+            LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
             rs = pstmtChannelParam.executeQuery();
           }
   
@@ -428,7 +428,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             }
           }
         }
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
   
         // Add the channel definition to the cache
         try {
@@ -468,7 +468,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_FNAME='" + channelFunctionalName + "' ORDER BY CHAN_APVL_DT DESC";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -499,7 +499,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT CHAN_ID FROM UP_CHANNEL";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinitions(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinitions(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           List channelDefsList = new ArrayList();
@@ -548,7 +548,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlFName = RDBMServices.sqlEscape(channelDef.getFName());
 
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
 
         // If channel is already there, do an update, otherwise do an insert
@@ -569,7 +569,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_NAME='" + sqlName + "', " +
           "CHAN_FNAME='" + sqlFName + "' " +
           "WHERE CHAN_ID=" + channelPublishId;
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
           stmt.executeUpdate(update);
         } else {
           String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
@@ -578,13 +578,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               + chanPupblUsrId + ", " + sysdate + ", " + sqlTimeout
               + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
               + "', '" + sqlName + "', '" + sqlFName + "')";
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
           stmt.executeUpdate(insert);
         }
 
         // First delete existing parameters for this channel
         String delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + delete);
         int recordsDeleted = stmt.executeUpdate(delete);
 
         ChannelParameter[] parameters = channelDef.getParameters();
@@ -601,7 +601,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
             String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
                 ",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
-            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
+            LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
             stmt.executeUpdate(insert);
           }
         }
@@ -643,23 +643,23 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Delete from UP_CHANNEL
         String delete = "DELETE FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UP_CHANNEL_PARAM
         delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UP_PERMISSION
         // This needs to be updated to work with permission interfaces!!!
         delete = "DELETE FROM UP_PERMISSION WHERE OWNER='CHAN_ID." + channelPublishId + "' OR TARGET='CHAN_ID." + channelPublishId + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UPC_KEYWORD
         delete = "DELETE FROM UPC_KEYWORD WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Disassociate from parent categories (delete from UP_GROUP_MEMBERSHIP)
@@ -704,7 +704,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String update = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
         ", CHAN_APVL_DT = " + RDBMServices.sqlTimeStamp(approveDate) +
         " WHERE CHAN_ID = " + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannelDefinition(): " + update);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannelDefinition(): " + update);
         stmt.executeUpdate(update);
         
         // Notify the cache
@@ -742,7 +742,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Delete channel.
         int channelPublishId = channelDef.getId();
         String update = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.disapproveChannelDefinition(): " + update);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.disapproveChannelDefinition(): " + update);
         stmt.executeUpdate(update);
 
         // Commit the transaction

@@ -83,7 +83,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
                 xslt.setStylesheetParameter("isAdminUser", "true");
                 xslt.transform();
             } catch (Exception e) {
-                LogService.instance().log(LogService.DEBUG, e);
+                LogService.log(LogService.DEBUG, e);
             }
         }
     }
@@ -111,7 +111,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
 
         // handle pre-selection for servant mode
         if (session.staticData.get("prmOwners") != null) {
-            LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): processing pre-selection");
+            LogService.log(LogService.DEBUG,"PermissionServant.setStaticData(): processing pre-selection");
 
             // use specified set of owners
             IPermissible[] selOwners = (IPermissible[])session.staticData.get("prmOwners");
@@ -122,14 +122,14 @@ public class CPermissionsManagerServant extends CPermissionsManager
                   if (((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken())
                           != null) {
                     String[] selTargets = (String[])((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken());
-                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selTargets.length+" pre-selected targets");
+                    LogService.log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selTargets.length+" pre-selected targets");
                     for (int s=0;s<selTargets.length;s++){
                       PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"target",selTargets[s],true);
                     }
                     session.gotTargets = true;
                   }
                   else {
-                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected targets");
+                    LogService.log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected targets");
                   }
               }
 
@@ -137,14 +137,14 @@ public class CPermissionsManagerServant extends CPermissionsManager
                   if (((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken())
                           != null) {
                       String[] selActivities = (String[])((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken());
-                      LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selActivities.length+" pre-selected activities");
+                      LogService.log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selActivities.length+" pre-selected activities");
                       for (int s=0;s<selActivities.length;s++){
                         PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"activity",selActivities[s],true);
                       }
                       session.gotActivities = true;
                   }
                   else {
-                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected activities");
+                    LogService.log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected activities");
                   }
               }
 

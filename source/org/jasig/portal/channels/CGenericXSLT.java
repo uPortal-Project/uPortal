@@ -173,7 +173,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.ERROR, "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
+        LogService.log(LogService.ERROR, "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
       }
     }
 
@@ -185,7 +185,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     CState state = (CState)stateTable.get(uid);
 
     if (state == null)
-      LogService.instance().log(LogService.ERROR,"CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
       // because of the portal rendering model, there is no reason to synchronize on state
@@ -238,7 +238,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      LogService.instance().log(LogService.ERROR,"CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -248,10 +248,10 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     CState state=(CState)stateTable.get(uid);
 
     if (state == null)
-      LogService.instance().log(LogService.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
-      LogService.instance().log(LogService.DEBUG,"CGenericXSLT::renderXML() : state = " + state.toString() );
+      LogService.log(LogService.DEBUG,"CGenericXSLT::renderXML() : state = " + state.toString() );
 
       String xml;
       Document xmlDoc;
@@ -280,7 +280,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+            LogService.log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
           }
         }
 
@@ -327,7 +327,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return null;
     }
     else
@@ -349,7 +349,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return false;
     }
     else

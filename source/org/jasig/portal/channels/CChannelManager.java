@@ -237,9 +237,9 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)groupServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
-            LogService.instance().log(LogService.DEBUG, "CChannelManager.getGroupServant():  created new servant");
+            LogService.log(LogService.DEBUG, "CChannelManager.getGroupServant():  created new servant");
         }
         return  groupServant;
     }
@@ -265,9 +265,9 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)categoryServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
-            LogService.instance().log(LogService.DEBUG, "CChannelManager.getCategoryServant():  created new servant");
+            LogService.log(LogService.DEBUG, "CChannelManager.getCategoryServant():  created new servant");
         }
         return  categoryServant;
     }
@@ -627,7 +627,7 @@ public class CChannelManager extends BaseChannel {
                     selectedGroupsE.appendChild(selectedGroupE);
                 }
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
             el.appendChild(selectedGroupsE);
         }
@@ -655,7 +655,7 @@ public class CChannelManager extends BaseChannel {
                     selectedCategoriesE.appendChild(selectedCategoryE);
                 }
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
             userSettingsE.appendChild(selectedCategoriesE);
         }

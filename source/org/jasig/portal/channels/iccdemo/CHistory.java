@@ -80,17 +80,17 @@ public class CHistory extends BaseChannel {
         try {
             globalObjContext = (Context)staticData.getJNDIContext().lookup("/channel-obj");
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CHistory.getUserXML(): Could not find subcontext /channel-obj in JNDI");
+            LogService.log(LogService.ERROR, "CHistory.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
 
         try {
             globalObjContext.bind(staticData.getChannelSubscribeId(),records);
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CHistory.getUserXML(): Could not bind channel object for channel id="+staticData.getChannelSubscribeId());
+            LogService.log(LogService.ERROR, "CHistory.getUserXML(): Could not bind channel object for channel id="+staticData.getChannelSubscribeId());
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
@@ -173,16 +173,16 @@ public class CHistory extends BaseChannel {
             // Get the context that holds the global IDs for this user
             globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
+            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
         try {
             id=(String)globalIDContext.lookup(fname);
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
+            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
         return id;
     }
@@ -200,17 +200,17 @@ public class CHistory extends BaseChannel {
         try {
             globalObjContext = (Context)staticData.getJNDIContext().lookup("/channel-obj");
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
+            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
 
         try {
             o=globalObjContext.lookup(channelSubscribeId);
         } catch (NotContextException nce) {
-            LogService.instance().log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
+            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
         } catch (NamingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
         return o;        
     }

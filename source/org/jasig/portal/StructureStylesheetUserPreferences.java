@@ -73,13 +73,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     public String getFolderAttributeValue(String folderID,String attributeName) {
         Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
-            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
         String value=null;
         List l=(List) folderAttributeValues.get(folderID);
         if(l==null) {
-	    //            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
+	    //            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
 	    //            return null;
 	    return (String) defaultFolderAttributeValues.get(attributeNumber.intValue());
         } else {
@@ -90,7 +90,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
                 try {
                     value=(String) defaultFolderAttributeValues.get(attributeNumber.intValue());
                 } catch (IndexOutOfBoundsException e) {
-                    LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                    LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
                     return null;
                 }
             }
@@ -107,7 +107,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     String getDefinedFolderAttributeValue(String folderID,String attributeName) {
         Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
-            LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::hasDefinedFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::hasDefinedFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
         List l=(List) folderAttributeValues.get(folderID);
@@ -125,7 +125,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     public void setFolderAttributeValue(String folderID,String attributeName,String attributeValue) {
         Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
-            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::setFolderAttribute() : Attempting to set a non-existing folder attribute \""+attributeName+"\".");
+            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::setFolderAttribute() : Attempting to set a non-existing folder attribute \""+attributeName+"\".");
             return;
         }
         List l=(List) folderAttributeValues.get(folderID);
@@ -144,7 +144,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     public void addFolderAttribute(String attributeName, String defaultValue) {
         if(folderAttributeNumbers.get(attributeName)!=null) {
-            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::addFolderAttribute() : Attempting to re-add an existing folder attribute \""+attributeName+"\".");
+            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::addFolderAttribute() : Attempting to re-add an existing folder attribute \""+attributeName+"\".");
         } else {
             folderAttributeNumbers.put(attributeName,new Integer(defaultFolderAttributeValues.size()));
             // append to the end of the default value array
@@ -160,7 +160,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     public void removeFolderAttribute(String attributeName) {
         Integer attributeNumber;
         if((attributeNumber=(Integer)folderAttributeNumbers.get(attributeName))==null) {
-            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::removeFolderAttribute() : Attempting to remove a non-existing folder attribute \""+attributeName+"\".");
+            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::removeFolderAttribute() : Attempting to remove a non-existing folder attribute \""+attributeName+"\".");
         } else {
             folderAttributeNumbers.remove(attributeName);
             // do not touch the arraylists
@@ -178,12 +178,12 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         ArrayList l=new ArrayList(defaultFolderAttributeValues.size());
 
         if(folderAttributeValues.put(folderID,l)!=null)
-            LogService.instance().log(LogService.DEBUG,"StructureStylesheetUserPreferences::addFolder() : Readding an existing folder (folderID=\""+folderID+"\"). All values will be set to default.");
+            LogService.log(LogService.DEBUG,"StructureStylesheetUserPreferences::addFolder() : Readding an existing folder (folderID=\""+folderID+"\"). All values will be set to default.");
     }
 
     public void removeFolder(String folderID) {
         if(folderAttributeValues.remove(folderID)==null)
-            LogService.instance().log(LogService.ERROR,"StructureStylesheetUserPreferences::removeFolder() : Attempting to remove an non-existing folder (folderID=\""+folderID+"\").");
+            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::removeFolder() : Attempting to remove an non-existing folder (folderID=\""+folderID+"\").");
     }
 
 

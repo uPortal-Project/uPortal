@@ -75,7 +75,7 @@ public class CHeader extends BaseChannel implements ICacheable {
 	    // Let the authorization service decide:
 	    canPublish = staticData.getAuthorizationPrincipal().canPublish();      
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
       // Deny the user publish access if anything went wrong
     }
     return canPublish;
@@ -94,7 +94,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       return formatter.format(currentTime);
     }
     catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
 
     return "&nbsp;";
@@ -130,9 +130,9 @@ public class CHeader extends BaseChannel implements ICacheable {
         // Get the context that holds the global IDs for this user
         globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
       } catch (NotContextException nce) {
-        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find subcontext /channel-ids in JNDI");
+        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find subcontext /channel-ids in JNDI");
       } catch (NamingException e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
       }
       try {
         if (canUserPublish()) {
@@ -142,10 +142,10 @@ public class CHeader extends BaseChannel implements ICacheable {
           headerEl.appendChild(chanMgrChanidEl);
         }
       } catch (NotContextException nce) {
-        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/channelmanager/general for UID="
+        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/channelmanager/general for UID="
             + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
       } catch (NamingException e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
       }
       try {
         // Create <preferences-chanid> element under <header>
@@ -153,10 +153,10 @@ public class CHeader extends BaseChannel implements ICacheable {
         preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
         headerEl.appendChild(preferencesChanidEl);
       } catch (NotContextException nce) {
-        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/userpreferences/general for UID="
+        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/userpreferences/general for UID="
             + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
       } catch (NamingException e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
       }
     }
     doc.appendChild(headerEl);

@@ -58,7 +58,7 @@ public class SelectTargets implements IPermissionCommand {
     }
 
     public void execute(PermissionsSessionData session) throws Exception{
-            LogService.instance().log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
+            LogService.log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();

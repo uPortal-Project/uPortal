@@ -245,13 +245,13 @@ public class CGroupsManager
                xslt.transform();
             }
             catch (PortalException pe){
-               LogService.instance().log(LogService.ERROR, pe);
+               LogService.log(LogService.ERROR, pe);
                if (pe.getRecordedException()!=null){
-                LogService.instance().log(LogService.ERROR, pe.getRecordedException());
+                LogService.log(LogService.ERROR, pe.getRecordedException());
                }
             }
             catch (Exception e) {
-               LogService.instance().log(LogService.ERROR, e);
+               LogService.log(LogService.ERROR, e);
             }
             //Utility.printDoc(viewDoc, "viewXMl ready:\n");
 
@@ -259,7 +259,7 @@ public class CGroupsManager
             //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
       } catch (Exception e) {
-         LogService.instance().log(LogService.ERROR, e);
+         LogService.log(LogService.ERROR, e);
       }
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Finished with Groups Management");
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): =-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_ XXXXXXXXXXXXXX _=-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_");
@@ -301,7 +301,7 @@ public class CGroupsManager
                 c.execute(sessionData);
                }
                catch(Exception e){
-                  LogService.instance().log(LogService.ERROR,e);
+                  LogService.log(LogService.ERROR,e);
                   sessionData.feedback = "Error executing command "+theCommand+": "+e.getMessage();
                }
             }
@@ -369,7 +369,7 @@ public class CGroupsManager
                   + m.getKey() + " = " + m.getValue());
          }
       } catch (Exception e) {
-         LogService.instance().log(LogService.ERROR, e);
+         LogService.log(LogService.ERROR, e);
       }
    }
 
@@ -428,7 +428,7 @@ public class CGroupsManager
           r= EntityNameFinderService.instance().getNameFinder(IEntityGroup.class).getName(token);
         }
         catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
         }
       }
       return  r;

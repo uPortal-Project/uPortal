@@ -58,7 +58,7 @@ public class SelectOwners implements IPermissionCommand {
     }
 
     public void execute(PermissionsSessionData session) {
-            LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectOwners processing");
+            LogService.log(LogService.DEBUG,"PermissionsManager->SelectOwners processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();

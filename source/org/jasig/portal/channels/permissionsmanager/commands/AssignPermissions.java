@@ -72,7 +72,7 @@ public class AssignPermissions
      */
     public void execute (PermissionsSessionData session) throws Exception {
         
-            LogService.instance().log(LogService.DEBUG, "PermissionsManager->AssignPermissions processing");
+            LogService.log(LogService.DEBUG, "PermissionsManager->AssignPermissions processing");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
@@ -90,7 +90,7 @@ public class AssignPermissions
                     ph.activity = split3.substring(0, split3.indexOf("|"));
                     ph.target = split3.substring(split3.indexOf("|") + 1);
                     ph.type = session.runtimeData.getParameter(key);
-                    LogService.instance().log(LogService.DEBUG, "Processing "
+                    LogService.log(LogService.DEBUG, "Processing "
                             + ph.type + " permission o=" + ph.owner + " p="
                             + ph.principal + " a=" + ph.activity + " t=" +
                             ph.target);
@@ -106,11 +106,11 @@ public class AssignPermissions
                 IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(owner);
                 ArrayList phs = (ArrayList)owners.get(owner);
                 IPermission[] ipsd = pHolder2DeleteArray(upm, phs);
-                LogService.instance().log(LogService.DEBUG, "removing " + String.valueOf(ipsd.length)
+                LogService.log(LogService.DEBUG, "removing " + String.valueOf(ipsd.length)
                         + " old permissions");
                 upm.removePermissions(ipsd);
                 IPermission[] ipsa = pHolder2AddArray(upm, phs);
-                LogService.instance().log(LogService.DEBUG, "adding " + String.valueOf(ipsa.length)
+                LogService.log(LogService.DEBUG, "adding " + String.valueOf(ipsa.length)
                         + " new permissions");
                 upm.addPermissions(ipsa);
             }
@@ -139,7 +139,7 @@ public class AssignPermissions
                 p.setTarget(ph.target);
                 rlist.add(p);
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR,e);
+                LogService.log(LogService.ERROR,e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);
@@ -164,7 +164,7 @@ public class AssignPermissions
                     rlist.add(p);
                 }
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR,e);
+                LogService.log(LogService.ERROR,e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);

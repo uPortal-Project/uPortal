@@ -161,12 +161,12 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
                 }
             }
             catch (Exception e){
-              LogService.instance().log(LogService.ERROR,e);
+              LogService.log(LogService.ERROR,e);
             }
         }
       }
       catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
       long time2 = System.currentTimeMillis();
@@ -231,7 +231,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
           }
         }
         catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
         }
       }
       catch (Exception e){
@@ -309,7 +309,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         servant.getSessionData().defaultRootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
       catch (Exception e){
-        LogService.instance().log(LogService.ERROR,e);
+        LogService.log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
         long time2 = Calendar.getInstance().getTime().getTime();

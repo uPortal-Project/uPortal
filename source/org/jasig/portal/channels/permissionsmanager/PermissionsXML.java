@@ -90,17 +90,17 @@ public class PermissionsXML {
                     
                     if (session.staticData.get("prmOwners") != null) {
                         // use specified set of owners
-                        LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using specified owners");
+                        LogService.log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using specified owners");
                         session.owners = (IPermissible[])session.staticData.get("prmOwners");
                     }
                     else {
                         // use owners found in DB
-                        LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using DB owners");
+                        LogService.log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using DB owners");
                         session.owners = RDBMPermissibleRegistry.getAllPermissible();
                     }
 
                     for (int i = 0; i < session.owners.length; i++) {
-                        LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): Configuring element for owner "+session.owners[i].getOwnerName());
+                        LogService.log(LogService.DEBUG,"PermissionsXML.getViewDoc(): Configuring element for owner "+session.owners[i].getOwnerName());
                         Element owner = rDoc.createElement("owner");
                         owner.setAttribute("name", session.owners[i].getOwnerName());
                         owner.setAttribute("token", session.owners[i].getOwnerToken());
@@ -122,7 +122,7 @@ public class PermissionsXML {
                     }
 
                 } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, e);
+                    LogService.log(LogService.ERROR, e);
                 }
             }
         }
@@ -138,7 +138,7 @@ public class PermissionsXML {
     }
     
     public static void setSelected(PermissionsSessionData session, String ipermissible, String type, String token, boolean selected){
-        LogService.instance().log(LogService.DEBUG,"PermissionsXML.setSelected(): processing "+ipermissible+" / "+type+" / "+token+" / "+selected);
+        LogService.log(LogService.DEBUG,"PermissionsXML.setSelected(): processing "+ipermissible+" / "+type+" / "+token+" / "+selected);
         Element owner = getOwner(session,ipermissible);
         Element s = owner;
         String otoken = owner.getAttribute("token");
@@ -195,11 +195,11 @@ public class PermissionsXML {
           for (int x = 0; x < owners.length; x++) {
               ownerKeys.add(owners[x].getOwnerToken());
           }
-          //LogService.instance().log(LogService.DEBUG,"PermissionsManager:: getting principals");
+          //LogService.log(LogService.DEBUG,"PermissionsManager:: getting principals");
           IAuthorizationPrincipal[] aps = session.principals;
           for (int m = 0; m < aps.length; m++) {
               try {
-              //LogService.instance().log(LogService.DEBUG,"PermissionsManager:: iterating over principals");
+              //LogService.log(LogService.DEBUG,"PermissionsManager:: iterating over principals");
               Element ppl = rDoc.createElement("principal");
               ppl.setAttribute("token", aps[m].getPrincipalString());
               ppl.setAttribute("type", aps[m].getType().getName());
@@ -207,7 +207,7 @@ public class PermissionsXML {
               try {
                   name = EntityNameFinderService.instance().getNameFinder(aps[m].getType()).getName(name);
               } catch (Exception e) {
-                  LogService.instance().log(LogService.ERROR, e);
+                  LogService.log(LogService.ERROR, e);
               }
               ppl.setAttribute("name", name);
               IPermission[] pms = aps[m].getAllPermissions();
@@ -231,7 +231,7 @@ public class PermissionsXML {
               root.appendChild(ppl);
               }
               catch(Exception e){
-                LogService.instance().log(LogService.ERROR,e);
+                LogService.log(LogService.ERROR,e);
               }
           }
       }
@@ -270,7 +270,7 @@ public class PermissionsXML {
     }
 
     public static String[] getSelectedTargets(PermissionsSessionData session, Element owner){
-      LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedTargets(): processing for "+owner.getAttribute("name"));
+      LogService.log(LogService.DEBUG,"PermissionsXML.getSelectedTargets(): processing for "+owner.getAttribute("name"));
       ArrayList targets = new ArrayList();
       Element o =owner;
       if (o != null){
@@ -279,7 +279,7 @@ public class PermissionsXML {
           Element target = (Element)tl.item(i);
           if ((target.getAttribute("selected") != null) && (target.getAttribute("selected").equals("true"))){
             targets.add(target.getAttribute("token"));
-            LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedTargets(): adding "+target.getAttribute("token"));
+            LogService.log(LogService.DEBUG,"PermissionsXML.getSelectedTargets(): adding "+target.getAttribute("token"));
           }
          }
       }
@@ -287,7 +287,7 @@ public class PermissionsXML {
     }
 
     public static String[] getSelectedActivities(PermissionsSessionData session, Element owner){
-      LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedActivities(): processing for "+owner.getAttribute("name"));
+      LogService.log(LogService.DEBUG,"PermissionsXML.getSelectedActivities(): processing for "+owner.getAttribute("name"));
       ArrayList activities = new ArrayList();
       Element o = owner;
       if (o != null){
@@ -296,7 +296,7 @@ public class PermissionsXML {
           Element activity = (Element)al.item(i);
           if ((activity.getAttribute("selected") != null) && (activity.getAttribute("selected").equals("true"))){
             activities.add(activity.getAttribute("token"));
-            LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedActivities(): adding "+activity.getAttribute("token"));
+            LogService.log(LogService.DEBUG,"PermissionsXML.getSelectedActivities(): adding "+activity.getAttribute("token"));
           }
          }
       }
@@ -317,14 +317,14 @@ public class PermissionsXML {
     }
 
     public static Element getOwner(PermissionsSessionData session, String ipermissible){
-       LogService.instance().log(LogService.DEBUG,"PermissionsXML.getOwner(): looking for owner of class "+ipermissible);
+       LogService.log(LogService.DEBUG,"PermissionsXML.getOwner(): looking for owner of class "+ipermissible);
        Document doc = getViewDoc(session);
        Element ro = null;
        NodeList ol = doc.getElementsByTagName("owner");
         for (int i=0;i<ol.getLength();i++){
           Element o = (Element)ol.item(i);
           if(o.getAttribute("ipermissible").equals(ipermissible)){
-            LogService.instance().log(LogService.DEBUG,"PermissionsXML.getOwner(): found owner of class "+ipermissible+" and token "+o.getAttribute("token"));
+            LogService.log(LogService.DEBUG,"PermissionsXML.getOwner(): found owner of class "+ipermissible+" and token "+o.getAttribute("token"));
             ro = o;
             break;
           }
