@@ -25,25 +25,24 @@ public class XalanVersionCheck
         this.desiredVersion = desiredVersion;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.checks.ICheck#doCheck()
-     */
     public CheckResult doCheck() {
+        
+        CheckResult result;
+        
         try {
             String versionFound = org.apache.xalan.Version.getVersion();
             if (this.desiredVersion.equals(versionFound)){
-                return CheckResult.createSuccess("Xalan version [" + versionFound + "] is present.");
+                result = CheckResult.createSuccess("Xalan version [" + versionFound + "] is present.");
             } else {
-                return CheckResult.createFailure("Xalan version [" + versionFound + "] is present, rather than the desired version [" + this.desiredVersion + "]", "Install the Xalan jar corresponding to [" + this.desiredVersion + "] in the /endorsed/lib/ directory of the JRE.");
+                result = CheckResult.createFailure("Xalan version [" + versionFound + "] is present, rather than the desired version [" + this.desiredVersion + "]", "Install the Xalan jar corresponding to [" + this.desiredVersion + "] in the /endorsed/lib/ directory of the JRE.");
             }
         } catch (NoClassDefFoundError ncdfe) {
-            return CheckResult.createFailure("Class org.apache.xalan.Version could not be found.", "Install the xalan jar corresponding to [" + desiredVersion + "] in the /lib/endorsed directory of the JRE.");
+            result = CheckResult.createFailure("Class org.apache.xalan.Version could not be found.", "Install the xalan jar corresponding to [" + this.desiredVersion + "] in the /lib/endorsed directory of the JRE.");
         }
+        
+        return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.checks.ICheck#getDescription()
-     */
     public String getDescription() {
         return "Check that the version of Xalan present is [" + this.desiredVersion + "]";
     }
