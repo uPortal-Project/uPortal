@@ -375,7 +375,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                  while (e.hasMoreElements ())
                    {
                      String pName = (String) e.nextElement ();
-                     if ( !pName.startsWith("cw_") ) {
+                     if ( !pName.startsWith("cw_") && !pName.trim().equals("")) {
 		       String[] value_array = rd.getParameterValues(pName);
 		       if ( value_array == null || value_array.length == 0 ) {
 			   // keyword-style parameter
@@ -405,16 +405,18 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
                    while (st.hasMoreElements ())
                      {
                        String pName = st.nextToken();
+                       if ((pName!=null)&&(!pName.trim().equals(""))){
 LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person attribute: " + pName);
-                       newXML.append(appendchar);
-                       appendchar = "&";
-                       newXML.append(pName);
-                       newXML.append("=");
-		       // note, this only gets the first one if it's a
-		       // java.util.Vector.  Should check
-		       String pVal = (String)state.iperson.getAttribute(pName);
-		       if (pVal != null)
-                         newXML.append(URLEncoder.encode(pVal));
+                         newXML.append(appendchar);
+                         appendchar = "&";
+                         newXML.append(pName);
+                         newXML.append("=");
+                         // note, this only gets the first one if it's a
+                         // java.util.Vector.  Should check
+                         String pVal = (String)state.iperson.getAttribute(pName);
+                         if (pVal != null)
+                           newXML.append(URLEncoder.encode(pVal));
+                       }
                      }
                  }
 	       }
@@ -425,9 +427,11 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
              state.reqParameters = newXML.toString();
              state.fullxmlUri = state.xmlUri;
              if (!state.runtimeData.getHttpRequestMethod().equals("POST")){
-                appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-                // BUG 772 - this doesn't seem to catch all cases.
-                state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+                if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
+                  appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+                  // BUG 772 - this doesn't seem to catch all cases.
+                  state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+                }
                 state.reqParameters = null;
              }
              LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
@@ -581,7 +585,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     URLConnection urlConnect = url.openConnection();
     String protocol = url.getProtocol();
 
-    if (protocol.equals("http"))
+    if (protocol.equals("http") || protocol.equals("https"))
     {
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
@@ -619,7 +623,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     URLConnection urlConnect = url.openConnection();
     String protocol = url.getProtocol();
 
-    if (protocol.equals("http"))
+    if (protocol.equals("http") || protocol.equals("https"))
     {
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
@@ -681,14 +685,16 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
 
     // added 5/13/2002 by ASV - print post data
     if (state.runtimeData.getHttpRequestMethod().equals("POST")){
-        httpUrlConnect.setRequestMethod("POST");
-        httpUrlConnect.setAllowUserInteraction(false);
-        httpUrlConnect.setDoOutput(true);
-        PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
-        post.print(state.reqParameters);
-        post.flush();
-        post.close();
-        state.reqParameters=null;
+        if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
+          httpUrlConnect.setRequestMethod("POST");
+          httpUrlConnect.setAllowUserInteraction(false);
+          httpUrlConnect.setDoOutput(true);
+          PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
+          post.print(state.reqParameters);
+          post.flush();
+          post.close(); 
+          state.reqParameters=null;
+        }
     }
 
     int status = httpUrlConnect.getResponseCode();

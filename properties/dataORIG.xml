@@ -1,0 +1,2735 @@
+<?xml version="1.0"?>
+<!-- $Revision$ -->
+
+<data>
+  <table>
+    <name>UP_SEQUENCE</name>
+    <rows>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_USER_PROFILE</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_CHANNEL</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_CHAN_TYPE</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_USER</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+      </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_USER</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>USER_NAME</name><value>system</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_NAME</name><value>guest</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>NULL</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>NULL</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>30</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>USER_NAME</name><value>demo</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <!-- We need default layouts for student, faculty, staff, developer and admin and then
+           we should add these
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>USER_NAME</name><value>student</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>USER_NAME</name><value>faculty</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>USER_NAME</name><value>staff</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>6</value></column>
+        <column><name>USER_NAME</name><value>developer</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>USER_NAME</name><value>admin</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      -->
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_PERSON_DIR</name>
+      <rows>
+        <!-- The row below will add the guest user to the UP_PERSON_DIR table with the password = 'demo' -->
+        <!-- YOU SHOULD CHANGE THE PASSWORD BEFORE INSERTING THE ROW BELOW! If you don't anyone can log  -->
+        <!-- into your demo as 'guest' and change the guest layout that everyone will see.               -->
+        <!-- Without this row inserted the guest user will not be able to log on.                        -->
+        <!--
+        <row>
+          <column><name>USER_NAME</name><value>guest</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
+          <column><name>FIRST_NAME</name><value>Guest</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>guest.user@jasig.org</value></column>
+        </row>
+        -->
+        <row>
+          <column><name>USER_NAME</name><value>demo</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
+          <column><name>FIRST_NAME</name><value>Demo</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>demo.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>student</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)mhmjKvf2F3gPizS9DrA+CsFmqj74oTSb</value></column>
+          <column><name>FIRST_NAME</name><value>Student</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>student.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>faculty</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)FoDMOEu9EMjbJ3bikDnqdFT0Tpd7xg6S</value></column>
+          <column><name>FIRST_NAME</name><value>Faculty</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>faculty.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>staff</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)YGvCb8TdruiHaXdY9OvhRJ0MhwZYVTHa</value></column>
+          <column><name>FIRST_NAME</name><value>Staff</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>staff.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>developer</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)thUo6uSm62Jpj/ybqVyFy6bxJVWLgTnx</value></column>
+          <column><name>FIRST_NAME</name><value>Developer</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>developer.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>admin</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)OP2Z89LDMIY6gHAwfoFPRSQWDl5Z16Vt</value></column>
+          <column><name>FIRST_NAME</name><value>Admin</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>admin.user@jasig.org</value></column>
+        </row>
+      </rows>
+    </table>
+
+  <table>
+    <name>UP_CHANNEL</name>
+    <rows>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_TITLE</name><value>Daily Business Cartoon</value></column>
+        <column><name>CHAN_NAME</name><value>Daily Business Cartoon</value></column>
+        <column><name>CHAN_DESC</name><value>Daily Business Cartoon by Ted Goff, www.tedgoff.com</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>3</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CImage</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>daily-business-cartoon</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>2</value></column>
+        <column><name>CHAN_TITLE</name><value>StockCharts.com</value></column>
+        <column><name>CHAN_NAME</name><value>StockCharts.com</value></column>
+        <column><name>CHAN_DESC</name><value>StockCharts.com channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>stockcharts.com</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>3</value></column>
+        <column><name>CHAN_TITLE</name><value>Bookmarks</value></column>
+        <column><name>CHAN_NAME</name><value>Bookmarks</value></column>
+        <column><name>CHAN_DESC</name><value>Bookmarks channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CBookmarks</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>bookmarks</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>4</value></column>
+        <column><name>CHAN_TITLE</name><value>Person Attributes</value></column>
+        <column><name>CHAN_NAME</name><value>Person Attributes</value></column>
+        <column><name>CHAN_DESC</name><value>A display of person attributes available to channels</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CPersonAttributes</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>person-attributes</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>5</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal-Powered Sites</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal-Powered Sites</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Demos channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-powered-sites</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>6</value></column>
+        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
+        <column><name>CHAN_NAME</name><value>IBS News</value></column>
+        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>ibs-news</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>7</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal Developers Reference</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal Developers Reference</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Developers Reference channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-developers-reference</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>8</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal Home Page</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal Home Page</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Home Page channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>2</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-home-page</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_TITLE</name><value>Minesweeper</value></column>
+        <column><name>CHAN_NAME</name><value>Minesweeper</value></column>
+        <column><name>CHAN_DESC</name><value>Minesweeper applet</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CApplet</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>minesweeper</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>10</value></column>
+        <column><name>CHAN_TITLE</name><value>Header</value></column>
+        <column><name>CHAN_NAME</name><value>Header</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Header channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CHeader</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>header</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>11</value></column>
+        <column><name>CHAN_TITLE</name><value>Word of the Day</value></column>
+        <column><name>CHAN_NAME</name><value>Word of the Day</value></column>
+        <column><name>CHAN_DESC</name><value>Word of the Day channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>word-of-the-day</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>12</value></column>
+        <column><name>CHAN_TITLE</name><value>Salon.com</value></column>
+        <column><name>CHAN_NAME</name><value>Salon.com</value></column>
+        <column><name>CHAN_DESC</name><value>Salon.com channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>salon.com</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>13</value></column>
+        <column><name>CHAN_TITLE</name><value>Motley Fool</value></column>
+        <column><name>CHAN_NAME</name><value>The Motley Fool</value></column>
+        <column><name>CHAN_DESC</name><value>Motley Fool channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>motley-fool</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>14</value></column>
+        <column><name>CHAN_TITLE</name><value>Number Guessing Game</value></column>
+        <column><name>CHAN_NAME</name><value>Number Guessing Game</value></column>
+        <column><name>CHAN_DESC</name><value>Number Guessing Game channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CNumberGuess</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>number-guessing-game</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>15</value></column>
+        <column><name>CHAN_TITLE</name><value>CSS Viewer</value></column>
+        <column><name>CHAN_NAME</name><value>CSS Viewer</value></column>
+        <column><name>CHAN_DESC</name><value>CSS Viewer channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>css-viewer</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>16</value></column>
+        <column><name>CHAN_TITLE</name><value>Snooper</value></column>
+        <column><name>CHAN_NAME</name><value>Snooper</value></column>
+        <column><name>CHAN_DESC</name><value>Snooper channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSnoop</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>snooper</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_TITLE</name><value>Tomcat's NumGuess</value></column>
+        <column><name>CHAN_NAME</name><value>Tomcat's NumGuess</value></column>
+        <column><name>CHAN_DESC</name><value>Tomcat's NumGuess</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>4</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CWebProxy</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>Y</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>tomcat-number-guess</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_TITLE</name><value>Tomcat's Servlet Examples</value></column>
+        <column><name>CHAN_NAME</name><value>Tomcat's Servlet Examples</value></column>
+        <column><name>CHAN_DESC</name><value>Tomcat's Servlet Examples</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>4</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CWebProxy</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>Y</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>tomcat-servlet-examples</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>CHAN_TITLE</name><value>Footer</value></column>
+        <column><name>CHAN_NAME</name><value>Footer</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Footer channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>footer</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal Development Books</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal Development Books</value></column>
+        <column><name>CHAN_DESC</name><value>A list of books useful to uPortal developers</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-development-books</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>22</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal Data Dictionary</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal Data Dictionary</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Data Dictionary - descriptions for tables and attributes used in uPortal</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>2</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-data-dictionary</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>90</value></column>
+        <column><name>CHAN_TITLE</name><value>Channel Manager</value></column>
+        <column><name>CHAN_NAME</name><value>Channel Manager</value></column>
+        <column><name>CHAN_DESC</name><value>Channel administration</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CChannelManager</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>30000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/channelmanager/general</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>92</value></column>
+        <column><name>CHAN_TITLE</name><value>User Preferences</value></column>
+        <column><name>CHAN_NAME</name><value>User Preferences</value></column>
+        <column><name>CHAN_DESC</name><value>User Preferences channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.UserPreferences.CUserPreferences</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/userpreferences/general</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>99</value></column>
+        <column><name>CHAN_TITLE</name><value>Login</value></column>
+        <column><name>CHAN_NAME</name><value>Login</value></column>
+        <column><name>CHAN_DESC</name><value>uPortal Login Channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CLogin</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/login/general</value></column>
+      </row>
+     </rows>
+  </table>
+
+  <table>
+    <name>UP_CHANNEL_PARAM</name>
+    <rows>
+      <!-- Daily Business Channel -->
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_PARM_NM</name><value>img-uri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.tedgoff.com/mb/images/today.gif</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_PARM_NM</name><value>img-width</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>300</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_PARM_NM</name><value>img-height</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>300</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_PARM_NM</name><value>img-border</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>0</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>CHAN_PARM_NM</name><value>img-link</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.tedgoff.com</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- StockCharts.com -->
+      <row>
+        <column><name>CHAN_ID</name><value>2</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- uPortal Sites -->
+      <row>
+        <column><name>CHAN_ID</name><value>5</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/jasigPortalDemos.rss</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>5</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- IBS News -->
+      <row>
+        <column><name>CHAN_ID</name><value>6</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/ibs.rss</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>6</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- uPortal Developers Reference -->
+      <row>
+        <column><name>CHAN_ID</name><value>7</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.princeton.edu/~mbarton/jasigdev.rss</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>7</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- uPortal Home Page -->
+      <row>
+        <column><name>CHAN_ID</name><value>8</value></column>
+        <column><name>CHAN_PARM_NM</name><value>url</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://mis105.mis.udel.edu/ja-sig/uportal/</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>8</value></column>
+        <column><name>CHAN_PARM_NM</name><value>height</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>800</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Minesweeper -->
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>code</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>jmapplet.class</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>codeBase</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.nrr.co.uk/javamine</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>width</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>152</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>height</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>195</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>archive</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>javamine.jar</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.type</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>application/x-java-applet</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.level</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>beginner</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.rows</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>8</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.cols</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>8</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.mines</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>10</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.marks</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>true</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CHAN_PARM_NM</name><value>APPLET.graphics</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>true</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Word Of the Day -->
+      <row>
+        <column><name>CHAN_ID</name><value>11</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.dictionary.com/wordoftheday/wotd.rss</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>11</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Salon.com -->
+      <row>
+        <column><name>CHAN_ID</name><value>12</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.salon.com/feed/RDF/salon_use.rdf</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>12</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Motley Fool -->
+      <row>
+        <column><name>CHAN_ID</name><value>13</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.fool.com/xml/foolnews_rss091.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>13</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Number Guessing Game -->
+      <row>
+        <column><name>CHAN_ID</name><value>14</value></column>
+        <column><name>CHAN_PARM_NM</name><value>minNum</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>1</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>14</value></column>
+        <column><name>CHAN_PARM_NM</name><value>maxNum</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>100</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>Y</value></column>
+      </row>
+
+      <!-- CSS Viewer -->
+      <row>
+        <column><name>CHAN_ID</name><value>15</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/CSSViewer/cssViewer.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>15</value></column>
+       <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Tomcat's NumGuess -->
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_xml</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/examples/jsp/num/numguess.jsp</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_ssl</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CWebProxy/XHTML.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_tidy</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>on</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_passThrough</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>application</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_help</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_help.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_info</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_info.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>17</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_edit</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_edit.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Tomcat's Servlet Examples -->
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_xml</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://localhost:8080/examples/servlets/index.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_ssl</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CWebProxy/XHTML.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_tidy</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>on</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_passThrough</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>all</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_help</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_help.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_info</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_info.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>18</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cw_edit</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_edit.html</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- Footer -->
+      <row>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/emptyDocument.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/footer/footer.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cacheTimeout</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>Overrides the default cache timeout for CGenericXSLT channels</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>3600</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+
+      <!-- uPortal Developer Recommended Reading -->
+      <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/uPortalDevBooks/uPortalDevBooks.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <!-- uPortal Data Dictionary -->
+      <row>
+        <column><name>CHAN_ID</name><value>22</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/DataDictViewer/DataDictViewer.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>22</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>/properties/tables.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+    </rows>
+  </table>
+
+
+  <table>
+    <name>UP_USER_LAYOUT</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Guest layout</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Demo layout</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_LAYOUT_STRUCT</name>
+    <rows>
+      <!-- Guest layout -->
+
+      <!-- Header -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+          <!-- Header -->
+          <row>
+            <column><name>STRUCT_ID</name><value>2</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>10</value></column>
+          </row>
+          <!-- Login -->
+          <row>
+            <column><name>STRUCT_ID</name><value>3</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>99</value></column>
+          </row>
+      <!-- Main -->
+      <row>
+        <column><name>STRUCT_ID</name><value>4</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Main</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>9</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>5</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>5</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>7</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>6</value></column>
+        </row>
+          <!-- uPortal-Powered Sites -->
+          <row>
+            <column><name>STRUCT_ID</name><value>6</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>5</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>8</value></column>
+        </row>
+          <!-- uPortal Home Page -->
+          <row>
+            <column><name>STRUCT_ID</name><value>8</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>8</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+      <!-- Misc -->
+      <row>
+        <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Misc</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>14</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>10</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>12</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>11</value></column>
+        </row>
+          <!-- Minesweeper -->
+          <row>
+            <column><name>STRUCT_ID</name><value>11</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>9</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>12</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>13</value></column>
+        </row>
+          <!-- Word of the Day -->
+          <row>
+            <column><name>STRUCT_ID</name><value>13</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>11</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+      <!-- News -->
+      <row>
+        <column><name>STRUCT_ID</name><value>14</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>News</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>22</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>15</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>15</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>17</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>16</value></column>
+        </row>
+          <!-- Salon.com -->
+          <row>
+            <column><name>STRUCT_ID</name><value>16</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>12</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>17</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>18</value></column>
+          <column><name>UNREMOVABLE</name><value>N</value></column>
+        </row>
+          <!-- IBS News -->
+          <row>
+            <column><name>STRUCT_ID</name><value>18</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>19</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>6</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+          <!-- Motley Fool -->
+          <row>
+            <column><name>STRUCT_ID</name><value>19</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>13</value></column>
+            <column><name>UNREMOVABLE</name><value>N</value></column>
+          </row>
+      <!-- User Preferences -->
+      <row>
+        <column><name>STRUCT_ID</name><value>22</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>User Preferences</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>25</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>23</value></column>
+        <column><name>HIDDEN</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+          <!-- Channel manager -->
+          <row>
+            <column><name>STRUCT_ID</name><value>23</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>24</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>90</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+          </row>
+          <!-- User Preferences -->
+          <row>
+            <column><name>STRUCT_ID</name><value>24</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>92</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+          </row>
+      <!-- Footer -->
+      <row>
+        <column><name>STRUCT_ID</name><value>25</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>26</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+          <!-- Footer -->
+          <row>
+            <column><name>STRUCT_ID</name><value>26</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>19</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+            <column><name>IMMUTABLE</name><value>Y</value></column>
+          </row>
+
+      <!-- Demo Layout -->
+      <!-- Header -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+          <!-- Header -->
+          <row>
+            <column><name>STRUCT_ID</name><value>2</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>10</value></column>
+          </row>
+          <!-- Login -->
+          <row>
+            <column><name>STRUCT_ID</name><value>3</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>99</value></column>
+          </row>
+      <!-- Main -->
+      <row>
+        <column><name>STRUCT_ID</name><value>4</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Main</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>10</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>5</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>5</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>8</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>6</value></column>
+        </row>
+          <!-- Word of the Day -->
+          <row>
+            <column><name>STRUCT_ID</name><value>6</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>7</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>11</value></column>
+          </row>
+          <!-- Number Guessing Game -->
+          <row>
+            <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>14</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>8</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
+        </row>
+          <!-- Bookmarks -->
+          <row>
+            <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>29</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>3</value></column>
+          </row>
+          <!-- Daily Business Cartoon -->
+          <row>
+            <column><name>STRUCT_ID</name><value>29</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>1</value></column>
+          </row>
+      <!-- Development -->
+      <row>
+        <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Development</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>17</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>11</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>11</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>13</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>12</value></column>
+        </row>
+          <!-- Person Attributes -->
+          <row>
+            <column><name>STRUCT_ID</name><value>12</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>18</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>4</value></column>
+          </row>
+          <!-- CSS Viewer -->
+          <row>
+            <column><name>STRUCT_ID</name><value>18</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>15</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>13</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>15</value></column>
+        </row>
+          <!-- uPortal Developer Recommended Reading -->
+          <row>
+            <column><name>STRUCT_ID</name><value>15</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>14</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>20</value></column>
+          </row>
+          <!-- uPortal Developers Reference -->
+          <row>
+            <column><name>STRUCT_ID</name><value>14</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>16</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>7</value></column>
+          </row>
+          <!-- Snooper -->
+          <row>
+            <column><name>STRUCT_ID</name><value>16</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>37</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>16</value></column>
+          </row>
+
+          <!-- uPortal Data Dictionary -->
+          <row>
+            <column><name>STRUCT_ID</name><value>37</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>22</value></column>
+          </row>
+
+      <!-- User Preferences -->
+      <row>
+        <column><name>STRUCT_ID</name><value>17</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>User Preferences</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>21</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>19</value></column>
+        <column><name>HIDDEN</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+      </row>
+          <!-- Channel manager -->
+          <row>
+            <column><name>STRUCT_ID</name><value>19</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>20</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>90</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+          </row>
+          <!-- User Preferences -->
+          <row>
+            <column><name>STRUCT_ID</name><value>20</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>92</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+          </row>
+       <!-- CWebProxy Examples -->
+       <row>
+        <column><name>STRUCT_ID</name><value>21</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>CWebProxy Examples</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>22</value></column>
+      </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>22</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>25</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>23</value></column>
+        </row>
+          <!-- Tomcat's NumGuess -->
+          <row>
+            <column><name>STRUCT_ID</name><value>23</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>24</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
+          </row>
+          <!-- Tomcat's NumGuess (another) -->
+          <row>
+            <column><name>STRUCT_ID</name><value>24</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
+          </row>
+        <row>
+          <column><name>STRUCT_ID</name><value>25</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>26</value></column>
+        </row>
+          <!-- Tomcat's Servlet Examples -->
+          <row>
+            <column><name>STRUCT_ID</name><value>26</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>18</value></column>
+          </row>
+      <!-- Footer -->
+      <row>
+        <column><name>STRUCT_ID</name><value>27</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>28</value></column>
+      </row>
+          <!-- Footer -->
+          <row>
+            <column><name>STRUCT_ID</name><value>28</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>19</value></column>
+          </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_LAYOUT_PARAM</name>
+    <rows>
+      <!-- An example of how a user can override the dafault value of a channel parameter -->
+      <row>
+        <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>maxNum</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>150</value></column>
+      </row>
+      <row>
+        <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>minNum</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>50</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_CHAN_TYPE</name>
+    <rows>
+      <row>
+        <column><name>TYPE_ID</name><value>0</value></column>
+        <column><name>TYPE_NAME</name><value>RSS (Rich Site Summary)</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>TYPE_DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>1</value></column>
+        <column><name>TYPE_NAME</name><value>Simple XML Transformation</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>TYPE_DESCR</name><value>XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>2</value></column>
+        <column><name>TYPE_NAME</name><value>Inline Frame</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
+        <column><name>TYPE_DESCR</name><value>The Inline Frame channel can be used to render an HTML page within a frame. This channel does not work correctly in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>3</value></column>
+        <column><name>TYPE_NAME</name><value>Image</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
+        <column><name>TYPE_DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CImage/CImage.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>4</value></column>
+        <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
+        <column><name>TYPE_DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>5</value></column>
+        <column><name>TYPE_NAME</name><value>Remote Channel Proxy</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.remotechannel.CRemoteChannel</value></column>
+        <column><name>TYPE_DESCR</name><value>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/remotechannel/CRemoteChannel.cpd</value></column>
+      </row>
+
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_USER_PROFILE</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>2</value></column>
+        <column><name>PROFILE_NAME</name><value>WML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for WAP cell phones</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>2</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>2</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Internet Explorer Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>2</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>My Netscape Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>2</value></column>
+        <column><name>PROFILE_NAME</name><value>My Internet Explorer Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+        <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>2</value></column>
+      </row>
+
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_USER_PARM</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>PARAM_NAME</name><value>skin</value></column>
+        <column><name>PARAM_VAL</name><value>imm</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_USER_ATTS</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>5</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>60%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>8</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>40%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>13</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>11</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>22</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>25</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>5</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>7</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>12</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>10</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>15</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>17</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_STRUCT</name>
+    <rows>
+      <row>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_NAME</name><value>Tabs and columns</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>
+      </row>
+      <row>
+        <column><name>SS_ID</name><value>2</value></column>
+        <column><name>SS_NAME</name><value>Nested categories</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_THEME</name>
+    <rows>
+      <row>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_NAME</name><value>Nested tables</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>
+        <column><name>STRUCT_SS_ID</name><value>1</value></column>
+        <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_icon.gif</value></column>
+        <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_full.gif</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>DEVICE_TYPE</name><value>workstation</value></column>
+        <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
+        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
+      </row>
+      <row>
+        <column><name>SS_ID</name><value>2</value></column>
+        <column><name>SS_NAME</name><value>Deck of cards</value></column>
+        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
+        <column><name>STRUCT_SS_ID</name><value>1</value></column>
+        <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_icon.gif</value></column>
+        <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_full.gif</value></column>
+        <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
+        <column><name>DEVICE_TYPE</name><value>cellphone</value></column>
+        <column><name>SERIALIZER_NAME</name><value>WML</value></column>
+<!-- Cell phone doesn't use tab-column structure stylesheet ! -->
+<!--        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column> -->
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_THEME_PARM</name>
+     <rows>
+       <row>
+         <column><name>SS_ID</name><value>1</value></column>
+         <column><name>PARAM_NAME</name><value>skin</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>java</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row>
+         <column><name>SS_ID</name><value>1</value></column>
+         <column><name>PARAM_NAME</name><value>minimized</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
+         <column><name>TYPE</name><value>3</value></column>
+        </row>
+     </rows>
+  </table>
+
+  <table>
+    <name>UP_SS_STRUCT_PAR</name>
+     <rows>
+       <row>
+         <column><name>SS_ID</name><value>1</value></column>
+         <column><name>PARAM_NAME</name><value>activeTab</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>1</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>The number of the tab that is initially active</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row>
+         <column><name>SS_ID</name><value>1</value></column>
+         <column><name>PARAM_NAME</name><value>width</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>100%</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
+         <column><name>TYPE</name><value>2</value></column>
+        </row>
+     </rows>
+  </table>
+
+
+  <table>
+    <name>UP_SS_MAP</name>
+    <rows>
+      <row>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCT_SS_ID</name><value>1</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+      </row>
+      <row>
+        <column><name>THEME_SS_ID</name><value>2</value></column>
+        <column><name>STRUCT_SS_ID</name><value>1</value></column>
+        <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_MIME_TYPE</name>
+    <rows>
+      <row>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>MIME_TYPE_DESCRIPTION</name><value>HTML mime type is the one that most desktop browsers use</value></column>
+      </row>
+      <row>
+        <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
+        <column><name>MIME_TYPE_DESCRIPTION</name><value>WML mime type is mostly used by the cell phone WAP browsers.</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_PERMISSION</name>
+    <rows>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>PUBLISH</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.*</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_ERROR_CHAN</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>VIEW</value></column>
+        <column><name>TARGET</name><value>DETAILS</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.1</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.2</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.3</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.4</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.5</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.6</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.7</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.8</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.9</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.10</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.11</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.12</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.13</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.14</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.15</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.16</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.17</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.18</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.19</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.20</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.22</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.89</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.90</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.92</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.99</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- Groups tables -->
+<table>
+    <name>UP_GROUP_ENTITY_TYPE</name>
+    <rows>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>1</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>java.lang.Object</value></column>
+      </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.security.IPerson</value></column>
+      </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>3</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntityGroup</value></column>
+      </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.ChannelDefinition</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- Groups tables SAMPLE DATA -->
+  <table>
+    <name>UP_GROUP</name>
+    <rows>
+
+    <!-- IPerson groups -->
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Everyone</value></column>
+        <column><name>DESCRIPTION</name><value>All persons</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled university students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Faculty</value></column>
+        <column><name>DESCRIPTION</name><value>All university faculty</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Staff</value></column>
+        <column><name>DESCRIPTION</name><value>All university staff members</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Developers</value></column>
+        <column><name>DESCRIPTION</name><value>All IT developers</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>5</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Undergraduate Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled undergraduate students</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>6</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Full Time</value></column>
+        <column><name>DESCRIPTION</name><value>All full time undergraduate Students</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>7</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Part Time</value></column>
+        <column><name>DESCRIPTION</name><value>All part time undergraduate students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>8</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Graduate Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled graduate students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>9</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Prospective Students</value></column>
+        <column><name>DESCRIPTION</name><value>All prospective students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Officers</value></column>
+        <column><name>DESCRIPTION</name><value>All Officers of the administration</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>11</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Support Staff</value></column>
+        <column><name>DESCRIPTION</name><value>All Support Staff employees</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Tenured Professors</value></column>
+        <column><name>DESCRIPTION</name><value>All tenured university faculty</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>13</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Associate Professors</value></column>
+        <column><name>DESCRIPTION</name><value>All associate university faculty</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>14</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
+        <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
+      </row>
+
+      <!-- ChannelDefinition groups -->
+
+      <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>All categories</value></column>
+        <column><name>DESCRIPTION</name><value>All channel categories</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>51</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Applications</value></column>
+        <column><name>DESCRIPTION</name><value>Applications</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Development</value></column>
+        <column><name>DESCRIPTION</name><value>Development</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>uPortal</value></column>
+        <column><name>DESCRIPTION</name><value>uPortal-related</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Channel Types</value></column>
+        <column><name>DESCRIPTION</name><value>Java classes implementing the IChannel interface</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CWebProxy</value></column>
+        <column><name>DESCRIPTION</name><value>Serves as HTTP Proxy to HTML or XHTML web pages</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>56</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CApplet</value></column>
+        <column><name>DESCRIPTION</name><value>Renders a hava applet</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CGenericXSLT</value></column>
+        <column><name>DESCRIPTION</name><value>Performs XSLT transformations</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>RSS</value></column>
+        <column><name>DESCRIPTION</name><value>Rich Site Summary, an XML standard for content feeds</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>59</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CImage</value></column>
+        <column><name>DESCRIPTION</name><value>Renders and image with an optional caption and subcaption</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CInlineFrame</value></column>
+        <column><name>DESCRIPTION</name><value>Renders a web page inside and inline frame. Only use for IE 5 and Netscape 6 and higher.</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>61</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>News</value></column>
+        <column><name>DESCRIPTION</name><value>News</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Business</value></column>
+        <column><name>DESCRIPTION</name><value>Business or company news</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Entertainment</value></column>
+        <column><name>DESCRIPTION</name><value>Entertainment</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Games</value></column>
+        <column><name>DESCRIPTION</name><value>Games</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_GROUP_MEMBERSHIP</name>
+    <rows>
+      <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>MEMBER_KEY</name><value>2</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>5</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>5</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>10</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>12</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>13</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>MEMBER_KEY</name><value>14</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_KEY</name><value>2</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <!-- We need default layouts for student, faculty, staff, developer and admin before we
+          we can add these!
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>14</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+
+     -->
+
+     <!-- Channel categories -->
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>51</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>52</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>53</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>54</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>55</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>56</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>57</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>58</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>59</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>60</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>61</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>MEMBER_KEY</name><value>62</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>63</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>64</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>59</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>51</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>56</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>61</value></column>
+        <column><name>MEMBER_KEY</name><value>12</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>12</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>13</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>MEMBER_KEY</name><value>13</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>MEMBER_KEY</name><value>14</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>15</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>15</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>16</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>MEMBER_KEY</name><value>17</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>MEMBER_KEY</name><value>18</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>20</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>20</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>22</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+    </rows>
+  </table>
+
+  <!-- END Groups tables SAMPLE DATA -->
+
+  <table>
+    <name>UPC_BOOKMARKS</name>
+    <rows>
+      <row>
+        <column><name>PORTAL_USER_ID</name><value>0</value></column>
+        <column><name>BOOKMARK_XML</name><value><![CDATA[
+          <?xml version="1.0"?>
+          <!DOCTYPE xbel PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML" "file:/xbel-1.0.dtd">
+          <xbel>
+            <title>Default Bookmarks</title>
+            <info>
+              <metadata owner="Default User"/>
+            </info>
+            <folder id="node1" folded="yes">
+              <title>uPortal</title>
+              <folder id="node2" folded="yes">
+                <title>Resources</title>
+                <bookmark href="http://www.interactivebusiness.com" visited="8/24/00 4:40:17 PM" id="node3">
+                  <title>IBS Homepage</title>
+                  <desc>Homepage of the uPortal specialists</desc>
+                </bookmark>
+              </folder>
+              <folder id="node4" folded="yes">
+                <title>uPortal Demos</title>
+                <bookmark href="http://www.interactivebusiness.com" visited="8/24/00 4:40:17 PM" id="node5">
+                  <title>IBS Homepage</title>
+                  <desc>Homepage of the uPortal specialists</desc>
+                </bookmark>
+              </folder>
+            </folder>
+            <folder id="node6" folded="yes">
+              <title>XML</title>
+              <bookmark href="http://xml.apache.org" visited="8/24/00 4:47:35 PM" id="node7">
+                <title>Apache XML Links</title>
+              </bookmark>
+            </folder>
+          </xbel>
+          ]]></value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- A table that is used by CPermissionsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_PERM_MGR</name>
+    <rows>
+      <row>
+        <column><name>IPERMISSIBLE_CLASS</name><value>org.jasig.portal.channels.permissionsmanager.PermissiblePublishSubscribeChannels</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- A table that is used by CGroupsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_GROUP_MGR</name>
+    <rows>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>4</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+    </rows>
+  </table>
+
+</data>

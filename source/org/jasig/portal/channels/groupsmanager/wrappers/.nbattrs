@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<attributes version="1.0">
+   <fileobject name="EntityWrapper.java">
+      <attr name="class_dependency_org.jasig.portal.channels.groupsmanager.IGroupsManagerWrapper" stringvalue="EntityWrapper"/>
+      <attr name="class_dependency_org.jasig.portal.channels.groupsmanager.GroupsManagerConstants" stringvalue="EntityWrapper"/>
+   </fileobject>
+   <fileobject name="GroupWrapper.java">
+      <attr name="class_dependency_org.jasig.portal.channels.groupsmanager.IGroupsManagerWrapper" stringvalue="EntityWrapper_1;GroupWrapper"/>
+      <attr name="class_dependency_org.jasig.portal.channels.groupsmanager.GroupsManagerConstants" stringvalue="EntityWrapper_1;GroupWrapper"/>
+   </fileobject>
+</attributes>
