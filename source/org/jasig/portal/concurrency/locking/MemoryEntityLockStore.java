@@ -64,14 +64,7 @@ public MemoryEntityLockStore() {
  */
 public void add(IEntityLock lock) throws LockingException
 {
-    long now = System.currentTimeMillis();
-    long willExpire = lock.getExpirationTime().getTime();
-    long cacheIntervalSecs = (willExpire - now) / 1000;
-    SmartCache sc = (SmartCache)getLockCache(lock.getEntityType());
-
-    synchronized (sc) {
-        sc.put( getCacheKey(lock), lock, (cacheIntervalSecs) );
-    }
+    primAdd(lock, lock.getExpirationTime());
 }
 /**
  * Deletes this IEntityLock from the store.
@@ -279,8 +272,8 @@ throws LockingException
     update(lock, newExpiration, null);
 }
 /**
- * Just make sure the store has a reference to the lock.  Updates to the lock
- * are performed by the service.
+ * Make sure the store has a reference to the lock, and then add the lock 
+ * to refresh the SmartCache wrapper.  
  * @param group org.jasig.portal.concurrency.locking.IEntityLock
  * @param expiration java.util.Date
  * @param lockType Integer
@@ -290,5 +283,22 @@ throws LockingException
 {
     if ( find(lock) == null )
         { throw new LockingException("Problem updating " + lock + " : not found in store."); }
+    primAdd(lock, newExpiration);
+}
+
+/**
+ * Adds this IEntityLock to the store.
+ * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ */
+private void primAdd(IEntityLock lock, Date expiration) throws LockingException
+{
+    long now = System.currentTimeMillis();
+    long willExpire = expiration.getTime();
+    long cacheIntervalSecs = (willExpire - now) / 1000;
+    SmartCache sc = (SmartCache)getLockCache(lock.getEntityType());
+
+    synchronized (sc) {
+        sc.put( getCacheKey(lock), lock, (cacheIntervalSecs) );
+    }
 }
 }
