@@ -2160,84 +2160,57 @@ Version $Revision$
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+	
 	<xsl:template name="calculateShrinkColumn">
 		<xsl:if test="number(@width)&gt;4">
-			<xsl:variable name="thisId" select="@ID"/>
-			<xsl:choose>
-				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
-					<xsl:variable name="thisColumnCondensed" select="number(@width)-5"/>
-					<xsl:variable name="followingColumnExpanded" select="number(following-sibling::column/@width)+5"/>
-					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
-					<input type="hidden" name="uP_sparam" value="mode"/>
-					<input type="hidden" name="mode" value="{$mode}"/>
-					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
-					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
-					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnCondensed}"/>
-					<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnExpanded}"/>
-				</xsl:when>
-				<xsl:when test="../column[position()=last()]/@ID=$thisId">
-					<xsl:variable name="thisColumnCondensed" select="number(@width)-5"/>
-					<xsl:variable name="precedingColumnExpanded" select="number(preceding-sibling::column/@width)+5"/>
-					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
-					<input type="hidden" name="uP_sparam" value="mode"/>
-					<input type="hidden" name="mode" value="{$mode}"/>
-					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
-					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
-					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnCondensed}"/>
-					<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{preceding-sibling::column/@ID}_value" value="{$precedingColumnExpanded}"/>
-				</xsl:when>
-			</xsl:choose>
+		    <xsl:call-template name="calculateAdjustColumn">
+		        <xsl:with-param name="increment" select="-5"/>
+		    </xsl:call-template>
 		</xsl:if>
 	</xsl:template>
+	
 	<xsl:template name="calculateExpandColumn">
 		<xsl:if test="number(@width)&lt;96">
-			<xsl:variable name="thisId" select="@ID"/>
-			<xsl:choose>
-				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
-					<xsl:variable name="thisColumnExpanded" select="number(@width)+5"/>
-					<xsl:variable name="followingColumnCondensed" select="number(following-sibling::column/@width)-5"/>
-					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
-					<input type="hidden" name="uP_sparam" value="mode"/>
-					<input type="hidden" name="mode" value="{$mode}"/>
-					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
-					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
-					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnExpanded}"/>
-					<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnCondensed}"/>
-				</xsl:when>
-				<xsl:when test="../column[position()=last()]/@ID=$thisId">
-					<xsl:variable name="thisColumnExpanded" select="number(@width)+5"/>
-					<xsl:variable name="precedingColumnCondensed" select="number(preceding-sibling::column/@width)-5"/>
-					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
-					<input type="hidden" name="uP_sparam" value="mode"/>
-					<input type="hidden" name="mode" value="{$mode}"/>
-					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
-					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
-					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnExpanded}"/>
-					<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{preceding-sibling::column/@ID}_value" value="{$precedingColumnCondensed}"/>
-				</xsl:when>
-			</xsl:choose>
+		    <xsl:call-template name="calculateAdjustColumn">
+		        <xsl:with-param name="increment" select="5"/>
+		    </xsl:call-template>
 		</xsl:if>
 	</xsl:template>
+	
+	<xsl:template name="calculateAdjustColumn">
+	    <!-- The following algorithm computes a new width value that,
+	         when normalized with the other widths by the structure stylesheet,
+	         will produce the desired width increase increment.
+	         For example, if you start with 2 columns, each 50%, and you want to
+	         increase one of the columns by 5%, this algorithm would set that
+	         column width to 61.11.  When the new values (61.11 and 50) are normalized,
+	         you end up with the desired effect: 2 columns at 55% and 45%.
+	    -->
+		<xsl:param name="increment">pass a number!</xsl:param>
+		<xsl:variable name="width" select="@width"/>
+		<xsl:variable name="sum" select="sum(../column/@width)"/>
+		<xsl:variable name="newWidth" select="$width + (($increment * $sum) div (100 - $width - $increment))"/>
+		<xsl:variable name="thisId" select="@ID"/>
+		
+		<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
+		<input type="hidden" name="uP_sparam" value="mode"/>
+		<input type="hidden" name="mode" value="{$mode}"/>
+		<input type="hidden" name="uP_sparam" value="focusedTabID"/>
+		<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
+		<input type="hidden" name="uP_sparam" value="targetRestriction"/>
+		<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
+		<input type="hidden" name="uP_sfattr" value="width"/>
+		<input type="hidden" name="width_folderId" value="{@ID}"/>
+		<input type="hidden" name="width_{@ID}_value" value="{$newWidth}"/>
+		<xsl:for-each select="../column">
+		    <xsl:if test="not($thisId = @ID)">
+				<input type="hidden" name="uP_sfattr" value="width"/>
+				<input type="hidden" name="width_folderId" value="{@ID}"/>
+				<input type="hidden" name="width_{@ID}_value" value="{@width}"/>
+		    </xsl:if>
+		</xsl:for-each>
+	</xsl:template>	
+	
 	<xsl:template name="normalizeColumnWidths">
 		<form name="form_normalizeColumnWidths" method="post" action="{$baseActionURL}">
 			<td>
