@@ -43,6 +43,7 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -130,7 +131,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
 
   public ChannelCacheKey generateKey(String uid) {
     ChannelCacheKey key = new ChannelCacheKey();
-    key.setKey("org.jasig.portal.channels.CInlineFrame");
+    key.setKey(getKey(uid));
     key.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
     key.setKeyValidity(null);
     return key;
@@ -138,6 +139,25 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
 
   public boolean isCacheValid(Object validity, String uid) {
     return true;
+  }
+
+  private String getKey(String uid) {
+    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+    ChannelStaticData staticData = channelState.getStaticData();
+    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+
+    StringBuffer sbKey = new StringBuffer(1024);
+    sbKey.append("org.jasig.portal.channels.CInlineFrame").append(": ");
+    sbKey.append("xslUri:");
+    try {
+      String sslUrl = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
+      sbKey.append(XSLT.getStylesheetURI(sslUrl, runtimeData.getBrowserInfo())).append(", ");
+    } catch (PortalException pe) {
+      sbKey.append("Not available, ");
+    }
+    sbKey.append("staticData:").append(staticData.toString());
+
+    return sbKey.toString();
   }
 }
 
