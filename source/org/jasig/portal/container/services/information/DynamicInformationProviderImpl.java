@@ -86,7 +86,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
 
-	public PortletStateManager getPortletURLManager(PortletWindow portletWindow) {
+	public PortletStateManager getPortletStateManager(PortletWindow portletWindow) {
 		return new PortletStateManager(portletWindow);
 	}
 

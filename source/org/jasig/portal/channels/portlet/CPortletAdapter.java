@@ -288,7 +288,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 case PortalEvent.UNSUBSCRIBE:
                     // For both SESSION_DONE and UNSUBSCRIBE, we might want to
                     // release resources here if we need to
-                    // 
+                    PortletStateManager.clearState(pcs.getHttpServletRequest());
                     break;
                     
                 default:
@@ -357,7 +357,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 
                 // Get the portlet url manager which will analyze the request parameters
                 DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
-                PortletStateManager pum = ((DynamicInformationProviderImpl)dip).getPortletURLManager(portletWindow);
+                PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
                 
                 // If portlet is rendering as root, change mode to maximized, otherwise minimized
                 PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
@@ -368,7 +368,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 }
                 
                 // Process action if this is the targeted channel and the URL is an action URL
-                if (rd.isTargeted() && pum.isAction()) {
+                if (rd.isTargeted() && psm.isAction()) {
                     try {
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
@@ -485,8 +485,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 }
                 // Change render parameters
                 Map renderParameters = actionResponse.getRenderParameters();
-                PortletStateManager pum = ((DynamicInformationProviderImpl)InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest())).getPortletURLManager(cd.getPortletWindow());
-                pum.setParameters(renderParameters);
+                PortletStateManager psm = ((DynamicInformationProviderImpl)InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest())).getPortletStateManager(cd.getPortletWindow());
+                psm.addParameters(renderParameters);
             }
 
             StringWriter sw = new StringWriter();
