@@ -35,9 +35,8 @@
 
 package org.jasig.portal.webservices;
 
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalEvent;
-import java.util.Map;
-import javax.servlet.http.Cookie;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -73,24 +72,16 @@ public interface IRemoteChannel {
    */
   public String instantiateChannel(String fname) throws Exception;
 
-
   /**
-   * Asks the channel to render content and return it as a String.
+   * Asks the channel to render content and return it as an XML Element.
    * The content will be well-formed XML which the client must serialize.
    * @param instanceId an identifier for the channel instance returned by instantiateChannel()
-   * @param headers a Map of headers (name/value pairs).
-            One of the headers must be a "user-agent".
-   * @param cookies an array of javax.servlet.http.Cookie objects.
-            Can be null if there are no cookies to send.
-   * @param parameters a Map of request parameter name/value pairs.
-            Can be null if there are no request parameters.
-   * @param baseActionURL a String representing the base action URL to which
-            channels will append '?' and a set of name/value pairs delimited by '&'.
+   * @param runtimeData the channel runtime data including request parameters
+            headers, cookies, etc.
    * @return xml an XML element representing the channel's output
    * @throws java.lang.Exception if the channel cannot respond with the expected rendering
    */
-  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies,
-                               Map parameters, String baseActionURL) throws Exception;
+  public Element renderChannel(String instanceId, ChannelRuntimeData runtimeData) throws Exception;
 
   /**
    * Passes portal events to the channel.

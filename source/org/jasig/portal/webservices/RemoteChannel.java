@@ -101,6 +101,7 @@ import org.jasig.portal.EntityIdentifier;
  * @version $Revision$
  */
 public class RemoteChannel implements IRemoteChannel {
+  // Todo: Should get this thread pool from the ChannelManager!
   private static final BoundedThreadPool renderThreadPool = new BoundedThreadPool(20, 150, 5);
 
   protected static final String MARKUP_FRAGMENT_ROOT = "channel";
@@ -163,6 +164,7 @@ public class RemoteChannel implements IRemoteChannel {
       throw new AuthorizationException("User '" + person.getAttribute(person.USERNAME) + "' is not authorized to access channel with functional name '" + fname + "'");
       
     // Instantiate channel
+    // Should this block be synchronized?
     String javaClass = channelDef.getJavaClass();
     String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();    
     String uid = messageContext.getProperty(SimpleSessionHandler.SESSION_ID) + "/" + instanceId;
@@ -202,23 +204,15 @@ public class RemoteChannel implements IRemoteChannel {
   }
 
   /**
-   * Asks the channel to render content and return it as a String.
+   * Asks the channel to render content and return it as an XML Element.
    * The content will be well-formed XML which the client must serialize.
-   * All relative URLs in markup are guaranteed to be absolute URLs.
    * @param instanceId an identifier for the channel instance returned by instantiateChannel()
-   * @param headers a Map of headers (name/value pairs).
-            One of the headers must be a "user-agent".
-   * @param cookies an array of javax.servlet.http.Cookie objects.
-            Can be null if there are no cookies to send.
-   * @param parameters a Map of request parameter name/value pairs.
-            Can be null if there are no request parameters.
-   * @param baseActionURL a String representing the base action URL to which
-            channels will append '?' and a set of name/value pairs delimited by '&'.
+   * @param runtimeData the channel runtime data including request parameters
+            headers, cookies, etc.
    * @return xml an XML element representing the channel's output
    * @throws java.lang.Exception if the channel cannot respond with the expected rendering
    */
-  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies,
-                               Map parameters, String baseActionURL) throws Exception {
+  public Element renderChannel(String instanceId, ChannelRuntimeData runtimeData) throws Exception {
 
     Element channelElement = null;
     IChannel channel = null;
@@ -231,15 +225,7 @@ public class RemoteChannel implements IRemoteChannel {
 
     if (channel == null || channelDef == null)
       throw new ResourceMissingException("id:" + instanceId, instanceId + " channel", "Unable to find a channel with instance ID '" + instanceId + "'");
-
-    // Set up channel runtime data and give it to channel
-    ChannelRuntimeData runtimeData = new ChannelRuntimeData();
-    runtimeData.setBrowserInfo(new BrowserInfo(cookies, headers));
-    runtimeData.setParametersSingleValued(parameters);
-    runtimeData.setBaseActionURL(baseActionURL);
-    runtimeData.setRenderingAsRoot(true);
-    runtimeData.setUPFile(new UPFileSpec(null, UPFileSpec.RENDER_METHOD, "webServiceRoot", "singlet", null));
-
+    
     // Start rendering
     ChannelRenderer cr = new ChannelRenderer(channel, runtimeData, renderThreadPool);
     cr.setTimeout(channelDef.getTimeout());
