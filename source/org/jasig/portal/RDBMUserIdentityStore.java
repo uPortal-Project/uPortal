@@ -40,6 +40,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
@@ -286,22 +287,39 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
-        /* put new user in groups that template is in */
+        /* Put the new user in the template user's groups */
         try{
           IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-
           IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
           java.util.Iterator templateGroups =  template.getContainingGroups();
           while (templateGroups.hasNext())
           {
-                IEntityGroup eg = (IEntityGroup) templateGroups.next();
-                ILockableEntityGroup leg = GroupService.findLockableGroup(eg.getKey(), "UP_FRAMEWORK");
-                leg.addMember(me);
-                leg.updateMembers();          }
-        }
+              IEntityGroup eg = (IEntityGroup) templateGroups.next();
+              ILockableEntityGroup leg = null;
+
+              boolean locked=false;
+              for (int i=0; i<25 && !locked; i++)
+              {
+                  try
+                  { 
+                      leg = GroupService.findLockableGroup(eg.getKey(), "UP_FRAMEWORK");
+                      locked=true;
+                  }
+                  catch (GroupsException ge)  // Some other process has the lock.
+                  {
+                      Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 2 * 1000)); // Retry in up to 2 seconds 
+                  }
+              }  // end for()
+
+              leg.addMember(me);
+              leg.updateMembers();
+
+          }      // end while()
+        }        // end try
         catch (Exception e) {
           LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
         }
+
         try
         {
           // Turn off autocommit if the database supports it
