@@ -331,7 +331,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return parameter value
      */
     public Object getObjectParameter(String pName) {
-        Object[] value_array = this.getParameterValues(pName);
+        Object[] value_array = this.getObjectParameterValues(pName);
         if ((value_array != null) && (value_array.length > 0)) {
             return  value_array[0];
         } else {
