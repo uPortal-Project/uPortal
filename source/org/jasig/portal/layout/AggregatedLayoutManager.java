@@ -1375,7 +1375,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
        // Checking restrictions
        if ( !canDeleteNode(nodeId) ) {
-           log.debug("The node with ID = '" + nodeId + "' cannot be deleted");
+           if (log.isDebugEnabled())
+               log.debug("The node with ID = '" + nodeId + "' cannot be deleted");
            return false;
        }
        
