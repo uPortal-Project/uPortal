@@ -43,6 +43,7 @@ import  org.jasig.portal.security.Permission;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.AuthorizationException;
+import  org.jasig.portal.PropertiesManager;
 import  java.sql.Connection;
 import  java.sql.Statement;
 import  java.sql.ResultSet;
@@ -53,6 +54,7 @@ import  java.util.ArrayList;
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  */
 public class ReferencePermissionManager extends PermissionManager {
+  private static boolean DEBUG = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ReferencePermissionManager.DEBUG");
 
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
@@ -145,15 +147,34 @@ public class ReferencePermissionManager extends PermissionManager {
     }
     Connection connection = RdbmServices.getConnection();
     try {
+      // Create the select statement to retrieve the permissions
       StringBuffer queryString = new StringBuffer(255);
-      queryString.append("SELECT * FROM UP_PERMISSIONS WHERE OWNER = '" + m_owner.toUpperCase() + "'");
-      queryString.append(" AND PRINCIPAL = '" + principal.toUpperCase() + "'");
-      queryString.append(" AND ACTIVITY = '" + activity.toUpperCase() + "'");
-      queryString.append(" AND TARGET = '" + target.toUpperCase() + "'");
-      queryString.append(" AND PERMISSION_TYPE = '" + type.toUpperCase() + "'");
+      queryString.append("SELECT * FROM UP_PERMISSIONS WHERE OWNER = '");
+      queryString.append(m_owner.toUpperCase());
+      queryString.append("'");
+      queryString.append(" AND PRINCIPAL = '");
+      queryString.append(principal.toUpperCase());
+      queryString.append("'");
+      queryString.append(" AND ACTIVITY = '");
+      queryString.append(activity.toUpperCase());
+      queryString.append("'");
+      queryString.append(" AND TARGET = '");
+      queryString.append(target.toUpperCase());
+      queryString.append("'");
+      queryString.append(" AND PERMISSION_TYPE = '");
+      queryString.append(type.toUpperCase());
+      queryString.append("'");
+      
+      // Create a JDBC statement to the database
       Statement statement = connection.createStatement();
-      LogService.log(LogService.DEBUG, queryString.toString());
+      
+      // DEBUG
+      if(DEBUG) LogService.log(LogService.DEBUG, queryString.toString());
+      
+      // Execute the query
       ResultSet rs = statement.executeQuery(queryString.toString());
+      
+      // Create an array list to store the retrieved permissions
       ArrayList permissions = new ArrayList();
       while (rs.next()) {
         Permission permission = new ReferencePermission(m_owner);
@@ -172,7 +193,6 @@ public class ReferencePermissionManager extends PermissionManager {
     } finally {
       RdbmServices.releaseConnection(connection);
     }
-
   }
 }
 
