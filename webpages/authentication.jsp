@@ -40,19 +40,23 @@
 
 <jsp:useBean id="auth" class="org.jasig.portal.services.Authentication" />
 
+<jsp:useBean id="JNDIManager" class="org.jasig.portal.jndi.JNDIManager" />
+
 <%
-String sUserName = request.getParameter ("userName");
-String sPassword = request.getParameter ("password");
+String sUserName = request.getParameter("userName");
+String sPassword = request.getParameter("password");
 
-boolean bAuthorized = auth.authenticate (sUserName, sPassword);
-session.setAttribute ("up_authorizationAttempted", "true");
+boolean bAuthorized = auth.authenticate(sUserName, sPassword);
+session.setAttribute("up_authorizationAttempted", "true");
 
-if (bAuthorized)
-{
-  /*** Tomcat 3.1 has a bug (http://jakarta.apache.org/bugs/show_bug.cgi?id=55)
-       which prevents you from invalidating the session and then
-       creating it again.  So in the meantime, we'll just
-       clear out the session attributes to indicate a logoff/logon  ***/
+if(bAuthorized)
+{ 
+  /*
+    Tomcat 3.1 has a bug (http://jakarta.apache.org/bugs/show_bug.cgi?id=55)
+    which prevents you from invalidating the session and then
+    creating it again.  So in the meantime, well just
+    clear out the session attributes to indicate a logoff/logon
+  */
 
   // Clear out session attributes
   java.util.Enumeration e = session.getAttributeNames ();
@@ -65,6 +69,9 @@ if (bAuthorized)
   // Get the Person object and put it in the session
   IPerson person = auth.getPerson ();
   session.setAttribute ("up_person", person);
+  
+  // Bind the user into the JNDI context
+  JNDIManager.initializeUserContext(session);
 }
 
 response.sendRedirect("index.jsp");
