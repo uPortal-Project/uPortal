@@ -40,6 +40,8 @@ import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.*;
 import  javax.servlet.http.*;
 import  java.util.*;
+import org.jasig.portal.utils.BooleanLock;
+
 
 
 /**
@@ -146,6 +148,15 @@ public interface IUserLayoutManager {
      * @return true if the remove operation was successful
      */
     public boolean removeChannel (String channelId) throws PortalException;
+
+    /**
+     * Returns a layout write lock.
+     * The lock is also serves as a flag to mark the dirty (modified) layouts.
+     *
+     * @return an <code>Object</code> layout write lock
+     */
+    public BooleanLock getUserLayoutWriteLock();
+
 }
 
 

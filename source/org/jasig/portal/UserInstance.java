@@ -82,10 +82,11 @@ public class UserInstance implements HttpSessionBindingListener {
     public static final boolean CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.cache_enabled");
     private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_xslt_cache_min_size");
     private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
-    private static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
-    private static final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
-    
+
+    final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
+    final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
+
     IPerson person;
     
     public UserInstance (IPerson person) {
@@ -139,12 +140,8 @@ public class UserInstance implements HttpSessionBindingListener {
                 channelManager = new ChannelManager(uLayoutManager); 
                 p_rendering_lock=new Object();
             }
-	    
-            // call layout manager to process all user-preferences-related request parameters
-            // this will update UserPreference object contained by UserLayoutManager, so that
-            // appropriate attribute incorporation filters and parameter tables can be constructed.
-            uLayoutManager.processUserPreferencesParameters(req);
-            renderState (req, res, out, this.channelManager, uLayoutManager.getUserLayout(), uLayoutManager.getUserPreferences(), uLayoutManager.getStructureStylesheetDescription(),uLayoutManager.getThemeStylesheetDescription(),p_rendering_lock);
+
+            renderState (req, res, out, this.channelManager, uLayoutManager,p_rendering_lock);
         } catch (Exception e) {
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
@@ -164,7 +161,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param ssd a <code>StructureStylesheetDescription</code> of the structure stylesheet that's to be used
      * @param tsd a <code>ThemeStylesheetDescription</code> of the theme stylesheet that's to be used
      */
-    public void renderState (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out, ChannelManager channelManager, Document userLayout, UserPreferences userPreferences, StructureStylesheetDescription ssd, ThemeStylesheetDescription tsd, Object rendering_lock) throws Exception {
+    public void renderState (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out, ChannelManager channelManager, IUserLayoutManager ulm, Object rendering_lock) throws Exception {
         synchronized(rendering_lock) {
             // This function does ALL the content gathering/presentation work.
             // The following filter sequence is processed:
@@ -188,7 +185,18 @@ public class UserInstance implements HttpSessionBindingListener {
             //
 
 
-            // determine rendering root -start
+            // call layout manager to process all user-preferences-related request parameters
+            // this will update UserPreference object contained by UserLayoutManager, so that
+            // appropriate attribute incorporation filters and parameter tables can be constructed.
+            ulm.processUserPreferencesParameters(req);
+            
+
+
+            // determine uPElement (optimistic prediction) --begin
+            // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
+            // to Privileged channels. We assume that Privileged channels are smart enough not to delete
+            // themselves in the detach mode ! 
+
             // In general transformations will start at the userLayoutRoot node, unless
             // we are rendering something in a detach mode.
             Node rElement = null;
@@ -208,6 +216,48 @@ public class UserInstance implements HttpSessionBindingListener {
             }
             // see if a new detach target has been specified
             String newDetachId = req.getParameter("uP_detach_target");
+
+            // set optimistic uPElement value
+            String uPElement = "render.uP";
+            if (newDetachId != null) {
+                uPElement = "detach_" + newDetachId + ".uP";
+            } else if (detachId!=null) {
+                uPElement = "detach_" + detachId + ".uP";
+            }
+            // determine uPElement (optimistic prediction) --end
+
+            // set up the channel manager
+            channelManager.setReqNRes(req, res, uPElement);
+            // process events that have to be handed directly to the userLayoutManager.
+            // (examples of such events are "remove channel", "minimize channel", etc.
+            //  basically things that directly affect the userLayout structure)
+            try {
+                processUserLayoutParameters(req,channelManager);
+            } catch (PortalException pe) {
+                Logger.log(Logger.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
+            }
+
+            // after this point the layout is determined
+            Document userLayout;
+            BooleanLock llock=ulm.getUserLayoutWriteLock();
+            synchronized(llock) {
+                // if the layout lock is dirty, prune the cache
+                if(llock.getValue()) {
+                    Logger.log(Logger.DEBUG,"UserInstance::writeContent() : pruning system caches.");
+                    systemCache.clear();
+                    systemCharacterCache.clear();
+                    llock.setValue(false);
+                }
+                userLayout=ulm.getUserLayout();
+            }
+
+            UserPreferences userPreferences=ulm.getUserPreferences();
+            StructureStylesheetDescription ssd= ulm.getStructureStylesheetDescription();
+            ThemeStylesheetDescription tsd=ulm.getThemeStylesheetDescription();
+
+            // verify upElement and determine rendering root --begin
+            // reset uPElement
+            uPElement = "render.uP";
             if (newDetachId != null && (!newDetachId.equals(detachId))) {
                 // see if the new detach traget is valid
                 rElement = userLayout.getElementById(newDetachId);
@@ -228,24 +278,17 @@ public class UserInstance implements HttpSessionBindingListener {
                 rElement = userLayout;
                 detachMode = false;
             }
-            String uPElement = "render.uP";
+            
             if (detachMode) {
                 Logger.log(Logger.DEBUG, "UserInstance::renderState() : entering detach mode for nodeId=\"" + detachId + "\".");
                 uPElement = "detach_" + detachId + ".uP";
             }
-            // determine rendering root -end
+            // inform channel manager about the new uPElement value
+            channelManager.setUPElement(uPElement);
+            // verify upElement and determine rendering root --begin
 
 
-            // set up the channel manager
-            channelManager.setReqNRes(req, res, uPElement);
-            // process events that have to be handed directly to the userLayoutManager.
-            // (examples of such events are "remove channel", "minimize channel", etc.
-            //  basically things that directly affect the userLayout structure)
-            try {
-                processUserLayoutParameters(req,channelManager);
-            } catch (PortalException pe) {
-                Logger.log(Logger.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
-            }
+
             // set the response mime type
             res.setContentType(tsd.getMimeType());
             // get a serializer appropriate for the target media
@@ -255,7 +298,7 @@ public class UserInstance implements HttpSessionBindingListener {
             // see if we can use character caching
             boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
             // initialize ChannelIncorporationFilter
-            //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager);
+            //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
             CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CACHE_ENABLED && this.CHARACTER_CACHE_ENABLED);
             String cacheKey=null;
             boolean output_produced=false;
@@ -376,6 +419,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 StylesheetRoot ts = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
                 // obtain an XSLT processor
                 XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+                //                processor.reset();
                 // prepare .uP element and detach flag to be passed to the stylesheets
                 // Including the context path in front of uPElement is necessary for phone.com browsers to work
                 XString xuPElement = processor.createXString(req.getContextPath() + "/" + uPElement);

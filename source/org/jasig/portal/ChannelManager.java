@@ -104,6 +104,7 @@ public class ChannelManager {
         this.setReqNRes(request,response,uPElement);
     }
 
+
     public void setUserLayoutManager(IUserLayoutManager m) {
         ulm=m;
     }
@@ -115,6 +116,10 @@ public class ChannelManager {
         this.uPElement=uPElement;
         rendererTable.clear ();
         processRequestChannelParameters (request);
+    }
+
+    public void setUPElement(String uPElement) {
+        this.uPElement=uPElement;
     }
     
     public void removeChannel(String channelId) {

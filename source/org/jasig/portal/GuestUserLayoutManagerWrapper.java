@@ -37,6 +37,7 @@
 package  org.jasig.portal;
 
 import  org.jasig.portal.security.IPerson;
+import  org.jasig.portal.utils.BooleanLock;
 import  org.w3c.dom.*;
 import  javax.servlet.http.*;
 import  java.util.*;
@@ -176,6 +177,11 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      */
     public UserPreferences getUserPreferences() {
         return this.gulm.getUserPreferences(this.sessionId);
+    }
+
+    public BooleanLock getUserLayoutWriteLock() {
+        //        return layout_write_lock;
+        return this.gulm.getUserLayoutWriteLock(this.sessionId);
     }
 
     /**

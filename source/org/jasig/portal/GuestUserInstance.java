@@ -175,11 +175,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 return;
             }
 	    
-            // call layout manager to process all user-preferences-related request parameters
-            // this will update UserPreference object contained by UserLayoutManager, so that
-            // appropriate attribute incorporation filters and parameter tables can be constructed.
-            uLayoutManager.processUserPreferencesParameters(req);
-            renderState (req, res, out, state.channelManager, uLayoutManager.getUserLayout(sessionId), uLayoutManager.getUserPreferences(sessionId), uLayoutManager.getStructureStylesheetDescription(sessionId),uLayoutManager.getThemeStylesheetDescription(sessionId),state.p_rendering_lock);
+            renderState (req, res, out, state.channelManager, new GuestUserLayoutManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
         } catch (Exception e) {
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));

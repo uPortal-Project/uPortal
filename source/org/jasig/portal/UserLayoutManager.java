@@ -38,6 +38,7 @@ package  org.jasig.portal;
 
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.utils.BooleanLock;
 import  java.sql.*;
 import  org.w3c.dom.*;
 import  org.apache.xalan.xpath.*;
@@ -73,6 +74,8 @@ public class UserLayoutManager implements IUserLayoutManager {
     private boolean unmapped_user_agent = false;
     IPerson m_person;
 
+    BooleanLock layout_write_lock=new BooleanLock(true);
+
     /**
      * Constructor does the following
      *  1. Read layout.properties
@@ -103,6 +106,8 @@ public class UserLayoutManager implements IUserLayoutManager {
                 complete_up=updb.getUserPreferences(m_person.getID(), upl);
                 // Initialize the JNDI context for this user
                 JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
+                // set dirty flag on the layout
+                layout_write_lock.setValue(true);
             } 
             else {
                 // there is no user-defined mapping for this particular browser.
@@ -265,14 +270,16 @@ public class UserLayoutManager implements IUserLayoutManager {
             updb.putUserPreferences(m_person.getID(), newPreferences);
             complete_up=newPreferences;
         }
-        if (newLayout != null) {
-            uLayoutXML = newLayout;
-            try {
-                GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), 
-                                                                     uLayoutXML);
-            } catch (Exception e) {
-                Logger.log(Logger.ERROR, e);
-                throw  new GeneralRenderingException(e.getMessage());
+        synchronized(layout_write_lock) {
+            if (newLayout != null) {
+                uLayoutXML = newLayout;
+                layout_write_lock.setValue(true);
+                try {
+                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+                } catch (Exception e) {
+                    Logger.log(Logger.ERROR, e);
+                    throw  new GeneralRenderingException(e.getMessage());
+                }
             }
         }
     }
@@ -340,31 +347,44 @@ public class UserLayoutManager implements IUserLayoutManager {
         // warning .. the channel should also be removed from uLayoutXML
         Element channel = uLayoutXML.getElementById(channelId);
         if (channel != null) {
-            if(!this.deleteNode(channel)) {
-                // unable to remove channel due to unremovable/immutable restrictionsn
-                Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
-                return false;
-            } else {
-                // channel has been removed from the userLayoutXML .. persist the layout ?
-                // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
-                // (or, alternatively, an incremental update should be done on the UserLayoutStore())
-                try {
-                    /*
-                      The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
-                    */
-                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
-                    /* end of patch */
-                } catch (Exception e) {
-                    Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
-                    throw new GeneralRenderingException("Unable to save layout changes.");
+            boolean rval=true;
+            synchronized(layout_write_lock) {
+                if(!this.deleteNode(channel)) {
+                    // unable to remove channel due to unremovable/immutable restrictionsn
+                    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                    rval=false;
+                } else {
+                    layout_write_lock.setValue(true);
+                    // channel has been removed from the userLayoutXML .. persist the layout ?
+                    // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
+                    // (or, alternatively, an incremental update should be done on the UserLayoutStore())
+                    try {
+                        /*
+                          The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
+                        */
+                        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+                        /* end of patch */
+                    } catch (Exception e) {
+                        Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
+                        throw new GeneralRenderingException("Unable to save layout changes.");
+                    }
+                    //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
                 }
-                //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
-                return true;
             }
+            return rval;
         } else {
             Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
             return false;
         }
+    }
+
+    /**
+     * Returns user layout write lock
+     *
+     * @return an <code>Object</code> lock
+     */
+    public BooleanLock getUserLayoutWriteLock() {
+        return layout_write_lock;
     }
 
     /**
