@@ -1,22 +1,7 @@
-/////////////////////////////////////////////////////////////////////////////
-//
-//                 Copyright (c) Campus Pipeline, Inc. 2000
-//                          All Rights Reserved
-//
-//  THIS WORK IS AN UNPUBLISHED WORK AND CONTAINS CONFIDENTIAL, PROPRIETARY,
-//  AND TRADE SECRET INFORMATION OF CAMPUS PIPELINE, INC.  ACCESS TO THIS
-//  WORK IS RESTRICTED TO CAMPUS PIPELINE, INC. EMPLOYEES AND TO ENTITIES
-//  OTHER THAN CAMPUS PIPELINE, INC. WHO ARE PARTIES TO CURRENT LICENSE AND
-//  CONFIDENTIALITY AGREEMENTS WITH CAMPUS PIPELINE, INC. OR ITS AUTHORIZED
-//  DISTRIBUTORS.  NO PART OF THIS WORK MAY BE USED, PRACTICED, PERFORMED,
-//  COPIED, DISTRIBUTED, REPRODUCED, REVISED, MODIFIED, TRANSLATED,
-//  ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED, RECAST,
-//  TRANSFORMED, ADAPTED, OR REVERSE ENGINEERED WITHOUT THE PRIOR WRITTEN
-//  CONSENT OF CAMPUS PIPELINE, INC.  ANY USE OR EXPLOITATION OF THIS WORK
-//  WITHOUT EXPRESS AUTHORIZATION COULD SUBJECT THE PERPETRATOR TO CRIMINAL
-//  AND CIVIL LIABILITY.
-//
-/////////////////////////////////////////////////////////////////////////////
+/* Copyright 2000 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal.lang;
 

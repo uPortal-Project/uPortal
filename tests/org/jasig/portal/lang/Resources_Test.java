@@ -1,32 +1,13 @@
-/////////////////////////////////////////////////////////////////////////////
-//
-//                Copyright (c) Campus Pipeline, Inc. 2001
-//                          All Rights Reserved
-//
-//  THIS WORK IS AN UNPUBLISHED WORK AND CONTAINS CONFIDENTIAL, PROPRIETARY,
-//  AND TRADE SECRET INFORMATION OF CAMPUS PIPELINE, INC.  ACCESS TO THIS
-//  WORK IS RESTRICTED TO CAMPUS PIPELINE, INC. EMPLOYEES AND TO ENTITIES
-//  OTHER THAN CAMPUS PIPELINE, INC. WHO ARE PARTIES TO CURRENT LICENSE AND
-//  CONFIDENTIALITY AGREEMENTS WITH CAMPUS PIPELINE, INC. OR ITS AUTHORIZED
-//  DISTRIBUTORS.  NO PART OF THIS WORK MAY BE USED, PRACTICED, PERFORMED,
-//  COPIED, DISTRIBUTED, REPRODUCED, REVISED, MODIFIED, TRANSLATED,
-//  ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED, RECAST,
-//  TRANSFORMED, ADAPTED, OR REVERSE ENGINEERED WITHOUT THE PRIOR WRITTEN
-//  CONSENT OF CAMPUS PIPELINE, INC.  ANY USE OR EXPLOITATION OF THIS WORK
-//  WITHOUT EXPRESS AUTHORIZATION COULD SUBJECT THE PERPETRATOR TO CRIMINAL
-//  AND CIVIL LIABILITY.
-//
-/////////////////////////////////////////////////////////////////////////////
-
-
+/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 package org.jasig.portal.lang;
-
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
-
 /**
  * The <code>TypeConverter_Test</code> class tests <code>TypeConverter</code> class.
  *
@@ -47,7 +28,6 @@ public class Resources_Test
     {
         junit.textui.TestRunner.run( suite() );
     }
-
     /**
      * Build a test suite using reflection.
      *
@@ -62,12 +42,10 @@ public class Resources_Test
      * Setup for each test method.
      **/
     public void setUp() {}
-
     /**
      * Tear down for each test method.
      **/
     public void tearDown() {}
-
     public Resources_Test( String name )
     {
         super( name );
@@ -83,7 +61,6 @@ public class Resources_Test
             {"someUnknownProperty", MissingResourceException.class},
             {"testGetString",       null }
         };
-        
         tryEach( tests );
     }
     
@@ -94,13 +71,11 @@ public class Resources_Test
         {
             String name = (String)objects[i][0];
             Class throwable = (Class)objects[i][1];
-            
             tryValue( name, throwable  );
             tryValue( name, null, throwable  );
             tryValue( name, new String[]{ "some value" }, throwable );
         }
     }
-    
     private void tryValue(
         String name,
         String[] objects,
@@ -119,7 +94,6 @@ public class Resources_Test
                 );
         }
     }
-
     private void tryValue(
         String name,
         Class throwable
@@ -136,12 +110,9 @@ public class Resources_Test
         catch( Throwable t )
         {
             String expected = "Should not have thrown an exception.";
-            
             if( null != throwable )
                 expected = throwable.getName();
-            
             String got = t.getClass().getName();
-            
             TestCase.assertEquals( 
                 expected, 
                 got
@@ -168,24 +139,19 @@ public class Resources_Test
            name
            );
     }
-    
     private String loadString( String name )
         throws Exception
     {
         Properties properties = new Properties();
-        
+       
         properties.load(
             getClass().getResourceAsStream( "Resources_Test.properties" )
             );
-        
         String value = properties.getProperty( name );
-        
         if( null == value )
             throw new MissingResourceException( "Undefined property.", Resources_Test.class.getName(), name );
-        
         return value;
     }
-    
     private String loadString(
         String name,
         String[] objects
@@ -197,7 +163,6 @@ public class Resources_Test
             objects
             );
     }
-    
     private void stringsEqual( String name )
         throws Exception
     {
@@ -206,7 +171,6 @@ public class Resources_Test
             getString( name )
             );
     }
-    
     private void stringsEqual(
         String name,
         String[] objects
