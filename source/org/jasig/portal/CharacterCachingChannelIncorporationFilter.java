@@ -195,13 +195,15 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                         channelIdBlocks.add(channelSubscribeId);
                     }
                     cm.outputChannel(channelSubscribeId,this.getContentHandler());
-                    // start caching again
-                    try {
-                        if(!ser.startCaching()) {
-                            LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
+                    if(ccaching) {
+                        // start caching again
+                        try {
+                            if(!ser.startCaching()) {
+                                LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
+                            }
+                        } catch (IOException ioe) {
+                            LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
                         }
-                    } catch (IOException ioe) {
-                        LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
                     }
                 }
             }
