@@ -43,18 +43,18 @@ $Revision$
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="showLockUnlock">true</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
-  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS-->
-  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <!--<xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
   <!--end remove-->
 
   <xsl:template match="layout">
     <!--remove for CVS-->
-            <html>
+    <!--        <html>
       <head>
         <title>uPortal 2.0</title>
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
-      </head>
+      </head>-->
     <!--end remove-->
 
     <xsl:call-template name="optionMenu"/>
@@ -82,7 +82,7 @@ $Revision$
     </table>
     <!--End Layout Table -->
     <!--remove for CVS-->
-    </html>
+    <!--</html>-->
     <!--end remove-->
   </xsl:template>
   <xsl:template name="tabRow">
@@ -1432,5 +1432,6 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
+
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
