@@ -48,8 +48,9 @@
     <!--System Header Table -->
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
-        <td>
-          <span class="uportal-channel-table-header">System Profiles</span>
+        <td nowrap="nowrap" valign="bottom" align="left">
+          <span class="uportal-channel-table-header">System Profiles</span></td>
+          <td nowrap="nowrap" valign="bottom" align="left">
           <strong>
             <a href="{$baseActionURL}?action=expandAll&amp;profileType=system">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
@@ -57,7 +58,8 @@
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               <span class="uportal-text-small">Expand all</span>
             </a>
-          </strong>
+          </strong></td>
+<td nowrap="nowrap" valign="bottom" align="left" width="100%">
           <strong>
             <a href="{$baseActionURL}?action=condenseAll&amp;profileType=system">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
@@ -69,7 +71,7 @@
         </td>
       </tr>
       <tr>
-        <td>
+        <td colspan="3">
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
               <td>
@@ -180,17 +182,17 @@
     <!--Begin Personal Profile Header Table -->
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
-        <td>
-          <span class="uportal-channel-table-header">Personal Profiles</span>
-          <strong>
+        <td nowrap="nowrap" valign="bottom" align="left">
+          <span class="uportal-channel-table-header">Personal Profiles</span></td>
+          <td nowrap="nowrap" valign="bottom" align="left"><strong>
             <a href="{$baseActionURL}?action=expandAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
               <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               <span class="uportal-text-small">Expand all</span>
             </a>
-          </strong>
-          <strong>
+          </strong></td>
+          <td nowrap="nowrap" valign="bottom" align="left" width="100%"><strong>
             <a href="{$baseActionURL}?action=condenseAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
               <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
@@ -201,7 +203,7 @@
         </td>
       </tr>
       <tr>
-        <td>
+        <td colspan="3">
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
               <td>
