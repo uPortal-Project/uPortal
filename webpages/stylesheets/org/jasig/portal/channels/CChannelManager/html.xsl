@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
+  
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <!--<xsl:param name="action">defaultView</xsl:param>-->
-  <xsl:param name="action">channelDef</xsl:param>
-
+  <xsl:param name="action">defaultView</xsl:param>
+  <!--xsl:param name="action">channelDef</xsl:param-->
   <xsl:param name="stepID">1</xsl:param>
-
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
 
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
+  <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
+  <!--xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable-->
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
 
-  <xsl:variable name="filterByID">
-    <xsl:value-of select="//filterByID[1]"/>
-  </xsl:variable>
-
-  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
-  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
   <xsl:template match="/">
     <html>
       <head>
@@ -255,6 +251,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-light">
       <tr class="uportal-channel-text" valign="top">
         <form name="formFilterByCategory" method="post" action="{$baseActionURL}">
+          <input type="hidden" name="action" value="filterByCategory"/>
           <td nowrap="nowrap">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
@@ -265,7 +262,7 @@
               <xsl:for-each select="ancestor::category">
                 <a class="uportal-navigation-category-selected">
                   <xsl:attribute name="href">
-                    <xsl:value-of select="$baseActionURL"/>?action=changeCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
+                    <xsl:value-of select="$baseActionURL"/>?action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
                   <em>
                     <xsl:value-of select="@name"/>
                   </em></a>::</xsl:for-each>
@@ -320,17 +317,17 @@
                   <xsl:if test="(position() &gt; (//recordsPerPage * //currentPage)-//recordsPerPage) and (position() &lt;= //recordsPerPage * //currentPage)">
                     <tr class="uportal-channel-text" valign="top">
                       <td nowrap="nowrap" align="center">
-                        <a href="$baseActionURL?action=reviewChannelSettings&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?action=reviewChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/view.gif" width="16" height="16" border="0" alt="Review settings for {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
-                        <a href="$baseActionURL?action=editChannelSettings&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
-                        <a href="$baseActionURL?action=removePublishedChannel&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?action=removePublishedChannel&amp;channelID={@ID}">
                           <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}"/>
                         </a>
                       </td>
@@ -376,12 +373,13 @@
       </tr>
       <tr class="uportal-channel-text">
         <form name="formRecordsDisplayed" method="post" action="{$baseActionURL}">
+          <input type="hidden" name="action" value="changeRecordsPerPage"/>
           <td nowrap="nowrap" valign="top">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="textfieldRecordsDisplayed" size="2" class="uportal-input-text">
+          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text">
             <xsl:attribute name="value">
               <xsl:value-of select="//recordsPerPage"/>
             </xsl:attribute></input>records at a time.<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
