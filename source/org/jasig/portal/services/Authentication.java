@@ -41,8 +41,10 @@ package  org.jasig.portal.services;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.security.provider.PersonImpl;
 import  org.jasig.portal.GenericPortalBean;
-import  org.jasig.portal.RDBMUserIdentityStore;
+import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.IUserIdentityStore;
 import  org.jasig.portal.AuthorizationException;
+import  org.jasig.portal.PropertiesManager;
 
 /**
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -112,14 +114,20 @@ public class Authentication {
 
       // find the uPortal userid for this user or flunk authentication if not found
 
-      //just for testing.. the template username should actually be derived from directory information.
-      // setting the uPortalTemplateUserName to demo will use demo as the template.
+      // The template username should actually be derived from directory information.
+      // The reference implemenatation sets the uPortalTemplateUserName to the default in
+      // the portal.properties file.
       // A more likely template would be staff or faculty or undergraduate.
-      m_Person.setAttribute("uPortalTemplateUserName","demo");
+      PropertiesManager pm = new PropertiesManager();
+      boolean autocreate = pm.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+      if (autocreate && m_Person.getAttribute("uPortalTemplateUserName")==null) {
+          m_Person.setAttribute("uPortalTemplateUserName",
+            pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
+          }
+      IUserIdentityStore UIDStore = RdbmServices.getUserIdentityStoreImpl();
 
-      RDBMUserIdentityStore UIDStore = new RDBMUserIdentityStore();
       try {
-      int newUID = UIDStore.getPortalUID(m_Person, true);
+      int newUID = UIDStore.getPortalUID(m_Person, autocreate);
       m_Person.setID(newUID);
       } catch (AuthorizationException  ae) {
       return (false);
