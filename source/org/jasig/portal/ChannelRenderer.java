@@ -77,6 +77,8 @@ public class ChannelRenderer
     protected static ThreadPool tp=null;
     protected static Map systemCache=null;
 
+    private Object cacheWriteLock;
+
   /**
    * Default constructor.
    * @param chan Channel associated with this ChannelRenderer
@@ -87,6 +89,7 @@ public class ChannelRenderer
     this.rd=runtimeData;
     rendering = false;
     ccacheable=false;
+    cacheWriteLock=new Object();
     if(tp==null && POOL_THREADS) {
 	ResourceLimits rl=new ResourceLimits();
 	rl.setOptimalSize(100); // should be on the order of concurrent users
@@ -392,7 +395,7 @@ public class ChannelRenderer
 		buffer=null;
 		validity=null;
 	    }
-	    public ChannelCacheEntry(SAXBufferImpl buffer,Object validity) {
+	    public ChannelCacheEntry(Object buffer,Object validity) {
 		this.buffer=buffer;
 		this.validity=validity;
 	    }
@@ -460,23 +463,25 @@ public class ChannelRenderer
 			}
 
                         // check if need to render
-			if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
-			    // need to render again and cache the output
-			    buffer = new SAXBufferImpl ();
-			    buffer.startBuffering();
-			    channel.renderXML (buffer);
-			    
-			    // save cache
-			    if(key!=null) {
-				if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-				    systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
-				} else {
-				    getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
-				}
-			    }
-			}
+                        synchronized(cacheWriteLock) {
+                            if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
+                                // need to render again and cache the output
+                                buffer = new SAXBufferImpl ();
+                                buffer.startBuffering();
+                                channel.renderXML (buffer);
+                                
+                                // save cache
+                                if(key!=null) {
+                                    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                                        systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                        Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
+                                    } else {
+                                        getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                        Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+                                    }
+                                }
+                            }
+                        }
 		    } else {
 			buffer = new SAXBufferImpl ();
 			buffer.startBuffering();
@@ -519,7 +524,9 @@ public class ChannelRenderer
          * Sets a character cache for the current rendering.
          */
         public void setCharacterCache(String chars) {
-
+            synchronized(cacheWriteLock) {
+                cbuffer=chars;
+            }
             if(CACHE_CHANNELS) {
                 // try to obtain rendering from cache
                 if(channel instanceof ICacheable ) {
@@ -529,25 +536,24 @@ public class ChannelRenderer
                         ChannelCacheEntry entry=null;
                         if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                             entry=(ChannelCacheEntry)systemCache.get(key.getKey());
-                            if(entry!=null) {
-                                entry.buffer=chars;
-                                systemCache.put(key.getKey(),entry);
+                            if(entry==null) {
                                 Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
+                                entry=new ChannelCacheEntry(chars,key.getKeyValidity());
                             } else {
-                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                                entry.buffer=chars;
                             }
+                            systemCache.put(key.getKey(),entry);
                         } else {
                             // by default we assume INSTANCE_KEY_SCOPE
                             entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
-                            if(entry!=null) {
-                                entry.buffer=chars;
-                                getChannelCache().put(key.getKey(),entry);
-                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on an instance key \""+key.getKey()+"\"");
-                            } else {
+                            if(entry==null) {
                                 Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                                entry=new ChannelCacheEntry(chars,key.getKeyValidity());
+                            } else {
+                                entry.buffer=chars;
                             }
+                            getChannelCache().put(key.getKey(),entry);
                         }
-
                     } else {
                         Logger.log(Logger.WARN,"ChannelRenderer::setCharacterCache() : channel cache key is null !");
                     }

@@ -163,7 +163,7 @@ public final class CachingXHTMLSerializer
     }
 
     public String getCache() throws UnsupportedEncodingException, IOException {
-                _printer.flush();
+        _printer.flush();
         return cacher.getCache(this.encoding);
     }
     
@@ -174,5 +174,6 @@ public final class CachingXHTMLSerializer
      */
     public void printRawCharacters(String text) {
         _printer.printText(text);
+        _printer.flush();
     }
 }
