@@ -44,12 +44,10 @@ import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 
 
 /**
- * <p>Title: UserLayoutNode </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic</p>
+ * UserLayoutNode summary description sentence goes here.
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 
 public class UserLayoutNode {

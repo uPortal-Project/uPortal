@@ -47,12 +47,9 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.IIndividualGroupService;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author unascribed
- * @version 1.0
+ * SearchResultsGroupImp summary description sentence goes here.
+ * 
+ * @version $Revision$
  */
 
 public class SearchResultsGroupImpl implements IEntityGroup{

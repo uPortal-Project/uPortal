@@ -37,12 +37,10 @@
 package org.jasig.portal.layout.restrictions;
 
 /**
- * <p>Title: The Restriction Types</p>
- * <p>Description: This interface contains the restriction types </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * RestrictionTypes is an interface containing the restriction types.
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 
 public interface RestrictionTypes {

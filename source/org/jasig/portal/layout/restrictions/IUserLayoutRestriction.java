@@ -42,12 +42,10 @@ import org.jasig.portal.layout.ALNode;
 
 
 /**
- * <p>Title: The base interface for UserLayout restrictions </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * IUserLayoutRestriction is the base interface for UserLayout restrictions.
+ * 
  * @author Michael Ivanov
- * @version 1.1
+ * @version $Revision$
  */
 // create table up_restrictions (restriction_id integer(10) primary key, restriction_name varchar(50) not null );
 // insert into up_restrictions (restriction_id,restriction_name) values (1,'priority');

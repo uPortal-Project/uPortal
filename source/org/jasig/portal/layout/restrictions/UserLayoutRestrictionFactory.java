@@ -39,12 +39,10 @@ package org.jasig.portal.layout.restrictions;
 import org.jasig.portal.PortalException;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
+ * UserLayoutRestrictionFactory summary description sentence goes here.
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version $Revision$
  */
 
 public class UserLayoutRestrictionFactory {

@@ -40,12 +40,10 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.ALNode;
 
 /**
- * <p>Title: UserLayoutRelativeRestriction class</p>
- * <p>Description: The base class for UserLayout restrictions</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic</p>
+ * UserLayoutRelativeRestriction summary sentence goes here.
+ * 
  * @author Michael Ivanov
- * @version 1.0
+ * @version $Revision$
  */
 
 public abstract class UserLayoutRestriction implements IUserLayoutRestriction {

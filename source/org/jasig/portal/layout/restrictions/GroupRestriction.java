@@ -50,11 +50,10 @@ import org.jasig.portal.layout.IALNodeDescription;
 
 
 /**
- * <p>Title: The Group Restriction class</p>
- * <p>Description: This class checks the group restriction for a given ALNode object</p>
- * <p>Company: Instructional Media & Magic </p>
+ * GroupRestriction checks the group restriction for a given ALNode object.
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 
 public class GroupRestriction extends UserLayoutRestriction {

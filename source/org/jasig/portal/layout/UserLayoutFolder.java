@@ -39,10 +39,8 @@ package org.jasig.portal.layout;
 
 
 /**
- * <p>Title: UserLayoutFolder </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic</p>
+ * UserLayoutFolder summary decription sentence goes here.
+ * 
  * @author Michael Ivanov
  * @version 1.1
  */

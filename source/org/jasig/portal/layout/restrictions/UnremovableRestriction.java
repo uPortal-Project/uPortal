@@ -40,11 +40,11 @@ import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 /**
- * <p>Title: Unremovable Restriction class</p>
- * <p>Description: This class checks the restriction on the "unremovable" property for a given ALNode object</p>
- * <p>Company: Instructional Media & Magic </p>
+ * UnremovableRestriction checks the restriction on the "unremovable"
+ * property for a given ALNode object.
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version $Revision$
  */
 
 public class UnremovableRestriction extends BooleanRestriction {

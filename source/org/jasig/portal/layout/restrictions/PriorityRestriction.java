@@ -43,12 +43,10 @@ import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * <p>Title: Priority Restriction class</p>
- * <p>Description: This class checks the priority restriction for a given ALNode object</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * PriorityRestriction checks the priority restriction for a given ALNode object.
+ *  
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 
 public class PriorityRestriction extends UserLayoutRestriction {

@@ -40,7 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * <p>This object is passed to special channels</p>
+ * This object is passed to special channels.
+ * 
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
  */

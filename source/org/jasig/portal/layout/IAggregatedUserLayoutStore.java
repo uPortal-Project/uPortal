@@ -41,12 +41,10 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
 /**
- * <p>Title: The IAggregatedUserLayoutStore interface </p>
- * <p>Description: This interface defines the base methods working with aggregated user layout store </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic</p>
+ * IAggregatedUserLayoutStore defines the base methods working with aggregated user layout store.
+ * 
  * @author Michael Ivanov
- * @version 1.0
+ * @version $Revision$
  */
 
 public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
