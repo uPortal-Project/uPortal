@@ -35,6 +35,8 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.security.IPerson;
+
 import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
@@ -56,12 +58,11 @@ import org.apache.xml.serialize.*;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class LayoutBean extends GenericPortalBean
+public class LayoutBean
 {
   // all channel content/parameters/caches/etc are managed here
-    ChannelManager channelManager;
-
-    UserLayoutManager uLayoutManager;
+  ChannelManager channelManager;
+  UserLayoutManager uLayoutManager;
 
   // stylesheet sets for the first two major XSL transformations
   // userLayout -> structuredLayout -> target markup language
@@ -82,8 +83,8 @@ public class LayoutBean extends GenericPortalBean
   {
     // init the media manager
     String fs = System.getProperty ("file.separator");
-    String propertiesDir = getPortalBaseDir () + "properties" + fs;
-    String stylesheetDir = getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "LayoutBean" + fs;
+    String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
+    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "LayoutBean" + fs;
     mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
 
     // create a stylesheet set for userLayout transformations
@@ -93,8 +94,6 @@ public class LayoutBean extends GenericPortalBean
     // create a stylesheet set for structuredLayout transformations
     structuredLayoutSS = new StylesheetSet (stylesheetDir + "StructuredLayout.ssl");
     structuredLayoutSS.setMediaProps (propertiesDir + "media.properties ");
-
-
 
     // instantiate the processors
     try
@@ -109,14 +108,16 @@ public class LayoutBean extends GenericPortalBean
   }
 
   /**
-   * Gets the username from the session
-   * @param the servlet request object
-   * @return the username
+   * Gets the person object from the session.  Null is returned if
+   * no person is logged in
+   * @param req the servlet request object
+   * @return the person object, null if no person is logged in
    */
-  public String getUserName (HttpServletRequest req)
+  public IPerson getPerson (HttpServletRequest req)
   {
     HttpSession session = req.getSession (false);
-    return (String) session.getAttribute ("userName");
+    IPerson person = (IPerson) session.getAttribute ("up_person");
+    return person;
   }
 
   /**
@@ -154,8 +155,8 @@ public class LayoutBean extends GenericPortalBean
       Node rElement;
 
       // get the layout manager
-      if(uLayoutManager==null)
-	  uLayoutManager = new UserLayoutManager (req, getUserName (req));
+      if (uLayoutManager == null)
+        uLayoutManager = new UserLayoutManager (req, getPerson(req));
 
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
@@ -193,7 +194,7 @@ public class LayoutBean extends GenericPortalBean
       sLayoutProcessor.processStylesheet (stylesheet);
       sLayoutProcessor.setDocumentHandler (crb);
 
-      // initialize a filter to fill in channel attributes for the 
+      // initialize a filter to fill in channel attributes for the
       // "theme" (second) transformation.
       ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(sLayoutProcessor,cup.getThemeStylesheetUserPreferences());
 
@@ -235,7 +236,7 @@ public class LayoutBean extends GenericPortalBean
 
       Hashtable upTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
       Hashtable spTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
-      
+
       String stylesheetTarget = null;
 
       if ( (stylesheetTarget = (req.getParameter ("stylesheetTarget"))) != null)
@@ -285,11 +286,11 @@ public class LayoutBean extends GenericPortalBean
         String pValue= (String) spTable.get (pName);
         sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
-      
+
        cup.getStructureStylesheetUserPreferences().setParameterValues(upTable);
        cup.getThemeStylesheetUserPreferences().setParameterValues(spTable);
 
-      
+
       // all the parameters are set up, fire up the filter transforms
       uLayoutProcessor.process (new XSLTInputSource (rElement),userLayoutSS.getStylesheet (),new XSLTResultTarget (taif));
     }
@@ -311,11 +312,7 @@ public class LayoutBean extends GenericPortalBean
   {
     String layoutTarget;
 
-    /*    for (Enumeration e = req.getParameterNames() ; e.hasMoreElements() ;) {
-	Logger.log(Logger.DEBUG,(String) e.nextElement());
-	}*/
-
-    if ( (layoutTarget = req.getParameter ("userLayoutTarget")) != null)
+    if ((layoutTarget = req.getParameter ("userLayoutTarget")) != null)
     {
       String action = req.getParameter ("action");
 
