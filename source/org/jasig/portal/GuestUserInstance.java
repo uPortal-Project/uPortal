@@ -56,7 +56,7 @@ import  org.apache.xml.serialize.*;
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
  */
-public class GuestUserInstance extends UserInstance  {
+public class GuestUserInstance extends UserInstance implements HttpSessionBindingListener {
     // state class
     private class IState {
         private ChannelManager channelManager;
@@ -101,10 +101,36 @@ public class GuestUserInstance extends UserInstance  {
      * @param sessionId a <code>String</code> value
      */
     public void unbindSession(String sessionId) {
-	stateTable.remove(sessionId);
+	IState state=(IState)stateTable.get(sessionId);
+	if(state==null) {
+	    Logger.log(Logger.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+	    return;
+	}
+        state.channelManager.finishedSession();
         uLayoutManager.unbindSession(sessionId);
+	stateTable.remove(sessionId);
     }
 
+
+    /**
+     * This notifies UserInstance that it has been unbound from the session.
+     * Method triggers cleanup in ChannelManager.
+     *
+     * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
+     */
+    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
+        this.unbindSession(bindingEvent.getSession().getId());
+        Logger.log(Logger.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+    }
+    
+    /**
+     * Notifies UserInstance that it has been bound to a session.
+     *
+     * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
+     */
+    public void valueBound (HttpSessionBindingEvent bindingEvent) {
+        Logger.log(Logger.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+    }
    
     /**
      * Prepares for and initates the rendering cycle. 

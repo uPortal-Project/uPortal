@@ -58,7 +58,7 @@ import  org.apache.xml.serialize.*;
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
  */
-public class UserInstance {
+public class UserInstance implements HttpSessionBindingListener {
     public static final int guestUserId = 1;
     
     // manages layout and preferences
@@ -332,6 +332,23 @@ public class UserInstance {
         return  this.person;
     }
 
+    /**
+     * This notifies UserInstance that it has been unbound from the session.
+     * Method triggers cleanup in ChannelManager.
+     *
+     * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
+     */
+    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
+        channelManager.finishedSession();
+    }
+
+    /**
+     * Notifies UserInstance that it has been bound to a session.
+     *
+     * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
+     */
+    public void valueBound (HttpSessionBindingEvent bindingEvent) {
+    }
 
     /**
      * Process layout action events.

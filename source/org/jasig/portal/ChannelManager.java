@@ -118,6 +118,19 @@ public class ChannelManager {
     }
     
     public void removeChannel(String channelId) {
+        IChannel ch=(IChannel)channelTable.get(channelId);
+        if(ch!=null) {
+            try {
+                if(ulm.removeChannel(channelId)) {
+                    // clean up channel cache
+                    channelCacheTable.remove(ch);
+                    ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
+                    channelTable.remove(ch);
+                }
+            } catch (PortalException gre) {
+                Logger.log(Logger.ERROR,"ChannelManager::removeChannel(): exception raised when trying to remove a channel : "+gre);
+            }
+        }
     }
 
 
@@ -392,6 +405,20 @@ public class ChannelManager {
 	// clean up
 	rendererTable.clear();
 	targetParams=null;
+    }
+
+    /**
+     * Handle end-of-session cleanup
+     *
+     */
+    public void finishedSession() {
+        this.finishedRendering();
+        channelCacheTable.clear();
+        // send SESSION_DONE event to all the channels
+        PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
+        for(Enumeration e=channelTable.elements();e.hasMoreElements();) {
+            ((IChannel)e.nextElement()).receiveEvent(ev);
+        }
     }
 
     /**
