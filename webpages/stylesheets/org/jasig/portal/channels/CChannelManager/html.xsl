@@ -1009,7 +1009,7 @@
                       <xsl:for-each select="params/step[ID=$stepID]/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
