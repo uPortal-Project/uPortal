@@ -50,10 +50,13 @@ public class UserProfile {
     protected boolean system=false;
 
     public UserProfile(int id,String name,String struct_ss, String theme_ss, String desc) {
-	pName=name; struct_ss_name=struct_ss; theme_ss_name=theme_ss; description=desc;
-	this.id=id;
+        pName=name; struct_ss_name=struct_ss; theme_ss_name=theme_ss; description=desc;
+        if (description == null) {
+          description = "";
+        }
+        this.id=id;
     }
-    
+
     public int getProfileId() { return id; }
     public String getProfileName() { return pName; }
     public String getProfileDescription() { return description; }
