@@ -11,34 +11,25 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * Delete command implementation
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
-public class DeleteCommand implements ILayoutCommand {
-    INodeId nodeId;
+public class DeleteCommand extends AbstractCommand {
     
-    public DeleteCommand() {};
+    public DeleteCommand() {
+    	super();
+    }
     /**
      * Construct new delete command
      * @param nodeId
      */
     public DeleteCommand(INodeId nodeId) {
-        this.nodeId = nodeId;
+        super(nodeId);
     }
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayoutManager)
      */
     public boolean execute(ILayoutManager manager) {
-        return manager.deleteNode(nodeId);
+        return manager.deleteNode(getNodeId());
     }
-    /**
-     * @return Returns the nodeId.
-     */
-    public INodeId getNodeId() {
-        return nodeId;
-    }
-    /**
-     * @param nodeId The nodeId to set.
-     */
-    public void setNodeId(INodeId nodeId) {
-        this.nodeId = nodeId;
-    }
+    
 }

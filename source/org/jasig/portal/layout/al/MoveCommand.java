@@ -11,11 +11,12 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * Move command representation
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
-public class MoveCommand implements ILayoutCommand {
-    INodeId nodeId;
-    INodeId parentId;
-    INodeId nextNodeId;  
+public class MoveCommand extends AbstractCommand {
+	
+    private INodeId parentId;
+    private INodeId nextNodeId;  
     
     public MoveCommand() {};
     
@@ -26,8 +27,7 @@ public class MoveCommand implements ILayoutCommand {
      * @param nextNodeId
      */
     public MoveCommand(INodeId nodeId, INodeId parentId, INodeId nextNodeId) {
-        super();
-        this.nodeId = nodeId;
+        super(nodeId);
         this.parentId = parentId;
         this.nextNodeId = nextNodeId;
     }
@@ -35,38 +35,30 @@ public class MoveCommand implements ILayoutCommand {
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayoutManager)
      */
     public boolean execute(ILayoutManager manager) {
-        return manager.moveNode(nodeId,parentId,nextNodeId);
+        return manager.moveNode(getNodeId(),parentId,nextNodeId);
     }
+    
     /**
      * @return Returns the nextNodeId.
      */
     public INodeId getNextNodeId() {
         return nextNodeId;
     }
+
     /**
      * @param nextNodeId The nextNodeId to set.
      */
     public void setNextNodeId(INodeId nextNodeId) {
         this.nextNodeId = nextNodeId;
     }
-    /**
-     * @return Returns the nodeId.
-     */
-    public INodeId getNodeId() {
-        return nodeId;
-    }
-    /**
-     * @param nodeId The nodeId to set.
-     */
-    public void setNodeId(INodeId nodeId) {
-        this.nodeId = nodeId;
-    }
+    
     /**
      * @return Returns the parentId.
      */
     public INodeId getParentId() {
         return parentId;
     }
+    
     /**
      * @param parentId The parentId to set.
      */
