@@ -2,6 +2,7 @@
 
 <?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl"  type="text/xsl" media="netscape"?>
 <?xml-stylesheet alternate="true" href="webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_wml.xsl"  type="text/xsl" media="WAP"?>
+<?xml-stylesheet alternate="true" href="webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_wml.xsl"  type="text/xsl" media="up"?>
 <?xml-stylesheet alternate="true" href="webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_pp.xsl"  type="text/xsl" media="avantgo"?>
 
 <document>
