@@ -196,7 +196,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     media = runtimeData.getMedia();
 
     if ( buttonxmlUri != null )
-	fullxmlUri = buttonxmlUri;
+        fullxmlUri = buttonxmlUri;
     else {
     //if (this.passThrough != null )
     //  Logger.log (Logger.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
@@ -251,7 +251,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if (evnum == ev.EDIT_BUTTON_EVENT && this.editUri != null)
           this.buttonxmlUri = this.editUri;
     else if (evnum == ev.HELP_BUTTON_EVENT && this.helpUri != null)
-	  this.buttonxmlUri = this.helpUri;
+          this.buttonxmlUri = this.helpUri;
     else if (evnum == ev.ABOUT_BUTTON_EVENT && this.infoUri != null)
           this.buttonxmlUri = this.infoUri;
 
@@ -306,13 +306,13 @@ public class CWebProxy implements org.jasig.portal.IChannel
     try
     {
       if (xslUri != null)
-        XSLT.transform(xml, new URL(xslUri), out, runtimeData);
+        XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData);
       else
       {
         if (xslTitle != null)
-          XSLT.transform(xml, new URL(sslUri), out, runtimeData, xslTitle, media);
+          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, xslTitle, media);
         else
-          XSLT.transform(xml, new URL(sslUri), out, runtimeData, media);
+          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, media);
       }
     }
     catch (org.xml.sax.SAXException e)
@@ -328,11 +328,11 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
   /**
    * Get the contents of a URI as a String but send it through tidy first.
-   * Also includes support for cookies.  
+   * Also includes support for cookies.
    * @param uri the URI
    * @return the data pointed to by a URI
    */
-  private String getXmlString (String uri) 
+  private String getXmlString (String uri)
   throws IOException, MalformedURLException, PortalException, ParseException
   {
     URL url = new URL (UtilitiesBean.fixURI(uri));
@@ -372,7 +372,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
       xml = sbText.toString ();
     }
-    
+
     return xml;
 
   }
@@ -406,13 +406,13 @@ public class CWebProxy implements org.jasig.portal.IChannel
     String path = p.substring(0, p.lastIndexOf("/"));
     while ( (header=urlConnect.getHeaderFieldKey(index)) != null )
     {
-       if (supportSetCookie2) 
+       if (supportSetCookie2)
        {
          if (header.equalsIgnoreCase("set-cookie2"))
          {
             //send Cookie2 header
             urlConnect.setRequestProperty("Cookie2", "Version=\"$1\"");
-            processSetCookie2Header(urlConnect.getHeaderField(index), domain, path);           
+            processSetCookie2Header(urlConnect.getHeaderField(index), domain, path);
          }
        }
        else
@@ -440,12 +440,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
      while (headerValue.hasMoreTokens())
      {
        cookieValue = new StringTokenizer(headerValue.nextToken(), ";");
-       token = cookieValue.nextToken(); 
+       token = cookieValue.nextToken();
        if ( token.indexOf("=") != -1)
        {
           cookie = new Cookie ( token.substring(0, token.indexOf("=")),
                                 token.substring(token.indexOf("=")+1).trim() );
-       }  
+       }
        else
        {
           Logger.log(Logger.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
@@ -467,7 +467,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
             }
             if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
             {
-               cookie.setDomain(token.substring(token.indexOf("=")+1).trim()); 
+               cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
                domainSet = true;
             }
             if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
@@ -478,17 +478,17 @@ public class CWebProxy implements org.jasig.portal.IChannel
           }
           if (!domainSet)
           {
-             cookie.setDomain(domain);    
+             cookie.setDomain(domain);
           }
           if (!pathSet)
           {
-             cookie.setPath(path); 
+             cookie.setPath(path);
           }
           // checks to see if this cookie should replace one already stored
           for (int index = 0; index < cookies.size(); index++)
           {
              Cookie old = (Cookie) cookies.elementAt(index);
-             if ( cookie.getName().equals(old.getName()) ) 
+             if ( cookie.getName().equals(old.getName()) )
              {
                 String newPath = cookie.getPath();
                 String newDomain = cookie.getDomain();
@@ -520,9 +520,9 @@ public class CWebProxy implements org.jasig.portal.IChannel
             timer.schedule( new RemoveCookieTimerTask(cookie), new Date( (long) d.getTime()+(expires*1000)) );
           }
       }
-    } 
+    }
   }
- 
+
   private void processSetCookieHeader (String headerVal, String domain, String path)    throws ParseException
   {
      StringTokenizer cookieValue;
@@ -637,21 +637,21 @@ public class CWebProxy implements org.jasig.portal.IChannel
        processSetCookie2Header(headerVal, domain, path);
      }
   }
- 
+
   // Removes the cookie from the vector of stored cookies when the cookie expires.
   private class RemoveCookieTimerTask extends TimerTask
   {
 
      Cookie cookie;
 
-     public RemoveCookieTimerTask (Cookie cookie) 
+     public RemoveCookieTimerTask (Cookie cookie)
      {
        this.cookie = cookie;
-     } 
- 
+     }
+
      public void run()
      {
-       cookies.removeElement(cookie);   
+       cookies.removeElement(cookie);
      }
   }
 }
