@@ -68,6 +68,7 @@ public class ChannelDefinition implements IBasicEntity {
   private boolean chanEditable;
   private boolean chanHasHelp;
   private boolean chanHasAbout;
+  private boolean chanIsSecure;    
   private Map parameters; // Consider implementing as a Set
   private String chanLocale;
   private Hashtable chanDescs;
@@ -106,15 +107,16 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean isEditable() { return chanEditable; }
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
+  public boolean isSecure() { return chanIsSecure; }    
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
   public String getLocale() { return chanLocale; }
   // I18n
   public String getName(String locale) {
       String chanName=(String)chanNames.get(locale);
       if (chanName == null) {
-	  return this.chanName; // fallback on "en_US"
+          return this.chanName; // fallback on "en_US"
       }  else {
-	  return chanName;
+          return chanName;
       }
   }
   public String getDescription(String locale) {
@@ -123,9 +125,9 @@ public class ChannelDefinition implements IBasicEntity {
       */
       String chanDesc=(String)chanDescs.get(locale);
       if (chanDesc == null) {
-	  return this.chanDesc; // fallback on "en_US"
+          return this.chanDesc; // fallback on "en_US"
       }  else {
-	  return chanDesc;
+          return chanDesc;
       }
   }
   public String getTitle(String locale) {
@@ -134,9 +136,9 @@ public class ChannelDefinition implements IBasicEntity {
       */
       String chanDesc=(String)chanDescs.get(locale);
       if (chanDesc == null) {
-	  return this.chanDesc; // fallback on "en_US"
+          return this.chanDesc; // fallback on "en_US"
       }  else {
-	  return chanDesc;
+          return chanDesc;
       }
   }
 
@@ -155,9 +157,10 @@ public class ChannelDefinition implements IBasicEntity {
   public void setEditable(boolean editable) {this.chanEditable = editable; }
   public void setHasHelp(boolean hasHelp) {this.chanHasHelp = hasHelp; }
   public void setHasAbout(boolean hasAbout) {this.chanHasAbout = hasAbout; }
+  public void setIsSecure(boolean isSecure) {this.chanIsSecure = isSecure; }    
   public void setLocale(String locale) {
       if (locale!=null)
-	  this.chanLocale = locale;
+          this.chanLocale = locale;
   }
   public void clearParameters() { this.parameters.clear(); }
   public void setParameters(ChannelParameter[] parameters) {
@@ -255,6 +258,7 @@ public class ChannelDefinition implements IBasicEntity {
     channel.setAttribute("editable", editable ? "true" : "false");
     channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
     channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
+    channel.setAttribute("secure", chanIsSecure ? "true" : "false");    
     return channel;
   }
 
