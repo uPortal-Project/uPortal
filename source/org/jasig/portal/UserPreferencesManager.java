@@ -77,6 +77,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     IPerson m_person;
     IUserLayoutStore ulsdb = null;
 
+    private static final boolean saveUserPreferencesAtLogout = PropertiesManager.getPropertyAsBoolean(UserPreferencesManager.class.getName() + ".save_UserPreferences_at_logout");
+
     /**
      * Constructor does the following
      *  1. Read layout.properties
@@ -357,7 +359,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     public void finishedSession(HttpSessionBindingEvent bindingEvent) {
         // persist the layout and user preferences
         try {
-            ulsdb.putUserPreferences(m_person, complete_up);
+            if(saveUserPreferencesAtLogout) {
+                ulsdb.putUserPreferences(m_person, complete_up); 
+            }
             ulm.saveUserLayout();
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
