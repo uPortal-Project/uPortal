@@ -10,15 +10,25 @@ import java.util.Hashtable;
 
 public interface IUserPreferencesDB {
 
-    public UserProfile getUserProfile(int userId, String userAgent);
-    public void setUserProfile(int userId,UserProfile profile);
 
+    // user profiles
+    public UserProfile getUserProfile(int userId, String userAgent);
+    public void updateUserProfile(int userId,UserProfile profile);
+    public void deleteUserProfile(int userId,int profileId);
+    /*
+     * Creates a new user profile in the database.
+     * In the process, new profileId is assigned to the profile
+     * The UserProfile object returned has the profileId set.
+     */
+    public UserProfile addUserProfile(int userId,UserProfile profile);
     public UserProfile getUserProfileById(int userId,int profileId);
     public Hashtable getUserProfileList(int userId);
 
-
+    // syste profiles
     public UserProfile getSystemProfile(String userAgent);
-    public void setSystemProfile(UserProfile profile);
+    public void updateSystemProfile(UserProfile profile);
+    public void deleteSystemProfile(int profileId);
+    public UserProfile addSystemProfile(UserProfile profile);
     public UserProfile getSystemProfileById(int profileId);
     public Hashtable getSystemProfileList();
 

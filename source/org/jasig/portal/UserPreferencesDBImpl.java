@@ -193,24 +193,13 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         return pl;
     }
 
-    public void setUserProfile(int userId,UserProfile profile) {
+    public void updateUserProfile(int userId,UserProfile profile) {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_PROFILES WHERE USER_ID="+userId+" AND PROFILE_ID="+profile.getProfileId();
-            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            if(rs.next()) {
-                sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='"+profile.getThemeStylesheetName()+"', STRUCTURE_SS_NAME='"+profile.getStructureStylesheetName()+"', DESCRIPTION='"+profile.getProfileDescription()+"', PROFILE_NAME='"+profile.getProfileName()+"' WHERE USER_ID = "+userId+" AND PROFILE_ID="+profile.getProfileId();
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
-                stmt.executeUpdate(sQuery);
-            }
-            else {
-                sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("+userId+","+profile.getProfileId()+",'"+profile.getProfileName()+"','"+profile.getStructureStylesheetName()+"','"+profile.getThemeStylesheetName()+"','"+profile.getProfileDescription()+"')";
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
-                stmt.executeQuery(sQuery);
-            }
+	    String sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='"+profile.getThemeStylesheetName()+"', STRUCTURE_SS_NAME='"+profile.getStructureStylesheetName()+"', DESCRIPTION='"+profile.getProfileDescription()+"', PROFILE_NAME='"+profile.getProfileName()+"' WHERE USER_ID = "+userId+" AND PROFILE_ID="+profile.getProfileId();
+	    Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::updateUserProfile() : "+sQuery);
+	    stmt.executeUpdate(sQuery);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);
@@ -219,14 +208,57 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         }
     }
 
-    public void setSystemProfile(UserProfile profile) {
-        this.setUserProfile(0,profile);
+    public void updateSystemProfile(UserProfile profile) {
+        this.updateUserProfile(0,profile);
+    }
+    public UserProfile addUserProfile(int userId,UserProfile profile) {
+	// generate an id for this profile
+	DBCounterImpl dbc=new DBCounterImpl();
+	Integer id=dbc.getIncrementIntegerId("UP_USER_PROFILES");
+	if(id==null) return null;
+	profile.setProfileId(id.intValue());
+	try {
+            con=rdbmService.getConnection();
+            Statement stmt=con.createStatement();
+	    String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("+userId+","+profile.getProfileId()+",'"+profile.getProfileName()+"','"+profile.getStructureStylesheetName()+"','"+profile.getThemeStylesheetName()+"','"+profile.getProfileDescription()+"')";
+	    Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::addUserProfile() : "+sQuery);
+	    stmt.executeQuery(sQuery);
+        }
+        catch (Exception e) {
+            Logger.log (Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+	return profile;
+    }
+
+    public UserProfile addSystemProfile(UserProfile profile) {
+	return addUserProfile(0,profile);
+    }
+
+    public void deleteUserProfile(int userId,int profileId) {
+        try {
+            con=rdbmService.getConnection();
+            Statement stmt=con.createStatement();
+            String sQuery = "DELETE FROM UP_USER_PROFILES WHERE USER_ID="+userId+" AND PROFILE_ID="+Integer.toString(profileId);
+            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::deleteUserProfile() : "+sQuery);
+            ResultSet rs=stmt.executeQuery(sQuery);
+        }
+        catch (Exception e) {
+            Logger.log (Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+    }
+
+    public void deleteSystemProfile(int profileId) {
+	this.deleteUserProfile(0,profileId);
     }
 
     public void putUserPreferences(int userId, UserPreferences up) {
         // store profile
         UserProfile profile=up.getProfile();
-        this.setUserProfile(userId,profile);
+        this.updateUserProfile(userId,profile);
 
         this.setStructureStylesheetUserPreferences(userId,profile.getProfileId(),up.getStructureStylesheetUserPreferences());
         this.setThemeStylesheetUserPreferences(userId,profile.getProfileId(),up.getThemeStylesheetUserPreferences());
