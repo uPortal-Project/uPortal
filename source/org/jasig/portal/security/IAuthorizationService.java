@@ -57,15 +57,7 @@ public interface IAuthorizationService
  * @exception AuthorizationException
  */
     public void addPermissions(IPermission[] permissions) throws AuthorizationException;
-/**
- * Adds <code>IPermissions</code> to the service for the <code>IAuthorizationPrincipal</code>.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-    public void addPermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-    throws AuthorizationException;
+
 /**
  * I'm not sure what this means (Dan).  Publish what?
  * @param principal IAuthorizationPrincipal
@@ -230,30 +222,13 @@ public interface IAuthorizationService
  * @exception AuthorizationException
  */
     public void removePermissions(IPermission[] permissions) throws AuthorizationException;
-/**
- * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> from the service.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-    public void removePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-    throws AuthorizationException;
+
 /**
  * Updates <code>IPermissions</code> in the service.
  * @param permissions IPermission[]
  * @exception AuthorizationException
  */
     public void updatePermissions(IPermission[] permissions) throws AuthorizationException;
-/**
- * Updates <code>IPermissions</code> in the service for the <code>IAuthorizationPrincipal</code>.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-    public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-    throws AuthorizationException;
 
 /**
  * Returns the <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.

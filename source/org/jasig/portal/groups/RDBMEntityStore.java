@@ -34,18 +34,9 @@
  */
 package org.jasig.portal.groups;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.RDBMServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.EntityTypes;
 
 /**
  * Reference implementation for IEntityStore.
@@ -64,55 +55,7 @@ public RDBMEntityStore()
 {
     super();
 }
-/**
- * Find the <code>IEntities</code> that are members of the <code>IEntityGroup</code>.
- * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IEntityGroup
- * @deprecated
- * replaced by <code>RDBMEntityGroupStore.findEntitiesForGroup(IEntityGroup)</code>.
- */
-public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
-{
-    Collection entities = new ArrayList();
-    Connection conn = null;
-    String groupID = group.getLocalKey();
-    Class cls = group.getLeafType();
 
-    try
-    {
-        conn = RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        try {
-
-            String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP" +
-                           " WHERE GROUP_ID = " + "'" + groupID + "'" +
-                           " AND MEMBER_IS_GROUP = 'F' ";
-
-            ResultSet rs = stmnt.executeQuery(query);
-            try {
-                while (rs.next())
-                {
-                    String key = rs.getString(1);
-                    IEntity e = newInstance(key, cls);
-                    entities.add(e);
-                }
-            } finally {
-                  rs.close();
-              }
-        } finally {
-              stmnt.close();
-          }
-        }
-    catch (SQLException sqle)
-    {
-        log.error( sqle);
-        throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
-    }
-    finally
-        { RDBMServices.releaseConnection(conn); }
-
-    return entities.iterator();
-}
 /**
  * @return org.jasig.portal.groups.IEntity
  * @param key java.lang.String

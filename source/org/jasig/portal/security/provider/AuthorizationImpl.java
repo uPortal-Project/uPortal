@@ -103,23 +103,6 @@ throws AuthorizationException
             { removeFromPermissionsCache(permissions); }
     }
 }
-/**
- * Adds <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> to the store
- * and clears out the cache.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-public void addPermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().add(permissions);
-    }
-}
 
 /**
 * Adds the <code>IPermissionSet</code> to the entity cache.
@@ -825,24 +808,6 @@ throws AuthorizationException
 }
 
 /**
- * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> in the store
- * and clears out the cache.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-public void removePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().delete(permissions);
-    }
-}
-
-/**
  * @param newDefaultPermissionPolicy org.jasig.portal.security.IPermissionPolicy
  */
 protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
@@ -880,24 +845,6 @@ throws AuthorizationException
         getPermissionStore().update(permissions);
         if ( cachePermissions )
             { removeFromPermissionsCache(permissions); }
-    }
-}
-
-/**
- * Updates <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code>, in the
- * store and clears out the cache.
- * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal
- * @exception AuthorizationException
- * @deprecated as of uPortal 2.2.  A convenience method that was never used.
- */
-public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().update(permissions);
     }
 }
 

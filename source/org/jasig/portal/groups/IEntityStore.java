@@ -42,15 +42,6 @@ package org.jasig.portal.groups;
  */
 public interface IEntityStore {
 /**
- * Returns an <code>Iterator</code> over the <code>IEntities</code> that are members of 
- * the <code>IEntityGroup</code>.
- * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IEntityGroup
- * @deprecated
- * replaced by <code>IEntityGroupStore.findEntitiesForGroup(IEntityGroup)</code>.
- */
-java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException;
-/**
  * @return org.jasig.portal.groups.IEntity
  * @param key java.lang.String
  */
