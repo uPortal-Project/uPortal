@@ -849,6 +849,16 @@ $Revision$
                   </td>
                 </tr>
               </xsl:if>
+              <xsl:if test="//channel[@ID=$elementID]/parameter/@override = 'yes'">
+                 <tr>
+                  <td class="uportal-channel-text">
+                    <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+                  </td>
+                  <td width="100%" class="uportal-channel-text">
+                    <a href="{$baseActionURL}?action=modifyChannelParams&amp;elementID={$elementID}">Modify this channel's parameters</a>
+                  </td>
+                </tr>
+              </xsl:if>
               <!-- If ancestor or self is unremovable - the channel cannot be deleted-->
               <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
@@ -1121,6 +1131,7 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
+
 
 
 

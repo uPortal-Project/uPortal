@@ -295,8 +295,5 @@ $Revision$
 
 
 
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios ><scenario default="yes" name="chan reg" userelativepaths="yes" url="..\..\..\..\..\..\..\media\org\jasig\portal\channels\CChannelManager\channelRegistry001.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="yes" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" />
-</metaInformation>
--->
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
