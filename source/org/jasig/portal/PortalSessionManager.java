@@ -216,10 +216,11 @@ public class PortalSessionManager extends HttpServlet {
                 UPFileSpec upfs=new UPFileSpec(req);
 
                 String tag=upfs.getTagId();
-
+                
                 // see if the tag was registered
-                if(tag!=null) {
-                    request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
+                if ( tag != null ) {
+                    request_verified = true;
+                    requestTags.remove(tag);
                 }
 
                 LogService.log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
