@@ -16,10 +16,10 @@ It is much better to release the resources when done with them rather than letti
 the JVM do it.<br><br>
 
 <pre>
-Connection con = rdbmService.getConnection();
+Connection con = RDBMServices.getConnection();
 try {
     String query = "SELECT ...";
-    RDBMPreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
+    RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
     try {
         pstmt.clearParameters();
         pstmt.setXXXXX(1, someValue);
@@ -37,7 +37,7 @@ try {
         pstmt.close();
     }
 } finally {
-    rdbmService.releaseConnection(con);
+    RDBMServices.releaseConnection(con);
 }
 </pre>
 </body>
