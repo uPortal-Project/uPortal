@@ -38,6 +38,7 @@ package  org.jasig.portal.security.provider;
 
 import java.util.Vector;
 
+import javax.naming.AuthenticationException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -170,6 +171,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                          "SimpleLdapSecurityContext: No such user: " +
                          this.myPrincipal.UID);
         }
+      } catch (javax.naming.AuthenticationException ae) {
+        LogService.log(LogService.INFO,"SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         LogService.log(LogService.ERROR,
                        "SimpleLdapSecurityContext: LDAP Error with user: " +
