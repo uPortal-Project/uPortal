@@ -637,6 +637,8 @@ public void updateGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
     getGroupStore().update(group);
+    if ( cacheInUse())
+        { cacheRemove(group); }
     synchronizeGroupMembersOnUpdate(group);
 }
 /**
@@ -670,8 +672,6 @@ throws GroupsException
         else
             { group.getLock().release(); }
 
-        if ( cacheInUse())
-            { cacheRemove(group); }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
@@ -684,6 +684,8 @@ throws GroupsException
 public void updateGroupMembers(IEntityGroup group) throws GroupsException {
     throwExceptionIfNotInternallyManaged();
     getGroupStore().updateMembers(group);
+    if ( cacheInUse())
+        { cacheRemove(group); }
     synchronizeGroupMembersOnUpdate(group);
 }
 /**
@@ -717,8 +719,6 @@ throws GroupsException
         else
             { group.getLock().release(); }
 
-        if ( cacheInUse())
-            { cacheRemove(group); }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
