@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import org.apache.pluto.om.window.PortletWindow;
@@ -80,8 +81,9 @@ public class PortletURLManager {
 	private static Map windowStates = new HashMap();
 	private static Map portletModes = new HashMap();
 	
-	private PortletWindow windowOfAction;
+	private PortletWindowImpl windowOfAction;
 	private ChannelRuntimeData runtimeData;
+	private HttpServletRequest request;
 	
 	// Indicates the current action
 	private boolean isAction;
@@ -99,12 +101,13 @@ public class PortletURLManager {
 	  nextState = state;	
 	}
 	
-	public PortletURLManager ( PortletWindow windowOfAction ) {
-	  this.windowOfAction = windowOfAction;
+	public PortletURLManager ( PortletWindow window ) {
+	  this.windowOfAction = (PortletWindowImpl) window;
 	  nextMode = null;
 	  nextState = null;
 	  isAction = nextAction = false;
-	  runtimeData = ((PortletWindowImpl)windowOfAction).getChannelRuntimeData();
+	  request = windowOfAction.getHttpServletRequest();
+	  runtimeData = windowOfAction.getChannelRuntimeData();
 	  if ( windowOfAction != null && runtimeData != null )
 		analizeRequestInformation();
 	}
@@ -161,11 +164,11 @@ public class PortletURLManager {
       return isAction;
     }
 
-	private static String decodeMultiName( PortletWindow window, String paramName) {
+	private static String decodeMultiName( PortletWindow window, String sessionId, String paramName) {
 		return paramName.substring((getKey(window)+MULTI).length());
 	}
 	
-	private static String encodeMultiName( PortletWindow window, String paramName) {
+	private static String encodeMultiName( PortletWindow window, String sessionId, String paramName) {
 		return getKey(window) + MULTI + paramName;
 	}
 
@@ -185,7 +188,9 @@ public class PortletURLManager {
 	}
 
 	public static String getKey(PortletWindow window) {
-			return window.getId().toString() + "_"; 
+		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
+		    String sessionId = windowImpl.getHttpServletRequest().getSession().getId();
+			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
 	}
 
 	public void clearParameters(PortletWindow portletWindow) {
@@ -246,6 +251,7 @@ public class PortletURLManager {
 
 
 	public static void setMode(PortletWindow window, PortletMode mode) {
+		PortletWindowImpl windowImpl = (PortletWindowImpl) window;
 		Object prevMode = portletModes.get(getKey(window)+MODE);
 		if (prevMode != null)
 		  portletModes.put(getKey(window)+PREV_MODE, prevMode);
