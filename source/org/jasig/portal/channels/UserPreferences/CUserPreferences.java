@@ -128,15 +128,15 @@ public class CUserPreferences implements IPrivilegedChannel {
     this.pcs = pcs;
 
     if (!initialized) {
-	instantiateManagePreferencesState(up.getProfile());
-	// Initial state should be manage preferences
-	internalState = managePreferences;
+        instantiateManagePreferencesState(up.getProfile());
+        // Initial state should be manage preferences
+        internalState = managePreferences;
         internalState.setStaticData(staticData);
-	editedProfile=up.getProfile();
-	initialized=true;
+        editedProfile=up.getProfile();
+        initialized=true;
     }
     if(internalState!=null) {
-	internalState.setPortalControlStructures(pcs);
+        internalState.setPortalControlStructures(pcs);
     }
   }
 
@@ -147,20 +147,20 @@ public class CUserPreferences implements IPrivilegedChannel {
      * @param profile profile for which preferences are to be edited
      */
     private void instantiateManagePreferencesState(UserProfile profile) {
-	try {
-	    ThemeStylesheetDescription tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
-	    if(tsd!=null) {
-		String cupmClass = tsd.getCustomUserPreferencesManagerClass();
-		managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
-		((BaseState)managePreferences).setContext(this);
-	    } else {
-		LogService.instance().log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
-		managePreferences = new GPreferencesState(this);
-	    }
-	} catch (Exception e) {
-	    LogService.instance().log(LogService.ERROR, e);
-	    managePreferences = new GPreferencesState(this);
-	}
+        try {
+            ThemeStylesheetDescription tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
+            if(tsd!=null) {
+                String cupmClass = tsd.getCustomUserPreferencesManagerClass();
+                managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
+                ((BaseState)managePreferences).setContext(this);
+            } else {
+                LogService.instance().log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+                managePreferences = new GPreferencesState(this);
+            }
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR, e);
+            managePreferences = new GPreferencesState(this);
+        }
     }
 
   /** Returns channel runtime properties
@@ -214,36 +214,36 @@ public class CUserPreferences implements IPrivilegedChannel {
         }
         else {
           // reset to the manage profiles state
-	    //          manageProfiles.setRuntimeData(rd);
+            //          manageProfiles.setRuntimeData(rd);
           this.internalState = manageProfiles;
         }
       }
       else if (action.equals("managePreferences")) {
-	  if (profileId != null) {
-	      // find the profile mapping
-	      updb = RdbmServices.getUserPreferencesStoreImpl();
-	      if (systemProfile) {
-		  UserProfile newProfile = updb.getSystemProfileById(profileId.intValue());
-		  if(newProfile!=null && (!(editedProfile.isSystemProfile() && editedProfile.getProfileId()==newProfile.getProfileId()))) {
-		      // new profile has been selected
-		      editedProfile=newProfile;
-		      instantiateManagePreferencesState(editedProfile);
-		  }
-	      } else {
-		  UserProfile newProfile = updb.getUserProfileById(ulm.getPerson().getID(), profileId.intValue());
-		  if(newProfile!=null && (editedProfile.isSystemProfile() || (editedProfile.getProfileId()!=newProfile.getProfileId()))) {
-		      // new profile has been selected
-		      editedProfile=newProfile;
-		      instantiateManagePreferencesState(editedProfile);
-		  }
-	      }
-	  }
+          if (profileId != null) {
+              // find the profile mapping
+              updb = RdbmServices.getUserPreferencesStoreImpl();
+              if (systemProfile) {
+                  UserProfile newProfile = updb.getSystemProfileById(profileId.intValue());
+                  if(newProfile!=null && (!(editedProfile.isSystemProfile() && editedProfile.getProfileId()==newProfile.getProfileId()))) {
+                      // new profile has been selected
+                      editedProfile=newProfile;
+                      instantiateManagePreferencesState(editedProfile);
+                  }
+              } else {
+                  UserProfile newProfile = updb.getUserProfileById(ulm.getPerson(), profileId.intValue());
+                  if(newProfile!=null && (editedProfile.isSystemProfile() || (editedProfile.getProfileId()!=newProfile.getProfileId()))) {
+                      // new profile has been selected
+                      editedProfile=newProfile;
+                      instantiateManagePreferencesState(editedProfile);
+                  }
+              }
+          }
 
-	  if(editedProfile==null) {
-	      editedProfile = up.getProfile();
-	  }
-	  //        managePreferences.setRuntimeData(rd);
-	  this.internalState = managePreferences;
+          if(editedProfile==null) {
+              editedProfile = up.getProfile();
+          }
+          //        managePreferences.setRuntimeData(rd);
+          this.internalState = managePreferences;
       }
     }
     if (internalState != null)
@@ -272,11 +272,11 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
       IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
-      up = upStore.getUserPreferences(getUserLayoutManager().getPerson().getID(), profile);
-      up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson().getID(), getCurrentUserPreferences().getProfile().getProfileId()));
+      up = upStore.getUserPreferences(getUserLayoutManager().getPerson(), profile);
+      up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
   }
-  
+
   protected UserProfile getEditedUserProfile() {
     return editedProfile;
   }

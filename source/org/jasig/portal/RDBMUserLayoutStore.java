@@ -56,6 +56,7 @@ import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.jasig.portal.security.IRole;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.security.IPerson;
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -365,11 +366,8 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param chanId
-   * @param userId
-   * @param con
-   * @return
-   * @exception java.sql.SQLException
+   * @param approved Date
+   * @return boolean Channel is approved
    */
    protected static boolean channelApproved(java.sql.Timestamp approvedDate) {
       java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
@@ -458,12 +456,13 @@ public class RDBMUserLayoutStore
 
   /**
    * UserLayout
-   * @param userId, the user ID
+   * @param person, the user ID
    * @param profileId, the profile ID
    * @return a DOM object representing the user layout
    * @throws Exception
    */
-  public Document getUserLayout (int userId, int profileId) throws Exception {
+  public Document getUserLayout (IPerson person, int profileId) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     String str_uLayoutXML = null;
     try {
@@ -517,12 +516,13 @@ public class RDBMUserLayoutStore
 
   /**
    * Save the user layout
-   * @param userId
+   * @param person
    * @param profileId
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout (int userId, int profileId, Document layoutXML) throws Exception {
+  public void setUserLayout (IPerson person, int profileId, Document layoutXML) throws Exception {
+    int userId = person.getID();
     int layoutId = 0;
     Connection con = rdbmService.getConnection();
     try {
@@ -1190,18 +1190,18 @@ public class RDBMUserLayoutStore
    * @parameter userId
    * @result next free structure ID
    */
-  public String getNextStructChannelId (int userId) throws Exception {
-    return  getNextStructId(userId, channelPrefix);
+  public String getNextStructChannelId (IPerson person) throws Exception {
+    return  getNextStructId(person, channelPrefix);
   }
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @return
    * @exception Exception
    */
-  public String getNextStructFolderId (int userId) throws Exception {
-    return  getNextStructId(userId, folderPrefix);
+  public String getNextStructFolderId (IPerson person) throws Exception {
+    return  getNextStructId(person, folderPrefix);
   }
 
   /**
@@ -1219,12 +1219,13 @@ public class RDBMUserLayoutStore
   }
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param prefix
    * @return
    * @exception Exception
    */
-  protected String getNextStructId (int userId, String prefix) throws Exception {
+  protected String getNextStructId (IPerson person, String prefix) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1260,7 +1261,8 @@ public class RDBMUserLayoutStore
   /**
    * Is a user in this role
    */
-  public boolean isUserInRole (int userId, String role) throws Exception {
+  public boolean isUserInRole (IPerson person, String role) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       String query = "SELECT * FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " + "WHERE UU.USER_ID=" + userId + " UUR.USER_ID=UU.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID "
@@ -1403,10 +1405,11 @@ public class RDBMUserLayoutStore
   /**
    * Get the roles that a user belongs to
    * @param userRoles
-   * @param userId
+   * @param person
    * @exception Exception
    */
-  public void getUserRoles (Vector userRoles, int userId) throws Exception {
+  public void getUserRoles (Vector userRoles, IPerson person) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1432,11 +1435,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param roles
    * @exception Exception
    */
-  public void addUserRoles (int userId, Vector roles) throws Exception {
+  public void addUserRoles (IPerson person, Vector roles) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1477,11 +1481,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param roles
    * @exception Exception
    */
-  public void removeUserRoles (int userId, Vector roles) throws Exception {
+  public void removeUserRoles (IPerson person, Vector roles) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1701,7 +1706,8 @@ public class RDBMUserLayoutStore
   /**
    *   UserPreferences
    */
-  public int getUserBrowserMapping (int userId, String userAgent) throws Exception {
+  public int getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
+    int userId = person.getID();
     int profileId = 0;
     Connection con = rdbmService.getConnection();
     try {
@@ -1732,12 +1738,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param userAgent
    * @param profileId
    * @exception Exception
    */
-  public void setUserBrowserMapping (int userId, String userAgent, int profileId) throws Exception {
+  public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1768,12 +1775,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @return
    * @exception Exception
    */
-  public UserProfile getUserProfileById (int userId, int profileId) throws Exception {
+  public UserProfile getUserProfileById (IPerson person, int profileId) throws Exception {
+    int userId = person.getID();
     UserProfile upl = null;
     Connection con = rdbmService.getConnection();
     try {
@@ -1805,11 +1813,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @return
    * @exception Exception
    */
-  public Hashtable getUserProfileList (int userId) throws Exception {
+  public Hashtable getUserProfileList (IPerson person) throws Exception {
+    int userId = person.getID();
+
     Hashtable pv = new Hashtable();
     Connection con = rdbmService.getConnection();
     try {
@@ -1839,11 +1849,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profile
    * @exception Exception
    */
-  public void setUserProfile (int userId, UserProfile profile) throws Exception {
+  public void setUserProfile (IPerson person, UserProfile profile) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1879,13 +1890,14 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @param stylesheetId
    * @return
    * @exception Exception
    */
-  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (int userId, int profileId, int stylesheetId) throws Exception {
+  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
+    int userId = person.getID();
     ThemeStylesheetUserPreferences tsup;
     Connection con = rdbmService.getConnection();
     try {
@@ -1964,13 +1976,14 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @param stylesheetId
    * @return
    * @exception Exception
    */
-  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (int userId, int profileId, int stylesheetId) throws Exception {
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
+    int userId = person.getID();
     StructureStylesheetUserPreferences ssup;
     Connection con = rdbmService.getConnection();
     try {
@@ -2069,12 +2082,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @param ssup
    * @exception Exception
    */
-  public void setStructureStylesheetUserPreferences (int userId, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
+  public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -2180,12 +2194,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @param tsup
    * @exception Exception
    */
-  public void setThemeStylesheetUserPreferences (int userId, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
+  public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -2261,11 +2276,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profile
    * @exception Exception
    */
-  public void updateUserProfile (int userId, UserProfile profile) throws Exception {
+  public void updateUserProfile (IPerson person, UserProfile profile) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -2285,12 +2301,13 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profile
    * @return
    * @exception Exception
    */
-  public UserProfile addUserProfile (int userId, UserProfile profile) throws Exception {
+  public UserProfile addUserProfile (IPerson person, UserProfile profile) throws Exception {
+    int userId = person.getID();
     // generate an id for this profile
     Connection con = rdbmService.getConnection();
     try {
@@ -2314,11 +2331,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param profileId
    * @exception Exception
    */
-  public void deleteUserProfile (int userId, int profileId) throws Exception {
+  public void deleteUserProfile (IPerson person, int profileId) throws Exception {
+    int userId = person.getID();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -2531,11 +2549,12 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param userId
+   * @param person
    * @param doc
    * @exception Exception
    */
-  public void saveBookmarkXML (int userId, Document doc) throws Exception {
+  public void saveBookmarkXML (IPerson person, Document doc) throws Exception {
+    int userId = person.getID();
     StringWriter outString = new StringWriter();
     XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
     xsl.serialize(doc);

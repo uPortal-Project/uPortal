@@ -38,7 +38,7 @@ package org.jasig.portal;
 import java.util.Hashtable;
 import org.w3c.dom.Document;
 
-
+import org.jasig.portal.security.IPerson;
 /**
  * Interface through which portal talks to the user preferences database
  *
@@ -51,45 +51,45 @@ public interface IUserPreferencesStore {
     // user profiles
     /** Obtain user profile
      *
-     * @param userId user id
+     * @param person User
      * @param userAgent User-Agent header string
      * @return user profile
      */
-    public UserProfile getUserProfile(int userId, String userAgent);
+    public UserProfile getUserProfile(IPerson person, String userAgent);
     /** update user profile
      *
-     * @param userId user id
+     * @param person User
      * @param profile profile update
      */
-    public void updateUserProfile(int userId,UserProfile profile);
+    public void updateUserProfile(IPerson person,UserProfile profile);
     /** remove user profile from the database
      *
-     * @param userId user id
+     * @param person User
      * @param profileId profile id
      */
-    public void deleteUserProfile(int userId,int profileId);
+    public void deleteUserProfile(IPerson person,int profileId);
     /**
      * Creates a new user profile in the database.
      * In the process, new profileId is assigned to the profile
      *
-     * @param userId user id
+     * @param person User
      * @param profile profile object (profile id in this object will be
      *     overwritten)
      * @return profile object with the profile id set to the newly generated
      *     id
      */
-    public UserProfile addUserProfile(int userId,UserProfile profile);
+    public UserProfile addUserProfile(IPerson person,UserProfile profile);
     /**      *
      * @param userId
      * @param profileId
      */
-    public UserProfile getUserProfileById(int userId,int profileId);
+    public UserProfile getUserProfileById(IPerson person,int profileId);
     /** retreive a list of user profiles
      *
-     * @param userId user id
+     * @param person User
      * @return hashtable mapping user profile ids (Integer objects) to the profile objects
      */
-    public Hashtable getUserProfileList(int userId);
+    public Hashtable getUserProfileList(IPerson person);
 
     // syste profiles
     /** retreive a system profile
@@ -126,11 +126,11 @@ public interface IUserPreferencesStore {
 
     /** establish a browser - user profile mapping
      *
-     * @param userId user id
+     * @param person User
      * @param userAgent User-Agent header string
      * @param profileId profile id to which given user agent will be mapped
      */
-    public void setUserBrowserMapping(int userId,String userAgent,int profileId);
+    public void setUserBrowserMapping(IPerson person,String userAgent,int profileId);
     /** establish system profile browser mapping
      *
      * @param userAgent User-Agent header string
@@ -142,11 +142,11 @@ public interface IUserPreferencesStore {
     // returns profileId
     /** Determine which profile a given browser mapped to
      *
-     * @param userId user id
+     * @param person User
      * @param userAgent User-Agent header string
      * @return profile id
      */
-    public int getUserBrowserMapping(int userId,String userAgent);
+    public int getUserBrowserMapping(IPerson person,String userAgent);
     /** Determine which system profile given browser is mapped to
      *
      * @param userAgent User-Agent header string
@@ -157,51 +157,51 @@ public interface IUserPreferencesStore {
 
     /** Retreive the entire UserPreferences object
      *
-     * @param userId user id
+     * @param person User
      * @param profile profile
      * @return user preferences
      */
-    public UserPreferences getUserPreferences(int userId, UserProfile profile);
+    public UserPreferences getUserPreferences(IPerson person, UserProfile profile);
 
     /** save user preferences
      *
-     * @param userId user id
+     * @param person User
      * @param up user preferences object
      */
-    public void putUserPreferences(int userId, UserPreferences up);
+    public void putUserPreferences(IPerson person, UserPreferences up);
 
     /** Obtain structure stylesheet user preferences
      *
-     * @param userId user id
+     * @param person User
      * @param profileId profile id
      * @param stylesheetName structure stylesheet name
      * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,int stylesheetId);
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(IPerson person,int profileId,int stylesheetId);
 
     /** Obtain theme styelsheet user preferences
      *
-     * @param userId user id
+     * @param person User
      * @param profileId profile id
      * @param stylesheetName theme stylesheet name
      * @return theme stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,int stylesheetId);
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(IPerson person,int profileId,int stylesheetId);
 
     /** Save structure stylesheet user pferences
      *
-     * @param userId user id
+     * @param person User
      * @param profileId profile id
      * @param fsup structure stylesheet user preferences
      */
-    public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup);
+    public void setStructureStylesheetUserPreferences(IPerson person,int profileId, StructureStylesheetUserPreferences fsup);
 
     /** Save theme stylesheet user preferences
      *
-     * @param userId user id
+     * @param person User
      * @param profileId profile id
      * @param ssup structure stylesheet user preferneces
      */
-    public void setThemeStylesheetUserPreferences(int userId,int profileId, ThemeStylesheetUserPreferences ssup);
+    public void setThemeStylesheetUserPreferences(IPerson person,int profileId, ThemeStylesheetUserPreferences ssup);
 
 }

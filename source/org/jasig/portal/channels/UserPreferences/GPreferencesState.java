@@ -154,7 +154,7 @@ class GPreferencesState extends BaseState {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
-        userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson().getID(),
+        userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson(),
             context.getCurrentUserPreferences().getProfile().getProfileId());
       } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
@@ -195,7 +195,7 @@ class GPreferencesState extends BaseState {
   public UserPreferences getUserPreferences () throws ResourceMissingException, PortalException {
     if (up == null) {
       // load UserPreferences from the DB
-      up = this.getUserPreferencesStore().getUserPreferences(context.getUserLayoutManager().getPerson().getID(), this.getProfile());
+      up = this.getUserPreferencesStore().getUserPreferences(context.getUserLayoutManager().getPerson(), this.getProfile());
       up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
     }
     return  up;
@@ -771,7 +771,7 @@ class GPreferencesState extends BaseState {
       }
       else {
         // do a database save on the preferences
-        context.getUserPreferencesStore().putUserPreferences(context.getUserLayoutManager().getPerson().getID(), context.getUserPreferences());
+        context.getUserPreferencesStore().putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
         context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null);
       }
     }

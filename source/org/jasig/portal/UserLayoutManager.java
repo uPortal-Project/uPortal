@@ -53,7 +53,7 @@ import  java.net.*;
 
 
 /**
- * UserLayoutManager is responsible for keeping: user id, user layout, user preferences 
+ * UserLayoutManager is responsible for keeping: user id, user layout, user preferences
  * and stylesheet descriptions.
  * For method descriptions please see {@link IUserLayoutManager}.
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
@@ -90,23 +90,23 @@ public class UserLayoutManager implements IUserLayoutManager {
             IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
-            UserProfile upl = updb.getUserProfile(m_person.getID(), userAgent);
+            UserProfile upl = updb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = updb.getSystemProfile(userAgent);
             }
             if (upl != null) {
                 // read uLayoutXML
-                uLayoutXML = RdbmServices.getUserLayoutStoreImpl().getUserLayout(m_person.getID(), upl.getProfileId());
+                uLayoutXML = RdbmServices.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
                 if (uLayoutXML == null) {
-                    Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
+                    Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
                                m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
-                complete_up=updb.getUserPreferences(m_person.getID(), upl);
+                complete_up=updb.getUserPreferences(m_person, upl);
                 // Initialize the JNDI context for this user
                 JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
                 // set dirty flag on the layout
                 layout_write_lock.setValue(true);
-            } 
+            }
             else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
@@ -118,7 +118,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             Logger.log(Logger.ERROR, e);
         }
     }
-    
+
     /**
      * A simpler constructor, that only initialises the person object.
      * Needed for ancestors.
@@ -265,7 +265,7 @@ public class UserLayoutManager implements IUserLayoutManager {
         if (newPreferences != null) {
             // Should obtain implementation in a different way!!
             IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
-            updb.putUserPreferences(m_person.getID(), newPreferences);
+            updb.putUserPreferences(m_person, newPreferences);
             complete_up=newPreferences;
         }
         synchronized(layout_write_lock) {
@@ -273,7 +273,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 uLayoutXML = newLayout;
                 layout_write_lock.setValue(true);
                 try {
-                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                 } catch (Exception e) {
                     Logger.log(Logger.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
@@ -336,8 +336,8 @@ public class UserLayoutManager implements IUserLayoutManager {
         Element node = uLayoutXML.getElementById(nodeId);
         if (node != null) {
             return  node.getAttribute("name");
-        } 
-        else 
+        }
+        else
             return  null;
     }
 
@@ -360,7 +360,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+                        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                         /* end of patch */
                     } catch (Exception e) {
                         Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
@@ -413,8 +413,8 @@ public class UserLayoutManager implements IUserLayoutManager {
      */
     public static boolean isUnremovable (Node node) {
         if (getUnremovableParent(node) != null)
-            return  true; 
-        else 
+            return  true;
+        else
             return  false;
     }
 
@@ -425,8 +425,8 @@ public class UserLayoutManager implements IUserLayoutManager {
      */
     public static boolean isImmutable (Node node) {
         if (getImmutableParent(node) != null)
-            return  true; 
-        else 
+            return  true;
+        else
             return  false;
     }
 
@@ -534,8 +534,8 @@ public class UserLayoutManager implements IUserLayoutManager {
         if (node == null)
             return  false;
         if (node == ancestor)
-            return  true; 
-        else 
+            return  true;
+        else
             return  isDescendentOf(ancestor, node.getParentNode());
     }
 
@@ -571,7 +571,7 @@ public class UserLayoutManager implements IUserLayoutManager {
         // everything checks out, do the move
         if (sibiling != null && sibiling.getParentNode() == target) {
             target.insertBefore(node, sibiling);
-        } 
+        }
         else {
             target.appendChild(node);
         }

@@ -71,18 +71,18 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   protected Hashtable getUserProfileList () throws PortalException {
     if (userProfileList == null)
-      userProfileList = this.getUserPreferencesStore().getUserProfileList(context.getUserLayoutManager().getPerson().getID());
+      userProfileList = this.getUserPreferencesStore().getUserProfileList(context.getUserLayoutManager().getPerson());
     return  userProfileList;
   }
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   protected Hashtable getSystemProfileList () throws PortalException {
@@ -97,74 +97,74 @@ class ManageProfilesState extends BaseState {
    * @exception PortalException
    */
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-	this.runtimeData = rd;
-	// local action processing
-	String action = runtimeData.getParameter("action");
-	if (action != null) {
-	    String profileId = runtimeData.getParameter("profileId");
-	    boolean systemProfile = false;
-	    if (profileId != null) {
-		String profileType = runtimeData.getParameter("profileType");
-		if (profileType != null && profileType.equals("system"))
-		    systemProfile = true;
-		if (action.equals("edit")) {
-		    // initialize internal edit state
-		    CEditProfile epstate = new CEditProfile(this);
-		    // clear cached profile list tables
-		    userProfileList = systemProfileList = null;
-		    epstate.setRuntimeData(rd);
-		    internalState = epstate;
-		} else if (action.equals("copy")) {
-		    // retrieve a profile from the database
-		    UserProfile p=null;
-		    if(systemProfile) {
-			p=(UserProfile)systemProfileList.get(new Integer(profileId));
-		    } else {
-			p=(UserProfile)userProfileList.get(new Integer(profileId));
-		    }
-		    if(p!=null) {
-			// create a new layout
-			p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson().getID(),p);
-			// reset user profile listing
-			userProfileList=null;
-		    }
-		}
-		else if (action.equals("delete")) {
-		    // delete a profile
-		    if (systemProfile) {
-			// need to check permissions here
-			//			context.getUserPreferencesStore().deleteSystemProfile(Integer.parseInt(profileId));
-			//			systemProfileList=null;
-		    } 
-		    else {
-			this.getUserPreferencesStore().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(), Integer.parseInt(profileId));
-			userProfileList = null;
-		    }
-		} 
-		else if (action.equals("map")) {
-		    this.getUserPreferencesStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
-		    // let userLayoutManager know that the current profile has changed : everything must be reloaded
-		}
-	    }
-	    if(action.equals("newProfile")) {
-		// get a copy of a current layout to copy the values from
-		UserProfile cp=context.getCurrentUserPreferences().getProfile();
-		if(cp!=null) {
-		    // create a new profile
-		    UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
-		    p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson().getID(),p);
-		    // reset user profile listing
-		    userProfileList=null;
-		}
-	    }
-	}
-	if (internalState != null)
-	    internalState.setRuntimeData(rd);
+        this.runtimeData = rd;
+        // local action processing
+        String action = runtimeData.getParameter("action");
+        if (action != null) {
+            String profileId = runtimeData.getParameter("profileId");
+            boolean systemProfile = false;
+            if (profileId != null) {
+                String profileType = runtimeData.getParameter("profileType");
+                if (profileType != null && profileType.equals("system"))
+                    systemProfile = true;
+                if (action.equals("edit")) {
+                    // initialize internal edit state
+                    CEditProfile epstate = new CEditProfile(this);
+                    // clear cached profile list tables
+                    userProfileList = systemProfileList = null;
+                    epstate.setRuntimeData(rd);
+                    internalState = epstate;
+                } else if (action.equals("copy")) {
+                    // retrieve a profile from the database
+                    UserProfile p=null;
+                    if(systemProfile) {
+                        p=(UserProfile)systemProfileList.get(new Integer(profileId));
+                    } else {
+                        p=(UserProfile)userProfileList.get(new Integer(profileId));
+                    }
+                    if(p!=null) {
+                        // create a new layout
+                        p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                        // reset user profile listing
+                        userProfileList=null;
+                    }
+                }
+                else if (action.equals("delete")) {
+                    // delete a profile
+                    if (systemProfile) {
+                        // need to check permissions here
+                        //			context.getUserPreferencesStore().deleteSystemProfile(Integer.parseInt(profileId));
+                        //			systemProfileList=null;
+                    }
+                    else {
+                        this.getUserPreferencesStore().deleteUserProfile(context.getUserLayoutManager().getPerson(), Integer.parseInt(profileId));
+                        userProfileList = null;
+                    }
+                }
+                else if (action.equals("map")) {
+                    this.getUserPreferencesStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+                    // let userLayoutManager know that the current profile has changed : everything must be reloaded
+                }
+            }
+            if(action.equals("newProfile")) {
+                // get a copy of a current layout to copy the values from
+                UserProfile cp=context.getCurrentUserPreferences().getProfile();
+                if(cp!=null) {
+                    // create a new profile
+                    UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
+                    p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                    // reset user profile listing
+                    userProfileList=null;
+                }
+            }
+        }
+        if (internalState != null)
+            internalState.setRuntimeData(rd);
     }
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private IPerson getPerson () {
     return  context.getUserLayoutManager().getPerson();
@@ -172,7 +172,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private StylesheetSet getStylesheetSet () {
     return  context.getStylesheetSet();
@@ -180,7 +180,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
@@ -196,7 +196,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () throws PortalException {
@@ -219,7 +219,7 @@ class ManageProfilesState extends BaseState {
     // default screen rendering (profile list screen)
     if (internalState != null) {
       internalState.renderXML(out);
-    } 
+    }
     else {
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("profiles");
@@ -266,8 +266,8 @@ class ManageProfilesState extends BaseState {
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       params.put("profileId", Integer.toString(currentProfile.getProfileId()));
       if (currentProfile.isSystemProfile())
-        params.put("profileType", "system"); 
-      else 
+        params.put("profileType", "system");
+      else
         params.put("profileType", "user");
       if (xslURI != null) {
         try {
@@ -275,8 +275,8 @@ class ManageProfilesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }
@@ -334,22 +334,22 @@ class ManageProfilesState extends BaseState {
           if (profileId == null) {
             // return back to the base state if the profile hasn't been specified
             context.setState(null);
-          } 
+          }
           else {
             String profileType = runtimeData.getParameter("profileType");
             if (profileType == null) {
               // return to the profile listing
               context.setState(null);
-            } 
+            }
             else {
               if (profileType.equals("system"))
                 systemProfile = true;
               // find the UserProfile
               if (systemProfile) {
                 profile = context.getUserPreferencesStore().getSystemProfileById(profileId.intValue());
-              } 
+              }
               else {
-                profile = context.getUserPreferencesStore().getUserProfileById(context.getPerson().getID(), profileId.intValue());
+                profile = context.getUserPreferencesStore().getUserProfileById(context.getPerson(), profileId.intValue());
               }
               if (profile == null) {
                 // failed to find the specified profile, return to the base state
@@ -357,12 +357,12 @@ class ManageProfilesState extends BaseState {
               }
             }
           }
-        } 
+        }
         else if (action.equals("completeEdit")) {
           if (runtimeData.getParameter("submitCancel") != null) {
             // cancel button has been hit
             context.setState(null);
-          } 
+          }
           else if (runtimeData.getParameter("submitSave") != null) {
             // save changes
             profile.setProfileName(runtimeData.getParameter("profileName"));
@@ -375,9 +375,9 @@ class ManageProfilesState extends BaseState {
             }
             if (profile.isSystemProfile())
               // only administrative users should be able to do this
-              context.getUserPreferencesStore().updateSystemProfile(profile); 
-            else 
-              context.getUserPreferencesStore().updateUserProfile(context.getPerson().getID(), profile);
+              context.getUserPreferencesStore().updateSystemProfile(profile);
+            else
+              context.getUserPreferencesStore().updateUserProfile(context.getPerson(), profile);
             context.setState(null);
           }
         }
@@ -394,8 +394,8 @@ class ManageProfilesState extends BaseState {
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element profileEl = doc.createElement("profile");
       if (this.modified)
-        profileEl.setAttribute("modified", "true"); 
-      else 
+        profileEl.setAttribute("modified", "true");
+      else
         profileEl.setAttribute("modified", "false");
       // add profile name and description
       {
@@ -505,7 +505,7 @@ class ManageProfilesState extends BaseState {
           if (!tsList.isEmpty()) {
             Enumeration e = tsList.keys();
             profile.setThemeStylesheetId(((Integer)e.nextElement()).intValue());
-          } 
+          }
           else {
           //                        profile.setThemeStylesheetId(-1);
           }
@@ -516,8 +516,8 @@ class ManageProfilesState extends BaseState {
           boolean current = (ssId.intValue() == profile.getThemeStylesheetId());
           Element altEl;
           if (current)
-            altEl = doc.createElement("current"); 
-          else 
+            altEl = doc.createElement("current");
+          else
             altEl = doc.createElement("alternate");
           ThemeStylesheetDescription tsd = (ThemeStylesheetDescription)tsList.get(ssId);
           Element altnEl = doc.createElement("name");
@@ -536,13 +536,13 @@ class ManageProfilesState extends BaseState {
           altdiuEl.appendChild(doc.createTextNode(deviceIconURI));
           Element altsuEl = doc.createElement("sampleuri");
           if (tsd.getSamplePictureURI() == null || tsd.getSamplePictureURI().equals(""))
-            altsuEl.appendChild(doc.createTextNode("")); 
-          else 
+            altsuEl.appendChild(doc.createTextNode(""));
+          else
             altsuEl.appendChild(doc.createTextNode(tsd.getSamplePictureURI()));
           Element altsiuEl = doc.createElement("sampleiconuri");
           if (tsd.getSampleIconURI() == null || tsd.getSampleIconURI().equals(""))
-            altsiuEl.appendChild(doc.createTextNode("")); 
-          else 
+            altsiuEl.appendChild(doc.createTextNode(""));
+          else
             altsiuEl.appendChild(doc.createTextNode(tsd.getSampleIconURI()));
           altEl.appendChild(altnEl);
           altEl.appendChild(altidEl);
@@ -581,8 +581,8 @@ class ManageProfilesState extends BaseState {
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
-      } 
-      else 
+      }
+      else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }

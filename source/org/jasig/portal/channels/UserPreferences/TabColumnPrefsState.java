@@ -202,7 +202,7 @@ final class TabColumnPrefsState extends BaseState
     if (modifyingCurrentProfile())
       userLayout = ulm.getUserLayoutCopy();
     else
-      userLayout = ulStore.getUserLayout(ulm.getPerson().getID(), context.getCurrentUserPreferences().getProfile().getProfileId());
+      userLayout = ulStore.getUserLayout(ulm.getPerson(), context.getCurrentUserPreferences().getProfile().getProfileId());
 
     return userLayout;
   }
@@ -235,9 +235,8 @@ final class TabColumnPrefsState extends BaseState
     ssup.putParameterValue("activeTab", activeTab);
 
     // Persist structure stylesheet user preferences
-    int userId = staticData.getPerson().getID();
     int profileId = editedUserProfile.getProfileId();
-    upStore.setStructureStylesheetUserPreferences(userId, profileId, ssup);
+    upStore.setStructureStylesheetUserPreferences(staticData.getPerson(), profileId, ssup);
   }
 
   private final void renameTab(String tabId, String tabName) throws Exception
@@ -459,7 +458,7 @@ final class TabColumnPrefsState extends BaseState
 
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry();
     Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
-    String instanceId = ulStore.getNextStructChannelId(staticData.getPerson().getID());
+    String instanceId = ulStore.getNextStructChannelId(staticData.getPerson());
     newChannel.setAttribute("ID", instanceId);
     // The following line is Xerces-specific
     ((org.apache.xerces.dom.DocumentImpl)userLayout).putIdentifier(instanceId, newChannel);
@@ -551,7 +550,7 @@ final class TabColumnPrefsState extends BaseState
    */
   private final Element createFolder (String name) throws Exception
   {
-    String ID = String.valueOf(ulStore.getNextStructFolderId(staticData.getPerson().getID()));
+    String ID = String.valueOf(ulStore.getNextStructFolderId(staticData.getPerson()));
     Element layout = userLayout.getDocumentElement();
     Document doc = layout.getOwnerDocument();
     Element folder = doc.createElement("folder");
@@ -583,7 +582,7 @@ final class TabColumnPrefsState extends BaseState
     if (modifyingCurrentProfile())
       ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
     else
-      upStore.putUserPreferences(staticData.getPerson().getID(), userPrefs);
+      upStore.putUserPreferences(staticData.getPerson(), userPrefs);
   }
 
   private boolean modifyingCurrentProfile () throws PortalException
