@@ -135,7 +135,7 @@ public class ChannelRegistryManager {
 
     // Cycle through all the channels, looking for restricted channels
     NodeList nl = channelRegistry.getElementsByTagName("channel");
-    for (int i = 0; i < nl.getLength(); i++) {
+    for (int i = (nl.getLength()-1); i >=0; i--) {
       Element channel = (Element)nl.item(i);
       String channelPublishId = channel.getAttribute("chanID");
       channelPublishId = channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId;
