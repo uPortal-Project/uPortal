@@ -66,7 +66,7 @@ public final class WorkTracker {
 	}
 	
 	/**
-	 * Updates the status of this tracker
+	 * Updates the status of this tracker, and notifies all threads waiting on this object.
 	 * 
 	 * @param state the current state of the task associated with this tracker
 	 * @param succcessful whether the task associated with this tracker has been completed succesfully
