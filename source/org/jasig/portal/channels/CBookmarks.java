@@ -47,7 +47,6 @@ import org.xml.sax.helpers.*;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.sql.*;
 import java.io.*;
 
 /**
@@ -73,8 +72,6 @@ public class CBookmarks implements IChannel
 
   ChannelStaticData staticData = new ChannelStaticData ();
   ChannelRuntimeData runtimeData = new ChannelRuntimeData ();
-  private RdbmServices rdbmService = new RdbmServices ();
-  private Connection con = null;
 
   // construct the URL for the location of the bookmarks.xml
   String fs = System.getProperty ("file.separator");
@@ -136,43 +133,17 @@ public class CBookmarks implements IChannel
     if (bookmarksXML == null)
     {
       //If there is no bookmarks, then go and get it from the database
-      Connection con;
-      String inputXML = null;
 
       try
       {
-        con = this.rdbmService.getConnection ();
-        String userid = GetUserID (rd);
-        ResultSet statem = con.createStatement ().executeQuery ("SELECT BOOKMARK_XML FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userid);
-
-        DOMParser domP = new DOMParser ();
-
-        if (statem.next ())
-        {
-          inputXML = statem.getString ("BOOKMARK_XML");
-        }
-        else
-        {
-          statem = con.createStatement ().executeQuery ("SELECT UPC_BOOKMARKS.BOOKMARK_XML FROM UPC_BOOKMARKS, UP_USERS WHERE UP_USERS.USER_NAME = 'default' AND UP_USERS.ID = UPC_BOOKMARKS.PORTAL_USER_ID ");
-          statem.next ();
-          inputXML = statem.getString ("BOOKMARK_XML");
-          Statement cstate = con.createStatement ();
-          cstate.executeQuery ("INSERT INTO UPC_BOOKMARKS VALUES ('"+userid+"','"+userid+"','"+inputXML+"')");
-        }
-
-        domP.parse (new InputSource (new StringReader (inputXML)));
-        bookmarksXML=domP.getDocument ();
-        rdbmService.releaseConnection (con);
+        int userid = staticData.getPerson().getID();
+        IDBImpl dbImpl = new DBImpl();
+        return dbImpl.getBookmarkXML(userid);
       }
       catch (Exception e)
       {
         Logger.log (Logger.ERROR, e);
         Logger.log (Logger.ERROR, this.userID);
-
-        if (inputXML != null)
-        {
-          Logger.log (Logger.ERROR,inputXML);
-        }
       }
     }
     return bookmarksXML;
@@ -182,17 +153,10 @@ public class CBookmarks implements IChannel
   {
     if ( bookmarksXML != null)
     {
-      StringWriter outString = new StringWriter ();
-
-      try
-      {
-        XMLSerializer xsl = new XMLSerializer (outString,new OutputFormat ( this.bookmarksXML ) );
-        xsl.serialize (bookmarksXML);
-        this.con = this.rdbmService.getConnection ();
-        Statement statem = con.createStatement ();
-        statem.executeUpdate ("UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + GetUserID (rd));
-      }
-      catch (Exception e)
+      try {
+        IDBImpl dbImpl = new DBImpl();
+        dbImpl.saveBookmarkXML(staticData.getPerson().getID(), bookmarksXML);
+      } catch (Exception e)
       {
         Logger.log (Logger.ERROR,e);
       }
@@ -402,43 +366,4 @@ public class CBookmarks implements IChannel
 
   protected String userID=null;
 
-  protected String GetUserID (ChannelRuntimeData rd)
-  {
-    //goes to the DB and gets the user ID unless is has already been collected.
-    if (userID == null)
-    {
-      Connection con = null;
-      String username = (String)rd.getSessionAttribute ("userName");
-
-      if (username ==null)
-      {
-        username = "guest";
-      }
-
-      try
-      {
-        con = rdbmService.getConnection ();
-        Statement stmt = con.createStatement ();
-        String userQuery = "SELECT ID FROM UP_USERS WHERE USER_NAME = '" + username + "'";
-        ResultSet rs = stmt.executeQuery (userQuery);
-
-        if (rs.next ())
-        {
-          userID = rs.getString ("ID");
-        }
-
-        stmt.close ();
-      }
-      catch (Exception e)
-      {
-        Logger.log (Logger.ERROR, e);
-      }
-      finally
-      {
-        rdbmService.releaseConnection (con);
-      }
-    }
-
-    return userID;
-  }
 }

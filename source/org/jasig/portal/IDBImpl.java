@@ -47,5 +47,9 @@ public interface IDBImpl {
   public void removeThemeStylesheetDescription(String stylesheetName) throws Exception;
   public void addStructureStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText) throws Exception;
   public void addThemeStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText, String mimeType, Enumeration e) throws Exception;
+
+  /* CBookmarks */
+  public Document getBookmarkXML(int userId) throws Exception;
+  public void saveBookmarkXML(int userId, Document doc) throws Exception;
 }
 

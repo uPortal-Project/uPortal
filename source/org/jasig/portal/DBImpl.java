@@ -808,4 +808,64 @@ public class DBImpl implements IDBImpl {
           rdbmService.releaseConnection (con);
         }
     }
+
+    /**
+     *
+     * CBookmarks
+     *
+     *
+     */
+    public Document getBookmarkXML(int userId) throws Exception
+    {
+        RdbmServices rdbmService = new RdbmServices();
+        Connection con=rdbmService.getConnection();
+        try {
+          String sQuery = "SELECT BOOKMARK_XML FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userId;
+          Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
+          ResultSet statem = con.createStatement ().executeQuery (sQuery);
+
+          DOMParser domP = new DOMParser ();
+          String inputXML;
+          if (statem.next ())
+          {
+            inputXML = statem.getString ("BOOKMARK_XML");
+          }
+          else
+          {
+            sQuery = "SELECT UPC_BOOKMARKS.BOOKMARK_XML FROM UPC_BOOKMARKS, UP_USERS WHERE UP_USERS.USER_NAME = 'system' AND UP_USERS.ID = UPC_BOOKMARKS.PORTAL_USER_ID";
+            Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
+            statem = con.createStatement ().executeQuery (sQuery);
+            statem.next ();
+            inputXML = statem.getString ("BOOKMARK_XML");
+            Statement cstate = con.createStatement ();
+            sQuery = "INSERT INTO UPC_BOOKMARKS VALUES ('"+userId+"','"+userId+"','"+inputXML+"')";
+            Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
+            cstate.executeQuery (sQuery);
+          }
+
+          domP.parse (new InputSource (new StringReader (inputXML)));
+          return domP.getDocument ();
+        } finally {
+          rdbmService.releaseConnection (con);
+        }
+    }
+    public void saveBookmarkXML(int userId, Document doc) throws Exception
+    {
+      RdbmServices rdbmService = new RdbmServices();
+      Connection con=rdbmService.getConnection();
+
+      try
+      {
+        StringWriter outString = new StringWriter ();
+        XMLSerializer xsl = new XMLSerializer (outString,new OutputFormat ( doc ) );
+        xsl.serialize (doc);
+        Statement statem = con.createStatement ();
+        String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + userId;
+        Logger.log(Logger.DEBUG, "DBImpl::saveBookmarkXML(): " + sQuery);
+        statem.executeUpdate (sQuery);
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+    }
+
 }
