@@ -55,6 +55,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.IPortalDocument;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -74,6 +75,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected IUserLayoutStore store=null;
     protected Set listeners=new HashSet();
 
+    protected IUserLayout userLayout = null;
     protected Document userLayoutDocument=null;
     protected Document markedUserLayout=null;
 
@@ -114,13 +116,20 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
     
     public IUserLayout getUserLayout() {
-        // TODO: Implement this!
-        return null;
+        // Temporary until we use IUserLayout for real
+        return new SimpleLayout(String.valueOf(profile.getLayoutId()), this.userLayoutDocument);
     }
     
     public void setUserLayout(IUserLayout userLayout) {
-        // TODO: Implement this!
-        
+        // Temporary until we use IUserLayout for real
+        Document doc = DocumentFactory.getNewDocument();
+        try {
+            userLayout.writeTo(doc);
+        } catch (PortalException pe) {
+        }
+        this.userLayoutDocument=doc;
+        this.markedUserLayout=null;
+        this.updateCacheKey();
     }
 
     private void setUserLayoutDOM(Document doc) {
