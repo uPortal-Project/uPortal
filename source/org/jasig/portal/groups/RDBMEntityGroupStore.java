@@ -1314,7 +1314,7 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                     else
                     {
                         isGroup = MEMBER_IS_ENTITY;
-                        serviceName = new String();
+                        serviceName = egi.getServiceName().toString();
                         memberKey = addedGM.getUnderlyingEntityIdentifier().getKey();
                     }
 
