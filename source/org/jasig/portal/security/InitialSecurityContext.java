@@ -67,7 +67,8 @@ public class InitialSecurityContext implements ISecurityContext {
   private ISecurityContext ictx;
   private Hashtable subcontext;
 
-  public InitialSecurityContext(String ctx) {
+  public InitialSecurityContext(String ctx) throws PortalSecurityException
+    {
     Properties pr;
     Enumeration ctxnames;
     String factoryname;
@@ -77,10 +78,11 @@ public class InitialSecurityContext implements ISecurityContext {
     // Initial contexts must have names that are not compound
 
     if (ctx.indexOf('.') != -1) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Initial Context can't be compound"));
-      return;
-    }
+      PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
+      }
+
 
     // Find our properties file and open it
 
@@ -91,27 +93,27 @@ public class InitialSecurityContext implements ISecurityContext {
       pr.load(new FileInputStream(secprops));
     }
     catch (IOException e) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException(e.getMessage()));
-      return;
+      PortalSecurityException ep = new PortalSecurityException(e.getMessage());
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
     }
 
     // Look for our security context factory and instantiate an instance
     // of it or die trying.
 
     if ((factoryname = pr.getProperty(ctx)) == null) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("No such security context " + ctx));
-      return;
+      PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
     }
     try {
       factory = (ISecurityContextFactory)
           Class.forName(factoryname).newInstance();
     }
     catch (Exception e) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Failed to instantiate " + factoryname));
-      return;
+      PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryname);
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
     }
 
     // From our factory get an actual security context instance
@@ -137,9 +139,11 @@ public class InitialSecurityContext implements ISecurityContext {
           ictx.addSubContext(secname, sfactory.getSecurityContext());
         }
         catch (Exception e) {
-          Logger.log(Logger.ERROR, new
-              PortalSecurityException("(Subcontext)Failed to instantiate " +
-              sfactoryname));
+          PortalSecurityException ep =
+              new PortalSecurityException("(Subcontext)Failed to instantiate " +
+                sfactoryname);
+          Logger.log(Logger.ERROR,ep);
+          throw(ep);
         }
       }
     }
@@ -160,7 +164,7 @@ public class InitialSecurityContext implements ISecurityContext {
     return (ictx == null ? null : ictx.getOpaqueCredentialsInstance());
   }
 
-  public void authenticate() {
+  public void authenticate() throws PortalSecurityException {
     if (ictx != null)
       ictx.authenticate();
     return;
@@ -182,7 +186,9 @@ public class InitialSecurityContext implements ISecurityContext {
     return (ictx == null ? false : ictx.isAuthenticated());
   }
 
-  public ISecurityContext getSubContext(String ctx) {
+  public ISecurityContext getSubContext(String ctx)
+    throws PortalSecurityException
+    {
     return (ictx == null ? null : ictx.getSubContext(ctx));
   }
 
@@ -190,7 +196,8 @@ public class InitialSecurityContext implements ISecurityContext {
     return (ictx == null ? null : ictx.getSubContexts());
   }
 
-  public void addSubContext(String name, ISecurityContext ctx) {
+  public void addSubContext(String name, ISecurityContext ctx)
+    throws PortalSecurityException {
     if (ictx != null)
       ictx.addSubContext(name, ctx);
     return;

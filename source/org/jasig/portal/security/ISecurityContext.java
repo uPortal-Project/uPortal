@@ -36,6 +36,7 @@
 package org.jasig.portal.security;
 
 import java.util.Enumeration;
+import org.jasig.portal.security.*;
 
 /**
  * <p>This is the main interface for the JASIG portal effort's security
@@ -96,7 +97,7 @@ public interface ISecurityContext {
    *  @see #getPrincipalInstance
    *  @see #getOpaqueCredentialsInstance
    */
-  public void authenticate();
+  public void authenticate() throws PortalSecurityException;
 
   /**
    * Returns the currently authenticated principal if we are currently
@@ -149,7 +150,7 @@ public interface ISecurityContext {
    *
    * @param ctx The non-compound name of the subserviant security context.
    */
-  public ISecurityContext getSubContext(String ctx);
+  public ISecurityContext getSubContext(String ctx) throws PortalSecurityException;
 
   /**
    * Returns an enumeration of the security contexts currently registered as
@@ -169,5 +170,6 @@ public interface ISecurityContext {
    * @param ctx The security context object to register.
    *
    */
-  public void addSubContext(String name, ISecurityContext ctx);
+  public void addSubContext(String name, ISecurityContext ctx)
+      throws PortalSecurityException;
 }

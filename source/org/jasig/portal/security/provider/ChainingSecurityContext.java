@@ -49,7 +49,8 @@ import java.sql.*;
  * @version $Revision$
  */
 
-public abstract class ChainingSecurityContext implements ISecurityContext {
+public abstract class ChainingSecurityContext implements ISecurityContext
+   {
 
   protected boolean isauth = false;
   protected Hashtable mySubContexts;
@@ -85,7 +86,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
    * to either the credentials or the UID.
    */
 
-  public synchronized void authenticate() {
+  public synchronized void authenticate()  throws PortalSecurityException {
     int i;
     Enumeration e = mySubContexts.elements();
 
@@ -131,11 +132,14 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
     return this.isauth;
   }
 
-  public synchronized ISecurityContext getSubContext(String name) {
+  public synchronized ISecurityContext getSubContext(String name)
+    throws PortalSecurityException {
     ISecurityContext c = (ISecurityContext)mySubContexts.get(name);
-    if (c == null)
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("No such subcontext: " + name));
+    if (c == null) {
+      PortalSecurityException ep=new PortalSecurityException("No such subcontext: " + name);
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
+      }
     return c;
   }
 
@@ -144,10 +148,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
     return e;
   }
 
-  public synchronized void addSubContext(String name, ISecurityContext ctx) {
-    if (mySubContexts.get(name) != null)
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Subcontext already exists: " + name));
+  public synchronized void addSubContext(String name, ISecurityContext ctx)
+    throws PortalSecurityException {
+    if (mySubContexts.get(name) != null){
+      PortalSecurityException ep=new PortalSecurityException("Subcontext already exists: " + name);
+      Logger.log(Logger.ERROR,ep);
+      throw(ep);
+      }
     else
       mySubContexts.put(name, ctx);
     return;

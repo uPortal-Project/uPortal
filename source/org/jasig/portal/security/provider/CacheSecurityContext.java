@@ -73,7 +73,7 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
     return this.CACHESECURITYAUTHTYPE;
   }
 
-  public synchronized void authenticate() {
+  public synchronized void authenticate()  throws PortalSecurityException {
     this.isauth = false;
     RdbmServices rdbmservices = new RdbmServices();
     if (this.myPrincipal.UID != null &&
@@ -111,8 +111,10 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
           Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
       }
       catch (Exception e) {
-        Logger.log(Logger.ERROR, new PortalSecurityException
-          ("SQL Database Error"));
+        PortalSecurityException ep = new PortalSecurityException
+          ("SQL Database Error");
+        Logger.log(Logger.ERROR, ep);
+        throw(ep);
       }
       finally {
         try { rset.close(); } catch (Exception e) { }
