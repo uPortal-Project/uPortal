@@ -108,14 +108,14 @@ public class PortletStateManager {
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
 	  if ( windowOfAction != null && runtimeData != null && request != null )
-		analizeRequestInformation();
+		analyzeRequestInformation();
 	}
 	
 	public void setAction() {
 		nextAction = true;
 	}
 	
-    private void analizeRequestInformation() {
+    private void analyzeRequestInformation() {
         params.clear();
         String windowId = windowOfAction.getId().toString();
         for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
