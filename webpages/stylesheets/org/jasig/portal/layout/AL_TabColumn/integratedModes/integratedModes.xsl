@@ -1128,7 +1128,7 @@ Version $Revision$
                         </td>
                         <td valign="middle">
                             <!-- &amp;uP_sparam=selectedID&amp;selectedID= -->
-                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_cancel_targets=true">
+                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_cancel_targets=true&amp;uP_sparam=newNodeID&amp;newNodeID=">
                                 <img alt="Click to add new tab here" title="Click to add new tab here" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
                             </a>
                         </td>
@@ -1168,7 +1168,7 @@ Version $Revision$
                 <table border="0" cellspacing="0" cellpadding="5" class="uportal-background-neutral-light">
                     <tr>
                         <td valign="top">
-                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">
+                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=newNodeID&amp;newNodeID=">
                                 <img alt="Click to add new column here" title="Click to add new column here" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
                             </a>
                         </td>
@@ -1182,7 +1182,7 @@ Version $Revision$
             <table width="100%" border="0" cellspacing="0" cellpadding="4">
                 <tr>
                     <td align="center">
-                        <a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
+                        <a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=newNodeID&amp;newNodeID=">
                             <img alt="Click to add new channel here" title="Click to add new channel here" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
                         </a>
                     </td>
