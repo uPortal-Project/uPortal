@@ -860,10 +860,10 @@ final class TabColumnPrefsState extends BaseState
               TransformerFactory tFactory=TransformerFactory.newInstance();
               if(tFactory instanceof SAXTransformerFactory) {
                   SAXTransformerFactory saxTFactory=(SAXTransformerFactory) tFactory;
-              
+
                   // empty transformer to do the initial dom2sax transition
                   Transformer emptytr=tFactory.newTransformer();
-          
+
                   // stylesheet transformer
                   String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
                   TransformerHandler th=saxTFactory.newTransformerHandler(XSLT.getTemplates(xslURI));
@@ -886,7 +886,7 @@ final class TabColumnPrefsState extends BaseState
                   }
                   // Begin SAX chain
                   emptytr.transform(new DOMSource(userLayout),new SAXResult(saif));
-              
+
                   //if (action.equals("newChannel"))
                   //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
 
@@ -937,7 +937,7 @@ final class TabColumnPrefsState extends BaseState
       {
         String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
         if (SkinsInfoDocument == null)
-          getAvailableSkinsInfo ();
+          SkinsInfoDocument = getSkins();
 
         XSLT xslt = new XSLT ();
         xslt.setXML(SkinsInfoDocument);
@@ -957,95 +957,21 @@ final class TabColumnPrefsState extends BaseState
         }
       }
 
-    void getAvailableSkinsInfo ()
+    Document getSkins()
     {
-      Connection connection = null;
-      Element skin = null;
-      Element node = null;
-      SkinsInfoDocument = DocumentFactory.getNewDocument ();
-      Element root = SkinsInfoDocument.createElement("root");
-
+      Document doc = null;
       try
       {
-
-        connection = getConnection();
-
-        String query = "SELECT SKIN_NAME, SKIN_DESCRIPTION, THUMBNAIL_URI, SKIN_DIR FROM UP_SKINS";
-        // Get the result set
-        ResultSet rs = connection.createStatement().executeQuery(query);
-
-        while (rs != null && rs.next ())
-        {
-          //Start of an enrty
-          skin = SkinsInfoDocument.createElement("skin");
-          //make Skin-Name node
-          node = SkinsInfoDocument.createElement("Skin-Name");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_NAME")));
-          skin.appendChild(node);
-          //make Skin-Description node
-          node = SkinsInfoDocument.createElement("Skin-Description");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_DESCRIPTION")));
-          skin.appendChild(node);
-          //make Skin-Thumbnail-File node
-          node = SkinsInfoDocument.createElement("Skin-Thumbnail-File");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("THUMBNAIL_URI")));
-          skin.appendChild(node);
-          //make Skin-Folder-Name node
-          node = SkinsInfoDocument.createElement("Skin-Folder-Name");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_DIR")));
-          skin.appendChild(node);
-          //append skin to root
-          root.appendChild(skin);
-          //end of entry
-        }
-
-        //append root to the document
-        SkinsInfoDocument.appendChild(root);
-
-        //System.out.println(UtilitiesBean.dom2PrettyString(SkinsInfoDocument));
+        doc = upStore.getSkins();
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.ERROR, e);
-        SkinsInfoDocument = null;
-      }
-      finally
-      {
-        // Release the database connection
-        if (connection != null)
-        {
-          releaseConnection(connection);
-        }
-      }
-    }
-
-    private Connection getConnection ()
-    {
-      try
-      {
-        RdbmServices rdbmServices = new RdbmServices();
-        return  (rdbmServices.getConnection());
-      }
-      catch (Exception e)
-      {
-        LogService.instance().log(LogService.ERROR, e);
-        return  (null);
-      }
-    }
-
-    private void releaseConnection (Connection connection)
-    {
-      try
-      {
-        RdbmServices rdbmServices = new RdbmServices();
-        rdbmServices.releaseConnection(connection);
-      }
-      catch (Exception e)
-      {
+        doc = null;
+        LogService.instance().log(LogService.ERROR, "TabColumnPrefsState.getSkins(): Couldn't get Skins");
         LogService.instance().log(LogService.ERROR, e);
       }
+      return doc;
     }
-
   }
 
 
