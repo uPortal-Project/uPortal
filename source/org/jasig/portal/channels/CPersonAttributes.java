@@ -7,7 +7,7 @@ package org.jasig.portal.channels;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.jasig.portal.ChannelRuntimeData;
@@ -49,11 +49,11 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
 
     Element attributesE = doc.createElement("attributes");
 
-    // Grab all the name elements from eduPerson.xml
-    Iterator attribs = PersonDirectory.getPropertyNamesIterator();
-    while ( attribs.hasNext() ) {
+    Enumeration attribs = person.getAttributeNames();
+    
+    while ( attribs.hasMoreElements() ) {
       // Get the attribute name
-      String attName = (String)attribs.next();
+      String attName = (String) attribs.nextElement();
       // Set the attribute
       Element attributeE = doc.createElement("attribute");
 
