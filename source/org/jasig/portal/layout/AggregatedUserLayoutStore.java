@@ -2273,13 +2273,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // finding the last node in the sibling line of the root children
         ALNode lastNode = null, prevNode = null;
         String nextId = rootNode.getFirstChildNodeId();
-        int i = 1;
         while ( nextId != null ) {
           lastNode = (ALNode)layoutData.get(nextId);
           // If neccessary cleaning the end of tabs sibling line setting the next ID to null of the last tab
-          if ( lastNode == null && prevNode != null ) {
+          if ( lastNode == null ) {
+           if ( prevNode != null ) {
              prevNode.setNextNodeId(null);
              lastNode = prevNode;
+           }
              break;
           }
           nextId = lastNode.getNextNodeId();
