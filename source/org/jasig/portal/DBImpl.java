@@ -220,17 +220,14 @@ public class DBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE USER_ID="
+      String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID="
           + userId + " AND PROFILE_ID=" + profileId;
       Logger.log(Logger.DEBUG, "DBImpl::getUserProfileId(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"),
-            rs.getString("DESCRIPTION"));
-      }
-      else {
+      if (rs.next())
+        upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
+      else
         return  null;
-      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -248,13 +245,12 @@ public class DBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE USER_ID="
-          + userId;
+      String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId;
       Logger.log(Logger.DEBUG, "DBImpl::getUserProfileList(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       while (rs.next()) {
-        UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"),
-            rs.getString("THEME_SS_NAME"), rs.getString("DESCRIPTION"));
+        UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"),
+          rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
         pv.put(upl.getProfileName(), upl);
       }
     } finally {
