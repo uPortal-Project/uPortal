@@ -1366,8 +1366,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     AggregatedLayout layout = (AggregatedLayout) layoutImpl;
 
     int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
+    int profileId=profile.getProfileId();
 
+    Connection con = RDBMServices.getConnection();
 
     RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
@@ -1380,17 +1381,29 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId;
+        int layoutId = 0;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
-            layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
+            if ( rs.next() )
+             layoutId = rs.getInt(1);
         } finally {
             rs.close();
         }
+
+
+      String sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+      LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+      rs = stmt.executeQuery(sQuery);
+      if ( !rs.next() ) {
+         String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
+         sQuery = "INSERT INTO UP_USER_LAYOUT_AGGR (LAYOUT_ID,USER_ID,LAYOUT_TITLE,INIT_NODE_ID) VALUES ("+layoutId+","+userId+",'"+person.getFullName()+" layout',"
+                   +firstNodeId+")";
+         LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+         stmt.executeUpdate(sQuery);
+      }
+      if ( rs != null ) rs.close();
+
+
 
       // Clear the previous data related to the user layout
       PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
@@ -1737,14 +1750,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId;
+        int layoutId = 0;
         rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
-            layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
+            if ( rs.next() )
+             layoutId = rs.getInt(1);
         } finally {
             rs.close();
         }
@@ -1754,9 +1764,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
-            rs.next();
-            userId = rs.getInt(1);
-            layoutId = rs.getInt(2);
+            if ( rs.next() ) {
+             userId = rs.getInt(1);
+             layoutId = rs.getInt(2);
+            }
           } finally {
             rs.close();
           }
@@ -1764,11 +1775,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           // Make sure the next struct id is set in case the user adds a channel
           sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-          int nextStructId;
+          int nextStructId = 0;
           rs = stmt.executeQuery(sQuery);
           try {
-            rs.next();
-            nextStructId = rs.getInt(1);
+            if ( rs.next() )
+             nextStructId = rs.getInt(1);
           } finally {
             rs.close();
           }
@@ -1839,8 +1850,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
-          rs.next();
-          firstStructId = rs.getInt(1);
+          if ( rs.next() )
+            firstStructId = rs.getInt(1);
+          else
+            throw new PortalException("AggregatedUserLayoutStore::getAggregatedLayout(): No INIT_NODE_ID in UP_USER_LAYOUT_AGGR for " + userId + " and LAYOUT_ID " + layoutId);
         } finally {
           rs.close();
         }
