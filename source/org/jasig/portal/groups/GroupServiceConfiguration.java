@@ -70,9 +70,11 @@ public class GroupServiceConfiguration
     class GroupConfigurationHandler extends org.xml.sax.helpers.DefaultHandler {
       ComponentGroupServiceDescriptor svcDescriptor;
       String elementName;
+      StringBuffer elementValue;
 
       public void startElement (String namespaceURI, String localName, String qName, Attributes atts) {
         elementName = qName;
+        elementValue = new StringBuffer();
 
       if (qName.equals("servicelist"))
       {
@@ -81,19 +83,32 @@ public class GroupServiceConfiguration
       }
       else if (qName.equals("service"))
       {
-        svcDescriptor = new ComponentGroupServiceDescriptor();
         debugMessage("Parsing configuration for component service.");
+        svcDescriptor = new ComponentGroupServiceDescriptor();
+        for(int i=0; i<atts.getLength(); i++)
+        {
+            String name = atts.getQName(i);
+            String value = atts.getValue(i);
+            svcDescriptor.put(name, value);
+        }
       }
     }
 
     public void endElement (String namespaceURI, String localName, String qName) {
-      elementName = null;
-
+      String val = elementValue.toString();
       if (qName.equals("service"))
       {
         serviceDescriptors.add(svcDescriptor);
-        debugMessage("Done parsing configuration for " + svcDescriptor.getName());
+        debugMessage("Parsed configuration for " + svcDescriptor.getName());
       }
+      else if (qName.equals("servicelist"))
+          { debugMessage("Done parsing group service configuration."); }
+      else if (qName.equals("internally_managed"))
+          { svcDescriptor.setInternallyManaged("TRUE".equalsIgnoreCase(val)); }
+      else if (qName.equals("caching_enabled"))
+          { svcDescriptor.setCachingEnabled("TRUE".equalsIgnoreCase(val)); }
+      else
+          { svcDescriptor.setAttribute(elementName, val); }
     }
 
     public void characters (char ch[], int start, int length)
@@ -101,19 +116,20 @@ public class GroupServiceConfiguration
         if (elementName == null || elementName.equals("service") || elementName.equals("servicelist"))
             return;
         String chValue = new String(ch, start, length);
-
-        if (elementName.equals("internally_managed"))
-          { svcDescriptor.setInternallyManaged("TRUE".equalsIgnoreCase(chValue)); }
-        else if (elementName.equals("caching_enabled"))
-          { svcDescriptor.setCachingEnabled("TRUE".equalsIgnoreCase(chValue)); }
-        else
-          { svcDescriptor.setAttribute(elementName, chValue); }
+        elementValue.append(chValue);
     }
   }
 public GroupServiceConfiguration()
 {
     super();
     serviceHandler = new GroupConfigurationHandler();
+}
+/**
+ *
+ */
+protected void debugMessage(String msg)
+{
+    LogService.log(LogService.DEBUG, "Group services: " + msg);
 }
 /**
  *
@@ -139,13 +155,6 @@ public String getDefaultService() {
 public List getServiceDescriptors()
 {
     return serviceDescriptors;
-}
-/**
- *
- */
-protected void debugMessage(String msg)
-{
-    LogService.log(LogService.DEBUG, "Group services: " + msg);
 }
 /**
  *
