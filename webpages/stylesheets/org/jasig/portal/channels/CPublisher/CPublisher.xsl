@@ -12,7 +12,9 @@ function xml(nodelist){
 	<xsl:param name="currentStep" select="1"/>
 	<xsl:param name="specialStep" select="none"/>
 	<xsl:param name="numSteps" select="count(*/params/step)"/>
-        <xsl:param name="totSteps" select="$numSteps + 3"/>
+    <xsl:param name="extraSteps" select="0"/>
+    <xsl:param name="calcTotSteps" select="$numSteps + $extraSteps"/>
+    <xsl:param name="totSteps" select="$numSteps + $extraSteps"/>
 	<xsl:param name="modified">false</xsl:param>
 	<xsl:param name="mode">publish</xsl:param>
 	<xsl:param name="profileName">default profile</xsl:param>
@@ -128,7 +130,7 @@ function xml(nodelist){
 		<p align="center">
 			<xsl:value-of select="description"/>
 		</p>
-		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
+		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$calcTotSteps"/>
 		</p>
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
       	  <p align="center"><input type="submit" value="Next"/></p>

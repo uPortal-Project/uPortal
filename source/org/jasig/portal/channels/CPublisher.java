@@ -84,7 +84,7 @@ public class CPublisher
   private static final int NAME = 7;
   private static final int PREVIEW = 8;
   //number of extra steps
-  private static final int EXTRA = 3;
+  private static final int EXTRA = 4;
   private int mode = NONE;
   private Document channelTypes = null;
   private Document channelDecl = null;
@@ -239,6 +239,7 @@ public class CPublisher
         ssParams.put("currentStep", currentStep);
         ssParams.put("specialStep", specialStep);
         ssParams.put("totSteps", Integer.toString(totSteps));
+        ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
       } 
@@ -255,6 +256,8 @@ public class CPublisher
   private void prepareChoose () {
     mode = PUBLISH;
     currentStep = "1";
+    numSteps=0;
+    totSteps=0;
     catID = null;
     String runtimeURI = runtimeData.getParameter("channel");
     if (runtimeURI != null)
@@ -367,6 +370,8 @@ public class CPublisher
    */
   private void preparePublishName () {
     mode = PUBLISH;
+    int i = Integer.parseInt(currentStep);
+    currentStep = Integer.toString(i + 1);
     //currentStep = "end";
     chanName = runtimeData.getParameter("chanName");
   }
