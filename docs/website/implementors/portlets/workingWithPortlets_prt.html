@@ -29,7 +29,7 @@ has chosen to use a Portlet Container from the Apache Jakarta project
 called <a href="http://jakarta.apache.org/pluto/">Pluto</a>.&nbsp;
 Pluto is the reference implementation of the Java Portlet
 Specification.&nbsp; uPortal 2.3 embeds the Pluto container and
-includes a Portlet-to-Channel adapter that makes it possible to install
+includes a Portlet adapter that makes it possible to install
 and render Portlets along with its native Channels.&nbsp; The End-User
 of uPortal can not tell the difference between a Portlet and a Channel.
 <br>
@@ -153,10 +153,10 @@ definition XML files for the 3 included sample Portlets that are
 described above.&nbsp; If you choose to publish the Portlet using the
 GUI, select the Portlet channel type and follow instructions to enter
 the required parameters.&nbsp; In both cases, you are actually
-publishing a Portlet-to-Channel adapter which knows how to find and
+publishing a Portlet adapter which knows how to find and
 render the appropriate Portlet based on the Portlet Definition ID.<br>
 <h2><a name="Portlet_Caching"></a>Portlet Caching</h2>
-In order to make the Portlet-to-Channel adapter as efficient as
+In order to make the Portlet adapter as efficient as
 possible, a caching strategy was implemented that is beyond the scope
 of the Portlet's control.&nbsp; It works as follows:&nbsp; uPortal will
 cache the contents of a Portlet screen until one of the following
@@ -183,7 +183,7 @@ primary portal module.&nbsp; This means that terminology within uPortal
 will change to reflect the use of Portlets rather than Channels.&nbsp;
 Also the rendering architecture of uPortal will be simplified to handle
 the Portlet natively, rather than through an adapter.&nbsp; The
-Channel, of course, will still be supported though a Channel-to-Portlet
+Channel, of course, will still be supported though a Channel
 adapter.&nbsp; uPortal 3.0 is still in its early design stages.&nbsp;
 More will be added to this section as the design matures.<br>
 <br>
