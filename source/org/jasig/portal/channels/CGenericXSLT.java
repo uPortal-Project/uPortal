@@ -37,12 +37,12 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
-
+import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.helpers.SAXHelper;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +70,7 @@ import java.net.MalformedURLException;
  *  4) "xslUri" - a URI representing the stylesheet to use
  *                  <i>If <code>xslUri</code> is supplied, <code>sslUri</code>
  *                  and <code>xslTitle</code> will be ignored.
- *  5) "cacheTimeout" - the amount of time (in seconds) that the contents of the 
+ *  5) "cacheTimeout" - the amount of time (in seconds) that the contents of the
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
  * </p>
@@ -98,7 +98,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
   static final String systemCacheId="org.jasig.portal.channels.CGenericXSLT"; // to prepend to the system-wide cache key
 
   // state class
-  private class CState 
+  private class CState
   {
     private String xmlUri;
     private String sslUri;
@@ -107,7 +107,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
 
-    public CState() 
+    public CState()
     {
       xmlUri = sslUri = xslTitle = xslUri = null;
       cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
@@ -115,78 +115,78 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     }
   }
 
-  public CGenericXSLT() 
+  public CGenericXSLT()
   {
     stateTable = Collections.synchronizedMap(new HashMap());
   }
 
-  public void setStaticData (ChannelStaticData sd, String uid) 
+  public void setStaticData (ChannelStaticData sd, String uid)
   {
     CState state = new CState();
     state.xmlUri = sd.getParameter("xmlUri");
     state.sslUri = sd.getParameter("sslUri");
-    
+
     if (state.sslUri != null)
       state.sslUri = UtilitiesBean.fixURI(state.sslUri);
-	  
+
     state.xslTitle = sd.getParameter("xslTitle");
     state.xslUri = sd.getParameter("xslUri");
-    
+
     String cacheTimeout = sd.getParameter("cacheTimeout");
-    
+
     if (cacheTimeout != null)
       state.cacheTimeout = Long.parseLong(cacheTimeout);
-    
+
     stateTable.put(uid,state);
   }
-    
-  public void setRuntimeData (ChannelRuntimeData rd, String uid) 
+
+  public void setRuntimeData (ChannelRuntimeData rd, String uid)
   {
     CState state = (CState)stateTable.get(uid);
-	  
-    if (state == null) 
+
+    if (state == null)
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
-    else 
+    else
     {
       // because of the portal rendering model, there is no reason to synchronize on state
       state.runtimeData=rd;
       String xmlUri = rd.getParameter("xmlUri");
-    
-      if (xmlUri != null) 
+
+      if (xmlUri != null)
         state.xmlUri = xmlUri;
-	    
+
       String sslUri = rd.getParameter("sslUri");
-    
+
       if (sslUri != null)
         state.sslUri = UtilitiesBean.fixURI(sslUri);
 
       String xslTitle = rd.getParameter("xslTitle");
-  
+
       if (xslTitle != null)
         state.xslTitle = xslTitle;
-      
+
       String xslUri = rd.getParameter("xslUri");
-	    
+
       if (xslUri != null)
         state.xslUri = xslUri;
     }
   }
 
-  public void receiveEvent (PortalEvent ev, String uid) 
+  public void receiveEvent (PortalEvent ev, String uid)
   {
-      if (ev.getEventNumber() == PortalEvent.SESSION_DONE) 
+      if (ev.getEventNumber() == PortalEvent.SESSION_DONE)
       {
           // clean up
           stateTable.remove(uid);
       }
   }
-    
-  public ChannelRuntimeProperties getRuntimeProperties (String uid)  
+
+  public ChannelRuntimeProperties getRuntimeProperties (String uid)
   {
     ChannelRuntimeProperties rp=new ChannelRuntimeProperties();
-    
+
     // determine if such channel is registered
-    if (stateTable.get(uid) == null) 
+    if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
@@ -194,41 +194,40 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     return rp;
   }
 
-  public void renderXML(ContentHandler out,String uid) throws PortalException  
+  public void renderXML(ContentHandler out,String uid) throws PortalException
   {
     CState state=(CState)stateTable.get(uid);
-	  
-    if (state == null) 
+
+    if (state == null)
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
-    else 
+    else
     {
       String xml;
       Document xmlDoc;
 
-      try 
+      try
       {
-        org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
-        org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
-        domParser.setEntityResolver(dtdResolver);
-        domParser.parse(UtilitiesBean.fixURI(state.xmlUri));
-        xmlDoc = domParser.getDocument();
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DTDResolver dtdResolver = new DTDResolver();
+        docBuilder.setEntityResolver(dtdResolver);
+        xmlDoc = docBuilder.parse(UtilitiesBean.fixURI(state.xmlUri));
       }
-      catch (IOException e) 
+      catch (IOException ioe)
       {
-        throw new ResourceMissingException (state.xmlUri, "", e.getMessage());
+        throw new ResourceMissingException (state.xmlUri, "", ioe.getMessage());
       }
-      catch (SAXException se) 
+      catch (Exception e)
       {
-        throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + se);
+        throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
-	    
+
       XSLT xslt = new XSLT();
       xslt.setXML(xmlDoc);
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);
-      else 
+      else
         xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameters(state.runtimeData);
@@ -236,16 +235,16 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     }
   }
 
-  public ChannelCacheKey generateKey(String uid) 
+  public ChannelCacheKey generateKey(String uid)
   {
     CState state = (CState)stateTable.get(uid);
-	
-    if (state == null) 
+
+    if (state == null)
     {
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return null;
-    } 
-    else 
+    }
+    else
     {
       ChannelCacheKey k = new ChannelCacheKey();
       k.setKey(this.getKey(state));
@@ -255,19 +254,19 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     }
   }
 
-  public boolean isCacheValid(Object validity,String uid) 
+  public boolean isCacheValid(Object validity,String uid)
   {
-    if (!(validity instanceof Long)) 
+    if (!(validity instanceof Long))
       return false;
-	  
+
     CState state = (CState)stateTable.get(uid);
-	
-    if (state == null) 
+
+    if (state == null)
     {
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return false;
-    } 
-    else 
+    }
+    else
       return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
 
@@ -279,7 +278,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     sbKey.append(systemCacheId).append(": ");
     sbKey.append("xmluri:").append(state.xmlUri).append(", ");
     sbKey.append("sslUri:").append(state.sslUri).append(", ");
-    
+
     // xslUri may either be specified as a parameter to this channel or we will
     // get it by looking in the stylesheet list file
     String xslUriForKey = null;
@@ -288,7 +287,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     } catch (PortalException pe) {
       xslUriForKey = "Not attainable!";
     }
-    
+
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
     sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
     sbKey.append("params:").append(state.runtimeData.toString());
