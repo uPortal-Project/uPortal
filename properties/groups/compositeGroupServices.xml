@@ -17,9 +17,8 @@ This list of component group services is processed by the composite, or "root" s
     <caching_enabled>true</caching_enabled>
   </service>
 
-<!--  UNcomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
+<!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
 <!--  
-
   <service>
     <name>ldap</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -31,7 +30,7 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!-- UNcomment to configure a file system group service component.  Change groupsRoot as appropriate.  -->
+<!-- Uncomment to configure a file system group service component.  Change groupsRoot as appropriate. -->
 <!-- 
   <service groupsRoot="C:/groups">
     <name>filesystem</name>
@@ -44,10 +43,7 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!-- 
-  UNcomment to configure a Person Attributes group service component.  Configure your person attributes groups
-  in PAGSGroupStoreConfig.xml.  
--->
+<!-- Uncomment to configure a Person Attributes group service component.  Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
 <!-- 
   <service>
     <name>pags</name>
