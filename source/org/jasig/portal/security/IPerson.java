@@ -39,14 +39,17 @@
 package  org.jasig.portal.security;
 
 import  java.util.Enumeration;
+import org.jasig.portal.IBasicEntity;
 
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public interface IPerson extends IAdditionalDescriptor
+public interface IPerson extends IAdditionalDescriptor, IBasicEntity
 {
+  // string used as a key for the eduPerson username attribute
+  public static final String USERNAME = "username";
 
   /**
    * Sets the ID of the user
