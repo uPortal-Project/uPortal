@@ -44,7 +44,6 @@ import  java.io.FileInputStream;
 import  java.io.IOException;
 import  java.util.Properties;
 import  org.jasig.portal.GenericPortalBean;
-import  org.jasig.portal.Logger;
 import  org.jasig.portal.security.IRole;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.IAuthorization;
@@ -69,17 +68,17 @@ public class Authorization {
       pr.load(new FileInputStream(secprops));
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-        Logger.log(Logger.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
-      } 
+        LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
+      }
       else {
         try {
           m_Factory = (IAuthorizationFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          Logger.log(Logger.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          LogService.instance().log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
         }
       }
     } catch (IOException e) {
-      Logger.log(Logger.ERROR, new PortalSecurityException(e.getMessage()));
+      LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
     }
   }
 
@@ -95,7 +94,7 @@ public class Authorization {
    * put your documentation comment here
    * @param person
    * @param role
-   * @return 
+   * @return
    */
   public boolean isUserInRole (IPerson person, IRole role) {
     return  (m_authorization.isUserInRole(person, role));
@@ -103,7 +102,7 @@ public class Authorization {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Vector getAllRoles () {
     return  (m_authorization.getAllRoles());
@@ -113,7 +112,7 @@ public class Authorization {
    * put your documentation comment here
    * @param channelID
    * @param roles
-   * @return 
+   * @return
    */
   public int setChannelRoles (int channelID, Vector roles) {
     return  (m_authorization.setChannelRoles(channelID, roles));
@@ -122,7 +121,7 @@ public class Authorization {
   /**
    * put your documentation comment here
    * @param person
-   * @return 
+   * @return
    */
   public boolean canUserPublish (IPerson person) {
     return  (m_authorization.canUserPublish(person));
@@ -137,7 +136,7 @@ public class Authorization {
    * put your documentation comment here
    * @param person
    * @param channelID
-   * @return 
+   * @return
    */
   public boolean canUserSubscribe (IPerson person, int channelID) {
     return  (m_authorization.canUserSubscribe(person, channelID));
@@ -147,7 +146,7 @@ public class Authorization {
    * put your documentation comment here
    * @param person
    * @param channelID
-   * @return 
+   * @return
    */
   public boolean canUserRender (IPerson person, int channelID) {
     return  (m_authorization.canUserRender(person, channelID));
@@ -156,7 +155,17 @@ public class Authorization {
   /**
    * put your documentation comment here
    * @param person
-   * @return 
+   * @param channelID
+   * @return
+   */
+  public Vector getChannelRoles (int channelID) {
+    return  (m_authorization.getChannelRoles(channelID));
+  }
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @return
    */
   public Vector getUserRoles (IPerson person) {
     return  (m_authorization.getUserRoles(person));
