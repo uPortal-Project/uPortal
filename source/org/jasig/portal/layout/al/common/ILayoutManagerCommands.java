@@ -5,6 +5,7 @@
 package org.jasig.portal.layout.al.common;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
@@ -19,13 +20,13 @@ public interface ILayoutManagerCommands {
     /**
      * Add a new node to a current user layout.
      *
-     * @param node an <code>INodeDescription</code> value of a node to be added (Id doesn't have to be set)
+     * @param node an <code>INode</code> value of a node to be added.
      * @param parentId an id of a folder to which the new node (channel or folder) should be added.
      * @param nextSiblingId an id of a sibling node (channel or folder) prior to which the new node should be inserted.
-     * @return an <code>INodeDescription</code> value with a newly determined Id.
+     * @return an <code>ILayoutNode</code> value with a newly determined Id.
      * @exception PortalException if an error occurs
      */
-    public INodeDescription addNode(INode node, INodeId parentId, INodeId nextSiblingId) throws PortalException;
+    public ILayoutNode addNode(INode node, INodeId parentId, INodeId nextSiblingId) throws PortalException;
     /**
      * Move a node (channel or folder) from one location to another.
      *
