@@ -416,7 +416,7 @@ $Revision$
         <xsl:choose>
           <xsl:when test="$action = 'newChannel' and $position='before' and $elementID=@ID">
             <td class="uportal-background-highlight">
-              <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
+              <a href="{$baseActionURL}?action=newChannel&amp;position=before&amp;elementID={@ID}" class="uportal-text-small">
                 <img alt="Click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
@@ -435,7 +435,7 @@ $Revision$
           </xsl:when>
           <xsl:otherwise>
             <td>
-              <a href="{$baseActionURL}?action=newChannel&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
+              <a href="{$baseActionURL}?action=newChannel&amp;position=before&amp;elementID={@ID}" class="uportal-text-small">
                 <img alt="Click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
@@ -475,8 +475,7 @@ $Revision$
         <xsl:choose>
           <xsl:when test="$action = 'newChannel' and $position='after'">
             <td class="uportal-background-highlight">
-              <!--a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small"-->
-              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+              <a href="{$baseActionURL}?action=newChannel&amp;position=after&amp;elementID={@ID}" class="uportal-text-small">
                 <img alt="Click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
@@ -495,8 +494,7 @@ $Revision$
           </xsl:when>
           <xsl:otherwise>
             <td>
-              <!--a href="{$baseActionURL}?action=newChannel&amp;method=appendAfter&amp;elementID={@ID}" class="uportal-text-small"-->
-              <a href="javascript:alert('This feature is not yet implemented.')" class="uportal-text-small">
+              <a href="{$baseActionURL}?action=newChannel&amp;position=after&amp;elementID={@ID}" class="uportal-text-small">
                 <img alt="Click to add a new channel in this location [after {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
@@ -1076,7 +1074,7 @@ $Revision$
                                     </xsl:otherwise>
                                   </xsl:choose>
                                 </select>
-                                <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
+                                <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
                               </td>
                             </tr>
                           </form>
@@ -1119,7 +1117,7 @@ $Revision$
                                         <option value="all">Select All</option>
                                       </xsl:if>
                                     </select>
-                                    <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
+                                    <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
                                   </td>
                                 </tr>
                               </form>
@@ -1156,7 +1154,7 @@ $Revision$
                                       <option value="">____________________</option>
                                       <option value="" selected="selected">Select a subcategory</option>
                                     </select>
-                                    <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
+                                    <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
                                   </td>
                                 </tr>
                               </form>
