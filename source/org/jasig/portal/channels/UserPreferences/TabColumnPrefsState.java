@@ -65,7 +65,7 @@ import java.net.URL;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-class TabColumnPrefsState extends BaseState
+final class TabColumnPrefsState extends BaseState
 {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
@@ -75,7 +75,9 @@ class TabColumnPrefsState extends BaseState
   private IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
-  // a properties file or static parameters.
+  // a properties file or static parameters.  Actually, the error handling written so far isn't
+  // very good and should be improved.  For example, there needs to be a way to let a user know that
+  // he/she couldn't remove a tab because it was set as unremovable.
   private String errorMessage = "Nothing is wrong!";
   private static final String errorMessageSetActiveTab = "Problem trying to set the active tab";
   private static final String errorMessageRenameTab = "Problem trying to rename tab";
@@ -88,6 +90,12 @@ class TabColumnPrefsState extends BaseState
   private static final String errorMessageDeleteColumn = "Problem trying to delete column";
   private static final String errorMessageMoveChannel = "Problem trying to move channel";
   private static final String errorMessageDeleteChannel = "Problem trying to delete channel";
+
+  public TabColumnPrefsState()
+  {
+    super();
+    this.internalState = new DefaultState(this);
+  }
 
   public TabColumnPrefsState(CUserPreferences context)
   {
@@ -182,7 +190,12 @@ class TabColumnPrefsState extends BaseState
   private final void renameTab(String tabId, String tabName) throws Exception
   {
     Element tab = userLayout.getElementById(tabId);
-    tab.setAttribute("name", tabName);
+
+    if (tab.getAttribute("immutable").equals("false"))
+      tab.setAttribute("name", tabName);
+    else
+      throw new Exception("Attempt to rename immutable tab " + tabId + "has failed");
+
     saveLayout();
   }
 
