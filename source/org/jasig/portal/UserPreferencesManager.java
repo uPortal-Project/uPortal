@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.layout.InfrastructureUserLayoutManagerWrapper;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
@@ -218,10 +218,10 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         if (fname != null) {
             // get a subscribe id for the fname
             String subId = ulm.getSubscribeId(fname);
-            if ( ulm instanceof InfrastructureUserLayoutManagerWrapper ){
+            if ( ulm instanceof TransientUserLayoutManagerWrapper ){
                 // get wrapper implementation for focusing
-                InfrastructureUserLayoutManagerWrapper iulm =
-                    (InfrastructureUserLayoutManagerWrapper) ulm;
+                TransientUserLayoutManagerWrapper iulm =
+                    (TransientUserLayoutManagerWrapper) ulm;
                 // .. and now set it as the focused id
                 iulm.setFocusedId(subId);
             }
