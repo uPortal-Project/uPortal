@@ -36,10 +36,12 @@
 package org.jasig.portal.container;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,7 +52,9 @@ import org.apache.pluto.factory.PortletObjectAccess;
 import org.apache.pluto.invoker.PortletInvoker;
 import org.apache.pluto.invoker.PortletInvokerAccess;
 import org.apache.pluto.om.window.PortletWindow;
-import org.apache.pluto.services.log.Log;
+import org.apache.pluto.services.PortletContainerEnvironment;
+import org.apache.pluto.services.log.LogService;
+import org.apache.pluto.services.log.Logger;
 
 /**
  * Same as Pluto's PortletContainerImpl, but this one ignores redirects.
@@ -61,22 +65,33 @@ import org.apache.pluto.services.log.Log;
  */
 public class PortletContainerImpl extends org.apache.pluto.PortletContainerImpl {
 
-    // We wouldn't need this member variable if it was protected or public
-    // in org.apaceh.pluto.PortletContainerImpl
+    // We wouldn't need these member variables if they were protected or public
+    // in org.apache.pluto.PortletContainerImpl
     private String uniqueContainerName = null;
+    private Logger log = null;
 
     public PortletContainerImpl(String uniqueContainerName) {
         super();
         this.uniqueContainerName = uniqueContainerName;
     }
 
+    // We need this method to assign a logger since log is private
+    // in org.apache.pluto.PortletContainerImpl
+    public void init(String uniqueContainerName, ServletConfig servletConfig, PortletContainerEnvironment environment, Properties properties) throws PortletContainerException {
+        super.init(uniqueContainerName, servletConfig, environment, properties);
+        // Initialize the Logger that we will use
+        // from here forward for this Container:
+        log = ((LogService)environment.getContainerService(LogService.class)).getLogger(getClass());
+    }
+
+
     public void processPortletAction(PortletWindow portletWindow, HttpServletRequest servletRequest, HttpServletResponse servletResponse)
         throws PortletException, IOException, PortletContainerException {
         PortletContainerServices.prepare(uniqueContainerName);
         PortletInvoker invoker = null;
 
-        if (Log.isDebugEnabled("org.apache.pluto.invoker")) {
-            Log.debug("org.apache.pluto.invoker", "PortletContainerImpl.performPortletAction(" + portletWindow.getId() + ") called.");
+        if (log.isDebugEnabled()) {
+            log.debug("PortletContainerImpl.performPortletAction(" + portletWindow.getId() + ") called.");
         }
 
         String location = null;

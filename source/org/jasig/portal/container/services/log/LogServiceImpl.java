@@ -39,8 +39,8 @@ import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 
+import org.apache.pluto.services.log.Logger;
 import org.jasig.portal.container.services.PortletContainerService;
-import org.jasig.portal.services.LogService;
 
 
 /**
@@ -66,45 +66,12 @@ public class LogServiceImpl implements PortletContainerService, org.apache.pluto
 
     // LogService methods
     
-    public boolean isDebugEnabled(String aComponent) {
-        return true;
+    public Logger getLogger(Class klass) {
+        return new LoggerImpl(klass);
     }
 
-    public boolean isInfoEnabled(String aComponent) {
-        return true;
-    }
-
-    public boolean isWarnEnabled(String aComponent) {
-        return true;
-    }
-
-    public boolean isErrorEnabled(String aComponent) {
-        return true;
-    }
-
-    public void debug(String aComponent, String aMessage) {
-        LogService.log(LogService.DEBUG, aComponent + ": " + aMessage);
-    }
-
-    public void debug(String aComponent, String aMessage, Throwable aThrowable) {
-        LogService.log(LogService.DEBUG, aComponent + ": " + aMessage, aThrowable);
-    }
-
-
-    public void info(String aComponent, String aMessage) {
-        LogService.log(LogService.INFO, aComponent + ": " + aMessage);
-    }
-
-    public void warn(String aComponent, String aMessage) {
-        LogService.log(LogService.WARN, aComponent + ": " + aMessage);
-    }
-
-    public void error(String aComponent, String aMessage, Throwable aThrowable) {
-        LogService.log(LogService.ERROR, aComponent + ": " + aMessage, aThrowable);
-    }
-
-    public void error(String aComponent, Throwable aThrowable) {
-        LogService.log(LogService.ERROR, aComponent, aThrowable);
+    public Logger getLogger(String component) {
+        return new LoggerImpl(component);
     }
 
 }
