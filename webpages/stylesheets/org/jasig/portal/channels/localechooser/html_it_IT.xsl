@@ -20,7 +20,7 @@
         -->
         <td align="right" nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
   	  <select class="uportal-button" name="locale">
-              <option value="en_US">Inglese</option>
+              <option value="it_IT" selected="selected">Inglese</option>
               <option value="ja_JP">Giapponese</option>
               <option value="sv_SE">Svedese</option>
               <option value="de_DE">German</option>

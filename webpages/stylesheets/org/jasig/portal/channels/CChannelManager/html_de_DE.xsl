@@ -118,7 +118,7 @@
                 <td nowrap="nowrap" class="uportal-channel-table-header">
                   <img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap" class="uportal-channel-table-header">Kanaltyp</td>
+                <td nowrap="nowrap" class="uportal-channel-table-header">Channeltyp</td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">
                   <img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
@@ -151,7 +151,7 @@
                 <td nowrap="nowrap">
                   <img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
-                <td width="100%">Dieser Kanaltyp erlaubt die Publikation der Kanäle ohne begleitendes CPD (Channel Publishing Document). Er wird gewöhnlich verwendet, um Kanäle mit nur einer entsprechenden Kanal-Definition zu veröffentlichen.</td>
+                <td width="100%">Dieser Channeltyp erlaubt die Publikation der Kanäle ohne begleitendes CPD (Channel Publishing Document). Er wird gewöhnlich verwendet, um Kanäle mit nur einer entsprechenden Channel-Definition zu veröffentlichen.</td>
               </tr>
 
                 <tr class="uportal-channel-text" valign="top">
@@ -627,13 +627,13 @@
               <!-- Channel Title -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Titel des Channels\n\nBeispiel: StockCharts\n\nBeschreibung: Dies ist der Titel des Kanals. Gewöhnlich erscheint dieser Text als Überschrift, wenn der Channel übertragen wird. Titel und Name sind gewöhnlich gleich.')">
+                  <a href="javascript:alert('Name: Titel des Channels\n\nBeispiel: StockCharts\n\nBeschreibung: Dies ist der Titel des Channels. Gewöhnlich erscheint dieser Text als Überschrift, wenn der Channel übertragen wird. Titel und Name sind gewöhnlich gleich.')">
                   <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Anzeige Hilfe-Informationen"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Titel des Kanals:</span> <span class="uportal-text-small">[Beispiel - StockCharts]<br/>
+                  <span class="uportal-label">Titel des Channels:</span> <span class="uportal-text-small">[Beispiel - StockCharts]<br/>
                   <input type="text" name="title" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@title">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
@@ -655,7 +655,7 @@
               <!-- Channel name -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Name\n\nBeispiel: StockCharts\n\nBeschreibung: Dies ist der Name des Kanals. Wenn die Benutzer den Channel abbonieren ist dies der Name den Sie sehen werden. Gewöhnlich sind Titel und Name gleich.')">
+                  <a href="javascript:alert('Name: Channel Name\n\nBeispiel: StockCharts\n\nBeschreibung: Dies ist der Name des Channels. Wenn die Benutzer den Channel abbonieren ist dies der Name den Sie sehen werden. Gewöhnlich sind Titel und Name gleich.')">
                   <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Anzeige Hilfe-Informationen"/>
                   </a></td>
                 <td>
@@ -1810,7 +1810,7 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Titel des Kanals:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Titel des Channels:</a></strong></td>
              <td><img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@title"/></a></td>
            </tr>

@@ -118,6 +118,10 @@
 						</xsl:if>
 					</xsl:for-each>
 				</select>
+				</td>
+				</tr>
+				<tr>
+				<td colspan="5" nowrap="nowrap" class="uportal-channel-text">
 				whose name  
 				<select class="uportal-button" name="grpMethod">
 					<option value="1">is</option>
@@ -125,7 +129,7 @@
 					<option value="3">ends with</option>
 					<option value="4" selected="selected">contains</option>
 				</select>
-				<input type="text" size="10" name="grpQuery" class="uportal-input-text"/>
+				<input type="text" size="25" name="grpQuery" class="uportal-input-text"/>
 				<input type="submit" class="uportal-button" value="Go"/>
 				</td>
 				</tr>
@@ -209,7 +213,7 @@
 						<xsl:if test="count(descendant::*[@selected='true'])">
 						  <xsl:text>
 						  </xsl:text>
-						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="Mit Selektion ?gemacht" />
+						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="Mit Selektion erledigt" />
 						</xsl:if>
 					  <xsl:text>
 					  </xsl:text>
@@ -387,7 +391,7 @@
 	  <td colspan="3">
 	  	<table width="100%" border="0">
     			<tr>
-    				<td class="uportal-channel-strong" nowrap="nowrap">
+    				<td class="uportal-channel-strong">
     					<xsl:text>Mitglieder</xsl:text>
     				</td>
     				<td width="50%">

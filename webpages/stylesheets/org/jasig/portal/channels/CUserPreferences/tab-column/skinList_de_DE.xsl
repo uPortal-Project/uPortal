@@ -51,8 +51,8 @@
           <tr>
             <td>
               <input type="hidden" name="action" value="completeEdit"/>
-              <input type="submit" name="submitSave" value="Apply" class="uportal-button"/>
-              <input type="submit" name="submitCancel" value="Cancel" class="uportal-button"/>              
+              <input type="submit" name="submitSave" value="Anwenden" class="uportal-button"/>
+              <input type="submit" name="submitCancel" value="Abbrechen" class="uportal-button"/>              
             </td>
           </tr>
         </table>

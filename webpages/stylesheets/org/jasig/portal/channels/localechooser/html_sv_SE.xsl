@@ -20,9 +20,9 @@
         -->
         <td align="right" nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
   	  <select class="uportal-button" name="locale">
-              <option value="en_US">English</option>
+              <option value="sv_SE" selected="selected">English</option>
               <option value="ja_JP">Japanese</option>
-              <option value="sv_SE" selected="selected">Swedish</option>
+              <option value="sv_SE">Swedish</option>
               <option value="de_DE">German</option>
 	  </select>
           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>

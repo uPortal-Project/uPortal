@@ -69,7 +69,7 @@ $Revision$
   </xsl:template>
   <xsl:template match="error">
     <tr class="uportal-background-light">
-      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">Bei der Authentifizierung ist ein Fehler aufgetreten. das Portal ist zur Zeit nicht in der Lage Sie einzuloggen. Bitte probieren Sie es später noch einmal.<span class="uportal-channel-warning"></span>
+      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">Bei der Authentifizierung ist ein Fehler aufgetreten. Das Portal ist zur Zeit nicht in der Lage Sie einzuloggen. Bitte probieren Sie es später noch einmal.<span class="uportal-channel-warning"></span>
       </td>
       <td colspan="1" rowspan="1">
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>

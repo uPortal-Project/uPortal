@@ -20,7 +20,7 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 				<tr class="uportal-channel-text">
 					<td>
-						<strong>Skin Selection:</strong>Wählen Sie von unten einen Portal-Skin, und klicken dann auf[Skin Wechseln].</td>
+						<strong>Skin Auswahl:</strong>Wählen Sie von unten einen Portal-Skin, und klicken dann auf [Skin Wechseln].</td>
 				</tr>
 				<tr>
 					<td>
@@ -90,7 +90,7 @@
 				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td>
-				<img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+				<img height="90" alt="{Skin-Name} Thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
 			</td>
 			<td>
 				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>

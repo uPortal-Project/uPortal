@@ -30,7 +30,7 @@
       <p>Dies ist eine Demonstration der Interchannel-Kommunikation. Der gegenwärtige Channel arbeitet in Kooperation mit zwei anderen Channels um Webseiten anzuzeigen.
       <br />
 
-      Dieser Channel(Selektor) erlaubt es dem Benutzer eine URL zur Ansicht zu wählen. Die Wahl des Benutzers wird dann zum Ansichtskanal geführt. Der Ansichtchannel benutzt ein <span class="uportal-channel-code">iframe</span>-Element um die gewünschten Webseiten anzuzeigen, und führt dann die gegenwärtigen URL Informationen zum dritten Channel - dem History-Channel. Der History-Channel zeigt einfach die Sequenz der letzten 10 URLs, die beim Ansichtschannel angeklickt wurden. 
+      Dieser Channel(Selektor) erlaubt es dem Benutzer eine URL zur Ansicht zu wählen. Die Wahl des Benutzers wird dann zum Ansichtschannel geführt. Der Ansichtschannel benutzt ein <span class="uportal-channel-code">iframe</span>-Element um die gewünschten Webseiten anzuzeigen, und führt dann die gegenwärtigen URL Informationen zum dritten Channel - dem History-Channel. Der History-Channel zeigt einfach die Sequenz der letzten 10 URLs, die beim Ansichtschannel angeklickt wurden. 
       <br />
 
       Der URL-Selektor-Channel wartet eine Sekunde zusätzlich, bevor die URL zum CViewer geführt wird in der <span class="uportal-channel-code">setRuntimeData()</span> Methode. Das bedeutet, dass die meiste Zeit, CViewer die alte URL überträgt, und die neue URL wird erst angezeigt wenn der Benutzer den 'Neu Laden'-Knopf des Browsers anklickt. Wenn jedoch der URL Selector Channel die Gruppenübertragung verwendet, synchronisiert die Portalübertragungsmaschine alle drei Channel bei der <span class="uportal-channel-code">renderXML()</span> Grenze, und somit eine Garantie zur Verfügung stellt, daß CViewer nicht mit dem überholten URL überträgt.</p>
@@ -44,7 +44,7 @@
 
       <p>
         <form action="{$baseActionURL}">
-          Oder tippen Sie ein URL manuell ein: <br />
+          Oder tippen Sie in ein URL manuell: <br />
           <input name="url" type="text" size="30" />
         </form>
       </p>

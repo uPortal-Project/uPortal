@@ -20,10 +20,10 @@
         -->
         <td align="right" nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
   	  <select class="uportal-button" name="locale">
-              <option value="en_US">Englisch</option>
+              <option value="de_DE" selected="selected">Englisch</option>
               <option value="ja_JP">Japanisch</option>
               <option value="sv_SE">Schwedisch</option>
-              <option value="de_DE" selected="selected">German</option>
+              <option value="de_DE">Deutsch</option>
 	  </select>
           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
           <input type="submit" value="Go" name="Go" class="uportal-button"/>

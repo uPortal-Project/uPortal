@@ -20,28 +20,28 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 				<tr class="uportal-channel-text">
 					<td>
-						<strong>Skin Selection:</strong>Select a portal skin below, then click [Change Skin].</td>
+						<strong>Selezione del Tema Grafico:</strong>Seleziona un tema grafico sottostante, poi seleziona [Cambia Tema Grafico].</td>
 				</tr>
 				<tr>
 					<td>
 						<input type="hidden" name="action" value="completeEdit"/>
-						<input type="submit" name="submitSave" value="Change Skin" class="uportal-button"/>
+						<input type="submit" name="submitSave" value="Cambia Tema Grafico" class="uportal-button"/>
 					</td>
 				</tr>
 				<tr class="uportal-channel-text">
 					<td>
 						<table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
 							<tr class="uportal-channel-table-header">
-								<td>Option</td>
+								<td>Opzione</td>
 								<td>
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+									<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
 								</td>
-								<td>Thumbnail</td>
+								<td>miniatura</td>
 								<td>
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+									<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
 								</td>
 								<td width="100%">
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+									<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 								</td>
 							</tr>
 							<tr class="uportal-channel-table-header">
@@ -49,7 +49,7 @@
 									<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
 										<tr>
 											<td>
-												<img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+												<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
 											</td>
 										</tr>
 									</table>
@@ -64,7 +64,7 @@
 				<tr>
 					<td>
 						<input type="hidden" name="action" value="completeEdit"/>
-						<input type="submit" name="submitSave" value="Change Skin" class="uportal-button"/>
+						<input type="submit" name="submitSave" value="Cambia Tema Grafico" class="uportal-button"/>
 					</td>
 				</tr>
 			</table>
@@ -87,18 +87,18 @@
 				</xsl:choose>
 			</td>
 			<td>
-				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+				<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td>
-				<img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+				<img height="90" alt="{skin-name} miniatura" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
 			</td>
 			<td>
-				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+				<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td class="uportal-channel-table-header">
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr valign="top">
-						<td class="uportal-channel-table-header">Name:</td>
+						<td class="uportal-channel-table-header">Nome:</td>
 						<td width="100%" class="uportal-channel-text">
 							<strong>
 								<xsl:value-of select="skin-name"/>
@@ -106,7 +106,7 @@
 						</td>
 					</tr>
 					<tr valign="top">
-						<td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
+						<td nowrap="nowrap" class="uportal-channel-table-header">Descrizione:<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
 						<td class="uportal-channel-text">
 							<xsl:value-of select="skin-description"/>
 						</td>
@@ -119,7 +119,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
 					<tr>
 						<td>
-							<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+							<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 						</td>
 					</tr>
 				</table>

@@ -109,7 +109,7 @@
             </td>
 
             <td class="uportal-channel-subtitle" align="center">
-              <div align="center">Probe</div>
+              <div align="center">Beispiel</div>
             </td>
           </tr>
 
@@ -155,7 +155,7 @@
 
       <xsl:choose>
         <xsl:when test="sampleiconuri =''">
-          <td align="center" valign="middle" class="uportal-text-small">Keine Proben
+          <td align="center" valign="middle" class="uportal-text-small">Kein Beispiel
           <br />
 
           Vorhanden</td>
@@ -209,7 +209,7 @@
 
       <xsl:choose>
         <xsl:when test="sampleiconuri =''">
-          <td align="center" valign="middle" class="uportal-text-small">Keine Proben
+          <td align="center" valign="middle" class="uportal-text-small">Kein Beispiel
           <br />
 
           Vorhanden</td>

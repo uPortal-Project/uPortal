@@ -74,7 +74,7 @@
 
         <xsl:template name="notAuthorized">
           <span class="uportal-channel-warning">
-          <xsl:text>Sie sind nicht berechtigt diesen Kanal zu benutzen</xsl:text>
+          <xsl:text>Sie sind nicht berechtigt diesen Channel zu benutzen</xsl:text>
           </span>
         </xsl:template>
 

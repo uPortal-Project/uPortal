@@ -41,7 +41,7 @@
     </xsl:for-each>
     </p>
 
-    <p>Das Klicken einer URL in der oben genannten Liste veranlaßt CHistory das URL zum CViewer-Kanal zu führen.  Ein Weg dieses zu machen ist intern (durch JNDI Kontexte direkt zum CViewer-Channel).  Ein anderer ist es, die URL Syntax des uPortals zu benutzen (uP_channelTarget) und ein "url"-Parameter zum CURLSelector hinzuführen, so dass der Wählerchannel CViewer signalieren kann. 
+    <p>Das Klicken einer URL in der oben genannten Liste veranlaßt CHistory das URL zum CViewer-Channel zu führen.  Ein Weg dieses zu machen ist intern (durch JNDI Kontexte direkt zum CViewer-Channel).  Ein anderer ist es, die URL Syntax des uPortals zu benutzen (uP_channelTarget) und ein "url"-Parameter zum CURLSelector hinzuführen, so dass der Wählerchannel CViewer signalieren kann. 
     <form action="{$baseActionURL}">
       <xsl:choose>
         <xsl:when test="$passExternally='true'">URLs z.Z., außen führend mit uP_channelTarget: 

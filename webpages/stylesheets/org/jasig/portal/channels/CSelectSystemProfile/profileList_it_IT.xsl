@@ -6,8 +6,8 @@
   <xsl:template match="profiles">
         <div align="center">
           <center>
-	<p class="uportal-channel-warning">The browser build you are currently using has not been previously encountered.<br/>
-Please select a fitting profile.</p>
+	<p class="uportal-channel-warning">Il browser corrente non è mai stato incontrato precedentemente.<br/>
+Selezionare il profilo da utilizzare.</p>
             <table border="0" width="100%" cellspacing="0" cellpadding="2">
               <xsl:apply-templates select="system"/>
             </table>
@@ -18,12 +18,12 @@ Please select a fitting profile.</p>
   <xsl:template match="system">
     <tr>
       <td class="uportal-background-med" valign="top" colspan="5">
-        <p class="uportal-channel-title">System Profiles</p>
+        <p class="uportal-channel-title">Profili di Sistema</p>
       </td>
     </tr>
     <tr>
       <td class="uportal-background-light" valign="bottom" align="center">
-        <p class="uportal-channel-subtitle">Action</p>
+        <p class="uportal-channel-subtitle">Azione</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
         <img alt="interface image" border="0" width="10" height="10">
@@ -31,7 +31,7 @@ Please select a fitting profile.</p>
         </img>
       </td>
       <td class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Name</p>
+        <p class="uportal-channel-subtitle">Nome del profilo</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
         <img alt="interface image" border="0" width="10" height="10">
@@ -39,7 +39,7 @@ Please select a fitting profile.</p>
         </img>
       </td>
       <td width="60%" class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Description</p>
+        <p class="uportal-channel-subtitle">Descrizione del profilo</p>
       </td>
     </tr>
     <xsl:apply-templates mode="system"/>
@@ -49,7 +49,7 @@ Please select a fitting profile.</p>
           <td class="uportal-text" valign="top" align="center">
             <a>
               <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Map current browser to this profile">
+              <img border="0" width="16" height="16" alt="Associa il browser corrente con il profilo">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
               </img>
             </a>
