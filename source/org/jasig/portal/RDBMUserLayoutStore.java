@@ -717,6 +717,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
     try {
+      RDBMServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -736,8 +737,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 + currentStructId;
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
             stmt.executeUpdate(sUpdate);
+            RDBMServices.commit(con);
             return  prefix + nextStructId;
           } catch (SQLException sqle) {
+            RDBMServices.rollback(con);
             // Assume a concurrent update. Try again after some random amount of milliseconds.
             Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
           }
