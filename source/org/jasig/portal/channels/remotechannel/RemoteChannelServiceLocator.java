@@ -49,7 +49,7 @@ import javax.xml.rpc.ServiceException;
  */
 public class RemoteChannelServiceLocator extends Service implements RemoteChannelService {
 
-  // Use to get a proxy class for RemoteChannel
+  // Use to get a proxy class for RemoteChannel - this is just a default value
   private final String RemoteChannel_address = "http://localhost:8080/uPortal/services/RemoteChannel";
 
   private static final String serviceName = "RemoteChannel";
@@ -59,6 +59,16 @@ public class RemoteChannelServiceLocator extends Service implements RemoteChanne
     "  <service name=\"" + serviceName + "\">" +
     "    <requestFlow><handler type=\"SessionHandler\"/></requestFlow>" +
     "    <responseFlow><handler type=\"SessionHandler\"/></responseFlow>" +
+    "    <typeMapping xmlns:ns=\"http://http.servlet.javax\" qname=\"ns:Cookie\"" +
+    "      type=\"java:javax.servlet.http.Cookie\"" +
+    "      serializer=\"org.jasig.portal.webservices.ser.CookieSerializerFactory\"" +
+    "      deserializer=\"org.jasig.portal.webservices.ser.CookieDeserializerFactory\"" +    
+    "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +
+    "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:ArrayOf_tns3_Cookie\"" +
+    "      type=\"java:javax.servlet.http.Cookie[]\"" +
+    "      serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"" +
+    "      deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"" +    
+    "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +    
     "  </service>" +
     "  <transport name=\"http\" pivot=\"java:org.apache.axis.transport.http.HTTPSender\"/>" +
     "</deployment>";

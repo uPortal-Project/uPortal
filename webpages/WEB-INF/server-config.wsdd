@@ -66,7 +66,17 @@ Version $Revision$
   <parameter name="scope" value="session"/>
   <parameter name="className" value="org.jasig.portal.webservices.RemoteChannel"/>
   <parameter name="methodName" value="*"/>
- </service>
+  <typeMapping xmlns:ns="http://http.servlet.javax" qname="ns:Cookie"
+    type="java:javax.servlet.http.Cookie"
+    serializer="org.jasig.portal.webservices.ser.CookieSerializerFactory"
+    deserializer="org.jasig.portal.webservices.ser.CookieDeserializerFactory"
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:ArrayOf_tns3_Cookie"
+    type="java:javax.servlet.http.Cookie[]"
+    serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+    deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </service>
 
  <service name="AdminService" provider="java:MSG">
   <parameter name="allowedMethods" value="AdminService"/>
