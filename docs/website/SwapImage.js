@@ -9,6 +9,6 @@ function swapImage(imageName, type)  {
   }
 
   if (document.images)  {
-    document.images[imageName].src = 'images/' + newImage + '.gif';
+    document.images[imageName].src = "images/" + newImage + ".gif";
   }
 }
