@@ -40,8 +40,8 @@ public class AssignPermissions
      *  key['permission//{owner}|{principal}|{activity}|{target}'] = value['INHERIT','GRANT','DENY']
      */
     public void execute (PermissionsSessionData session) throws Exception {
-        
-            log.debug("PermissionsManager->AssignPermissions processing");
+            if (log.isDebugEnabled())
+                log.debug("PermissionsManager->AssignPermissions processing");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
@@ -59,7 +59,8 @@ public class AssignPermissions
                     ph.activity = split3.substring(0, split3.indexOf("|"));
                     ph.target = split3.substring(split3.indexOf("|") + 1);
                     ph.type = session.runtimeData.getParameter(key);
-                    log.debug("Processing "
+                    if (log.isDebugEnabled())
+                        log.debug("Processing "
                             + ph.type + " permission o=" + ph.owner + " p="
                             + ph.principal + " a=" + ph.activity + " t=" +
                             ph.target);
@@ -75,11 +76,13 @@ public class AssignPermissions
                 IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(owner);
                 ArrayList phs = (ArrayList)owners.get(owner);
                 IPermission[] ipsd = pHolder2DeleteArray(upm, phs);
-                log.debug("removing " + String.valueOf(ipsd.length)
+                if (log.isDebugEnabled())
+                    log.debug("removing " + String.valueOf(ipsd.length)
                         + " old permissions");
                 upm.removePermissions(ipsd);
                 IPermission[] ipsa = pHolder2AddArray(upm, phs);
-                log.debug("adding " + String.valueOf(ipsa.length)
+                if (log.isDebugEnabled())
+                    log.debug("adding " + String.valueOf(ipsa.length)
                         + " new permissions");
                 upm.addPermissions(ipsa);
             }
@@ -133,7 +136,7 @@ public class AssignPermissions
                     rlist.add(p);
                 }
             } catch (Exception e) {
-                log.error(e);
+                log.error(e, e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);
