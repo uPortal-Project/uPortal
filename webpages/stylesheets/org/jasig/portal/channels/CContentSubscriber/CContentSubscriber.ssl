@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
-<?xml-stylesheet title="contentSubscriber" href="/org/jasig/portal/channels/CContentSubscriber/contentSubscriber.xsl" type="text/xsl" media="netscape"?>
+<?xml-stylesheet title="contentSubscriber" href="/org/jasig/portal/channels/CContentSubscriber/html.xsl" type="text/xsl" media="netscape"?>
 
 <document/>
