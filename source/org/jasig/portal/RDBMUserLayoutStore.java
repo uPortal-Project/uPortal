@@ -422,7 +422,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       updateStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-e.printStackTrace();
       LogService.log(LogService.DEBUG, e);
       return  false;
     }
