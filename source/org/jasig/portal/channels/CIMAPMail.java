@@ -151,6 +151,7 @@ import com.oreilly.servlet.multipart.FilePart;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
 import org.xml.sax.DocumentHandler;
 import java.util.zip.*;
@@ -301,12 +302,9 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       public void notification (StoreEvent e) {
         String eventMsg = e.getMessage ();
         int eventType = e.getMessageType ();
-        if (DEBUG) Logger.log (Logger.DEBUG, "store event: " + eventMsg + ", " + eventType);
+        if (DEBUG) LogService.instance().log(LogService.DEBUG, "store event: " + eventMsg + ", " + eventType);
       }
     };
-
-  private MediaManager mm;
-  private String media;
 
   private ChannelRuntimeData runtimeData = null;
   private static String fs = File.separator;
@@ -315,26 +313,25 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
   private static final String sslLocation = stylesheetDir + fs + "CIMAPMail.ssl";
   public CIMAPMail ()
   {
-    mm=new MediaManager();
   }
 
   private FolderListener folderListener = new FolderListener () {
     public void folderCreated (FolderEvent e) {
         try {
-          //Logger.log(Logger.DEBUG, "folder created event for " + e.getFolder().getName());
+          //LogService.instance().log(LogService.DEBUG, "folder created event for " + e.getFolder().getName());
           imapFolders.add (e.getFolder ());
         } catch (MessagingException me) {
-          Logger.log (Logger.ERROR, "folderCreated" + me);
+          LogService.instance().log(LogService.ERROR, "folderCreated" + me);
         }
     }
     public void folderDeleted (FolderEvent e) {
-        //Logger.log(Logger.DEBUG, "folder deleted event for " + e.getFolder().getName());
+        //LogService.instance().log(LogService.DEBUG, "folder deleted event for " + e.getFolder().getName());
         try {
           imapFolders.deleted (e.getFolder ().getName ());
         } catch (ImapFolderException sfe) {}
     }
     public void folderRenamed (FolderEvent e) {
-        //Logger.log(Logger.DEBUG, "folder renamed event from " + e.getFolder().getName() + " to " + e.getNewFolder());
+        //LogService.instance().log(LogService.DEBUG, "folder renamed event from " + e.getFolder().getName() + " to " + e.getNewFolder());
         try {
           imapFolders.rename (e.getFolder ().getName (), e.getNewFolder ().getName ());
         } catch (ImapFolderException sfe) {
@@ -430,7 +427,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
     public void setException(Exception e) {
       exception = e;
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
 
     public boolean isThisMethod(String methodName) {
@@ -622,7 +619,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                 Message deletedMessage = activeFolder.getMessage (msg);
                 cMsgs.add (deletedMessage);
               } catch (Exception e) {
-                Logger.log (Logger.ERROR, "respondToMsgControls: Unable to get message " +
+                LogService.instance().log(LogService.ERROR, "respondToMsgControls: Unable to get message " +
                       sMsgs[i] + "in " + activeFolder.getFolderName() + ": " + e);
               }
             }
@@ -1207,12 +1204,12 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           metrics.attachmentsViewed++;
         }
       } catch (Exception e) {
-        Logger.log (Logger.ERROR, e);
+        LogService.instance().log(LogService.ERROR, e);
         /*
         try {
            out.println ("Unable to find/display attachment");
         } catch (IOException ie) {
-          Logger.log (Logger.ERROR, "respondToReadAttachment:"+ie);
+          LogService.instance().log(LogService.ERROR, "respondToReadAttachment:"+ie);
         }
         */
       }
@@ -1460,7 +1457,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
             xml.write(">" + HTMLescape(sFolderName) + "</folder>\n");
           } catch (Exception e) {
             //out.println ("<tr>" + me + " -> " + (folderData == null ? "null" : folderData.folderName) + "</tr>");
-            Logger.log (Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
           }
         }
         xml.write("</folders>\n");
@@ -1599,7 +1596,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                 }
               }
             } catch (Exception e) {
-              Logger.log(Logger.ERROR, e);
+              LogService.instance().log(LogService.ERROR, e);
             }
             zout.closeEntry();
 
@@ -1619,7 +1616,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                   in.close();
                 }
               } catch (Exception e) {
-                Logger.log(Logger.ERROR, e);
+                LogService.instance().log(LogService.ERROR, e);
               }
               zout.closeEntry();
             }
@@ -1638,7 +1635,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           return;
         } catch (Exception e) {
           //displayErrorMsg(e, false, out);
-          Logger.log (Logger.ERROR, e);
+          LogService.instance().log(LogService.ERROR, e);
           return;
         }
       }
@@ -2163,7 +2160,6 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
    */
   public void setRuntimeData(ChannelRuntimeData rd) {
     runtimeData = rd;
-    media = mm.getMedia(runtimeData.getBrowserInfo());
 
     if (!authenticated) {
       activeMethod = authenticateMethod;
@@ -2216,7 +2212,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         } catch (Exception e) {
           activeMethod = listMessages;
           xmlString = displayErrorMsg(e, true).toString();
-          Logger.log(Logger.ERROR, e);
+          LogService.instance().log(LogService.ERROR, e);
         }
         if (xmlString != null) {
           weAre = activeMethod.getWeAre();
@@ -2224,11 +2220,11 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
           Hashtable ssParams = new Hashtable();
           ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-          XSLT.transform(xmlString, new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, weAre, media);
+          XSLT.transform(xmlString, new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, weAre, runtimeData.getBrowserInfo());
         } else {
         }
       } catch (Exception e) {
-        Logger.log(Logger.ERROR, e);
+        LogService.instance().log(LogService.ERROR, e);
       }
   }
 
@@ -2690,7 +2686,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
     }
 
     if (store == null || !store.isConnected ()) {
-      Logger.log(Logger.DEBUG, "Lost connection to store, re-initializing.");
+      LogService.instance().log(LogService.DEBUG, "Lost connection to store, re-initializing.");
 
       try {
         reconnect ();
@@ -2699,7 +2695,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         if (e instanceof CIMAPLostConnectionException) {
           throw (CIMAPLostConnectionException)e;
         }
-        Logger.log (Logger.ERROR, "checkIMAPConnection:" + e);
+        LogService.instance().log(LogService.ERROR, "checkIMAPConnection:" + e);
         throw e;
       }
     }
@@ -2734,7 +2730,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       }
       myOut.close ();
     } catch (Exception e) {
-      Logger.log (Logger.ERROR, "checkIMAPConnection:"+e);
+      LogService.instance().log(LogService.ERROR, "checkIMAPConnection:"+e);
     }
   }
 
@@ -2760,7 +2756,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       }
     catch (Exception e)
       {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
       }
     return 0;
   };
@@ -2794,7 +2790,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       }
     catch (Exception e)
       {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
       }
     return 0;
   };
@@ -2826,7 +2822,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           return d1.compareTo (d2) * order;
         }
     } catch (Exception e) {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
     }
     return 0;
   };
@@ -2856,7 +2852,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         Integer m2size = new Integer (m2.getSize ());
         return m1size.compareTo (m2size) * order;
     } catch (Exception e) {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
     }
     return 0;
   };
@@ -2884,7 +2880,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         Folder f2 = (Folder) o2;
         return f1.getFullName ().compareToIgnoreCase (f2.getFullName ()) * order;
     } catch (Exception e) {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
     }
     return 0;
   };
@@ -2912,7 +2908,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         String f2 = (String) o2;
         return f1.compareToIgnoreCase (f2);
       } catch (Exception e) {
-        Logger.log (Logger.WARN, e);
+        LogService.instance().log(LogService.WARN, e);
       }
       return 0;
     }
@@ -3122,7 +3118,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
               newMessages = true;
               addMessages (newMsgs);
             } catch (MessagingException e) {
-              Logger.log (Logger.ERROR, "messageListener:"+e);
+              LogService.instance().log(LogService.ERROR, "messageListener:"+e);
             }
           }
         }
@@ -3139,13 +3135,13 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
     private ConnectionListener connectionListener = new ConnectionListener () {
         public void opened (ConnectionEvent e) {
-          //Logger.log(Logger.DEBUG, "received connection opened event for " + e);
+          //LogService.instance().log(LogService.DEBUG, "received connection opened event for " + e);
         }
         public void closed (ConnectionEvent e) {
-          //Logger.log(Logger.DEBUG, "received connection closed event " + e);
+          //LogService.instance().log(LogService.DEBUG, "received connection closed event " + e);
         }
         public void disconnected (ConnectionEvent e) {
-          //Logger.log(Logger.DEBUG, "received connection disconnected event " + e);
+          //LogService.instance().log(LogService.DEBUG, "received connection disconnected event " + e);
         }
       };
 
@@ -3619,7 +3615,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
   public void valueUnbound (HttpSessionBindingEvent event) {
     cleanup ();
     if (metrics.showMetrics) {
-      Logger.log(Logger.INFO, "WebMail metric: " + metrics);
+      LogService.instance().log(LogService.INFO, "WebMail metric: " + metrics);
       metrics.showMetrics = false;
     }
   }
