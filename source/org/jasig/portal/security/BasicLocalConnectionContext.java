@@ -59,8 +59,8 @@ public class BasicLocalConnectionContext extends LocalConnectionContext {
          */
         if (sd.getParameter(CHANPARAMUSERNAME) != null)
             usernameandpassword = MessageFormat.format(USERNAMEANDPWDMASK,
-                    new String[] { sd.getParameter(CHANPARAMUSERNAME),
-                            sd.getParameter(CHANPARAMPASSWORD) });
+                    (Object[])(new String[] { sd.getParameter(CHANPARAMUSERNAME),
+                            sd.getParameter(CHANPARAMPASSWORD) }));
 
     }
 
