@@ -41,7 +41,7 @@
           </xsl:if>
 
           <xsl:if test="$allowReinstantiation='true'">
-            <a href="{$baseActionURL}?action=retry">
+            <a href="{$baseActionURL}?action=restart">
               <img src="{$baseMediaURL}error_reboot.gif" border="0" width="16" height="16" alt="Reboot the channel"/>
               <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
               <span class="uportal-label">Reboot the Channel</span>
