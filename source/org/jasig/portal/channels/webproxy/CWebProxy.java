@@ -35,9 +35,8 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -651,7 +650,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       if (state.personAllow != null)
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
-      XSLT xslt = new XSLT(this);
+      XSLT xslt = XSLT.getTransformer(this, state.runtimeData.getLocales());
       if (tidiedXml != null)
         xslt.setXML(tidiedXml);
       else
@@ -746,24 +745,41 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
     }
 
-    if ( System.getProperty("os.name").indexOf("Windows") != -1 )
-      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
-    else
-      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
-    ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
+    PrintWriter pw;
 
-    tidy.parse (urlConnect.getInputStream(), new BufferedOutputStream (stream));
+    if ( System.getProperty("os.name").indexOf("Windows") != -1 )
+    {
+      pw = new PrintWriter(new FileOutputStream("nul"));
+      tidy.setErrout(pw);
+    }
+    else
+    {
+      pw = new PrintWriter(new FileOutputStream("/dev/null"));
+      tidy.setErrout(pw);
+    }
+
+    ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
+    BufferedOutputStream out = new BufferedOutputStream (stream);
+
+    tidy.parse (urlConnect.getInputStream(), out);
+    pw.close();
+    String tidiedXml = stream.toString();
+    stream.close();
+    out.close();
 
     if ( tidy.getParseErrors() > 0 )
       throw new GeneralRenderingException("Unable to convert input document to XHTML");
 
-    return stream.toString();
+    return tidiedXml;
   }
 
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
   {
       // before making the connection, ensure all spaces in the URI are encoded
-      // not sure if any other characters will need to be re-encoded; will check it out
+      // (Note that URLEncoder.encode(String uri) cannot be used because
+      // this method encodes everything, including forward slashes and
+      // forward slashes are used for determining if the URL is
+      // relative or absolute)
       uri = uri.trim();
       if (uri.indexOf(" ") != -1)
       {
