@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
@@ -84,7 +85,7 @@ import tyrex.naming.MemoryContext;
  * sometimes channels will timeout with information retreival then the content should
  * be skipped.
  *
- * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * @author Peter Kharchenko, pkharchenko@unicon.net
  * @version $Revision$
  */
 public class ChannelManager implements LayoutEventListener {
@@ -128,7 +129,7 @@ public class ChannelManager implements LayoutEventListener {
     public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
-
+    private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors");
     private Set repeatRenderings=new HashSet();
     private boolean ccaching=false;
 
@@ -284,9 +285,15 @@ public class ChannelManager implements LayoutEventListener {
      * in the tables.
      *
      * @param channelSubscribeId a <code>String</code> value
-     * @param ch a <code>ContentHandler</code> value
+     * @param contentHandler a <code>ContentHandler</code> value
      */
-    public void outputChannel(String channelSubscribeId,ContentHandler ch) {
+    public void outputChannel(String channelSubscribeId,ContentHandler contentHandler) {
+        // Set the subscribeId as the achorId for an anchoring serializer
+        if (useAnchors && contentHandler instanceof IAnchoringSerializer) {
+            IAnchoringSerializer as = (IAnchoringSerializer)contentHandler;
+            as.startAnchoring(channelSubscribeId);
+        }
+
         // obtain IChannelRenderer
         IChannelRenderer cr=(IChannelRenderer)rendererTable.get(channelSubscribeId);
         if(cr==null) {
@@ -304,14 +311,14 @@ public class ChannelManager implements LayoutEventListener {
         try {
             renderingStatus=cr.completeRendering();
         } catch (Throwable t) {
-            handleRenderingError(channelSubscribeId,ch,t,renderingStatus,"encountered problem while trying to complete rendering","IChannelRenderer.completeRendering() threw",false);
+            handleRenderingError(channelSubscribeId,contentHandler,t,renderingStatus,"encountered problem while trying to complete rendering","IChannelRenderer.completeRendering() threw",false);
             return;
         }
 
         if(renderingStatus==IChannelRenderer.RENDERING_SUCCESSFUL) {
             // obtain content
-            if(ch instanceof CachingSerializer && this.isCharacterCaching()) {
-                CachingSerializer cs=(CachingSerializer) ch;
+            if(contentHandler instanceof CachingSerializer && this.isCharacterCaching()) {
+                CachingSerializer cs=(CachingSerializer) contentHandler;
                 // need to get characters
                 String characterContent=cr.getCharacters();
                 if(characterContent==null) {
@@ -324,7 +331,7 @@ public class ChannelManager implements LayoutEventListener {
                                 LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : unable to restart character cache while compiling character cache for channel \""+channelSubscribeId+"\" !");
                             }
                             // dump SAX buffer into the serializer
-                            bufferedContent.outputBuffer(ch);
+                            bufferedContent.outputBuffer(contentHandler);
                             // extract compiled character cache
                             if(cs.stopCaching()) {
                                 try {
@@ -345,15 +352,15 @@ public class ChannelManager implements LayoutEventListener {
                                 return;
                             }
                         } catch (IOException ioe) {
-                            handleRenderingError(channelSubscribeId,ch,ioe,renderingStatus,"encountered a problem compiling channel character content","Encountered IO exception while trying to output channel content SAX to the character caching serializer",true);
+                            handleRenderingError(channelSubscribeId,contentHandler,ioe,renderingStatus,"encountered a problem compiling channel character content","Encountered IO exception while trying to output channel content SAX to the character caching serializer",true);
                             return;
                         } catch (org.xml.sax.SAXException se) {
-                            handleRenderingError(channelSubscribeId,ch,se,renderingStatus,"encountered a problem compiling channel character content","Encountered SAX exception while trying to output channel content SAX to the character caching serializer",true);
+                            handleRenderingError(channelSubscribeId,contentHandler,se,renderingStatus,"encountered a problem compiling channel character content","Encountered SAX exception while trying to output channel content SAX to the character caching serializer",true);
                             return;
                         }
 
                     } else {
-                        handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
+                        handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                         return;
                     }
                 } else { // non-null characterContent case
@@ -372,16 +379,22 @@ public class ChannelManager implements LayoutEventListener {
                 if(bufferedContent!=null) {
                     try {
                         // output to the serializer
-                        ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(ch);
+                        ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(contentHandler);
                         bufferedContent.outputBuffer(custodian);
                     } catch (Exception e) {
                         LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : encountered an exception while trying to output SAX2 content of channel \""+channelSubscribeId+"\" to a regular serializer. Partial output possible !",e);
                         return;
                     }
                 } else {
-                    handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
+                    handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                     return;
                 }
+            }
+            
+            // Reset the anchorId for an anchoring serializer
+            if (useAnchors && contentHandler instanceof IAnchoringSerializer) {
+                IAnchoringSerializer as = (IAnchoringSerializer)contentHandler;
+                as.stopAnchoring();
             }
 
             // Obtain the channel description
@@ -391,11 +404,11 @@ public class ChannelManager implements LayoutEventListener {
             } catch (PortalException pe) {
               // Do nothing
             }
-
+            
             // Tell the StatsRecorder that this channel has rendered
             StatsRecorder.recordChannelRendered(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
         } else {
-            handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unsuccessfull rendering","unsuccessfull rendering",false);
+            handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessfull rendering","unsuccessfull rendering",false);
             return;
         }
     }
@@ -432,75 +445,83 @@ public class ChannelManager implements LayoutEventListener {
      * (or giving up if the error channel is failing as well)
      *
      * @param channelSubscribeId a <code>String</code> value
-     * @param ch a <code>ContentHandler</code> value
+     * @param contentHandler a <code>ContentHandler</code> value
      * @param t a <code>Throwable</code> value
      * @param renderingStatus an <code>int</code> value
      * @param commonMessage a <code>String</code> value
      * @param technicalMessage a <code>String</code> value
      * @param partialOutput a <code>boolean</code> value
      */
-    private void handleRenderingError(String channelSubscribeId,ContentHandler ch, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
-        if(isRepeatedRenderingAttempt(channelSubscribeId)) {
-            // this means that the error channel has failed :(
-            String message="ChannelManager::handleRenderingError() : Unable to handle a rendering error through error channel.";
-            if(t!=null) {
-                if(t instanceof InternalPortalException) {
-                    InternalPortalException ipe=(InternalPortalException) t;
-                    Throwable e=ipe.getException();
-                    message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
-                    System.out.println("CError produced the following exception. Please fix CError immediately!");
-                    e.printStackTrace();
+    private void handleRenderingError(String channelSubscribeId,ContentHandler contentHandler, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
+        try {
+            if(isRepeatedRenderingAttempt(channelSubscribeId)) {
+                // this means that the error channel has failed :(
+                String message="ChannelManager::handleRenderingError() : Unable to handle a rendering error through error channel.";
+                if(t!=null) {
+                    if(t instanceof InternalPortalException) {
+                        InternalPortalException ipe=(InternalPortalException) t;
+                        Throwable e=ipe.getException();
+                        message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
+                        System.out.println("CError produced the following exception. Please fix CError immediately!");
+                        e.printStackTrace();
+                    } else {
+                        message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
+                        System.out.println("CError produced the following exception. Please fix CError immediately!");
+                        t.printStackTrace();
+                    }
                 } else {
-                    message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
-                    System.out.println("CError produced the following exception. Please fix CError immediately!");
-                    t.printStackTrace();
+                    // check status
+                    message=message+" channelRenderingStatus=";
+    
+                    switch( renderingStatus )
+                    {
+                        case IChannelRenderer.RENDERING_SUCCESSFUL:
+                            message += "successful";
+                            break;
+                        case IChannelRenderer.RENDERING_FAILED:
+                            message += "failed";
+                            break;
+                        case IChannelRenderer.RENDERING_TIMED_OUT:
+                            message += "timed out";
+                            break;
+                        default:
+                            message += "UNKNOWN CODE: " + renderingStatus;
+                            break;
+                    }
                 }
+                message=message+" "+technicalMessage;
+                LogService.log(LogService.ERROR,message);
             } else {
-                // check status
-                message=message+" channelRenderingStatus=";
-
-                switch( renderingStatus )
-                {
-                    case IChannelRenderer.RENDERING_SUCCESSFUL:
-                        message += "successful";
-                        break;
-                    case IChannelRenderer.RENDERING_FAILED:
-                        message += "failed";
-                        break;
-                    case IChannelRenderer.RENDERING_TIMED_OUT:
-                        message += "timed out";
-                        break;
-                    default:
-                        message += "UNKNOWN CODE: " + renderingStatus;
-                        break;
+                // first check for an exception
+                if(t!=null ){
+                    if(t instanceof InternalPortalException) {
+                        InternalPortalException ipe=(InternalPortalException) t;
+                        Throwable channelException=ipe.getException();
+                        replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
+                    } else {
+                        replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,true);
+                    }
+                } else {
+                    if(renderingStatus==IChannelRenderer.RENDERING_TIMED_OUT) {
+                        replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,true);
+                    } else {
+                        replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,true);
+                    }
+                }
+    
+                // remove channel renderer
+                rendererTable.remove(channelSubscribeId);
+                // re-try render
+                if(!partialOutput) {
+                    setRepeatedRenderingAttempt(channelSubscribeId);
+                    outputChannel(channelSubscribeId,contentHandler);
                 }
             }
-            message=message+" "+technicalMessage;
-            LogService.log(LogService.ERROR,message);
-        } else {
-            // first check for an exception
-            if(t!=null ){
-                if(t instanceof InternalPortalException) {
-                    InternalPortalException ipe=(InternalPortalException) t;
-                    Throwable channelException=ipe.getException();
-                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
-                } else {
-                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,true);
-                }
-            } else {
-                if(renderingStatus==IChannelRenderer.RENDERING_TIMED_OUT) {
-                    replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,true);
-                } else {
-                    replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,true);
-                }
-            }
-
-            // remove channel renderer
-            rendererTable.remove(channelSubscribeId);
-            // re-try render
-            if(!partialOutput) {
-                setRepeatedRenderingAttempt(channelSubscribeId);
-                outputChannel(channelSubscribeId,ch);
+        } finally {
+            // Set the subscribeId as the achorId for an anchoring serializer
+            if (useAnchors && contentHandler instanceof IAnchoringSerializer) {
+                IAnchoringSerializer as = (IAnchoringSerializer)contentHandler;
+                as.stopAnchoring();
             }
         }
     }

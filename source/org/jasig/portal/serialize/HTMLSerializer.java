@@ -79,6 +79,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Enumeration;
 
+import org.jasig.portal.IAnchoringSerializer;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -126,9 +127,7 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:arkin@intalio.com">Assaf Arkin</a>
  * @see Serializer
  */
-public class HTMLSerializer
-    extends BaseMarkupSerializer
-{
+public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSerializer {
 
 
     /**
@@ -139,7 +138,7 @@ public class HTMLSerializer
 
     public static String XHTMLNamespace = "";
 
-
+    private String anchorId = null;
 
 
     /**
@@ -305,7 +304,8 @@ public class HTMLSerializer
                         } else {
                             _printer.printText( name );
                             _printer.printText( "=\"" );
-			    value = ProxyWriter.considerProxyRewrite(name,localName,value);   
+                            value = ProxyWriter.considerProxyRewrite(name,localName,value);   
+                            value = appendAnchorIfNecessary(rawName.toLowerCase(),name,value);
                             printEscaped( value );
                             _printer.printText( '"' );
                         }
@@ -868,7 +868,32 @@ public class HTMLSerializer
             return uri;
     }
 
+    public void startAnchoring(String anchorId) {
+        this.anchorId = anchorId;
+    }
+    
+    public void stopAnchoring() {
+        this.anchorId = null;
+    }
 
+    protected String appendAnchorIfNecessary(String elementName, String attributeName, String attributeValue) {
+        if (anchorId != null) {
+            // looking for an <a> or <form> tag element
+            if (elementName.equalsIgnoreCase("a") || elementName.equalsIgnoreCase("form")) {
+                // found an <a> or <form>, let's peek at the attributes it contains
+                // does it contain either an "href" or "action" attribute
+                if (attributeName.equalsIgnoreCase("href") || attributeName.equalsIgnoreCase("action")) {
+                    // found the attribute, now lets make sure it points back to a channel
+                    if (attributeValue.indexOf(".render.") != -1) {
+                        // this link points back to a channel, so let's
+                        // rewrite it and place back into the Attribute Object
+                        attributeValue += "#" + anchorId;
+                    }
+                }
+            }
+        }
+        return attributeValue;
+    }
 }
 
 
