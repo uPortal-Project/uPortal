@@ -159,7 +159,20 @@ public class CGroupsManager
    //public void receiveEvent(LayoutEvent ev)
    {
       if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
-        sessionsMap.remove(uid); // Clean up
+         try{
+            CGroupsManagerSessionData sd = getSessionData(uid);
+            if (sd.lockedGroup != null){
+               sd.lockedGroup.getLock().release();
+               sd.lockedGroup = null;
+               //GroupsManagerCommandFactory.get("Unlock").execute(sd);
+            }
+            if (sd.servantChannel != null){
+               sd.servantChannel.isFinished();
+            }
+            sessionsMap.remove(uid); // Clean up
+         } catch (Exception e){
+            Utility.logMessage("ERROR", this.getClass().getName() + "::receiveEvent(): Exception = " + e);
+         }
       }
    }
 

@@ -56,7 +56,7 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public String uid;
    public IPerson user;
    public long startRD;
-   public ILockableEntityGroup lockedGroup;
+   public ILockableEntityGroup lockedGroup = null;
    public String highlightedGroupID;
    public int currentPage = 1;
    public String rootViewGroupID = "0";
