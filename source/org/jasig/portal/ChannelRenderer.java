@@ -46,10 +46,11 @@ import org.jasig.portal.utils.threading.WorkerTask;
 
 
 /**
- * This class renders channel content into a SAXBuffer.
- * Rendering is done in a separate thread.
- * @author Peter Kharchenko
- * @version $ Revision: 1.0 $
+ * This class takes care of initiating channel rendering thread, 
+ * monitoring it for timeouts, retreiving cache, and returning 
+ * rendering results and status.
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version $Revision$
  */
 public class ChannelRenderer
 {
@@ -80,25 +81,50 @@ public class ChannelRenderer
     protected static ThreadPool tp=null;
     protected static Map systemCache=null;
 
+    protected SetCheckInSemaphore groupSemaphore;
+    protected Object groupRenderingKey;
     private Object cacheWriteLock;
 
-  /**
-   * Default constructor.
-   * @param chan Channel associated with this ChannelRenderer
-   */
-  public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ThreadPool threadPool)
-  {
-    this.channel=chan;
-    this.rd=runtimeData;
-    rendering = false;
-    ccacheable=false;
-    cacheWriteLock=new Object();
-    tp = threadPool;
 
-    if(systemCache==null) {
-	systemCache=ChannelManager.systemCache;
+
+    /**
+     * Default contstructor
+     *
+     * @param chan an <code>IChannel</code> value
+     * @param runtimeData a <code>ChannelRuntimeData</code> value
+     * @param threadPool a <code>ThreadPool</code> value
+     */
+    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ThreadPool threadPool) {
+        this.channel=chan;
+        this.rd=runtimeData;
+        rendering = false;
+        ccacheable=false;
+        cacheWriteLock=new Object();
+        tp = threadPool;
+
+        if(systemCache==null) {
+            systemCache=ChannelManager.systemCache;
+        }
+
+        this.groupSemaphore=null;
+        this.groupRenderingKey=null;
     }
-  }
+
+
+    /**
+     * Default contstructor
+     *
+     * @param chan an <code>IChannel</code> value
+     * @param runtimeData a <code>ChannelRuntimeData</code> value
+     * @param threadPool a <code>ThreadPool</code> value
+     * @param groupSemaphore a <code>SetCheckInSemaphore</code> for the current rendering group
+     * @param groupRenderingKey an <code>Object</code> to be used for check ins with the group semaphore
+     */
+    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ThreadPool threadPool, SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
+        this(chan,runtimeData,threadPool);
+        this.groupSemaphore=groupSemaphore;
+        this.groupRenderingKey=groupRenderingKey;
+    }
 
 
     /**
@@ -133,14 +159,13 @@ public class ChannelRenderer
     }
 
 
-  /**
-   * Set the timeout value
-   * @param value timeout in milliseconds
-   */
-  public void setTimeout (long value)
-  {
-    timeOut = value;
-  }
+    /**
+     * Set the timeout value
+     * @param value timeout in milliseconds
+     */
+    public void setTimeout (long value) {
+        timeOut = value;
+    }
 
     public void setCacheTables(Map cacheTables) {
 	this.cacheTables=cacheTables;
@@ -171,6 +196,12 @@ public class ChannelRenderer
     startTime = System.currentTimeMillis ();
   }
 
+    public void startRendering(SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
+        this.groupSemaphore=groupSemaphore;
+        this.groupRenderingKey=groupRenderingKey;
+        this.startRendering();
+    }
+
   /**
    * Output channel rendering through a given ContentHandler.
    * Note: call of outputRendering() without prior call to startRendering() is equivalent to
@@ -180,68 +211,29 @@ public class ChannelRenderer
    * @param out Document Handler that will receive information rendered by the channel.
    * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
    */
-  public int outputRendering (ContentHandler out) throws Throwable
-  {
-
-
-    if (!rendering)
-      this.startRendering ();
-
-    boolean abandoned=false;
-    long timeOutTarget = startTime + timeOut;
-	
-    while(System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()){
-        Thread.currentThread().yield();
-    }
-	
-    if(!workTracker.isJobComplete()) {
-        workTracker.killJob();
-        abandoned=true;
-        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
-    } else {
-        abandoned=!workTracker.isJobSuccessful();
-    }
-
-
-
-    if (!abandoned && worker.done ())
-    {
-	SAX2BufferImpl buffer;
-      if (worker.successful() && ((buffer=worker.getBuffer())!=null))
-      {
-        // unplug the buffer :)
-        try
-        {
-            buffer.setAllHandlers(out);
-            buffer.outputBuffer();
-            return RENDERING_SUCCESSFUL;
+    public int outputRendering (ContentHandler out) throws Throwable {
+        int renderingStatus=completeRendering();
+        if(renderingStatus==RENDERING_SUCCESSFUL) {
+            SAX2BufferImpl buffer;
+            if ((buffer=worker.getBuffer())!=null) {
+                // unplug the buffer :)
+                try {
+                    buffer.setAllHandlers(out);
+                    buffer.outputBuffer();
+                    return RENDERING_SUCCESSFUL;
+                } catch (SAXException e) {
+                    // worst case scenario: partial content output :(
+                    LogService.instance().log(LogService.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
+                    throw e;
+                }
+            } else {
+                LogService.instance().log(LogService.ERROR, "ChannelRenderer::outputRendering() : output buffer is null even though rendering was a success?! trying to rendering for ccaching ?"); 
+                throw new PortalException("unable to obtain rendering buffer");
+            }
         }
-        catch (SAXException e) {
-            // worst case scenario: partial content output :(
-            LogService.instance().log(LogService.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
-            throw e;
-        }
-      } else if(worker.successful() && ccacheable && worker.cbuffer!=null){
-          return RENDERING_SUCCESSFUL;
-      } else {
-          // rendering was not successful
-          Throwable e;
-          if((e=worker.getThrowable())!=null) throw new InternalPortalException(e);
-          // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-          return RENDERING_FAILED;
-      }
-    } else {
-        Throwable e;
-        e = workTracker.getException();
-
-        if (e != null) {
-          throw new InternalPortalException(e);
-        } else {
-          // Assume rendering has timed out
-          return RENDERING_TIMED_OUT;
-        }
+        return renderingStatus;
     }
-  }
+
 
     /**
      * Requests renderer to complete rendering and return status.
@@ -250,44 +242,81 @@ public class ChannelRenderer
      *
      * @return an <code>int</code> return status value
      */
-    public int completeRendering () throws Throwable
-  {
-    if (!rendering)
-      this.startRendering ();
 
-    boolean abandoned=false;
-    long timeOutTarget = startTime + timeOut;
-	
-    while(System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()){
-        Thread.currentThread().yield();
-    }
-	
-    if(!workTracker.isJobComplete()) {
-        workTracker.killJob();
-        abandoned=true;
-        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
-    } else {
-        abandoned=!workTracker.isJobSuccessful();
+    public int completeRendering() throws Throwable {
+        if (!rendering) {
+            this.startRendering ();
+        }
+        boolean abandoned=false;
+        long timeOutTarget = startTime + timeOut;
+      
+      
+        // separate waits caused by rendering group
+        if(groupSemaphore!=null) {
+            while(!worker.isSetRuntimeDataComplete() && System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()) {
+                long wait=timeOutTarget-System.currentTimeMillis();
+                if(wait<=0) { wait=1; }
+                try {
+                    synchronized(groupSemaphore) {
+                        groupSemaphore.wait(wait);
+                    }
+                } catch (InterruptedException ie) {}
+            }
+            if(!worker.isSetRuntimeDataComplete() && !workTracker.isJobComplete()) {
+                workTracker.killJob();
+                abandoned=true;
+                LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed. (key="+groupRenderingKey.toString()+")");
+            } else {
+                groupSemaphore.waitOn();
+            }
+            // reset timer for rendering
+            timeOutTarget=System.currentTimeMillis()+timeOut;
+        }
+      
+        if(!abandoned) {
+            while(System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()) {
+                long wait=timeOutTarget-System.currentTimeMillis();
+                if(wait<=0) { wait=1; }
+                try {
+                    synchronized(workTracker) {
+                        workTracker.wait(wait);
+                    }
+                } catch (InterruptedException ie) {}
+            }
+          
+            if(!workTracker.isJobComplete()) {
+                workTracker.killJob();
+                abandoned=true;
+                LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
+            } else {
+                abandoned=!workTracker.isJobSuccessful();
+            }
+          
+        }
+      
+        if (!abandoned && worker.done ()) {
+            if (worker.successful() && (((worker.getBuffer())!=null) || (ccacheable && worker.cbuffer!=null))) {
+                return RENDERING_SUCCESSFUL;
+
+            } else {
+                // rendering was not successful
+                Throwable e;
+                if((e=worker.getThrowable())!=null) throw new InternalPortalException(e);
+                // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+                return RENDERING_FAILED;
+            }
+        } else {
+            Throwable e;
+            e = workTracker.getException();
+            if (e != null) {
+                throw new InternalPortalException(e);
+            } else {
+                // Assume rendering has timed out
+                return RENDERING_TIMED_OUT;
+            }
+        }
     }
 
-
-    if (!abandoned && worker.done ())
-    {
-	SAX2BufferImpl buffer;
-      if (worker.successful() && (((buffer=worker.getBuffer())!=null) || (ccacheable && worker.cbuffer!=null))) {
-          return RENDERING_SUCCESSFUL;
-      } else {
-          // rendering was not successful
-          Throwable e;
-          if((e=worker.getThrowable())!=null) throw new InternalPortalException(e);
-          // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-          return RENDERING_FAILED;
-      }
-    } else {
-        // rendering has timed out
-        return RENDERING_TIMED_OUT;
-    }
-  }
 
     /**
      * Returns rendered buffer.
@@ -339,6 +368,8 @@ public class ChannelRenderer
     protected class Worker extends WorkerTask{
         private boolean successful;
         private boolean done;
+        private boolean setRuntimeDataComplete;
+        private boolean decremented;
         private IChannel channel;
         private ChannelRuntimeData rd;
 	private SAX2BufferImpl buffer;
@@ -360,7 +391,7 @@ public class ChannelRenderer
 
         public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel=ch;  this.rd=runtimeData;
-            successful = false; done = false;
+            successful = false; done = false; setRuntimeDataComplete=false;
 	    buffer=null; cbuffer=null;
         }
 
@@ -368,10 +399,20 @@ public class ChannelRenderer
             this.channel=ch;
         }
 
+        public boolean isSetRuntimeDataComplete() {
+            return this.setRuntimeDataComplete;
+        }
+
         public void run () {
             try {
-                if(rd!=null)
+                if(rd!=null) {
                     channel.setRuntimeData(rd);
+                }
+                setRuntimeDataComplete=true;
+                
+                if(groupSemaphore!=null) {
+                    groupSemaphore.checkInAndWaitOn(groupRenderingKey);
+                }
 
 		if(CACHE_CHANNELS) {
 		    // try to obtain rendering from cache
@@ -434,7 +475,7 @@ public class ChannelRenderer
                             // need to render again and cache the output
                             buffer = new SAX2BufferImpl ();
                             buffer.startBuffering();
-                            channel.renderXML (buffer);
+                            channel.renderXML(buffer);
 
                             // save cache
                             if(key!=null) {
@@ -451,7 +492,7 @@ public class ChannelRenderer
 		    } else {
 			buffer = new SAX2BufferImpl ();
 			buffer.startBuffering();
-			channel.renderXML (buffer);
+			channel.renderXML(buffer);
 		    }
 		} else  {
 		    // in the case when channel cache is not enabled
@@ -461,7 +502,10 @@ public class ChannelRenderer
 		}
                 successful = true;
             } catch (Exception e) {
-              this.setException(e);
+                if(groupSemaphore!=null) {
+                    groupSemaphore.checkIn(groupRenderingKey);
+                }
+                this.setException(e);
             }
             done = true;
         }
