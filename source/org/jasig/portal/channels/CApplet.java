@@ -13,14 +13,15 @@ import java.net.*;
 
 
 /**
- * Displays an applet. You have to pass in the appropriate parameters.
- * Applet parameters are currently passed in as a concatenated string with
- * format: name1>value1^name2>value2^name3>value3 ...
- * It is possible that '>' and '^' are characters that may actually appear
- * in applet parameters.  If this is true, this method will have to be
- * rewritten.
+ * Displays an applet. To pass in paramaters to the applet, give the
+ * channel parameters whose keys start with the string "APPLET."
+ * For example, the key/value pair
+ *    APPLET.data=foo
+ * as a channel parameter is given to the applet as
+ *    data=foo
  *
  * @author Ken Weiner
+ * @author Shawn Bayern
  * @version $Revision$
  */
 public class CApplet implements org.jasig.portal.IChannel
@@ -42,50 +43,46 @@ public class CApplet implements org.jasig.portal.IChannel
   {
     try
     {
-      out.println ("<center>");
-      out.println ("<applet CODE=\"" + chConfig.get ("code") + "\" CODEBASE=\"" + chConfig.get ("codeBase") + "\" WIDTH=\"" + chConfig.get ("width") + "\" HEIGHT=\"" + chConfig.get ("height") + "\" ALIGN=top border=0 archive=\"" + chConfig.get ("archive") + "\">");
-
-  	  // Split "params" string into name-value pairs
-  	  String sParams = (String) chConfig.get ("params");
-
-  	  if (sParams != null)
-  	  {
-  	    StringTokenizer stParams = new StringTokenizer (sParams, "^");
-
-  	    // For each "param" string, parse to get name and value
-  	    String sParamName, sParamValue;
-
-  	    while (stParams.hasMoreTokens())
-  	    {
-  	      sParamName="";
-  	      sParamValue="";
-  	      StringTokenizer stNameValue = new StringTokenizer (stParams.nextToken (), ">");
-
-  	      if (stNameValue.hasMoreTokens ())
-  	        sParamName = stNameValue.nextToken ();
-
-  	      if (stNameValue.hasMoreTokens ())
-  	        sParamValue = stNameValue.nextToken ();
-
-          out.println ("<param name=\"" + sParamName + "\" value=\"" + sParamValue + "\">");
-        }
-      }
-
-      out.println ("</applet>");
-      out.println ("</center>");
+	out.println ("<center>");
+	out.println (
+	    "<applet CODE=\"" + chConfig.get ("code")
+	    + "\" CODEBASE=\"" + chConfig.get ("codeBase") 
+	    + "\" WIDTH=\"" + chConfig.get ("width") 
+	    + "\" HEIGHT=\"" + chConfig.get ("height") 
+	    + "\" ALIGN=top border=0 archive=\"" + chConfig.get ("archive")
+	    + "\">"
+	    );
+	
+	// Take all parameters whose names start with "APPLET." and pass them
+	// to the applet (after stripping "APPLET.")
+	Enumeration allKeys = chConfig.keys();
+	while (allKeys.hasMoreElements()) {
+	    String p = (String) allKeys.nextElement();
+	    if (p.startsWith("APPLET.")) {
+		String name = p.substring(7);          // skip "APPLET."
+		String value = (String) chConfig.get(p);
+		out.println(
+		    "   <param name=\"" + name + "\" value=\"" + value + "\">"
+		    );
+	    }
+	}
+	
+	out.println ("</applet>");
+	out.println ("</center>");
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+	Logger.log (Logger.ERROR, e);
     }
   }
+
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
-    // This channel is not editable
+      // This channel is not editable
   }
-
+    
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
-    // This channel has no help
+      // This channel has no help
   }
 }
