@@ -5,12 +5,15 @@
 
 package org.jasig.portal.layout.al.common.node;
 
+
 /**
  * Node type constant class
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
 public class NodeType {
+	
     private final String name;
     
     public final static NodeType CHANNEL=new NodeType("channel");
@@ -24,5 +27,13 @@ public class NodeType {
      */
     public String getName() {
         return name;
+    }
+    
+    public String toString() {
+      	return name;
+    }
+      
+    public boolean equals ( Object obj ) {
+      	return ( (obj instanceof NodeType) && obj.toString().equals(name) );
     }
 }
