@@ -19,7 +19,7 @@
       <head>
         <title>Untitled Document</title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-        <link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>
+        <!--<link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>-->
       <xsl:comment></xsl:comment>
       </head>
       <body>
@@ -65,7 +65,7 @@
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
             <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2">Options for Managing Channels:</td>
+              <td colspan="2" class="uportal-channel-text">Options for Managing Channels:</td>
             </tr>
             <tr valign="top">
               <td colspan="2">
@@ -74,11 +74,9 @@
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td>
-                <a href="#">
-                </a>
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
-              <td width="100%">
+              <td width="100%" class="uportal-channel-text">
                 <a href="{$baseActionURL}?uPCM_action=selectChannelType">Publish a new channel</a>
               </td>
             </tr>
@@ -726,6 +724,11 @@
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
+                <td align="center" valign="top">
+    <a href="javascript:alert('Name: Channel Class\nExample: org.jasig.portal.channels.myChannelClass\n\nDescription: This is the class for a custom channel. A channel class is mandatory')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a></td>
+
                 <td>
                 </td>
                 <td>
@@ -2705,6 +2708,11 @@ Detachable<br/>
   </xsl:template>
 
 </xsl:stylesheet>
+
+
+
+
+
 
 
 
