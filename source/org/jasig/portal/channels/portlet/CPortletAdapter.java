@@ -55,6 +55,8 @@ import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.InformationProviderAccess;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
@@ -67,6 +69,7 @@ import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
+import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
@@ -99,7 +102,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
-    private static final String portletPreferenceNamePrefix = "PORTLET.";
+    public static final String portletPreferenceNamePrefix = "PORTLET.";
 
     static {
         channelStateMap = Collections.synchronizedMap(new HashMap());
@@ -166,7 +169,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 throw new PortalException("Missing publish parameter '" + portletDefinitionIdParamName + "'");
             }
             
-            PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));                
+            PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));
+            ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(sd.getChannelPublishId()));
+            ((PortletDefinitionImpl)portletDefinition).setChannelDefinition(channelDefinition);      
                     
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());

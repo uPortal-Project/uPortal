@@ -51,6 +51,7 @@ import org.apache.pluto.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.portlet.PortletDefinitionCtrl;
 import org.apache.pluto.om.servlet.ServletDefinition;
+import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 
@@ -75,6 +76,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     private DisplayNameSet displayNames = null;
     private String expirationCache = null;
     private ClassLoader portletClassLoader = null;
+    private ChannelDefinition channelDefinition = null;
     
     // PortletDefinition methods
     
@@ -197,6 +199,14 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
 
     public void setServletDefinition(ServletDefinition definition) {
         this.servletDefinition = definition;
+    }
+    
+    public ChannelDefinition getChannelDefinition() {
+        return this.channelDefinition;
+    }
+    
+    public void setChannelDefinition(ChannelDefinition channelDefinition) {
+        this.channelDefinition = channelDefinition;
     }
 
 }
