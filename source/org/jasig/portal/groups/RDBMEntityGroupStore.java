@@ -47,6 +47,7 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * Store for <code>EntityGroupImpl</code>.
@@ -90,13 +91,24 @@ public class RDBMEntityGroupStore implements IEntityGroupStore {
     private static String deleteMembersInGroupSql;
     private static String deleteMemberSql;
     private static String insertMemberSql;
-
+    
+    // SQL group search string
+    private static String searchGroupsPartial = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" LIKE ?";
+    private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" = ?";
+    private Class groupType;
+    
 /**
  * RDBMEntityGroupStore constructor.
  */
 public RDBMEntityGroupStore()
 {
     super();
+    try{
+      groupType = Class.forName("org.jasig.portal.groups.IEntityGroup");
+    }
+    catch(Exception e){
+      LogService.instance().log(LogService.ERROR,e); 
+    }
 }
 /**
  * @param conn java.sql.Connection
@@ -1104,4 +1116,51 @@ private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsExc
 
     return eg;
 }
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    EntityIdentifier[] r = new EntityIdentifier[0];
+    ArrayList ar = new ArrayList();
+    Connection conn = null;
+    RDBMServices.PreparedStatement ps = null;
+    int type = EntityTypes.getEntityTypeID(leaftype).intValue();
+    System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
+
+        try {
+            conn = RDBMServices.getConnection();
+            switch(method){
+              case IS:
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroups);
+                break;
+              case STARTS_WITH:
+                query = query+"%";
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              case ENDS_WITH:
+                query = "%"+query;
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              case CONTAINS:
+                query = "%"+query+"%";
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              default:
+                throw new GroupsException("Unknown search type");
+            }
+            ps.clearParameters();
+            ps.setInt(1,type);
+            ps.setString(2,query);
+            ResultSet rs = ps.executeQuery();
+            //System.out.println(ps.toString());
+            while (rs.next()){
+              //System.out.println("result");
+              ar.add(new EntityIdentifier(rs.getString(1),groupType));
+            }
+            ps.close();
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.instance().log(LogService.ERROR, e);
+        } finally {
+            RDBMServices.releaseConnection(conn);
+        }
+      return (EntityIdentifier[]) ar.toArray(r);
+  }
 }
