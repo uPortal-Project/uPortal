@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Xerces" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -156,8 +156,8 @@ public class PalmHTMLSerializer
         this( false, format != null ? format : new OutputFormat( Method.HTML, null, false ) );
         setOutputByteStream( output );
     }
-    
-    
+
+
     public void setOutputFormat( OutputFormat format )
     {
         super.setOutputFormat( format != null ? format : new OutputFormat( Method.HTML, null, false ) );
@@ -179,10 +179,10 @@ public class PalmHTMLSerializer
         String       value;
         String       htmlName;
         boolean      addNSAttr = false;
-        
+
         if ( _printer == null )
             throw new IllegalStateException( "SER002 No writer supplied for serializer" );
-        
+
         state = getElementState();
         if ( isDocumentState() ) {
             // If this is the root element handle it differently.
@@ -208,7 +208,7 @@ public class PalmHTMLSerializer
 
         // Do not change the current element state yet.
         // This only happens in endElement().
-        
+
         if ( rawName == null ) {
             rawName = localName;
             if ( namespaceURI != null ) {
@@ -227,7 +227,7 @@ public class PalmHTMLSerializer
             else
                 htmlName = null;
         }
-        
+
         // XHTML: element names are lower case, DOM will be different
         _printer.printText( '<' );
         if ( _xhtml )
@@ -235,7 +235,7 @@ public class PalmHTMLSerializer
         else
             _printer.printText( rawName );
         _printer.indent();
-        
+
         // For each attribute serialize it's name and value as one part,
         // separated with a space so the element can be broken on
         // multiple lines.
@@ -262,7 +262,7 @@ public class PalmHTMLSerializer
                         _printer.printText( name );
                     else if ( PalmHTMLdtd.isURI( rawName, name ) ) {
                         _printer.printText( name );
-                        _printer.printText( "=\"" ); 
+                        _printer.printText( "=\"" );
                         _printer.printText( escapeURI( value ) );
                         _printer.printText( '"' );
                     } else if ( PalmHTMLdtd.isBoolean( rawName, name ) )
@@ -278,10 +278,10 @@ public class PalmHTMLSerializer
         }
         if ( htmlName != null && PalmHTMLdtd.isPreserveSpace( htmlName ) )
             preserveSpace = true;
-        
+
         if ( addNSAttr ) {
             Enumeration enum;
-            
+
             enum = _prefixes.keys();
             while ( enum.hasMoreElements() ) {
                 _printer.printSpace();
@@ -300,20 +300,20 @@ public class PalmHTMLSerializer
                 }
             }
         }
-        
+
         // Now it's time to enter a new element state
         // with the tag name and space preserving.
         // We still do not change the curent element state.
         state = enterElementState( namespaceURI, localName, rawName, preserveSpace );
-        
+
         // Prevents line breaks inside A/TD
-        
+
         if ( htmlName != null && ( htmlName.equalsIgnoreCase( "A" ) ||
                                    htmlName.equalsIgnoreCase( "TD" ) ) ) {
             state.empty = false;
             _printer.printText( '>' );
         }
-        
+
         // Handle SCRIPT and STYLE specifically by changing the
         // state of the current element to CDATA (XHTML) or
         // unescaped (HTML).
@@ -328,20 +328,20 @@ public class PalmHTMLSerializer
             }
         }
     }
-    
-    
+
+
     public void endElement( String namespaceURI, String localName,
                             String rawName )
     {
         ElementState state;
         String       htmlName;
-        
+
         // Works much like content() with additions for closing
         // an element. Note the different checks for the closed
         // element's state and the parent element's state.
         _printer.unindent();
         state = getElementState();
-        
+
         if ( state.namespaceURI == null )
             htmlName = state.rawName;
         else {
@@ -350,7 +350,7 @@ public class PalmHTMLSerializer
             else
                 htmlName = null;
         }
-        
+
         if ( _xhtml) {
             if ( state.empty ) {
                 _printer.printText( " />" );
@@ -388,14 +388,14 @@ public class PalmHTMLSerializer
         // Temporary hack to prevent line breaks inside A/TD
         if ( htmlName == null || ( ! htmlName.equalsIgnoreCase( "A" ) &&
                                    ! htmlName.equalsIgnoreCase( "TD" ) ) )
-            
+
             state.afterElement = true;
         state.empty = false;
         if ( isDocumentState() )
             _printer.flush();
     }
-    
-    
+
+
     //------------------------------------------//
     // SAX document handler serializing methods //
     //------------------------------------------//
@@ -404,14 +404,14 @@ public class PalmHTMLSerializer
     public void characters( char[] chars, int start, int length )
     {
         ElementState state;
-        
+
         // HTML: no CDATA section
         state = content();
         state.doCData = false;
         super.characters( chars, start, length );
     }
-    
-    
+
+
     public void startDocument()
     {
         // Do nothing for HTML/XHTML, browser might not respond
@@ -419,8 +419,8 @@ public class PalmHTMLSerializer
         if ( _printer == null )
             throw new IllegalStateException( "SER002 No writer supplied for serializer" );
     }
-    
-    
+
+
     public void startElement( String tagName, AttributeList attrs )
     {
         int          i;
@@ -428,10 +428,10 @@ public class PalmHTMLSerializer
         ElementState state;
         String       name;
         String       value;
-        
+
         if ( _printer == null )
             throw new IllegalStateException( "SER002 No writer supplied for serializer" );
-        
+
         state = getElementState();
         if ( isDocumentState() ) {
             // If this is the root element handle it differently.
@@ -457,7 +457,7 @@ public class PalmHTMLSerializer
 
         // Do not change the current element state yet.
         // This only happens in endElement().
-        
+
         // XHTML: element names are lower case, DOM will be different
         _printer.printText( '<' );
         if ( _xhtml )
@@ -465,7 +465,7 @@ public class PalmHTMLSerializer
         else
             _printer.printText( tagName );
         _printer.indent();
-        
+
         // For each attribute serialize it's name and value as one part,
         // separated with a space so the element can be broken on
         // multiple lines.
@@ -481,7 +481,7 @@ public class PalmHTMLSerializer
                         _printer.printText( "=\"\"" );
                     } else {
                         _printer.printText( name );
-                        _printer.printText( "=\"" ); 
+                        _printer.printText( "=\"" );
                         printEscaped( value );
                         _printer.printText( '"' );
                     }
@@ -492,14 +492,14 @@ public class PalmHTMLSerializer
                         _printer.printText( name );
                     else if ( PalmHTMLdtd.isURI( tagName, name ) ) {
                         _printer.printText( name );
-                        _printer.printText( "=\"" ); 
+                        _printer.printText( "=\"" );
                         _printer.printText( escapeURI( value ) );
                         _printer.printText( '"' );
                     } else if ( PalmHTMLdtd.isBoolean( tagName, name ) )
                         _printer.printText( name );
                     else {
                         _printer.printText( name );
-                        _printer.printText( "=\"" ); 
+                        _printer.printText( "=\"" );
                         printEscaped( value );
                         _printer.printText( '"' );
                     }
@@ -508,18 +508,18 @@ public class PalmHTMLSerializer
         }
         if ( PalmHTMLdtd.isPreserveSpace( tagName ) )
             preserveSpace = true;
-        
+
         // Now it's time to enter a new element state
         // with the tag name and space preserving.
         // We still do not change the curent element state.
         state = enterElementState( null, null, tagName, preserveSpace );
-        
+
         // Prevents line breaks inside A/TD
         if ( tagName.equalsIgnoreCase( "A" ) || tagName.equalsIgnoreCase( "TD" ) ) {
             state.empty = false;
             _printer.printText( '>' );
         }
-        
+
         // Handle SCRIPT and STYLE specifically by changing the
         // state of the current element to CDATA (XHTML) or
         // unescaped (HTML).
@@ -534,8 +534,8 @@ public class PalmHTMLSerializer
             }
         }
     }
-    
-    
+
+
     public void endElement( String tagName )
     {
         endElement( null, null, tagName );
@@ -562,7 +562,7 @@ public class PalmHTMLSerializer
     protected void startDocument( String rootTagName )
     {
         StringBuffer buffer;
-        
+
         // Not supported in HTML/XHTML, but we still have to switch
         // out of DTD mode.
         _printer.leaveDTD();
@@ -604,7 +604,7 @@ public class PalmHTMLSerializer
                 _printer.breakLine();
             }
         }
-        
+
         _started = true;
         // Always serialize these, even if not te first root element.
         serializePreRoot();
@@ -627,7 +627,7 @@ public class PalmHTMLSerializer
         String       name;
         String       value;
         String       tagName;
-        
+
         tagName = elem.getTagName();
         state = getElementState();
         if ( isDocumentState() ) {
@@ -654,7 +654,7 @@ public class PalmHTMLSerializer
 
         // Do not change the current element state yet.
         // This only happens in endElement().
-        
+
         // XHTML: element names are lower case, DOM will be different
         _printer.printText( '<' );
         if ( _xhtml )
@@ -662,7 +662,7 @@ public class PalmHTMLSerializer
         else
             _printer.printText( tagName );
         _printer.indent();
-        
+
         // Lookup the element's attribute, but only print specified
         // attributes. (Unspecified attributes are derived from the DTD.
         // For each attribute print it's name and value as one part,
@@ -711,20 +711,20 @@ public class PalmHTMLSerializer
         }
         if ( PalmHTMLdtd.isPreserveSpace( tagName ) )
             preserveSpace = true;
-        
+
         // If element has children, or if element is not an empty tag,
         // serialize an opening tag.
         if ( elem.hasChildNodes() || ! PalmHTMLdtd.isEmptyTag( tagName ) ) {
             // Enter an element state, and serialize the children
             // one by one. Finally, end the element.
             state = enterElementState( null, null, tagName, preserveSpace );
-            
+
             // Prevents line breaks inside A/TD
             if ( tagName.equalsIgnoreCase( "A" ) || tagName.equalsIgnoreCase( "TD" ) ) {
                 state.empty = false;
                 _printer.printText( '>' );
             }
-            
+
             // Handle SCRIPT and STYLE specifically by changing the
             // state of the current element to CDATA (XHTML) or
             // unescaped (HTML).
@@ -765,24 +765,29 @@ public class PalmHTMLSerializer
     protected void characters( String text )
     {
         ElementState state;
-        
+
         // HTML: no CDATA section
         state = content();
         state.doCData = false;
         super.characters( text );
     }
-    
-    
+
+
     protected String getEntityRef( char ch )
     {
         return PalmHTMLdtd.fromChar( ch );
+    }
+
+    protected String getEntityRef(int ch)
+    {
+        return getEntityRef((char) ch);
     }
 
 
     protected String escapeURI( String uri )
     {
         int index;
-        
+
         // XXX  Apparently Netscape doesn't like if we escape the URI
         //      using %nn, so we leave it as is, just remove any quotes.
         index = uri.indexOf( "\"" );
