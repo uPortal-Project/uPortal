@@ -88,7 +88,7 @@ public class AuthenticationServlet extends HttpServlet {
     // Clear out the existing session for the user
     request.getSession().invalidate();
     // Retrieve the user's session
-    HttpSession session = request.getSession(true);
+    request.getSession(true);
     IPerson person = null;
     try {
       // Get the person object associated with the request
@@ -106,8 +106,11 @@ public class AuthenticationServlet extends HttpServlet {
     } catch (Exception e) {
       // Log the exception
       LogService.log(LogService.ERROR, e);
-      // Store the error in the session
-      session.setAttribute("up_authorizationError", "true");
+      // Reset everything
+      person = null;
+      request.getSession(false).invalidate();
+      // Add the authentication failure
+      request.getSession(true).setAttribute("up_authenticationError", "true");
     }
     // Check to see if the person has been authenticated
     if (person != null && person.getSecurityContext().isAuthenticated()) {
@@ -117,7 +120,7 @@ public class AuthenticationServlet extends HttpServlet {
     } 
     else {
       // Store the fact that this user has attempted authorization in the session
-      session.setAttribute("up_authorizationAttempted", "true");
+      request.getSession(false).setAttribute("up_authorizationAttempted", "true");
       // Send the unauthenticated to the baseActionURL
       response.sendRedirect(request.getParameter("baseActionURL") + "?userName=" + request.getParameter("userName"));
     }
