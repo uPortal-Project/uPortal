@@ -669,12 +669,25 @@ public class UserInstance implements HttpSessionBindingListener {
 
         if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
             ulm.markMoveTargets(values[0]);
-        }
-
+        } else {
+            ulm.markMoveTargets(null);
+          }
 
         if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
             int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
             ulm.markAddTargets(ulm.createNodeDescription(nodeType));
+        } else {
+            ulm.markAddTargets(null);
+          }
+
+        if ((values = req.getParameterValues("uP_add_target")) != null) {
+         String[] values1, values2;
+         int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
+         if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
+            IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
+            nodeDesc.setName("Unnamed folder");
+            nodeDesc = ulm.addNode(nodeDesc,values2[0],values1[0]);
+         }
         }
 
         if ((values = req.getParameterValues("uP_move_target")) != null) {
