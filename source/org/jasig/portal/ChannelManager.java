@@ -92,6 +92,8 @@ public class ChannelManager {
     private Context portalContext;
     private Context channelContext;
 
+    private IAuthorizationPrincipal ap;
+
     public String uPElement;
 
     // global channel rendering cache
@@ -391,7 +393,9 @@ public class ChannelManager {
         IChannel ch=null;
 
         // check if the user has permissions to instantiate this channel
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
+        if(ap==null) {
+            ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
+        } 
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
             
@@ -435,7 +439,6 @@ public class ChannelManager {
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
-            LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : user has no authorization to render channel "+chanId+".");
             ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",chanId,null);
         }
 
