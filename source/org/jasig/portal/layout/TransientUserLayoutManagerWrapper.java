@@ -431,7 +431,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             ulnd.setEditable(chanDef.isEditable());
             ulnd.setHasHelp(chanDef.hasHelp());
             ulnd.setHasAbout(chanDef.hasAbout());
-
+            ulnd.setIsSecure(chanDef.isSecure());
+            
             ChannelParameter[] parms = chanDef.getParameters();
             for ( int i=0; i<parms.length; i++ )
             {
@@ -565,6 +566,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                                       CommonUtils.boolToStr(chanDef.hasHelp()));
                             channelAttrs.addAttribute("","hasAbout","hasAbout","CDATA",
                                                       CommonUtils.boolToStr(chanDef.hasAbout()));
+                            channelAttrs.addAttribute("","secure","secure","CDATA",
+                                                      CommonUtils.boolToStr(chanDef.isSecure()));
 
                             startElement("",CHANNEL,CHANNEL,channelAttrs);
 

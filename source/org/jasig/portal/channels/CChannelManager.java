@@ -322,6 +322,7 @@ public class CChannelManager extends BaseChannel {
                 String title = runtimeData.getParameter("title");
                 String timeout = runtimeData.getParameter("timeout");
                 String javaClass = runtimeData.getParameter("class");
+                String secure = runtimeData.getParameter("secure");                
                 if (name != null)
                     channelDef.setName(name.trim());
                 if (fname != null)
@@ -334,6 +335,8 @@ public class CChannelManager extends BaseChannel {
                     channelDef.setTimeout(timeout.trim());
                 if (javaClass != null)
                     channelDef.setJavaClass(javaClass.trim());
+
+                channelDef.setIsSecure(secure != null ? "true" : "false");                
                 // Custom parameters
             }
             else if (capture.equals("customSettings")) {
@@ -1085,6 +1088,7 @@ public class CChannelManager extends BaseChannel {
         protected String editable;
         protected String hasHelp;
         protected String hasAbout;
+        protected String secure;        
         protected Map parameters;
 
         protected class Parameter {
@@ -1193,6 +1197,14 @@ public class CChannelManager extends BaseChannel {
         }
 
         /**
+         * Channel secure setting.
+         * @return 'true' or 'false'
+         */
+        protected String isSecure () {
+            return  secure;
+        }
+        
+        /**
          * put your documentation comment here
          * @param typeID
          */
@@ -1272,6 +1284,14 @@ public class CChannelManager extends BaseChannel {
             this.hasAbout = hasAbout;
         }
 
+        /**
+         * Sets channel secure setting.
+         * @param secure  'true' or 'false'
+         */
+        protected void setIsSecure (String secure) {
+            this.secure = secure;
+        }
+        
         /**
          * put your documentation comment here
          * @param e
@@ -1368,6 +1388,7 @@ public class CChannelManager extends BaseChannel {
             editable = channelE.getAttribute("editable");
             hasHelp = channelE.getAttribute("hasHelp");
             hasAbout = channelE.getAttribute("hasAbout");
+            secure = channelE.getAttribute("secure");            
             for (Node n = channelE.getFirstChild(); n != null; n = n.getNextSibling()) {
                 if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("parameter")) {
                     Element parameterE = (Element)n;
@@ -1396,6 +1417,7 @@ public class CChannelManager extends BaseChannel {
             setAttribute(channelE, "editable", editable);
             setAttribute(channelE, "hasAbout", hasAbout);
             setAttribute(channelE, "hasHelp", hasHelp);
+            setAttribute(channelE, "secure", secure);            
             Iterator iter = parameters.keySet().iterator();
             while (iter.hasNext()) {
                 String name = (String)iter.next();

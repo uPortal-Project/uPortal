@@ -1040,7 +1040,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
               attributes.addAttribute("","timeout","timeout","CDATA",String.valueOf(channelDescription.getTimeout()));
               attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
               attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
-
+              attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
+              
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
 
               if ( channelDescription.hasParameters() ) {
@@ -1288,6 +1289,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         channelDesc.setEditable(CommonUtils.strToBool(node.getAttribute("editable")));
         channelDesc.setHasAbout(CommonUtils.strToBool(node.getAttribute("hasAbout")));
         channelDesc.setHasHelp(CommonUtils.strToBool(node.getAttribute("hasHelp")));
+        channelDesc.setIsSecure(CommonUtils.strToBool(node.getAttribute("secure")));        
         channelDesc.setFunctionalName(node.getAttribute("fname"));
         channelDesc.setTimeout(Long.parseLong(node.getAttribute("timeout")));
         channelDesc.setTitle(node.getAttribute("title"));

@@ -103,7 +103,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                   " WHERE CHAN_ID=? AND CHAN_PARM_NM=?";
   protected static final String CHANNEL_UPDATE_SQL = "UPDATE UP_CHANNEL SET CHAN_TITLE=?,CHAN_NAME=?,CHAN_DESC=?,CHAN_CLASS=?,CHAN_TYPE_ID=?,"+
                       "CHAN_PUBL_ID=?,CHAN_PUBL_DT=?,CHAN_APVL_ID=?,CHAN_APVL_DT=?,CHAN_TIMEOUT=?,CHAN_EDITABLE=?,CHAN_HAS_HELP=?,CHAN_HAS_ABOUT=?,"+
-                      "CHAN_FNAME=? WHERE CHAN_ID=?";
+                      "CHAN_FNAME=?,CHAN_SECURE=? WHERE CHAN_ID=?";
   protected static final String FRAGMENT_ADD_SQL = "INSERT INTO UP_FRAGMENTS (FRAGMENT_ID,NODE_ID,NEXT_NODE_ID,PREV_NODE_ID,CHLD_NODE_ID,PRNT_NODE_ID,"+
                                                                "EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,GROUP_KEY,PRIORITY)"+
                                                                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -118,7 +118,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                                         " VALUES (?,?,?,?,?)";
   protected static final String CHANNEL_ADD_SQL = "INSERT INTO UP_CHANNEL (CHAN_ID,CHAN_TITLE,CHAN_NAME,CHAN_DESC,CHAN_CLASS,CHAN_TYPE_ID,CHAN_PUBL_ID,"+
                                   "CHAN_PUBL_DT,CHAN_APVL_ID,CHAN_APVL_DT,CHAN_TIMEOUT,CHAN_EDITABLE,CHAN_HAS_HELP,CHAN_HAS_ABOUT,"+
-                                  "CHAN_FNAME) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                  "CHAN_FNAME,CHAN_SECURE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   private static String fragmentJoinQuery = "";
 
@@ -2695,6 +2695,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
                  channelDesc.setHasAbout(channelDef.hasAbout());
                  channelDesc.setHasHelp(channelDef.hasHelp());
+                 channelDesc.setIsSecure(channelDef.isSecure());
                  channelDesc.setName(channelDef.getName());
                  channelDesc.setTitle(channelDef.getTitle());
                  channelDesc.setChannelPublishId(channelDef.getId()+"");
