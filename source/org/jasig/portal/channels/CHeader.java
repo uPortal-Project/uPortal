@@ -40,15 +40,21 @@ package  org.jasig.portal.channels;
 
 import  java.net.URL;
 import  java.util.Hashtable;
+import  java.util.HashMap;
 import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  javax.naming.NamingException;
-import org.jasig.portal.MediaManager;
+import  org.jasig.portal.security.Permission;
+import  org.jasig.portal.security.PermissionManager;
+import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.MediaManager;
 import  org.jasig.portal.UtilitiesBean;
-import  org.jasig.portal.Logger;
-import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
+import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.utils.SmartCache;
+import  org.jasig.portal.factories.DocumentFactory;
 import  org.xml.sax.DocumentHandler;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Element;
@@ -61,11 +67,25 @@ import  org.w3c.dom.Element;
  * page.
  * @author Peter Kharchenko
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision 1.1$
  */
 public class CHeader extends BaseChannel {
-  private static final String sslUri = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
-    private MediaManager mm=new MediaManager();
+  // Create a URL object for the XSLT parser
+  private static URL m_sslURL = null;
+  // Create a MediaManager for this channel to use
+  private static MediaManager mm = new MediaManager();
+  // Cache the answers to canUserPublish() to speed things up
+  private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
+  // Create a URL object from the URI string
+  static {
+    try {
+      // Turn the URI string into a URL object
+      m_sslURL = new URL(UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl"));
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+    }
+  }
 
   /**
    * put your documentation comment here
@@ -73,8 +93,43 @@ public class CHeader extends BaseChannel {
    * @exception PortalException
    */
   public void renderXML (DocumentHandler out) throws PortalException {
+    try {
+      // Perform the transformation
+      XSLT.transform(getUserXML(), m_sslURL, out, getStylesheetParams(), mm.getMedia(runtimeData.getBrowserInfo()));
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+      throw  (new GeneralRenderingException(e.getMessage()));
+    }
+  }
+
+  /**
+   * Returns the Hashtable of stylesheet parameters for the current user
+   * NOTE: This should be made more effecient, perhaps by avoiding the Hashtable creating for every call
+   * @return 
+   */
+  private Hashtable getStylesheetParams () {
+    // Create a new hashtable for the user
+    Hashtable stylesheetParams = new Hashtable(2);
+    // Add the baseActionURL to the stylesheet parameters
+    stylesheetParams.put("baseActionURL", runtimeData.getBaseActionURL());
+    // Add the guest user flag if applicable
+    if (staticData.getPerson().getFullName() != null && staticData.getPerson().getFullName().equals("Guest")) {
+      stylesheetParams.put("guest", "true");
+    }
+    // Return the hashtable
+    return  (stylesheetParams);
+  }
+
+  /**
+   * Returns the DOM object associated with the user
+   * NOTE: This should be made more effecient through caching
+   * @return 
+   */
+  private Document getUserXML () {
+    // Get the fullname of the current user
     String fullName = (String)staticData.getPerson().getFullName();
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    // Get a new DOM instance
+    Document doc = DocumentFactory.getNewDocument();
     // Create <header> element
     Element headerEl = doc.createElement("header");
     // Create <full-name> element under <header>
@@ -89,15 +144,18 @@ public class CHeader extends BaseChannel {
     Element timeStampShortEl = doc.createElement("timestamp-short");
     timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
+    // Don't render the publish, subscribe, user preferences links if it's the guest user
     if (fullName != null && !fullName.equals("Guest")) {
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
         globalIDContext = (Context)staticData.getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
-        // Create <timestamp-short> element under <header>
-        Element publishChanidEl = doc.createElement("publish-chanid");
-        publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
-        headerEl.appendChild(publishChanidEl);
+        if (canUserPublish()) {
+          // Create <timestamp-short> element under <header>
+          Element publishChanidEl = doc.createElement("publish-chanid");
+          publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
+          headerEl.appendChild(publishChanidEl);
+        }
         // Create <timestamp-short> element under <header>
         Element subscribeChanidEl = doc.createElement("subscribe-chanid");
         subscribeChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/subscribe/general")));
@@ -107,20 +165,53 @@ public class CHeader extends BaseChannel {
         preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
         headerEl.appendChild(preferencesChanidEl);
       } catch (NamingException e) {
-        Logger.log(Logger.ERROR, e);
+        LogService.instance().log(LogService.ERROR, e);
       }
     }
     doc.appendChild(headerEl);
-    // Set up stylesheet parameters: "baseActionURL" and "guest"
-    Hashtable ssParams = new Hashtable(2);
-    ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-    if (fullName != null && fullName.equals("Guest")) {
-      ssParams.put("guest", "true");
+    return  (doc);
+  }
+
+  /**
+   * Checks user permissions to see if the user is authorized to publish channels
+   * @return 
+   */
+  private boolean canUserPublish () {
+    // Get the current user ID
+    int userID = staticData.getPerson().getID();
+    // Check the cache for the answer
+    if (m_canUserPublishResponses.get("USER_ID." + userID) != null) {
+      // Return the answer if it's in the cache
+      if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
+        return  (true);
+      } 
+      else {
+        return  (false);
+      }
     }
+    // Get a reference to the PermissionManager for this channel
+    PermissionManager pm = staticData.getPermissionManager();
     try {
-      XSLT.transform(doc, new URL(sslUri), out, ssParams, mm.getMedia(runtimeData.getBrowserInfo()));
+      // Check to see if the user or all user's are specifically denied access
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH", 
+          "*", "DENY").length > 0) {
+        // Cache the result
+        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(false));
+        return  (false);
+      }
+      // Check to see if the user or all users are granted permission by default
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH", 
+          "*", "GRANT").length > 0) {
+        // Cache the result
+        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(true));
+        return  (true);
+      }
+      // Since no permission exist for this user we will return true by default
+      return  (true);
     } catch (Exception e) {
-      throw  new GeneralRenderingException(e.getMessage());
+      LogService.instance().log(LogService.ERROR, e);
+      // Deny the user publish access if anything went wrong
+      return  (false);
     }
   }
 }
