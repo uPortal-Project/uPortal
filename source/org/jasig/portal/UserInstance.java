@@ -333,7 +333,7 @@ public class UserInstance implements HttpSessionBindingListener {
             if(this.CACHE_ENABLED) {
                 boolean ccache_exists=false;
                 // obtain the cache key
-                cacheKey=constructCacheKey(this.getPerson(),userPreferences);
+                cacheKey=constructCacheKey(this.getPerson(),userPreferences,uPElement);
                 if(ccaching) {
                     // obtain character cache
                     CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
@@ -496,16 +496,12 @@ public class UserInstance implements HttpSessionBindingListener {
                 if (detachMode) {
                     saif.startDocument();
                     saif.startElement("","layout_fragment","layout_fragment", new org.xml.sax.helpers.AttributesImpl());
-                    emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
+
+                    emptyt.transform(new DOMSource(rElement),new SAXResult(new ChannelSAXStreamFilter((ContentHandler)saif)));
                     saif.endElement("","layout_fragment","layout_fragment");
                     saif.endDocument();
-                } else if (rElement.getNodeType() == Node.DOCUMENT_NODE) {
-                    emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
                 } else {
-                    // as it is, this should never happen
-                    saif.startDocument();
                     emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
-                    saif.endDocument();
                 }
                 // all channels should be rendering now
 
@@ -513,8 +509,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 if (printXMLBeforeStructureTransformation) {
                   LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
                 }
-
-
+                
                 // prepare for the theme transformation
 
                 // set up of the parameters
@@ -618,9 +613,10 @@ public class UserInstance implements HttpSessionBindingListener {
         return p_rendering_lock;
     }
 
-    private static String constructCacheKey(IPerson person,UserPreferences userPreferences) {
+    private static String constructCacheKey(IPerson person,UserPreferences userPreferences,String uPElement) {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
+        sbKey.append(uPElement).append(",");
         sbKey.append(userPreferences.getCacheKey());
         return sbKey.toString();
     }
