@@ -42,6 +42,8 @@ import org.jasig.portal.utils.ResourceLoader;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -83,6 +85,11 @@ public class PersonDirectory {
 
   static Vector sources = null; // List of PersonDirInfo objects
   static Hashtable drivers = new Hashtable(); // Registered JDBC drivers
+  public static HashSet propertynames = new HashSet();
+
+  public static Iterator getPropertyNamesIterator() {
+    return propertynames.iterator();
+  }
 
   /**
    * Parse XML file and create PersonDirInfo objects
@@ -160,7 +167,7 @@ public class PersonDirectory {
             continue; // whitespace (typically \n) between tags
           Element pele = (Element) param;
           String tagname = pele.getTagName();
-          String value = XML.getElementText(pele);
+          String value = getTextUnderElement(pele);
 
           // each tagname corresponds to an object data field
           if (tagname.equals("url")) {
@@ -188,13 +195,13 @@ public class PersonDirectory {
                 NodeList namenodes = anode.getElementsByTagName("name");
                 String aname = "$$$";
                 if (namenodes.getLength()!=0)
-                  aname = XML.getElementText((Element)(namenodes.item(0)));
+                  aname= getTextUnderElement(namenodes.item(0));
                 pdi.attributenames[j]=aname;
                 NodeList aliasnodes = anode.getElementsByTagName("alias");
                 if (aliasnodes.getLength()==0) {
                   pdi.attributealiases[j]=aname;
                 } else {
-                  pdi.attributealiases[j]=XML.getElementText((Element)(aliasnodes.item(0)));
+                  pdi.attributealiases[j]=getTextUnderElement(aliasnodes.item(0));
                 }
               }
             } else {
@@ -224,8 +231,12 @@ public class PersonDirectory {
               }
             }
           } else {
-            LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
+      	    LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
+        }
+        for (int ii=0;ii<pdi.attributealiases.length;ii++) {
+          String aa = pdi.attributealiases[ii];
+          propertynames.add(aa);
         }
         sources.addElement(pdi); // Add one LDAP or JDBC source to the list
       }
@@ -236,6 +247,21 @@ public class PersonDirectory {
       return false;
     }
     return true;
+  }
+
+
+  private String getTextUnderElement(Node nele) {
+    if (!(nele instanceof Element))
+      return null;
+    Element pele = (Element) nele;
+    StringBuffer vb = new StringBuffer();
+    NodeList vnodes = pele.getChildNodes();
+    for (int j =0; j<vnodes.getLength();j++) {
+      Node vnode = vnodes.item(j);
+      if (vnode instanceof Text)
+        vb.append(((Text)vnode).getData());
+    }
+    return vb.toString();
   }
 
   /**
