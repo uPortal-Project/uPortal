@@ -314,12 +314,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_user_role */
-        Insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID, PRIM_ROLE_IND) "+
-          " SELECT "+newUID+", UUR.ROLE_ID, UUR.PRIM_ROLE_IND FROM UP_USER_ROLE UUR WHERE UUR.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
-
         /* insert row into up_user_ua_map */
         Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
           " SELECT "+newUID+", UUUA.USER_AGENT, UUUA.PROFILE_ID"+
