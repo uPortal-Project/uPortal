@@ -5,28 +5,28 @@ CREATE TABLE PORTAL_CLASS(
 	NAME VARCHAR(100) not null
 	);
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('News') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Sports') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Weather') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Financial') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Development') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Other') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Just4Fun') ;
 
-INSERT INTO PORTAL_CLASS (NAME)
+INSERT INTO PORTAL_CLASS (name)
 VALUES ('Applications') ;
 
 DROP TABLE PORTAL_CHAN_TYPES;
@@ -47,6 +47,9 @@ VALUES ('CPageRenderer', 'HTML Channel', 'HTML is a quick and easy way to create
 INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESCR)
 VALUES ('CInlineFrame', 'Inline Frame Channel', 'This channel uses HTML and presents it in an Inline Frame. Please note that only newer browsers support this.');
 
+INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESCR)
+VALUES ('CApplet', 'Applet Channel', 'This channel uses program code located on a server which is then executed within the portal. This channel requires a number of parameters to be set and is for more experienced users.');
+
 DROP TABLE PORTAL_CHANNELS;
 
 CREATE TABLE PORTAL_CHANNELS (
@@ -57,12 +60,12 @@ CREATE TABLE PORTAL_CHANNELS (
 	CHANNEL_XML LONGVARCHAR not null
 	);
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('Salon.com', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
       </channel>') ;
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('ABC News', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ABC News" name="name"/>
         <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
@@ -74,26 +77,26 @@ VALUES ('ABC News', '<channel minimized="false" class="org.jasig.portal.channels
         <parameter name="APPLET.station" value="KABC"/>
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('Search', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('DE Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
         <parameter value="DE" name="state"/>
         <parameter value="Newark" name="city"/>
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('JA-SIG uPortal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('My Bookmarks', '<channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('ESPN Scoreboard', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ESPN Scoreboard" name="name"/>
         <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
@@ -112,7 +115,7 @@ VALUES ('ESPN Scoreboard', '<channel minimized="false" class="org.jasig.portal.c
         <parameter name="APPLET.inactive data time" value="300000"/>
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="Clock" name="name"/>
         <parameter value="Clock3D.class" name="code"/>
@@ -137,7 +140,7 @@ VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.chann
         <parameter name="APPLET.12hour" value="0"/>
       </channel>');
 
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('UD Homepage', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
         <parameter value="UDel" name="name"/>
         <parameter value="http://www.udel.edu" name="url"/>
