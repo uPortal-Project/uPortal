@@ -39,7 +39,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,7 +53,11 @@ import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -74,8 +82,8 @@ import org.w3c.dom.NodeList;
  * ant publish -Dchannel=all  (this will publish all channels that have a corresponding xml file)
  * ant publish -Dchannel=webmail.xml  (this will publish the specified channels)
  *
- * @author Freddy Lopez, flopez@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Freddy Lopez, flopez@unicon.net
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class ChannelPublisher {
@@ -86,14 +94,13 @@ public class ChannelPublisher {
   private static int MODE;
 
   private static Properties channelTypesProperties;
-  private static Properties categoriesProperties;
-  private static Properties groupsProperties;
 
   private static IPerson systemUser;
   private static DocumentBuilder domParser;
   private static IChannelRegistryStore crs;
+  private static Map chanTypesNamesToIds;
   
-  private static final String chanDefsLocation = "/properties/chanpub/chandefs";
+  private static final String chanDefsLocation = "/properties/chanpub";
 
   public static void main(String[] args) {
 
@@ -105,13 +112,8 @@ public class ChannelPublisher {
         ant publish -Dchannel=all or -Dchannel=webmail.xml
 
         2) validate each against the channelDefinition.dtd file
-
-        3) load properties files
-          - channelTypes.properties
-          - categories.properties
-          - groups.properties
       
-        4) publish one channel at a time
+        3) publish one channel at a time
 
         */
 
@@ -130,8 +132,8 @@ public class ChannelPublisher {
 
           // initialize channel registry store
           crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-          // load properties files
-          loadProps();
+          // read in channel types
+          initChanTypeMap();
           // create IPerson object for the portal's system user
           setupSystemUser();
           // setup DOM Parser with dtd validation
@@ -201,20 +203,6 @@ public class ChannelPublisher {
 
   private static void setupSystemUser() {
         systemUser = PersonFactory.createSystemPerson();
-  }
-
-  private static void loadProps() throws Exception {
-        // Load channelTypes.properties
-        channelTypesProperties = ResourceLoader.getResourceAsProperties(ChannelPublisher.class, "/properties/chanpub/channelTypes.properties");
-        LogService.log(LogService.INFO, "loadProps() :: channelTypes.properties file loaded. ");
-
-        // Load categories.properties
-        categoriesProperties = ResourceLoader.getResourceAsProperties(ChannelPublisher.class, "/properties/chanpub/categories.properties");
-        LogService.log(LogService.INFO, "loadProps() :: categories.properties file loaded. ");
-
-        // Load groups.properties
-        groupsProperties = ResourceLoader.getResourceAsProperties(ChannelPublisher.class, "/properties/chanpub/groups.properties");
-        LogService.log(LogService.INFO, "loadProps() :: groups.properties file loaded. ");
   }
 
   private static void publishChannel(ChannelInfo ci) throws Exception {
@@ -322,9 +310,7 @@ public class ChannelPublisher {
                 else if (tagname.equals("desc"))
                   ci.chanDef.setDescription(value);
                 else if (tagname.equals("type")) {
-                  // need to lookup corresponding channel type as declared in channelTypes.properties
-                  // i.e.: Custom = -1, WebProxy = 4
-                  String typeId = channelTypesProperties.getProperty(value);
+                  String typeId = (String)chanTypesNamesToIds.get(value);
                   if (typeId != null) {
                         ci.chanDef.setTypeId(Integer.parseInt(typeId));
                   } else {
@@ -352,11 +338,11 @@ public class ChannelPublisher {
                           // need to look up corresponding category id
                           // ie: Applications = local.50
                           //     Entertainment = local.51
-                          String cat = categoriesProperties.getProperty(catString);
-                          if (cat != null)
-                                ci.categories[j] = crs.getChannelCategory(cat);
+                          IEntityGroup category = getGroup(catString, ChannelDefinition.class);
+                          if (category != null)
+                            ci.categories[j] = crs.getChannelCategory(category.getKey());
                           else
-                                throw new Exception ("Invalid entry in " + chanDefFile + " for category entry. Please fix before running Channel Publishing Tool");
+                            throw new Exception ("Invalid entry in " + chanDefFile + " for category entry. Please fix before running Channel Publishing Tool");
                         }
                   }
                 } else if (tagname.equals("groups")) {
@@ -369,11 +355,11 @@ public class ChannelPublisher {
                           // need to look up corresponding group id
                           // ie: Everyone = local.0
                           //     Developers = local.4
-                          String group = groupsProperties.getProperty(groupStr);
+                          IEntityGroup group = getGroup(groupStr, IPerson.class);
                           if (group != null)
-                                ci.groups[j] = GroupService.findGroup(group);
+                            ci.groups[j] = group;
                           else
-                                throw new Exception ("Invalid entry in " + chanDefFile + " for groups entry. Please fix before running Channel Publishing Tool");
+                            throw new Exception ("Invalid entry in " + chanDefFile + " for groups entry. Please fix before running Channel Publishing Tool");
                         }
                   }
                 } else if (tagname.equals("parameters")) {
@@ -417,7 +403,59 @@ public class ChannelPublisher {
         }
         return ci;
   }  
-
+  
+  /**
+   * Attempts to determine group key based on a group name or fully qualifed
+   * group key.
+   * @param groupName a <code>String</code> value
+   * @param entityType the kind of entity the group contains
+   * @return a group key
+   */
+  private static IEntityGroup getGroup(String groupName, Class entityType) throws Exception {
+      IEntityGroup group = null;
+      EntityIdentifier[] groups = GroupService.searchForGroups(groupName, IGroupConstants.IS, entityType);
+      if (groups != null && groups.length > 0) {
+          group = GroupService.findGroup(groups[0].getKey());
+      } else {
+          // An actual group key might be specified, so try looking up group directly
+          group = GroupService.findGroup(groupName);
+      }
+      return group;
+  }
+  
+  private static void initChanTypeMap() {
+      if (chanTypesNamesToIds == null) {
+          chanTypesNamesToIds = new HashMap();
+          chanTypesNamesToIds.put("Custom", "-1");
+          Connection con = RDBMServices.getConnection();
+          try {
+              String query = "SELECT * FROM UP_CHAN_TYPE";
+              RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
+              try {
+                  pstmt.clearParameters();
+                  LogService.log(LogService.DEBUG, query);
+                  ResultSet rs = pstmt.executeQuery();
+                  try {
+                      while (rs.next()) {
+                          String chanTypeName = rs.getString("TYPE_NAME");
+                          String chanTypeId = rs.getString("TYPE_ID");
+                          chanTypesNamesToIds.put(chanTypeName, chanTypeId);
+                      }
+                  } finally {
+                      rs.close();
+                  }
+              } finally {
+                  pstmt.close();
+              }
+          } catch (Exception e) {
+              LogService.log(LogService.ERROR, "Problem loading channel types from UP_CHAN_TYPE");
+              LogService.log(LogService.ERROR, e);
+          } finally {
+              RDBMServices.releaseConnection(con);
+          }  
+      }
+  }
+  
   private static class ChannelInfo {
         ChannelDefinition chanDef;
         IGroupMember[] groups;
