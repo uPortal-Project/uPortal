@@ -240,7 +240,7 @@ public class CChannelManager extends BaseChannel {
                         members[mp] = AuthorizationService.instance().getGroupMember(prins[mp]);
                     }
                     groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
-                            "Please select groups who should have access to this channel:",
+                            "Please select groups or people who should have access to this channel:",
                             GroupService.EVERYONE, false, false, members);
                 }
                 ((IChannel)groupServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
