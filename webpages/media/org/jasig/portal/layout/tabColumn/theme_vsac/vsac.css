@@ -1,8 +1,6 @@
 BODY {
 	background-color : #006666;
 }
-
-
 A {
 	text-decoration : none;
 	font-family : System, Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -26,6 +24,35 @@ A.navigation:hover {
 .uportal-text{
 	color : Black;
 	font-family: Century Gothic, Arial, Verdana, Helvetica;
+	font-size : 12px;
+}
+.uportal-text-small{
+	color : Black;
+	font-family : Century Gothic, Arial, Verdana, Helvetica;
+	font-size : 10px;
+}
+.uportal-button{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	background : #99CCCC;
+}
+.uportal-label{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	font-weight : bold;
+}
+.uportal-input-text{
+	color : Black;	
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
+	background : #99CCCC;
+}
+.uportal-text-reversed{
+	color : White;
+	font-family : Century Gothic, Arial, Verdana, Helvetica;
+	font-size : 12px;
 }
 A.uportal-navigation-category{
 	color : Black;
@@ -60,6 +87,7 @@ A.uportal-navigation-channel:hover{
 	font-size : 12px;
 }
 .uportal-navigation-channel-selected{
+	background : Black;
 	font-size : 12px;
 	color : #333333;
 }
@@ -85,8 +113,20 @@ A.uportal-navigation-channel:hover{
 	font-size : 16px;
 	font-weight : bold;
 }
+.uportal-channel-title-reversed{
+	color : #996666;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 16px;
+	font-weight : bold;
+}
 .uportal-channel-subtitle{
 	color : Black;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+}
+.uportal-channel-subtitle-reversed{
+	color : #333333;
 	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
@@ -103,14 +143,49 @@ A.uportal-navigation-channel:hover{
 	font-family : Georgia, "Times New Roman", Times, serif;
 }
 .uportal-channel-code{
-	font-size: 14px;
-	font-family: Monaco, Andale Mono, monospace
+	color : Black;
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
 }
 .uportal-channel-copyright{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 11px;
 	color : Black;
 	font-style : italic;
+}
+.uportal-channel-warning{
+	font-size: 10px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+}
+.uportal-channel-error{
+	color : Black;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.uportal-channel-table-caption{
+	color : #993333;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+  text-align: center;
+}
+.uportal-channel-table-header{
+	color : black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+  text-align: left;
+}
+.uportal-channel-table-row-even{
+	color : black;
+	font-size: 10px;
+	font-family: Monaco, Andale Mono, monospace
+}
+.uportal-channel-table-row-odd{
+	color : #CCCC99;
+	font-size: 10px;
+	font-family: Monaco, Andale Mono, monospace
 }
 .uportal-background{
 	background : #FFFFFF;
