@@ -608,8 +608,8 @@
   
   ant regstylesheet
     -DstylesheetType=-t
-    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
-    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
+    -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
+    -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
 
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
@@ -624,6 +624,7 @@
     <property name="descriptionUri" value=" "/>    
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
+        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
@@ -647,8 +648,8 @@
   
   ant modstylesheet
     -DstylesheetType=-t
-    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
-    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
+    -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
+    -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
     -DstylesheetId=1
     
   where -s = specify structure stylesheet
@@ -665,6 +666,7 @@
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
+        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
@@ -702,6 +704,7 @@
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
+        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
