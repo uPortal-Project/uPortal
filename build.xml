@@ -335,9 +335,9 @@
       <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
     </copy>
 
-    <!-- Copy all stylesheets and stylesheet list files -->
+    <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
-      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl"/>
+      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf"/>
     </copy>
 
     <!-- Copy everything in media except for files that are accessible from the web -->
