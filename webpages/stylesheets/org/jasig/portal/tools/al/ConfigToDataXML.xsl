@@ -54,8 +54,13 @@
 							<value>1</value>
 						</column>
 -->
-						<column>
-							<name>ROOT_NODE_ID</name>
+
+                                                <column>
+							<name>PUSHED_FRAGMENT</name>
+							<value>Y</value>
+						</column>
+                                                <column>
+							<name>FRAGMENT_ROOT_ID</name>
 							<value>1</value>
 						</column>
 						<column>
