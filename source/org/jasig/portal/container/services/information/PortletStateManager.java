@@ -59,6 +59,8 @@ public class PortletStateManager {
 	public static final String UP_VIEW_TARGET = "uP_view_target";
 	public static final String MIN_CHAN_ID = "minimized_channelId";
 	
+    public static final String UP_PARAM_PREFIX = "uP_";
+    
 	private static final String ENC_SEP = "~~%%~~";
 	private static final String MINIMIZED = "minimized";
     private static final String ROOT = IUserLayout.ROOT_NODE_NAME;

@@ -66,7 +66,8 @@ import org.jasig.portal.container.services.information.InformationProviderServic
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.services.property.PropertyManagerServiceImpl;
-import org.jasig.portal.container.servlet.EmptyRequestImpl;
+import org.jasig.portal.container.servlet.DummyParameterRequestWrapper;
+import org.jasig.portal.container.servlet.PortletParameterRequestWrapper;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -391,7 +392,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             if (cd.isPortletWindowInitialized() && !cd.hasProcessedAction()) {
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
-				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
+				HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
                         cd.getPortletWindow().getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
                 
                 // Add the user information
@@ -437,7 +438,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
                         HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
-                        //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
+                        wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
+                        
                         portletContainer.processPortletAction(portletWindow, wrappedRequest, wrappedResponse);
                         InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
@@ -539,7 +541,12 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                                                 
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
-                wrappedRequest = new EmptyRequestImpl(wrappedRequest);
+                wrappedRequest = new DummyParameterRequestWrapper(wrappedRequest, cd.getLastRequestParameters());
+            }
+            // Use the parameters from the last request so the portlet maintains it's state
+            else {
+                wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
+                cd.setLastRequestParameters(wrappedRequest.getParameterMap());
             }
             
             // Add the user information
@@ -714,6 +721,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 
             // Add the user information to the request
             wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
+            wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
 
             //render the portlet
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, response);

@@ -28,6 +28,7 @@ public class ChannelData {
     private long lastRenderTime = Long.MIN_VALUE;
     private String expirationCache = null;
     private WindowState newWindowState = null;
+    private Map lastRequestParameters = null;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
@@ -37,18 +38,9 @@ public class ChannelData {
     public boolean isFocused() { return this.focused; }
     public PortletMode getNewPortletMode() { return this.newPortletMode; }
     public WindowState getNewWindowState() { return this.newWindowState; }
-    /**
-     * @return Returns the lastRenderTime.
-     */
-    public long getLastRenderTime() {
-        return this.lastRenderTime;
-    }
-    /**
-     * @return Returns the expirationCache.
-     */
-    public String getExpirationCache() {
-        return this.expirationCache;
-    }
+    public long getLastRenderTime() { return this.lastRenderTime; }
+    public String getExpirationCache() { return this.expirationCache; }
+    public Map getLastRequestParameters() { return this.lastRequestParameters; }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
@@ -58,17 +50,8 @@ public class ChannelData {
     public void setFocused(boolean focused) { this.focused = focused; }
     public void setNewPortletMode(PortletMode newPortletMode) { this.newPortletMode = newPortletMode; }
     public void setNewWindowState(WindowState newWindowState) { this.newWindowState = newWindowState; }
-    /**
-     * @param lastRenderTime The lastRenderTime to set.
-     */
-    public void setLastRenderTime(long lastRenderTime) {
-        this.lastRenderTime = lastRenderTime;
-    }
-    /**
-     * @param expirationCache The expirationCache to set.
-     */
-    public void setExpirationCache(String expirationCache) {
-        this.expirationCache = expirationCache;
-    }
+    public void setLastRenderTime(long lastRenderTime) { this.lastRenderTime = lastRenderTime; }
+    public void setExpirationCache(String expirationCache) { this.expirationCache = expirationCache; }
+    public void setLastRequestParameters(Map lastRequestParameters) { this.lastRequestParameters = lastRequestParameters; }
 }
 
