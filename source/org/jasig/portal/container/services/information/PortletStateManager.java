@@ -193,7 +193,7 @@ public class PortletStateManager {
 			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
 	}
 
-	public void clearParameters(PortletWindow portletWindow) {
+	public static void clearParameters(PortletWindow portletWindow) {
 	  Map map = windowStates;	
 	  for ( int i = 0; i < 2; i++ )	{
 		Iterator keyIterator = map.keySet().iterator();
@@ -208,6 +208,22 @@ public class PortletStateManager {
 	  }	
 	     
 	}
+	
+	public static void clearState( HttpServletRequest request ) {
+		Map map = windowStates;	
+	 for ( int i = 0; i < 2; i++ )	{
+	  Iterator keyIterator = map.keySet().iterator();
+	  while ( keyIterator.hasNext() ) {
+		  String name = (String) keyIterator.next();
+		  if (name.startsWith(request.getSession().getId())) {
+			  keyIterator.remove();
+		  }
+	  }
+	  if ( i == 1 )
+	   map = portletModes;
+	 }	
+	}
+
 	
 	public void clearParameters() {
 	  params.clear();	  

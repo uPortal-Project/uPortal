@@ -88,7 +88,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public void clearParameters() {
         clearParameters = true;
-		urlManager.clearParameters(portletWindow);
+		PortletStateManager.clearParameters(portletWindow);
     }
 
     public void setParameters(Map parameters) {
