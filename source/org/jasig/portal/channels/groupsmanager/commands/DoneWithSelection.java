@@ -119,6 +119,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
          // Parent was locked so no other thread or process could have changed it, but
          // child members could have changed.
          GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+         sessionData.staticData.remove("groupParentId");
       }
       else {
          princResults = (IGroupMember[])gmCollection.toArray(new IGroupMember[0]);
