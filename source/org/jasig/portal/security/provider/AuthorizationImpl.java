@@ -59,8 +59,7 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
-    // Clear the caches every 5 minutes
-    protected SmartCache groupMembersCache = new SmartCache(300);
+    // Clear the cache every 5 minutes.
     protected SmartCache permissionsCache = new SmartCache(300);
     protected Object permissionsCacheLock = new Object();
 
@@ -284,20 +283,10 @@ private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principa
 throws GroupsException
 {
     LogService.log (LogService.DEBUG,
-       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " + principal.toString());
+       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
+       principal.toString());
 
-    IGroupMember gm = (IGroupMember)groupMembersCache.get(principal);
-    if ( gm == null )
-    {
-        String key = principal.getKey();
-        Class type = principal.getType();
-        if ( type == EntityTypes.GROUP_ENTITY_TYPE )
-            { gm = GroupService.findGroup(key); }
-        else
-            { gm = GroupService.getEntity(key, type); }
-
-        groupMembersCache.put(principal, gm);
-    }
+    IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
     LogService.log (LogService.DEBUG,
        "AuthorizationImpl.getGroupMemberForPrincipal(): got group member " + gm);
