@@ -1209,7 +1209,7 @@ public class RDBMUserLayoutStore
 
               sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-              stmt.executeQuery(sQuery);
+              stmt.executeUpdate(sQuery);
             }
             long stopTime = System.currentTimeMillis();
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
