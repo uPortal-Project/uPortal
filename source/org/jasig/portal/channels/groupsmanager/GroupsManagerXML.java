@@ -81,7 +81,6 @@ public class GroupsManagerXML
    /**
     * Returns a Document for all InitialContexts for which the user has
     * permissions. This method is called when CGroupsManager is instantiated.
-    * @param rd
     * @param sd
     * @return Document
     */
@@ -359,13 +358,16 @@ public class GroupsManagerXML
     */
    public static HashMap getEntityTypes () {
       HashMap entTypes = new HashMap(5);
+      /** @todo can't determine size due to private methods */
+      //HashMap entTypes = new HashMap(EntityTypes.singleton().getEntityTypesByType().size());
       String entName;
       String entClassName;
       Iterator entTypesItr = EntityTypes.singleton().getAllEntityTypes();
       while (entTypesItr.hasNext()) {
          Class entType = (Class)entTypesItr.next();
          entClassName = entType.getName();
-         entName = entClassName.substring(entClassName.lastIndexOf('.') + 1);
+         //entName = entClassName.substring(entClassName.lastIndexOf('.') + 1);
+         entName = EntityTypes.singleton().getDescriptiveNameForType(entType);
          try {
             if (GroupService.getRootGroup(entType) != null) {
                entTypes.put(entName, entClassName);
@@ -612,7 +614,9 @@ public class GroupsManagerXML
             + aKey);
       IEntityGroup grp = null;
       try {
-         grp = GroupService.findGroup(aKey);
+         if (aKey != null){
+            grp = GroupService.findGroup(aKey);
+         }
       } catch (Throwable th) {
          Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroup(): Could not retrieve Group Member ("
                + aKey + "): \n" + th);
@@ -650,7 +654,7 @@ public class GroupsManagerXML
       }
       return  gm;
    }
-   
+
    public static void expandGroupElementXML(Element expandedElem, Document xmlDoc){
       //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
          boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()

@@ -95,12 +95,16 @@ public class Utility
       // prevent overlapping messages during debugging
 
       /** @todo next 4 lines are for running test */
-      /*
-      if (msg != null && !msgTypeStr.equals("DEBUG")){
-         System.out.println(msgTypeStr+"::"+msg);
-         return;
-      }
-      */
+//      if (msg != null){
+//         if (!msgTypeStr.equals("DEBUG")){
+//            System.out.println(msgTypeStr+"::"+msg);
+//            return;
+//         }
+//         else{
+//            return;
+//         }
+//      }
+
       boolean delay = false;
       Priority msgType;
       if (msgTypeStr == null | msgTypeStr.equals(""))
@@ -220,10 +224,10 @@ public class Utility
       }
       return  sw.toString();
    }
-   
+
    /**
     * given a group key, return an xml group id that matches it in the provided document
-    * 
+    *
     * @param grpKey
     * @param model
     * @return String

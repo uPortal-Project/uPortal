@@ -53,7 +53,7 @@ import  java.util.Set;
  */
 public class GroupsManagerCommandFactory
       implements GroupsManagerConstants {
-   protected static HashMap bindings = new java.util.HashMap(12);
+   protected static HashMap bindings = new java.util.HashMap(16);
    protected static GroupsManagerCommandFactory _instance = null;
 
    /**
@@ -62,21 +62,21 @@ public class GroupsManagerCommandFactory
    protected GroupsManagerCommandFactory () {
       try {
          bindings.put("Add", Class.forName(COMMANDS_PACKAGE + ".AddMembers").newInstance());
+         bindings.put("Permissions", Class.forName(COMMANDS_PACKAGE + ".AssignPermissions").newInstance());
          bindings.put("Cancel", Class.forName(COMMANDS_PACKAGE + ".CancelSelection").newInstance());
          bindings.put("Collapse", Class.forName(COMMANDS_PACKAGE + ".CollapseGroup").newInstance());
          bindings.put("Create", Class.forName(COMMANDS_PACKAGE + ".CreateGroup").newInstance());
          bindings.put("Delete", Class.forName(COMMANDS_PACKAGE + ".DeleteGroup").newInstance());
-         bindings.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
          bindings.put("Done", Class.forName(COMMANDS_PACKAGE + ".DoneWithSelection").newInstance());
          bindings.put("Lock", Class.forName(COMMANDS_PACKAGE + ".EditGroup").newInstance());
-         bindings.put("Unlock", Class.forName(COMMANDS_PACKAGE + ".UnlockGroup").newInstance());
          bindings.put("Expand", Class.forName(COMMANDS_PACKAGE + ".ExpandGroup").newInstance());
-         //bindings.put("Find", Class.forName(COMMANDS_PACKAGE + ".FindEntities").newInstance());
-         bindings.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
-         bindings.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
-         bindings.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());
-         bindings.put("Permissions", Class.forName(COMMANDS_PACKAGE + ".AssignPermissions").newInstance());
+         bindings.put("Search", Class.forName(COMMANDS_PACKAGE + ".Search").newInstance());
          bindings.put("Highlight", Class.forName(COMMANDS_PACKAGE + ".HighlightGroup").newInstance());
+         bindings.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
+         bindings.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
+         bindings.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
+         bindings.put("Unlock", Class.forName(COMMANDS_PACKAGE + ".UnlockGroup").newInstance());
+         bindings.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerCommandFactory::GroupsManagerCommandFactory(): \n"
                + e);
