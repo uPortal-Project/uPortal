@@ -402,6 +402,7 @@ public class ChannelPublisher {
           LogService.log(LogService.ERROR, e);
           throw e;
         } finally {
+        	if(is != null)
         	is.close();
         }
         return ci;
