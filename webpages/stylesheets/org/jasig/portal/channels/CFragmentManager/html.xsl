@@ -41,9 +41,9 @@ Version $Revision$
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <xsl:param name="locale" select="'en_US'"/>
     <!--~-->
-    <!--actions: 'defaultView', 'properties', 'publish', 'new' -->
+    <!--actions: 'defaultView', 'properties', 'publish', 'new', 'save' -->
     <!--~-->
-    <xsl:param name="uPcFM_action" select="'defaultView'"/>
+    <xsl:param name="uPcFM_action" select="'save'"/>
     <xsl:param name="uPcFM_selectedID" select="''"/>
     <!-- Param removed under assumption of non-use
     <xsl:param name="selectedID" select="'noSelectedID'"/>
@@ -98,6 +98,9 @@ Version $Revision$
                         </xsl:when>
                         <xsl:when test="$uPcFM_action='new'">
                             <xsl:call-template name="new"/>
+                        </xsl:when>
+                        <xsl:when test="$uPcFM_action='save'">
+                            <xsl:call-template name="save"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:call-template name="defaultView"/>
@@ -405,6 +408,7 @@ Version $Revision$
                                         </tr>
                                         <tr align="left" valign="top">
                                             <td colspan="3">
+                                                <input type="hidden" name="uPcFM_action" value="save"/>
                                                 <input name="frag_prop_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
@@ -581,6 +585,7 @@ Version $Revision$
                                         <!-- TR On only with New Fragments -->
                                         <tr align="left" valign="top">
                                             <td colspan="3">
+                                                <input type="hidden" name="uPcFM_action" value="save"/>
                                                 <input name="frag_prop_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
@@ -680,9 +685,53 @@ Version $Revision$
             </tr>
         </table>
     </xsl:template>
+    <!--~-->
+    <!--groups template - a copy of the groups template for the groups servant-->
+    <!--~-->
     <xsl:template name="selectGroups">
-    <xsl:variable name="groupID">
-      <xsl:value-of select="//browsingGroup[1]"/>
-    </xsl:variable>
-</xsl:template>
+        <xsl:variable name="groupID">
+            <xsl:value-of select="//browsingGroup[1]"/>
+        </xsl:variable>
+    </xsl:template>
+    <!--~-->
+    <!--save template - displays a friendly message if data is saved-->
+    <!--~-->
+    <xsl:template name="save">
+        <table cellpadding="2" cellspacing="0" border="0" width="100%">
+            <tr>
+                <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
+                    <span class="uportal-channel-table-header">Fragment Management: Data Saved</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                            <td>
+                                <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="6" class="uportal-background-highlight">
+            <tr>
+                <td>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
+                        <tr>
+                            <td class="uportal-channel-strong" align="left" valign="top">
+                                <!-- Closed Contents of info table -->
+                                <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
+                                    <tr>
+                                        <td align="left" valign="top" nowrap="nowrap"> Your data has been saved. Please select an action from the menu to the left. </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </xsl:template>
 </xsl:stylesheet>
