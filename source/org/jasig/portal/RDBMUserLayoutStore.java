@@ -847,6 +847,7 @@ public class RDBMUserLayoutStore
       Element root = doc.createElement("layout");
       Statement stmt = con.createStatement();
       try {
+
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
@@ -863,6 +864,8 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
+          String roleIds = ""; // Roles that this user belongs to
+
           if (rs.next()) {
             int firstStructId = rs.getInt("INIT_STRUCT_ID");
             if (firstStructId == 0) {                // Grab the default "Guest" layout
@@ -989,11 +992,24 @@ public class RDBMUserLayoutStore
                   rs = null;
                 }
               }
-            } finally {
+              sQuery = " SELECT ROLE_ID FROM UP_USER_ROLE WHERE USER_ID=" + userId;
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+              rs = stmt.executeQuery(sQuery);
+              try {
+                String sep = "";
+                while (rs.next()) {
+                  roleIds += sep + rs.getInt(1);
+                  sep = ",";
+                }
+              } finally {
+                rs.close();
+                rs = null;
+              }
+             } finally {
               stmt.close();
             }
-            sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
-              "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=? AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+           sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR " +
+              "WHERE UC.CHAN_ID=? AND UR.ROLE_ID IN (" + roleIds + ") AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
             MyPreparedStatement pstmtUserInRole = new MyPreparedStatement(con, sQuery);
             try {
               createLayout(layoutStructure, doc, root, firstStructId, pstmtUserInRole);
@@ -1051,12 +1067,12 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-        String sQuery = "DELETE FROM UP_LAYOUT_PARAM WHERE " + selectString;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-        sQuery = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-        stmt.executeUpdate(sQuery);
+        String sSql = "DELETE FROM UP_LAYOUT_PARAM WHERE " + selectString;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+        stmt.executeUpdate(sSql);
+        sSql = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+        stmt.executeUpdate(sSql);
         if (DEBUG > 1) {
           System.err.println("--> saving document");
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
@@ -1065,14 +1081,18 @@ public class RDBMUserLayoutStore
         MyPreparedStatement structStmt = new MyPreparedStatement(con,
           "INSERT INTO UP_LAYOUT_STRUCT " +
           "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
-          "VALUES ("+ userId + "," + profileId + ",?,?,?,?,?,?,?,?,?,?)");
+          "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
         try {
           MyPreparedStatement parmStmt = new MyPreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +
             "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " +
-            "VALUES ("+ userId + "," + profileId + ",?,?,?)");
+            "VALUES ("+ userId + "," + layoutId + ",?,?,?)");
           try {
-            saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
+            int firstStructId = saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
+            sSql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=" + firstStructId + " WHERE " + selectString;
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+            stmt.executeUpdate(sSql);
+
             long stopTime = System.currentTimeMillis();
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
                 (stopTime - startTime) + " milliseconds to save");
