@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ *u
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
@@ -73,6 +73,12 @@ public class md5passwd {
     String spass;
     int cnt = 0;
 
+    // Make sure user is specified correctly
+    if (user == null || user.trim().length() <= 0) {
+      System.out.println("You did not specify a valid user name.  Please try again.");
+      System.exit(0);
+    }
+
     // Check to see if the user exists
 
     conn = rdbm.getConnection();
@@ -95,6 +101,7 @@ public class md5passwd {
       r.nextBytes(rnd);
       md.update(rnd);
       System.out.print("Enter Password for " + user + ": ");
+      System.out.flush(); // Needed for prompt to appear when running from Ant.
       BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
       spass = d.readLine();
       hash = md.digest(spass.getBytes());
