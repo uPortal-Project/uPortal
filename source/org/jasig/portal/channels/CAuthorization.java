@@ -129,7 +129,6 @@ public class CAuthorization implements org.jasig.portal.IChannel
     out.println ("</table>");
       
     out.println ("<center>");  
-    out.println ("<input name=remember type=checkbox>Remember my user name");
     out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
     out.println ("</center>");  
     out.println ("<input name=authorizationAction type=hidden value=\"signIn\"><br>");
