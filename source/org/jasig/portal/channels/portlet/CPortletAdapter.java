@@ -38,6 +38,7 @@ package org.jasig.portal.channels.portlet;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -99,10 +100,21 @@ import org.xml.sax.ContentHandler;
 
 /**
  * A JSR 168 Portlet adapter that presents a portlet
- * through the uPortal channel interface. 
+ * through the uPortal channel interface.
+ * <p> 
  * There is a related channel type called
  * "Portlet Adapter" that is included with uPortal, so to use
  * this channel, just select the "Portlet" type when publishing.
+ * </p>
+ * <p>
+ * Note: A portlet can specify the String "password" in the 
+ * user attributes section of the portlet.xml.  In this is done,
+ * this adapter will look for the user's cached password. If
+ * the user's password is being stored in memory by a caching
+ * security context, the adapter will consult the cache to fill the
+ * request for the attribute. If the user's password is not cached,
+ * <code>null</code> will be set for the attributes value.
+ * </p>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
@@ -116,18 +128,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     private static ChannelCacheKey instanceCacheKey;
     
     private static final String uniqueContainerName = "Pluto-in-uPortal";
-    
-    /**
-     * Holds the String "password" as the name of the attribute a portlet
-     * can specify in the portlet.xml to request from the portal. The
-     * password attribute corresponds to a user's cached password. If
-     * the users password is being stored in memory by a caching
-     * security context the adapter will consult the cache to fill the
-     * request for the attribute. If the user's password is not cached
-     * null will be set for the attributes value.
-     */
-    public static final String PASSWORD_USER_ATRB = "password";
-    
+        
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
     public static final String portletPreferenceNamePrefix = "PORTLET.";
@@ -234,18 +235,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
                         UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();
                         String attName = userAttribute.getName();
-                        String attValue = null;
-                        
-                        attValue = (String)person.getAttribute(attName);
-
-                        if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_USER_ATRB)) {
-                            try {
-                                attValue = this.getPassword(person);
-                            }
-                            catch (Exception e) {
-                                //Don't really care about any exceptions, just log them
-                                LogService.log(LogService.INFO, "CPortletAdapter::initPortletWindow() - Error getting password from cache.", e);
-                            }
+                        String attValue = (String)person.getAttribute(attName);
+                        final String PASSWORD_ATTR = "password";
+                        if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_ATTR)) {
+                            attValue = getPassword(person);
                         }
                         userInfo.put(attName, attValue);
                     }
@@ -261,7 +254,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             portletWindow.setHttpServletRequest(wrappedRequest);
             cd.setPortletWindow(portletWindow);
                 
-            // As the container to load the portlet
+            // Ask the container to load the portlet
             synchronized(this) {
                 portletContainer.portletLoad(portletWindow, wrappedRequest, pcs.getHttpServletResponse());
             }
@@ -562,7 +555,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         return markup;
     }
     
+    //***************************************************************
     // IMultithreadedCacheable methods
+    //***************************************************************  
     
     /**
      * Generates a channel cache key.  The key scope is set to be system-wide
@@ -667,7 +662,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     
     
     //***************************************************************
-    // helper methods
+    // Helper methods
     //***************************************************************  
 
     /**
@@ -706,40 +701,33 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     }
     
     /**
-     * Retrieves the users cached credentials
-     *
-     * @param p the IPerson object of the person of whose credentials is being looked for
-     * @return the users cached password
+     * Retrieves the users password by iterating over
+     * the user's security contexts and returning the first
+     * available cached password.
+     * @param person the person whose password is being sought
+     * @return the users password
      */
-    private String getPassword (IPerson p) throws Exception {
-        String sPassword = null;
-        try {
-            ISecurityContext ic = (ISecurityContext) p.getSecurityContext();
-            IOpaqueCredentials oc = ic.getOpaqueCredentials();
-            
-            if (oc instanceof NotSoOpaqueCredentials) {
-                NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)oc;
-                sPassword = nsoc.getCredentials();
-            }
+    private String getPassword(IPerson person) {
+        String password = null;
+        ISecurityContext ic = (ISecurityContext) person.getSecurityContext();
+        IOpaqueCredentials oc = ic.getOpaqueCredentials();
+        
+        if (oc instanceof NotSoOpaqueCredentials) {
+            NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)oc;
+            password = nsoc.getCredentials();
+        }
 
-            // If still no password, loop through subcontexts to find cached credentials
-            if (sPassword == null) {
-                java.util.Enumeration en = ic.getSubContexts();
-                
-                while (en.hasMoreElements()) {
-                    ISecurityContext sctx = (ISecurityContext)en.nextElement();
-                    IOpaqueCredentials soc = sctx.getOpaqueCredentials();
-                    
-                    if (soc instanceof NotSoOpaqueCredentials) {
-                        NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)soc;
-                        sPassword = nsoc.getCredentials();
-                    }
-                }
+        // If still no password, loop through subcontexts to find cached credentials
+        Enumeration en = ic.getSubContexts();
+        while (password == null && en.hasMoreElements()) {
+            ISecurityContext sctx = (ISecurityContext)en.nextElement();
+            IOpaqueCredentials soc = sctx.getOpaqueCredentials();
+            if (soc instanceof NotSoOpaqueCredentials) {
+                NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)soc;
+                password = nsoc.getCredentials();
             }
-        } catch (Exception e) {
-            throw e;
         }
         
-        return sPassword;
+        return password;
     }      
 }
