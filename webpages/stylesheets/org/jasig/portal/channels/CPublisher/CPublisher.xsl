@@ -40,8 +40,15 @@ function xml(nodelist){
 	</xsl:template>
 	
 	<xsl:template match="channelDef">
+	<xsl:choose>
+	<xsl:when test="$currentStep='end'">
+	  	<p align="center">Channel is now published!</p>
+	</xsl:when>
+	<xsl:otherwise>
         <form action="{$baseActionURL}" method="post">
       	  <input type="hidden" name="action" value="publish"/>
+	  <input type="hidden" name="currentStep" value="{$currentStep}"/>
+	  <input type="hidden" name="numSteps" value="{$numSteps}"/>
 		<!--<xsl:param name="numSteps" select="count(params/step)"/>-->
 		<p align="center">
 			<xsl:value-of select="description"/>
@@ -49,11 +56,13 @@ function xml(nodelist){
 		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$numSteps"/>
 		</p>
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
-      	  <p align="center"><input type="submit" name="publish" value="Next"/></p>
+      	  <p align="center"><input type="submit" value="Next"/></p>
         </form>
+      </xsl:otherwise>
+	</xsl:choose>
 	<form action="{$baseActionURL}" method="post">
 	<input type="hidden" name="action" value="cancel"/>
-      	  <p align="center"><input type="submit" name="cancel" value="Cancel"/></p>
+      	  <p align="center"><input type="submit"  value="Cancel"/></p>
 	</form>
 	</xsl:template>
 	
