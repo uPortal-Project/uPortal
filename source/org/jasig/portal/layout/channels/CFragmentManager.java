@@ -40,8 +40,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 
+import org.jasig.portal.IServant;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IPrivileged;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
@@ -56,6 +65,7 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,10 +81,52 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private static final String sslLocation = "/org/jasig/portal/channels/CFragmentManager/CFragmentManager.ssl";
 	private IAggregatedUserLayoutManager alm;
 	private ThemeStylesheetUserPreferences themePrefs;
+	private static IServant groupServant;
 	private Map fragments;
+	private boolean servantRender = false;
 
 	public CFragmentManager() throws PortalException {
 		super();
+	}
+
+
+	/**
+		 * Produces a group servant
+		 * @return the group servant
+		 */
+	private synchronized IServant getGroupServant() throws PortalException {
+			if (groupServant == null) {		
+				try {
+					// create the appropriate servant
+						groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+								"Please select groups or people who should have access to this channel:",
+								GroupService.EVERYONE);					
+				} catch (Exception e) {
+					throw new PortalException(e);
+				  }
+			}
+			return  groupServant;
+    }
+
+	private Element getGroupsXML ( Document doc ) throws PortalException {
+		   Element selectedGroupsE = doc.createElement("selectedGroups");
+		   IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
+		   System.out.println ( "gms size: " + gms.length );
+		   // Add selected groups if there are any
+		   if (gms != null && gms.length > 0) {
+			   
+			   try {
+				   for (int c = 0; c < gms.length; c++) {
+					   Element selectedGroupE = doc.createElement("selectedGroup");
+					   selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
+					   selectedGroupE.appendChild(doc.createTextNode(gms[c].getKey()));
+					   selectedGroupsE.appendChild(selectedGroupE);
+				   }
+			   } catch (Exception e) {
+				  throw new PortalException(e);
+			   }
+		   }
+		   return  selectedGroupsE;
 	}
 
 	private String createFolder( ALFragment fragment ) throws PortalException {
@@ -85,10 +137,11 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	private String analyzeParameters( XSLT xslt ) throws PortalException {
+	private String analyzeParameters( XSLT xslt, ContentHandler out ) throws PortalException {
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
-		
+		if ( servantRender && getGroupServant().isFinished() ) 
+		   servantRender = false;
 				if (action.equals("save_new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String funcName = runtimeData.getParameter("fragment_fname");
@@ -142,8 +195,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					  fragmentId = (fragments != null && fragments.isEmpty())?(String) fragments.keySet().toArray()[0]:"";
 					} else
 					   new PortalException ( "Invalid fragment ID="+fragmentId);
-				} else if (action.equals("properties")) {
-					 
+				} else if (action.equals("publish")) {
+					servantRender = true; 
 				}
 				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
@@ -181,6 +234,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		Document document = DocumentFactory.getNewDocument();
 		Element fragmentsNode = document.createElement("fragments");
 		document.appendChild(fragmentsNode);
+		//fragmentsNode.appendChild(getGroupsXML(document));
 		Element category = document.createElement("category");
 		category.setAttribute("name", "Fragments");
 		category.setAttribute("expanded", "true");
@@ -219,11 +273,16 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				fragmentNode.appendChild(desc);
 			}
 		}
+		//System.out.println ( XML.serializeNode(document));
 		return document;
 	}
 
 	public void setStaticData(ChannelStaticData sd) throws PortalException {
 		staticData = sd;
+	}
+	public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+	  runtimeData = rd;
+	  getGroupServant().setRuntimeData(rd);
 	}
 
 	public void refreshFragments() throws PortalException {
@@ -244,19 +303,16 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		
-		String fragmentId = analyzeParameters(xslt);
-		xslt.setXML(getFragmentList());
-		
-		xslt.setXSL(
-			sslLocation,
-			"fragmentManager",
-			runtimeData.getBrowserInfo());
-		xslt.setTarget(out);
-		
-		xslt.setStylesheetParameter(
-			"baseActionURL",
-			runtimeData.getBaseActionURL());
-		xslt.transform();
+		String fragmentId = analyzeParameters(xslt,out);
+		if ( servantRender )
+		  getGroupServant().renderXML(out); 
+		else {
+		  xslt.setXML(getFragmentList());
+		  xslt.setXSL(sslLocation,"fragmentManager",runtimeData.getBrowserInfo());
+		  xslt.setTarget(out);
+		  xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
+	      xslt.transform();   
+	    } 
 	}
 
 }
