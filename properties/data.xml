@@ -67,6 +67,23 @@
     </rows>
   </table>
 
+  <table>
+    <name>UP_USER_LAYOUT_AGGR</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Guest layout</value></column>
+        <column><name>INIT_NODE_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Demo layout</value></column>
+        <column><name>INIT_NODE_ID</name><value>1</value></column>
+      </row>
+    </rows>
+  </table>
 
   <table>
     <name>UP_LAYOUT_STRUCT_AGGR</name>
@@ -1128,7 +1145,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>daily-business-cartoon</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>	
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>2</value></column>
@@ -1145,7 +1162,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>stockcharts.com</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>4</value></column>
@@ -1162,7 +1179,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>person-attributes</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>5</value></column>
@@ -1179,7 +1196,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>uportal-powered-sites</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
@@ -1196,7 +1213,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>ibs-news</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -1213,7 +1230,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>uportal-developers-reference</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>8</value></column>
@@ -1230,7 +1247,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>uportal-home-page</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>9</value></column>
@@ -1247,7 +1264,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>minesweeper</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>10</value></column>
@@ -1264,7 +1281,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>header</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>11</value></column>
@@ -1281,7 +1298,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>word-of-the-day</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>12</value></column>
@@ -1298,7 +1315,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>salon.com</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>13</value></column>
@@ -1315,7 +1332,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>motley-fool</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>14</value></column>
@@ -1332,7 +1349,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>number-guessing-game</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>15</value></column>
@@ -1349,7 +1366,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>css-viewer</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>16</value></column>
@@ -1366,7 +1383,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>snooper</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>17</value></column>
@@ -1384,7 +1401,7 @@
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>tomcat-number-guess</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>18</value></column>
@@ -1402,7 +1419,7 @@
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>tomcat-servlet-examples</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>19</value></column>
@@ -1419,7 +1436,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>footer</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>20</value></column>
@@ -1436,7 +1453,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>uportal-development-books</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>22</value></column>
@@ -1454,7 +1471,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>uportal-data-dictionary</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>23</value></column>
@@ -1472,7 +1489,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>portal/iccdemo/urlselector</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>24</value></column>
@@ -1490,7 +1507,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>portal/iccdemo/viewer</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>25</value></column>
@@ -1508,7 +1525,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>portal/iccdemo/history</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
 
       <row>
@@ -1526,7 +1543,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>portal/channelmanager/general</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>92</value></column>
@@ -1543,7 +1560,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>portal/userpreferences/general</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>94</value></column>
@@ -1561,7 +1578,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>groupsmanager</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>95</value></column>
@@ -1579,7 +1596,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>permissionsmanager</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>96</value></column>
@@ -1597,7 +1614,7 @@
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
         <column><name>CHAN_FNAME</name><value>localechooser</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>99</value></column>
@@ -1615,7 +1632,7 @@
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>portal/login/general</value></column>
-        <column><name>CHAN_SECURE</name><value>N</value></column>		
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
      </rows>
   </table>
@@ -2584,7 +2601,7 @@
             <column><name>CHAN_ID</name><value>19</value></column>
             <column><name>LOCALE</name><value>en_US</value></column>
           </row>
-          
+
       <!-- Admin Layout -->
       <!-- layout root node -->
       <row>
@@ -4175,7 +4192,7 @@
         <column><name>SS_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl</value></column>
         <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns</value></column>
-      </row>      
+      </row>
     </rows>
   </table>
 
@@ -4224,7 +4241,7 @@
         <column><name>DEVICE_TYPE</name><value>workstation</value></column>
         <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
         <!-- <column><name>UP_MODULE_CLASS</name><value> (none) </value></column> -->
-      </row>      
+      </row>
     </rows>
   </table>
 
@@ -4246,7 +4263,7 @@
          <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
          <column><name>TYPE</name><value>3</value></column>
         </row>
-        
+
         <!-- For integratedModes theme -->
        <row>
          <column><name>SS_ID</name><value>3</value></column>
@@ -4261,7 +4278,7 @@
          <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
          <column><name>TYPE</name><value>3</value></column>
-        </row>        
+        </row>
      </rows>
   </table>
 
@@ -4283,7 +4300,7 @@
          <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
          <column><name>TYPE</name><value>2</value></column>
         </row>
-        
+
        <!-- For AL_TabColumn structure -->
        <row>
          <column><name>SS_ID</name><value>3</value></column>
@@ -4298,7 +4315,7 @@
          <column><name>PARAM_DEFAULT_VAL</name><value>100%</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
          <column><name>TYPE</name><value>2</value></column>
-        </row>        
+        </row>
      </rows>
   </table>
 
@@ -4359,7 +4376,7 @@
         <column><name>ACTIVITY</name><value>VIEW</value></column>
         <column><name>TARGET</name><value>DETAILS</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
