@@ -227,8 +227,8 @@ public class CChannelManager extends BaseChannel {
                 // create the appropriate servant
                 if (channelDef.ID == null) {
                     groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
-                            "Please select groups who should have access to this channel:",
-                            GroupService.EVERYONE, false, false);
+                            "Please select groups or people who should have access to this channel:",
+                            GroupService.EVERYONE, false, true);
                 }
                 else {
                     IGroupMember[] members;
@@ -497,20 +497,11 @@ public class CChannelManager extends BaseChannel {
                 for (int c = 0; c < ctgs.length; c++) {
                     catIDs[c] = ctgs[c].getKey();
                 }
-                // collect groups that can subscribe
-                IEntityGroup[] groups;
-                IGroupMember[] gms = (IGroupMember[])getGroupServant().getResults();
-                groups = new IEntityGroup[gms.length];
-                int gc = 0;
-                for (int g = 0; g < gms.length; g++) {
-                    if (gms[g].isGroup()) {
-                        groups[gc++] = (IEntityGroup)gms[g];
-                    }
-                }
+                // collect groups and/or people that can subscribe
+                IGroupMember[] groupMembers = (IGroupMember[])getGroupServant().getResults();
                 try {
                     Element channelE = channelDef.toXML();
-                    ChannelRegistryManager.publishChannel(channelE, catIDs, groups,
-                            person);
+                    ChannelRegistryManager.publishChannel(channelE, catIDs, groupMembers, person);
                     resetSettings();
                 } catch (Exception e) {
                     // Need to revisit this and handle the error!

@@ -418,11 +418,11 @@ public class ChannelRegistryManager {
    * Publishes a channel.
    * @param channel the channel XML fragment
    * @param categoryIDs a list of categories that the channel belongs to
-   * @param groups a list of group keys that are permitted to subscribe to and view the channel
+   * @param groupMembers a list of groups and/or people that are permitted to subscribe to and view the channel
    * @param publisher the user ID of the channel publisher
    * @throws java.lang.Exception
    */
-  public static void publishChannel (Element channel, String[] categoryIDs, IEntityGroup[] groups, IPerson publisher) throws Exception {
+  public static void publishChannel (Element channel, String[] categoryIDs, IGroupMember[] groupMembers, IPerson publisher) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
@@ -476,10 +476,10 @@ public class ChannelRegistryManager {
     AuthorizationService authService = AuthorizationService.instance();
     String target = "CHAN_ID." + ID;
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
-    IPermission[] permissions = new IPermission[groups.length];
-    for (int i = 0; i < groups.length; i++) {
-      String principalKey = groups[i].getKey();
-      IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
+    IPermission[] permissions = new IPermission[groupMembers.length];
+    for (int i = 0; i < groupMembers.length; i++) {
+      String principalKey = groupMembers[i].getKey();
+      IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, groupMembers[i].getType());
       permissions[i] = upm.newPermission(authPrincipal);
       permissions[i].setType(GRANT_PERMISSION_TYPE);
       permissions[i].setActivity(SUBSCRIBER_ACTIVITY);
