@@ -2612,41 +2612,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  public void setUserProfile (IPerson person, UserProfile profile) throws Exception {
-    int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        // this is ugly, but we have to know wether to do INSERT or UPDATE
-        String sQuery = "SELECT USER_ID, PROFILE_NAME FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID="
-            + profile.getProfileId();
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserProfile() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          if (rs.next()) {
-            sQuery = "UPDATE UP_USER_PROFILE SET THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID=" +
-                profile.getStructureStylesheetId() + ", DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
-                + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
-          }
-          else {
-            sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
-                + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
-                + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
-          }
-        } finally {
-          rs.close();
-        }
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserProfile(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
-
   /**
    * Updates an existing structure stylesheet description with a new one. Old stylesheet
    * description is found based on the Id provided in the parameter structure.
@@ -2904,7 +2869,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "UPDATE UP_USER_PROFILE SET THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID="
+        String sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=" + profile.getLayoutId() 
+            + ", THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID="
             + profile.getStructureStylesheetId() + ", DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
             + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::updateUserProfile() : " + sQuery);

@@ -176,6 +176,11 @@ public class TabColumnPrefsState extends BaseState
           internalState = new SelectSkinsState(this);
           internalState.setStaticData(staticData);
         }
+      } else if (action.equals("resetLayout")) {
+        if (!(internalState instanceof ResetLayoutState)) {
+          internalState = new ResetLayoutState(this);
+          internalState.setStaticData(staticData);
+        }        
       } else if (action.equals("managePreferences")) {
         internalState = new DefaultState(this);
         internalState.setStaticData(staticData);
@@ -991,6 +996,33 @@ public class TabColumnPrefsState extends BaseState
       }
     }
   }
+
+  /**
+   * A sub-state of TabColumnPrefsState for resetting layout
+   */
+  protected class ResetLayoutState extends BaseState
+  {
+    protected TabColumnPrefsState context;
+
+    public ResetLayoutState(TabColumnPrefsState context) {
+      this.context = context;
+    }
+
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
+      try {
+        editedUserProfile.setLayoutId(0);
+        ulStore.updateUserProfile(staticData.getPerson(), editedUserProfile);
+        ulm.loadUserLayout();
+      } catch (Exception e) {
+        throw new PortalException(e);
+      }
+      // return to the default state
+      BaseState df = new DefaultState(context);
+      df.setStaticData(staticData);
+      context.setState(df);
+    }
+  }
+
 
   /**
    * A sub-state of TabColumnPrefsState for selecting skins
