@@ -231,8 +231,8 @@
 
   <xsl:template name="selectModifyChannel">
   <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
-  <xsl:variable name="recsPerPage" select="//recordsPerPage"/>
-  <xsl:variable name="currPage" select="//currentPage"/>
+  <xsl:variable name="recsPerPage" select="number(//recordsPerPage)"/>
+  <xsl:variable name="currPage" select="number(//currentPage)"/>
   <xsl:variable name="pageIdNodeSet" select="//*[@ID=$filterByID]//channel"/>
   <xsl:variable name="maxPages" select="ceiling(count($pageIdNodeSet[not(@ID=preceding::channel/@ID)]) div $recsPerPage)"/>
 
