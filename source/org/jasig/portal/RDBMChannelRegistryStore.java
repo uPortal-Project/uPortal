@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -559,7 +560,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @param channelDef the channel definition
    * @throws java.sql.SQLException
    */
-  public void saveChannelDefinition (ChannelDefinition channelDef) throws SQLException {
+  public void saveChannelDefinition (ChannelDefinition channelDef) throws Exception {
     Connection con = RDBMServices.getConnection();
     try {
       int channelPublishId = channelDef.getId();
@@ -585,7 +586,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlIsSecure = RDBMServices.dbFlag(channelDef.isSecure());
         
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
 
         // If channel is already there, do an update, otherwise do an insert
@@ -607,7 +608,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_FNAME='" + sqlFName + "', " +
           "CHAN_SECURE='" + sqlIsSecure + "' " +                  
           "WHERE CHAN_ID=" + channelPublishId;
-          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelDefinition(): " + update);
           stmt.executeUpdate(update);
         } else {
           String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, "
@@ -616,18 +617,21 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               + chanPublisherId + ", " + chanPublishDate + ", " + chanApproverId + ", " + chanApprovalDate + ", " + sqlTimeout
               + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
               + "', '" + sqlName + "', '" + sqlFName + "', '" + sqlIsSecure + "')";
-          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
+          LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
           stmt.executeUpdate(insert);
         }
 
         // First delete existing parameters for this channel
         String delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + delete);
+        LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelDefinition(): " + delete);
         int recordsDeleted = stmt.executeUpdate(delete);
 
         ChannelParameter[] parameters = channelDef.getParameters();
-
+        
         if (parameters != null) {
+          // Keep track of any portlet preferences
+          PreferenceSetImpl preferences = new PreferenceSetImpl();
+          
           for (int i = 0; i < parameters.length; i++) {
             String paramName = parameters[i].getName();
             String paramValue = parameters[i].getValue();
@@ -637,10 +641,27 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               throw new RuntimeException("Invalid parameter node");
             }
 
-            String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
-                ",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
-            LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
-            stmt.executeUpdate(insert);
+            final String portletPrefNamePrefix = "PORTLET.";
+            if (paramName.startsWith(portletPrefNamePrefix)) {
+                // We have a portlet preference
+                String prefName = paramName.substring(portletPrefNamePrefix.length());
+                String prefValue = paramValue;
+                List prefValues = (List)preferences.get(prefName);
+                // Unfortunately, we can only support single-valued preferences
+                // at this level unless we change a lot of uPortal code :(
+                prefValues = new ArrayList(1);
+                prefValues.add(prefValue);
+                preferences.add(prefName, prefValues, paramOverride);
+            } else {
+                // We have a normal channel parameter
+                String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
+                                ",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
+                LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
+                stmt.executeUpdate(insert);
+            }
+          }
+          if (preferences.size() > 0) {
+              PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl().setDefinitionPreferences(channelPublishId, preferences);
           }
         }
 
@@ -735,9 +756,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @param channelDef the channel definition to approve
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
-   * @throws java.sql.SQLException
+   * @throws java.sql.Exception
    */
-  public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws SQLException {
+  public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws Exception {
     channelDef.setApproverId(approver.getID());
     channelDef.setApprovalDate(approveDate);
     saveChannelDefinition(channelDef);
@@ -751,9 +772,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * this method, one could simply set the approver ID and approval date
    * to NULL and then call saveChannelDefinition(ChannelDefinition chanDef).
    * @param channelDef the channel definition to disapprove
-   * @throws java.sql.SQLException
+   * @throws java.sql.Exception
    */
-  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws SQLException {   
+  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception {   
     channelDef.setApproverId(-1);
     channelDef.setApprovalDate(null);
     saveChannelDefinition(channelDef);
