@@ -54,7 +54,9 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
+import org.jasig.portal.wsrp.Constants;
 import org.jasig.portal.wsrp.MarkupService;
+import org.jasig.portal.wsrp.types.CacheControl;
 import org.jasig.portal.wsrp.types.ClientData;
 import org.jasig.portal.wsrp.types.InteractionParams;
 import org.jasig.portal.wsrp.types.MarkupContext;
@@ -68,6 +70,7 @@ import org.jasig.portal.wsrp.types.RuntimeContext;
 import org.jasig.portal.wsrp.types.SessionContext;
 import org.jasig.portal.wsrp.types.StateChange;
 import org.jasig.portal.wsrp.types.Templates;
+import org.jasig.portal.wsrp.types.UploadContext;
 import org.jasig.portal.wsrp.types.UserContext;
 import org.jasig.portal.wsrp.types.UserProfile;
 import org.xml.sax.ContentHandler;
@@ -117,16 +120,39 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         private String sessionId = null;
         private MarkupService markupService = null;
         private PortletContext portletContext = null;
+        private MarkupParams markupParams = null;
+        private InteractionParams interactionParams = null;
+        private MarkupContext markupContext = null;
+        private MarkupCache markupCache = null;
+        
+        public ChannelData() {
+            this.markupCache = new MarkupCache();
+        }
         
         public String getSessionId() { return this.sessionId; }
         public MarkupService getMarkupService() { return this.markupService; }
         public PortletContext getPortletContext() { return this.portletContext; }
+        public MarkupParams getMarkupParams() { return this.markupParams; }
+        public InteractionParams getInteractionParams() { return this.interactionParams; }
+        public MarkupContext getMarkupContext() { return this.markupContext; }
+        public MarkupCache getMarkupCache() { return this.markupCache; }
+        
+        public String getValidateTag() {
+            String validateTag = null;
+            if (markupContext != null && markupContext.getCacheControl() != null) {
+                validateTag = markupContext.getCacheControl().getValidateTag();
+            }
+            return validateTag;
+        }
         
         public void setSessionId(String sessionId) { this.sessionId = sessionId; }
         public void setMarkupService(MarkupService markupService) { this.markupService = markupService; }
         public void setPortletContext(PortletContext portletContext) { this.portletContext = portletContext; }
+        public void setMarkupParams(MarkupParams markupParams) { this.markupParams = markupParams; }
+        public void setInteractionParams(InteractionParams interactionParams) { this.interactionParams = interactionParams; }
+        public void setMarkupContext(MarkupContext markupContext) { this.markupContext = markupContext; }
+        public void setMarkupCache(MarkupCache markupCache) { this.markupCache = markupCache; }
     }
-
 
     static {
         channelStateMap = Collections.synchronizedMap(new HashMap());
@@ -134,7 +160,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         // Setup registration context
         // The registration context would be normally be produced when the consumer
         // registers with the producer - right now we are skipping this optional step
-        registrationContext = new RegistrationContext();            
+        registrationContext = new RegistrationContext(); 
     }
 
     /**
@@ -233,47 +259,16 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         // call performBlockingInteraction on markup service
         if (rd.getParameters().size() > 0) {
             try {
-                // Runtime context
-                RuntimeContext runtimeContext = new RuntimeContext();
-                runtimeContext.setUserAuthentication("wsrp:none");
-                runtimeContext.setSessionID(cd.getSessionId());
-                Templates templates = new Templates();
-                templates.setRenderTemplate(rd.getBaseActionURL());
-                runtimeContext.setTemplates(templates);        
-                
-                // User context
-                UserContext userContext = new UserContext();
-                IPerson person = staticData.getPerson();
-                UserProfile userProfile = new UserProfile();
-                PersonName personName = new PersonName();
-                personName.setGiven((String)person.getAttribute("givenName"));
-                personName.setFamily((String)person.getAttribute("sn"));
-                userProfile.setName(personName); // much more could be set here!
-                userContext.setUserContextKey((String)person.getAttribute(IPerson.USERNAME));
-                userContext.setProfile(userProfile);
-                
-                // Markup params
-                MarkupParams markupParams = new MarkupParams();
-                ClientData clientData = new ClientData();
-                clientData.setUserAgent(rd.getBrowserInfo().getUserAgent());
-                markupParams.setClientData(clientData);
-                markupParams.setSecureClientCommunication(false); // is consumer currently communicating securly with end user?
-                markupParams.setLocales(getLocalesAsStringArray(rd.getLocales()));
-                MediaManager mediaManager = new MediaManager();
-                markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(rd.getBrowserInfo())) });
-                markupParams.setMode("wsrp:view"); // can be a different mode
-                markupParams.setWindowState("wsrp:normal");
-                markupParams.setNavigationalState(""); // ???
-                markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
-                markupParams.setValidateTag(""); // ???
-                markupParams.setValidNewModes(new String[] {""}); // ??
-                markupParams.setValidNewWindowStates(new String[] {""}); // ??
+                RuntimeContext runtimeContext = getRuntimeContext(uid);                       
+                UserContext userContext = getUserContext(uid);          
+                MarkupParams markupParams = getMarkupParams(uid);
                 
                 // Interaction params
                 InteractionParams interactionParams = new InteractionParams();
                 interactionParams.setPortletStateChange(StateChange.readWrite);
                 //interactionParams.setInteractionState(""); ??
                 interactionParams.setFormParameters(getFormParameters(rd));
+                cd.setInteractionParams(interactionParams);
                 
                 markupService.performBlockingInteraction(registrationContext, portletContext, runtimeContext, userContext, markupParams, interactionParams);
                 
@@ -328,84 +323,304 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
             throw new PortalException(e);
         }
     }
-    
+
     /**
      * This is where we do the real work of getting the markup.
      * This is called from both renderXML() and renderCharacters().
+     * We first check the markup cache to see if any markup has been
+     * cached previously.
      * @param uid a unique ID used to identify the state of the channel
+     * @return the portlet markup
+     * @throws PortalException
      */
-    private String getMarkup(String uid) {
+    private String getMarkup(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
+
+        String markup = null;
+        MarkupContext markupContext = cd.getMarkupContext();
+        String key = generateKey(cd.getMarkupParams(), cd.getInteractionParams()); 
+
+        if (markupContext != null) { // Have we rendered previously?
+            CacheControl cacheControl = markupContext.getCacheControl();
+            if (cacheControl != null) { // Was a CacheControl previously supplied?
+                String userScope = cacheControl.getUserScope();
+                MarkupWrapper markupWrapper = (MarkupWrapper)cd.getMarkupCache().get(key, userScope);
+                if (markupWrapper != null) { // Have we previously cached some markup?                   
+                    if (!markupWrapper.hasExpired()) { // Is the markup still valid?
+                        markup = markupWrapper.getMarkup();
+                    } else {                         
+                        // Note sure how to interpret the WSRP spec here.
+                        // Should we remove expired markup from the cache
+                        // or hang onto it in case the producer says to use it later?
+                        // Remove the expired markup from the cache
+                        cd.getMarkupCache().remove(key, userScope);
+                        if (markupContext.getUseCachedMarkup().booleanValue()) { // Does the producer say to use the expired markup?
+                            markup = markupWrapper.getMarkup();
+                        }
+                    }
+                    
+                }
+            }
+        }
         
-        String markupString = null;
-        try {
-            // Portlet context
-            PortletContext portletContext = cd.getPortletContext();            
-                      
-            // Runtime context
-            RuntimeContext runtimeContext = new RuntimeContext();
-            runtimeContext.setUserAuthentication("wsrp:none");
-            runtimeContext.setSessionID(cd.getSessionId());
-            Templates templates = new Templates();
-            templates.setRenderTemplate(runtimeData.getBaseActionURL());
-            runtimeContext.setTemplates(templates);           
-          
-            // User context
-            UserContext userContext = new UserContext();
-            IPerson person = staticData.getPerson();
-            UserProfile userProfile = new UserProfile();
-            PersonName personName = new PersonName();
-            personName.setGiven((String)person.getAttribute("givenName"));
-            personName.setFamily((String)person.getAttribute("sn"));
-            userProfile.setName(personName); // much more could be set here!
-            userContext.setUserContextKey((String)person.getAttribute(IPerson.USERNAME));
-            userContext.setProfile(userProfile);
-          
-            // Markup params
-            MarkupParams markupParams = new MarkupParams();
-            ClientData clientData = new ClientData();
-            clientData.setUserAgent(runtimeData.getBrowserInfo().getUserAgent());
-            markupParams.setClientData(clientData);
-            markupParams.setSecureClientCommunication(false); // is consumer currently communicating securly with end user?
-            markupParams.setLocales(getLocalesAsStringArray(runtimeData.getLocales()));
-            MediaManager mediaManager = new MediaManager();
-            markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(runtimeData.getBrowserInfo())) });
-            markupParams.setMode("wsrp:view"); // can be a different mode
-            markupParams.setWindowState("wsrp:normal");
-            markupParams.setNavigationalState(""); // ???
-            markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
-            markupParams.setValidateTag(""); // ???
-            markupParams.setValidNewModes(new String[] {""}); // ??
-            markupParams.setValidNewWindowStates(new String[] {""}); // ??
+        if (markup != null) {
+            System.out.println("Using cached markup!!!");
+        }
+        
+        if (markup == null) {
+            // Go get the markup from the producer
+            MarkupResponse markupResponse = getMarkupFromProducer(uid);
             
-            
-            MarkupResponse markupResponse = cd.getMarkupService().getMarkup(registrationContext, portletContext, runtimeContext, userContext, markupParams);                          
-            MarkupContext markupContext = markupResponse.getMarkupContext();
-            SessionContext sessionContext = markupResponse.getSessionContext();
-            
-            // Obtain the markup string from the producer
-            markupString = markupContext.getMarkupString();
+            markupContext = markupResponse.getMarkupContext();
+            cd.setMarkupContext(markupContext);
             
             // Check if URLs need to be rewritten - we don't support that yet
             if (markupContext.getRequiresUrlRewriting().booleanValue()) {
                 throw new PortalException("Consumer URL rewriting is currently not supported");
             }
             
+            // Obtain the actual markup as a String
+            markup = markupContext.getMarkupString();
+
             // Set the session id
+            SessionContext sessionContext = markupResponse.getSessionContext();
             String sessionId = sessionContext.getSessionID();
             cd.setSessionId(sessionId);
-                                      
+                        
+            // If a CacheControl has been supplied, cache the markup
+            CacheControl cacheControl = markupContext.getCacheControl();
+            if (cacheControl != null) {
+                MarkupWrapper markupWrapper = new MarkupWrapper(markup, cacheControl);
+                cd.getMarkupCache().put(key, markupWrapper);
+            }
+        }
+        
+        return markup;
+    }
+            
+    /**
+     * This is where we do the real work of getting the markup from the producer.
+     * @param uid a unique ID used to identify the state of the channel
+     * @return the markup response
+     */
+    private MarkupResponse getMarkupFromProducer(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ChannelData cd = channelState.getChannelData();
+        
+        MarkupResponse markupResponse = null;
+        try {
+            PortletContext portletContext = cd.getPortletContext();            
+            RuntimeContext runtimeContext = getRuntimeContext(uid);                  
+            UserContext userContext = getUserContext(uid);          
+            MarkupParams markupParams = getMarkupParams(uid);
+                        
+            MarkupService markupService = cd.getMarkupService();
+            markupResponse = markupService.getMarkup(registrationContext, 
+                                                     portletContext, 
+                                                     runtimeContext, 
+                                                     userContext, 
+                                                     markupParams);                                                               
         } catch (Exception e) {
             e.printStackTrace();
         } 
         
-        return markupString;   
+        return markupResponse;   
     }
     
+    /**
+     * Helps construct and populate a RuntimeContext object.
+     * @param uid the unique identifier
+     * @return a populated RuntimeContext
+     */
+    private RuntimeContext getRuntimeContext(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        ChannelData cd = channelState.getChannelData();
+
+        RuntimeContext runtimeContext = new RuntimeContext();
+        runtimeContext.setUserAuthentication(Constants.WSRP_NONE);
+        runtimeContext.setSessionID(cd.getSessionId());
+        Templates templates = new Templates();
+        templates.setRenderTemplate(runtimeData.getBaseActionURL());
+        runtimeContext.setTemplates(templates);           
+        return runtimeContext;
+    }
+    
+    /**
+     * Helps construct and populate a UserContext object.
+     * @param uid the unique identifier
+     * @return a populated UserContext
+     */
+    private UserContext getUserContext(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+
+        UserContext userContext = new UserContext();
+        IPerson person = staticData.getPerson();
+        UserProfile userProfile = new UserProfile();
+        PersonName personName = new PersonName();
+        personName.setGiven((String)person.getAttribute("givenName"));
+        personName.setFamily((String)person.getAttribute("sn"));
+        userProfile.setName(personName); // much more could be set here!
+        userContext.setUserContextKey((String)person.getAttribute(IPerson.USERNAME));
+        userContext.setProfile(userProfile);
+        return userContext;
+    }
+    
+    /**
+     * Helps construct and populate a MarkupParams object.
+     * @param uid the unique identifier
+     * @return a populated MarkupParams
+     */
+    private MarkupParams getMarkupParams(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        ChannelData cd = channelState.getChannelData();
+
+        MarkupParams markupParams = new MarkupParams();
+        ClientData clientData = new ClientData();
+        clientData.setUserAgent(runtimeData.getBrowserInfo().getUserAgent());
+        markupParams.setClientData(clientData);
+        markupParams.setSecureClientCommunication(false); // is consumer currently communicating securly with end user?
+        markupParams.setLocales(getLocalesAsStringArray(runtimeData.getLocales()));
+        MediaManager mediaManager = new MediaManager();
+        markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(runtimeData.getBrowserInfo())) });
+        markupParams.setMode(Constants.WSRP_VIEW); // can be a different mode
+        markupParams.setWindowState(Constants.WSRP_NORMAL);
+        //markupParams.setNavigationalState(""); // ???
+        markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
+        markupParams.setValidateTag(cd.getValidateTag());
+        markupParams.setValidNewModes(new String[] {""}); // ??
+        markupParams.setValidNewWindowStates(new String[] {""}); // ??
+        cd.setMarkupParams(markupParams);
+        return markupParams;        
+    }
+    
+    /**
+     * Generate a key that is based on the state of the
+     * MarkupParams and InteractionParams objects. I would prefer
+     * to just serialize these two objects into XML strings but
+     * I had a hard time figuring out how to do that easily without
+     * bringing in another third-party lib like Castor.
+     * @param mp the current MarkupParams
+     * @param ip the current InteractionParams
+     * @return a key based on the MarkupParams and InteractionParams
+     */
+    private String generateKey(MarkupParams mp, InteractionParams ip) {
+        StringBuffer sbKey = new StringBuffer(1024);
+        if (mp != null) {
+            sbKey.append("MarkupParams: ");
+            // Capture the state of MarkupParams as a String
+            sbKey.append(mp.isSecureClientCommunication()).append("|");
+            sbKey.append(getStringArrayAsString(mp.getLocales())).append("|");
+            sbKey.append(getStringArrayAsString(mp.getMimeTypes())).append("|");
+            sbKey.append(mp.getMode()).append("|");
+            sbKey.append(mp.getWindowState()).append("|");
+            sbKey.append(mp.getClientData().getUserAgent()).append("|");
+            sbKey.append(mp.getNavigationalState()).append("|");
+            sbKey.append(getStringArrayAsString(mp.getMarkupCharacterSets())).append("|");
+            sbKey.append(mp.getValidateTag()).append("|");
+            sbKey.append(getStringArrayAsString(mp.getValidNewModes())).append("|");
+            sbKey.append(getStringArrayAsString(mp.getValidNewWindowStates()));
+            // Right now we're ignoring any extensions 
+            sbKey.append("\n");          
+        }
+        
+        if (ip != null) {
+            sbKey.append("InteractionParams: ");
+            // Capture the state of InteractionParams as a String
+            sbKey.append(ip.getPortletStateChange().getValue()).append("|");
+            sbKey.append(ip.getInteractionState()).append("|");
+            sbKey.append(getNamedStringArrayAsString(ip.getFormParameters())).append("|");
+            sbKey.append(getUploadContextArrayAsString(ip.getUploadContexts()));
+            // Right now we're ignoring any extensions 
+            sbKey.append("\n");          
+        }
+        //System.out.println("key:\n" + sbKey.toString());
+        return sbKey.toString();
+    }    
+    
+    /**
+     * Helps turn a String array into a single string.
+     * Used in generation of cache key.
+     * @param strings the String array
+     * @return the String array as a string
+     */
+    private String getStringArrayAsString(String[] strings) {
+        String string = "null";
+        if (strings != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("{");
+            for (int i = 0; i < strings.length; i++) {
+                sb.append(strings[i]);
+                if (i < strings.length - 1) {
+                    sb.append(",");
+                }            
+            }
+            sb.append("}");
+            string = sb.toString();
+        }
+        return string;
+    }
+
+    /**
+     * Helps turn a NamedString array into a single string.
+     * Used in generation of cache key.
+     * @param namedStrings the NamedString array
+     * @return the NamedString array as a string
+     */
+    private String getNamedStringArrayAsString(NamedString[] namedStrings) {
+        String string = "null";
+        if (namedStrings != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("{");
+            for (int i = 0; i < namedStrings.length; i++) {
+                sb.append(namedStrings[i].getName()).append("=");
+                sb.append(namedStrings[i].getValue());
+                if (i < namedStrings.length - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append("}");
+            string = sb.toString();
+        }
+        return string;
+    }
+    
+    /**
+     * Helps turn a UploadContext array into a single string.
+     * Used in generation of cache key.
+     * @param uploadContexts the UploadContext array
+     * @return the UploadContext array as a string
+     */
+    private String getUploadContextArrayAsString(UploadContext[] uploadContexts) {
+        String string = "null";
+        if (uploadContexts != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("{");
+            for (int i = 0; i < uploadContexts.length; i++) {
+                sb.append(uploadContexts[i].getMimeType()).append(",");
+                sb.append(new String(uploadContexts[i].getUploadData())).append(",");
+                sb.append(getNamedStringArrayAsString(uploadContexts[i].getMimeAttributes()));
+            }
+            sb.append("}");
+            string = sb.toString();
+        }
+        return string;
+    }
+        
+    /**
+     * Converts an array of Locales to an array of Strings.
+     * @param locales the array of Locale objects
+     * @return an array of String objects
+     */
     private static String[] getLocalesAsStringArray(Locale[] locales) {
         if (locales == null) {
             locales = new Locale[] { Locale.getDefault() };
@@ -417,6 +632,12 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         return localesStringArray;
     }
     
+    /**
+     * This method helps transfer request parameters out of uPortal's
+     * ChannelRuntimeData object into an array of WSRP's NamedStrings.
+     * @param runtimeData the channel runtime data
+     * @return an array of NamedStrings
+     */
     private static NamedString[] getFormParameters(ChannelRuntimeData runtimeData) {
         NamedString[] namedStrings = new NamedString[runtimeData.size()];
         int i = 0;

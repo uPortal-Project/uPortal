@@ -118,8 +118,13 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
             // Obtain the channel markup
             ChannelInstanceManager cim = getChannelInstanceManager(sessionId, portletHandle, userContext);
             String markup = cim.getChannelMarkup(runtimeContext, markupParams);
-            markupContext.value.setUseCachedMarkup(Boolean.FALSE);
-            // TODO: Implement caching
+            // We cannot implement caching because the WSRP and portlet
+            // caching implementation only deals with expiration based caching.
+            // uPortal channel caching is much more flexible and there is no
+            // way to derive a simple expiration timeout via the ICacheable interface            
+            // Consider doing something with the setUseCachedMarkup(Boolean.TRUE) method
+            // in conjunction with the validateFlag.
+            markupContext.value.setCacheControl(null);
             markupContext.value.setMarkupString(markup);
             
             // Producer will rewrite the URLs, not the Consumer

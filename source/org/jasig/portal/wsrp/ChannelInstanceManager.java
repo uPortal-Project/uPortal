@@ -97,12 +97,22 @@ public class ChannelInstanceManager {
     private static final IChannelRendererFactory channelRendererFactory = ChannelRendererFactory.newInstance(ChannelInstanceManager.class.getName());
     protected static String baseUrl;
 
+    /**
+     * Constructs a ChannelInstanceManager.
+     * @param portletHandle the portlet handle
+     * @param sessionId the session ID
+     * @param userContext the user context
+     */
     public ChannelInstanceManager(String portletHandle, String sessionId, UserContext userContext) throws Exception {
         person = getPerson(userContext);
         channelDef = getChannelDefinition(portletHandle);
         channel = getChannel(sessionId, channelDef);
     }
     
+    /**
+     * Accessor to IChannel.
+     * @return the channel instance
+     */
     public IChannel getChannel() {
         return this.channel;
     }
@@ -201,7 +211,6 @@ public class ChannelInstanceManager {
      * @throws java.lang.Exception
      */
     protected IChannel getChannel(String sessionId, ChannelDefinition channelDef) throws Exception {
-        System.out.println("Making a new WSRP channel instance...." + sessionId);        
         // Make sure user is authorized to access this channel
         EntityIdentifier ei = person.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
@@ -213,7 +222,6 @@ public class ChannelInstanceManager {
         }
         
         // Instantiate channel
-        // Should this block be synchronized?
         String javaClass = channelDef.getJavaClass();
         String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();    
         String uid = sessionId + "/" + instanceId;
