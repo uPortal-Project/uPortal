@@ -388,7 +388,7 @@ private static java.lang.String getAllMemberColumns()
 private static java.lang.String getDeleteGroupSql(IEntityGroup group)
 {
     StringBuffer buff = new StringBuffer(100);
-    buff.append("DELETE ");
+    buff.append("DELETE FROM ");
     buff.append(GROUP_TABLE);
     buff.append(" WHERE ");
     buff.append(GROUP_ID_COLUMN);
@@ -405,7 +405,7 @@ private static java.lang.String getDeleteMembersInGroupSql()
     if ( deleteMembersInGroupSql == null )
     {
         StringBuffer buff = new StringBuffer(100);
-        buff.append("DELETE ");
+        buff.append("DELETE FROM ");
         buff.append(MEMBER_TABLE);
         buff.append(" WHERE ");
         buff.append(GROUP_ID_COLUMN);
@@ -434,7 +434,7 @@ private static java.lang.String getDeleteMemberSql()
     if ( deleteMemberSql == null )
     {
         StringBuffer buff = new StringBuffer(100);
-        buff.append("DELETE ");
+        buff.append("DELETE FROM ");
         buff.append(MEMBER_TABLE);
         buff.append(" WHERE ");
         buff.append(MEMBER_GROUP_ID_COLUMN);
