@@ -1,7 +1,7 @@
 package org.jasig.portal.groups;
 
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,19 +35,21 @@ package org.jasig.portal.groups;
  *
  */
 
+import java.sql.*;
 import java.util.*;
 import org.jasig.portal.*;
 import org.jasig.portal.services.LogService;
-import java.sql.*;
+import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.utils.SqlTransaction;
 
 /**
  * Factory for <code>EntityGroupImpl</code>.
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01
+ * @version 1.0, 11/29/01  
  */
 public class EntityGroupStoreRDBM implements IEntityGroupStore {
 	private static EntityGroupStoreRDBM singleton;
-
+	
 	// Constant strings for GROUP table:
 	private static String GROUP_TABLE = "UP_GROUP";
 	private static String GROUP_TABLE_ALIAS = "T1";
@@ -67,7 +69,7 @@ public class EntityGroupStoreRDBM implements IEntityGroupStore {
 	private static String findMemberGroupsSql;
 	private static String insertGroupSql;
 	private static String updateGroupSql;
-
+	
 	// Constant strings for MEMBERS table:
 	private static String MEMBER_TABLE = "UP_GROUP_MEMBERSHIP";
 	private static String MEMBER_TABLE_ALIAS = "T2";
@@ -76,17 +78,17 @@ public class EntityGroupStoreRDBM implements IEntityGroupStore {
 	private static String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
 	private static String MEMBER_IS_ENTITY = "F";
 	private static String MEMBER_IS_GROUP = "T";
-
+	
 	// SQL strings for group MEMBERS crud:
 	private static String allMemberColumns;
 	private static String deleteMembersInGroupSql;
 	private static String deleteMemberSql;
 	private static String insertMemberSql;
-
+	
 /**
  * EntityGroupStoreRDBM constructor.
  */
-public EntityGroupStoreRDBM()
+public EntityGroupStoreRDBM() 
 {
 	super();
 }
@@ -94,15 +96,9 @@ public EntityGroupStoreRDBM()
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-protected static void commit(Connection conn) throws java.sql.SQLException
+protected static void commit(Connection conn) throws java.sql.SQLException 
 {
-	try
-	{
-		if ( supportsTransactions(conn) )
-			{ conn.commit(); }
-	}
-	catch (SQLException sqle)
-		{ LogService.instance().log(LogService.ERROR, sqle); }
+	SqlTransaction.commit(conn);
 }
 /**
  * If this entity exists, delete it.
@@ -141,21 +137,13 @@ public IEntityGroup find(String groupID) throws GroupsException
 	{
 		conn = RdbmServices.getConnection();
 		java.sql.PreparedStatement ps = conn.prepareStatement(getFindGroupSql());
-                try {
-                  ps.setString(1, groupID);
-                  java.sql.ResultSet rs = ps.executeQuery();
-                  try {
-                    while (rs.next())
-                      { ug = instanceFromResultSet(rs); }
-                  } finally {
-                    rs.close();
-                  }
-                } finally {
-                  ps.close();
-                }
+		ps.setString(1, groupID);
+		java.sql.ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			{ ug = instanceFromResultSet(rs); }
 	}
 	catch (Exception e)
-		{
+		{ 
 			LogService.log (LogService.ERROR, e);
 			throw new GroupsException("Error retrieving " + groupID + ": " + e);
 		}
@@ -167,7 +155,7 @@ public IEntityGroup find(String groupID) throws GroupsException
 /**
  * Find the groups associated with this member key.
  * @return java.util.Iterator
- * @param String memberKey
+ * @param String memberKey 
  */
 private java.util.Iterator findContainingGroups(String memberKey, int type) throws GroupsException
 {
@@ -179,29 +167,21 @@ private java.util.Iterator findContainingGroups(String memberKey, int type) thro
 	{
 		conn = RdbmServices.getConnection();
 		java.sql.PreparedStatement ps = conn.prepareStatement(getFindContainingGroupsSql());
-                try {
-		  ps.setString(1, memberKey);
-		  ps.setInt(2, type);
-		  java.sql.ResultSet rs = ps.executeQuery();
-                  try {
-		    while (rs.next())
-		      {
+		ps.setString(1, memberKey);
+		ps.setInt(2, type);
+		java.sql.ResultSet rs = ps.executeQuery();
+		while (rs.next())
+		{ 
 			eg = instanceFromResultSet(rs);
 			groups.add(eg);
-		      }
-                  } finally {
-                    rs.close();
-                  }
-                } finally {
-                  ps.close();
-                }
+		}
 	}
 	catch (Exception e)
-		{
+		{ 
 			LogService.log (LogService.ERROR, e);
 			throw new GroupsException("Problem retrieving containing groups: " + e);
 		}
-
+		
 	finally
 		{ RdbmServices.releaseConnection(conn); }
 
@@ -221,40 +201,32 @@ public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsExc
 /**
  * Find the groups with this creatorID.
  * @return java.util.Iterator
- * @param String creatorID
+ * @param String creatorID 
  */
 public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsException
 {
 	java.sql.Connection conn = null;
 	Collection groups = new ArrayList();
 	IEntityGroup eg = null;
-
+	
 	try
 	{
 		conn = RdbmServices.getConnection();
 		PreparedStatement ps = conn.prepareStatement(getFindGroupsByCreatorSql());
-                try {
-		  ps.setString(1, creatorID);
-		  ResultSet rs = ps.executeQuery();
-                  try {
-		    while (rs.next())
-		    {
+		ps.setString(1, creatorID);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+		{ 
 			eg = instanceFromResultSet(rs);
 			groups.add(eg);
-		    }
-                  } finally {
-                    rs.close();
-                  }
-                } finally {
-                  ps.close();
-                }
+		}
 	}
 	catch (Exception e)
-		{
+		{ 
 			LogService.log (LogService.ERROR, e);
 			throw new GroupsException("Problem retrieving groups: " + e);
 		}
-
+		
 	finally
 		{ RdbmServices.releaseConnection(conn); }
 
@@ -275,24 +247,16 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
 	{
 		conn = RdbmServices.getConnection();
 		java.sql.PreparedStatement ps = conn.prepareStatement(getFindMemberGroupsSql());
-                try {
-		  ps.setString(1, group.getKey());
-		  java.sql.ResultSet rs = ps.executeQuery();
-                  try {
-		    while (rs.next())
-		    {
+		ps.setString(1, group.getKey());
+		java.sql.ResultSet rs = ps.executeQuery();
+		while (rs.next())
+		{ 
 			eg = instanceFromResultSet(rs);
 			groups.add(eg);
-		    }
-                  } finally {
-                    rs.close();
-                  }
-                } finally {
-                  ps.close();
-                }
+		}
 	}
 	catch (Exception sqle)
-		{
+		{ 
 			LogService.log (LogService.ERROR, sqle);
 			throw new GroupsException("Problem retrieving member groups: " + sqle);
 		}
@@ -306,7 +270,7 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
  */
 private static java.lang.String getAllGroupColumns()
 {
-
+	
 	if ( allGroupColumns == null )
 	{
 		StringBuffer buff = new StringBuffer(100);
@@ -319,9 +283,9 @@ private static java.lang.String getAllGroupColumns()
 		buff.append(GROUP_NAME_COLUMN);
 		buff.append(", ");
 		buff.append(GROUP_DESCRIPTION_COLUMN);
-
+		
 		allGroupColumns = buff.toString();
-	}
+	}	
 	return allGroupColumns;
 }
 /**
@@ -329,7 +293,7 @@ private static java.lang.String getAllGroupColumns()
  */
 private static java.lang.String getAllGroupColumnsWithTableAlias()
 {
-
+	
 	if ( allGroupColumnsWithTableAlias == null )
 	{
 		StringBuffer buff = new StringBuffer(100);
@@ -342,9 +306,9 @@ private static java.lang.String getAllGroupColumnsWithTableAlias()
 		buff.append(prependGroupTableAlias(GROUP_NAME_COLUMN));
 		buff.append(", ");
 		buff.append(prependGroupTableAlias(GROUP_DESCRIPTION_COLUMN));
-
+		
 		allGroupColumnsWithTableAlias = buff.toString();
-	}
+	}	
 	return allGroupColumnsWithTableAlias;
 }
 /**
@@ -355,30 +319,30 @@ private static java.lang.String getAllMemberColumns()
 	if ( allMemberColumns == null )
 	{
 		StringBuffer buff = new StringBuffer(100);
-
+		
 		buff.append(MEMBER_GROUP_ID_COLUMN);
 		buff.append(", ");
 		buff.append(MEMBER_MEMBER_KEY_COLUMN);
 		buff.append(", ");
 		buff.append(MEMBER_IS_GROUP_COLUMN);
-
+		
 		allMemberColumns = buff.toString();
-	}
+	}	
 	return allMemberColumns;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getDeleteGroupSql(IEntityGroup group)
+private static java.lang.String getDeleteGroupSql(IEntityGroup group) 
 {
 	StringBuffer buff = new StringBuffer(100);
 	buff.append("DELETE ");
 	buff.append(GROUP_TABLE);
 	buff.append(" WHERE ");
 	buff.append(GROUP_ID_COLUMN);
-	buff.append(" = '");
+	buff.append(" = '");	
 	buff.append(group.getKey());
-	buff.append("'");
+	buff.append("'");	
 	return buff.toString();
 }
 /**
@@ -394,20 +358,20 @@ private static java.lang.String getDeleteMembersInGroupSql()
 		buff.append(" WHERE ");
 		buff.append(GROUP_ID_COLUMN);
 		buff.append(" = ");
-
+		
 		deleteMembersInGroupSql = buff.toString();
-	}
+	}	
 	return deleteMembersInGroupSql;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getDeleteMembersInGroupSql(IEntityGroup group)
+private static java.lang.String getDeleteMembersInGroupSql(IEntityGroup group) 
 {
 	StringBuffer buff = new StringBuffer(getDeleteMembersInGroupSql());
 	buff.append("'");
 	buff.append(group.getKey());
-	buff.append("'");
+	buff.append("'");	
 	return buff.toString();
 }
 /**
@@ -427,16 +391,16 @@ private static java.lang.String getDeleteMemberSql()
 		buff.append(" = ? AND ");
 		buff.append(MEMBER_IS_GROUP_COLUMN);
 		buff.append(" = ? ");
-
-
+		
+		
 		deleteMemberSql = buff.toString();
-	}
+	}	
 	return deleteMemberSql;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getFindContainingGroupsSql()
+private static java.lang.String getFindContainingGroupsSql() 
 {
 	if ( findContainingGroupsSql == null)
 	{
@@ -465,7 +429,7 @@ private static java.lang.String getFindContainingGroupsSql()
  * @return java.lang.String
  */
 private static java.lang.String getFindGroupsByCreatorSql()
-{
+{	
 	if ( findGroupsByCreatorSql == null )
 	{
 		StringBuffer buff = new StringBuffer(200);
@@ -476,9 +440,9 @@ private static java.lang.String getFindGroupsByCreatorSql()
 		buff.append(" WHERE ");
 		buff.append(GROUP_CREATOR_COLUMN);
 		buff.append(" = ? ");
-
+		
 		findGroupsByCreatorSql = buff.toString();
-	}
+	}	
 	return findGroupsByCreatorSql;
 }
 /**
@@ -486,7 +450,7 @@ private static java.lang.String getFindGroupsByCreatorSql()
  */
 private static java.lang.String getFindGroupSql()
 {
-
+	
 	if ( findGroupSql == null )
 	{
 		StringBuffer buff = new StringBuffer(200);
@@ -497,15 +461,15 @@ private static java.lang.String getFindGroupSql()
 		buff.append(" WHERE ");
 		buff.append(GROUP_ID_COLUMN);
 		buff.append(" = ? ");
-
+		
 		findGroupSql = buff.toString();
-	}
+	}	
 	return findGroupSql;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getFindMemberGroupSql()
+private static java.lang.String getFindMemberGroupSql() 
 {
 	if ( findMemberGroupSql == null )
 	{
@@ -515,14 +479,14 @@ private static java.lang.String getFindMemberGroupSql()
 		buff.append(".");
 		buff.append(GROUP_NAME_COLUMN);
 		buff.append(" = ?");
-		findMemberGroupSql = buff.toString();
+		findMemberGroupSql = buff.toString(); 
 	}
 	return findMemberGroupSql;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getFindMemberGroupsSql()
+private static java.lang.String getFindMemberGroupsSql() 
 {
 	if (findMemberGroupsSql == null)
 	{
@@ -544,7 +508,7 @@ private static java.lang.String getFindMemberGroupsSql()
 		buff.append("' AND ");
 		buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
 		buff.append(" = ? ");
-
+		
 		findMemberGroupsSql = buff.toString();
 	}
 	return findMemberGroupsSql;
@@ -562,9 +526,9 @@ private static java.lang.String getInsertGroupSql()
 		buff.append(" (");
 		buff.append(getAllGroupColumns());
 		buff.append(") VALUES (?, ?, ?, ?, ?)");
-
+		
 		insertGroupSql = buff.toString();
-	}
+	}	
 	return insertGroupSql;
 }
 /**
@@ -580,10 +544,18 @@ private static java.lang.String getInsertMemberSql()
 		buff.append(" (");
 		buff.append(getAllMemberColumns());
 		buff.append(") VALUES (?, ?, ? )");
-
+		
 		insertMemberSql = buff.toString();
-	}
+	}	
 	return insertMemberSql;
+}
+/**
+ * @return java.lang.String
+ * @exception java.lang.Exception 
+ */
+private String getNextKey() throws java.lang.Exception 
+{
+	return SequenceGenerator.instance().getNext(GROUP_TABLE);
 }
 /**
  * @return java.lang.String
@@ -606,9 +578,9 @@ private static java.lang.String getUpdateGroupSql()
 		buff.append(" = ? WHERE ");
 		buff.append(GROUP_ID_COLUMN);
 		buff.append(" = ? ");
-
+		
 		updateGroupSql = buff.toString();
-	}
+	}	
 	return updateGroupSql;
 }
 /**
@@ -616,8 +588,8 @@ private static java.lang.String getUpdateGroupSql()
  * @return org.jasig.portal.groups.IEntityGroup
  * @param key java.lang.Object
  */
-private IEntityGroup instanceFromResultSet(java.sql.ResultSet rs)
-throws  SQLException,
+private IEntityGroup instanceFromResultSet(java.sql.ResultSet rs) 
+throws  SQLException, 
 		GroupsException
 {
 	IEntityGroup eg = null;
@@ -631,7 +603,7 @@ throws  SQLException,
 
 	if ( key != null )
 		{ eg = newInstance(key, entityType, creatorID, groupName, description); }
-
+		
 	return eg;
 }
 /**
@@ -640,32 +612,28 @@ throws  SQLException,
 protected static void logNoTransactionWarning()
 {
 	String msg = "You are running the portal on a database that does not support transactions.  " +
-				 "This is not a supported production environment for uPortal.  " +
+				 "This is not a supported production environment for uPortal.  " + 
 				 "Sooner or later, your database will become corrupt.";
 	LogService.instance().log(LogService.WARN, msg);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
-public IEntityGroup newInstance(String groupID) throws GroupsException
+public IEntityGroup newInstance(Class type) throws GroupsException
 {
-	return new EntityGroupImpl(groupID, null);
+	try
+		{ return new EntityGroupImpl(getNextKey(), type); }
+	catch ( Exception ex )
+		{ throw new GroupsException("Could not create new group: " + ex.getMessage()); }
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
-public IEntityGroup newInstance(String groupID, Class type) throws GroupsException
-{
-	return new EntityGroupImpl(groupID, type);
-}
-/**
- * @return org.jasig.portal.groups.IEntityGroup
- */
-public IEntityGroup newInstance
-	(String newKey,
-	Class newType,
-	String newCreatorID,
-	String newName,
+private IEntityGroup newInstance
+	(String newKey, 
+	Class newType, 
+	String newCreatorID, 
+	String newName, 
 	String newDescription)
 	throws GroupsException
 {
@@ -678,14 +646,14 @@ public IEntityGroup newInstance
 /**
  * @return java.lang.String
  */
-private static java.lang.String prependGroupTableAlias(String column)
+private static java.lang.String prependGroupTableAlias(String column) 
 {
 	return GROUP_TABLE_ALIAS + "." + column;
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String prependMemberTableAlias(String column)
+private static java.lang.String prependMemberTableAlias(String column) 
 {
 	return MEMBER_TABLE_ALIAS + "." + column;
 }
@@ -696,31 +664,27 @@ private static java.lang.String prependMemberTableAlias(String column)
 private void primAdd(IEntityGroup group) throws SQLException, GroupsException
 {
 	java.sql.Connection conn = null;
-
+	
 	try
 	{
-
+		
 		conn = RdbmServices.getConnection();
 		java.sql.PreparedStatement ps = conn.prepareStatement(getInsertGroupSql());
-                try {
-		  Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
-		  ps.setString(1, group.getKey());
-		  ps.setString(2, group.getCreatorID());
-		  ps.setInt   (3, typeID.intValue());
-		  ps.setString(4, group.getName());
-		  ps.setString(5, group.getDescription());
+		Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+		ps.setString(1, group.getKey());
+		ps.setString(2, group.getCreatorID());
+		ps.setInt   (3, typeID.intValue());
+		ps.setString(4, group.getName());
+		ps.setString(5, group.getDescription());
 
-		  int rc = ps.executeUpdate();
-
-                  if ( rc != 1 )
-		  {
+		int rc = ps.executeUpdate();
+		
+		if ( rc != 1 )
+		{
 			String errString = "Problem adding " + group;
 			LogService.log (LogService.ERROR, errString);
 			throw new GroupsException(errString);
-		  }
-                } finally {
-                  ps.close();
-                }
+		}
 	}
 	catch (java.sql.SQLException sqle)
 	{
@@ -729,14 +693,14 @@ private void primAdd(IEntityGroup group) throws SQLException, GroupsException
 	}
 	finally
 	{
-		RdbmServices.releaseConnection(conn);
+		RdbmServices.releaseConnection(conn); 
 	}
 }
 /**
  * Delete this entity from the database after first deleting
  * its memberships.
  * Exception java.sql.SQLException - if we catch a SQLException,
- * we rollback and re-throw it.
+ * we rollback and re-throw it.  
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 private void primDelete(IEntityGroup group) throws SQLException
@@ -745,31 +709,28 @@ private void primDelete(IEntityGroup group) throws SQLException
 	String groupID = group.getKey();
 	String deleteGroupSql = getDeleteGroupSql(group);
 	String deleteMembershipSql = getDeleteMembersInGroupSql(group);
-
+	
 	try
 	{
 		conn = RdbmServices.getConnection();
-                setAutoCommit(conn, false);
 		Statement stmnt = conn.createStatement();
-                try {
-		  stmnt.executeUpdate(deleteMembershipSql);
-		  stmnt.executeUpdate(deleteGroupSql);
-                } finally {
-                  stmnt.close();
-                }
-                commit(conn);
-
+		setAutoCommit(conn, false);
+		
+		stmnt.executeUpdate(deleteMembershipSql);
+		stmnt.executeUpdate(deleteGroupSql);
+		
+		commit(conn);
 
 	}
 	catch (SQLException sqle)
-	{
-		rollback(conn);
+	{ 
+		rollback(conn); 
 		throw sqle;
 	}
 	finally
 	{
 		setAutoCommit(conn, true);
-		RdbmServices.releaseConnection(conn);
+		RdbmServices.releaseConnection(conn); 
 	}
 }
 /**
@@ -779,30 +740,27 @@ private void primDelete(IEntityGroup group) throws SQLException
 private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
 {
 	java.sql.Connection conn = null;
-
+	
 	try
 	{
 		conn = RdbmServices.getConnection();
 		java.sql.PreparedStatement ps = conn.prepareStatement(getUpdateGroupSql());
-		try {
-		  Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+		
+		Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
 
-		  ps.setString(1, group.getCreatorID());
-		  ps.setInt(2, typeID.intValue());
-		  ps.setString(3, group.getName());
-		  ps.setString(4, group.getDescription());
-		  ps.setString(5, group.getKey());
+		ps.setString(1, group.getCreatorID());
+		ps.setInt(2, typeID.intValue());
+		ps.setString(3, group.getName());
+		ps.setString(4, group.getDescription());
+		ps.setString(5, group.getKey());	
 
-		  int rc = ps.executeUpdate();
-
-		  if ( rc != 1 )
-		  {
+		int rc = ps.executeUpdate();
+		
+		if ( rc != 1 )
+		{
 			String errString = "Problem updating " + group;
 			LogService.log (LogService.ERROR, errString);
 			throw new GroupsException(errString);
-		  }
-		} finally {
-                  ps.close();
 		}
 	}
 	catch (java.sql.SQLException sqle)
@@ -812,11 +770,11 @@ private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
 	}
 	finally
 	{
-		RdbmServices.releaseConnection(conn);
+		RdbmServices.releaseConnection(conn); 
 	}
 }
 /**
- * Insert and delete group membership rows inside a transaction.
+ * Insert and delete group membership rows inside a transaction.  
  * @param group org.jasig.portal.groups.EntityGroupImpl
  */
 private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
@@ -825,7 +783,7 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 	String memberKey = null;
 	String isGroup = null;
 	Connection conn = null;
-
+		
 	try
 	{
 		conn = RdbmServices.getConnection();
@@ -834,10 +792,9 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 		if ( egi.hasDeletes() )
 		{
 			PreparedStatement psDelete = conn.prepareStatement(getDeleteMemberSql());
-                        try {
-			  Iterator deletes = egi.getRemovedMembers().values().iterator();
-			  while ( deletes.hasNext() )
-			  {
+			Iterator deletes = egi.getRemovedMembers().values().iterator();
+			while ( deletes.hasNext() )
+			{
 				GroupMemberImpl removedGM = (GroupMemberImpl) deletes.next();
 				memberKey = removedGM.getKey();
 				isGroup = removedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
@@ -845,19 +802,15 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 				psDelete.setString(2, memberKey);
 				psDelete.setString(3, isGroup);
 				psDelete.executeUpdate();
-			  }
-                        } finally {
-                          psDelete.close();
-                        }
+			}
 		}
 
 		if ( egi.hasAdds() )
 		{
 			PreparedStatement psAdd = conn.prepareStatement(getInsertMemberSql());
-                        try {
-			  Iterator adds = egi.getAddedMembers().values().iterator();
-			  while ( adds.hasNext() )
-			  {
+			Iterator adds = egi.getAddedMembers().values().iterator();
+			while ( adds.hasNext() )
+			{
 				GroupMemberImpl addedGM = (GroupMemberImpl) adds.next();
 				memberKey = addedGM.getKey();
 				isGroup = addedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
@@ -865,10 +818,7 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 				psAdd.setString(2, memberKey);
 				psAdd.setString(3, isGroup);
 				psAdd.executeUpdate();
-			  }
-                        } finally {
-                          psAdd.close();
-                        }
+			}
 		}
 
 		commit(conn);
@@ -876,7 +826,7 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-
+		
 		rollback(conn);
 
 		LogService.log (LogService.ERROR, sqle);
@@ -886,37 +836,25 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 	finally
 	{
 		setAutoCommit(conn, true);
-		RdbmServices.releaseConnection(conn);
+		RdbmServices.releaseConnection(conn); 
 	}
 }
 /**
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-protected static void rollback(Connection conn) throws java.sql.SQLException
+protected static void rollback(Connection conn) throws java.sql.SQLException 
 {
-	try
-	{
-		if ( supportsTransactions(conn) )
-			{ conn.rollback(); }
-	}
-	catch (SQLException sqle)
-		{ LogService.instance().log(LogService.ERROR, sqle); }
+	SqlTransaction.rollback(conn);
 }
 /**
  * @param conn java.sql.Connection
  * @param newValue boolean
  * @exception java.sql.SQLException The exception description.
  */
-protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
+protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException 
 {
-	try
-	{
-		if ( supportsTransactions(conn) )
-			{ conn.setAutoCommit(newValue); }
-	}
-	catch (SQLException sqle)
-		{ LogService.instance().log(LogService.ERROR, sqle); }
+	SqlTransaction.setAutoCommit(conn, newValue);
 }
 /**
  * @return org.jasig.portal.groups.EntityGroupStoreRDBM
@@ -929,30 +867,10 @@ throws GroupsException
 	return singleton;
 }
 /**
- * If you're using a database that either does or does not support transactions, you could
- * override this method to simply return the boolean value.
- *
- * @param conn java.sql.Connection
- * @exception java.sql.SQLException.
- */
-protected static boolean supportsTransactions(Connection conn) throws java.sql.SQLException
-{
-	boolean supports = false;
-	try
-	{
-		supports = conn.getMetaData().supportsTransactions();
-		if ( ! supports )
-			{ logNoTransactionWarning(); }
-	}
-	catch (SQLException sqle)
-		{ LogService.instance().log(LogService.ERROR, sqle); }
-	return supports;
-}
-/**
  * Commit this entity to the backing store.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
-public void update(IEntityGroup group) throws GroupsException
+public void update(IEntityGroup group) throws GroupsException 
 {
 	try
 	{
@@ -965,7 +883,7 @@ public void update(IEntityGroup group) throws GroupsException
 		{ throw new GroupsException("Problem updating " + this + ex); }
 }
 /**
- * Insert and delete group membership rows inside a transaction.
+ * Insert and delete group membership rows inside a transaction.  
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void updateMembers(IEntityGroup eg) throws GroupsException

@@ -70,11 +70,7 @@ public java.util.Iterator findMemberGroups(IEntityGroup group) throws GroupsExce
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
-public IEntityGroup newInstance(String key) throws GroupsException;
-/**
- * @return org.jasig.portal.groups.IEntityGroup
- */
-public IEntityGroup newInstance(String key, Class entityType) throws GroupsException;
+public IEntityGroup newInstance(Class entityType) throws GroupsException;
 /**
  * Adds or updates the <code>IEntityGroup</code> to the data store, as appropriate.  
  * @param group org.jasig.portal.groups.IEntityGroup
