@@ -177,46 +177,51 @@ public class CContentSubscriber extends FragmentManager {
 			 	if ( initRegistry )
 			 	 initRegistry = false;
 		} else if ( action.equals("search") ) {
-			searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
-			searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
-			searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
-			searchQuery = runtimeData.getParameter("search-query");
-			String escapedSearchQuery = escapeQuotesForXpath(searchQuery);
-			// Clear all the previous state
-			if ( searchQuery != null ) {
-                String expression = "//*";
-                XPathFactory fac = XPathFactory.newInstance();
-                XPath xpath = fac.newXPath();
-                NodeList nodeList = (NodeList) xpath.evaluate(expression, registry, XPathConstants.NODESET);
-				for ( int k = 0; k < nodeList.getLength(); k++ ) {
-				  Element node = (Element) nodeList.item(k);
-				  node.setAttribute("search-selected","false");
-				  node.setAttribute("search-view","condensed");
-				} 	
-			}
-			if ( CommonUtils.nvl(searchQuery).length() > 0 ) {
-			  String[] xPathQueries = new String[3];
-			  if ( searchChannel.equals("true") )	
-			   xPathQueries[0] = "//channel[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]";
-			  if ( searchCategory.equals("true") )
-			   xPathQueries[1] = "//category[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]"; 
-			  if ( searchFragment.equals("true") )
-			   xPathQueries[2] = "//fragment[contains(name,"+escapedSearchQuery+") or contains(description,"+escapedSearchQuery+")]";
-			  for ( int i = 0; i < xPathQueries.length; i++) {  
-			   if ( xPathQueries[i] != null ) {
-			    log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
-                XPathFactory fac = XPathFactory.newInstance();
-                XPath xpath = fac.newXPath();
-                NodeList nodeList = (NodeList) xpath.evaluate(xPathQueries[i], registry, 
-                        XPathConstants.NODESET);
-			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
-				 Element node = (Element) nodeList.item(k);
-				 node.setAttribute("search-selected","true");
-				 expandAscendents(node);
-			    } 
-			   } 
-			  } 
-			}		
+		    searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
+		    searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
+		    searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
+		    searchQuery = runtimeData.getParameter("search-query");
+		    // Clear all the previous state
+		    if ( searchQuery != null ) {
+		        searchQuery = searchQuery.toLowerCase();
+		        String expression = "//*";
+		        XPathFactory fac = XPathFactory.newInstance();
+		        XPath xpath = fac.newXPath();
+		        NodeList nodeList = (NodeList) xpath.evaluate(expression, registry, XPathConstants.NODESET);
+		        for ( int k = 0; k < nodeList.getLength(); k++ ) {
+		            Element node = (Element) nodeList.item(k);
+		            node.setAttribute("search-selected","false");
+		            node.setAttribute("search-view","condensed");
+		        } 	
+		    }
+		    if ( CommonUtils.nvl(searchQuery).length() > 0 ) {
+		        String[] xPathQueries = new String[3];
+		        if ( searchChannel.equals("true") )	
+		            xPathQueries[0] = "//channel";
+		        if ( searchCategory.equals("true") )
+		            xPathQueries[1] = "//category";
+		        if ( searchFragment.equals("true") )
+		            xPathQueries[2] = "//fragment";
+		        for ( int i = 0; i < xPathQueries.length; i++) {  
+		            if ( xPathQueries[i] != null ) {
+		                log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
+		                XPathFactory fac = XPathFactory.newInstance();
+		                XPath xpath = fac.newXPath();
+		                NodeList nodeList = (NodeList) xpath.evaluate(xPathQueries[i], registry, 
+		                        XPathConstants.NODESET);
+		                for ( int k = 0; k < nodeList.getLength(); k++ ) {
+		                    Element node = (Element) nodeList.item(k);
+		                    // check description and name attribute
+		                    String name = node.getAttribute("name").toLowerCase();
+		                    String desc = node.getAttribute("description").toLowerCase();
+		                    if (name.indexOf(searchQuery) >= 0 || desc.indexOf(searchQuery) >= 0){
+		                        node.setAttribute("search-selected","true");
+		                        expandAscendents(node);
+		                    }
+		                } 
+		            } 
+		        } 
+		    }		
 		}
 			 
 		Vector removedItems = new Vector(); 
