@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -147,7 +148,7 @@ public class ResourceLoader {
    * @throws org.jasig.portal.ResourceMissingException
    */
   public static String getResourceAsFileString(Class requestingClass, String resource) throws ResourceMissingException {
-    return getResourceAsURL(requestingClass, resource).getFile();
+    return URLDecoder.decode(getResourceAsURL(requestingClass, resource).getFile());
   }
 
   /**
