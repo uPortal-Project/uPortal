@@ -40,6 +40,9 @@ import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
 import java.util.Map;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.utils.threading.ThreadPool;
+import org.jasig.portal.utils.threading.WorkTracker;
+import org.jasig.portal.utils.threading.WorkerTask;
 
 
 /**
@@ -50,8 +53,6 @@ import org.jasig.portal.PropertiesManager;
  */
 public class ChannelRenderer
 {
-    public static final boolean POOL_THREADS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.pool_threads");
-
     public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels");
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
@@ -67,7 +68,7 @@ public class ChannelRenderer
     protected boolean donerendering;
 
     protected Thread workerThread;
-    protected ThreadPoolReceipt workerReceipt;
+    protected WorkTracker workTracker;
 
     protected Worker worker;
 
@@ -85,19 +86,15 @@ public class ChannelRenderer
    * Default constructor.
    * @param chan Channel associated with this ChannelRenderer
    */
-  public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData)
+  public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ThreadPool threadPool)
   {
     this.channel=chan;
     this.rd=runtimeData;
     rendering = false;
     ccacheable=false;
     cacheWriteLock=new Object();
-    if(tp==null && POOL_THREADS) {
-	ResourceLimits rl=new ResourceLimits();
-	rl.setOptimalSize(100); // should be on the order of concurrent users
-	// note the lack of an upper limit
-	tp=new ThreadPool("renderers",rl);
-    }
+    tp = threadPool;
+
     if(systemCache==null) {
 	systemCache=ChannelManager.systemCache;
     }
@@ -169,17 +166,7 @@ public class ChannelRenderer
     // start the rendering thread
 
     worker = new Worker (channel,rd);
-    if(POOL_THREADS) {
-	// use thread pooling
-	try {
-	    workerReceipt=tp.execute(worker);
-	} catch (InterruptedException ie) {
-	    LogService.instance().log(LogService.ERROR,"ChannelRenderer::startRendering() : interupted while waiting for a rendering thread!");
-	}
-    } else {
-	workerThread = new Thread (this.worker);
-	workerThread.start ();
-    }
+    workTracker=tp.execute(worker);
     rendering = true;
     startTime = System.currentTimeMillis ();
   }
@@ -201,55 +188,20 @@ public class ChannelRenderer
       this.startRendering ();
 
     boolean abandoned=false;
-    try
-    {
-      long wait = timeOut - System.currentTimeMillis () + startTime;
-
-      if(POOL_THREADS) {
-	  synchronized(workerReceipt) {
-	      if(wait>0 && !workerReceipt.isJobdone()) {
-		  workerReceipt.wait(wait);
-              } else if(timeOut==0) {
-		  workerReceipt.wait();
-              }
-	  }
-      } else {
-	  if (wait>0) {
-	      workerThread.join(wait);
-          } else if(timeOut==0) {
-              workerThread.join();
-          }
-      }
+    long timeOutTarget = startTime + timeOut;
+	
+    while(System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()){
+        Thread.currentThread().yield();
     }
-    catch (InterruptedException e)
-    {
-      LogService.instance().log(LogService.DEBUG, "ChannelRenderer::outputRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
-    }
-
-    // by this point, if the job is not done, we have to kill it.
-    // peterk: would be nice to put it on a "death row" instead of
-    // stop()ing it instantly. (sorry for the analogy). That way
-    // we could try poking it with interrupt() a few times, give it
-    // a low priority and see if it can come back up. stop() can
-    // leave the system in an unstable state :(
-    if(POOL_THREADS) {
-	synchronized(workerReceipt) {
-	    if(!workerReceipt.isJobdone()) {
-		workerReceipt.killJob();
-		abandoned=true;
-		LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
-	    } else {
-		abandoned=!workerReceipt.isJobsuccessful();
-	    }
-	}
+	
+    if(!workTracker.isJobComplete()) {
+        workTracker.killJob();
+        abandoned=true;
+        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
     } else {
-	if(!worker.done()) {
-	    // kill the working thread
-	    // yes, this is terribly crude and unsafe, but I don't see an alternative
-	    workerThread.stop ();
-	    abandoned=true;
-	}
+        abandoned=!workTracker.isJobSuccessful();
     }
+
 
 
     if (!abandoned && worker.done ())
@@ -280,11 +232,8 @@ public class ChannelRenderer
       }
     } else {
         Throwable e;
-        if(POOL_THREADS) {
-          e = workerReceipt.getThrownException();
-        } else {
-          e = worker.getThrowable();
-        }
+        e = workTracker.getException();
+
         if (e != null) {
           throw new InternalPortalException(e);
         } else {
@@ -307,54 +256,18 @@ public class ChannelRenderer
       this.startRendering ();
 
     boolean abandoned=false;
-    try
-    {
-      long wait = timeOut - System.currentTimeMillis () + startTime;
-
-      if(POOL_THREADS) {
-	  synchronized(workerReceipt) {
-	      if(wait>0 && !workerReceipt.isJobdone()) {
-		  workerReceipt.wait(wait);
-              } else if(timeOut==0) {
-		  workerReceipt.wait();
-              }
-	  }
-      } else {
-	  if (wait>0) {
-	      workerThread.join(wait);
-          } else if(timeOut==0) {
-              workerThread.join();
-          }
-      }
+    long timeOutTarget = startTime + timeOut;
+	
+    while(System.currentTimeMillis() < timeOutTarget && !workTracker.isJobComplete()){
+        Thread.currentThread().yield();
     }
-    catch (InterruptedException e)
-    {
-      LogService.instance().log(LogService.DEBUG, "ChannelRenderer::completeRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
-    }
-
-    // by this point, if the job is not done, we have to kill it.
-    // peterk: would be nice to put it on a "death row" instead of
-    // stop()ing it instantly. (sorry for the analogy). That way
-    // we could try poking it with interrupt() a few times, give it
-    // a low priority and see if it can come back up. stop() can
-    // leave the system in an unstable state :(
-    if(POOL_THREADS) {
-	synchronized(workerReceipt) {
-	    if(!workerReceipt.isJobdone()) {
-		workerReceipt.killJob();
-		abandoned=true;
-		LogService.instance().log(LogService.DEBUG,"ChannelRenderer::completeRendering() : killed.");
-	    } else {
-		abandoned=!workerReceipt.isJobsuccessful();
-	    }
-	}
+	
+    if(!workTracker.isJobComplete()) {
+        workTracker.killJob();
+        abandoned=true;
+        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
     } else {
-	if(!worker.done()) {
-	    // kill the working thread
-	    // yes, this is terribly crude and unsafe, but I don't see an alternative
-	    workerThread.stop ();
-	    abandoned=true;
-	}
+        abandoned=!workTracker.isJobSuccessful();
     }
 
 
@@ -417,17 +330,13 @@ public class ChannelRenderer
      * The alternative is kill them explicitly in ChannelManager.
      */
     protected void finalize () throws Throwable  {
-	if(POOL_THREADS) {
-	    if(workerReceipt!=null && !workerReceipt.isJobdone())
-		workerReceipt.killJob();
-	} else {
-	    if (workerThread.isAlive ())
-		workerThread.stop ();
-	}
-        super.finalize ();
+       if(workTracker!=null && !workTracker.isJobComplete())
+            workTracker.killJob();
+       super.finalize ();
     }
 
-    protected class Worker implements Runnable {
+
+    protected class Worker extends WorkerTask{
         private boolean successful;
         private boolean done;
         private IChannel channel;
@@ -551,8 +460,8 @@ public class ChannelRenderer
 		    channel.renderXML (buffer);
 		}
                 successful = true;
-            } catch (Throwable t) {
-              exc = t;
+            } catch (Exception e) {
+              this.setException(e);
             }
             done = true;
         }
@@ -621,8 +530,7 @@ public class ChannelRenderer
         }
 
         public Throwable getThrowable() {
-            return exc;
+            return this.getException();
         }
-
     }
 }

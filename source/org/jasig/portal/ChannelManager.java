@@ -73,6 +73,8 @@ import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutMoveEvent;
 
+import org.jasig.portal.utils.threading.BoundedThreadPool;
+
 
 import tyrex.naming.MemoryContext;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -105,6 +107,8 @@ public class ChannelManager implements LayoutEventListener {
     private Context channelContext;
 
     private IAuthorizationPrincipal ap;
+
+    private static final BoundedThreadPool renderThreadPool = new BoundedThreadPool(20, 150, 5);
 
     public UPFileSpec uPElement;
 
@@ -860,7 +864,7 @@ public class ChannelManager implements LayoutEventListener {
             rd.setRenderingAsRoot(true);
         }
 
-        ChannelRenderer cr = new ChannelRenderer(ch,rd);
+        ChannelRenderer cr = new ChannelRenderer(ch,rd,renderThreadPool);
         cr.setCharacterCacheable(this.isCharacterCaching());
         if(ch instanceof ICacheable) {
             cr.setCacheTables(this.channelCacheTable);

@@ -52,6 +52,7 @@ import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.utils.threading.UnboundedThreadPool;
 import org.xml.sax.*;
 
 import  org.jasig.portal.serialize.*;
@@ -82,6 +83,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
     private static final String chanID="singleton";
     private static final String fs = File.separator;
     private static final String relativeSSLLocation = "/org/jasig/portal/tools/ChannelServlet/ChannelServlet.ssl";
+    private static final UnboundedThreadPool renderThreadPool = new UnboundedThreadPool(10, 5);
 
 
     /**
@@ -151,7 +153,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	}
 
 	// start rendering
-	ChannelRenderer cr = new ChannelRenderer (this,rd);
+	ChannelRenderer cr = new ChannelRenderer (this,rd,renderThreadPool);
         cr.setTimeout (timeOut);
         cr.startRendering ();
 
