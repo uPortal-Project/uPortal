@@ -1419,7 +1419,7 @@ Version $Revision$
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
-                        <xsl:if test="$authorizedChannelPublisher='true'">
+                        <xsl:if test="$authorizedFragmentPublisher='true'">
                             <!-- <br/> -->
                             <span> |<xsl:text>&#160;</xsl:text>
                             </span>
@@ -2151,9 +2151,7 @@ Version $Revision$
         <!-- Check if the node is unremovable before allowing delete -->
         <xsl:choose>
             <xsl:when test="/layout/@immutable='false' or @unremovable='false'">
-                <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
-                    <img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
-                </a>
+                    <img alt="Remove tab is disabled" title="Remove tab is disabled" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
             </xsl:when>
             <xsl:otherwise>
                 <img alt="Remove tab is disabled" title="Remove tab is disabled" src="{$mediaPathIcons}/canicondisabled.gif" width="22" height="18" border="0"/>
