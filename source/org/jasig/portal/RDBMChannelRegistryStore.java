@@ -139,6 +139,16 @@ public class RDBMChannelRegistryStore
     }
   }
 
+  /** A method for approving a channel so that users are allowed to subscribe to it.
+   *  This would be called by the publish channel or the administrator channel
+   *  @param chanId Channel to approve
+   *  @param approvedId Account approving the channel
+   *  @param approveDate When should the channel appear
+   */
+  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception {
+    GenericPortalBean.getUserLayoutStore().approveChannel(chanId, approverId, approveDate);
+  }
+
   /** A method for getting the next available channel ID.
    * This would be called by a publish channel.
    */
@@ -170,7 +180,7 @@ public class RDBMChannelRegistryStore
   /**
    * put your documentation comment here
    * @param chanDoc
-   * @return 
+   * @return
    */
   public String serializeDOM (Document chanDoc) {
     StringWriter stringOut = null;

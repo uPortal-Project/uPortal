@@ -52,7 +52,7 @@ public interface IChannelRegistryStore {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   public int getNextId () throws PortalException;
@@ -63,7 +63,7 @@ public interface IChannelRegistryStore {
    * put your documentation comment here
    * @param catID
    * @param role
-   * @return 
+   * @return
    */
   public Document getRegistryXML (String catID, String role);
 
@@ -80,7 +80,7 @@ public interface IChannelRegistryStore {
   /**
    * put your documentation comment here
    * @param role
-   * @return 
+   * @return
    */
   public Document getTypesXML (String role);
 
@@ -89,7 +89,7 @@ public interface IChannelRegistryStore {
   /**
    * put your documentation comment here
    * @param role
-   * @return 
+   * @return
    */
   public Document getCategoryXML (String role);
 
@@ -113,6 +113,15 @@ public interface IChannelRegistryStore {
    * @param catID[]
    */
   public void addChannel (int id, String title, Document doc, String catID[]);
+
+  /**
+   * put your documentation comment here
+   * @param chanId
+   * @param approverId
+   * @param approveDate
+   * @exception Exception
+   */
+  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception;
 }
 
 

@@ -64,8 +64,10 @@ import  org.jasig.portal.security.provider.RoleImpl;
 public class RDBMUserLayoutStore
     implements IUserLayoutStore {
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
-  static int DEBUG = 1;
+  static int DEBUG = 0;
   protected RdbmServices rdbmService = null;
+  protected static final String channelPrefix = "n";
+  protected static final String folderPrefix = "s";
 
   /**
    * put your documentation comment here
@@ -149,8 +151,8 @@ public class RDBMUserLayoutStore
     String chanDesc = rs.getString("CHAN_DESC");
     String chanClass = rs.getString("CHAN_CLASS");
     int chanPupblUsrId = rs.getInt("CHAN_PUBL_ID");
-    java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
     int chanApvlId = rs.getInt("CHAN_APVL_ID");
+    java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
     java.sql.Timestamp chanApvlDt = rs.getTimestamp("CHAN_APVL_DT");
     int chanTimeout = rs.getInt("CHAN_TIMEOUT");
     String chanMinimizable = rs.getString("CHAN_MINIMIZABLE");
@@ -213,13 +215,22 @@ public class RDBMUserLayoutStore
    */
   protected Element createChannelNode (Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException {
     Element channel = null;
-    String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
     Statement stmt = con.createStatement();
     try {
+      String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
+      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
+          if (!channelApproved(rs.getTimestamp("CHAN_APVL_DT"))) {
+          /* Channel hasn't been approved yet. Replace it with the error channel and a suitable message */
+
+          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
+          Logger.log(Logger.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel hasn't been approved for publishing yet (ignored at the moment) for channel "
+              + chanId);
+          // return new ErrorChannel()
+          }
+
           channel = doc.createElement("channel");
           createChannelNodeHeaders(doc, chanId, idTag, rs, channel);
           rs.close();
@@ -295,7 +306,7 @@ public class RDBMUserLayoutStore
     }
     sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
         + structId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): b" + sQuery);
+    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
     rs = stmt.executeQuery(sQuery);
     try {
       while (rs.next()) {
@@ -354,6 +365,19 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
+   protected static boolean channelApproved(java.sql.Timestamp approvedDate) {
+      java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
+      return (approvedDate != null && rightNow.after(approvedDate));
+   }
+
+  /**
+   * put your documentation comment here
+   * @param chanId
+   * @param userId
+   * @param con
+   * @return
+   * @exception java.sql.SQLException
+   */
   protected static boolean channelInUserRole (int chanId, int userId, Connection con) throws java.sql.SQLException {
     Statement stmt = con.createStatement();
     try {
@@ -396,8 +420,13 @@ public class RDBMUserLayoutStore
         /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
         Logger.log(Logger.INFO, "RDBMUserLayoutStore::createLayoutStructure(): No role access (ignored at the moment) for channel "
             + chanId + " for user " + userId);
+
+        // return new ErrorChannel()
+
       }
-      return  createChannelNode(stmt.getConnection(), doc, chanId, "n" + idTag);
+
+      return  createChannelNode(stmt.getConnection(), doc, chanId, channelPrefix + idTag);
+
     }
     else {      // Folder
       String name = rs.getString("NAME");
@@ -406,8 +435,8 @@ public class RDBMUserLayoutStore
       String unremovable = rs.getString("UNREMOVABLE");
       String immutable = rs.getString("IMMUTABLE");
       Element folder = doc.createElement("folder");
-      doc.putIdentifier("s" + idTag, folder);
-      addChannelHeaderAttribute("ID", "s" + idTag, folder);
+      doc.putIdentifier(folderPrefix + idTag, folder);
+      addChannelHeaderAttribute("ID", folderPrefix + idTag, folder);
       addChannelHeaderAttribute("name", name, folder);
       addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder);
       addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder);
@@ -513,7 +542,7 @@ public class RDBMUserLayoutStore
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
         }
-        saveStructure(layoutXML.getFirstChild().getFirstChild(), stmt, userId, profileId, new StructId());
+        saveStructure(layoutXML.getFirstChild().getFirstChild(), stmt, userId, profileId);
       } finally {
         stmt.close();
       }
@@ -554,7 +583,7 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
-  protected int saveStructure (Node node, Statement stmt, int userId, int layoutId, StructId structId) throws java.sql.SQLException {
+  protected int saveStructure (Node node, Statement stmt, int userId, int layoutId) throws java.sql.SQLException {
     if (node == null) {
       return  0;
     }
@@ -570,9 +599,9 @@ public class RDBMUserLayoutStore
       Logger.log(Logger.DEBUG, "-->" + node.getNodeName() + "@" + saveStructId);
     }
     if (node.hasChildNodes()) {
-      childStructId = saveStructure(node.getFirstChild(), stmt, userId, layoutId, structId);
+      childStructId = saveStructure(node.getFirstChild(), stmt, userId, layoutId);
     }
-    nextStructId = saveStructure(node.getNextSibling(), stmt, userId, layoutId, structId);
+    nextStructId = saveStructure(node.getNextSibling(), stmt, userId, layoutId);
     String chanId = "NULL";
     String structName = "NULL";
     if (node.getNodeName().equals("channel")) {
@@ -709,6 +738,30 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
+   * @param chanId
+   * @param approverId
+   * @exception Exception
+   */
+  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception {
+    Connection con = rdbmService.getConnection();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approverId + ", CHAN_APVL_DT = " +
+        "{ts '" + approveDate.toString() + "'}" +
+        " WHERE CHAN_ID = " + chanId;
+        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
+        stmt.executeUpdate(sUpdate);
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+  }
+
+  /**
+   * put your documentation comment here
    * @param id
    * @param title
    * @param doc
@@ -721,14 +774,15 @@ public class RDBMUserLayoutStore
     setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
-      String sysdate = "{ts '" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() + "'}";
+      java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
+      String sysdate = "{ts '" + rightNow.toString() + "'}";
       String sqlTitle = sqlEscape(title);
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
-      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, "
+      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
           + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
       sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") +
-          "'," + "0," + sysdate + ",0," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
+          "'," + "0," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
           + "'" + ",'" + dbBool(channel.getAttribute("editable")) + "'" + ",'" + dbBool(channel.getAttribute("hasHelp"))
           + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" + ",'" + dbBool(channel.getAttribute("unremovable"))
           + "'," + "'" + dbBool(channel.getAttribute("detachable")) + "'" + ",'" + sqlName + "','" + sqlFName + "')";
@@ -740,13 +794,29 @@ public class RDBMUserLayoutStore
           if (parameters.item(i).getNodeName().equals("parameter")) {
             Element parmElement = (Element)parameters.item(i);
             NamedNodeMap nm = parmElement.getAttributes();
-            String nodeName = nm.item(0).getNodeName();
-            String nodeValue = nm.item(0).getNodeValue();
-            if (DEBUG > 1) {
-              System.err.println(nodeName + "=" + nodeValue);
+            String paramName = null;
+            String paramValue = null;
+            String paramOverride = "NULL";
+            for (int j = 0; j < nm.getLength(); j++) {
+              Node param = nm.item(j);
+              String nodeName = param.getNodeName();
+              String nodeValue = param.getNodeValue();
+              if (DEBUG > 1) {
+                System.err.println(nodeName + "=" + nodeValue);
+              }
+              if (nodeName.equals("name")) {
+                paramName = nodeValue;
+              } else if (nodeName.equals("value")) {
+                paramValue = nodeValue;
+              } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
+                paramOverride = "'Y'";
+              }
+            }
+            if (paramName == null && paramValue == null) {
+              throw new Exception("Invalid parameter node");
             }
             sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
-                ",'" + nodeName + "','" + nodeValue + "','N')";
+                ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
             Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
             stmt.executeUpdate(sInsert);
           }
@@ -754,6 +824,7 @@ public class RDBMUserLayoutStore
       }
       // Commit the transaction
       commit(con);
+      approveChannel(id, 0, rightNow);
     } catch (Exception e) {
       rollback(con);
       throw  e;
@@ -778,8 +849,10 @@ public class RDBMUserLayoutStore
     try {
       Statement stmt = con.createStatement();
       try {
+        java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
         String sQuery = "SELECT CL.CAT_ID, CL.CAT_TITLE, CHCL.CHAN_ID " + "FROM UP_CATEGORY CL, UP_CHANNEL CH, UP_CAT_CHAN CHCL "
-            + "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CAT_ID=CL.CAT_ID";
+            + "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CAT_ID=CL.CAT_ID AND CH.CHAN_APVL_DT <=" +
+            "{ts '" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() + "'}";
         if (catID != null)
           sQuery += " AND CL.CAT_ID=" + catID;
         sQuery += " ORDER BY CL.CAT_TITLE, CH.CHAN_TITLE";
@@ -801,7 +874,7 @@ public class RDBMUserLayoutStore
               cat.setAttribute("name", catnm);
               chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
             }
-            Element child = createChannelNode(con, chanDoc, chanId, "xchan" + chanId);
+            Element child = createChannelNode(con, chanDoc, chanId, "t" + chanId);
             if (DEBUG > 3) {
               System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
             }
@@ -905,7 +978,7 @@ public class RDBMUserLayoutStore
    * @result next free structure ID
    */
   public String getNextStructChannelId (int userId) throws Exception {
-    return  getNextStructId(userId, "n");
+    return  getNextStructId(userId, channelPrefix);
   }
 
   /**
@@ -915,7 +988,7 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public String getNextStructFolderId (int userId) throws Exception {
-    return  getNextStructId(userId, "s");
+    return  getNextStructId(userId, folderPrefix);
   }
 
   /**

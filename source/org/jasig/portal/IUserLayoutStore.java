@@ -72,6 +72,7 @@ public interface IUserLayoutStore {
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
   public String getNextStructChannelId(int userId) throws Exception;
   public String getNextStructFolderId(int userId) throws Exception;
+  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception;
 
   /* CoreStylesheetDescription */
     public Integer getStructureStylesheetId(String ssName) throws Exception;
