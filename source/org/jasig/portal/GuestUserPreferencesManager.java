@@ -142,14 +142,18 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     String profileId=uaMatcher.match(userAgent);
                     if(profileId!=null) {
                         // user agent has been matched
-                        log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
+                        if (log.isDebugEnabled())
+                            log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
+                                    "userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
                         upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
                         // save mapping
                         if(SAVE_PROFILE_GUESSES) {
                             ulsdb.setSystemBrowserMapping(userAgent,upl.getProfileId());
                         }
                     } else {
-                        log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : userAgent \"" + userAgent + "\" has not matched any profile.");
+                        if (log.isDebugEnabled())
+                            log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
+                                    "userAgent \"" + userAgent + "\" has not matched any profile.");
                     }
                 }
             }
@@ -232,7 +236,10 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
-                log.debug("GuestUserPreferencesManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("GuestUserPreferencesManager::registerSession() : " +
+                            "unable to find a profile for user \"" + m_person.getID() + 
+                            "\" and userAgent=\"" + userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
@@ -280,8 +287,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 state.complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
-                           + "\"=\"" + pValue + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : " +
+                            "setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
             }
         }
         String[] tparams = req.getParameterValues("uP_tparam");
@@ -289,8 +297,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 state.complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
-                           + "\"=\"" + pValue + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : " +
+                            "setting tparam \"" + tparams[i] + "\"=\"" + pValue + "\".");
             }
         }
         // attribute processing
@@ -304,7 +313,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName
+                        if (log.isDebugEnabled())
+                            log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : " +
+                                    "setting sfattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -319,7 +330,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName
+                        if (log.isDebugEnabled())
+                            log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : " +
+                                    "setting scattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -335,7 +348,8 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName
+                        if (log.isDebugEnabled())
+                            log.debug("GuestUserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
