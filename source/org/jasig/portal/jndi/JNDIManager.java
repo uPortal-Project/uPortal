@@ -332,7 +332,7 @@ public class JNDIManager {
    * not all servlet containers properly unbind objects from the session when it expires!
    */
   private static class JNDISessionListener
-      implements HttpSessionBindingListener {
+      implements HttpSessionBindingListener, java.io.Serializable {
 
  
     public void valueBound(HttpSessionBindingEvent bindingEvent) {

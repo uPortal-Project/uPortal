@@ -45,7 +45,7 @@ package org.jasig.portal.security;
  * @version $Revision$
  */
 
-public interface IPrincipal {
+public interface IPrincipal extends java.io.Serializable {
 
   /**
    * Returns the locally unique username or user identifier for this

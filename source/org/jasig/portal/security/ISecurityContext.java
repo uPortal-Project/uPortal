@@ -48,7 +48,7 @@ import java.util.Enumeration;
  * Added getSubContextNames() to support principal and credential tokens
   */
 
-public interface ISecurityContext {
+public interface ISecurityContext extends java.io.Serializable {
 
   /**
    * Returns the canonical authentication type for this flavor of

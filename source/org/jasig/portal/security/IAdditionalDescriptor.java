@@ -44,5 +44,5 @@ package org.jasig.portal.security;
  * @version $Revision$
  */
 
-public interface IAdditionalDescriptor {
+public interface IAdditionalDescriptor extends java.io.Serializable {
 }

@@ -31,10 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-
 
 package  org.jasig.portal.security;
 
@@ -47,7 +44,7 @@ import org.jasig.portal.IBasicEntity;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public interface IPerson extends IAdditionalDescriptor, IBasicEntity
+public interface IPerson extends IAdditionalDescriptor, IBasicEntity, java.io.Serializable
 {
   // string used as a key for the eduPerson username attribute
   public static final String USERNAME = "username";

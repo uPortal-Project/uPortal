@@ -45,7 +45,7 @@ package org.jasig.portal.security;
  * @version $Revision$
  */
 
-public interface IOpaqueCredentials {
+public interface IOpaqueCredentials extends java.io.Serializable {
 
   /**
    * Set the credentials value.
