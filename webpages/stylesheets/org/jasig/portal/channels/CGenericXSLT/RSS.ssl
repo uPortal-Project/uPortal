@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/rss2html_full.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet alternate="yes" href="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/rss2html_compact.xsl"  type="text/xsl" media="explorer"?>
+<?xml-stylesheet alternate="yes" href="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/rss2html_compact.xsl"  type="text/xsl" media="avantgo"?>
+<?xml-stylesheet alternate="yes" href="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/rss2html_wml.xsl"  type="text/xsl" media="WAP"?>
+
+<document>
+
+</document>
