@@ -32,15 +32,18 @@ public interface PersonAttributeDao {
     
     
     /**
-     * Gets a {@link Set} of attribute names that may be returned for 
-     * a user query. No guarantee is made that all the attributes in the
-     * {@link Set} will be avalable for every user.
+     * Gets a {@link Set} of attribute names that this PersonAttributeDao implementation
+     * expects will be the keys in the Map it returns for the attributesForUser() method. 
+     * No guarantee is made about the relationship of this Set to the set of keys
+     * in the map returned by attributesForUser() -- attributesForUser() may map
+     * attributes not declared in this Set and it may fail to map attributes declared in
+     * this Set.
      * <br>
      * Implementations may return <code>null</code> if they cannot provide
-     * a list of attribute names.
+     * a Set of attribute names and they should document at the implementation
+     * level the semantics of their implementation of this method.
      * <br>
-     * It is recommended that implementations return an immutable
-     * {@link Set}.
+     * Implementations may return an immutable {@link Set}.
      * 
      * @return A {@link Set} of possible attribute names for user queries.
      */
