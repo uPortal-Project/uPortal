@@ -93,6 +93,7 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
  * ReferenceInvalidatingEntityCache constructor comment.
  */
 public ReferenceInvalidatingEntityCache(Class type, int maxSize, int maxUnusedTime, int sweepInterval )
+throws CachingException
 {
     super(type, maxSize, maxUnusedTime, sweepInterval);
 }

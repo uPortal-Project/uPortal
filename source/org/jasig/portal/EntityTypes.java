@@ -97,10 +97,21 @@ public EntityTypes()
     super();
     initialize();
 }
+
 /**
- * @return java.util.Iterator
+ * Add the new type if it does not already exist.
  */
-public synchronized void addEntityType(Class newType, String description) throws java.lang.Exception
+public static synchronized void addIfNecessary(Class newType, String description)
+throws java.lang.Exception
+{
+    singleton().addEntityType(newType, description);
+}
+
+/**
+ * Add the new type if it does not already exist.
+ */
+public synchronized void addEntityType(Class newType, String description)
+throws java.lang.Exception
 {
     refresh();
     if ( getEntityTypesByType().get(newType) == null )
@@ -459,7 +470,7 @@ private void updateEntityType(EntityType et) throws SQLException
 
             if ( rc != 1 )
             {
-                String errString = "Problem adding updating type " + et;
+                String errString = "Problem updating type " + et;
                 LogService.log (LogService.ERROR, errString);
                 throw new SQLException(errString);
             }
