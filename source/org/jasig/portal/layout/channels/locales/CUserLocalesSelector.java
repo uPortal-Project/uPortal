@@ -90,38 +90,39 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
 
     public void renderXML(ContentHandler out) throws PortalException {
         Document doc = DocumentFactory.getNewDocument();
+        Locale[] locales = lm.getLocales();
 
         // <locales>
         Element localesE = doc.createElement("locales");
-        Locale[] locales = lm.getPortalLocales();
-        for (int i = 0; i < locales.length; i++) {
+        Locale[] portalLocales = lm.getPortalLocales();
+        for (int i = 0; i < portalLocales.length; i++) {
           Element locE = doc.createElement("locale");
-          locE.setAttribute("displayName", locales[i].getDisplayName());
-          locE.setAttribute("code", locales[i].toString());
+          locE.setAttribute("displayName", portalLocales[i].getDisplayName(locales[0]));
+          locE.setAttribute("code", portalLocales[i].toString());
 
           // Mark which locale is the user's preference
-          if (userLocale != null && userLocale.equals(locales[i])) {
+          if (userLocale != null && userLocale.equals(portalLocales[i])) {
               locE.setAttribute("selected", "true");
           }
 
           // <language iso2="..." iso3="..." displayName="..."/>
           Element languageE = doc.createElement("language");
-          languageE.setAttribute("iso2", locales[i].getLanguage());
-          languageE.setAttribute("iso3", locales[i].getISO3Language());
-          languageE.setAttribute("displayName", locales[i].getDisplayLanguage());
+          languageE.setAttribute("iso2", portalLocales[i].getLanguage());
+          languageE.setAttribute("iso3", portalLocales[i].getISO3Language());
+          languageE.setAttribute("displayName", portalLocales[i].getDisplayLanguage(locales[0]));
           locE.appendChild(languageE);
 
           // <country iso2="..." iso3="..." displayName="..."/>
           Element countryE = doc.createElement("country");
-          countryE.setAttribute("iso2", locales[i].getCountry());
-          countryE.setAttribute("iso3", locales[i].getISO3Country());
-          countryE.setAttribute("displayName", locales[i].getDisplayCountry());
+          countryE.setAttribute("iso2", portalLocales[i].getCountry());
+          countryE.setAttribute("iso3", portalLocales[i].getISO3Country());
+          countryE.setAttribute("displayName", portalLocales[i].getDisplayCountry(locales[0]));
           locE.appendChild(countryE);
 
           // <variant code="..." displayName="..."/>
           Element variantE = doc.createElement("variant");
-          variantE.setAttribute("code", locales[i].getVariant());
-          variantE.setAttribute("displayName", locales[i].getDisplayVariant());
+          variantE.setAttribute("code", portalLocales[i].getVariant());
+          variantE.setAttribute("displayName", portalLocales[i].getDisplayVariant(locales[0]));
           locE.appendChild(variantE);
 
           localesE.appendChild(locE);
