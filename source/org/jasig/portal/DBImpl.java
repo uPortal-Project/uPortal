@@ -154,8 +154,11 @@ public class DBImpl implements IDBImpl
   }
   protected static final void createChannelNodeParameters(DocumentImpl doc, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
   {
-            String chanHDInd = rs.getString("CHAN_H_D_IND");
             String chanParmNM = rs.getString("CHAN_PARM_NM");
+            if (rs.wasNull()) {
+              return;
+            }
+            String chanHDInd = rs.getString("CHAN_H_D_IND");
             String chanParmVal = rs.getString("CHAN_PARM_VAL");
 
             if (chanHDInd.equals("H")) {
@@ -178,27 +181,24 @@ public class DBImpl implements IDBImpl
             }
   }
 
-  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
+  protected Element createChannelNode(Statement stmt, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
   {
+  System.err.println("DBImpl::createChannelNode(" + chanId + ")");
+  Thread.dumpStack();
     Element channel = null;
     String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
     Logger.log (Logger.DEBUG, sQuery);
 
-    ResultSet rs = null;
-    Statement stmt = con.createStatement ();
+    ResultSet rs = stmt.executeQuery (sQuery);
     try {
-      rs = stmt.executeQuery (sQuery);
       if (rs.next()) {
         channel = doc.createElement("channel");
         Element system = doc.createElement("system");
         createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
         rs.close();
-        stmt.close();
-
 
         sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
         Logger.log (Logger.DEBUG, sQuery);
-        stmt = con.createStatement ();
         rs = stmt.executeQuery (sQuery);
         while(rs.next()) {
           createChannelNodeParameters(doc, rs, channel, system);
@@ -206,10 +206,7 @@ public class DBImpl implements IDBImpl
         channel.appendChild(system);
       }
     } finally {
-      if (rs != null) {
-        rs.close();
-      }
-       stmt.close();
+      rs.close();
    }
     return channel;
   }
@@ -236,98 +233,131 @@ public class DBImpl implements IDBImpl
     return null;
   }
 
-  protected void createLayout(Connection con, DocumentImpl doc, Statement stmt, Element root, int userId, int profileId, int structId) throws java.sql.SQLException
+  protected void createLayout(Connection con, DocumentImpl doc, Statement stmt, Element root, int userId, int profileId, int layoutId, int structId) throws java.sql.SQLException
   {
-
     if (structId == 0) { // End of line
       return;
     }
 
     int nextStructId;
     int chldStructId;
-    int priority;
-    int externalId;
     int chanId;
-    String idTag;
-    String name;
-    String type;
-    String hidden;
-    String removable;
-    String immutable;
 
-    String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-    String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
+    String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
     Logger.log (Logger.DEBUG, sQuery);
+    Element system = null;
+    Element parameter = null;
+    Element structure;
     ResultSet rs = stmt.executeQuery (sQuery);
     try {
       rs.next();
       nextStructId = rs.getInt("NEXT_STRUCT_ID");
       chldStructId = rs.getInt("CHLD_STRUCT_ID");
-      externalId = rs.getInt("EXTERNAL_ID");
       chanId = rs.getInt("CHAN_ID");
-      priority = rs.getInt("PRIORITY");
-      idTag = rs.getString("ID_TAG");
-      name = rs.getString("NAME");
-      type = rs.getString("TYPE");
-      hidden = rs.getString("HIDDEN");
-      removable = rs.getString("REMOVABLE");
-      immutable = rs.getString("IMMUTABLE");
+
+      structure = createLayoutStructure(rs, chanId, userId, stmt, doc);
     } finally {
       rs.close();
     }
-
+    system = (Element) structure.getElementsByTagName("system").item(0);
     if (chanId != 0) { // Channel
-      /* See if we have access to the channel */
-      sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
+      parameter = (Element) structure.getElementsByTagName("parameter").item(0);
+    }
+
+    sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
+    Logger.log (Logger.DEBUG, sQuery);
+    rs = stmt.executeQuery (sQuery);
+    try {
+      while (rs.next ()) {
+        createLayoutStructureParameter(chanId, rs, structure, parameter, system);
+     }
+    } finally {
+      rs.close();
+    }
+    root.appendChild(structure);
+
+    if (chanId == 0) {  // Folder
+      createLayout(con, doc, stmt, structure, userId, profileId, layoutId, chldStructId);
+    }
+
+    createLayout(con, doc, stmt, root, userId, profileId, layoutId, nextStructId);
+  }
+
+  protected static final void createLayoutStructureParameter(int chanId, ResultSet rs, Element structure, Element parameter, Element system) throws java.sql.SQLException
+  {
+    String paramName = rs.getString("STRUCT_PARM_NM");
+
+    if (paramName != null) {
+      String foldHDInd = rs.getString("STRUCT_H_D_IND");
+      String paramValue = rs.getString("STRUCT_PARM_VAL");
+      if (chanId == 0) { // Folder
+        structure.setAttribute(paramName, paramValue);
+      } else { // Channel
+        if (foldHDInd.equals("H")) {
+          if (!system.hasAttribute("H" + paramName)) {
+            structure.setAttribute(paramName, paramValue);
+          }
+        } else if (foldHDInd.equals("D")) {
+          if (!system.hasAttribute("D" + paramName)) {
+            parameter.setAttribute(paramName, paramValue);
+          }
+        } else {
+          throw new SQLException("Invalid value ('" + foldHDInd + "') for PARAM_H_D_IND for channel ");
+        }
+      }
+    }
+  }
+
+  protected static boolean channelInUserRole(int chanId, int userId, Connection con) throws java.sql.SQLException
+  {
+      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
         "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=" + chanId +" AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
       Logger.log (Logger.DEBUG, sQuery);
-      rs = stmt.executeQuery (sQuery);
+      Statement stmt = con.createStatement();
       try {
-        if (!rs.next()) {
-          /* No access to channel. Replace it with the error channel and a suitable message */
-
-          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-          Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
-        }
-      } finally {
-        rs.close();
-      }
-
-
-      Element channel = createChannelNode(con, doc, chanId, idTag);
-      Element system = (Element) channel.getElementsByTagName("system").item(0);
-      Element parameter = (Element) channel.getElementsByTagName("parameter").item(0);
-
-      sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
-      Logger.log (Logger.DEBUG, sQuery);
-      rs = stmt.executeQuery (sQuery);
-      try {
-        while (rs.next ()) {
-          String foldHDInd = rs.getString("STRUCT_H_D_IND");
-          String paramName = rs.getString("STRUCT_PARM_NM");
-          if (foldHDInd.equals("H")) {
-            if (!system.hasAttribute("H" + paramName)) {
-              channel.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
-            }
-          } else if (foldHDInd.equals("D")) {
-            if (!system.hasAttribute("D" + paramName)) {
-              parameter.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
-            }
-          } else {
-            throw new SQLException("Invalid value for PARAM_H_D_IND for channel " + chanId);
+        ResultSet rs = stmt.executeQuery (sQuery);
+        try {
+          if (!rs.next()) {
+            return false;
           }
+        } finally {
+          rs.close();
         }
       } finally {
-       rs.close();
+        stmt.close();
+      }
+    return true;
+  }
+
+  protected final Element createLayoutStructure(ResultSet rs, int chanId, int userId, Statement stmt, DocumentImpl doc) throws java.sql.SQLException
+  {
+    String idTag = rs.getString("ID_TAG");
+    if (chanId != 0) { // Channel
+      /* See if we have access to the channel */
+      if (!channelInUserRole(chanId, userId, stmt.getConnection())) {
+        /* No access to channel. Replace it with the error channel and a suitable message */
+
+        /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
+        Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
       }
 
-      root.appendChild(channel);
+      /* Don't use stmt since createChannelNode will close the active ResultSet which we still need */
+      Statement stmt2 = stmt.getConnection().createStatement();
+      try {
+        return createChannelNode(stmt2, doc, chanId, idTag);
+      } finally {
+        stmt2.close();
+      }
     } else { // Folder
+      int priority = rs.getInt("PRIORITY");
+      String name = rs.getString("NAME");
+      String type = rs.getString("TYPE");
+      String hidden = rs.getString("HIDDEN");
+      String removable = rs.getString("REMOVABLE");
+      String immutable = rs.getString("IMMUTABLE");
+
       Element folder = doc.createElement("folder");
       Element system = doc.createElement("system");
-      if (idTag == null) {
-        Logger.log(Logger.ERROR, "No tag for " + name);
-      }
       doc.putIdentifier(idTag, folder);
       addChannelHeaderAttribute("ID", idTag, folder, system);
       addChannelHeaderAttribute("priority", priority, folder, system);
@@ -336,24 +366,10 @@ public class DBImpl implements IDBImpl
       addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
       addChannelHeaderAttribute("immutable", (immutable == null || immutable.equals("Y") ? "true" : "false"), folder, system);
       addChannelHeaderAttribute("removable", (removable == null || removable.equals("Y") ? "true" : "false"), folder, system);
-      sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
-      Logger.log (Logger.DEBUG, sQuery);
-      rs = stmt.executeQuery (sQuery);
-      try {
-        while (rs.next ()) {
-          String foldHDInd = rs.getString("STRUCT_H_D_IND");
-          String paramName = rs.getString("STRUCT_PARM_NM");
-          folder.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
-        }
-      } finally {
-        rs.close();
-      }
-      root.appendChild(folder);
-      createLayout(con, doc, stmt, folder, userId, profileId, chldStructId);
-      folder.appendChild(system);
-    }
 
-    createLayout(con, doc, stmt, root, userId, profileId, nextStructId);
+      folder.appendChild(system);
+      return folder;
+    }
   }
 
   /**
@@ -374,22 +390,33 @@ public class DBImpl implements IDBImpl
 
       Statement stmt = con.createStatement ();
       try {
+        long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        String selectString = "USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ")";
-        String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE " + selectString;
+        Logger.log (Logger.DEBUG, subSelectString);
+        ResultSet rs = stmt.executeQuery (subSelectString);
+        int layoutId;
+        try {
+          rs.next();
+          layoutId = rs.getInt("LAYOUT_ID");
+        } finally {
+          rs.close();
+        }
+        String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
         Logger.log (Logger.DEBUG, sQuery);
-        ResultSet rs = stmt.executeQuery (sQuery);
+        rs = stmt.executeQuery (sQuery);
         try {
           if (rs.next ()) {
             int structId = rs.getInt("INIT_STRUCT_ID");
             if (structId == 0) {      // Grab the default "Guest" layout
-              structId = 1;
+              structId = 1;           // Should look this up
             }
-            createLayout(con, doc, stmt, root, userId, profileId, structId);
+            createLayout(con, doc, stmt, root, userId, profileId, layoutId, structId);
           }
         } finally {
           rs.close();
         }
+        long stopTime = System.currentTimeMillis();
+        Logger.log(Logger.DEBUG, "Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to create");
 
         doc.appendChild(root);
         if (DEBUG > 0) {
@@ -700,25 +727,28 @@ public class DBImpl implements IDBImpl
       sQuery += " ORDER BY CL.CAT_TITLE, CH.CHAN_TITLE";
       Logger.log(Logger.DEBUG, "DBImpl::getRegistryXML(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        String catnm = rs.getString(2);
-        int chanId = rs.getInt(3);
-        Node chan = null;
-        String s = rs.getString(1);
-        if (!s.equals(catid)) {
-          if (catid.length() > 0) {
-            root.appendChild(cat);
+      try {
+        while (rs.next()) {
+          String catnm = rs.getString(2);
+          int chanId = rs.getInt(3);
+          Node chan = null;
+          String s = rs.getString(1);
+          if (!s.equals(catid)) {
+            if (catid.length() > 0) {
+              root.appendChild(cat);
+            }
+            catid = s;
+            cat = chanDoc.createElement("category");
+            cat.setAttribute("ID", "cat" + catid);
+            cat.setAttribute("name", catnm);
+            chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
           }
-          catid = s;
-          cat = chanDoc.createElement("category");
-          cat.setAttribute("ID", "cat" + catid);
-          cat.setAttribute("name", catnm);
-          chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
+          Element child = createChannelNode(stmt, chanDoc, chanId, "xchan" + chanId);
+          if (DEBUG > 3) System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
+          cat.appendChild(child);
         }
-        Element child = createChannelNode(con, chanDoc, chanId, "xchan" + chanId);
-        if (DEBUG > 3) System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
-        cat.appendChild(child);
-
+      } finally {
+        rs.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
