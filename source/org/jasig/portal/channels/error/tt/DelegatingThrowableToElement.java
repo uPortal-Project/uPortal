@@ -13,14 +13,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * A wrapper for a List of child ThrowableToNodes and the logic to poll
+ * A wrapper for a List of child ThrowableToElements and the logic to poll
  * them in order, accepting the result from the first to support the given throwable.
- * Defaults to the standard List of ThrowableToNode implementations, but provides
+ * Defaults to the standard List of ThrowableToElement implementations, but provides
  * API hooks to change the list.
  * 
  * You can add handling for other Throwables by either editing this implementation 
- * code to include additional ThrowableToNode implementations by default or
- * by injecting a different List of ThrowableToNode implementations after 
+ * code to include additional ThrowableToElement implementations by default or
+ * by injecting a different List of ThrowableToElement implementations after 
  * instantiating this class.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
