@@ -32,7 +32,7 @@ public static void begin(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		log.error( sqle);
+		log.error("Error beginning connection", sqle);
 		throw sqle;
 	}
 }
@@ -50,7 +50,7 @@ public static void commit(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		log.error( sqle);
+		log.error("Error committing", sqle);
 		throw sqle;
 	}
 }
@@ -77,7 +77,7 @@ public static void rollback(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		log.error( sqle);
+		log.error("Error rolling back connection.", sqle);
 		throw sqle;
 	}
 }
@@ -94,7 +94,7 @@ public static void setAutoCommit(Connection conn, boolean newValue) throws java.
 	}
 	catch (SQLException sqle)
 	{
-		log.error( sqle);
+		log.error("Error setting auto commit to " + newValue, sqle);
 		throw sqle;
 	}
 }
