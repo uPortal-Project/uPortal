@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.remotechannel;
 
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalEvent;
 import org.apache.axis.client.Stub;
 import org.apache.axis.client.Call;
@@ -202,28 +203,22 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
   }
 
-  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies, Map parameters, String baseActionURL) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception {
+  public Element renderChannel(String instanceId, ChannelRuntimeData runtimeData) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception {
     if (super.cachedEndpoint == null) {
         throw new org.apache.axis.NoEndPointException();
     }
     Call call = getCall();
     QName p0QName = new QName("", "instanceId");
     call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
-    QName p1QName = new QName("", "headers");
-    call.addParameter(p1QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.IN);
-    QName p2QName = new QName("", "cookies");
-    call.addParameter(p2QName, new QName(methodNS, "ArrayOf_tns2_Cookie"), ParameterMode.IN);
-    QName p3QName = new QName("", "parameters");
-    call.addParameter(p3QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.IN);
-    QName p4QName = new QName("", "baseActionURL");
-    call.addParameter(p4QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
+    QName p1QName = new QName("", "runtimeData");
+    call.addParameter(p1QName, new QName(methodNS, "ChannelRuntimeData"), ParameterMode.IN);
     call.setReturnType(new QName("http://xml.apache.org/xml-soap", "Element"));
     call.setUseSOAPAction(true);
     call.setSOAPActionURI("");
     call.setOperationStyle("rpc");
     call.setOperationName(new QName(methodNS, "renderChannel"));
 
-    Object resp = call.invoke(new Object[] {instanceId, headers, cookies, parameters, baseActionURL});
+    Object resp = call.invoke(new Object[] {instanceId, runtimeData});
 
     if (resp instanceof RemoteException) {
       throw (RemoteException)resp;

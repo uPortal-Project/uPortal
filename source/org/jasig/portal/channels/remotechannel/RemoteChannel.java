@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.remotechannel;
 
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalEvent;
 import org.w3c.dom.Element;
 import java.util.Map;
@@ -51,7 +52,7 @@ import javax.servlet.http.Cookie;
 public interface RemoteChannel extends Remote {
   public void authenticate(String username, String password) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
   public String instantiateChannel(String fname) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
-  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies, Map parameters, String baseActionURL) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
+  public Element renderChannel(String instanceId, ChannelRuntimeData runtimeData) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
   public void receiveEvent(String instanceId, PortalEvent portalEvent) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
   public void freeChannel(String instanceId) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
   public void logout() throws RemoteException, org.jasig.portal.channels.remotechannel.Exception;
