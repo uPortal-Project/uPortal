@@ -36,6 +36,7 @@
 package org.jasig.portal.channels.remotechannel;
 
 import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.IPrivileged;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.PortalException;
@@ -43,6 +44,7 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.*;
@@ -54,23 +56,42 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.rmi.RemoteException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.rpc.ServiceException;
 
 /**
  * <p>A proxy channel for remote channels exposed by the uPortal
- * Web Services layer</p>
+ * Web Services layer.  There is a related channel type called
+ * "Remote Channel Proxy" that is included with uPortal, so to use
+ * this channel, just select "Remote Channel Proxy" when publishing.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CRemoteChannel extends BaseChannel implements ICacheable {
+public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheable {
 
   protected RemoteChannel rc = null;
   protected String instanceId = null;
   protected static final String SSL_LOCATION = "CRemoteChannel.ssl";
+  protected String baseUrl = null;
   protected String xslUriForKey = null;
   protected boolean receivedEvent = false;
 
-
+  /**
+   * Provides initialization opportunity for this channel.  The static
+   * data is expected to contain the following properties:<br/>
+   * <ul>
+   *   <li><code>endpoint</code>, the service URL</li>
+   *   <li><code>fname</code>, the remote channel's functional name</li>   
+   * </ul>
+   * If those parameters are present, this channel will attempt to
+   * authenticate to the remote channel service and then instantiate
+   * the remote channel.  If the remote channel is successfully
+   * instantiated, then an instance ID is received from the remote
+   * channel service and held by this channel to identify the remote
+   * channel in future communications.
+   * @param sd the channel static data
+   * @throws org.jasig.portal.PortalException
+   */  
   public void setStaticData(ChannelStaticData sd) throws PortalException {
     super.setStaticData(sd);
     String endpoint = staticData.getParameter("endpoint");
@@ -95,6 +116,14 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
     }
   }
 
+  /**
+   * Passes this channel a portal event.  All events are forwarded
+   * to the remote channel.  When a "session done" event is passed,
+   * this channel logs out of the remote channel service.  When an
+   * "unsubscribe" event is passed, this channel frees the instance
+   * of the remote channel living on the remote server.
+   * @param ev the portal event
+   */    
   public void receiveEvent(PortalEvent ev) {
     try {
       // Pass the portal event to the remote channel
@@ -113,14 +142,19 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
     receivedEvent = true;
   }
 
+  /**
+   * This is where the channel obtains markup from the remote channel
+   * and dumps it into the content handler supplied by the portal framework. 
+   * @param out the content handler
+   * @throws org.jasig.portal.PortalException
+   */  
   public void renderXML(ContentHandler out) throws PortalException {
-    System.out.println("Rendering remote channel...");
     // Set up arguments to renderChannel()
     BrowserInfo bi = runtimeData.getBrowserInfo();
     Map headers = bi.getHeaders();
     Cookie[] cookies = bi.getCookies();
     Map params = runtimeData.getParameters();
-    String baseActionURL = runtimeData.getBaseActionURL();
+    String baseActionURL = baseUrl + runtimeData.getBaseActionURL();
 
     // Obtain the channel content
     Element channelE = null;
@@ -168,8 +202,33 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
     }
 
     if (username != null && password != null)
-      rc.authenticate("demo", "demo");
+      rc.authenticate(username, password);
   }
+  
+  
+  // IPrivileged methods
+  
+  /**
+   * This is where the portal control structures are passed to this channel by the framework.
+   * We are only interested in getting the HttpServletRequest object which allows us to 
+   * construct a base URL which we hold onto and eventually prepend to the baseActionURL
+   * before we send it to the remote channel.
+   * @param pcs the portal control structures
+   * @throws org.jasig.portal.PortalException
+   */
+  public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
+    if (baseUrl == null) {
+      // If there is a better way to obtain the base URL, please improve this!      
+      HttpServletRequest request = pcs.getHttpServletRequest();
+      String protocol = request.getProtocol();
+      String protocolFixed = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
+      String serverName = request.getServerName();
+      int serverPort = request.getServerPort();
+      String contextPath = request.getContextPath();
+      baseUrl = protocolFixed + "://" + serverName + ":" + serverPort + contextPath + "/";
+    }
+  }
+  
 
   // ICacheable methods
 
