@@ -89,6 +89,97 @@ public class SubscriberBean extends GenericPortalBean{
    }
 
   /**
+   * Method for getting Channel Name
+   * @param the servlet request object
+   * @return String the channel name
+   */
+   public String getChannelName(HttpServletRequest req)
+   {
+     LayoutBean layoutbean = new LayoutBean();
+     org.jasig.portal.IChannel ch = layoutbean.getChannelInstance(getChannel(req));
+     return ch.getName();
+   } 
+
+  /**
+   * displays a preview of the channel
+   * for the user to see before subscribing
+   * @param the servlet request object
+   */
+  public void previewChannel(HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+        try{
+        LayoutBean layoutbean = new LayoutBean();
+        org.jasig.portal.IChannel ch = layoutbean.getChannelInstance(getChannel(req));
+
+        out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
+        out.println ("  <tr>");
+        out.println ("    <td bgcolor=cccccc>");
+
+        // Channel heading
+        IXml layoutXml = layoutbean.getLayoutXml (req, layoutbean.getUserName (req));
+        ILayout layout = (ILayout) layoutXml.getRoot ();
+            
+        out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
+        out.println ("        <tr>");
+        out.println ("          <td>");
+        out.println ("            <font face=arial color=#000000><b>&nbsp;" + ch.getName() + "</b></font>");
+        out.println ("          </td>");
+        out.println ("          <td nowrap valign=center align=right>");
+        out.println ("            &nbsp;");
+            
+        // Channel control buttons
+        if (ch.isMinimizable ())
+        out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\">");
+
+        if (ch.isDetachable ())
+        out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\">");
+            
+        if (ch.isRemovable ())
+        out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\">");
+
+        if (ch.isEditable ())
+        out.println ("<img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\">");
+
+        if (ch.hasHelp ())
+        out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\">");
+
+            out.println ("            &nbsp;");
+            out.println ("          </td>");            
+            out.println ("        </tr>");
+            out.println ("      </table>");
+
+            // Channel body
+            out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100%>");
+            out.println ("        <tr>");
+            out.println ("          <td bgcolor=#ffffff>");
+
+            out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
+            out.println ("              <tr>");
+            out.println ("                <td valign=top>");
+                            
+
+              // Render channel contents
+              ch.render (req, res, out);
+
+              
+            out.println ("                </td>");
+            out.println ("              </tr>");
+            out.println ("            </table>");
+
+            out.println ("          </td>");
+            out.println ("        </tr>");
+            out.println ("      </table>");
+
+            out.println ("    </td>");
+            out.println ("  </tr>");
+            out.println ("</table>");
+        }
+        catch (Exception e){
+              Logger.log (Logger.ERROR, e);
+        }
+  }
+
+  /**
    * Retrieves all available channels
    * @param the servlet request object
    * @return ResultSet
