@@ -53,6 +53,7 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * <p>Allows a user to login to the portal.  Login info is posted to
@@ -150,7 +151,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
     doc.appendChild(loginStatusElement);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

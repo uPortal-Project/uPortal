@@ -60,6 +60,7 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.IPortalDocument;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.i18n.LocaleManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -80,6 +81,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static final String folderPrefix = "s";
   protected IChannelRegistryStore crs;
   protected ICounterStore csdb;
+  // I18n propertiy
+  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
 
   /**
    * LayoutStructure
@@ -105,6 +108,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     boolean unremovable;
     boolean immutable;
     ArrayList parameters;
+    String locale;       
 
     /**
      *
@@ -117,6 +121,21 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       this.hidden = RDBMServices.dbFlag(hidden);
       this.immutable = RDBMServices.dbFlag(immutable);
       this.unremovable = RDBMServices.dbFlag(unremovable);
+
+      if (DEBUG > 1) {
+        System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
+      }
+    }
+
+    public LayoutStructure(int structId, int nextId,int childId,int chanId, String hidden, String unremovable, String immutable, String locale) {
+      this.nextId = nextId;
+      this.childId = childId;
+      this.chanId = chanId;
+      this.structId = structId;
+      this.hidden = RDBMServices.dbFlag(hidden);
+      this.immutable = RDBMServices.dbFlag(immutable);
+      this.unremovable = RDBMServices.dbFlag(unremovable);
+      this.locale = locale; // for i18n by Shoji
 
       if (DEBUG > 1) {
         System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
@@ -146,6 +165,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       if (isChannel()) {
         ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
         if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
+            if (localeAware) {
+                channelDef.setLocale(locale); // for i18n by Shoji
+            }
           structure = channelDef.getDocument(doc, channelPrefix + structId);
         } else {
           // Create an error channel if channel is missing or not approved
@@ -172,6 +194,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       structure.setAttribute("hidden", (hidden ? "true" : "false"));
       structure.setAttribute("immutable", (immutable ? "true" : "false"));
       structure.setAttribute("unremovable", (unremovable ? "true" : "false"));
+      if (localeAware) {
+          structure.setAttribute("locale", locale);  // for i18n by Shoji
+      }
 
       if (parameters != null) {
         for (int i = 0; i < parameters.size(); i++) {
@@ -1592,6 +1617,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     int realUserId = userId;
     ResultSet rs;
     Connection con = RDBMServices.getConnection();
+    LocaleManager localeManager = profile.getLocaleManager();
 
     RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
@@ -1693,8 +1719,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
 
-        String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+	String sql;
+	if (localeAware) {
+	    sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+          "ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.LOCALE";
+	}  else {
+	    sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
+	}
         if (RDBMServices.supportsOuterJoins) {
           sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
         } else {
@@ -1733,7 +1765,18 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
               String temp5=rs.getString(5); // Some JDBC drivers require columns accessed in order
               String temp6=rs.getString(6); // Access 5 and 6 now, save till needed.
-              ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
+
+	      // uPortal i18n 
+              int name_index, value_index;
+	      if (localeAware) {
+		  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocale(rs.getString(10)));
+                  name_index=11;
+                  value_index=12;
+	      }  else {
+		  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
+                  name_index=10;
+                  value_index=11;
+	      }
               layoutStructure.put(new Integer(structId), ls);
               lastStructId = structId;
               if (!ls.isChannel()) {
@@ -1741,8 +1784,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
               if (RDBMServices.supportsOuterJoins) {
                 do {
-                  String name = rs.getString(10);
-                  String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
+                  String name = rs.getString(name_index);
+                  String value = rs.getString(value_index); // Oracle JDBC requires us to do this for longs
                   if (name != null) { // may not be there because of the join
                     ls.addParameter(name, value);
                   }
@@ -2171,6 +2214,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     structStmt.setString(8, RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
     structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
+
+    if (localeAware) { 
+	structStmt.setString(11, RDBMServices.dbFlag(xmlBool(structure.getAttribute("locale")))); // for i18n by Shoji
+    }
     LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
     structStmt.executeUpdate();
 
@@ -2468,10 +2515,20 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
         }
-        RDBMServices.PreparedStatement structStmt = new RDBMServices.PreparedStatement(con,
-          "INSERT INTO UP_LAYOUT_STRUCT " +
-          "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
-          "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
+
+	// uPortal i18n 
+	RDBMServices.PreparedStatement structStmt;
+	if (localeAware) { 
+	    structStmt = new RDBMServices.PreparedStatement(con,
+							    "INSERT INTO UP_LAYOUT_STRUCT " +
+							    "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,LOCALE) " +
+							    "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?,?)");
+	}  else {
+	    structStmt = new RDBMServices.PreparedStatement(con,
+							    "INSERT INTO UP_LAYOUT_STRUCT " +
+							    "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
+							    "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
+	}
         try {
           RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +

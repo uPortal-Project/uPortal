@@ -52,6 +52,8 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * CGroupsManager allows users to graphically administer all groups for which
  * user has administrtaive permissions.
@@ -195,7 +197,7 @@ public class CGroupsManager
          else {
             viewDoc = sessionData.model;
             time2 = Calendar.getInstance().getTime().getTime();
-            XSLT xslt = new XSLT(this);
+            LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
             xslt.setXML(viewDoc);
             xslt.setTarget(out);
             xslt.setStylesheetParameter("baseActionURL", sessionData.runtimeData.getBaseActionURL());

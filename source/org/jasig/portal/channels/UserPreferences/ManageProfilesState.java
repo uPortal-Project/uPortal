@@ -60,6 +60,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /** 
  * <p>CUserPreferences state for managing profiles</p>
@@ -345,7 +346,7 @@ class ManageProfilesState extends BaseState {
       }
 
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -658,7 +659,7 @@ class ManageProfilesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);

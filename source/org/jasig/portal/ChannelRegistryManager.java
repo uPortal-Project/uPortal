@@ -78,6 +78,8 @@ public class ChannelRegistryManager {
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
+  // I18n propertiy
+  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
 
   // Caches
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
@@ -237,8 +239,17 @@ public class ChannelRegistryManager {
     channelE.setAttribute("ID", subscribeId);
     channelE.setAttribute("chanID", String.valueOf(channelDef.getId()));
     channelE.setAttribute("timeout", String.valueOf(channelDef.getTimeout()));
-    channelE.setAttribute("name", channelDef.getName());
-    channelE.setAttribute("title", channelDef.getTitle());
+    // I18n
+    if (localeAware) {
+        String locale=channelDef.getLocale();
+        channelE.setAttribute("name", channelDef.getName(locale));
+        channelE.setAttribute("title", channelDef.getTitle(locale));
+        channelE.setAttribute("locale", locale);
+        LogService.log(LogService.DEBUG, "ChannelRegistryManager::getChannelXML: locale=" + locale);
+    }  else {
+        channelE.setAttribute("name", channelDef.getName());
+        channelE.setAttribute("title", channelDef.getTitle());
+    }
     channelE.setAttribute("fname", channelDef.getFName());
     channelE.setAttribute("class", channelDef.getJavaClass());
     channelE.setAttribute("typeID", String.valueOf(channelDef.getTypeId()));
@@ -292,6 +303,10 @@ public class ChannelRegistryManager {
     channelDef.setEditable(chanEditable != null && chanEditable.equals("true") ? true : false);
     channelDef.setHasHelp(chanHasHelp != null && chanHasHelp.equals("true") ? true : false);
     channelDef.setHasAbout(chanHasAbout != null && chanHasAbout.equals("true") ? true : false);
+    // I18n
+    if (localeAware) {
+        channelDef.setLocale(channelE.getAttribute("locale"));
+    }
 
     // Now set the channel parameters
     channelDef.clearParameters();

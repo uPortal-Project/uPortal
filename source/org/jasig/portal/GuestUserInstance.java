@@ -48,6 +48,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * A multithreaded version of a UserInstance.
@@ -58,6 +59,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     // state class
     private class IState {
         private ChannelManager channelManager;
+        private LocaleManager localeManager;
         private StandaloneChannelRenderer p_browserMapper;
         private Object p_rendering_lock;
         public IState() {
@@ -86,7 +88,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void registerSession(HttpServletRequest req) throws PortalException {
 	      IState newState=new IState();
         newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
+        newState.localeManager=new LocaleManager(req);
         newState.p_rendering_lock=new Object();
+        uLayoutManager.setLocaleManager(newState.localeManager);
         uLayoutManager.registerSession(req);
         stateTable.put(req.getSession(false).getId(),newState);
     }
@@ -180,7 +184,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
             return;
         }
 
-        renderState (req, res, state.channelManager, new GuestUserPreferencesManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
+        renderState (req, res, state.channelManager, state.localeManager, new GuestUserPreferencesManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
     }
 }
 

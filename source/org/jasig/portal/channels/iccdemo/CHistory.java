@@ -53,6 +53,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * A channel showing a list of history URLs, as a part of the inter-channel communication demo.
  *
@@ -223,7 +225,7 @@ public class CHistory extends BaseChannel {
      */
     public void renderXML (ContentHandler out) throws PortalException {
         // Perform the transformation
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(getUserXML());
         xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
         xslt.setTarget(out);

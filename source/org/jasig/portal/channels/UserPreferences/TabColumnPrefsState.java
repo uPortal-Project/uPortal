@@ -42,6 +42,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -86,7 +87,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 
-
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 
 /**
@@ -928,6 +929,10 @@ public class TabColumnPrefsState extends BaseState
 
           // Stylesheet transformer
           String xslURI = set.getStylesheetURI("default", runtimeData.getBrowserInfo());
+
+          // for i18n
+          xslURI= LocaleAwareXSLT.getLocaleAwareXslUri(xslURI, runtimeData.getLocales(), this);
+
           TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(ResourceLoader.getResourceAsURLString(this.getClass(), xslURI)));
           th.setResult(new SAXResult(out));
           Transformer sstr = th.getTransformer();
@@ -1027,7 +1032,7 @@ public class TabColumnPrefsState extends BaseState
       InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
-      XSLT xslt = new XSLT (this);
+      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
       xslt.setXML(xmlStream);
       xslt.setXSL(sslLocation, "skinList", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
@@ -1106,7 +1111,7 @@ public class TabColumnPrefsState extends BaseState
     {
       Document doc = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
 
-      XSLT xslt = new XSLT(this);
+      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
       xslt.setXML(doc);
       xslt.setXSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
@@ -1174,7 +1179,7 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      XSLT xslt = new XSLT (this);
+      LocaleAwareXSLT xslt = new LocaleAwareXSLT (this, runtimeData.getLocales());
       xslt.setXML(getParametersDoc());
       xslt.setXSL(sslLocation, "parameters", runtimeData.getBrowserInfo());
       xslt.setTarget(out);

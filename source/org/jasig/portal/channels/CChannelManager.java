@@ -66,6 +66,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CChannelManager is a Channel used to manage other Channels.
@@ -152,7 +153,7 @@ public class CChannelManager extends BaseChannel {
      * @exception PortalException
      */
     public void renderXML (ContentHandler out) throws PortalException {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(channelManagerDoc);
         xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
         xslt.setTarget(out);

@@ -60,6 +60,8 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * <p>A proxy channel for remote channels exposed by the uPortal
  * Web Services layer.  There is a related channel type called
@@ -160,7 +162,7 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
       throw new PortalException(re);
     }
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(channelE);
     xslt.setXSL(SSL_LOCATION, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

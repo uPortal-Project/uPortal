@@ -50,6 +50,7 @@ import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.PropsMatcher;
+import org.jasig.portal.i18n.LocaleManager;
 
 
 /**
@@ -156,6 +157,87 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         }
     }
 
+    /**
+     * Constructor does the following
+     *  1. Read layout.properties
+     *  2. read userLayout from the database
+     *  @param the servlet request object
+     *  @param person object
+     *  @param locale manager
+     */
+    public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager) throws PortalException {
+        ulm=null;
+        try {
+            m_person = person;
+            // load user preferences
+            // Should obtain implementation in a different way!!
+            ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            // determine user profile
+            String userAgent = req.getHeader("User-Agent");
+            UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
+            if (upl == null) {
+                upl = ulsdb.getSystemProfile(userAgent);
+            }
+            if(upl==null) {
+                // try guessing the profile through pattern matching
+
+                if(uaMatcher==null) {
+                    // init user agent matcher
+                    URL url = null;
+                    try {
+                        url = this.getClass().getResource("/properties/browser.mappings");
+                        if (url != null) {
+                            uaMatcher = new PropsMatcher(url.openStream());
+                        }
+                    } catch (IOException ioe) {
+                        LogService.log(LogService.ERROR, "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                    }
+                }
+
+                if(uaMatcher!=null) {
+                    // try matching
+                    String profileId=uaMatcher.match(userAgent);
+                    if(profileId!=null) {
+                        // user agent has been matched
+
+                        upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
+                    }
+                }
+
+            }
+
+            if (upl != null) {
+                if (localeManager.localeAware()) {
+                    upl.setLocaleManager(localeManager);
+                }
+                ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,upl);
+
+                try {
+                    complete_up=ulsdb.getUserPreferences(m_person, upl);
+                } catch (Exception e) {
+                    LogService.log(LogService.ERROR, "UserPreferencesManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
+                    complete_up=new UserPreferences(upl);
+                }
+
+                try {
+                    // Initialize the JNDI context for this user
+                    JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),ulm.getUserLayoutDOM());
+                } catch(PortalException ipe) {
+                  LogService.log(LogService.ERROR, "UserPreferencesManager(): Could not properly initialize user context", ipe);
+                }
+            } else {
+                // there is no user-defined mapping for this particular browser.
+                // user should be redirected to a browser-registration page.
+                unmapped_user_agent = true;
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
+            }
+        } catch (PortalException pe) {
+            throw pe;
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+        }
+    }
+    
     /**
      * A simpler constructor, that only initialises the person object.
      * Needed for ancestors.

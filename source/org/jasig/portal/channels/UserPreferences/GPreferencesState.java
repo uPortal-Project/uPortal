@@ -67,6 +67,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
  * stylesheet is expected to replace this component with its own
@@ -472,7 +474,7 @@ class GPreferencesState extends BaseState {
       }
       String xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -580,7 +582,7 @@ class GPreferencesState extends BaseState {
       }
       String xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -676,7 +678,7 @@ class GPreferencesState extends BaseState {
         params.put("profileType", "user");
       }
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
@@ -761,7 +763,7 @@ class GPreferencesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);

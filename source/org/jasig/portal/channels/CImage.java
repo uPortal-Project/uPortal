@@ -51,6 +51,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /** <p>A simple channel which renders an image along with an optional
  * caption and subcaption.</p>
  * <p>Channel parameters:</p>
@@ -132,7 +134,7 @@ public class CImage extends BaseMultithreadedChannel implements IMultithreadedCa
 
     doc.appendChild(contentE);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

@@ -53,6 +53,7 @@ import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.PropsMatcher;
+import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * Multithreaded version of {@link UserPreferencesManager}.
@@ -86,6 +87,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     Hashtable cached_profiles;
 
     IPerson m_person;
+    LocaleManager localeManager;
 
     final static boolean SAVE_PROFILE_GUESSES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.GuestUserPreferencesManager.save_profile_guesses");
 
@@ -185,6 +187,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 }
                 if(newState.ulm==null) {
                     try {
+			upl.setLocaleManager(localeManager);
                         newState.ulm=UserLayoutManagerFactory.immutableUserLayoutManager(UserLayoutManagerFactory.getUserLayoutManager(m_person,upl));
                         if(upl.isSystemProfile()) {
                             sp_layouts.put(new Integer(upl.getProfileId()),newState.ulm);
@@ -501,6 +504,11 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public void finishedSession(HttpSessionBindingEvent bindingEvent) {
         throw new UnsupportedOperationException();
     }
+
+    public void setLocaleManager(LocaleManager lm) {
+	localeManager = lm;
+    }
+
 }
 
 

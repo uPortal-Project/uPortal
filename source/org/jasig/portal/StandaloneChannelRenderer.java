@@ -52,6 +52,7 @@ import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
@@ -69,6 +70,7 @@ public class StandaloneChannelRenderer
     private String channelName;
     private PortalControlStructures pcs;
     private BrowserInfo binfo;
+    private LocaleManager lm;
     private boolean hasEdit = false;
     private boolean hasAbout = false;
     private boolean hasHelp = false;
@@ -182,6 +184,7 @@ public class StandaloneChannelRenderer
     private ChannelRuntimeData getRuntimeData(HttpServletRequest req) {
         // construct runtime data
         this.binfo=new BrowserInfo(req);
+        this.lm=new LocaleManager(req);
 
         Hashtable targetParams = new Hashtable();
         UPFileSpec upfs=new UPFileSpec(req);
@@ -202,6 +205,7 @@ public class StandaloneChannelRenderer
 
         ChannelRuntimeData rd= new ChannelRuntimeData();
         rd.setBrowserInfo(binfo);
+        rd.setLocales(lm.getLocales());
         rd.setHttpRequestMethod(req.getMethod());
         if(channelTarget!=null && chanID.equals(channelTarget)) {
             rd.setParameters(targetParams);

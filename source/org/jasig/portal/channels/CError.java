@@ -60,6 +60,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * CError is the error channel, also known as the null channel, it is
  * designed to render in place of other channels when something goes wrong.
@@ -401,7 +403,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // end of debug block
 
         try {
-            XSLT xslt = new XSLT(this);
+	    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
             xslt.setXML(doc);
             xslt.setXSL(sslLocation, ssTitle, runtimeData.getBrowserInfo());
             xslt.setTarget(out);

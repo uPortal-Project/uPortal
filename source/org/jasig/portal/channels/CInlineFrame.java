@@ -52,6 +52,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * This channel renders content identified by a URL within an inline browser
@@ -104,7 +105,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     iframeE.appendChild(heightE);
     doc.appendChild(iframeE);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
     xslt.setTarget(out);

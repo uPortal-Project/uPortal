@@ -51,6 +51,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /** <p>Displays an applet. To pass in applet parameters, construct
  * channel parameters whose keys start with the string "APPLET."</p>
  * <p>For example, the key/value pair
@@ -108,7 +110,7 @@ public class CApplet extends BaseMultithreadedChannel implements IMultithreadedC
 
     doc.appendChild(appletE);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

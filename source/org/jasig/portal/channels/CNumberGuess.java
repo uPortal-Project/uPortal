@@ -47,6 +47,8 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -196,7 +198,7 @@ public class CNumberGuess implements IChannel
 
     w.write ("</content>\n");
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(w.toString());
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

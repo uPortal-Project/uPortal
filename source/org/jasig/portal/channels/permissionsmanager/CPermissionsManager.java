@@ -58,6 +58,7 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Element;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CPermissionsManager allows graphical administration of permissions for all owners
@@ -301,7 +302,7 @@ public class CPermissionsManager
             if (!session.view.equals("Select Principals")
                     || !session.isAuthorized) {
                 long time2 = Calendar.getInstance().getTime().getTime();
-                XSLT xslt = new XSLT(this);
+                LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, session.runtimeData.getLocales());
                 xslt.setXML(PermissionsXML.getViewDoc(session));
                 xslt.setTarget(out);
                 xslt.setStylesheetParameter("baseActionURL", session.runtimeData.getBaseActionURL());

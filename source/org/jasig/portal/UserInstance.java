@@ -73,6 +73,7 @@ import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.URLUtil;
+import org.jasig.portal.i18n.LocaleManager;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -96,7 +97,8 @@ public class UserInstance implements HttpSessionBindingListener {
     UserPreferencesManager uPreferencesManager;
     // manages channel instances and channel rendering
     ChannelManager channelManager;
-
+    // manages locale
+    LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
     static MediaManager mediaM;
@@ -156,12 +158,18 @@ public class UserInstance implements HttpSessionBindingListener {
                 throw new PortalException(e);
             }
         }
-        if (uPreferencesManager==null || uPreferencesManager.isUserAgentUnmapped()) {
-            uPreferencesManager = new UserPreferencesManager(req, this.getPerson());
-        } else {
-            // p_browserMapper is no longer needed
-            p_browserMapper = null;
-        }
+	// instantiate locale manager (uPortal i18n)
+	if (localeManager == null) {
+	    LogService.log(LogService.DEBUG, "UserInstance::writeContent(): new LocaleManager(req) called.");
+	    localeManager = new LocaleManager(req);
+	}
+
+	if (uPreferencesManager==null || uPreferencesManager.isUserAgentUnmapped() || localeManager.isLocaleChanged(req)) {
+	    uPreferencesManager = new UserPreferencesManager(req, this.getPerson(),localeManager);
+	} else {
+	    // p_browserMapper is no longer needed
+	    p_browserMapper = null;
+	}
 
         if (uPreferencesManager.isUserAgentUnmapped()) {
             // unmapped browser
@@ -188,7 +196,7 @@ public class UserInstance implements HttpSessionBindingListener {
             uPreferencesManager.getUserLayoutManager().addLayoutEventListener(channelManager);
             p_rendering_lock=new Object();
         }
-        renderState (req, res, this.channelManager, uPreferencesManager,p_rendering_lock);
+        renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager,p_rendering_lock);
     }
 
     /**
@@ -200,7 +208,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param rendering_lock a lock for rendering on a single user
      * @exception PortalException if an error occurs
      */
-    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, IUserPreferencesManager upm, Object rendering_lock) throws PortalException {
+    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, LocaleManager localeManager, IUserPreferencesManager upm, Object rendering_lock) throws PortalException {
         // process possible worker dispatch
         if(!processWorkerDispatch(req,res,channelManager,upm)) {
             synchronized(rendering_lock) {
@@ -247,6 +255,12 @@ public class UserInstance implements HttpSessionBindingListener {
                     if(rootNodeId==null) {
                         rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
+
+		    // set up the locale manager for i18n
+		    // locale setting affects both user layout and channel
+		    localeManager.setLocaleFromSessionParameter(req);
+		    localeManager.setLocalesFromBrowserSetting(req);
+		    channelManager.setLocaleManager(localeManager);
 
                     // see if a new root target has been specified
                     String newRootNodeId = req.getParameter("uP_detach_target");
@@ -467,6 +481,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
                         }
+                        sst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
                         // all the parameters are set up, fire up structure transformation
 
                         // filter to fill in channel/folder attributes for the "structure" transformation.
@@ -529,6 +544,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
+                        tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
 
                         // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
                         // attach it downstream of the channel rendering buffer

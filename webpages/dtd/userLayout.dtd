@@ -44,7 +44,8 @@ $Revision$
   hidden (true|false) "false"
   unremovable (true|false) "false"
   immutable (true|false) "false"
-  name CDATA #IMPLIED>
+  name CDATA #IMPLIED
+  locale CDATA>
 
 
 <!ELEMENT channel (parameter)*>
@@ -61,7 +62,8 @@ $Revision$
   hidden (true|false) "false"
   editable (true|false) "false"
   hasHelp (true|false) "false"
-  hasAbout (true|false) "false">
+  hasAbout (true|false) "false"
+  locale CDATA>
 
 
 <!ELEMENT parameter EMPTY>

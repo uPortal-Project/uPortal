@@ -51,6 +51,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile.
@@ -121,7 +122,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     }
     edEl.appendChild(sEl);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

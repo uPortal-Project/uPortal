@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Hashtable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +69,10 @@ public class ChannelDefinition implements IBasicEntity {
   private boolean chanHasHelp;
   private boolean chanHasAbout;
   private Map parameters; // Consider implementing as a Set
+  private String chanLocale;
+  private Hashtable chanDescs;
+  private Hashtable chanTitles;
+  private Hashtable chanNames;
 
   /**
    * Constructs a channel definition.
@@ -79,6 +84,10 @@ public class ChannelDefinition implements IBasicEntity {
     this.chanDesc = "";
     this.chanClass = "";
     this.parameters = new HashMap();
+    this.chanLocale = null;
+    this.chanTitles = new Hashtable();
+    this.chanNames = new Hashtable();
+    this.chanDescs = new Hashtable();
   }
 
   // Getter methods
@@ -98,6 +107,38 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
+  public String getLocale() { return chanLocale; }
+  // I18n
+  public String getName(String locale) {
+      String chanName=(String)chanNames.get(locale);
+      if (chanName == null) {
+	  return this.chanName; // fallback on "en_US"
+      }  else {
+	  return chanName;
+      }
+  }
+  public String getDescription(String locale) {
+      /*
+      return chanDesc;
+      */
+      String chanDesc=(String)chanDescs.get(locale);
+      if (chanDesc == null) {
+	  return this.chanDesc; // fallback on "en_US"
+      }  else {
+	  return chanDesc;
+      }
+  }
+  public String getTitle(String locale) {
+      /*
+      return chanDesc;
+      */
+      String chanDesc=(String)chanDescs.get(locale);
+      if (chanDesc == null) {
+	  return this.chanDesc; // fallback on "en_US"
+      }  else {
+	  return chanDesc;
+      }
+  }
 
   // Setter methods
   public void setFName(String fname) {this.chanFName =fname; }
@@ -114,6 +155,10 @@ public class ChannelDefinition implements IBasicEntity {
   public void setEditable(boolean editable) {this.chanEditable = editable; }
   public void setHasHelp(boolean hasHelp) {this.chanHasHelp = hasHelp; }
   public void setHasAbout(boolean hasAbout) {this.chanHasAbout = hasAbout; }
+  public void setLocale(String locale) {
+      if (locale!=null)
+	  this.chanLocale = locale;
+  }
   public void clearParameters() { this.parameters.clear(); }
   public void setParameters(ChannelParameter[] parameters) {
     for (int i = 0; i < parameters.length; i++) {
@@ -123,6 +168,15 @@ public class ChannelDefinition implements IBasicEntity {
   public void replaceParameters(ChannelParameter[] parameters) {
     clearParameters();
     setParameters(parameters);
+  }
+  public void putChanTitles(String locale, String chanTitle) {
+      chanTitles.put(locale, chanTitle);
+  }
+  public void putChanNames(String locale, String chanName) {
+      chanNames.put(locale, chanName);
+  }
+  public void putChanDescs(String locale, String chanDesc) {
+      chanDescs.put(locale, chanDesc);
   }
   
   /**
@@ -187,8 +241,14 @@ public class ChannelDefinition implements IBasicEntity {
     channel.setAttribute("ID", idTag);
     channel.setAttribute("chanID", id + "");
     channel.setAttribute("timeout", chanTimeout + "");
-    channel.setAttribute("name", chanName);
-    channel.setAttribute("title", chanTitle);
+    if (chanLocale != null) {
+        channel.setAttribute("name", getName(chanLocale));
+        channel.setAttribute("title", getTitle(chanLocale));
+        channel.setAttribute("locale", chanLocale);
+    }  else {
+        channel.setAttribute("name", chanName);
+        channel.setAttribute("title", chanTitle);
+    }
     channel.setAttribute("fname", chanFName);
     channel.setAttribute("class", chanClass);
     channel.setAttribute("typeID", chanTypeId + "");

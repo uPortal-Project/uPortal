@@ -50,6 +50,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /*
  * This is a modified version of the CInlineFrame channel that uses inter-channel communications.
  *
@@ -166,7 +168,7 @@ public class CViewer extends BaseChannel {
         iframeE.appendChild(heightE);
         doc.appendChild(iframeE);
         
-        XSLT xslt = new XSLT(this);
+        LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
         xslt.setTarget(out);

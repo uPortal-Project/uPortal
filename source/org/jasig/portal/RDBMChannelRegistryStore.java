@@ -85,6 +85,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     }
   }
 
+  // I18n propertiy
+  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
 
   /**
    * Create a new ChannelType object.
@@ -358,12 +360,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Connection con = null;
       RDBMServices.PreparedStatement pstmtChannel = null;
       RDBMServices.PreparedStatement pstmtChannelParam = null;
+      RDBMServices.PreparedStatement pstmtChannelMdata = null;
       ResultSet rs = null;
   
       try {
         con = RDBMServices.getConnection();
         pstmtChannel = getChannelPstmt(con);
         pstmtChannelParam = getChannelParamPstmt(con);
+        pstmtChannelMdata = getChannelMdataPstmt(con);
         pstmtChannel.clearParameters();
         pstmtChannel.setInt(1, channelPublishId);
         LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
@@ -401,6 +405,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           channelDef.setHasAbout(RDBMServices.dbFlag(rs.getString(12)));
           channelDef.setName(rs.getString(13));
           channelDef.setFName(rs.getString(14));
+          // Don't use the following line to attain DB compatibility
+          // channelDef.setLocale("en_US");
   
           int dbOffset = 0;
           if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
@@ -427,9 +433,38 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               break;
             }
           }
+
+          if (localeAware) {
+              // Read UP_CHANNEL_MDATA
+              rs.close();
+              pstmtChannelMdata.clearParameters();
+              pstmtChannelMdata.setInt(1, channelPublishId);
+              LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelMdata);
+              try {
+                  rs = pstmtChannelMdata.executeQuery();
+	  
+                  String locale;
+                  while (true) {
+                      if (pstmtChannelMdata != null && !rs.next()) {
+                          break;
+                      }
+                      locale = rs.getString(1);
+                      channelDef.putChanTitles(locale, rs.getString(2));
+                      channelDef.putChanDescs(locale, rs.getString(3));
+                      channelDef.putChanNames(locale, rs.getString(4));
+                  
+                      if (pstmtChannelMdata == null && !rs.next()) {
+                          break;
+                      }
+                  }
+              }  catch (Exception e) {
+                  LogService.log(LogService.ERROR, "RDBMChannelRegistryStore.getChannelDefinition(): Database being used is not internationalized. Execute `ant i18n-db' for internationalized database setting.");
+              }
+          }
         }
+
         LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
-  
+
         // Add the channel definition to the cache
         try {
           EntityCachingService.instance().add(channelDef);
@@ -444,6 +479,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           pstmtChannel.close();
         if (pstmtChannelParam != null)
           pstmtChannelParam.close();
+        if (pstmtChannelMdata != null)
+          pstmtChannelMdata.close();
         RDBMServices.releaseConnection(con);
   
       }  
@@ -952,4 +989,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       return new RDBMServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
     }
   }
+
+  protected static final RDBMServices.PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
+      return new RDBMServices.PreparedStatement(con, "SELECT LOCALE, CHAN_TITLE, CHAN_DESC, CHAN_NAME FROM UP_CHANNEL_MDATA WHERE CHAN_ID=?");
+  }
+    
 }

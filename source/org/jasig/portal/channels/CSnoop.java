@@ -50,6 +50,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * <p>A channel which displays HTTP request and HTML header info.
  * This channel implements IPrivilegedChannel rather than
@@ -229,7 +231,7 @@ public class CSnoop implements IPrivilegedChannel {
     doc.appendChild(requestInfoE);
     
     // Now perform the transformation
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

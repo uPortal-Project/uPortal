@@ -52,6 +52,9 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * This channel demonstrates the method of obtaining and displaying
  * standard uPortal person attributes.
@@ -100,7 +103,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
 
     doc.appendChild(attributesE);
 
-    XSLT xslt = new XSLT(this);
+    LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, runtimeData.getLocales());
     xslt.setXML(doc);
     xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
     xslt.setStylesheetParameter("downloadWorkerURL",

@@ -83,6 +83,8 @@ import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.i18n.LocaleAwareXSLT;
+
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
  *    See docs/website/developers/channel_docs/reference/CwebProxy.html
@@ -651,7 +653,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       if (state.personAllow != null)
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
-      XSLT xslt = new XSLT(this);
+      LocaleAwareXSLT xslt = new LocaleAwareXSLT(this, state.runtimeData.getLocales());
       if (tidiedXml != null)
         xslt.setXML(tidiedXml);
       else
