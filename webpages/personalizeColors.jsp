@@ -900,7 +900,7 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="12,384,36,396" href="javascript:viewNewColor('"ffffff"')">
+     <area shape="rect" coords="12,384,36,396" href="javascript:viewNewColor('ffffff')">
 
      <area shape="rect" coords="36,384,60,396" href="javascript:viewNewColor('cccccc')">
 
@@ -912,7 +912,7 @@ IndivDrop = IndivDrop + "value=\"ChannelColor\">Channel Heading</option>";
 
 
 
-     <area shape="rect" coords="12,12,24,396" alt="White" href="javascript:viewNewColor('"ffffff"')">
+     <area shape="rect" coords="12,12,24,396" alt="White" href="javascript:viewNewColor('ffffff')">
 
      <area shape="rect" coords="0,0,190,408" alt="Black" href="javascript:viewNewColor('000000')">
 
