@@ -99,7 +99,7 @@ public class InitialSecurityContextFactory {
                 //Initial contexts must have names that are not compound
                 if (ctx.indexOf('.') != -1) {
                     PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-                    log.error(ep);
+                    log.error("Initial context cannot be compound", ep);
                     throw(ep);
                 }
                 
@@ -132,7 +132,7 @@ public class InitialSecurityContextFactory {
                 }
                 catch (IOException e) {
                   PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-                  log.error(ep);
+                  log.error("Exception loading security properties", ep);
                   throw(ep);
                 } 
                 finally {
@@ -151,7 +151,7 @@ public class InitialSecurityContextFactory {
                 String factoryName = pr.getProperty(ctx);
                 if (factoryName == null) {
                     PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-                    log.error(ep);
+                    log.error("Could not load root context factory name "  + ctx, ep);
                     throw(ep);
                 }
                 
@@ -207,8 +207,7 @@ public class InitialSecurityContextFactory {
                             String errorMsg = "(Subcontext) Failed to instantiate " + sfactoryname;
                             PortalSecurityException ep = new PortalSecurityException(errorMsg);
                             ep.setRecordedException(e);
-                            log.error( errorMsg);
-                            log.error( e);
+                            log.error( errorMsg, e);
                             throw ep;
                         }
                     }
@@ -305,7 +304,7 @@ public class InitialSecurityContextFactory {
             String errorMsg = "Error while creating ISecurityContext chain.";
             PortalSecurityException ep = new PortalSecurityException(errorMsg);
             ep.setRecordedException(npe);
-            log.error( ep);
+            log.error(ep, ep);
             throw ep;
         }
     }

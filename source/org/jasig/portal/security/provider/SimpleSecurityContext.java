@@ -114,7 +114,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        log.error( e);
+        log.error("Error authenticating user", e);
         throw  (ep);
       }
     }
