@@ -35,11 +35,21 @@
 
 package org.jasig.portal.channels;
 
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
-import java.io.StringWriter;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** <p>Displays an applet. To pass in applet parameters, construct
  * channel parameters whose keys start with the string "APPLET."</p>
@@ -52,54 +62,70 @@ import java.io.StringWriter;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CApplet extends BaseChannel
-{
+public class CApplet extends BaseMultithreadedChannel implements IMultithreadedCacheable {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CApplet/CApplet.ssl");
 
-  /** Output channel content to the portal
+  /**
+   * Output channel content to the portal
    * @param out a sax document handler
+   * @param uid a unique ID used to identify the state of the channel
    */
-  public void renderXML (ContentHandler out)
-  {
-    try
-    {
-      StringWriter w = new StringWriter ();
-      w.write ("<?xml version='1.0'?>\n");
-      w.write ("<applet code=\"" + staticData.getParameter ("code") + "\"\n");
-      w.write ("        codebase=\"" + staticData.getParameter ("codeBase") + "\"\n");
-      w.write ("        width=\"" + staticData.getParameter ("width") + "\"\n");
-      w.write ("        height=\"" + staticData.getParameter ("height")  + "\"\n");
-      w.write ("        align=\"top\"\n");
-      w.write ("        border=\"0\"\n");
-      w.write ("        archive=\"" + staticData.getParameter ("archive") + "\">\n");
+  public void renderXML (ContentHandler out, String uid) throws PortalException {
+    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+    ChannelStaticData staticData = channelState.getStaticData();
+    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
 
-      // Take all parameters whose names start with "APPLET." and pass them
-      // to the applet (after stripping "APPLET.")
-      java.util.Enumeration allKeys = staticData.keys ();
+    Document doc = null;
+    try {
+      doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+    } catch (ParserConfigurationException pce) {
+      LogService.log(LogService.ERROR, pce);
+      throw new GeneralRenderingException(pce.getMessage());
+    }
 
-      while (allKeys.hasMoreElements ())
-      {
-        String p = (String) allKeys.nextElement();
+    // Create XML doc
+    Element appletE = doc.createElement("applet");
+    appletE.setAttribute("code", staticData.getParameter("code"));
+    appletE.setAttribute("codebase", staticData.getParameter("codeBase"));
+    appletE.setAttribute("width", staticData.getParameter("width"));
+    appletE.setAttribute("height", staticData.getParameter("height"));
+    appletE.setAttribute("align", "top");
+    appletE.setAttribute("border", "0");
+    appletE.setAttribute("archive", staticData.getParameter("archive"));
 
-        if (p.startsWith ("APPLET."))
-        {
-          String name = p.substring (7); // skip "APPLET."
-          String value = (String) staticData.getParameter (p);
-          w.write ("  <param name=\"" + name + "\" value=\"" + value + "\"/>\n");
-        }
+    // Take all parameters whose names start with "APPLET." and pass them
+    // to the applet (after stripping "APPLET.")
+    java.util.Enumeration allKeys = staticData.keys ();
+    while (allKeys.hasMoreElements()) {
+      String p = (String)allKeys.nextElement();
+      if (p.startsWith ("APPLET.")) {
+        Element paramE = doc.createElement("param");
+        paramE.setAttribute("name", p.substring(7) /*skip "APPLET."*/);
+        paramE.setAttribute("value", (String)staticData.getParameter(p));
+        appletE.appendChild(paramE);
       }
-
-      w.write ("</applet>\n");
-
-      XSLT xslt = new XSLT();
-      xslt.setXML(w.toString());
-      xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
-      xslt.setTarget(out);
-      xslt.transform();
     }
-    catch (Exception e)
-    {
-      LogService.instance().log(LogService.ERROR, e);
-    }
+
+    doc.appendChild(appletE);
+
+    XSLT xslt = new XSLT();
+    xslt.setXML(doc);
+    xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.transform();
+  }
+
+  // IMultithreadedCachable methods...
+
+  public ChannelCacheKey generateKey(String uid) {
+    ChannelCacheKey key = new ChannelCacheKey();
+    key.setKey("org.jasig.portal.channels.CImage");
+    key.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+    key.setKeyValidity(null);
+    return key;
+  }
+
+  public boolean isCacheValid(Object validity, String uid) {
+    return true;
   }
 }
