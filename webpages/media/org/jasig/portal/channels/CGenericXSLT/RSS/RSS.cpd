@@ -41,6 +41,18 @@
   			</type>
   		</parameter>
 
+      <parameter modify="publish">
+  		  <name>cacheTimeout</name>
+  			<label>Cache timeout in seconds</label>
+  			<type base="integer" input="text" display="text">
+  			  <length>4</length>
+  				<!-- length and maxlength for text field -->
+  				<maxlength>10</maxlength>
+  			</type>
+  			<defaultValue>900</defaultValue>
+  			<!-- default value for text field -->
+      </parameter>
+
 	  </step>
   </params>
   <controls/>
