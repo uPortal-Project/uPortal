@@ -92,9 +92,6 @@ public class CGenericXSLT implements IChannel
   protected ChannelRuntimeData runtimeData;
   protected String media;
   protected MediaManager mm;
-  protected static String fs = File.separator;
-  protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
-  protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
 
   // Cache transformed content in this smartcache - should be moved out of the channel
   protected static SmartCache bufferCache = new SmartCache(15 * 60); // 15 mins
@@ -115,6 +112,7 @@ public class CGenericXSLT implements IChannel
     this.sslUri = sd.getParameter("sslUri");
     this.xslTitle = sd.getParameter("xslTitle");
     this.xslUri = sd.getParameter("xslUri");
+    mm=new MediaManager();
   }
 
   public void setRuntimeData (ChannelRuntimeData rd)
@@ -141,7 +139,7 @@ public class CGenericXSLT implements IChannel
     if (xslUri != null)
       this.xslUri = xslUri;
 
-    media = runtimeData.getMedia();
+    media = mm.getMedia(runtimeData.getBrowserInfo());
   }
 
   public void receiveEvent (PortalEvent ev)

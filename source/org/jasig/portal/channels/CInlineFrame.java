@@ -65,7 +65,7 @@ public class CInlineFrame extends BaseChannel
   private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
   private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CInlineFrame";
   private static final String sslLocation = stylesheetDir + fs + "CInlineFrame.ssl";
-
+    private MediaManager mm;
   private String media;
 
   /**
@@ -76,6 +76,7 @@ public class CInlineFrame extends BaseChannel
   {
     this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
+    this.mm=new MediaManager();
   }
 
   /**
@@ -84,7 +85,7 @@ public class CInlineFrame extends BaseChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    media = runtimeData.getMedia();
+    media = mm.getMedia(runtimeData.getBrowserInfo());
   }
 
   /**

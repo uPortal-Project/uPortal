@@ -61,6 +61,12 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
   IUserPreferencesStore updb;
   private Hashtable systemProfileList;
+    private MediaManager mm;
+
+
+    public CSelectSystemProfile() {
+	this.mm=new MediaManager();
+    }
 
   /**
    * put your documentation comment here
@@ -140,7 +146,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     Hashtable params = new Hashtable();
     params.put("baseActionURL", runtimeData.getBaseActionURL());
     try {
-      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getMedia());
+      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, mm.getMedia(runtimeData.getBrowserInfo()));
     } catch (org.xml.sax.SAXException e) {
       throw  new GeneralRenderingException("Unable to complete transformation");
     } catch (java.io.IOException i) {

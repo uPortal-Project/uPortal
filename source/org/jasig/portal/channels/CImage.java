@@ -77,12 +77,14 @@ public class CImage implements IChannel
   private String sImageLink = null;
   private String sCaption = null;
   private String sSubCaption = null;
+    private MediaManager mm;
 
   /**
    * Constructs a CImage.
    */
   public CImage ()
   {
+      this.mm=new MediaManager();
   }
 
   /**
@@ -128,7 +130,7 @@ public class CImage implements IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    media = runtimeData.getMedia();
+    media = mm.getMedia(runtimeData.getBrowserInfo());
   }
 
   /**

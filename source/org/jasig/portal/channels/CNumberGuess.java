@@ -64,14 +64,13 @@ public class CNumberGuess implements IChannel
 {
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
-  StylesheetSet set = null;
   private String media;
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
   private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CNumberGuess";
   private static final String sslLocation = stylesheetDir + fs + "CNumberGuess.ssl";
-
+    private MediaManager mm;
   private int iMinNum = 0;
   private int iMaxNum = 0;
   private int iGuess = 0;
@@ -83,10 +82,9 @@ public class CNumberGuess implements IChannel
    */
   public CNumberGuess ()
   {
-    this.staticData = new ChannelStaticData ();
-    this.runtimeData = new ChannelRuntimeData ();
-    this.set = new StylesheetSet (stylesheetDir + fs + "CNumberGuess.ssl");
-    this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
+      this.staticData = new ChannelStaticData ();
+      this.runtimeData = new ChannelRuntimeData ();
+      this.mm=new MediaManager();
   }
 
   /** Returns channel runtime properties
@@ -144,7 +142,7 @@ public class CNumberGuess implements IChannel
   {
     this.runtimeData = rd;
 
-    media = runtimeData.getMedia();
+    media = mm.getMedia(runtimeData.getBrowserInfo());
 
     String sGuess = runtimeData.getParameter ("guess");
 
@@ -176,10 +174,7 @@ public class CNumberGuess implements IChannel
     else if (iGuess > iAnswer)
       sSuggest = "lower";
 
-    try
-    {
-      if (set != null)
-      {
+    try	{
         StringWriter w = new StringWriter ();
         w.write ("<?xml version='1.0'?>\n");
         w.write ("<content>\n");
@@ -205,7 +200,6 @@ public class CNumberGuess implements IChannel
         Hashtable ssParams = new Hashtable();
         ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
         XSLT.transform(w.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, "main", media);
-      }
     }
     catch (Exception e)
     {

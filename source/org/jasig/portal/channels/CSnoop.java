@@ -68,7 +68,6 @@ public class CSnoop implements IPrivilegedChannel
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
   private StylesheetSet set;
-  private String media;
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
@@ -131,7 +130,6 @@ public class CSnoop implements IPrivilegedChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    media = runtimeData.getMedia();
   }
 
   /**
@@ -182,7 +180,7 @@ public class CSnoop implements IPrivilegedChannel
 
     try
     {
-      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(set.getStylesheetURI(media))), out);
+      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(set.getStylesheetURI(runtimeData.getBrowserInfo()))), out);
     }
     catch (Exception e)
     {

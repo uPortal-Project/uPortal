@@ -194,8 +194,15 @@ public class StylesheetSet extends SAXFilterImpl
     public String getStylesheetURI (HttpServletRequest req) {
         return getStylesheetURI(getMedia(req));
     }
+
+    public String getStylesheetURI (BrowserInfo bi) {
+        return getStylesheetURI(getMedia(bi));
+    }
     public String getStylesheetURI (String title, HttpServletRequest req) {
         return getStylesheetURI(title,getMedia(req));
+    }
+    public String getStylesheetURI (String title, BrowserInfo bi) {
+        return getStylesheetURI(title,getMedia(bi));
     }
 
   /**
@@ -357,6 +364,17 @@ public class StylesheetSet extends SAXFilterImpl
 
     if (props!=null)
       return props.getValue (req.getHeader ("User-Agent"));
+
+    return (String) null;
+  }
+
+  protected String getMedia (BrowserInfo bi)
+  {
+    if (props==null)
+      this.setMediaProps ((String) null);
+
+    if (props!=null)
+      return props.getValue (bi.getUserAgent());
 
     return (String) null;
   }

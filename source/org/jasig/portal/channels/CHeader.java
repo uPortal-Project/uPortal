@@ -43,6 +43,7 @@ import  java.util.Hashtable;
 import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  javax.naming.NamingException;
+import org.jasig.portal.MediaManager;
 import  org.jasig.portal.UtilitiesBean;
 import  org.jasig.portal.Logger;
 import  org.jasig.portal.utils.XSLT;
@@ -64,6 +65,7 @@ import  org.w3c.dom.Element;
  */
 public class CHeader extends BaseChannel {
   private static final String sslUri = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
+    private MediaManager mm=new MediaManager();
 
   /**
    * put your documentation comment here
@@ -116,7 +118,7 @@ public class CHeader extends BaseChannel {
       ssParams.put("guest", "true");
     }
     try {
-      XSLT.transform(doc, new URL(sslUri), out, ssParams, runtimeData.getMedia());
+      XSLT.transform(doc, new URL(sslUri), out, ssParams, mm.getMedia(runtimeData.getBrowserInfo()));
     } catch (Exception e) {
       throw  new GeneralRenderingException(e.getMessage());
     }

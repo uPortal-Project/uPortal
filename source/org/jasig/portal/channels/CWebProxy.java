@@ -113,6 +113,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
   protected String media;
   protected Vector cookies;
   protected boolean supportSetCookie2;
+    protected MediaManager mm;
 
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CWebProxy" + fs;
@@ -122,6 +123,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     this.cookies = new Vector();
     this.supportSetCookie2 = false;
     this.buttonxmlUri = null;
+    this.mm=new MediaManager();
   }
 
   // Get channel parameters.
@@ -199,7 +201,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
        // }
     }
 
-    media = runtimeData.getMedia();
+    media = mm.getMedia(runtimeData.getBrowserInfo());
 
     if ( buttonxmlUri != null )
         fullxmlUri = buttonxmlUri;

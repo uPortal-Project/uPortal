@@ -64,7 +64,6 @@ public class CSubscriber
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;
   IChannelRegistryStore chanReg = null;
-  private String media;
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal"
@@ -137,7 +136,6 @@ public class CSubscriber
    */
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
-    media = runtimeData.getMedia();
     String catID = null;
     //catID = runtimeData.getParameter("catID");
     String role = "student";                    //need to get from current user
@@ -145,7 +143,8 @@ public class CSubscriber
     //get fresh copies of both since we don't really know if changes have been made
     if (userLayoutXML == null)
       userLayoutXML = ulm.getUserLayoutCopy();
-    channelRegistry = chanReg.getRegistryXML(catID, role);
+    if(channelRegistry == null)
+	channelRegistry = chanReg.getRegistryXML(catID, role);
     action = runtimeData.getParameter("action");
     if (action != null) {
       try {
@@ -203,7 +202,7 @@ public class CSubscriber
    * @exception org.xml.sax.SAXException
    */
   private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException {
-    String xsl = set.getStylesheetURI(stylesheetName, media);
+    String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
       if (xsl != null) {
         Hashtable ssParams = new Hashtable();

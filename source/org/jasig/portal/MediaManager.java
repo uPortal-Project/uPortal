@@ -86,10 +86,8 @@ public class MediaManager
    */
   public void setMediaProps (String uri)
   {
-    String CURRENTDIR= System.getProperty ("user.dir") + System.getProperty ("file.separator");
-
     if (uri == null)
-      uri = "file://" + CURRENTDIR + "media.properties";
+	uri = "file://" + GenericPortalBean.getPortalBaseDir () + "properties" + File.separator + "media.properties";
 
     try
     {
@@ -103,6 +101,7 @@ public class MediaManager
     {
       Logger.log (Logger.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " + uri + ". " + ioe1);
     }
+
   }
 
   /**
@@ -111,10 +110,8 @@ public class MediaManager
    */
   public void setMimeProps (String uri)
   {
-    String CURRENTDIR = System.getProperty ("user.dir")+System.getProperty ("file.separator");
-
     if (uri == null)
-      uri= "file://" + CURRENTDIR + "mime.properties";
+	uri = "file://" + GenericPortalBean.getPortalBaseDir () + "properties" + File.separator + "mime.properties";
 
     try
     {
@@ -135,10 +132,8 @@ public class MediaManager
    */
   public void setSerializerProps (String uri)
   {
-    String CURRENTDIR = System.getProperty ("user.dir") + System.getProperty ("file.separator");
-
     if (uri == null)
-      uri="file://" + CURRENTDIR + "serializer.properties";
+	uri = "file://" + GenericPortalBean.getPortalBaseDir () + "properties" + File.separator + "serializer.properties";
 
     try
     {
@@ -165,6 +160,22 @@ public class MediaManager
 
     if (mediaProps != null)
       return mediaProps.getValue (req.getHeader ("User-Agent"));
+
+    return (String) null;
+  }
+
+  /**
+   * Determines a media name from the request object.
+   * @param req the request object
+   * @return media name
+   */
+  public String getMedia (BrowserInfo bi)
+  {
+    if (mediaProps == null)
+      this.setMediaProps ((String) null);
+
+    if (mediaProps != null)
+      return mediaProps.getValue (bi.getUserAgent());
 
     return (String) null;
   }

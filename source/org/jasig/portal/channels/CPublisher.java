@@ -63,11 +63,10 @@ public class CPublisher
   private boolean DEBUG = false;
   private ChannelStaticData staticData = null;
   private ChannelRuntimeData runtimeData = null;
-  private StylesheetSet set = null;
+    private StylesheetSet set;
   private IChannelRegistryStore chanReg = null;
   private RdbmServices rdbmService = new RdbmServices();
   private Connection con = null;
-  private String media;
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal"
@@ -115,8 +114,8 @@ public class CPublisher
   /** Construct a CPublisher.
    */
   public CPublisher () {
-    this.staticData = new ChannelStaticData();
-    this.runtimeData = new ChannelRuntimeData();
+    this.staticData = new ChannelStaticData ();
+    this.runtimeData = new ChannelRuntimeData ();
     this.set = new StylesheetSet(stylesheetDir + fs + "CPublisher.ssl");
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
     // Should obtain implementation in a different way!
@@ -167,7 +166,6 @@ public class CPublisher
    */
   public void setRuntimeData (final org.jasig.portal.ChannelRuntimeData rd) throws org.jasig.portal.PortalException {
     this.runtimeData = rd;
-    media = runtimeData.getMedia();
     //catID = runtimeData.getParameter("catID");
     String role = "student";                    //need to get from current user
     // Should obtain implementation in a different way!
@@ -237,7 +235,7 @@ public class CPublisher
    * @exception org.xml.sax.SAXException
    */
   private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException {
-    String xsl = set.getStylesheetURI(stylesheetName, media);
+    String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
       if (xsl != null) {
         Hashtable ssParams = new Hashtable();
