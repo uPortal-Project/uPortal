@@ -58,6 +58,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private UPFileSpec channelUPFile;
     private String baseActionURL = null; // Not sure if this will stay
     private String httpRequestMethod=null;
+    private String keywords=null;
     private boolean renderingAsRoot=false;
     private static final String TRADITIONAL_MEDIA_BASE = "media/";
 
@@ -447,7 +448,22 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         }
         return params;
     }
+
+    /**
+     * Sets the keywords 
+     * @param keywords a String of keywords
+     */
+    public void setKeywords(String keywords)
+    {
+      this.keywords = keywords;
+    }
+
+    /**
+     * Returns the keywords 
+     * @return a String of keywords, null if there were none
+     */
+    public String getKeywords()
+    {
+      return keywords;
+    }
 }
-
-
-
