@@ -67,6 +67,9 @@ public class HttpProxyServlet extends HttpServlet {
 	// pathinfo is "/host/url"
 	if(request.getPathInfo() != null && !request.getPathInfo().equals("")) {
 	    target = "http:/" + request.getPathInfo();
+	    String qs = request.getQueryString();
+	    if (qs != null)
+	        target +="?"+request.getQueryString(); 	    
 	} else {
 		response.setStatus(404);
 	    return;
