@@ -10,8 +10,9 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
-// This is only useful if you will be using the LogService (which you should!!):
-import org.jasig.portal.services.LogService;
+// This is only useful if you will be using Commons Logging (which you should!!):
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 /** 
  *  A simple example channel for the uPortal.
