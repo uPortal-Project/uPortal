@@ -121,7 +121,9 @@ public class PortletStateManager {
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
 	  if ( windowOfAction != null && runtimeData != null && request != null ) {
-		runtimeData.setParameters(getURLDecodedParameters(request));
+	  	Map decodedParameters = getURLDecodedParameters(request);
+		runtimeData.setParameters(decodedParameters);
+		request.getParameterMap().putAll(decodedParameters);
 		analyzeRequestInformation();
 	  } 	
 	}
