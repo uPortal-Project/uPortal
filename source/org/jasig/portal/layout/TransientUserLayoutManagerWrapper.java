@@ -36,8 +36,8 @@
 package org.jasig.portal.layout;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.transform.Transformer;
@@ -98,6 +98,15 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException("Cannot wrap a null IUserLayoutManager !");
         }
     }
+    
+    public IUserLayout getUserLayout() {
+        return man.getUserLayout();
+    }
+    
+    public void setUserLayout(IUserLayout userLayout) { 
+        man.setUserLayout(userLayout);  
+    }
+
 
     public void getUserLayout(ContentHandler ch) throws PortalException {
         man.getUserLayout(new TransientUserLayoutManagerSAXFilter(ch));

@@ -53,6 +53,20 @@ import org.xml.sax.ContentHandler;
  */
 public interface IUserLayoutManager {
     /**
+     * Gets a user layout (with appropriate markings).
+     *
+     * @return the user layout
+     */
+    public IUserLayout getUserLayout();
+
+    /**
+     * Sets a user layout (with appropriate markings).
+     *
+     * @param the user layout
+     */
+    public void setUserLayout(IUserLayout userLayout);    
+    
+    /**
      * Output user layout (with appropriate markings) into
      * a <code>ContentHandler</code>
      *

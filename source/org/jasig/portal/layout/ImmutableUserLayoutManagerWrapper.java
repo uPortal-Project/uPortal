@@ -59,6 +59,15 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException("Can not wrap a null IUserLayoutManager !");
         }
     }
+    
+    public IUserLayout getUserLayout() {
+        // TODO: Implement this!
+        return null;
+    }
+    
+    public void setUserLayout(IUserLayout userLayout) {
+        // TODO: Implement this!
+    }
 
     public void getUserLayout(ContentHandler ch) throws PortalException {
         //todo: we should probably cache the output here and save a DOM transform - the user layout never changes here

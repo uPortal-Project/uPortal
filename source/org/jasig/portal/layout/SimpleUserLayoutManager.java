@@ -66,7 +66,7 @@ import org.xml.sax.ContentHandler;
  * An implementation of a user layout manager that uses 2.0-release store implementations.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version 1.0
+ * @version $Revision$
  */
 public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected final IPerson owner;
@@ -111,6 +111,16 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         this.loadUserLayout();
         this.markingMode=null;
         this.markingNode=null;
+    }
+    
+    public IUserLayout getUserLayout() {
+        // TODO: Implement this!
+        return null;
+    }
+    
+    public void setUserLayout(IUserLayout userLayout) {
+        // TODO: Implement this!
+        
     }
 
     private void setUserLayoutDOM(Document doc) {
