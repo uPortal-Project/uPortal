@@ -50,14 +50,14 @@ import org.jasig.portal.utils.CommonUtils;
  */
 public class LocaleManager  {
 
-    final static boolean LOCALE_AWARE=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+    final static boolean localeAware=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
     private Locale[] DEFAULT_LOCALES;
     private Locale   localeFromSessionParameter;
     private Locale[] localesFromBrowserSetting;
 
     public LocaleManager() {
 
-	String default_locales=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.default_locales");
+	String default_locales=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.portal_locales");
 
 	String [] strarr = CommonUtils.getSplitStringByCommas(default_locales, ",");
 
@@ -72,7 +72,7 @@ public class LocaleManager  {
     };
 
     public boolean localeAware() {
-	return LOCALE_AWARE;
+	return localeAware;
     }
 
     public LocaleManager (HttpServletRequest request) {
@@ -86,14 +86,22 @@ public class LocaleManager  {
 	// set the current locale from `locale' session parameter
 	setLocaleFromSessionParameter(request);
 
-	if (LOCALE_AWARE) {
+	if (localeAware) {
 	    LogService.instance().log(LogService.DEBUG, "LocaleManager - yes, locale aware!");
 	}  
     }
 
     public void  setLocaleFromSessionParameter(HttpServletRequest request) {
 
-	localeFromSessionParameter = getLocaleForLanguage(request.getParameter("locale"));
+        String locale=request.getParameter("locale");
+
+        if (locale != null) {
+            // 
+            localeFromSessionParameter = getLocaleForLanguage(locale);
+        }  else {
+            // the same locale 
+            localeFromSessionParameter = getLocaleForLanguage((String)request.getSession().getAttribute("locale"));
+        }
 
 	LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: localeFromSessionParameter = " + localeFromSessionParameter);
 
@@ -138,12 +146,14 @@ public class LocaleManager  {
     }
 
     public boolean isLocaleAware() {
-	return LOCALE_AWARE;
+	return localeAware;
     }
 
     public Locale[] getLocales() {
 
 	int i=0;
+
+        if (localeAware == false)  return null;
 
 	int totalLength;
 	if (localeFromSessionParameter != null) {
@@ -177,7 +187,9 @@ public class LocaleManager  {
 
 	Locale[] locales=getLocales(); 
 
-	LogService.instance().log(LogService.DEBUG, "LocaleManager.getLocale() - the current locale is " + locales[0]);
+        if (locales == null)  return null;
+        
+        LogService.instance().log(LogService.DEBUG, "LocaleManager.getLocale() - the current locale is " + locales[0]);
 
 	return locales[0];
 
@@ -186,6 +198,8 @@ public class LocaleManager  {
     public String getLocale(String loc) {
 
 	Locale[] locales=getLocales(); 
+
+        if (locales == null)  return null;
 
 	LogService.instance().log(LogService.DEBUG, "LocaleManager.getLocale() - the current locale is " + locales[0]);
 

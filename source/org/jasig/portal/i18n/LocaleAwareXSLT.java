@@ -20,9 +20,13 @@ public class LocaleAwareXSLT extends XSLT {
 	super(instance);
 	this.caller=instance;
 	this.locales=locales;
-	for (int i=0; i<locales.length; i++) {
-	    LogService.log(LogService.DEBUG, "LocaleAwareXSLT: locales #" + i + " = " + locales[i]);
-	}
+
+        // debug
+        if  (locales != null) {
+            for (int i=0; i<locales.length; i++) {
+                LogService.log(LogService.DEBUG, "LocaleAwareXSLT: locales #" + i + " = " + locales[i]);
+            }
+        }
     }
 
     public void setXSL(String sslUri, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
@@ -32,25 +36,7 @@ public class LocaleAwareXSLT extends XSLT {
 	LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: fullpath sslUri=" + ResourceLoader.getResourceAsURLString(caller.getClass(), sslUri));
 	set.setMediaProps(mediaProps);
 	String xslUri = set.getStylesheetURI(stylesheetTitle, browserInfo);
-	String localeAwareXslUri = xslUri;
-
-	int i;
-	for (i=0; i<locales.length; i++) {
-	    localeAwareXslUri = xslUri.replaceAll("\\.xsl", "_" + locales[i] + ".xsl");
-	    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: locale aware xslUri=" + localeAwareXslUri);
-	    try {
-		xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), localeAwareXslUri);
-		LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: XSL file found as " + xslUri);
-		break;
-	    }  catch (ResourceMissingException e) {
-		LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: XSL file NOT found as " + localeAwareXslUri);
-		LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: Fallbacking...");
-	    }
-	}
-	if (i == locales.length) {
-	    xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);	    
-	    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.setXSL: XSL file found as " + xslUri);
-	}
+	xslUri = getLocaleAwareXslUri(xslUri, locales, caller);
 	setXSL(xslUri);
     }
 	
@@ -58,5 +44,41 @@ public class LocaleAwareXSLT extends XSLT {
 	setXSL(sslUri, (String)null, browserInfo);
     }
 
+    public static String getLocaleAwareXslUri(String xslUri, Locale[] locales, Object caller) {
 
+	String localeAwareXslUri = xslUri;
+	int i;
+
+        if (locales == null) {
+	    try {
+		xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);	    
+		LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+	    } catch (ResourceMissingException e) {
+		LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + xslUri);
+	    }
+        }  else {
+
+            for (i=0; i<locales.length; i++) {
+                localeAwareXslUri = xslUri.replaceAll("\\.xsl", "_" + locales[i] + ".xsl");
+                LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: locale aware xslUri=" + localeAwareXslUri);
+                try {
+                    xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), localeAwareXslUri);
+                    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+                    break;
+                }  catch (ResourceMissingException e) {
+                    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + localeAwareXslUri);
+                    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: Fallbacking...");
+                }
+            }
+            if (i == locales.length) {
+                try {
+                    xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), xslUri);	    
+                    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file found as " + xslUri);
+                } catch (ResourceMissingException e) {
+                    LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: XSL file NOT found as " + xslUri);
+                }
+            }
+        }
+	return xslUri;
+    }
 }
