@@ -72,7 +72,7 @@ import org.apache.commons.logging.LogFactory;
 public class AuthorizationImpl implements IAuthorizationService {
 
     private static final Log log = LogFactory.getLog(AuthorizationImpl.class);
-    
+
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
     protected Map principalCache = new HashMap(100);
@@ -83,7 +83,7 @@ public class AuthorizationImpl implements IAuthorizationService {
   /**
    *
    */
-private AuthorizationImpl () throws AuthorizationException
+protected AuthorizationImpl () throws AuthorizationException
 {
     super();
     initialize();
@@ -100,7 +100,7 @@ throws AuthorizationException
     {
         getPermissionStore().add(permissions);
         if ( cachePermissions )
-            { removeFromPermissionsCache(permissions); } 
+            { removeFromPermissionsCache(permissions); }
     }
 }
 /**
@@ -136,20 +136,20 @@ protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
 * Retrieves the <code>IPermissionSet</code> for the <code>IPermissionSet</code>
 * from the entity cache.
 */
-protected IPermissionSet cacheGet(IAuthorizationPrincipal principal) 
+protected IPermissionSet cacheGet(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
     try
-    { 
+    {
         return (IPermissionSet)
-          EntityCachingService.instance().get(PERMISSION_SET_TYPE, principal.getPrincipalString()); 
+          EntityCachingService.instance().get(PERMISSION_SET_TYPE, principal.getPrincipalString());
     }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache: " + ce.getMessage() ); }
 }
 
 /**
-* Removes the <code>IPermissionSet</code> for this principal from the 
+* Removes the <code>IPermissionSet</code> for this principal from the
 * entity cache.
 */
 protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException
@@ -298,7 +298,7 @@ throws AuthorizationException
  * Does this mean all channels the principal could conceivably subscribe
  * to or all channels principal is specifically authorized to subscribe to,
  * or what?
- * 
+ *
  * @param principal IAuthorizationPrincipal
  * @return Vector (of channels?)
  * @exception AuthorizationException indicates authorization information could not
@@ -588,8 +588,8 @@ private void initialize() throws AuthorizationException
         throw new AuthorizationException(eMsg);
     }
 
-    try 
-    { 
+    try
+    {
         PERMISSION_SET_TYPE = Class.forName("org.jasig.portal.security.IPermissionSet");
     }
     catch (ClassNotFoundException cnfe)
@@ -639,8 +639,8 @@ public IPermissionManager newPermissionManager(String owner)
 
 /**
  * Factory method for IAuthorizationPrincipal.
- * First check the principal cache, and if not present, create the principal 
- * and cache it.  
+ * First check the principal cache, and if not present, create the principal
+ * and cache it.
  * @return org.jasig.portal.security.IAuthorizationPrincipal
  * @param key java.lang.String
  * @param type java.lang.Class
@@ -700,7 +700,7 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
 /**
  * Returns permissions for a principal.  First check the entity caching
  * service, and if the permissions have not been cached, retrieve and
- * cache them.  
+ * cache them.
  * @return IPermission[]
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
@@ -709,18 +709,18 @@ throws AuthorizationException
 {
     if ( ! cachePermissions )
         { return getUncachedPermissionsForPrincipal(principal, null, null, null);}
-        
+
     IPermissionSet ps = null;
     // Check the caching service for the Permissions first.
     ps = cacheGet(principal);
-    
+
     if ( ps == null )
     synchronized ( principal )
     {
         ps = cacheGet(principal);
         if ( ps == null )
         {
-            IPermission[] permissions = 
+            IPermission[] permissions =
               getUncachedPermissionsForPrincipal(principal, null, null, null);
             ps = new PermissionSetImpl(permissions, principal);
             cacheAdd(ps);
@@ -744,11 +744,11 @@ private IPermission[] primGetPermissionsForPrincipal
 throws AuthorizationException
 {
         log.debug(
-          "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
+          "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
           "Principal: " + principal + " owner: " + owner +
           " activity: " + activity + " target: " + target);
 
-    
+
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
         { return perms; }
@@ -762,9 +762,9 @@ throws AuthorizationException
            )
             { al.add(perms[i]); }
     }
-    
+
     log.debug(
-      "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
+      "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
       "# permissions retrieved: " + al.size());
 
 
@@ -790,7 +790,7 @@ throws AuthorizationException
  * the cache.
  * @param principals IAuthorizationPrincipal[]
  */
-private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals) 
+private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals)
 throws AuthorizationException
 {
     for ( int i=0; i<principals.length; i++ )
@@ -801,7 +801,7 @@ throws AuthorizationException
  * Removes <code>IPermissions</code> from the cache.
  * @param permissions IPermission[]
  */
-private void removeFromPermissionsCache(IPermission[] permissions) 
+private void removeFromPermissionsCache(IPermission[] permissions)
 throws AuthorizationException
 {
     IAuthorizationPrincipal[] principals = getPrincipalsFromPermissions(permissions);
@@ -820,7 +820,7 @@ throws AuthorizationException
     {
         getPermissionStore().delete(permissions);
         if ( cachePermissions )
-            { removeFromPermissionsCache(permissions); }  
+            { removeFromPermissionsCache(permissions); }
     }
 }
 
