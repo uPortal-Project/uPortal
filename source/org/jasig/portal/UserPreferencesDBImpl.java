@@ -102,7 +102,6 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             // remove the old mapping and add the new one
             Statement stmt=con.createStatement();
             String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_NAME='"+userName+"' AND USER_AGENT='"+userAgent+"'";
-            String sQuery2 = "INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             sQuery = "INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
