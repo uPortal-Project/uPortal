@@ -516,22 +516,7 @@ public class DbLoader
 
   static class PropertiesHandler extends DefaultHandler
   {
-    private static boolean insideProperties = false;
-    private static boolean insideTablesUri = false;
-    private static boolean insideTablesXslUri = false;
-    private static boolean insideDataUri = false;
-    private static boolean insideDataXslUri = false;
-    private static boolean insideCreateScript = false;
-    private static boolean insideScriptUri = false;
-    private static boolean insideStatementTerminator = false;
-    private static boolean insideDbTypeMapping = false;
-    private static boolean insideDbName = false;
-    private static boolean insideDbVersion = false;
-    private static boolean insideDriverName = false;
-    private static boolean insideDriverVersion = false;
-    private static boolean insideType = false;
-    private static boolean insideGeneric = false;
-    private static boolean insideLocal = false;
+    private static StringBuffer charBuff = null;
 
     static Properties properties;
     static DbTypeMapping dbTypeMapping;
@@ -549,120 +534,51 @@ public class DbLoader
 
     public void startElement (String uri, String name, String qName, Attributes atts)
     {
-        if (name.equals("properties"))
-        {
-          insideProperties = true;
-          properties = new Properties();
-        }
-        else if (name.equals("tables-uri"))
-          insideTablesUri = true;
-       else if (name.equals("tables-xsl-uri"))
-          insideTablesXslUri = true;
-        else if (name.equals("data-uri"))
-          insideDataUri = true;
-       else if (name.equals("data-xsl-uri"))
-          insideDataXslUri = true;
-        else if (name.equals("create-script"))
-          insideCreateScript = true;
-        else if (name.equals("script-uri"))
-          insideScriptUri = true;
-        else if (name.equals("statement-terminator"))
-          insideStatementTerminator = true;
-        else if (name.equals("db-type-mapping"))
-        {
-          insideDbTypeMapping = true;
-          dbTypeMapping = new DbTypeMapping();
-        }
-        else if (name.equals("db-name"))
-          insideDbName = true;
-        else if (name.equals("db-version"))
-          insideDbVersion = true;
-        else if (name.equals("driver-name"))
-          insideDriverName = true;
-        else if (name.equals("driver-version"))
-          insideDriverVersion = true;
+      charBuff = new StringBuffer();
 
-        else if (name.equals("type"))
-        {
-          insideType = true;
-          type = new Type();
-        }
-        else if (name.equals("generic"))
-          insideGeneric = true;
-        else if (name.equals("local"))
-          insideLocal = true;
+      if (name.equals("properties"))
+        properties = new Properties();
+      else if (name.equals("db-type-mapping"))
+        dbTypeMapping = new DbTypeMapping();
+      else if (name.equals("type"))
+        type = new Type();
     }
 
     public void endElement (String uri, String name, String qName)
     {
-        if (name.equals("properties"))
-          insideProperties = false;
-        else if (name.equals("tables-uri"))
-          insideTablesUri = false;
-        else if (name.equals("tables-xsl-uri"))
-          insideTablesXslUri = false;
-        else if (name.equals("data-uri"))
-          insideDataUri = false;
-        else if (name.equals("data-xsl-uri"))
-          insideDataXslUri = false;
-        else if (name.equals("create-script"))
-          insideCreateScript = false;
-        else if (name.equals("script-uri"))
-          insideScriptUri = false;
-        else if (name.equals("statement-terminator"))
-          insideStatementTerminator = false;
-        else if (name.equals("db-type-mapping"))
-        {
-          insideDbTypeMapping = false;
-          properties.addDbTypeMapping(dbTypeMapping);
-        }
-        else if (name.equals("db-name"))
-          insideDbName = false;
-        else if (name.equals("db-version"))
-          insideDbVersion = false;
-        else if (name.equals("driver-name"))
-          insideDriverName = false;
-        else if (name.equals("driver-version"))
-          insideDriverVersion = false;
-        else if (name.equals("type"))
-        {
-          insideType = false;
-          dbTypeMapping.addType(type);
-        }
-        else if (name.equals("generic"))
-          insideGeneric = false;
-        else if (name.equals("local"))
-          insideLocal = false;
+      if (name.equals("tables-uri")) // tables URI
+        properties.setTablesUri(charBuff.toString());
+      else if (name.equals("tables-xsl-uri")) // tables xsl URI
+        properties.setTablesXslUri(charBuff.toString());
+      else if (name.equals("data-uri")) // data xml URI
+        properties.setDataUri(charBuff.toString());
+      else if (name.equals("create-script")) // create script ("yes" or "no")
+        properties.setCreateScript(charBuff.toString());
+      else if (name.equals("script-uri")) // script URI
+        properties.setScriptUri(charBuff.toString());
+      else if (name.equals("statement-terminator")) // statement terminator
+        properties.setStatementTerminator(charBuff.toString());
+      else if (name.equals("db-type-mapping"))
+        properties.addDbTypeMapping(dbTypeMapping);
+      else if (name.equals("db-name")) // database name
+        dbTypeMapping.setDbName(charBuff.toString());
+      else if (name.equals("db-version")) // database version
+        dbTypeMapping.setDbVersion(charBuff.toString());
+      else if (name.equals("driver-name")) // driver name
+        dbTypeMapping.setDriverName(charBuff.toString());
+      else if (name.equals("driver-version")) // driver version
+        dbTypeMapping.setDriverVersion(charBuff.toString());
+      else if (name.equals("type"))
+        dbTypeMapping.addType(type);
+      else if (name.equals("generic")) // generic type
+        type.setGeneric(charBuff.toString());
+      else if (name.equals("local")) // local type
+        type.setLocal(charBuff.toString());
     }
 
     public void characters (char ch[], int start, int length)
     {
-      if (insideTablesUri) // tables xml URI
-        properties.setTablesUri(new String(ch, start, length));
-      else if (insideTablesXslUri) // tables xsl URI
-        properties.setTablesXslUri(new String(ch, start, length));
-      else if (insideDataUri) // data xml URI
-        properties.setDataUri(new String(ch, start, length));
-      else if (insideDataXslUri) // data xsl URI
-        properties.setDataXslUri(new String(ch, start, length));
-      else if (insideCreateScript) // create script ("yes" or "no")
-        properties.setCreateScript(new String(ch, start, length));
-      else if (insideScriptUri) // script URI
-        properties.setScriptUri(new String(ch, start, length));
-      else if (insideStatementTerminator) // statement terminator
-        properties.setStatementTerminator(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideDbName) // database name
-        dbTypeMapping.setDbName(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideDbVersion) // database version
-        dbTypeMapping.setDbVersion(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideDriverName) // driver name
-        dbTypeMapping.setDriverName(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideDriverVersion) // driver version
-        dbTypeMapping.setDriverVersion(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideType && insideGeneric) // generic type
-        type.setGeneric(new String(ch, start, length));
-      else if (insideDbTypeMapping && insideType && insideLocal) // local type
-        type.setLocal(new String(ch, start, length));
+      charBuff.append(ch, start, length);
     }
 
     class Properties
