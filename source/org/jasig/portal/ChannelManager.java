@@ -70,8 +70,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutMoveEvent;
@@ -390,9 +390,9 @@ public class ChannelManager implements LayoutEventListener {
             }
             
             // Obtain the channel description
-            UserLayoutChannelDescription channelDesc = null;
+            IUserLayoutChannelDescription channelDesc = null;
             try {
-              channelDesc = (UserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
+              channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
             } catch (PortalException pe) {
               // Do nothing
             }
@@ -590,14 +590,14 @@ public class ChannelManager implements LayoutEventListener {
             channelTable.remove(channelSubscribeId);
         }
         // get channel information from the user layout manager
-        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
+        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
         if(channel!=null)
             return instantiateChannel(channel);
         else 
             return null;
     }
 
-    private IChannel instantiateChannel(UserLayoutChannelDescription cd) throws PortalException {
+    private IChannel instantiateChannel(IUserLayoutChannelDescription cd) throws PortalException {
         IChannel ch=null;
         String channelSubscribeId=cd.getChannelSubscribeId();
         String channelPublishId=cd.getChannelPublishId();
@@ -674,9 +674,9 @@ public class ChannelManager implements LayoutEventListener {
 
         if(channelTarget!=null) {
             // Obtain the channel description
-            UserLayoutChannelDescription channelDesc = null;
+            IUserLayoutChannelDescription channelDesc = null;
             try {
-              channelDesc = (UserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelTarget);
+              channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelTarget);
             } catch (PortalException pe) {
               // Do nothing
             }          
@@ -900,12 +900,12 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch;
         long timeOut=0;
         
-        UserLayoutNodeDescription node=upm.getUserLayoutManager().getNode(channelSubscribeId);
-        if(!(node instanceof UserLayoutChannelDescription)) {
+        IUserLayoutNodeDescription node=upm.getUserLayoutManager().getNode(channelSubscribeId);
+        if(!(node instanceof IUserLayoutChannelDescription)) {
             throw new PortalException("\""+channelSubscribeId+"\" is not a channel node !");
         }
         
-        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) node;
+        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) node;
         timeOut=channel.getTimeout();
 
         if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {

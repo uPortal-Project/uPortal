@@ -36,8 +36,8 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
@@ -110,7 +110,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }  
   
-  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -123,7 +123,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }    
   
-  public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -136,7 +136,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
   
-  public void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -149,7 +149,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
   
-  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -162,7 +162,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
 
-  public void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     String msg = "Folder [" +
                  folderDesc.getName() + ", " + 
                  folderDesc.getId() + "] " +
@@ -174,7 +174,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }    
   
-  public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     String msg = "Folder [" +
                  folderDesc.getName() + ", " + 
                  folderDesc.getId() + "] " +
@@ -186,7 +186,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
   
-  public void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     String msg = "Folder [" +
                  folderDesc.getName() + ", " + 
                  folderDesc.getId() + "] " +
@@ -198,7 +198,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
   
-  public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     String msg = "Folder [" +
                  folderDesc.getName() + ", " + 
                  folderDesc.getId() + "] " +
@@ -210,7 +210,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   } 
   
-  public void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -223,7 +223,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }   
 
-  public void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -236,7 +236,7 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   }
 
-  public void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +

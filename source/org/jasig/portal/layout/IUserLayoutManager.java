@@ -99,7 +99,7 @@ public interface IUserLayoutManager {
      * @return an <code>UserLayoutNodeDescription</code> value
      * @exception PortalException if an error occurs
      */
-    public UserLayoutNodeDescription getNode(String nodeId) throws PortalException;
+    public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException;
 
     /**
      * Add a new node to a current user layout.
@@ -110,7 +110,7 @@ public interface IUserLayoutManager {
      * @return an <code>UserLayoutNodeDescription</code> value with a newly determined Id.
      * @exception PortalException if an error occurs
      */
-    public UserLayoutNodeDescription addNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException;
+    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException;
 
 
     /**
@@ -140,7 +140,7 @@ public interface IUserLayoutManager {
      * @return a <code>boolean</code> value noting if the operation was successful
      * @exception PortalException if an error occurs
      */
-    public boolean updateNode(UserLayoutNodeDescription node) throws PortalException;
+    public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException;
 
 
     /**
@@ -152,7 +152,7 @@ public interface IUserLayoutManager {
      * @return a <code>boolean</code> value
      * @exception PortalException if an error occurs
      */
-    public boolean canAddNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException;
+    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException;
 
     /**
      * Test if a particular node can be moved to a given location.
@@ -189,7 +189,7 @@ public interface IUserLayoutManager {
      *
      * @param node an <code>UserLayoutNodeDescription</code> value or <code>null</code> to stop outputting add markings.
      */
-    public void markAddTargets(UserLayoutNodeDescription node);
+    public void markAddTargets(IUserLayoutNodeDescription node);
 
 
     /**
@@ -275,5 +275,12 @@ public interface IUserLayoutManager {
      * @return an <code>int</code> layout Id value;
      */
     public int getLayoutId();
+
+    /**
+     * Returns an id of the root folder.
+     *
+     * @return a <code>String</code> value
+     */
+    public String getRootFolderId();
 
 }

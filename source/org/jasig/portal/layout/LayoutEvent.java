@@ -43,7 +43,7 @@ package org.jasig.portal.layout;
  * @version 1.0
  */
 public class LayoutEvent extends java.util.EventObject {
-    protected UserLayoutNodeDescription node;
+    protected IUserLayoutNodeDescription node;
 
 
     /**
@@ -53,7 +53,7 @@ public class LayoutEvent extends java.util.EventObject {
      * @param source an <code>Object</code> that generated the event
      * @param node an <code>UserLayoutNodeDescription</code> of the node that was involved
      */
-    public LayoutEvent(Object source,UserLayoutNodeDescription node) {
+    public LayoutEvent(Object source,IUserLayoutNodeDescription node) {
         super(source);
         this.node=node;
     }
@@ -63,7 +63,7 @@ public class LayoutEvent extends java.util.EventObject {
      *
      * @return an <code>UserLayoutNodeDescription</code> value
      */
-    public UserLayoutNodeDescription getNodeDescription() {
+    public IUserLayoutNodeDescription getNodeDescription() {
         return this.node;
     }
 }

@@ -274,8 +274,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         rootNode.setFirstChildNodeId(firstStructId+"");
 
         //Assigning the root folder!!
-        rootNode.setNodeDescription(new UserLayoutRootDescription());
-        layout.put(UserLayoutNodeDescription.ROOT_FOLDER_ID,rootNode);
+        rootNode.setNodeDescription(new UserLayoutFolderDescription());
+        layout.put(AggregatedUserLayoutImpl.ROOT_FOLDER_ID,rootNode);
 
         String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.PREV_STRUCT_ID,ULS.PRNT_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
@@ -327,7 +327,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 chanId = 0;
               }*/
 
-              UserLayoutNodeDescription nodeDesc= null;
+              IUserLayoutNodeDescription nodeDesc= null;
               // Trying to get the node if it already exists
               //UserLayoutNode node = (UserLayoutNode) layout.get(structId+"");
               UserLayoutNode node;
@@ -341,11 +341,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 String type = rs.getString(8);
                 int intType;
                 if ( "header".equalsIgnoreCase(type))
-                 intType = UserLayoutFolderDescription.HEADER_TYPE;
+                 intType = IUserLayoutFolderDescription.HEADER_TYPE;
                 else if ( "footer".equalsIgnoreCase(type))
-                 intType = UserLayoutFolderDescription.FOOTER_TYPE;
+                 intType = IUserLayoutFolderDescription.FOOTER_TYPE;
                 else
-                 intType = UserLayoutFolderDescription.REGULAR_TYPE;
+                 intType = IUserLayoutFolderDescription.REGULAR_TYPE;
 
                 folderDesc.setFolderType(intType);
                 nodeDesc = folderDesc;
@@ -401,9 +401,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            // If there is a channel we need to get its parameters
 
-           UserLayoutChannelDescription channelDesc = null;
+           IUserLayoutChannelDescription channelDesc = null;
            if ("channel".equalsIgnoreCase(node.getNodeType())) {
-                channelDesc = (UserLayoutChannelDescription) nodeDesc;
+                channelDesc = (IUserLayoutChannelDescription) nodeDesc;
                 chanIds.add(structId+""); // For later
            }
 
@@ -481,7 +481,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             //System.out.println( "before" );
             UserLayoutNode node = (UserLayoutNode) layout.get(nodeId+"");
 
-            UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
+            IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription) node.getNodeDescription();
             ChannelDefinition channelDef = crs.getChannelDefinition(Integer.parseInt(channelDesc.getChannelPublishId()));
 
             //System.out.println( "after" );
@@ -531,7 +531,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 //LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
                 UserLayoutNode node = (UserLayoutNode) layout.get(structId+"");
                 if ( node != null ) {
-                 UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
+                 IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription) node.getNodeDescription();
                  int lastStructId = structId;
                  do {
                    //ls.addParameter(rs.getString(2), rs.getString(3));

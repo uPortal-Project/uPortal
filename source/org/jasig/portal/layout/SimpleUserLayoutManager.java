@@ -198,7 +198,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
-    public UserLayoutNodeDescription getNode(String nodeId) throws PortalException {
+    public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         Document ulm=this.getUserLayoutDOM();
         if(ulm==null) {
             throw new PortalException("UserLayout has not been initialized.");
@@ -213,9 +213,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
 
-    public UserLayoutNodeDescription addNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
         boolean isChannel=false;
-        UserLayoutNodeDescription parent=this.getNode(parentId);
+        IUserLayoutNodeDescription parent=this.getNode(parentId);
         if(canAddNode(node,parent,nextSiblingId)) {
             // assign new Id
 
@@ -223,7 +223,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 throw new PortalException("Store implementation has not been set.");
             } else {
                 try {
-                    if(node instanceof UserLayoutChannelDescription) {
+                    if(node instanceof IUserLayoutChannelDescription) {
                         isChannel=true;
                         node.setId(this.getLayoutStore().generateNewChannelSubscribeId(owner));
                     } else {
@@ -266,8 +266,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
 
-        UserLayoutNodeDescription parent=this.getNode(parentId);
-        UserLayoutNodeDescription node=this.getNode(nodeId);
+        IUserLayoutNodeDescription parent=this.getNode(parentId);
+        IUserLayoutNodeDescription node=this.getNode(nodeId);
         String oldParentNodeId=getParentId(nodeId);
         if(canMoveNode(node,parent,nextSiblingId)) {
             // must be a folder
@@ -284,7 +284,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
             // inform the listeners
             boolean isChannel=false;
-            if(node instanceof UserLayoutChannelDescription) {
+            if(node instanceof IUserLayoutChannelDescription) {
                 isChannel=true;
             }
             LayoutMoveEvent ev=new LayoutMoveEvent(this,node,oldParentNodeId);
@@ -304,7 +304,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public boolean deleteNode(String nodeId) throws PortalException {
         if(canDeleteNode(nodeId)) {
-            UserLayoutNodeDescription nodeDescription=this.getNode(nodeId);
+            IUserLayoutNodeDescription nodeDescription=this.getNode(nodeId);
             String parentNodeId=this.getParentId(nodeId);
 
             Document ulm=this.getUserLayoutDOM();
@@ -319,7 +319,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
             // inform the listeners
             boolean isChannel=false;
-            if(nodeDescription instanceof UserLayoutChannelDescription) {
+            if(nodeDescription instanceof IUserLayoutChannelDescription) {
                 isChannel=true;
             }
             LayoutMoveEvent ev=new LayoutMoveEvent(this,nodeDescription,parentNodeId);
@@ -338,7 +338,11 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
-    public synchronized boolean updateNode(UserLayoutNodeDescription node) throws PortalException {
+    public String getRootFolderId() {
+        return null;
+    }
+
+    public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         boolean isChannel=false;
         if(canUpdateNode(node)) {
             // normally here, one would determine what has changed
@@ -354,11 +358,11 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 nextSibling=ulm.getElementById(nextSiblingId);
             }
 
-            UserLayoutNodeDescription oldNode=getNode(nodeId);
+            IUserLayoutNodeDescription oldNode=getNode(nodeId);
 
-            if(oldNode instanceof UserLayoutChannelDescription) {
-                UserLayoutChannelDescription oldChannel=(UserLayoutChannelDescription) oldNode;
-                if(node instanceof UserLayoutChannelDescription) {
+            if(oldNode instanceof IUserLayoutChannelDescription) {
+                IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
+                if(node instanceof IUserLayoutChannelDescription) {
                     isChannel=true;
                     DocumentImpl ulm=this.userLayoutDocument;
                     // generate new XML Element
@@ -379,12 +383,10 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 } else {
                     throw new PortalException("Change channel to folder is not allowed by updateNode() method!");
                 }
-            } else if(oldNode instanceof UserLayoutRootDescription) {
-                throw new PortalException("Update of root node is not currently allowed!");
             } else {
                  // must be a folder
-                UserLayoutFolderDescription oldFolder=(UserLayoutFolderDescription) oldNode;
-                if(node instanceof UserLayoutFolderDescription) {
+                IUserLayoutFolderDescription oldFolder=(IUserLayoutFolderDescription) oldNode;
+                if(node instanceof IUserLayoutFolderDescription) {
                     DocumentImpl ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newFolderElement=node.getXML(ulm);
@@ -426,14 +428,14 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
 
-    public boolean canAddNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
         return this.canAddNode(node,this.getNode(parentId),nextSiblingId);
     }
 
-    protected boolean canAddNode(UserLayoutNodeDescription node,UserLayoutNodeDescription parent, String nextSiblingId) throws PortalException {
+    protected boolean canAddNode(IUserLayoutNodeDescription node,IUserLayoutNodeDescription parent, String nextSiblingId) throws PortalException {
         // make sure sibling exists and is a child of nodeId
         if(nextSiblingId!=null) {
-            UserLayoutNodeDescription sibling=getNode(nextSiblingId);
+            IUserLayoutNodeDescription sibling=getNode(nextSiblingId);
             if(sibling==null) {
                 throw new PortalException("Unable to find a sibling node with id=\""+nextSiblingId+"\"");
             }
@@ -442,16 +444,16 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
         }
 
-        return (parent!=null && parent instanceof UserLayoutFolderDescription && !parent.isImmutable());
+        return (parent!=null && parent instanceof IUserLayoutFolderDescription && !parent.isImmutable());
     }
 
     public boolean canMoveNode(String nodeId, String parentId,String nextSiblingId) throws PortalException {
         return this.canMoveNode(this.getNode(nodeId),this.getNode(parentId),nextSiblingId);
     }
 
-    protected boolean canMoveNode(UserLayoutNodeDescription node,UserLayoutNodeDescription parent, String nextSiblingId) throws PortalException {
+    protected boolean canMoveNode(IUserLayoutNodeDescription node,IUserLayoutNodeDescription parent, String nextSiblingId) throws PortalException {
         // is the current parent immutable ?
-        UserLayoutNodeDescription currentParent=getNode(getParentId(node.getId()));
+        IUserLayoutNodeDescription currentParent=getNode(getParentId(node.getId()));
         if(currentParent==null) {
             throw new PortalException("Unable to determine a parent node for node with id=\""+node.getId()+"\"");
         }
@@ -462,7 +464,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         return canDeleteNode(this.getNode(nodeId));
     }
 
-    protected boolean canDeleteNode(UserLayoutNodeDescription node) throws PortalException {
+    protected boolean canDeleteNode(IUserLayoutNodeDescription node) throws PortalException {
         return !(node==null || node.isUnremovable());
     }
 
@@ -470,18 +472,18 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         return canUpdateNode(this.getNode(nodeId));
     }
 
-    protected boolean canUpdateNode(UserLayoutNodeDescription node) {
+    protected boolean canUpdateNode(IUserLayoutNodeDescription node) {
         return !(node==null || node.isImmutable());
     }
 
-    public void markAddTargets(UserLayoutNodeDescription node) {
+    public void markAddTargets(IUserLayoutNodeDescription node) {
         // get all folders
         this.updateCacheKey();
     }
 
 
     public void markMoveTargets(String nodeId) throws PortalException {
-        UserLayoutNodeDescription node=getNode(nodeId);
+        IUserLayoutNodeDescription node=getNode(nodeId);
         this.updateCacheKey();
     }
 
@@ -547,8 +549,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public List getChildIds(String nodeId) throws PortalException {
         Vector v=new Vector();
-        UserLayoutNodeDescription node=getNode(nodeId);
-        if(node instanceof UserLayoutFolderDescription) {
+        IUserLayoutNodeDescription node=getNode(nodeId);
+        if(node instanceof IUserLayoutFolderDescription) {
             Document ulm=this.getUserLayoutDOM();
             Element felement=(Element)ulm.getElementById(nodeId);
             for(Node n=felement.getFirstChild(); n!=null;n=n.getNextSibling()) {

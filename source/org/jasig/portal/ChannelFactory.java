@@ -37,7 +37,7 @@ package org.jasig.portal;
 
 import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.services.LogService;
 import java.util.Map;
 
@@ -70,7 +70,7 @@ public class ChannelFactory {
      */
     public static IChannel instantiateLayoutChannel(String channelSubscribeId, IUserLayoutManager ulm, String sessionId) throws PortalException {
         // get channel information from the user layout manager
-        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) ulm.getNode(channelSubscribeId);
+        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) ulm.getNode(channelSubscribeId);
         if(channel!=null) {
             String className=channel.getClassName();
             String channelPublishId=channel.getChannelPublishId();
@@ -91,7 +91,7 @@ public class ChannelFactory {
      * @param sessionId a <code>String</code> HTTP session Id value
      * @return an <code>IChannel</code> value
      */
-    public static IChannel instantiateLayoutChannel(UserLayoutChannelDescription description, String sessionId) throws PortalException {
+    public static IChannel instantiateLayoutChannel(IUserLayoutChannelDescription description, String sessionId) throws PortalException {
         return instantiateChannel(description.getChannelSubscribeId(),description.getChannelPublishId(), description.getClassName(),description.getTimeout(),description.getParameterMap(),sessionId);
     }
 

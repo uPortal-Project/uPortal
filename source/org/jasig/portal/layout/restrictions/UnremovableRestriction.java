@@ -39,7 +39,7 @@ package org.jasig.portal.layout.restrictions;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.layout.UserLayoutNode;
-import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 /**
  * <p>Title: Unremovable Restriction class</p>
@@ -70,7 +70,7 @@ public class UnremovableRestriction extends BooleanRestriction {
            * @param node a <code>UserLayoutNode</code> user layout node to be checked
          */
          protected boolean getBooleanPropertyValue( UserLayoutNode node ) {
-           UserLayoutNodeDescription nodeDesc = node.getNodeDescription();
+           IUserLayoutNodeDescription nodeDesc = node.getNodeDescription();
            return nodeDesc.isUnremovable();
          }
 

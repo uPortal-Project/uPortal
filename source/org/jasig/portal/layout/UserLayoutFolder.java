@@ -59,7 +59,7 @@ import java.util.*;
        super();
      }
 
-     public UserLayoutFolder ( UserLayoutNodeDescription nd ) {
+     public UserLayoutFolder ( IUserLayoutNodeDescription nd ) {
        super (nd);
      }
 

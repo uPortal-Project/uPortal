@@ -35,8 +35,8 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
@@ -109,7 +109,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout to which the channel is added
    * @param channelDesc, the channel being subscribed to
    */
-  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);
   
   /**
    * Called when a channel is being updated in a user layout
@@ -117,7 +117,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which the channel is updated
    * @param channelDesc, the channel being updated
    */
-  public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+  public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);
     
   /**
    * Called when a channel is being moved in a user layout
@@ -125,7 +125,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which the channel is moved
    * @param channelDesc, the channel being moved
    */
-  public void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+  public void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);
         
   /**
    * Called when a channel is being removed from a user layout
@@ -133,7 +133,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout to which the channel is removed   
    * @param channelDesc, the channel being removed from a user layout
    */
-  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);      
 
   /**
    * Called when a folder is being added to a user layout
@@ -141,7 +141,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout to which the folder is added
    * @param folderDesc, the folder being subscribed to
    */
-  public void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+  public void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc);
   
   /**
    * Called when a folder is being updated in a user layout
@@ -149,7 +149,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which the folder is updated
    * @param folderDesc, the folder being updated
    */
-  public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+  public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc);
     
   /**
    * Called when a folder is being moved in a user layout
@@ -157,7 +157,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which the folder is moved
    * @param folderDesc, the folder being moved
    */
-  public void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+  public void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc);
         
   /**
    * Called when a folder is being removed from a user layout
@@ -165,7 +165,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout to which the folder is removed   
    * @param folderDesc, the folder being removed from a user layout
    */
-  public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);      
+  public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc);      
 
   /**
    * Called when a channel is being instantiated
@@ -173,7 +173,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which this channel is instantiated
    * @param channelDesc, the channel being instantiated
    */
-  public void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+  public void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);      
 
   /**
    * Called when a channel is being rendered
@@ -181,7 +181,7 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which this channel is rendered
    * @param channelDesc, the channel being rendered
    */
-  public void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+  public void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);      
  
   /**
    * Called when a channel is being targeted
@@ -189,6 +189,6 @@ public interface IStatsRecorder {
    * @param profile, the profile of the layout in which this channel resides
    * @param channelDesc, the channel being targeted
    */
-  public void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+  public void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc);      
  
 }

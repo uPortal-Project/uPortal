@@ -45,7 +45,7 @@ import org.jasig.portal.PortalException;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public class UserLayoutFolderDescription extends UserLayoutNodeDescription {
+public class UserLayoutFolderDescription extends UserLayoutNodeDescription implements IUserLayoutFolderDescription {
     public static final int REGULAR_TYPE=0;
     public static final int HEADER_TYPE=1;
     public static final int FOOTER_TYPE=2;

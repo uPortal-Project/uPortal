@@ -88,11 +88,8 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.traversal.NodeIterator;
 
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.*;
+
 
 
 
@@ -268,7 +265,7 @@ public class TabColumnPrefsState extends BaseState
 
   private final void renameTab(String tabId, String tabName) throws PortalException
   {
-      UserLayoutFolderDescription tab=(UserLayoutFolderDescription)ulm.getNode(tabId);
+      IUserLayoutFolderDescription tab=(IUserLayoutFolderDescription)ulm.getNode(tabId);
       if(ulm.canUpdateNode(tabId)) {
           if (tabName == null || tabName.trim().length() == 0) {
               tab.setName(BLANK_TAB_NAME);
@@ -282,11 +279,14 @@ public class TabColumnPrefsState extends BaseState
   }
 
   private final void moveTab(String sourceTabId, String method, String destinationTabId) throws PortalException {
-      if(ulm.canMoveNode(sourceTabId,UserLayoutNodeDescription.ROOT_FOLDER_ID,destinationTabId)) {
+      // determine root folder id
+      String rootNodeId=ulm.getParentId(sourceTabId);
+      
+      if(ulm.canMoveNode(sourceTabId,rootNodeId,destinationTabId)) {
           if(method.equals("insertBefore")) {
-              ulm.moveNode(sourceTabId,UserLayoutNodeDescription.ROOT_FOLDER_ID,destinationTabId);
+              ulm.moveNode(sourceTabId,rootNodeId,destinationTabId);
           } else {
-              ulm.moveNode(sourceTabId,UserLayoutNodeDescription.ROOT_FOLDER_ID,null);
+              ulm.moveNode(sourceTabId,rootNodeId,null);
           }
       }
   }
@@ -301,13 +301,13 @@ public class TabColumnPrefsState extends BaseState
   private final void addTab(String tabName, String method, String destinationTabId) throws PortalException
   {
 
-    UserLayoutFolderDescription newTab = createFolder(tabName);
+    IUserLayoutFolderDescription newTab = createFolder(tabName);
     if (tabName == null || tabName.trim().length() == 0) {
         newTab.setName(BLANK_TAB_NAME);
     }
     String siblingId=null;
     if(method.equals("insertBefore")) siblingId=destinationTabId;
-    ulm.addNode(newTab,UserLayoutNodeDescription.ROOT_FOLDER_ID,siblingId);
+    ulm.addNode(newTab,ulm.getRootFolderId(),siblingId);
   }
 
   /**
@@ -320,7 +320,7 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void addColumn(String method, String destinationElementId) throws Exception
   {
-      UserLayoutFolderDescription newColumn = createFolder("Column");
+      IUserLayoutFolderDescription newColumn = createFolder("Column");
       // Insert a column if the destination element is a tab
       if(isTab(destinationElementId)) {
           ulm.addNode(newColumn,destinationElementId,null);
@@ -457,7 +457,7 @@ public class TabColumnPrefsState extends BaseState
       
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
-          UserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
+          IUserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
           ulm.moveNode(sourceChannelSubscribeId,newColumn.getId(),null);
       } else if(isColumn(destinationElementId)) {
           // move the channel into the column
@@ -481,10 +481,10 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
   {
-      UserLayoutChannelDescription channel=new UserLayoutChannelDescription(newChannel);
+      IUserLayoutChannelDescription channel=new UserLayoutChannelDescription(newChannel);
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
-          UserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
+          IUserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
           ulm.addNode(channel,newColumn.getId(),null);
       } else if(isColumn(destinationElementId)) {
           // move the channel into the column
@@ -564,7 +564,7 @@ public class TabColumnPrefsState extends BaseState
   private final boolean isTab (String folderId) throws PortalException
   {
       // we could be a bit more careful here and actually check the type
-      return (ulm.getParentId(folderId)==UserLayoutNodeDescription.ROOT_FOLDER_ID);
+      return (ulm.getParentId(folderId)==ulm.getRootFolderId());
   }
 
   /**
@@ -584,13 +584,13 @@ public class TabColumnPrefsState extends BaseState
    * @param name the tab name for tabs and an empty string for columns
    * @return the newly created tab or column
    */
-  private final UserLayoutFolderDescription createFolder (String name)
+  private final IUserLayoutFolderDescription createFolder (String name)
   {
     String id = "tbd";
-    UserLayoutFolderDescription folder=new UserLayoutFolderDescription();
+    IUserLayoutFolderDescription folder=new UserLayoutFolderDescription();
     folder.setName(name);
     folder.setId(id);
-    folder.setFolderType(UserLayoutFolderDescription.REGULAR_TYPE);
+    folder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
     folder.setHidden(false);
     folder.setUnremovable(false);
     folder.setImmutable(false);
@@ -925,7 +925,7 @@ public class TabColumnPrefsState extends BaseState
           String subAction = runtimeData.getParameter("subAction");
           if (subAction != null && subAction.equals("modifyChannelParams"))
           {
-            UserLayoutChannelDescription layoutChannel=(UserLayoutChannelDescription)ulm.getNode(elementID);
+            IUserLayoutChannelDescription layoutChannel=(IUserLayoutChannelDescription)ulm.getNode(elementID);
             String channelPublishId=layoutChannel.getChannelPublishId();            
             
             Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
@@ -1281,7 +1281,7 @@ public class TabColumnPrefsState extends BaseState
           context.addChannel(registryChannel, position, destinationElementId);
         }
         else if (previousState instanceof DefaultState) {
-          updateParams((UserLayoutChannelDescription)ulm.getNode(elementID));
+          updateParams((IUserLayoutChannelDescription)ulm.getNode(elementID));
         }
 
       } catch (Exception e) {
@@ -1290,7 +1290,7 @@ public class TabColumnPrefsState extends BaseState
       }
     }
 
-    private void updateParams(UserLayoutChannelDescription cd) throws PortalException {
+    private void updateParams(IUserLayoutChannelDescription cd) throws PortalException {
       // Process params
       Iterator iter = overridableChanParams.iterator();
       while (iter.hasNext()) {
@@ -1331,7 +1331,7 @@ public class TabColumnPrefsState extends BaseState
       if (previousState instanceof NewChannelState)
         userPrefParamsE.appendChild(doc.importNode(registryChannel, true));
       else if (previousState instanceof DefaultState) {
-        UserLayoutNodeDescription node=ulm.getNode(elementID);
+        IUserLayoutNodeDescription node=ulm.getNode(elementID);
         userPrefParamsE.appendChild(node.getXML(doc));
       }
 

@@ -35,7 +35,7 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 
@@ -49,9 +49,9 @@ public class RecordChannelInstantiatedWorkerTask extends StatsRecorderWorkerTask
   
   IPerson person;
   UserProfile profile;
-  UserLayoutChannelDescription channelDesc;
+  IUserLayoutChannelDescription channelDesc;
   
-  public RecordChannelInstantiatedWorkerTask(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public RecordChannelInstantiatedWorkerTask(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     this.person = person;
     this.profile = profile;
     this.channelDesc = channelDesc;

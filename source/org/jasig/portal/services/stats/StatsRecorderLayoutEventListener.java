@@ -39,8 +39,8 @@ import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutMoveEvent;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
@@ -68,43 +68,43 @@ public class StatsRecorderLayoutEventListener implements LayoutEventListener {
  
   // Channels...
   public void channelAdded(LayoutEvent ev) {
-    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
     StatsRecorder.recordChannelAddedToLayout(person, profile, channelDesc);
   }
   
   public void channelUpdated(LayoutEvent ev) {
-    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
     StatsRecorder.recordChannelUpdatedInLayout(person, profile, channelDesc);
   }
   
   public void channelMoved(LayoutMoveEvent ev) {
-    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
     StatsRecorder.recordChannelMovedInLayout(person, profile, channelDesc);
   }
   
   public void channelDeleted(LayoutMoveEvent ev) {
-    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
     StatsRecorder.recordChannelRemovedFromLayout(person, profile, channelDesc);    
   }
 
   // Folders...
   public void folderAdded(LayoutEvent ev) {
-    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    IUserLayoutFolderDescription folderDesc = (IUserLayoutFolderDescription)ev.getNodeDescription();
     StatsRecorder.recordFolderAddedToLayout(person, profile, folderDesc);    
   }
   
   public void folderUpdated(LayoutEvent ev) {
-    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    IUserLayoutFolderDescription folderDesc = (IUserLayoutFolderDescription)ev.getNodeDescription();
     StatsRecorder.recordFolderUpdatedInLayout(person, profile, folderDesc);    
   }
   
   public void folderMoved(LayoutMoveEvent ev) {
-    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    IUserLayoutFolderDescription folderDesc = (IUserLayoutFolderDescription)ev.getNodeDescription();
     StatsRecorder.recordFolderMovedInLayout(person, profile, folderDesc);    
   }
   
   public void folderDeleted(LayoutMoveEvent ev) {
-    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    IUserLayoutFolderDescription folderDesc = (IUserLayoutFolderDescription)ev.getNodeDescription();
     StatsRecorder.recordFolderRemovedFromLayout(person, profile, folderDesc);    
   }
 

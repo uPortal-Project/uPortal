@@ -47,14 +47,12 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public abstract class UserLayoutNodeDescription {
+public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescription {
     protected String id=null;
     protected String name=null;
     protected boolean immutable=false;
     protected boolean unremovable=false;
     protected boolean hidden=false;
-
-    public static final String ROOT_FOLDER_ID="root";
 
     /**
      * Returns a node Id.
@@ -146,9 +144,6 @@ public abstract class UserLayoutNodeDescription {
             return new UserLayoutChannelDescription(xmlNode);
         } else if(nodeName.equals("folder")) {
             return new UserLayoutFolderDescription(xmlNode);
-        } else if(nodeName.equals("layout")) {
-            // root node
-            return new UserLayoutRootDescription(xmlNode);
         } else {
             throw new PortalException("Given XML element is neither folder nor channel");
         }

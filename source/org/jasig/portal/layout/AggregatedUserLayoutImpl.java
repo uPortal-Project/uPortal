@@ -66,10 +66,14 @@ import org.jasig.portal.utils.CommonUtils;
 
 public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
+ public static final String ROOT_FOLDER_ID="root";
+
   private IAggregatedUserLayoutStore layoutStore;
   private Hashtable layout;
   private int layoutId;
-  private String rootNodeId = UserLayoutNodeDescription.ROOT_FOLDER_ID;
+  private String rootNodeId = ROOT_FOLDER_ID;
+
+
   private IPerson person;
 
   // User Layout restrictions
@@ -115,6 +119,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     return layoutId;
   }
 
+    public String getRootFolderId() {
+        return ROOT_FOLDER_ID;
+    }
 
   /**
      * Returns an Id of a parent user layout node.
@@ -197,8 +204,8 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
      */
   public void getUserLayout(String nodeId,ContentHandler contentHandler) throws PortalException {
 
-    UserLayoutFolderDescription folderDescription = null;
-    UserLayoutChannelDescription channelDescription = null;
+    IUserLayoutFolderDescription folderDescription = null;
+    IUserLayoutChannelDescription channelDescription = null;
 
     if ( contentHandler != null && nodeId != null ) {
       try {
@@ -216,12 +223,12 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
            if (nodeId.equals(rootNodeId)) contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
 
              UserLayoutFolder folder = (UserLayoutFolder) node;
-             folderDescription = (UserLayoutFolderDescription) folder.getNodeDescription();
+             folderDescription = (IUserLayoutFolderDescription) folder.getNodeDescription();
              String folderId = folderDescription.getId();
              attributes.addAttribute("","ID","ID","ID",
                         rootNodeId.equals(folderId)?folderId:FOLDER_PREFIX+folderId);
              attributes.addAttribute("","type","type","CDATA",
-                        UserLayoutFolderDescription.folderTypeNames[folderDescription.getFolderType()]);
+                        IUserLayoutFolderDescription.folderTypeNames[folderDescription.getFolderType()]);
              attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(folderDescription.isHidden()));
              attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(folderDescription.isUnremovable()));
              attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
@@ -247,7 +254,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
           // If we have a channel
          } else {
 
-              channelDescription = (UserLayoutChannelDescription) node.getNodeDescription();
+              channelDescription = (IUserLayoutChannelDescription) node.getNodeDescription();
 
               attributes.addAttribute("","ID","ID","ID",CHANNEL_PREFIX+channelDescription.getId());
               attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
@@ -325,7 +332,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
      */
     private void appendDescendants(Document domLayout,Element node, String nodeId) throws PortalException {
           UserLayoutNode layoutNode = getLayoutNode(nodeId);
-          UserLayoutNodeDescription nodeDesc = layoutNode.getNodeDescription();
+          UserLayoutNodeDescription nodeDesc = (UserLayoutNodeDescription) layoutNode.getNodeDescription();
           String nodeType = layoutNode.getNodeType();
           Element newNode = domLayout.createElement(nodeType);
           // We need to have this prefix in the DOM representation
@@ -370,9 +377,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
       String nodeId = node.getAttribute("ID");
 
-      if ( nodeDesc instanceof UserLayoutFolderDescription )
+      if ( nodeDesc instanceof IUserLayoutFolderDescription )
         nodeId = nodeId.substring(FOLDER_PREFIX.length());
-      else if ( nodeDesc instanceof UserLayoutChannelDescription )
+      else if ( nodeDesc instanceof IUserLayoutChannelDescription )
         nodeId = nodeId.substring(CHANNEL_PREFIX.length());
 
 
@@ -385,8 +392,8 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
 
       UserLayoutNode layoutNode = null;
-      if (nodeDesc instanceof UserLayoutChannelDescription) {
-        UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) nodeDesc;
+      if (nodeDesc instanceof IUserLayoutChannelDescription) {
+        IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription) nodeDesc;
         channelDesc.setChannelPublishId(node.getAttribute("chanID"));
         channelDesc.setChannelTypeId(node.getAttribute("typeID"));
         channelDesc.setClassName(node.getAttribute("class"));
@@ -464,7 +471,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
       Element rootNode = domLayout.getDocumentElement();
       UserLayoutFolder rootFolder = new UserLayoutFolder(UserLayoutNodeDescription.createUserLayoutNodeDescription(rootNode));
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID").substring(FOLDER_PREFIX.length()));
-      layout.put(UserLayoutNodeDescription.ROOT_FOLDER_ID,rootFolder);
+      layout.put(ROOT_FOLDER_ID,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootNodeId );
@@ -478,7 +485,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     public void saveUserLayout() throws PortalException {}
 
 
-    public UserLayoutNodeDescription getNode(String nodeId) throws PortalException {
+    public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         return getLayoutNode(nodeId).getNodeDescription();
     }
 
@@ -544,7 +551,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
     }
 
-    public UserLayoutNodeDescription addNode(UserLayoutNodeDescription nodeDesc, String parentId,String nextSiblingId) throws PortalException {
+    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription nodeDesc, String parentId,String nextSiblingId) throws PortalException {
         // Getting nodeId from the database
         // TO BE DONE
         String nodeId = "bla-bla";
@@ -555,7 +562,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
         //Assign the parent, next, prev nodes to the added node
         UserLayoutNode layoutNode;
-        if ( nodeDesc instanceof UserLayoutFolderDescription )
+        if ( nodeDesc instanceof IUserLayoutFolderDescription )
           layoutNode = new UserLayoutFolder(nodeDesc);
         else
           layoutNode = new UserLayoutNode(nodeDesc);
@@ -581,12 +588,12 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
         return nodeDesc;
     }
 
-    public boolean updateNode(UserLayoutNodeDescription node) throws PortalException {
+    public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         return false;
     }
 
 
-    public boolean canAddNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
        return false;
     }
 
@@ -594,7 +601,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     public boolean canDeleteNode(String nodeId) throws PortalException { return false; }
     public boolean canUpdateNode(String nodeId) throws PortalException { return false; }
 
-    public void markAddTargets(UserLayoutNodeDescription node) {}
+    public void markAddTargets(IUserLayoutNodeDescription node) {}
     public void markMoveTargets(String nodeId) throws PortalException {}
 
 

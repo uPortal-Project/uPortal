@@ -54,7 +54,7 @@ import java.util.StringTokenizer;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 
@@ -291,7 +291,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      */
     protected String getChannelPublishId(String channelSubscribeId) throws PortalException {
         // Get the channel node from the user's layout
-        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) getUserLayoutManager().getNode(channelSubscribeId);
+        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) getUserLayoutManager().getNode(channelSubscribeId);
         if(channel!=null) {
             return channel.getChannelPublishId();
         } else {

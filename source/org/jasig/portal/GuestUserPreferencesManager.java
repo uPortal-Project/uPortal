@@ -57,7 +57,7 @@ import java.io.IOException;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 /**
@@ -377,7 +377,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
      */
     protected String getChannelGlobalId (String channelSubscribeId, String sessionId) throws PortalException {
         // Get the channel node from the user's layout
-        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) getUserLayoutManager(sessionId).getNode(channelSubscribeId);
+        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) getUserLayoutManager(sessionId).getNode(channelSubscribeId);
         if(channel!=null) {
             return channel.getChannelPublishId();
         } else {

@@ -19,7 +19,7 @@ import java.util.Collections;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
+public class UserLayoutChannelDescription extends UserLayoutNodeDescription implements IUserLayoutChannelDescription  {
 
     Hashtable parameters;
     Hashtable override;

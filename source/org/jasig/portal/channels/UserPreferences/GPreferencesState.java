@@ -51,9 +51,9 @@ import java.net.URL;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
@@ -305,12 +305,12 @@ class GPreferencesState extends BaseState {
 
     private void prepareSaveEditedItem() throws PortalException {
       // update node name
-      UserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
+      IUserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
       node.setName(runtimeData.getParameter("name"));
       getUserLayoutManager().updateNode(node);
       
       // reset the name
-      if (node instanceof UserLayoutChannelDescription) {
+      if (node instanceof IUserLayoutChannelDescription) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
         for (Enumeration ce = ssup.getChannelAttributeNames(); ce.hasMoreElements();) {
@@ -351,9 +351,9 @@ class GPreferencesState extends BaseState {
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-        UserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
+        IUserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
         String elType="folder";
-        if(node instanceof UserLayoutChannelDescription) {
+        if(node instanceof IUserLayoutChannelDescription) {
             elType="channel";
         }
 

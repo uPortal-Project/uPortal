@@ -59,7 +59,7 @@ public class UserLayoutNode {
      protected String parentNodeId;
      protected String nextNodeId;
      protected String previousNodeId;
-     protected UserLayoutNodeDescription nodeDescription;
+     protected IUserLayoutNodeDescription nodeDescription;
 
      protected int priority = 0;
      protected int depth = 1;
@@ -70,7 +70,7 @@ public class UserLayoutNode {
 
      public UserLayoutNode() {}
 
-     public UserLayoutNode ( UserLayoutNodeDescription nd ) {
+     public UserLayoutNode ( IUserLayoutNodeDescription nd ) {
        nodeDescription = nd;
      }
 
@@ -83,11 +83,11 @@ public class UserLayoutNode {
        return "channel";
      }
 
-     public void setNodeDescription ( UserLayoutNodeDescription nd ) {
+     public void setNodeDescription ( IUserLayoutNodeDescription nd ) {
        nodeDescription = nd;
      }
 
-     public UserLayoutNodeDescription getNodeDescription() {
+     public IUserLayoutNodeDescription getNodeDescription() {
        return nodeDescription;
      }
 

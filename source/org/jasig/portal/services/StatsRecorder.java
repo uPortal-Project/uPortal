@@ -61,8 +61,8 @@ import org.jasig.portal.services.stats.RecordChannelTargetedWorkerTask;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
@@ -248,7 +248,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout to which the channel is being added
    * @param channelDesc, the channel being subscribed to
    */
-  public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_ADDED_TO_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelAddedToLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -262,7 +262,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout in which the channel is being updated
    * @param channelDesc, the channel being updated
    */
-  public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_UPDATED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelUpdatedInLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -276,7 +276,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout in which the channel is being moved
    * @param channelDesc, the channel being moved
    */
-  public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_MOVED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelMovedInLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -290,7 +290,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout to which the channel is being added
    * @param channelDesc, the channel being removed from a user layout
    */
-  public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_REMOVED_FROM_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelRemovedFromLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -304,7 +304,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout to which the folder is being added
    * @param folderDesc, the folder being subscribed to
    */
-  public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_ADDED_TO_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderAddedToLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -318,7 +318,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout in which the folder is being updated
    * @param folderDesc, the folder being updated
    */
-  public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_UPDATED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderUpdatedInLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -332,7 +332,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout in which the folder is being moved
    * @param folderDesc, the folder being moved
    */
-  public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_MOVED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderMovedInLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -346,7 +346,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout to which the folder is being added
    * @param folderDesc, the folder being removed from a user layout
    */
-  public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_REMOVED_FROM_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderRemovedFromLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -360,7 +360,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout for whom the channel is instantiated
    * @param channelDesc, the channel being instantiated
    */
-  public static void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_INSTANTIATED)) {
       StatsRecorderWorkerTask task = new RecordChannelInstantiatedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -374,7 +374,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout for whom the channel is rendered
    * @param channelDesc, the channel being rendered
    */
-  public static void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_RENDERED)) {
       StatsRecorderWorkerTask task = new RecordChannelRenderedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
@@ -390,7 +390,7 @@ public class StatsRecorder {
    * @param profile, the profile of the layout in which the channel resides
    * @param channelDesc, the channel being targeted
    */
-  public static void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public static void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_TARGETED)) {
       StatsRecorderWorkerTask task = new RecordChannelTargetedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);

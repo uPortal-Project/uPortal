@@ -54,7 +54,7 @@ public class LayoutMoveEvent extends LayoutEvent {
      * @param node an <code>UserLayoutNodeDescription</code> of the node that was involved
      * @param oldParentNodeId a <code>String</code> value of an old parent id
      */
-    public LayoutMoveEvent(Object source,UserLayoutNodeDescription node, String oldParentNodeId) {
+    public LayoutMoveEvent(Object source,IUserLayoutNodeDescription node, String oldParentNodeId) {
         super(source,node);
         this.oldParentNodeId=oldParentNodeId;
     }

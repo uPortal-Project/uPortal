@@ -83,11 +83,11 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {}
 
-    public UserLayoutNodeDescription getNode(String nodeId) throws PortalException {
+    public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         return man.getNode(nodeId);
     }
 
-    public UserLayoutNodeDescription addNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
         return null;
     }
 
@@ -99,12 +99,12 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return false;
     }
 
-    public boolean updateNode(UserLayoutNodeDescription node) throws PortalException {
+    public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         return false;
     }
 
 
-    public boolean canAddNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
         return false;
     }
 
@@ -120,7 +120,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return false;
     }
 
-    public void markAddTargets(UserLayoutNodeDescription node) {}
+    public void markAddTargets(IUserLayoutNodeDescription node) {}
 
     public void markMoveTargets(String nodeId) throws PortalException {}
 
@@ -160,6 +160,10 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public int getLayoutId() {
         return man.getLayoutId();
+    }
+
+    public String getRootFolderId() {
+        return man.getRootFolderId();
     }
 
     public boolean addLayoutEventListener(LayoutEventListener l){

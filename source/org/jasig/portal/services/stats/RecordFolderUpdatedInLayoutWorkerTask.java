@@ -35,7 +35,7 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 
@@ -49,9 +49,9 @@ public class RecordFolderUpdatedInLayoutWorkerTask extends StatsRecorderWorkerTa
   
   IPerson person;
   UserProfile profile;
-  UserLayoutFolderDescription folderDesc;
+  IUserLayoutFolderDescription folderDesc;
   
-  public RecordFolderUpdatedInLayoutWorkerTask(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+  public RecordFolderUpdatedInLayoutWorkerTask(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     this.person = person;
     this.profile = profile;
     this.folderDesc = folderDesc;

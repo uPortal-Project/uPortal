@@ -79,7 +79,7 @@ import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 
-import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 
 /**
@@ -238,7 +238,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // In general transformations will start at the userLayoutRoot node, unless
                     // we are rendering something in a detach mode.
-                    UserLayoutNodeDescription rElement = null;
+                    IUserLayoutNodeDescription rElement = null;
                     // see if an old detach target exists in the servlet path
 
 
