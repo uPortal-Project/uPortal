@@ -270,11 +270,12 @@ class ManageProfilesState extends BaseState {
       else
         params.put("profileType", "user");
       if (xslURI != null) {
-        try {
-          XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(doc);
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameters(params);
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
@@ -571,16 +572,14 @@ class ManageProfilesState extends BaseState {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
-      String xslURI = null;
-      xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
-      Hashtable params = new Hashtable();
-      params.put("baseActionURL", runtimeData.getBaseActionURL());
+      String xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        try {
-          XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(doc);
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
