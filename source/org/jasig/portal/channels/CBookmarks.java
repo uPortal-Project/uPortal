@@ -173,9 +173,17 @@ public class CBookmarks extends BaseChannel {
           }
           else {
             // Generate the XML here as a last resort
-            inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
-                + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + staticData.getPerson().getID()
-                + "\'/>" + "  </info>" + "</xbel>";
+             StringBuffer strbuf = new StringBuffer();
+             strbuf.append("<?xml version=\"1.0\"?>\n");
+             strbuf.append("<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">\n");
+             strbuf.append("<xbel>\n");
+             strbuf.append("  <title>Default Bookmarks</title>\n");
+             strbuf.append("  <info>\n");
+             strbuf.append("    <metadata owner=\"" + staticData.getPerson().getID() + "\"/>\n");
+             strbuf.append("  </info>\n");
+             strbuf.append("</xbel>");
+             inputXML = strbuf.toString();
+
             LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
           }
         } finally {
