@@ -143,7 +143,7 @@ Version $Revision$
     </xsl:template>
     <xsl:template match="fragment">
         <xsl:choose>
-            <xsl:when test="$uPcFM_selectedID=ID">
+            <xsl:when test="$uPcFM_selectedID=@ID">
                 <!-- Open State of Fragment List -->
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
                     <tr valign="top" align="left">
@@ -186,13 +186,13 @@ Version $Revision$
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="{$baseActionURL}?uPcFM_action=edit&amp;uP_sparam=focusedTabID&amp;focusedTabID={rootNodeID}&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_fragmentID={ID}&amp;uP_root=root">
+                                        <a href="{$baseActionURL}?uPcFM_action=edit&amp;uP_sparam=focusedTabID&amp;focusedTabID={rootNodeID}&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_fragmentID={@ID}&amp;uP_root=root">
                                             <img src="{$mediaPath}/editContent.gif" alt="edit" title="edit" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
                                         <span class="uportal-label">
-                                            <a href="{$baseActionURL}?uPcFM_action=edit&amp;uP_sparam=focusedTabID&amp;focusedTabID={rootNodeID}&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_fragmentID={ID}&amp;uP_root=root" class="uportal-channel-subtitle-reversed">Edit content</a>
+                                            <a href="{$baseActionURL}?uPcFM_action=edit&amp;uP_sparam=focusedTabID&amp;focusedTabID={rootNodeID}&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_fragmentID={@ID}&amp;uP_root=root" class="uportal-channel-subtitle-reversed">Edit content</a>
                                         </span>
                                     </td>
                                 </tr>
@@ -245,9 +245,9 @@ Version $Revision$
                             <img height="1" width="20" src="{$mediaPath}/transparent.gif" alt=""/>
                         </td>
                         <td width="100%" valign="bottom">
-                            <a href="{$baseActionURL}?uPcFM_action=properties&amp;uPcFM_selectedID={ID}" class="uportal-navigation-channel">
+                            <a href="{$baseActionURL}?uPcFM_action=properties&amp;uPcFM_selectedID={@ID}" class="uportal-navigation-channel">
                                 <xsl:choose>
-                                    <xsl:when test=" name='' ">No Name [id:<xsl:value-of select="ID"/>]</xsl:when>
+                                    <xsl:when test=" name='' ">No Name [id:<xsl:value-of select="@ID"/>]</xsl:when>
                                     <xsl:otherwise>
                                         <xsl:value-of select="name"/>
                                     </xsl:otherwise>
