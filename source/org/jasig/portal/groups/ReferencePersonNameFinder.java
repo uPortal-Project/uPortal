@@ -155,7 +155,7 @@ private String getSelectDirectoryNamesSql()
  */
 private String getSelectUserNamesSql()
 {
-    return "SELECT " + USER_ID_COLUMN + ", " + USER_NAME_COLUMN + " FROM " + USER_TABLE;
+    return "SELECT " + USER_NAME_COLUMN + " FROM " + USER_TABLE;
 }
 /**
  * Returns the entity type for this <code>IEntityFinder</code>.
@@ -186,9 +186,8 @@ private Map getUserNames() throws java.sql.SQLException
             ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next())
             {
-                String key = "" + rs.getString(USER_ID_COLUMN);
-                String name = rs.getString(USER_NAME_COLUMN);
-                userNames.put(key, name);
+                String key = rs.getString(USER_NAME_COLUMN);
+                userNames.put(key, key);
             }
 
         }
