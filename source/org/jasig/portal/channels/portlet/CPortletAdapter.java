@@ -17,18 +17,26 @@ import java.util.Properties;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
+import javax.portlet.RenderResponse;
 import javax.portlet.WindowState;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.factory.PortletObjectAccess;
+import org.apache.pluto.om.entity.PortletEntity;
+import org.apache.pluto.om.portlet.PortletDefinition;
+import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.information.PortletActionProvider;
+import org.apache.pluto.services.property.PropertyManager;
+import org.apache.pluto.services.property.PropertyManagerService;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
@@ -56,6 +64,7 @@ import org.jasig.portal.container.services.information.DynamicInformationProvide
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
+import org.jasig.portal.container.services.property.PropertyManagerServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
@@ -64,8 +73,6 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
 
@@ -91,6 +98,11 @@ import org.xml.sax.ContentHandler;
  */
 public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse {
     private static final Log log = LogFactory.getLog(CPortletAdapter.class);
+    
+    private static final String LAST_RENDER_TIME_KEY = "org.jasig.portal.channels.portlet.CPortletAdapter.LAST_RENDER_TIME";
+    private static final String CACHE_TIMEOUT_KEY = "org.jasig.portal.channels.portlet.CPortletAdapter.CACHE_TIMEOUT";
+
+    
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
@@ -135,12 +147,16 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             LogServiceImpl logService = new LogServiceImpl();
             FactoryManagerServiceImpl factorManagerService = new FactoryManagerServiceImpl();
             InformationProviderServiceImpl informationProviderService = new InformationProviderServiceImpl();
+            PropertyManagerService propertyManagerService = new PropertyManagerServiceImpl();
+            
             logService.init(servletConfig, null);
             factorManagerService.init(servletConfig, null);
             informationProviderService.init(servletConfig, null);
+            
             environment.addContainerService(logService);
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
+            environment.addContainerService(propertyManagerService);
 
             portletContainer = new PortletContainerImpl();
             portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
@@ -489,6 +505,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
+        PortletWindow portletWindow = cd.getPortletWindow();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         
         String markup = "<b>Problem rendering portlet " + sd.getParameter("portletDefinitionId") + "</b>";
@@ -512,7 +529,24 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
             
             //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
-            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
+            
+            //Support for the portlet modifying it's cache timeout
+            Map properties = PropertyManager.getRequestProperties(portletWindow, wrappedRequest);
+            String[] exprCacheTimeStr = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
+            
+            if (exprCacheTimeStr != null && exprCacheTimeStr.length > 0) {
+                PortletEntity pe = portletWindow.getPortletEntity();
+                PortletDefinition pd = pe.getPortletDefinition();
+                                
+                try {
+                    sd.put(CACHE_TIMEOUT_KEY, new Long(exprCacheTimeStr[0]));
+                }
+                catch (NumberFormatException nfe) {
+                    log.error("The specified RenderResponse.EXPIRATION_CACHE value of (" + exprCacheTimeStr + ") is not a number.", nfe);
+                    throw nfe;
+                }
+            }
             
             markup = sw.toString();
             
@@ -530,6 +564,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         } finally {
             PortletContainerServices.release();
         }
+        
+        //Keep track of the last time the portlet was successfully rendered
+        sd.put(LAST_RENDER_TIME_KEY, new Long(System.currentTimeMillis()));
         
         return markup;
     }
@@ -585,6 +622,36 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
+        
+        PortletWindow pw = cd.getPortletWindow();
+        PortletEntity pe = pw.getPortletEntity();
+        PortletDefinition pd = pe.getPortletDefinition();
+        
+        //Expiration based caching support for the portlet.
+        String exprCacheTimeStr = pd.getExpirationCache();
+        Long exprCacheTimeObj = (Long)staticData.get(CACHE_TIMEOUT_KEY);
+        Long lastRenderTimeObj = (Long)staticData.get(LAST_RENDER_TIME_KEY);
+
+        try {
+            if (exprCacheTimeObj == null)
+                exprCacheTimeObj = new Long(exprCacheTimeStr);
+            
+            long exprCacheTime = exprCacheTimeObj.longValue();
+            
+            if (exprCacheTime == 0) {
+                return false;
+            }
+            else if (exprCacheTime > 0 && lastRenderTimeObj != null) {
+                long lastRenderTime = lastRenderTimeObj.longValue();
+                
+                if ((lastRenderTime + (exprCacheTime * 1000)) < System.currentTimeMillis())
+                    return false;
+            }
+        }
+        catch (Exception e) {
+            String portletId = staticData.getParameter(portletDefinitionIdParamName);
+            log.warn("Error parsing portlet expiration time (" + exprCacheTimeStr + ") for portlet (" + portletId + ").", e);
+        }
 
         // Determine if the channel focus has changed
         boolean previouslyFocused = cd.isFocused();
