@@ -319,11 +319,11 @@ public class PortalSessionManager extends HttpServlet {
                 target=sessionTag.getBytes();
                 substitute=newTag.getBytes();
             }
-            return new SubstitutionServletOutputStream(res.getOutputStream(),target,substitute);
+            return new SubstitutionServletOutputStream(res.getOutputStream(),target,substitute,this.getBufferSize());
         }
 
         public PrintWriter getWriter() throws IOException {
-            return new PrintWriter(new SubstitutionWriter(res.getWriter(),sessionTag.toCharArray(),newTag.toCharArray()));
+            return new PrintWriter(new SubstitutionWriter(res.getWriter(),sessionTag.toCharArray(),newTag.toCharArray(),this.getBufferSize()));
         }
 
 

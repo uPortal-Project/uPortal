@@ -58,18 +58,19 @@ public class SubstitutionServletOutputStream extends ServletOutputStream {
      * @param substitute a <code>byte[]</code> value with which the target will be replaced
      */
     public SubstitutionServletOutputStream(ServletOutputStream out, byte[] target, byte[] substitute) {
-        // form integer arrays 
-        int[] itarget=new int[target.length];
-        for(int i=0;i<target.length;i++) {
-            itarget[i]=(int)target[i];
-        }
+        filter=new SubstitutionIntegerFilter(new WriteableOutputStreamWrapper(out),getIntArrayFromByteArray(target),getIntArrayFromByteArray(substitute));
+    }
 
-        int[] isubstitute=new int[substitute.length];
-        for(int i=0;i<substitute.length;i++) {
-            isubstitute[i]=(int)substitute[i];
-        }
-
-        filter=new SubstitutionIntegerFilter(new WriteableOutputStreamWrapper(out),itarget,isubstitute);
+    /**
+     * Creates a new <code>SubstitutionServletOutputStream</code> instance.
+     *
+     * @param out a true <code>ServletOutputStream</code> value where processed stream should be directed
+     * @param target a <code>byte[]</code> value of a target to be replaced
+     * @param substitute a <code>byte[]</code> value with which the target will be replaced
+     * @param bufferSize a buffer size
+     */
+    public SubstitutionServletOutputStream(ServletOutputStream out, byte[] target, byte[] substitute, int bufferSize) {
+        filter=new SubstitutionIntegerFilter(new WriteableOutputStreamWrapper(out),getIntArrayFromByteArray(target),getIntArrayFromByteArray(substitute),bufferSize);
     }
 
     public void write(int i) throws IOException {
@@ -82,4 +83,19 @@ public class SubstitutionServletOutputStream extends ServletOutputStream {
     public void close() throws IOException {
         filter.close();
     }
+
+    /**
+     * A helper method to convert byte array to int array.
+     * I am sure there's a way to cast it correctly, but I don't want to take my chances :)
+     * @param c a <code>byte[]</code> value
+     * @return an <code>int[]</code> value
+     */
+    private static int[] getIntArrayFromByteArray(byte[] c) {
+        int[] ic=new int[c.length];
+        for(int i=0;i<c.length;i++) {
+            ic[i]=(int)c[i];
+        }
+        return ic;
+    }
+
 }

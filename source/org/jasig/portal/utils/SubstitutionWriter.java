@@ -55,20 +55,21 @@ public class SubstitutionWriter extends Writer {
      * @param out a true <code>Writer</code> value where processed stream should be directed
      * @param target a <code>byte[]</code> value of a target to be replaced
      * @param substitute a <code>byte[]</code> value with which the target will be replaced
+     * @param bufferSize a size of the buffer
+     */
+    public SubstitutionWriter(Writer out, char[] target, char[] substitute, int bufferSize) {
+        filter=new SubstitutionIntegerFilter(new WriteableWriterWrapper(out),getIntArrayFromCharArray(target),getIntArrayFromCharArray(substitute),bufferSize);
+    }
+
+    /**
+     * Creates a new <code>SubstitutionWriter</code> instance.
+     *
+     * @param out a true <code>Writer</code> value where processed stream should be directed
+     * @param target a <code>byte[]</code> value of a target to be replaced
+     * @param substitute a <code>byte[]</code> value with which the target will be replaced
      */
     public SubstitutionWriter(Writer out, char[] target, char[] substitute) {
-        // form integer arrays 
-        int[] itarget=new int[target.length];
-        for(int i=0;i<target.length;i++) {
-            itarget[i]=(int)target[i];
-        }
-
-        int[] isubstitute=new int[substitute.length];
-        for(int i=0;i<substitute.length;i++) {
-            isubstitute[i]=(int)substitute[i];
-        }
-
-        filter=new SubstitutionIntegerFilter(new WriteableWriterWrapper(out),itarget,isubstitute);
+        filter=new SubstitutionIntegerFilter(new WriteableWriterWrapper(out),getIntArrayFromCharArray(target),getIntArrayFromCharArray(substitute));
     }
 
     public void write(int i) throws IOException {
@@ -91,6 +92,19 @@ public class SubstitutionWriter extends Writer {
         }
     }
     
+    /**
+     * A helper method to convert char array to int array.
+     * I am sure there's a way to cast it correctly, but I don't want to take my chances :)
+     * @param c a <code>char[]</code> value
+     * @return an <code>int[]</code> value
+     */
+    private static int[] getIntArrayFromCharArray(char[] c) {
+        int[] ic=new int[c.length];
+        for(int i=0;i<c.length;i++) {
+            ic[i]=(int)c[i];
+        }
+        return ic;
+    }
 
     /**
      * A test self-test method for the class.
