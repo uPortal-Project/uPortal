@@ -39,8 +39,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
@@ -61,6 +63,9 @@ import org.jasig.portal.utils.SqlTransaction;
 public class RDBMPermissionImpl implements IPermissionStore {
 
     private static RDBMPermissionImpl singleton;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
 
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
@@ -83,6 +88,9 @@ public class RDBMPermissionImpl implements IPermissionStore {
  */
 public RDBMPermissionImpl() {
     super();
+    Date testDate = new Date();
+    Timestamp testTimestamp = new Timestamp(testDate.getTime());
+    timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
 }
 /**
  * Add the IPermissions to the store.
@@ -438,8 +446,7 @@ private static String getUpdatePermissionSql()
  */
 private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 {
-    java.sql.Timestamp ts = null;
-    int nanos = 0;
+    Timestamp ts = null;
 
     IPermission perm = newInstance(rs.getString(OWNER_COLUMN));
     perm.setPrincipal(rs.getString(PRINCIPAL_TYPE_COLUMN) + "." + rs.getString(PRINCIPAL_KEY_COLUMN) );
@@ -449,17 +456,11 @@ private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 
     ts = rs.getTimestamp(EFFECTIVE_COLUMN);
     if ( ts != null )
-    {
-        nanos = ts.getNanos() / 1000000;
-        perm.setEffective(new java.util.Date(ts.getTime()+nanos));
-    }
+        { perm.setEffective(new Date(getTimestampMillis(ts))); }
 
     ts = rs.getTimestamp(EXPIRES_COLUMN);
     if ( ts != null )
-    {
-        nanos = ts.getNanos() / 1000000;
-        perm.setExpires(new java.util.Date(ts.getTime()+nanos));
-    }
+        { perm.setExpires(new Date(getTimestampMillis(ts))); }
 
     return perm;
 }
@@ -547,7 +548,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
         { ps.setString(6, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-        { ps.setNull(7, Types.DATE); }
+        { ps.setNull(7, Types.TIMESTAMP); }
     else
         {
             ts = new java.sql.Timestamp(perm.getEffective().getTime());
@@ -555,7 +556,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
         }
     // EXPIRES:
     if ( perm.getExpires() == null )
-        { ps.setNull(8, Types.DATE); }
+        { ps.setNull(8, Types.TIMESTAMP); }
     else
         {
             ts = new java.sql.Timestamp(perm.getExpires().getTime());
@@ -680,7 +681,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
         { ps.setString(1, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-        { ps.setNull(2, Types.DATE); }
+        { ps.setNull(2, Types.TIMESTAMP); }
     else
     {
         ts = new java.sql.Timestamp(perm.getEffective().getTime());
@@ -688,7 +689,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
     }
     // EXPIRES:
     if ( perm.getExpires() == null )
-        { ps.setNull(3, Types.DATE); }
+        { ps.setNull(3, Types.TIMESTAMP); }
     else
     {
         ts = new java.sql.Timestamp(perm.getExpires().getTime());
@@ -867,5 +868,15 @@ public void update(IPermission perm) throws AuthorizationException
     }
     finally
         { RDBMServices.releaseConnection(conn); }
+}
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+    if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
 }
 }
