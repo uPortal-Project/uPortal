@@ -121,6 +121,8 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
           }
           else if (attValue.trim().equals(""))
             attValue = baseUrl;
+          else if (attValue.trim().startsWith("?"))
+            attValue = baseUrl.concat(attValue);
           else
             attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
 
