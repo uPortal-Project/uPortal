@@ -97,13 +97,13 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
-     * Get the UPFileSpec 
+     * Get the UPFileSpec
      * @return channelUPFile the UPFileSpec
      */
     public UPFileSpec getUPFile() {
         return this.channelUPFile;
-    }    
-    
+    }
+
     /**
      * Set the HTTP Reqeust method.
      *
@@ -159,7 +159,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 
     /**
      * Setter method for array of locales. A channel should
-     * make an effort to render itself according to the 
+     * make an effort to render itself according to the
      * order of the locales in this array.
      * @param locales an ordered list of locales
      */
@@ -173,8 +173,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     public Locale[] getLocales() {
         return locales;
-    }    
-    
+    }
+
     /**
      * A convenience method for setting a whole set of parameters at once.
      * The values in the Map must be object arrays. If (name, value[]) is in
@@ -258,10 +258,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL(boolean idempotent) {
-        // If the base action URL was explicitly set, use it 
+        // If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
         if (baseActionURL != null) {
-          return baseActionURL;
+          return java.net.URLEncoder.encode(baseActionURL);
         }
 
         String url=null;
@@ -276,7 +276,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
-        return url;
+        return java.net.URLEncoder.encode(url);
     }
 
     /**
@@ -294,7 +294,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
-        return url;
+        return java.net.URLEncoder.encode(url);
     }
 
     /**
@@ -331,8 +331,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
        resource path is the path to the resource within its channel archive.
        (See org.jasig.portal.car.CarResources class for more information.)
        If the passed in resourcePath matches that of a resource loaded from
-       CARs then this method returns a URL appropriate to obtain CAR 
-       deployed, web-visible resources. Otherwise it returns a URL to the 
+       CARs then this method returns a URL appropriate to obtain CAR
+       deployed, web-visible resources. Otherwise it returns a URL to the
        traditional media path under the uPortal web application's document
        root.
      */
@@ -351,10 +351,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     throws PortalException
     {
         String url = getBaseWorkerURL( CarResources.CAR_WORKER_ID, true );
-        return url.concat( "?"+ CarResources.CAR_RESOURCE_PARM + "=" );
+        return java.net.URLEncoder.encode(url.concat( "?"+ CarResources.CAR_RESOURCE_PARM + "=" ));
     }
 
-    
+
     /**
      * Returns the URL to invoke one of the workers specified in PortalSessionManager.
      * Typically the channel that is invoked with the worker will have to implement an
@@ -372,10 +372,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         if(idempotent) {
             upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
         }
-                        
+
         url=upfs.getUPFile();
 
-        return url;
+        return java.net.URLEncoder.encode(url);
     }
 
     /**
@@ -466,7 +466,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
-     * Sets the keywords 
+     * Sets the keywords
      * @param keywords a String of keywords
      */
     public void setKeywords(String keywords)
@@ -475,7 +475,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
-     * Returns the keywords 
+     * Returns the keywords
      * @return a String of keywords, null if there were none
      */
     public String getKeywords()
