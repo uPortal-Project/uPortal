@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.ILayout;
+import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
@@ -23,7 +24,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  */
 public class ReducingLayoutCommandManager implements ILayoutCommandManager {
     List commands;
-    ILayoutManager layoutManager;
+    ILayout layoutManager;
     
     
     /* (non-Javadoc)
@@ -33,7 +34,7 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
         commands.clear();
     }
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#executeLayoutCommands(org.jasig.portal.layout.al.ILayoutManager)
+     * @see org.jasig.portal.layout.al.ILayoutCommandManager#executeLayoutCommands(org.jasig.portal.layout.al.ILayout)
      */
     public void executeLayoutCommands() throws PortalException {
         List successfulCommands=new ArrayList();
@@ -50,7 +51,7 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordAddCommand(org.jasig.portal.layout.node.IUserLayoutNodeDescription, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
      */
-    public INodeDescription addNode(INode nodeId, INodeId parentId, INodeId nextId) {
+    public ILayoutNode addNode(INode nodeId, INodeId parentId, INodeId nextId) {
         // reduction rules: add operation is always done on a new node, so there
         // are should not be any commands to reduce
         commands.add(new AddCommand(nodeId,parentId,nextId));
@@ -84,13 +85,19 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
     /**
      * @return Returns the layoutManager.
      */
-    public ILayoutManager getLayoutManager() {
+    public ILayout getLayoutManager() {
         return layoutManager;
     }
     /**
      * @param layoutManager The layoutManager to set.
      */
-    public void setLayoutManager(ILayoutManager layoutManager) {
+    public void setLayoutManager(ILayout layoutManager) {
         this.layoutManager = layoutManager;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.ILayoutCommandManager#notifyCentralDeleteNode(org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public void notifyCentralDeleteNode(INodeId nodeId) {
+        // TODO Auto-generated method stub
     }
 }

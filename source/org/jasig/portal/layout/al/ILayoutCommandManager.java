@@ -6,8 +6,9 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.ILayout;
 import org.jasig.portal.layout.al.common.ILayoutManagerCommands;
+import org.jasig.portal.layout.al.common.node.INodeId;
 
 
 /**
@@ -22,7 +23,7 @@ public interface ILayoutCommandManager extends ILayoutManagerCommands {
      * Specify the layout manager
      * @param manager - manager for which the commands are issued
      */
-    public void setLayoutManager(ILayoutManager manager);
+    public void setLayoutManager(ILayout manager);
     
     /**
      * Execute a sequence of the recorded commands.
@@ -34,4 +35,12 @@ public interface ILayoutCommandManager extends ILayoutManagerCommands {
      * Clear all user modification commands
      */
     public void clearCommands();
+    
+    /**
+     * Notify command manager that a particular node has been centrally
+     * deleted.
+     * 
+     * @param nodeId layout id of the node that has been centrally deleted
+     */
+    public void notifyCentralDeleteNode(INodeId nodeId);
 }
