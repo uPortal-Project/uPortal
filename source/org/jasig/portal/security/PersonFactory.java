@@ -34,7 +34,6 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -74,7 +73,6 @@ public class PersonFactory {
     /**
      * Creates a <i>system</i> user.
      * @return a <i>system</i> user
-     * @throws PortalException
      */
     public static IPerson createSystemPerson() {
         IPerson person = createPerson();
@@ -86,7 +84,7 @@ public class PersonFactory {
     /**
      * Creates a <i>guest</i> user.
      * @return <i>guest</i> user
-     * @throws PortalException
+     * @throws Exception
      */
     public static IPerson createGuestPerson() throws Exception {
         IPerson person = createPerson();

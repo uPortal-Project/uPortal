@@ -169,8 +169,6 @@ public class PortalSessionManager extends HttpServlet {
      *
      * @param req an incoming <code>HttpServletRequest</code> value
      * @param res an outgoing <code>HttpServletResponse</code> value
-     * @exception ServletException if an error occurs
-     * @exception IOException if an error occurs
      */
     public void doPost(HttpServletRequest req, HttpServletResponse res)  {
         doGet(req, res);
@@ -181,8 +179,6 @@ public class PortalSessionManager extends HttpServlet {
      *
      * @param req an incoming <code>HttpServletRequest</code>
      * @param res an outgoing <code>HttpServletResponse</code>
-     * @exception ServletException if an error occurs
-     * @exception IOException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
@@ -280,7 +276,6 @@ public class PortalSessionManager extends HttpServlet {
    * document root.  Paths should begin with a "/".
    * @param resource relative to the document root
    * @return a URL associated with the named resource or null if the URL isn't accessible
-   * @throws java.net.MalformedURLException
    */
   public static URL getResourceAsURL(String resource) {
     //Make sure resource string starts with a "/"

@@ -334,8 +334,7 @@ private static String getInsertPermissionSql()
 /**
  * Returns the principal key portion of the IPermission principal.
  * @return String
- * @param String
- * @exception AuthorizationException
+ * @param principalString
  */
 private String getPrincipalKey(String principalString)
 {
@@ -354,8 +353,7 @@ private String getPrincipalKey(IPermission perm) throws AuthorizationException
 /**
  * Returns the principal type portion of the principal.
  * @return int
- * @param String principalString
- * @exception javax.naming.AuthorizationException
+ * @param principalString
  */
 private int getPrincipalType(String principalString)
 {
@@ -453,7 +451,7 @@ public IPermission newInstance(String owner)
 /**
  * Add the IPermissions to the store.
  * @param perms org.jasig.portal.security.IPermission[]
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private void primAdd(IPermission[] perms) throws Exception
 {
@@ -508,8 +506,7 @@ private void primAdd(IPermission[] perms) throws Exception
  * Set the params on the PreparedStatement and execute the insert.
  * @param perm org.jasig.portal.security.IPermission
  * @param ps java.sql.PreparedStatement - the PreparedStatement for inserting a Permission row.
- * @return int - the return code from the PreparedStatement
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {
@@ -547,7 +544,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
 /**
  * Delete the IPermissions from the store.
  * @param perms org.jasig.portal.security.IPermission[]
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private void primDelete(IPermission[] perms) throws Exception
 {
@@ -590,7 +587,7 @@ private void primDelete(IPermission[] perms) throws Exception
  * @param perm org.jasig.portal.security.IPermission
  * @param ps java.sql.PreparedStatement - the PreparedStatement for deleting a Permission row.
  * @return int - the return code from the PreparedStatement
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {
@@ -607,7 +604,7 @@ private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) thro
 /**
  * Update the IPermissions in the store.
  * @param perms org.jasig.portal.security.IPermission[]
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private void primUpdate(IPermission[] perms) throws Exception
 {
@@ -650,7 +647,7 @@ private void primUpdate(IPermission[] perms) throws Exception
  * @param perm org.jasig.portal.security.IPermission
  * @param ps java.sql.PreparedStatement - the PreparedStatement for updating a Permission row.
  * @return int - the return code from the PreparedStatement
- * @exception java.sql.Exception
+ * @exception Exception
  */
 private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {

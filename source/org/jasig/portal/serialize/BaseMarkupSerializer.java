@@ -128,14 +128,14 @@ import org.xml.sax.ext.LexicalHandler;
  * as specified in the output format.
  * <p>
  * The serializer supports both DOM and SAX. DOM serializing is done
- * by calling {@link #serialize} and SAX serializing is done by firing
+ * by calling {@link #serialize(Document)} and SAX serializing is done by firing
  * SAX events and using the serializer as a document handler.
  * This also applies to derived class.
  * <p>
  * If an I/O exception occurs while serializing, the serializer
  * will not throw an exception directly, but only throw it
  * at the end of serializing (either DOM or SAX's {@link
- * org.xml.sax.DocumentHandler#endDocument}.
+ * org.xml.sax.DocumentHandler#endDocument()}.
  * <p>
  * For elements that are not specified as whitespace preserving,
  * the serializer will potentially break long text lines at space
@@ -272,8 +272,7 @@ public abstract class BaseMarkupSerializer
 
     /**
      * Protected constructor can only be used by derived class.
-     * Must initialize the serializer before serializing any document,
-     * see {@link #init}.
+     * Must initialize the serializer before serializing any document.
      */
     protected BaseMarkupSerializer( OutputFormat format )
     {
@@ -1179,9 +1178,7 @@ public abstract class BaseMarkupSerializer
      * whether the text is printed as CDATA or unescaped.
      *
      * @param text The text to print
-     * @param unescaped True is should print unescaped
-     * @throws IOException An I/O exception occured while
-     *   serializing
+     * @throws IOException An I/O exception occured while serializing
      */
     protected void characters( String text )
         throws IOException
@@ -1296,13 +1293,12 @@ public abstract class BaseMarkupSerializer
     /**
      * Called to print additional text with whitespace handling.
      * If spaces are preserved, the text is printed as if by calling
-     * {@link #printText(String)} with a call to {@link #breakLine}
+     * {@link #printText(String, boolean, boolean)} with a call to breakLine()
      * for each new line. If spaces are not preserved, the text is
      * broken at space boundaries if longer than the line width;
      * Multiple spaces are printed as such, but spaces at beginning
      * of line are removed.
      *
-     * @param text The text to print
      * @param preserveSpace Space preserving flag
      * @param unescaped Print unescaped
      */
@@ -1386,7 +1382,7 @@ public abstract class BaseMarkupSerializer
     /**
      * Print a document type public or system identifier URL.
      * Encapsulates the URL in double quotes, escapes non-printing
-     * characters and print it equivalent to {@link #printText}.
+     * characters and print it equivalent to {@link #printText(char[], int, int, boolean, boolean)}.
      *
      * @param url The document type url to print
      */

@@ -342,7 +342,7 @@ public class JNDIManager {
      * This method is called when the JNDISessionListener is unbound from a user's session. This should
      * only happen when the users session is either destroyed or expires. Note: This method may need synchronization!
      * If a user logs in and out quickly there may be problems with things not happening in the correct order.
-     * @param     HttpSessionBindingEvent bindingEvent
+     * @param bindingEvent
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
       LogService.log(LogService.INFO, "JNDISessionListener unbound for: " + bindingEvent.getSession().getId());

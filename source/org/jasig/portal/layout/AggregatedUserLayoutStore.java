@@ -497,8 +497,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     /**
      * Add the new user layout node.
-     * @param person an <code>IPerson</code> object specifying the user
-     * @param profile a user profile for which the layout is being stored
+     * @param userId the user
+     * @param layoutId identities the layout
      * @param node a <code>ALNode</code> object specifying the node
      * @return a <code>ALNode</code> object specifying the node with the generated node ID
      * @exception PortalException if an error occurs
@@ -878,8 +878,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     /**
      * Update the new user layout node.
-     * @param person an <code>IPerson</code> object specifying the user
-     * @param profile a user profile for which the layout is being stored
+     * @param userId the user
+     * @param layoutId identities the layout is being stored
      * @param node a <code>ALNode</code> object specifying the node
      * @return a boolean result of this operation
      * @exception PortalException if an error occurs
@@ -1515,7 +1515,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  /**   Sets the fragment
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragment a <code>ILayoutFragment</code> containing a fragment
-     * @exception Exception if an error occurs
+     * @exception PortalException if an error occurs
      */
  public synchronized void setFragment (IPerson person, ILayoutFragment fragment ) throws PortalException {
 

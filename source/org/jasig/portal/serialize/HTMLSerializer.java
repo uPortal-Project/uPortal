@@ -99,7 +99,7 @@ import org.xml.sax.SAXException;
  * as specified in the output format.
  * <p>
  * The serializer supports both DOM and SAX. DOM serializing is done
- * by calling {@link #serialize} and SAX serializing is done by firing
+ * by calling {@link #serialize(Element)} and SAX serializing is done by firing
  * SAX events and using the serializer as a document handler.
  * <p>
  * If an I/O exception occurs while serializing, the serializer
@@ -145,7 +145,7 @@ public class HTMLSerializer
     /**
      * Constructs a new HTML/XHTML serializer depending on the value of
      * <tt>xhtml</tt>. The serializer cannot be used without calling
-     * {@link #init} first.
+     * init() first.
      *
      * @param xhtml True if XHTML serializing
      */
@@ -158,7 +158,7 @@ public class HTMLSerializer
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
+     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
      * first.
      */
     public HTMLSerializer()
@@ -169,7 +169,7 @@ public class HTMLSerializer
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
+     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
      * first.
      */
     public HTMLSerializer( OutputFormat format )
@@ -628,7 +628,7 @@ public class HTMLSerializer
      * This method will check if it has not been called before ({@link #_started}),
      * will serialize the document type declaration, and will serialize all
      * pre-root comments and PIs that were accumulated in the document
-     * (see {@link #serializePreRoot}). Pre-root will be serialized even if
+     * (see {@link #serializePreRoot()}). Pre-root will be serialized even if
      * this is not the first root element of the document.
      */
     protected void startDocument( String rootTagName )
@@ -688,7 +688,7 @@ public class HTMLSerializer
 
     /**
      * Called to serialize a DOM element. Equivalent to calling {@link
-     * #startElement}, {@link #endElement} and serializing everything
+     * #startElement(String, String, String, Attributes)}, {@link #endElement(String, String, String)} and serializing everything
      * inbetween, but better optimized.
      */
     protected void serializeElement( Element elem )

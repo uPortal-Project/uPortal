@@ -82,7 +82,7 @@ public interface IEntityLockService {
  * Attempts to change the lock's <code>lockType</code> to <code>newType</code>.
  * @param lock IEntityLock
  * @param newType int
- * @exception org.jasig.portal.concurrency..LockingException
+ * @exception LockingException
  */
 public void convert(IEntityLock lock, int newType) throws LockingException;
 /**
@@ -172,7 +172,7 @@ public void renew(IEntityLock lock) throws LockingException;
  * Extends the expiration time of the lock by <code>duration</code> seconds.
  * @param lock IEntityLock
  * @param duration
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public void renew(IEntityLock lock, int duration) throws LockingException;
 }

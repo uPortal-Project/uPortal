@@ -51,20 +51,18 @@ class RemoteUserSecurityContext extends ChainingSecurityContext
 	private String remoteUser;
 
 	/**
-	 *Constructor for the RemoteUserSecurityContext object. Store the
+	 * Constructor for the RemoteUserSecurityContext object. Store the
 	 * value of user for authentication.
-	 *
-	 *@param  user  Description of the Parameter
 	 */
 	RemoteUserSecurityContext() {
 		this(null);
 	}
 
 	/**
-	 *Constructor for the RemoteUserSecurityContext object. Store the
+	 * Constructor for the RemoteUserSecurityContext object. Store the
 	 * value of user for authentication.
 	 *
-	 *@param  user  Description of the Parameter
+	 * @param  user  Description of the Parameter
 	 */
 	RemoteUserSecurityContext(String user) {
 		super();

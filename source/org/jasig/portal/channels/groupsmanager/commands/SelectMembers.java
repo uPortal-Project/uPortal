@@ -58,8 +58,8 @@ public class SelectMembers extends GroupsManagerCommand {
 
    /**
     * This is the public method
-    * @throws Exception
     * @param sessionData
+    * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;

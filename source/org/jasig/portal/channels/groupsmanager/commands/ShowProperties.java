@@ -57,8 +57,8 @@ public class ShowProperties extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
-    * @throws Exception
     * @param sessionData
+    * @throws Exception
     */
   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
     Document model = getXmlDoc(sessionData);

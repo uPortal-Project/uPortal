@@ -596,7 +596,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param portalContext uPortal JNDI context
      * @param sessionId current session id
      * @param userId id of a current user
-     * @param layotId id of the layout used by the user
+     * @param layoutId id of the layout used by the user
      * @return a channel <code>InitialContext</code> value
      */
     private static Context getChannelJndiContext(Context portalContext,String sessionId,String userId,String layoutId) throws NamingException {

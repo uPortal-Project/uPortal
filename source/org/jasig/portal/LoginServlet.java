@@ -184,7 +184,7 @@ public class LoginServlet extends HttpServlet {
   /**
    * Get the values represented by each token from the request and load them into a
    * HashMap that is returned.
-   * @param propNames
+   * @param tokens
    * @param request
    * @return HashMap of properties
    */

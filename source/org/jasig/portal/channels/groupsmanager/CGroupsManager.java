@@ -184,8 +184,8 @@ public class CGroupsManager
    /**
     * Ask channel to render its content.
     * @param out the SAX ContentHandler to output content to
-    * @exception PortalException
     * @param uid
+    * @throws PortalException
     */
    public void renderXML (ContentHandler out, String uid) throws PortalException {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): this = " + this);

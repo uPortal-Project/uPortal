@@ -112,7 +112,7 @@ throws org.jasig.portal.AuthorizationException
 /**
  * Checks that the permission is explicitly granted and not expired.
  * @return boolean
- * @param permission org.jasig.portal.security.IPermission
+ * @param p org.jasig.portal.security.IPermission
  */
 private boolean permissionIsGranted(IPermission p)
 {

@@ -371,7 +371,6 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
 
     /**
      * Returns a global channel Id given a channel instance Id
-     * @param channelInstanceId
      * @return Channel's global Id
      */
     protected String getChannelGlobalId (String channelSubscribeId, String sessionId) throws PortalException {

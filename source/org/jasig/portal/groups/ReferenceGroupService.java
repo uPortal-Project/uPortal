@@ -332,7 +332,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     }
     
     /**
-     * @exception org.jasig.portal.groups.GroupsException.
+     * @exception org.jasig.portal.groups.GroupsException
      */
     private void initialize() throws GroupsException
     {

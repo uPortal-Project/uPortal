@@ -49,14 +49,14 @@ public class GuidGenerator {
     /**
      * CLOCKMOD constitutes the net value range for the clock counter per RFC.
      *
-     * @see Guid#setClockSeq
+     * @see GuidGenerator#setClockSeq
      */
     private final static short CLOCKMOD = 16384;
 
     /**
      * NANOS is the conversion from millisecond timer to 100 nanoseconds per RFC.
      *
-     * @see Guid#getMilliTime
+     * @see GuidGenerator#getMilliTime
      */
     private final static short NANOS = 10000;
 
@@ -64,20 +64,20 @@ public class GuidGenerator {
      * nanoCounter holds static iteration value for unique nanosecond value when
      * two Guid values requested within clock resolution (one millisecond).
      *
-     * @see Guid#getNano
+     * @see GuidGenerator#getNano
      *
-     * @see Guid#nanoBump
+     * @see GuidGenerator#nanoBump
      *
-     * @see Guid#nanoReset
+     * @see GuidGenerator#nanoReset
      *
-     * @see Guid#set
+     * @see GuidGenerator#set
      */
     private static long nanoCounter = 0;
 
     /**
      * clockSeq holds the static clock sequence string used in fourth element of Guid per RFC.
      *
-     * @see Guid#setClockSeq
+     * @see GuidGenerator#setClockSeq
      */
     private static String clockSeq;
 
@@ -85,11 +85,11 @@ public class GuidGenerator {
      * lastMilliTime holds the static last millisecond time requested in order to provide determination
      * if nanoCounter needs to be adjusted.
      *
-     * @see Guid#getLastTime
+     * @see GuidGenerator#getLastTime
      *
-     * @see Guid#setLastTime
+     * @see GuidGenerator#setLastTime
      *
-     * @see Guid#set
+     * @see GuidGenerator#set
      */
     private static long lastMilliTime;
 
@@ -101,18 +101,18 @@ public class GuidGenerator {
     /**
      * macbase holds the instance initialization string denoting fifth element of Guid per RFC
      *
-     * @see Guid#Guid(String)
+     * @see GuidGenerator#GuidGenerator(String)
      *
-     * @see Guid#toString
+     * @see GuidGenerator#toString
      */
     private String macbase;
 
     /**
      * timebase holds the instance string denoting elements one thru four of Guid per RFC
      *
-     * @see Guid#Guid(String)
+     * @see GuidGenerator#GuidGenerator(String)
      *
-     * @see Guid#set()
+     * @see GuidGenerator#set()
      */
     private String timebase;
 
@@ -164,7 +164,6 @@ public class GuidGenerator {
     /**
      * getNano atomically increments and returns nanoCounter
      *
-     * @return the new value of nanoCounter
      */
     private void initGuid(String newMAC) throws IllegalArgumentException {
         // validate newMAC length
@@ -206,7 +205,7 @@ public class GuidGenerator {
     /**
      * setLastTime sets the new value of lastMilliTime
      *
-     * @see Guid#set
+     * @see GuidGenerator#set
      *
      * @param lastTime the value to which to set lastMilliTime
      */
@@ -229,7 +228,7 @@ public class GuidGenerator {
     /**
      * setClockSeq sets the RFC clock sequence string
      *
-     * @see Guid#Guid(String)
+     * @see GuidGenerator#GuidGenerator(String)
      */
     synchronized static void setClockSeq () {
         int clockCounter;

@@ -51,7 +51,7 @@ public class LockableEntityGroupImpl extends EntityGroupImpl implements ILockabl
  * LockableEntityGroupImpl constructor.
  * @param groupKey java.lang.String
  * @param groupType java.lang.Class
- * @exception org.jasig.portal.groups.GroupsException.
+ * @exception GroupsException
  */
 public LockableEntityGroupImpl(String groupKey, Class groupType) throws GroupsException {
     super(groupKey, groupType);

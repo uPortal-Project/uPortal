@@ -74,8 +74,8 @@ public class Search extends GroupsManagerCommand {
 
    /**
     * This is the public method
-    * @throws Exception
     * @param sessionData
+    * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception {
       Utility.logMessage("DEBUG", "SearchForEntities::execute(): Start");

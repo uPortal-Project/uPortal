@@ -67,7 +67,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    *    calls alternate signature with createPortalData set to false.
    * @param person the person object
    * @return uPortalUID number
-   * @throws Authorization exception if no user is found.
+   * @throws Exception if no user is found.
    */
   public int getPortalUID (IPerson person) throws Exception {
     int uPortalUID=-1;
@@ -249,7 +249,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     * @param person 
     * @param createPortalData indicating whether to try to create all uPortal data for this user from template prototype
     * @return uPortalUID number or -1 if unable to create user.
-    * @throws Authorization exception if createPortalData is false and no user is found
+    * @throws AuthorizationException if createPortalData is false and no user is found
     *  or if a sql error is encountered
     */
    public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {

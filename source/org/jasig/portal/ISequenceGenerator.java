@@ -41,7 +41,7 @@ public int getNextInt(String name) throws java.lang.Exception;
 /**
  * @param name java.lang.String
  * @param newValue int
- * @exception java.lang.Exception.
+ * @exception java.lang.Exception
  */
 public void setCounter(String name, int newValue) throws java.lang.Exception;
 }

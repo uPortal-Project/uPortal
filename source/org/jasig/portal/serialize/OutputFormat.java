@@ -286,9 +286,9 @@ public class OutputFormat
      * @param method The specified output method
      * @param encoding The specified encoding
      * @param indenting True for pretty printing
-     * @see #setEncoding
-     * @see #setIndenting
-     * @see #setMethod
+     * @see #setEncoding(String)
+     * @see #setIndenting(boolean)
+     * @see #setMethod(String)
      */
     public OutputFormat( String method, String encoding, boolean indenting )
     {
@@ -324,9 +324,9 @@ public class OutputFormat
      * @param doc The document to output
      * @param encoding The specified encoding
      * @param indenting True for pretty printing
-     * @see #setEncoding
-     * @see #setIndenting
-     * @see #whichMethod
+     * @see #setEncoding(String)
+     * @see #setIndenting(boolean)
+     * @see #whichMethod(Document)
      */
     public OutputFormat( Document doc, String encoding, boolean indenting )
     {
@@ -493,7 +493,7 @@ public class OutputFormat
     /**
      * Returns an <code>EncodingInfo<code> instance for the encoding.
      *
-     * @see #setEncoding
+     * @see #setEncoding(String)
      */
     public EncodingInfo getEncodingInfo() {
         if (_encodingInfo == null)

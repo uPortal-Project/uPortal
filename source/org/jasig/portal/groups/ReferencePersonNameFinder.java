@@ -77,7 +77,7 @@ private ReferencePersonNameFinder() throws SQLException
 }
 /**
  * Get names by user ID from UP_PERSON_DIR.
- * @exception java.sql.SQLException.
+ * @exception java.sql.SQLException
  */
 private Map getDirectoryNames() throws java.sql.SQLException
 {
@@ -167,7 +167,7 @@ public Class getType() {
 }
 /**
  * Get names by user ID from UP_USER.
- * @exception java.sql.SQLException.
+ * @exception java.sql.SQLException
  */
 private Map getUserNames() throws java.sql.SQLException
 {

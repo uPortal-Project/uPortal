@@ -265,7 +265,7 @@ public IEntityGroup find(String key) throws GroupsException
  * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntityGroups</code> that the <code>IEntity</code> belongs to.
  * @return java.util.Iterator
- * @param gm org.jasig.portal.groups.IEntityGroup
+ * @param ent org.jasig.portal.groups.IEntityGroup
  */
 protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 {
@@ -298,7 +298,7 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
  * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntityGroups</code> that the <code>IGroupMember</code> belongs to.
  * @return java.util.Iterator
- * @param gm org.jasig.portal.groups.IEntityGroup
+ * @param group org.jasig.portal.groups.IEntityGroup
  */
 protected Iterator findContainingGroups(IEntityGroup group) throws GroupsException
 {

@@ -56,7 +56,7 @@ public ReferenceEntityLockServiceFactory() {
 /**
  * Return an instance of the service implementation.
  * @return org.jasig.portal.concurrency.locking.IEntityLockService
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLockService newLockService() throws LockingException
 {

@@ -57,8 +57,8 @@ public class AssignPermissions extends GroupsManagerCommand implements GroupsMan
 
    /**
     * put your documentation comment here
-    * @throws Exception
     * @param sessionData
+    * @throws Exception
     */
    public void execute(CGroupsManagerSessionData sessionData) throws Exception{
       ChannelRuntimeData slaveRD = sessionData.runtimeData;

@@ -142,7 +142,6 @@ protected String getDefaultServiceName() throws GroupsException
     }
 /**
  * @return java.lang.String
- * @exception org.jasig.portal.groups.GroupsException.
  */
 public String getDistinguishedGroupKey(String name)
 {
@@ -430,7 +429,8 @@ throws InvalidNameException, GroupsException
 /**
  * Converts the String form of a service name into a Name.
  * @return javax.naming.Name
- * @exception javax.naming.InvalidNameException .
+ * @exception InvalidNameException
+ * @exception GroupsException
  */
 public static Name parseServiceName(String serviceName)
 throws InvalidNameException, GroupsException

@@ -56,7 +56,7 @@ public CompositeServiceIdentifier(String serviceKey) throws GroupsException
  * CompositeServiceIdentifier.
  * @param entityKey java.lang.String
  * @param entityType java.lang.Class
- * @exception org.jasig.portal.groups.GroupsException .
+ * @exception org.jasig.portal.groups.GroupsException
  */
 public CompositeServiceIdentifier(String entityKey, Class entityType) throws GroupsException 
 {

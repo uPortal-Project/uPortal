@@ -101,7 +101,7 @@ public class EntityLockService
         initialize();
     }
 /**
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 private void initialize() throws LockingException
 {
@@ -141,7 +141,7 @@ private void initialize() throws LockingException
  * @param entityType Class
  * @param entityKey String
  * @param owner String
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newReadLock(Class entityType, String entityKey, String owner)
 throws LockingException
@@ -155,7 +155,7 @@ throws LockingException
  * @param entityKey String
  * @param owner String
  * @param duration int (in seconds)
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newReadLock(Class entityType, String entityKey, String owner, int duration)
 throws LockingException
@@ -167,7 +167,7 @@ throws LockingException
  * @return org.jasig.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newReadLock(EntityIdentifier entityID, String owner)
 throws LockingException
@@ -180,7 +180,7 @@ throws LockingException
  * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newReadLock(EntityIdentifier entityID, String owner, int durationSecs)
 throws LockingException
@@ -193,7 +193,7 @@ throws LockingException
  * @param entityType Class
  * @param entityKey String
  * @param owner String
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newWriteLock(Class entityType, String entityKey, String owner)
 throws LockingException
@@ -207,7 +207,7 @@ throws LockingException
  * @param entityKey String
  * @param owner String
  * @param durationSecs int
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newWriteLock(Class entityType, String entityKey, String owner, int durationSecs)
 throws LockingException
@@ -219,7 +219,7 @@ throws LockingException
  * @return org.jasig.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newWriteLock(EntityIdentifier entityID, String owner)
 throws LockingException
@@ -232,7 +232,7 @@ throws LockingException
  * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newWriteLock(EntityIdentifier entityID, String owner, int durationSecs)
 throws LockingException

@@ -82,7 +82,7 @@ public static void rollback(Connection conn) throws java.sql.SQLException
 /**
  * @param conn java.sql.Connection
  * @param newValue boolean
- * @exception java.sql.SQLException.
+ * @exception java.sql.SQLException
  */
 public static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
 {

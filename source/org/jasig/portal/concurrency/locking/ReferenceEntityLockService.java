@@ -162,7 +162,7 @@ private Date getNewExpiration(int durationSecs)
     return new Date(System.currentTimeMillis() + (durationSecs*1000));
 }
 /**
- * @exception org.jasig.portal.concurrency.LockingException.
+ * @exception LockingException
  */
 private void initialize() throws LockingException
 {
@@ -204,9 +204,9 @@ private void initialize() throws LockingException
 /**
  * Answers if the entity represented by the entityType and entityKey already
  * has a lock of some type.
- *
- * @param Class entityType
- * @param String entityKey
+ * 
+ * @param entityType
+ * @param entityKey
  * @exception org.jasig.portal.concurrency.LockingException
  */
 private boolean isLocked(Class entityType, String entityKey) throws LockingException
@@ -217,9 +217,9 @@ private boolean isLocked(Class entityType, String entityKey) throws LockingExcep
  * Answers if the entity represented by entityType and entityKey has one
  * or more locks.  Param <code>lockType</code> can be null.
  *
- * @param Class entityType
- * @param String entityKey
- * @param Integer lockType (optional)
+ * @param entityType
+ * @param entityKey
+ * @param lockType (optional)
  * @exception org.jasig.portal.concurrency.LockingException
  */
 private boolean isLocked(Class entityType, String entityKey, Integer lockType) throws LockingException
@@ -268,7 +268,7 @@ private boolean isValidLockType(int lockType)
  * @param lockType
  * @param owner
  * @return org.jasig.portal.groups.IEntityLock
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner)
 throws LockingException
@@ -284,7 +284,7 @@ throws LockingException
  * @param owner
  * @param durationSecs
  * @return org.jasig.portal.groups.IEntityLock
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner, int durationSecs)
 throws LockingException
@@ -317,7 +317,7 @@ throws LockingException
  * @param entityID org.jasig.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner)
 throws LockingException
@@ -331,7 +331,7 @@ throws LockingException
  * @param lockType int
  * @param owner String
  * @param durationSecs int
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner, int durationSecs)
 throws LockingException
@@ -341,7 +341,7 @@ throws LockingException
 /**
  * Releases the <code>IEntityLock</code>.
  * @param lock IEntityLock
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public void release(IEntityLock lock) throws LockingException
 {
@@ -351,7 +351,7 @@ public void release(IEntityLock lock) throws LockingException
 /**
  * Extends the expiration time of the lock by some service-defined increment.
  * @param lock IEntityLock
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public void renew(IEntityLock lock) throws LockingException
 {
@@ -360,7 +360,7 @@ public void renew(IEntityLock lock) throws LockingException
 /**
  * Extends the expiration time of the lock by some service-defined increment.
  * @param lock IEntityLock
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @exception LockingException
  */
 public void renew(IEntityLock lock, int duration) throws LockingException
 {
@@ -377,10 +377,10 @@ public void renew(IEntityLock lock, int duration) throws LockingException
  * Returns an IEntityLock[] containing unexpired locks for the entityType, entityKey
  * and lockType.  Param <code>lockType</code> can be null.
  *
- * @param Class entityType
- * @param String entityKey
- * @param Integer lockType (optional)
- * @exception org.jasig.portal.concurrency.locking.LockingException
+ * @param entityType
+ * @param entityKey
+ * @param lockType (optional)
+ * @exception LockingException
  */
 private IEntityLock[] retrieveLocks(Class entityType, String entityKey, Integer lockType) throws LockingException
 {
@@ -403,7 +403,7 @@ private void setLockToleranceMillis(int newLockToleranceMillis) {
     lockToleranceMillis = newLockToleranceMillis;
 }
 /**
- * @param newInMemory boolean
+ * @param newMultiServer boolean
  */
 private void setMultiServer(boolean newMultiServer) {
     multiServer = newMultiServer;

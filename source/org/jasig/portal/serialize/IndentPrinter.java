@@ -86,7 +86,7 @@ public class IndentPrinter
     /**
      * Holds the currently accumulating text that follows {@link #_line}.
      * When the end of the part is identified by a call to {@link #printSpace}
-     * or {@link #breakLine}, this part is added to the accumulated line.
+     * or {@link #breakLine()}, this part is added to the accumulated line.
      */
     private StringBuffer    _text;
 
@@ -203,7 +203,7 @@ public class IndentPrinter
      * Called to print a single space between text parts that may be
      * broken into separate lines. Must not be called to print a space
      * when preserving spaces. The text accumulated so far with {@link
-     * #printText} will be added to the accumulated line, and a space
+     * #printText(String)} will be added to the accumulated line, and a space
      * separator will be counted. If the line accumulated so far is
      * long enough, it will be printed.
      */
@@ -297,7 +297,7 @@ public class IndentPrinter
     /**
      * Flushes the line accumulated so far to the writer and get ready
      * to accumulate the next line. This method is called by {@link
-     * #printText} and {@link #printSpace} when the accumulated line plus
+     * #printText(String)} and {@link #printSpace} when the accumulated line plus
      * accumulated text are two long to fit on a given line. At the end of
      * this method <code>_line</code> is empty and <code>_spaces</code> is zero.
      */

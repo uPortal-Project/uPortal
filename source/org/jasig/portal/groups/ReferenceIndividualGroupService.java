@@ -499,7 +499,7 @@ protected ComponentGroupServiceDescriptor getServiceDescriptor()
 }
 
 /**
- * @exception org.jasig.portal.groups.GroupsException.
+ * @exception org.jasig.portal.groups.GroupsException
  */
 private void initialize() throws GroupsException
 {

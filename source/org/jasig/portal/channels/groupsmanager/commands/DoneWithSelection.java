@@ -70,8 +70,8 @@ public class DoneWithSelection extends GroupsManagerCommand {
 
    /**
     * This is the public method
-    * @throws Exception
     * @param sessionData
+    * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
@@ -167,7 +167,6 @@ public class DoneWithSelection extends GroupsManagerCommand {
 
    /**
     * This section adds the selected members to an IEntityGroup.
-    * @throws Exception
     * @param gmCollection
     * @param sessionData
     * @param parentElem

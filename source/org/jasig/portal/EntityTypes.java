@@ -168,6 +168,7 @@ throws java.lang.Exception
         }          // end if
     }              // end synchronized
 }
+
 /**
  * Synchronize on update lock to serialize adds, deletes and updates
  * while letting reads proceed.
@@ -184,6 +185,7 @@ public void deleteEntityType(Class type) throws SQLException
         }
     }
 }
+
 /**
  * delete EntityType from the store.
  */
@@ -231,6 +233,7 @@ private void deleteEntityType(EntityType et) throws SQLException
         throw sqle;
     }
 }
+
 /**
  * @return java.lang.String
  */
@@ -238,6 +241,7 @@ private static java.lang.String getAllColumnNames()
 {
     return TYPE_ID_COLUMN + ", " + TYPE_NAME_COLUMN + ", " +  DESCRIPTIVE_NAME_COLUMN;
 }
+
 /**
  * @return java.util.Iterator
  */
@@ -245,6 +249,7 @@ public java.util.Iterator getAllEntityTypeIDs()
 {
     return entityTypesByID.keySet().iterator();
 }
+
 /**
  * @return java.util.Iterator
  */
@@ -258,6 +263,7 @@ public java.util.Iterator getAllEntityTypes()
     }
     return types.iterator();
 }
+
 /**
  * @return java.lang.String
  */
@@ -266,6 +272,7 @@ private static java.lang.String getDeleteEntityTypeSql()
     return "DELETE FROM " + ENTITY_TYPE_TABLE + " WHERE " +
       TYPE_ID_COLUMN + " = ? AND " + TYPE_NAME_COLUMN + " = ?";
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.String
@@ -274,6 +281,7 @@ public static String getDescriptiveName(Class type)
 {
     return singleton().getDescriptiveNameForType(type);
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.String
@@ -283,6 +291,7 @@ public String getDescriptiveNameForType(Class type)
     EntityType et = (EntityType)getEntityTypesByType().get(type);
     return et.getDescriptiveName();
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.Integer
@@ -292,6 +301,7 @@ public Integer getEntityIDFromType(Class type)
     EntityType et = (EntityType)getEntityTypesByType().get(type);
     return (et == null) ? null : et.getTypeId();
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.Class
@@ -300,6 +310,7 @@ public static Class getEntityType(Integer typeID)
 {
     return singleton().getEntityTypeFromID(typeID);
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.Class
@@ -309,6 +320,7 @@ public Class getEntityTypeFromID(Integer id)
     EntityType et = (EntityType)getEntityTypesByID().get(id);
     return (et == null) ? null : et.getType();
 }
+
 /**
  * Interface to the entity types cache.
  * @return java.lang.Class
@@ -317,6 +329,7 @@ public static Integer getEntityTypeID(Class type)
 {
     return singleton().getEntityIDFromType(type);
 }
+
 /**
  * @return java.util.Map
  */
@@ -324,10 +337,12 @@ private synchronized Map getEntityTypesByID()
 {
     return entityTypesByID;
 }
+
 private Map cloneHashMap(Map m)
 {
     return ((Map)((HashMap)m).clone());
 }
+
 /**
  * @return java.util.Map
  */
@@ -343,6 +358,7 @@ private static String getInsertEntityTypeSql()
 {
     return "INSERT INTO " + ENTITY_TYPE_TABLE + " (" + getAllColumnNames() + ") VALUES (?, ?, ?)";
 }
+
 /**
  * @return int
  * @exception java.lang.Exception
@@ -351,6 +367,7 @@ private int getNextKey() throws java.lang.Exception
 {
     return SequenceGenerator.instance().getNextInt(ENTITY_TYPE_TABLE);
 }
+
 /**
  * @return java.lang.String
  */
@@ -358,6 +375,7 @@ private static java.lang.String getSelectEntityTypesSql()
 {
     return "SELECT " + getAllColumnNames() + " FROM " + ENTITY_TYPE_TABLE;
 }
+
 /**
  * @return java.lang.String
  */
@@ -366,6 +384,7 @@ private static java.lang.String getUpdateEntityTypeSql()
     return "UPDATE " + ENTITY_TYPE_TABLE + " SET "  + DESCRIPTIVE_NAME_COLUMN +
       " = ? WHERE " + TYPE_ID_COLUMN + " = ?";
 }
+
 /**
  * Cache entityTypes.
  */
@@ -407,6 +426,7 @@ private void initialize()
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Cache entityTypes.
  */
@@ -415,6 +435,7 @@ private void initializeCaches()
     entityTypesByID = new HashMap(10);
     entityTypesByType = new HashMap(10);
 }
+
 /**
  * Cache entityTypes.
  */
@@ -463,6 +484,7 @@ private void insertEntityType(EntityType et) throws SQLException
         throw sqle;
     }
 }
+
 /**
  * Copy on write to prevent ConcurrentModificationExceptions.
  */
@@ -475,6 +497,7 @@ private void primAddEntityType(EntityType et)
     setEntityTypesByType(typesByType);
     setEntityTypesByID(typesByID);
 }
+
 /**
  * Copy on write to prevent ConcurrentModificationExceptions.
  */
@@ -487,22 +510,25 @@ private void primRemoveEntityType(EntityType et)
     setEntityTypesByType(typesByType);
     setEntityTypesByID(typesByID);
 }
+
 /**
  * Interface to the entity types cache.
- * @return java.lang.String
  */
 public static synchronized void refresh()
 {
     singleton().initialize();
 }
+
 public synchronized void setEntityTypesByID(Map m)
 {
     entityTypesByID = m;   
 }
+
 public synchronized void setEntityTypesByType(Map m)
 {
     entityTypesByType = m;   
 }
+
 /**
  * @return org.jasig.portal.groups.EntityTypes
  */

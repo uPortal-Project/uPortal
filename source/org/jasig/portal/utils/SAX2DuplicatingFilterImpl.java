@@ -88,8 +88,8 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     /**
      * Construct an XML filter with the specified parent.
      *
-     * @see #setParent
-     * @see #getParent
+     * @see #setParent(XMLReader)
+     * @see #getParent()
      */
     public SAX2DuplicatingFilterImpl(XMLReader parent)
     {
@@ -100,11 +100,11 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
 
     /**
      * Construct an XML filter with the specified children handlers.
-     * @see #setContentHandler
-     * @see #setDTDHandler
-     * @see #setErrorHandler
-     * @see #setEntityResolver
-     * @see #setLexicalHandler
+     * @see #setContentHandler(ContentHandler)
+     * @see #setDTDHandler(DTDHandler)
+     * @see #setErrorHandler(ErrorHandler)
+     * @see #setEntityResolver(EntityResolver)
+     * @see #setLexicalHandler(LexicalHandler)
      */
     public SAX2DuplicatingFilterImpl(ContentHandler ch, EntityResolver er, ErrorHandler eh, LexicalHandler lh, DTDHandler dh, ContentHandler ch2, EntityResolver er2, ErrorHandler eh2, LexicalHandler lh2, DTDHandler dh2) {
         super(ch,er,eh,lh,dh);

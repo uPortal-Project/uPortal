@@ -35,10 +35,16 @@
 
 package  org.jasig.portal.utils;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.BufferedInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -64,9 +70,9 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
-import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -328,9 +334,9 @@ public class XSLT {
 
   /**
    * Extracts name/value pairs from a Hashtable and uses them to create stylesheet parameters
-   * @param processor the XSLT processor
+   * @param transformer the XSLT processor
    * @param stylesheetParams name/value pairs used as stylesheet parameters
-   * @deprecated replaced by {@link #setStylesheetParams(XSLTProcessor, HashMap)}
+   * @deprecated replaced by {@link #setStylesheetParams(Transformer, HashMap)}
    */
   private static void setStylesheetParams(Transformer transformer, Hashtable stylesheetParams) {
     if (stylesheetParams != null) {
@@ -342,7 +348,7 @@ public class XSLT {
 
   /**
    * Extracts name/value pairs from a Hashtable and uses them to create stylesheet parameters
-   * @param processor the XSLT processor
+   * @param transformer the XSLT processor
    * @param stylesheetParams name/value pairs used as stylesheet parameters
    */
   private static void setStylesheetParams(Transformer transformer, HashMap stylesheetParams) {

@@ -56,7 +56,7 @@ public ReferenceEntityCachingServiceFactory() {
 /**
  * Return an instance of the service implementation.
  * @return org.jasig.portal.concurrency.caching.IEntityCachingService
- * @exception org.jasig.portal.concurrency.locking.CachingException
+ * @exception CachingException
  */
 public IEntityCachingService newCachingService() throws CachingException
 {

@@ -657,7 +657,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * 
      * @param channelState The state to read the action information from
      * @param wrappedRequest The request to add data from the action to
-     * @return An unchanged request if there wasn't an action, a request the data from the action if there was one.
      */
     private void transferActionResultsToRequest(ChannelState channelState, HttpServletRequest wrappedRequest) {
         ChannelData cd = channelState.getChannelData();

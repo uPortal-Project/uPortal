@@ -108,7 +108,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
      * @param layout a <code>IAggregatedLayout</code> containing an aggregated user layout
-     * @exception Exception if an error occurs
+     * @exception PortalException if an error occurs
      */
     public void setAggregatedLayout (IPerson person, UserProfile  profile, IAggregatedLayout layout) throws PortalException;
 
@@ -117,7 +117,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * Persists the fragment
      * @param person an <code>IPerson</code> object specifying the user
      * @param layoutImpl a <code>ILayoutFragment</code> object containing a fragment
-     * @exception Exception if an error occurs
+     * @exception PortalException if an error occurs
      */
     public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws PortalException;
 

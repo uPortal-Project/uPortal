@@ -66,6 +66,8 @@ package org.jasig.portal.serialize;
 
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,13 +86,13 @@ import org.xml.sax.SAXException;
  * as specified in the output format.
  * <p>
  * The serializer supports both DOM and SAX. DOM serializing is done
- * by calling {@link #serialize} and SAX serializing is done by firing
+ * by calling {@link #serialize(Element)} and SAX serializing is done by firing
  * SAX events and using the serializer as a document handler.
  * <p>
  * If an I/O exception occurs while serializing, the serializer
  * will not throw an exception directly, but only throw it
  * at the end of serializing (either DOM or SAX's {@link
- * org.xml.sax.DocumentHandler#endDocument}.
+ * org.xml.sax.ContentHandler#endDocument}.
  *
  *
  * @version $Revision$ $Date$
@@ -104,7 +106,7 @@ public class TextSerializer
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
+     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
      * first.
      */
     public TextSerializer()
@@ -263,7 +265,7 @@ public class TextSerializer
      * This method will check if it has not been called before ({@link #_started}),
      * will serialize the document type declaration, and will serialize all
      * pre-root comments and PIs that were accumulated in the document
-     * (see {@link #serializePreRoot}). Pre-root will be serialized even if
+     * (see {@link #serializePreRoot()}). Pre-root will be serialized even if
      * this is not the first root element of the document.
      */
     protected void startDocument( String rootTagName )
@@ -281,7 +283,7 @@ public class TextSerializer
 
     /**
      * Called to serialize a DOM element. Equivalent to calling {@link
-     * #startElement}, {@link #endElement} and serializing everything
+     * #startElement(String, String, String, Attributes)}, {@link #endElement(String, String, String)} and serializing everything
      * inbetween, but better optimized.
      */
     protected void serializeElement( Element elem )

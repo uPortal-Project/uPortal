@@ -206,7 +206,7 @@ throws GroupsException
  * the service closest to the composite service and ending with the name of
  * the leaf service.  The key is built up layer by layer.
  *
- * @exception GroupsException.
+ * @exception GroupsException
  */
 protected void initializeComponentServices() throws GroupsException
 {

@@ -57,7 +57,7 @@ public class MultithreadedPrivilegedCacheableDirectResponseCharacterChannelAdapt
     }
 
     /**
-     * @see org.jasig.portal.IMultithreadedDirectResponse#setResponse(javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.IMultithreadedDirectResponse#setResponse(String, javax.servlet.http.HttpServletResponse)
      */
     public void setResponse(HttpServletResponse response) {
         ((IMultithreadedDirectResponse) channel).setResponse(uid, response);

@@ -116,8 +116,8 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     /**
      * Construct an XML filter with the specified parent.
      * <p> Same default flag settings as with empty constructor</p>
-     * @see #setParent
-     * @see #getParent
+     * @see #setParent(XMLReader)
+     * @see #getParent()
      */
     public SAX2BufferImpl(XMLReader parent) {
         this();
@@ -127,11 +127,11 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     /**
      * Construct an XML filter with the specified children.
      * <p> Same default flag settings as with empty constructor</p>
-     * @see #setContentHandler
-     * @see #setDTDHandler
-     * @see #setErrorHandler
-     * @see #setEntityResolver
-     * @see #setLexicalHandler
+     * @see #setContentHandler(ContentHandler)
+     * @see #setDTDHandler(DTDHandler)
+     * @see #setErrorHandler(ErrorHandler)
+     * @see #setEntityResolver(EntityResolver)
+     * @see #setLexicalHandler(LexicalHandler)
      */
     public SAX2BufferImpl(ContentHandler ch, EntityResolver er, ErrorHandler eh, LexicalHandler lh, DTDHandler dh) {
         super(ch,er,eh,lh,dh);

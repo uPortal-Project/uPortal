@@ -172,7 +172,7 @@ public void deleteBefore(Date expiration) throws CachingException
 
 /**
  * Answers if this entity is represented in the store.
- * @param group org.jasig.portal.concurrency.CachedEntityInvalidation ent
+ * @param ent org.jasig.portal.concurrency.CachedEntityInvalidation
  */
 private boolean existsInStore(CachedEntityInvalidation ent, Connection conn)
 throws CachingException
@@ -365,7 +365,7 @@ throws SQLException, CachingException
  * Delete invalid entities from the underlying store whose invalidation is
  * before <code>invalidation</code>.
  *
- * @param invalidation java.util.Date
+ * @param expiration java.util.Date
  * @param conn Connection
  */
 private void primDeleteBefore(Date expiration, Connection conn)
@@ -438,7 +438,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
 }
 /**
  * Updates the invalid enity's <code>expiration</code> in the underlying store.
- * @param group org.jasig.portal.concurrency.caching.CachedEntityInvalidation
+ * @param ent org.jasig.portal.concurrency.caching.CachedEntityInvalidation
  * @param conn Connection
  */
 private void primUpdate(CachedEntityInvalidation ent, Connection conn)

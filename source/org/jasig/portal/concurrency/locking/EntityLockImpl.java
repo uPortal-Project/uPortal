@@ -232,31 +232,31 @@ public void renew(int duration) throws LockingException
     getService().renew(this, duration);
 }
 /**
- * @param java.lang.String newEntityKey
+ * @param newEntityKey
  */
 private void setEntityKey(String newEntityKey) {
     entityKey = newEntityKey;
 }
 /**
- * @param Class newEntityType
+ * @param newEntityType
  */
 private void setEntityType(Class newEntityType) {
     entityType = newEntityType;
 }
 /**
- * @param java.util.Date newExpirationTime
+ * @param newExpirationTime
  */
 void setExpirationTime(Date newExpirationTime) {
     expirationTime = newExpirationTime;
 }
 /**
- * @param String lockOwner
+ * @param newLockOwner
  */
 private void setLockOwner(String newLockOwner) {
     lockOwner = newLockOwner;
 }
 /**
- * @param int lockType
+ * @param newLockType
  */
 void setLockType(int newLockType) {
     lockType = newLockType;

@@ -80,7 +80,7 @@ public class XHTMLSerializer
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
+     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
      * first.
      */
     public XHTMLSerializer()
@@ -91,7 +91,7 @@ public class XHTMLSerializer
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
+     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
      * first.
      */
     public XHTMLSerializer( OutputFormat format )

@@ -90,7 +90,7 @@ public class BlockingQueue
 
     /**
      * Remove object from the beginning of the queue
-     * @throws <code>InterruptedException</code> if the wait was interrupted
+     * @throws InterruptedException if the wait was interrupted
      */
     public synchronized Object dequeue() throws InterruptedException
     {

@@ -89,7 +89,6 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
  * Adds the key of the <code>IEntityGroup</code> to our <code>Set</code> of group keys
  * by copying the keys, updating the copy, and replacing the old keys with the copy.
  * This lets us confine synchronization to the getter and setter methods for the keys.
- * @return void
  * @param eg org.jasig.portal.groups.IEntityGroup
  */
 public void addGroup(IEntityGroup eg) throws GroupsException
@@ -291,7 +290,6 @@ public boolean hasMembers() throws GroupsException
 }
 /**
  * Cache the keys for <code>IEntityGroups</code> that contain this <code>IGroupMember</code>.
- * @return void
  */
 private void initializeContainingGroupKeys() throws GroupsException
 {
@@ -398,7 +396,7 @@ private synchronized void setGroupKeys(Set newGroupKeys)
     groupKeys = newGroupKeys;
 }
 /**
- * @param newGroupsInitialized boolean
+ * @param newGroupKeysInitialized boolean
  */
 protected void setGroupKeysInitialized(boolean newGroupKeysInitialized) {
     groupKeysInitialized = newGroupKeysInitialized;

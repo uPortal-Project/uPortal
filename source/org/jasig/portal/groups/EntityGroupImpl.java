@@ -113,7 +113,6 @@ throws GroupsException
  * adds <code>this</code> to gm's group <code>Map</code>, after checking that the 
  * addition does not violate group rules.  Remember that we have added it so we can 
  * update the database if necessary.
- * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public void addMember(IGroupMember gm) throws GroupsException
@@ -514,8 +513,6 @@ public boolean hasMembers() throws GroupsException
 }
 /**
  * Cache the <code>IEntityGroup</code> members.
- * @return org.jasig.portal.groups.IGroupMember
- * @param name java.lang.String
  */
 private void initializeMembers() throws GroupsException
 {
@@ -562,7 +559,6 @@ public boolean isGroup()
  * original with the copy.  At this point, <code>gm</code> does not yet 
  * have <code>this</code> in its containing group cache.  That cache entry 
  * is not added until update(), when changes are committed to the store.
- * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 protected void primAddMember(IGroupMember gm) throws GroupsException
@@ -577,7 +573,7 @@ protected void primAddMember(IGroupMember gm) throws GroupsException
 /**
  * Returns the <code>Set</code> of <code>IEntities</code> in our member <code>Collection</code>
  * and, recursively, in the <code>Collections</code> of our members.
- * @param users java.lang.Set - a Set that IEntity-GroupMembers are added to.
+ * @param entities a Set that IEntity-GroupMembers are added to.
  * @return java.util.Set
  */
 protected java.util.Set primGetAllEntities(Set entities) throws GroupsException
@@ -618,7 +614,6 @@ protected java.util.Set primGetAllMembers(Set s) throws GroupsException
  * with the copy.  At this point, <code>gm</code> still has <code>this</code> 
  * in its containing groups cache.  That cache entry is not removed until update(), 
  * when changes are committed to the store.  
- * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 protected void primRemoveMember(IGroupMember gm) throws GroupsException
@@ -641,7 +636,6 @@ public void primSetName(java.lang.String newName)
  * Removes <code>IGroupMember</code> gm from our member <code>Map</code> and,
  * conversely, remove this from gm's group <code>Map</code>.  Remember that we
  * have removed it so we can update the database, if necessary.
- * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public void removeMember(IGroupMember gm) throws GroupsException

@@ -81,7 +81,7 @@ public ReferenceSequenceGenerator() {
 }
 /**
  * @param tableName java.lang.String
- * @exception java.lang.Exception
+ * @exception SQLException
  */
 public synchronized void createCounter (String tableName) throws SQLException
 {
@@ -98,7 +98,7 @@ public synchronized void createCounter (String tableName) throws SQLException
 }
 /**
  * @param tableName java.lang.String
- * @exception java.lang.SQLException
+ * @exception SQLException
  */
 private void createCounter (String tableName, Connection conn) throws SQLException
 {
@@ -286,7 +286,7 @@ private String getUpdateCounterSql()
  * for a while and then try again, up to 20 times.
  *
  * @param tableName java.lang.String
- * @param current int
+ * @param currentCounterValue
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
@@ -315,7 +315,7 @@ throws Exception
 }
 /**
  * @param tableName java.lang.String
- * @param current int
+ * @param currentCounterValue
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
@@ -382,7 +382,7 @@ public synchronized void setCounter (String tableName, int newCounterValue) thro
 }
 /**
  * @param tableName java.lang.String
- * @param current int
+ * @param newCounterValue
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */

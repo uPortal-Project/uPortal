@@ -341,7 +341,7 @@ throws GroupsException
 
 /**
  * @return org.jasig.portal.groups.IGroupMember
- * @param user org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
@@ -362,7 +362,7 @@ throws GroupsException
  * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
  * an <code>IGroupMember</code>.  Returns ALL the groups the <code>IGroupMember</code>
  * (recursively) belongs to.
- * @param user - org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal - org.jasig.portal.security.IAuthorizationPrincipal
  * @return java.util.Iterator over Collection of IEntityGroups
  */
 private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal)
@@ -375,7 +375,7 @@ throws GroupsException
 /**
  * Hook into the Groups system, find all containing groups, and convert the
  * them to <code>IAuthorizationPrincipals</code>.
- * @param user - org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal - org.jasig.portal.security.IAuthorizationPrincipal
  * @return java.util.Iterator over Collection of IEntityGroups
  */
 private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
@@ -467,7 +467,7 @@ throws AuthorizationException
 }
 
 /**
- * @param org.jasig.portal.groups.IEntityGroup
+ * @param group
  * @return user org.jasig.portal.security.IAuthorizationPrincipal
  */
 private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
@@ -847,7 +847,7 @@ protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermission
 }
 
 /**
- * @param newPermissionManager org.jasig.portal.security.provider.ReferencePermissionStore
+ * @param newPermissionStore org.jasig.portal.security.provider.ReferencePermissionStore
  */
 private void setPermissionStore(IPermissionStore newPermissionStore) {
     permissionStore = newPermissionStore;

@@ -1259,7 +1259,7 @@ public class DbLoader
 
     /**
      * Make a string SQL safe
-     * @param string
+     * @param sql the string containing sql to escape
      * @return SQL safe string
      */
     public static final String sqlEscape (String sql) {

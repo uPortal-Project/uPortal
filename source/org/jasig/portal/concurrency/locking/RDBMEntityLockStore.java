@@ -654,7 +654,6 @@ throws LockingException
  * @param entityType Class
  * @param entityKey String
  * @param lockType Integer - so we can accept a null value.
- * @param expiration Date
  * @param lockOwner String
  * @exception LockingException - wraps an Exception specific to the store.
  */

@@ -68,7 +68,6 @@ public class DepthRestriction extends UserLayoutRestriction {
          /**
            * Returns the type of the current restriction
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-           * @exception PortalException
            */
           public int getRestrictionType() {
            return RestrictionTypes.DEPTH_RESTRICTION|super.getRestrictionType();

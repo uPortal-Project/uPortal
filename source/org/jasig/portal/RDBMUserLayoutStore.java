@@ -573,7 +573,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Checks if a channel has been approved
-   * @param approved Date
+   * @param approvedDate
    * @return boolean Channel is approved
    */
    protected static boolean channelApproved(java.util.Date approvedDate) {

@@ -217,7 +217,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
    * grossly ignoring anything else.  If there are no values, then
    * return an empty string.</p>
    *
-   * @param results LDAP query results
+   * @param attrs LDAP query results
    * @param attribute LDAP attribute we are interested in
    * @return a single value of the attribute
    */

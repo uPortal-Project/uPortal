@@ -365,7 +365,6 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
  * Find the groups associated with this member key.
  * @param memberKey
  * @param type
- * @param isGroup
  * @return java.util.Iterator
  */
 private java.util.Iterator findContainingGroupsForEntity(String memberKey, int type)
@@ -419,7 +418,6 @@ throws GroupsException
  * @param serviceName
  * @param memberKey
  * @param type
- * @param isGroup
  * @return java.util.Iterator
  */
 private java.util.Iterator findContainingGroupsForGroup(String serviceName, String memberKey, int type)

@@ -84,7 +84,7 @@ public class PortletPreferencesStoreFactory {
     /**
      * Returns an instance of the IPortletPreferencesStore
      * 
-     * @param a className <code>String</code> object specifying the class to be loaded
+     * @param className <code>String</code> object specifying the class to be loaded
      * @return an IPortletPreferencesStore implementation
      */
     protected static IPortletPreferencesStore getPortletPreferencesImpl( String className ) throws PortalException {

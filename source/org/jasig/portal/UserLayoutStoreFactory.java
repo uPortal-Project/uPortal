@@ -80,7 +80,7 @@ public class UserLayoutStoreFactory {
 
   /**
    * Returns an instance of the IUserLayoutStore
-   * @param a className <code>String</code> object specifying the class to be loaded
+   * @param className <code>String</code> object specifying the class to be loaded
    * @return an IUserLayoutStore implementation
    */
   protected static IUserLayoutStore getUserLayoutStoreImpl( String className ) throws PortalException {

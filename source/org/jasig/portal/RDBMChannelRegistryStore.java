@@ -787,7 +787,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @param channelDef the channel definition to approve
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
-   * @throws java.sql.Exception
+   * @throws Exception
    */
   public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws Exception {
     channelDef.setApproverId(approver.getID());
@@ -803,7 +803,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * this method, one could simply set the approver ID and approval date
    * to NULL and then call saveChannelDefinition(ChannelDefinition chanDef).
    * @param channelDef the channel definition to disapprove
-   * @throws java.sql.Exception
+   * @throws Exception
    */
   public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception {   
     channelDef.setApproverId(-1);

@@ -56,7 +56,7 @@ public interface IUserIdentityStore {
    * determines whether or not to auto-create data for a new user.
    * @param person object, boolean createPortalData indicating whether to try to create all uPortal data for this user.
    * @return uPortalUID number or -1 if no user found and unable to create user.
-   * @throws Authorization exception if createPortalData is false and no user is found
+   * @throws AuthorizationException if createPortalData is false and no user is found
    *         or if a sql error is encountered
    */
   public int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;

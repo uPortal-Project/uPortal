@@ -95,7 +95,7 @@ public class BlockingStack
 
     /**
      * Remove object from the top of the stack
-     * @throws <code>InterruptedException</code> if the wait was interrupted
+     * @throws InterruptedException if the wait was interrupted
      */
     public synchronized Object pop() throws InterruptedException
     {

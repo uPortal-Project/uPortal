@@ -82,7 +82,7 @@ public IBasicEntity get(Class type, String key) throws CachingException;
  * and notifies peer caches.
  * @param type Class
  * @param key String
- * @exception org.jasig.portal.concurrency.caching.CachingException
+ * @exception CachingException
  */
 public void remove(Class type, String key) throws CachingException;
 /**

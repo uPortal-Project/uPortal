@@ -53,7 +53,6 @@ public interface IPortalDocument extends Document {
      *
      * @param idName a key used to store an <code>Element</code> object.
      * @param element an <code>Element</code> object to map.
-     * @exception DOMException if the element does not belong to the
      * document.
      */
     public void putIdentifier(String idName, Element element);
