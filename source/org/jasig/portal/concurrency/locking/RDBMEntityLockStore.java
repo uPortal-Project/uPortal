@@ -71,6 +71,14 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private static String addSql;
     private static String deleteLockSql;
     private static String updateSql;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
+    static {
+      Date testDate = new Date();
+      Timestamp testTimestamp = new Timestamp(testDate.getTime());
+      timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
+    }
 /**
  * RDBMEntityGroupStore constructor.
  */
@@ -716,9 +724,10 @@ throws LockingException
  */
 private static long getTimestampMillis(Timestamp ts)
 {
-    long tsMillis = ts.getTime();
-    long tsNanos = ts.getNanos() / 1000000;
-    return (tsMillis + tsNanos);
+    if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
 }
 
 /**
