@@ -81,35 +81,37 @@ public class RestrictedPersonTest extends TestCase {
     }
     
     /**
-     * Test that the setAttribute() method of RestrictedPerson has no effect.
+     * Test that the setAttribute() method of RestrictedPerson writes through
+     * to the underlying IPerson.
      */
     public void testSetAttribute() {
         
-        // test that new attributes do not write
+        // test that new attributes write
         
         assertNull(this.person.getAttribute("notSet"));
         assertNull(this.restrictedPerson.getAttribute("notSet"));
         
-        this.restrictedPerson.setAttribute("notSet", "stillNotSetWeHope");
+        this.restrictedPerson.setAttribute("notSet", "nowSet");
         
-        assertNull(this.person.getAttribute("notSet"));
-        assertNull(this.restrictedPerson.getAttribute("notSet"));
+        assertEquals("nowSet", this.person.getAttribute("notSet"));
+        assertEquals("nowSet", this.restrictedPerson.getAttribute("notSet"));
 
         
-        // test that existing attribute are not overwritten
+        // test that existing attribute are overwritten
         
         assertEquals("val1", this.person.getAttribute("att1"));
         assertEquals("val1", this.restrictedPerson.getAttribute("att1"));
         
-        this.restrictedPerson.setAttribute("att1", "bogus");
+        this.restrictedPerson.setAttribute("att1", "newValue");
         
-        assertEquals("val1", this.person.getAttribute("att1"));
-        assertEquals("val1", this.restrictedPerson.getAttribute("att1"));
+        assertEquals("newValue", this.person.getAttribute("att1"));
+        assertEquals("newValue", this.restrictedPerson.getAttribute("att1"));
         
     }
 
     /**
-     * Test that the setFullName method of RestrictedPerson has no effect.
+     * Test that the setFullName method of RestrictedPerson writes through
+     * to the underlying IPerson.
      */
     public void testSetFullname() {
         assertEquals("George Washington", this.restrictedPerson.getFullName());
@@ -117,12 +119,13 @@ public class RestrictedPersonTest extends TestCase {
 
         this.restrictedPerson.setFullName("Peter Furmonavicius");
         
-        assertEquals("George Washington", this.restrictedPerson.getFullName());
-        assertEquals("George Washington", this.person.getFullName());
+        assertEquals("Peter Furmonavicius", this.restrictedPerson.getFullName());
+        assertEquals("Peter Furmonavicius", this.person.getFullName());
     }
     
     /**
-     * Test that the RestrictedPerson setID method has no effect.
+     * Test that the RestrictedPerson setID method writes through
+     * to the underlying IPerson.
      */
     public void testSetID() {
         assertEquals(27, this.person.getID());
@@ -130,8 +133,8 @@ public class RestrictedPersonTest extends TestCase {
         
         this.restrictedPerson.setID(12);
         
-        assertEquals(27, this.person.getID());
-        assertEquals(27, this.restrictedPerson.getID());
+        assertEquals(12, this.person.getID());
+        assertEquals(12, this.restrictedPerson.getID());
     }
     
     /**
