@@ -101,7 +101,7 @@ public class SieveEncodingInfo extends EncodingInfo {
         if (this.dangerChars != null && ch <= 0xffff) {
             /**
              * Searches this.dangerChars for ch.
-             * TODO: Use binary search.
+             * TO DO: Use binary search.
              */
             if (this.dangerChars.indexOf(ch) >= 0)
                 return false;
