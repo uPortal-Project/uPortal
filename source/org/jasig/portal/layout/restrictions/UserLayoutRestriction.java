@@ -41,7 +41,7 @@ import org.jasig.portal.layout.ALNode;
 
 /**
  * UserLayoutRelativeRestriction summary sentence goes here.
- * 
+ *
  * @author Michael Ivanov
  * @version $Revision$
  */
@@ -51,6 +51,8 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
   private String restrictionExpression;
   protected String nodePath;
+
+  public static String LOCAL_RESTRICTION = "local";
 
   public UserLayoutRestriction() {
 

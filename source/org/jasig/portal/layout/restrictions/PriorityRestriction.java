@@ -44,7 +44,7 @@ import org.jasig.portal.utils.CommonUtils;
 
 /**
  * PriorityRestriction checks the priority restriction for a given ALNode object.
- *  
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
@@ -135,7 +135,7 @@ public class PriorityRestriction extends UserLayoutRestriction {
          public boolean checkRestriction( ALNode node ) throws PortalException {
 
           // if we have a related priority restriction we should check the priority ranges
-          if ( nodePath != null && nodePath.length() > 0 ) {
+          if ( nodePath != null && !nodePath.equals(LOCAL_RESTRICTION) ) {
              PriorityRestriction restriction = (PriorityRestriction) node.getRestriction(getRestrictionName(RestrictionTypes.PRIORITY_RESTRICTION,null));
              if ( restriction != null ) {
               int[] range = restriction.getRange();

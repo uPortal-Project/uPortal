@@ -77,7 +77,7 @@ public class GroupRestriction extends UserLayoutRestriction {
          }
 
          public GroupRestriction() throws PortalException {
-          this(null);
+          this(LOCAL_RESTRICTION);
          }
 
 

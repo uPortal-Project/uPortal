@@ -251,7 +251,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean checkRestriction(String nodeId, int restrictionType, String propertyValue ) throws PortalException {
-    return checkRestriction(nodeId, restrictionType, null, propertyValue);
+    return checkRestriction(nodeId, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue);
   }
 
   /**
@@ -365,7 +365,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean checkRestriction(ALNode node, int restrictionType, String propertyValue ) throws PortalException {
-    return checkRestriction(node, restrictionType, null, propertyValue);
+    return checkRestriction(node, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue);
   }
 
 
