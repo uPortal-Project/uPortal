@@ -235,7 +235,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + "template name is " + templateName);
 
         // Just use the default template if requested template not populated
-        if (templateName == null || templateName=="")
+        if (templateName == null || templateName.equals(""))
         {
           templateName=defaultTemplateUserName;
         }
