@@ -40,6 +40,7 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.ILocalConnectionContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
@@ -56,6 +57,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.net.URLConnection;
+import java.net.HttpURLConnection;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -73,6 +76,10 @@ import java.io.PrintWriter;
  *  5) "cacheTimeout" - the amount of time (in seconds) that the contents of the
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
+ *  6) "upc_localConnContext" - The class name of the ILocalConnectionContext 
+ *                  implementation.
+ *                  <i>Use when local data needs to be sent with the
+ *                  request for the URL.</i>
  * </p>
  * <p>The static parameters above can be overridden by including
  * parameters of the same name (<code>xmlUri</code>, <code>sslUri</code>,
@@ -107,6 +114,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private Map params;
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
+    private ILocalConnectionContext localConnContext;
 
     public CState()
     {
@@ -114,6 +122,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       params = new HashMap();
       cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
       runtimeData = null;
+      localConnContext = null;
     }
     
     public String toString()
@@ -147,6 +156,20 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (cacheTimeout != null)
       state.cacheTimeout = Long.parseLong(cacheTimeout);
+
+    String connContext = sd.getParameter ("upc_localConnContext");
+    if (connContext != null)
+    {
+      try
+      {
+        state.localConnContext = (ILocalConnectionContext) Class.forName(connContext).newInstance();
+        state.localConnContext.init(sd);
+      }
+      catch (Exception e)
+      {
+        LogService.instance().log(LogService.ERROR, "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
+      }
+    }
 
     stateTable.put(uid,state);
   }
@@ -234,8 +257,22 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         DTDResolver dtdResolver = new DTDResolver();
         docBuilder.setEntityResolver(dtdResolver);
-        InputStream xmlStream = ResourceLoader.getResourceAsStream(this.getClass(), state.xmlUri);
-        xmlDoc = docBuilder.parse(xmlStream);
+
+        URLConnection urlConnect = (ResourceLoader.getResourceAsURL(this.getClass(), state.xmlUri)).openConnection();
+
+        if (state.localConnContext != null)
+        {
+          try
+          {
+            state.localConnContext.sendLocalData(urlConnect, state.runtimeData);
+          }
+          catch (Exception e)
+          {
+            LogService.instance().log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+          }
+        }
+
+        xmlDoc = docBuilder.parse(urlConnect.getInputStream());
       }
       catch (IOException ioe)
       {

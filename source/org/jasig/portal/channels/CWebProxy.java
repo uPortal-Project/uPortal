@@ -48,6 +48,7 @@ import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ILocalConnectionContext;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
@@ -105,6 +106,10 @@ import org.jasig.portal.security.IPerson;
  *  <li>"cw_person" - IPerson attributes to pass.
  *		    <i>A comma-separated list of IPerson attributes to
  *		    pass to the back end application.</i>
+ *  <li>"upc_localConnContext" - The class name of the ILocalConnectionContext 
+ *                  implementation.
+ *                  <i>Use when local data needs to be sent with the
+ *                  request for the URL.</i>
  * </ol>
  * <p>Runtime Channel Parameters:</p>
  *    The static parameters above can be updated by equivalent Runtime
@@ -173,6 +178,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private ChannelRuntimeData runtimeData;
     private CookieCutter cookieCutter;
     private URLConnection connHolder;
+    private ILocalConnectionContext localConnContext;
 
     public ChannelState ()
     {
@@ -186,6 +192,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_scope");
       runtimeData = null;
       cookieCutter = new CookieCutter();
+      localConnContext = null;
     }
   }
 
@@ -234,6 +241,20 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     cacheTimeout = sd.getParameter("cw_cacheTimeout");
     if (cacheTimeout != null)
       state.cacheTimeout = Long.parseLong(cacheTimeout);
+
+    String connContext = sd.getParameter ("upc_localConnContext");
+    if (connContext != null)
+    {
+      try
+      {
+        state.localConnContext = (ILocalConnectionContext) Class.forName(connContext).newInstance();
+        state.localConnContext.init(sd);
+      }
+      catch (Exception e)
+      {
+        LogService.instance().log(LogService.ERROR, "CWebProxy: Cannot initialize ILocalConnectionContext: " + e);
+      }
+    }
 
     stateTable.put(uid,state);
   }
@@ -381,7 +402,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                  while (e.hasMoreElements ())
                    {
                      String pName = (String) e.nextElement ();
-                     if ( !pName.startsWith("cw_") && !pName.trim().equals("")) {
+                     if ( !pName.startsWith("cw_") && !pName.startsWith("upc_") 
+                                                   && !pName.trim().equals("")) {
 		       String[] value_array = rd.getParameterValues(pName);
 		       if ( value_array == null || value_array.length == 0 ) {
 			   // keyword-style parameter
@@ -636,7 +658,8 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     return xml;
   }
   
-  private URLConnection getConnection(String uri, ChannelState state) throws Exception{
+  private URLConnection getConnection(String uri, ChannelState state) throws Exception
+  {
       URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
       String domain = url.getHost().trim();
       String path = url.getPath();
@@ -646,6 +669,8 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
           path = path.substring(0, path.lastIndexOf("/"));
       }
       String port = Integer.toString(url.getPort());
+
+      //get connection
       URLConnection urlConnect = url.openConnection();
       String protocol = url.getProtocol();
   
@@ -653,19 +678,40 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
       {
         if (domain != null && path != null)
         {
+          //prepare the connection by setting properties and sending data
           HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
           httpUrlConnect.setInstanceFollowRedirects(false);
-
-          //send any headers to proxied application
+          //send any cookie headers to proxied application
           if(state.cookieCutter.cookiesExist())
             state.cookieCutter.sendCookieHeader(httpUrlConnect, domain, path, port);
+          //set connection properties if request method was post
+          if (state.runtimeData.getHttpRequestMethod().equals("POST"))
+          {
+            httpUrlConnect.setRequestMethod("POST");
+            httpUrlConnect.setAllowUserInteraction(false);
+            httpUrlConnect.setDoOutput(true);  
+          }
 
-          // added 5/13/2002 by ASV - print post data
+          //send local data, if required 
+          //can call getOutputStream in sendLocalData (ie. to send post params)
+          //(getOutputStream can be called twice on an HttpURLConnection)
+          if (state.localConnContext != null)
+          {
+            try
+            {
+              state.localConnContext.sendLocalData(httpUrlConnect, state.runtimeData);
+            }
+            catch (Exception e)
+            {
+              LogService.instance().log(LogService.ERROR, "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+            }
+          }
+
+          //send the request parameters by post, if required
+          //at this point, set or send methods cannot be called on the connection
+          //object (they must be called before sendLocalData)
           if (state.runtimeData.getHttpRequestMethod().equals("POST")){
             if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
-              httpUrlConnect.setRequestMethod("POST");
-              httpUrlConnect.setAllowUserInteraction(false);
-              httpUrlConnect.setDoOutput(true);
               PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
               post.print(state.reqParameters);
               post.flush();
@@ -674,6 +720,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
             }
           }
 
+          //receive cookie headers
           state.cookieCutter.storeCookieHeader(httpUrlConnect, domain, path, port);
 
           int status = httpUrlConnect.getResponseCode();
