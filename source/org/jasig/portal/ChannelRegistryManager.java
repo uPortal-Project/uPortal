@@ -81,26 +81,53 @@ public class ChannelRegistryManager {
   private static final String GRANT_PERMISSION_TYPE = "GRANT";
 
   /**
-   * Returns the channel registry as a Document.  This list is not filtered by roles.
+   * Returns the channel registry as a Document.  This list is not filtered
+   * according to a user's channel permissions.
    * @return the channel registry as a Document
    */
-  public static Document getChannelRegistry(IPerson person) throws PortalException {
+  public static Document getChannelRegistry() throws PortalException {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
-    if (channelRegistry == null)
-    {
+    if (channelRegistry == null) {
       // Channel registry has expired, so get it and cache it
       try {
-        channelRegistry = chanRegStore.getChannelRegistryXML(person);
+        channelRegistry = chanRegStore.getChannelRegistryXML();
       } catch (Exception e) {
         throw new PortalException(e);
       }
 
-      if (channelRegistry != null)
-      {
+      if (channelRegistry != null) {
         channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
         LogService.instance().log(LogService.INFO, "Caching channel registry.");
       }
     }
+    return channelRegistry;
+  }
+
+  /**
+   * Returns the channel registry as a Document.  This list is filtered
+   * according to a user's channel permissions.
+   * @return the filtered channel registry as a Document
+   */
+  public static Document getChannelRegistry(IPerson person) throws PortalException {
+    Document channelRegistry = getChannelRegistry();
+
+    // Filter the channel registry according to permissions
+    String userKey = String.valueOf(person.getID());
+    Class userType = IPerson.class;
+    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
+
+    // Cycle through all the channels, looking for restricted channels
+    NodeList nl = channelRegistry.getElementsByTagName("channel");
+    for (int i = 0; i < nl.getLength(); i++) {
+      Element channel = (Element)nl.item(i);
+      String chanID = channel.getAttribute("chanID");
+      chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
+
+      // Take out channels which user doesn't have access to
+      if (!ap.canSubscribe(Integer.parseInt(chanID)))
+        channel.getParentNode().removeChild(channel);
+    }
+
     return channelRegistry;
   }
 

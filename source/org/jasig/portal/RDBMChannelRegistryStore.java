@@ -35,27 +35,25 @@
 
 package  org.jasig.portal;
 
-import  org.jasig.portal.utils.DTDResolver;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.services.AuthorizationService;
-import  org.jasig.portal.security.IAuthorizationPrincipal;
-import  org.jasig.portal.security.IPerson;
-import  java.io.StringWriter;
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.SQLException;
-import  java.sql.Statement;
-import  java.util.ArrayList;
-import  java.util.Date;
-import  java.util.HashMap;
-import  org.apache.xml.serialize.OutputFormat;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.NamedNodeMap;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.IPerson;
+import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Reference implementation of IChannelRegistry.
@@ -93,8 +91,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @return a string of XML
    * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML (IPerson person) throws SQLException, AuthorizationException {
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
+  public Document getChannelRegistryXML () throws SQLException {
+    Document doc = DocumentFactory.getNewDocument();
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
     Connection con = RdbmServices.getConnection();
@@ -103,9 +101,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       try {
         Statement stmt = con.createStatement();
         try {
-          String userKey = "" + person.getID();
-          Class userType = org.jasig.portal.security.IPerson.class;
-          IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
           try {
             String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
             LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelRegistryXML(): " + query);
@@ -125,7 +120,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                 registry.appendChild(category);
 
                 // Add child categories and channels
-                appendChildCategoriesAndChannels(con, ap, chanStmt, category, catId);
+                appendChildCategoriesAndChannels(con, chanStmt, category, catId);
               }
             } finally {
               rs.close();
@@ -145,7 +140,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return doc;
   }
 
-  protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, RdbmServices.PreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
+  protected void appendChildCategoriesAndChannels (Connection con, RdbmServices.PreparedStatement chanStmt, Element category, int catId) throws SQLException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
@@ -169,10 +164,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         category.appendChild(childCategory);
 
         // Append child categories and channels recursively
-        appendChildCategoriesAndChannels(con, ap, chanStmt, childCategory, childCatId);
+        appendChildCategoriesAndChannels(con, chanStmt, childCategory, childCatId);
       }
-
-
 
       // Append children channels
       chanStmt.clearParameters();
@@ -183,14 +176,12 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       try {
         while (rs.next()) {
           int chanId = rs.getInt(1);
-          if (ap.canSubscribe(chanId)) {
-            Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
-            if (channel == null) {
-              LogService.instance().log(LogService.WARN, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): channel " + chanId +
-                " in category " + catId + " does not exist in the store");
-            } else {
-              category.appendChild(channel);
-            }
+          Element channel = getChannelNode (chanId, con, doc, "chan" + chanId);
+          if (channel == null) {
+            LogService.instance().log(LogService.WARN, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): channel " + chanId +
+              " in category " + catId + " does not exist in the store");
+          } else {
+            category.appendChild(channel);
           }
         }
       } finally {
@@ -227,7 +218,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.sql.SQLException
    */
   public Document getChannelTypesXML () throws SQLException {
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Document doc = DocumentFactory.getNewDocument();
     Element root = doc.createElement("channelTypes");
     doc.appendChild(root);
     Connection con = RdbmServices.getConnection();
@@ -610,7 +601,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Get a channel from the cache (it better be there)
    */
-  public Element getChannelXML(int chanId, DocumentImpl doc, String idTag) {
+  public Element getChannelXML(int chanId, Document doc, String idTag) {
     ChannelStoreDefinition channel = getChannel(chanId);
     if (channel != null) {
       return channel.getDocument(doc, idTag);
@@ -725,7 +716,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @return the channel node as an XML Element
    * @exception java.sql.SQLException
    */
-  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
+  public Element getChannelNode (int chanId, Connection con, Document doc, String idTag) throws java.sql.SQLException {
     RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
     try {
       RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,20 +31,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-
-package  org.jasig.portal;
+package org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
-import  org.w3c.dom.*;
+import org.w3c.dom.*;
 import java.util.Date;
 import java.sql.Connection;
 import java.sql.SQLException;
-import  org.apache.xerces.dom.DocumentImpl;
-
 
 /**
  * Interface defining how the portal retrieves it's channels and categories.
@@ -62,24 +57,18 @@ public interface IChannelRegistryStore {
    */
   public int getNextId () throws PortalException;
 
-
-
   /**
    * Gets the channel registry as an XML document
    * @return the channel registry XML
    * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML (IPerson person) throws Exception;
-
-
+  public Document getChannelRegistryXML () throws Exception;
 
   /**
    * put your documentation comment here
    * @param registryXML
    */
   public void setRegistryXML (String registryXML) throws Exception;
-
-
 
   /**
    * Returns a string of XML which describes the channel types.
@@ -88,15 +77,12 @@ public interface IChannelRegistryStore {
    */
   public Document getChannelTypesXML () throws Exception;
 
-
   /**
    * Removes a channel from the channel registry.
    * @param chanID, the ID of the channel to remove.
    * @exception Exception
    */
   public void removeChannel (String chanID) throws Exception;
-
-
 
   /**
    * Publishes a channel.
@@ -145,8 +131,12 @@ public interface IChannelRegistryStore {
   /**
    * Get an XML representation of a channel
    */
-  public Element getChannelXML(int chanId, DocumentImpl doc, String idTag);
+  public Element getChannelXML(int chanId, Document doc, String idTag);
 }
+
+
+
+
 
 
 
