@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import org.xml.sax.DocumentHandler;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.SAXException;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -46,24 +47,33 @@ import java.util.Enumeration;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class SAXBufferImpl implements DocumentHandler
+public class SAXBufferImpl implements DocumentHandler, LexicalHandler
 {
-  protected DocumentHandler outDocumentHandler;
+    protected DocumentHandler outDocumentHandler;
+    protected LexicalHandler outLexicalHandler;
 
-  protected Vector eventTypes;
-  protected Vector eventArguments;
+    protected Vector eventTypes;
+    protected Vector eventArguments;
+    
+    protected boolean buffering;
+    
+    // types of SAX events
+    public static final int STARTDOCUMENT = 0;
+    public static final int ENDDOCUMENT = 1;
+    public static final int STARTELEMENT = 2;
+    public static final int ENDELEMENT = 3;
+    public static final int CHARACTERS = 4;
+    public static final int IGNORABLEWHITESPACE = 5;
+    public static final int PROCESSINGINSTRUCTION = 6;
+    public static final int SETDOCUMENTLOCATOR = 7;
+    public static final int STARTDTD = 8;
+    public static final int ENDDTD = 9;
+    public static final int STARTENTITY = 10;
+    public static final int ENDENTITY = 11;
+    public static final int STARTCDATA = 12;
+    public static final int ENDCDATA = 13;
+    public static final int COMMENT = 14;
 
-  protected boolean buffering;
-
-  // types of SAX events
-  public static final int STARTDOCUMENT = 0;
-  public static final int ENDDOCUMENT = 1;
-  public static final int STARTELEMENT = 2;
-  public static final int ENDELEMENT = 3;
-  public static final int CHARACTERS = 4;
-  public static final int IGNORABLEWHITESPACE = 5;
-  public static final int PROCESSINGINSTRUCTION = 6;
-  public static final int SETDOCUMENTLOCATOR = 7;
 
   /**
    * Empty constructor
@@ -83,13 +93,14 @@ public class SAXBufferImpl implements DocumentHandler
   {
     buffering = false;
     this.outDocumentHandler = handler;
+    if(handler instanceof LexicalHandler) 
+	this.outLexicalHandler=(LexicalHandler) handler;
   }
 
   public SAXBufferImpl (DocumentHandler handler, boolean bufferSetting)
   {
     this (handler);
     this.buffering = bufferSetting;
-    this.outDocumentHandler = handler;
   }
 
   public synchronized void startBuffering ()
@@ -117,38 +128,83 @@ public class SAXBufferImpl implements DocumentHandler
       {
         int type = ((Integer)types.nextElement ()).intValue ();
 
-        switch (type)
-        {
-          case STARTDOCUMENT:
+        switch (type) {
+	case STARTDOCUMENT:
             outDocumentHandler.startDocument ();
             break;
-          case ENDDOCUMENT:
+	case ENDDOCUMENT:
             outDocumentHandler.endDocument ();
             break;
-          case STARTELEMENT:
+	case STARTELEMENT:
             StartElementData sed = (StartElementData) args.nextElement ();
             outDocumentHandler.startElement (sed.getName (), sed.getAtts ());
             break;
-          case ENDELEMENT:
+	case ENDELEMENT:
             String elname = (String) args.nextElement ();
             outDocumentHandler.endElement (elname);
             break;
-          case CHARACTERS:
+	case CHARACTERS:
             CharactersData cd = (CharactersData) args.nextElement ();
             outDocumentHandler.characters (cd.getCh (), cd.getStart (), cd.getLength ());
             break;
-          case IGNORABLEWHITESPACE:
+	case IGNORABLEWHITESPACE:
             CharactersData ws = (CharactersData) args.nextElement ();
             outDocumentHandler.ignorableWhitespace (ws.getCh (), ws.getStart (), ws.getLength ());
             break;
-          case PROCESSINGINSTRUCTION:
+	case PROCESSINGINSTRUCTION:
             ProcessingInstructionData pid = (ProcessingInstructionData) args.nextElement ();
             outDocumentHandler.processingInstruction (pid.getTarget (), pid.getData ());
             break;
-          case SETDOCUMENTLOCATOR:
+	case SETDOCUMENTLOCATOR:
             org.xml.sax.Locator loc = (org.xml.sax.Locator) args.nextElement ();
             outDocumentHandler.setDocumentLocator (loc);
             break;
+	case STARTDTD:
+	    if(outLexicalHandler!=null) {
+		StartDTDData dd=(StartDTDData) args.nextElement();
+		outLexicalHandler.startDTD(dd.getName(),dd.getPublicId(),dd.getSystemId());
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case ENDDTD:
+	    if(outLexicalHandler!=null) {
+		outLexicalHandler.endDTD();
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case STARTENTITY:
+	    if(outLexicalHandler!=null) {
+		String n=(String) args.nextElement();
+		outLexicalHandler.startEntity(n);
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case ENDENTITY:
+	    if(outLexicalHandler!=null) {
+		String n=(String) args.nextElement();
+		outLexicalHandler.endEntity(n);
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case STARTCDATA:
+	    if(outLexicalHandler!=null) {
+		outLexicalHandler.startCDATA();
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case ENDCDATA:
+	    if(outLexicalHandler!=null) {
+		outLexicalHandler.endCDATA();
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;
+	case COMMENT:
+	    if(outLexicalHandler!=null) {
+		CharactersData ccd = (CharactersData) args.nextElement ();
+		outLexicalHandler.comment (ccd.getCh (), ccd.getStart (), ccd.getLength ());
+	    } else 
+		Logger.log(Logger.WARN,"SAXBufferImpl.stopBuffering() : trying to output lexical events while LexicalHandler is null");
+	    break;		
         }
       }
     } 
@@ -166,22 +222,26 @@ public class SAXBufferImpl implements DocumentHandler
   public void setDocumentHandler (DocumentHandler handler)
   {
     this.outDocumentHandler=handler;
+    if(handler instanceof LexicalHandler) 
+	this.outLexicalHandler=(LexicalHandler) handler;
   }
+
+    public LexicalHandler getLexicalHandler() { return outLexicalHandler; }
+    
+    public void setLexicalHandler(LexicalHandler handler) {
+	this.outLexicalHandler=handler;
+    }
 
   public void characters (char ch[], int start, int length) throws SAXException
   {
-    if (buffering)
-    {
-      eventTypes.add (new Integer (CHARACTERS));
-      eventArguments.add (new CharactersData (ch, start, length));
-    } 
-    else
-    {
-      if (outDocumentHandler != null)
-      {
-        outDocumentHandler.characters (ch, start, length);
+      if (buffering) {
+	  eventTypes.add (new Integer (CHARACTERS));
+	  eventArguments.add (new CharactersData (ch, start, length));
+      } else {
+	  if (outDocumentHandler != null) {
+	      outDocumentHandler.characters (ch, start, length);
+	  }
       }
-    }
   }
 
   public void startDocument () throws SAXException
@@ -231,7 +291,7 @@ public class SAXBufferImpl implements DocumentHandler
     if (buffering)
     {
       eventTypes.add (new Integer (ENDELEMENT));
-      eventArguments.add (name);
+      eventArguments.add (new String(name));
     } 
     else
     {
@@ -281,6 +341,82 @@ public class SAXBufferImpl implements DocumentHandler
          outDocumentHandler.setDocumentLocator (locator);
     }
   }
+
+
+    public  void startDTD (String name, String publicId, String systemId) throws SAXException  {
+	if (buffering) {
+	    eventTypes.add(new Integer(STARTDTD));
+	    eventArguments.add(new StartDTDData(name,publicId,systemId));
+	} else {
+	    if(outLexicalHandler!=null)
+		outLexicalHandler.startDTD(name,publicId,systemId);
+	}
+    }
+
+
+    public  void endDTD () throws SAXException {
+	if (buffering) {
+	    eventTypes.add(new Integer(ENDDTD));
+	} else {
+	    if(outLexicalHandler!=null) 
+		outLexicalHandler.endDTD();
+	}
+    }
+
+
+    public  void startEntity (String name) throws SAXException {
+	if (buffering) {
+	    eventTypes.add(new Integer(STARTENTITY));
+	    eventArguments.add(new String(name));
+	} else {
+	    if(outLexicalHandler!=null) 
+		outLexicalHandler.startEntity(name);
+	}
+    }
+
+
+    public  void endEntity (String name) throws SAXException {
+	if (buffering) {
+	    eventTypes.add(new Integer(ENDENTITY));
+	    eventArguments.add(new String(name));
+	} else {
+	    if(outLexicalHandler!=null) 
+		outLexicalHandler.endEntity(name);
+	}
+    }
+
+
+    public  void startCDATA () throws SAXException {
+	if (buffering) {
+	    eventTypes.add(new Integer(STARTCDATA));
+	} else {
+	    if(outLexicalHandler!=null)
+		outLexicalHandler.startCDATA();
+	}
+    }
+
+
+
+    public  void endCDATA () throws SAXException {
+	if (buffering) {
+	    eventTypes.add(new Integer(ENDCDATA));
+	} else {
+	    if(outLexicalHandler!=null) 
+		outLexicalHandler.endCDATA();
+	}
+    }
+
+
+    public  void comment (char ch[], int start, int length) throws SAXException {
+	if (buffering) {
+	    eventTypes.add (new Integer (COMMENT));
+	    eventArguments.add (new CharactersData (ch, start, length));
+	} else {
+	    if(outLexicalHandler!=null)
+		outLexicalHandler.comment(ch,start,length);
+	}
+    }
+    
 
   // supporting utility classes
 
@@ -332,5 +468,22 @@ public class SAXBufferImpl implements DocumentHandler
     
     public String getName () {return s_name; }
     public  org.xml.sax.AttributeList getAtts () { return li; }
+  }
+
+  private class StartDTDData
+  {
+      public String s_name;
+      public String s_publicId;
+      public String s_systemId;
+
+    StartDTDData (String name, String publicId, String systemId)  {
+	this.s_name=name;
+	this.s_publicId=publicId;
+	this.s_systemId=systemId;
+    }
+
+    public String getName () { return s_name;; }
+    public String getPublicId () { return s_publicId; }
+    public String getSystemId () { return s_systemId; }
   }
 }

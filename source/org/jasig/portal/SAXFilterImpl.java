@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
 * This is intended as a temporary replacement for the XMLFilterImpl
@@ -45,85 +46,132 @@ import org.xml.sax.SAXException;
 * @author Peter Kharchenko
 * @version $Revision$
 */
-public class SAXFilterImpl implements DocumentHandler
+public class SAXFilterImpl implements DocumentHandler, LexicalHandler
 {
-  protected DocumentHandler outDocumentHandler;
+    protected DocumentHandler outDocumentHandler;
+    protected LexicalHandler outLexicalHandler;
 
-  public SAXFilterImpl() {}
-
-  public SAXFilterImpl (DocumentHandler handler)
-  {
-    this.outDocumentHandler=handler;
-  }
-
-  public DocumentHandler getDocumentHandler() { return outDocumentHandler; }
-
-  public void setDocumentHandler(DocumentHandler handler)
-  {
-    this.outDocumentHandler = handler;
-  }
-
-  public void characters (char ch[], int start, int length) throws SAXException
-  {
-    if (outDocumentHandler != null) 
+    public SAXFilterImpl() {}
+    
+    public SAXFilterImpl (DocumentHandler handler)
     {
-      outDocumentHandler.characters (ch, start, length);
+	this.outDocumentHandler=handler;
+	if(handler instanceof LexicalHandler) 
+	    this.outLexicalHandler=(LexicalHandler) handler;
     }
-  }
- 
-  public void startDocument () throws SAXException
-  {
-  	if (outDocumentHandler != null) 
-    {
-  	  outDocumentHandler.startDocument();
-	  }
-  }
+    
+    public DocumentHandler getDocumentHandler() { return outDocumentHandler; }
+    
+    public void setDocumentHandler(DocumentHandler handler) {
+	this.outDocumentHandler = handler;
+	if(handler instanceof LexicalHandler) 
+	    this.outLexicalHandler=(LexicalHandler) handler;
+    }
 
-  public void endDocument () throws SAXException
-  {
-	  if (outDocumentHandler != null) 
-    {
+    public LexicalHandler getLexicalHandler() { return outLexicalHandler; }
+    
+    public void setLexicalHandler(LexicalHandler handler) {
+	this.outLexicalHandler=handler;
+    }
+    
+    public void characters (char ch[], int start, int length) throws SAXException {
+	if (outDocumentHandler != null) {
+	    outDocumentHandler.characters (ch, start, length);
+	}
+    }
+ 
+    public void startDocument () throws SAXException {
+	if (outDocumentHandler != null) {
+	    outDocumentHandler.startDocument();
+	}
+    }
+    
+    public void endDocument () throws SAXException {
+	if (outDocumentHandler != null) {
 	    outDocumentHandler.endDocument ();
+	}
     }
-  }
- 
-  public void startElement (String name, org.xml.sax.AttributeList atts) throws SAXException
-  {
-    if (outDocumentHandler != null) 
-    {
-      outDocumentHandler.startElement(name,atts);
-	  }
-  }
- 
-  public void endElement(String name) throws SAXException
-  {
-    if (outDocumentHandler != null) 
-    {
-      outDocumentHandler.endElement(name);
+    
+    public void startElement (String name, org.xml.sax.AttributeList atts) throws SAXException {
+	if (outDocumentHandler != null) {
+	    outDocumentHandler.startElement(name,atts);
+	}
     }
-  }
- 
-  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
-  {
-    if (outDocumentHandler != null) 
-    {
-      outDocumentHandler.ignorableWhitespace(ch, start, length);
+    
+    public void endElement(String name) throws SAXException {
+	if (outDocumentHandler != null)  {
+	    outDocumentHandler.endElement(name);
+	}
     }
-  } 
+    
+    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+	if (outDocumentHandler != null)  {
+	    outDocumentHandler.ignorableWhitespace(ch, start, length);
+	}
+    } 
+    
+    public void processingInstruction (String target, String data) throws SAXException {
+	if (outDocumentHandler != null) {
+	    outDocumentHandler.processingInstruction (target,data);
+	}
+    }
+    
+    public void setDocumentLocator (org.xml.sax.Locator locator) {
+	if (outDocumentHandler != null) {
+	    outDocumentHandler.setDocumentLocator (locator);
+	}
+    }
+    
 
-  public void processingInstruction (String target, String data) throws SAXException
-  {
-    if (outDocumentHandler != null) 
-    {
-      outDocumentHandler.processingInstruction (target,data);
+    // LexicalHandler interface methods
+    public  void startDTD (String name, String publicId, String systemId) throws SAXException  {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.startDTD(name,publicId,systemId);
+	}
     }
-  }
- 
-  public void setDocumentLocator (org.xml.sax.Locator locator)
-  {
-    if (outDocumentHandler != null) 
-    {
-      outDocumentHandler.setDocumentLocator (locator);
+
+
+    public  void endDTD () throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.endDTD();
+	}
     }
-  }
+
+
+    public  void startEntity (String name) throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.startEntity(name);
+	}
+    }
+
+
+    public  void endEntity (String name) throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.endEntity(name);
+	}
+    }
+
+
+    public  void startCDATA () throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.startCDATA();
+	}
+
+    }
+
+
+
+    public  void endCDATA () throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.endCDATA();
+	}
+    }
+
+
+    public  void comment (char ch[], int start, int length) throws SAXException {
+	if(outLexicalHandler!=null) {
+	    outLexicalHandler.comment(ch,start,length);
+	}
+    }
+    
 }
