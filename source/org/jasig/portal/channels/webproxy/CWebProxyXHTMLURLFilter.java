@@ -75,34 +75,42 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
 
     if (attsImpl.getIndex("href") != -1)
     {
-      rewriteURL("a", "href", qName, atts, attsImpl);
-      rewriteURL("area", "href", qName, atts, attsImpl);
+      String target = atts.getValue("target");
+      // if target exists, do not go through channel
+      if (target == null)
+        rewriteURL("a", "href", qName, atts, attsImpl);
+      if (target == null)
+        rewriteURL("area", "href", qName, atts, attsImpl);
       rewriteURL("map", "href", qName, atts, attsImpl);
     }
     else if (qName.equals("form"))
     {
-      passThrough = (String)runtimeData.get("cw_passThrough");
-      if (passThrough.equals("all") || passThrough.equals("marked")
-                                    || passThrough.equals("application"))
+      String target = atts.getValue("target");
+      if (target == null)
       {
-        insideForm = true;
+        passThrough = (String)runtimeData.get("cw_passThrough");
+        if (passThrough.equals("all") || passThrough.equals("marked")
+                                      || passThrough.equals("application"))
+        {
+          insideForm = true;
        
-        // determine original action value
-        String attValue = atts.getValue("action");
-        if (attValue != null)
-        {
-          origActionValue = attValue;
-        }
-        else // action attribute required
-        {
-          attsImpl.addAttribute(uri, localName, "action", "CDATA", "");
-          origActionValue = "";
-        }
+          // determine original action value
+          String attValue = atts.getValue("action");
+          if (attValue != null)
+          {
+            origActionValue = attValue;
+          }
+          else // action attribute required
+          {
+            attsImpl.addAttribute(uri, localName, "action", "CDATA", "");
+            origActionValue = "";
+          }
 
-        // set up a buffer for form elements
-        buffer = new SAX2BufferImpl(this.contentHandler);
-        buffer.clearBuffer();
-        buffer.startBuffering();
+          // set up a buffer for form elements
+          buffer = new SAX2BufferImpl(this.contentHandler);
+          buffer.clearBuffer();
+          buffer.startBuffering();
+        }
       }
     }
     else if (qName.equals("input"))
