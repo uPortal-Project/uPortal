@@ -3149,15 +3149,15 @@
       <row>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_NAME</name><value>Tabs and columns</value></column>
-        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>
       </row>
       <row>
         <column><name>SS_ID</name><value>2</value></column>
         <column><name>SS_NAME</name><value>Nested categories</value></column>
-        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>
     </rows>
@@ -3169,8 +3169,8 @@
       <row>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_NAME</name><value>Nested tables</value></column>
-        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>
         <column><name>STRUCT_SS_ID</name><value>1</value></column>
         <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_icon.gif</value></column>
@@ -3183,8 +3183,8 @@
       <row>
         <column><name>SS_ID</name><value>2</value></column>
         <column><name>SS_NAME</name><value>Deck of cards</value></column>
-        <column><name>SS_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.xsl</value></column>
-        <column><name>SS_DESCRIPTION_URI</name><value>stylesheets/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/tab-column/deck-of-cards/deck-of-cards.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
         <column><name>STRUCT_SS_ID</name><value>1</value></column>
         <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_icon.gif</value></column>

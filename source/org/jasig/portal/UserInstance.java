@@ -418,8 +418,8 @@ public class UserInstance implements HttpSessionBindingListener {
                     if(!output_produced) {
 
                         // obtain transformer handlers for both structure and theme stylesheets
-                        TransformerHandler ssth = XSLT.getTransformerHandler(PortalSessionManager.getResourceAsURL(ssd.getStylesheetURI()).toString());
-                        TransformerHandler tsth = XSLT.getTransformerHandler(PortalSessionManager.getResourceAsURL(tsd.getStylesheetURI()).toString());
+                        TransformerHandler ssth = XSLT.getTransformerHandler(ResourceLoader.getResourceAsURL(UserInstance.class, ssd.getStylesheetURI()).toString());
+                        TransformerHandler tsth = XSLT.getTransformerHandler(ResourceLoader.getResourceAsURL(UserInstance.class, tsd.getStylesheetURI()).toString());
 
                         // obtain transformer references from the handlers
                         Transformer sst=ssth.getTransformer();
