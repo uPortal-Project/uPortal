@@ -6,6 +6,8 @@
 package org.jasig.portal.channels.error.tt;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.channels.error.error2xml.AuthorizationExceptionToElement;
+import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 
 /**
  * Testcase for the AuthorizationExceptionToElement class.

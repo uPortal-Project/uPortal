@@ -7,6 +7,7 @@ package org.jasig.portal.channels.error.tt;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.ExceptionHelper;
+import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

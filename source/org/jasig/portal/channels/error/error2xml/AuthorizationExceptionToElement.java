@@ -3,19 +3,19 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.channels.error.tt;
+package org.jasig.portal.channels.error.error2xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.AuthorizationException;
 
 /**
- * Translates from a uPortal InternalTimeoutException to an XML element.
+ * Translates from a uPortal AuthorizationException to an XML element.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class InternalTimeoutExceptionToElement 
+public final class AuthorizationExceptionToElement 
     implements IThrowableToElement{
 
     private ThrowableToElement throwableToElement = new ThrowableToElement();
@@ -26,25 +26,14 @@ public class InternalTimeoutExceptionToElement
     public Element throwableToElement(Throwable t, Document parentDoc) 
         throws IllegalArgumentException {
         
-        Element element = 
-            this.throwableToElement.throwableToElement(t, parentDoc);
+        Element element = this.throwableToElement.throwableToElement(t, parentDoc);
         
-        if (! (t instanceof InternalTimeoutException))
+        if (! (t instanceof AuthorizationException))
             throw new IllegalArgumentException(t.getClass().getName() + 
-                    " does not extend InternalTimeoutException");
+                    " does not extend AuthorizationException");
         
-        InternalTimeoutException ite = (InternalTimeoutException) t;
-        Long timeoutValue = ite.getTimeoutValue();
+        element.setAttribute("renderedAs", AuthorizationException.class.getName());
         
-        if (timeoutValue != null) {
-            Element timeoutEl = parentDoc.createElement("timeout");
-            timeoutEl.setAttribute("value", timeoutValue.toString());
-            element.appendChild(timeoutEl);
-        }
-        
-        element.setAttribute("renderedAs", 
-                InternalTimeoutException.class.getName());
-
         return element;
     }
 
@@ -54,10 +43,13 @@ public class InternalTimeoutExceptionToElement
     public boolean supports(Class c) throws IllegalArgumentException {
         if (c == null)
             throw new IllegalArgumentException("Cannot support a null class.");
+        
         if (! Throwable.class.isAssignableFrom(c))
-            throw new IllegalArgumentException("Supports undefined on " +
-                    "classes that are not and do not extend Throwable:" + c.getName());
-        return InternalTimeoutException.class.isAssignableFrom(c);
+            throw new IllegalArgumentException("Supports undefined on classes " +
+                    "which are not and do not extend Throwable.  Class was " 
+                    + c.getName());
+        
+        return AuthorizationException.class.isAssignableFrom(c);
     }
 
 }

@@ -5,6 +5,9 @@
 
 package org.jasig.portal.channels.error.tt;
 
+import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
+import org.jasig.portal.channels.error.error2xml.ThrowableToElement;
+
 /**
  * Testcase for ThrowableToElement.
  * @author andrew.petro@yale.edu

@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.channels.error.tt;
+package org.jasig.portal.channels.error.error2xml;
 
 import java.util.ArrayList;
 import java.util.Iterator;

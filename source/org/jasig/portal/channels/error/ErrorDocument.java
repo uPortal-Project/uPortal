@@ -5,8 +5,8 @@
 
 package org.jasig.portal.channels.error;
 
-import org.jasig.portal.channels.error.tt.DelegatingThrowableToElement;
-import org.jasig.portal.channels.error.tt.IThrowableToElement;
+import org.jasig.portal.channels.error.error2xml.DelegatingThrowableToElement;
+import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
