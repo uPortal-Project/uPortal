@@ -50,6 +50,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
+
+import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.ChannelStaticData;
@@ -299,7 +301,7 @@ public class TabColumnPrefsState extends BaseState
    * @param tabName the name of the tab
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationTabId the column to insert the new column before or append after (may actually be a tab)
-   * @throws Exception
+   * @throws PortalException
    */
   private final void addTab(String tabName, String method, String destinationTabId) throws PortalException
   {
@@ -411,7 +413,7 @@ public class TabColumnPrefsState extends BaseState
    * @param sourceId the column to move (may actually be a tab)
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationId the column to insert the new column before or append after (may actually be a tab)
-   * @throws Exception
+   * @throws PortalException
    */
   private final void moveColumn(String sourceId, String method, String destinationId) throws PortalException
   {
@@ -427,7 +429,7 @@ public class TabColumnPrefsState extends BaseState
    * @param sourceChannelSubscribeId the channel to move
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
-   * @throws Exception
+   * @throws PortalException
    */
   private final void moveChannel(String sourceChannelSubscribeId, String method, String destinationElementId) throws PortalException
   {
@@ -453,7 +455,7 @@ public class TabColumnPrefsState extends BaseState
    * @param newChannel the channel to add
    * @param position either <code>before</code> or <code>after</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
-   * @throws Exception
+   * @throws PortalException
    */
   private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
   {
@@ -537,7 +539,7 @@ public class TabColumnPrefsState extends BaseState
   }
 
   /**
- * @param siblingsIncludingSelf
+ * @param list is a NodeList containing all columns found in current tab
  */
   private void setEvenlyAssignedColumnWidths(NodeList list) {
     // Simply divide the number of columns by 100 and produce an evenly numbered column widths
@@ -560,7 +562,7 @@ public class TabColumnPrefsState extends BaseState
   
   /**
    * A folder is a tab if its parent element is the layout element
-   * @param folder the folder in question
+   * @param folderId the folder in question
    * @return <code>true</code> if the folder is a tab, otherwise <code>false</code>
    */
   private final boolean isTab (String folderId) throws PortalException
@@ -571,7 +573,7 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A folder is a column if its parent is a tab element
-   * @param folder the folder in question
+   * @param folderId the folder in question
    * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
    */
   private final boolean isColumn (String folderId) throws PortalException
