@@ -768,7 +768,42 @@
                   </table>
                 </td>
               </tr>
+
+              <!-- Channel Secure -->
+              <tr class="uportal-channel-text">
+                <!--<td align="center" valign="top">
+                  <input type="checkbox" name="modifySecure" value="checkbox"/>
+                </td>-->
+                 <td align="center" valign="top">
+                  <a href="javascript:alert('Name: Channel Secure\n\nDescription: This indicates whether or not a channel should only be rendered in a secure setting (i.e. https).')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Secure:</span><br/>
+                    <input type="checkbox" name="secure" class="uportal-input-text">
+                      <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@secure = 'true'">
+                        <xsl:attribute name="checked">
+                          checked
+                        </xsl:attribute>
+                      </xsl:if>
+                    </input>
+		</td>
+              </tr>
               
+              <tr>
+                <td colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
               <!-- Channel Java Class -->
               <xsl:choose>
                 <xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
@@ -1887,6 +1922,29 @@
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@timeout"/>
                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>milliseconds</a></td>
+           </tr>
+
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" colspan="5">
+               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                 <tr>
+                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                 </tr>
+              </table>
+            </td>
+          </tr>
+
+           <!-- Channel Secure -->
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Secure:</a></strong></td>
+             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">
+             <xsl:choose>
+               <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@secure = 'true'"><img alt="Secure" title="Secure" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+               <xsl:otherwise><img alt="Not Secure" title="Not Secure" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
+             </xsl:choose></a></td>
            </tr>
 
            <tr class="uportal-channel-text">

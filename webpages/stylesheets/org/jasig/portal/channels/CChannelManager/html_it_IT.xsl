@@ -69,27 +69,27 @@
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
             <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2" class="uportal-channel-text">Options for Managing Channels:</td>
+              <td colspan="2" class="uportal-channel-text">Opzioni per la gestione dei canali:</td>
             </tr>
             <tr valign="top">
               <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td width="100%" class="uportal-channel-text">
-                <a href="{$baseActionURL}?uPCM_action=selectChannelType">Publish a new channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectChannelType">Pubblica un nuovo canale</a>
               </td>
             </tr>
             <tr valign="top">
               <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modify a currently published channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modifica il canale corrente pubblicato</a>
               </td>
             </tr>
           </table>
@@ -108,7 +108,7 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Channel Type:</strong> Select the type of channel to add by clicking a select icon in the option column</td>
+            <strong>Tipo di Canale:</strong> Seleziona il tipo di canale da aggiungere selezionando una delle icone nella colonna delle opzioni</td>
         </tr>
         <tr>
           <td>
@@ -116,20 +116,20 @@
               <tr>
                 <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap" class="uportal-channel-table-header">Channel Type</td>
+                <td nowrap="nowrap" class="uportal-channel-table-header">Tipo di Canale</td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%" class="uportal-channel-table-header">Description</td>
+                <td width="100%" class="uportal-channel-table-header">Descrizione</td>
               </tr>
               <tr class="uportal-channel-text" valign="top">
                 <td nowrap="nowrap" colspan="5">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -143,15 +143,15 @@
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
                 <td nowrap="nowrap">
-                  <strong>Custom</strong>
+                  <strong>Proprietario</strong>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
-                <td width="100%">This channel type allows the publication of channels with no accompanying CPD (Channel Publishing Document). It is typically used to publish channels with only one corresponding channel definition.</td>
+                <td width="100%">Questo tipo di canale permette la pubblicazione di canalisenza CPD (Channel Publishing Document). E' tipicamente utilizzato nella pubblicazione di canali che hanno un'unica definizione di canale.</td>
               </tr>
 
                 <tr class="uportal-channel-text" valign="top">
@@ -159,7 +159,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -171,7 +171,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -186,7 +186,7 @@
                     <xsl:if test="@ID=../../channel/@typeID">
                      <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input> </td>
                   <td nowrap="nowrap">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
                   <td nowrap="nowrap">
                     <strong>
@@ -194,7 +194,7 @@
                     </strong>
                   </td>
                   <td nowrap="nowrap">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
                   <td width="100%">
                     <xsl:value-of select="description"/>
@@ -205,7 +205,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                          <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                         </td>
                       </tr>
                     </table>
@@ -221,9 +221,9 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
     </form>
@@ -242,10 +242,10 @@
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
             <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2">Modify a currently published channel:</td>
+              <td colspan="2">Modifica il canale corrente pubblicato:</td>
             </tr>
             <tr valign="top">
-              <td colspan="2">Select an option by clicking one of the icons in the table below.</td>
+              <td colspan="2">Seleziona un'opzione selezionando una delle icone nella tabella sottostante.</td>
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td colspan="2">
@@ -256,10 +256,10 @@
             </tr>
             <tr valign="top">
               <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?uPCM_action=cancel">Cancel and return</a>
+                <a href="{$baseActionURL}?uPCM_action=cancel">Cancella e ritorna</a>
               </td>
             </tr>
           </table>
@@ -278,7 +278,7 @@
           </td>
           <form method="post" action="{$baseActionURL}">
           <input type="hidden" name="uPCM_action" value="filterByCategory"/>
-          <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]">
+          <td width="100%" class="uportal-background-med">Filtra per categoria:<xsl:for-each select="//*[@ID = $filterByID]">
           <xsl:for-each select="ancestor::category">
           <a class="uportal-navigation-category-selected"><xsl:attribute name="href">
           <xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
@@ -294,8 +294,8 @@
                 <option>
                   <xsl:attribute name="value">
                     <xsl:value-of select="//registry[1]/@ID"/>
-                  </xsl:attribute>No Filter</option></select>
-              <input type="submit" name="uPCM_submit" value="go" class="uportal-input-text"/></xsl:for-each>
+                  </xsl:attribute>Nessun filtro</option></select>
+              <input type="submit" name="uPCM_submit" value="vai" class="uportal-input-text"/></xsl:for-each>
           </td>
           </form>
       </tr>
@@ -307,20 +307,20 @@
                 <tr class="uportal-channel-table-header">
                   <td colspan="2" align="center" valign="top">Option</td>
                   <td nowrap="nowrap" valign="top">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td nowrap="nowrap" valign="top">Channel Name</td>
+                  <td nowrap="nowrap" valign="top">Nome del canale</td>
                   <td valign="top">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td width="100%" valign="top">Description</td>
+                  <td width="100%" valign="top">Descrizione</td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" colspan="6">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
+                          <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -332,16 +332,16 @@
                     <tr class="uportal-channel-text" valign="top">
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
+                          <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Modifica le impostazioni di {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
+                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Rimuovi il canale pubblicato - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
                         </a>
                       </td>
                       <td valign="top">
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                       <td nowrap="nowrap" valign="top">
                         <strong>
@@ -349,7 +349,7 @@
                         </strong>
                       </td>
                       <td valign="top">
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                       <td width="100%" valign="top">
                         <xsl:value-of select="@description"/>
@@ -360,7 +360,7 @@
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                           <tr>
                             <td>
-                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                              <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                             </td>
                           </tr>
                         </table>
@@ -372,7 +372,7 @@
               <xsl:otherwise>
                 <tr class="uportal-channel-table-header">
                   <td colspan="3" valign="top" nowrap="nowrap">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>No channels to display</td>
+                    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16"/>Nessun canale da visualizzare</td>
                 </tr>
               </xsl:otherwise>
             </xsl:choose>
@@ -390,7 +390,7 @@
               <xsl:with-param name="maxPages" select="$maxPages"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>records at a time.<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="go" class="uportal-button"/></td>
+          <td width="100%" class="uportal-background-med" valign="top">Mostra<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input> elementi alla volta.<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="vai" class="uportal-button"/></td>
         </form>
       </tr>
     </table>
@@ -401,10 +401,10 @@
     <xsl:param name="maxPages"/>
 
     <xsl:if test="$i &lt;= $maxPages">
-      <xsl:if test="$i = 1">page:</xsl:if>
+      <xsl:if test="$i = 1">pagina:</xsl:if>
       <xsl:if test="($i = 1) and ($currPage=1)">
-        <img src="{$mediaPath}/arrow_left_off.gif" width="16" height="16" alt="Previous" border="0"/>
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img src="{$mediaPath}/arrow_left_off.gif" width="16" height="16" alt="Precedente" border="0"/>
+        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="($i = 1) and ($currPage &gt; 1)">
         <a>
@@ -412,13 +412,13 @@
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)-1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" ID="left" alt="Go to page [{($currPage)-1}]" border="0"/>
         </a>
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="$i = $currPage">
         <strong>
           <xsl:value-of select="$i"/>
         </strong>
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="$i != $currPage">
         <a>
@@ -426,16 +426,16 @@
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
           <xsl:value-of select="$i"/>
         </a>
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="($i = $maxPages) and ($currPage = $maxPages)">
-        <img src="{$mediaPath}/arrow_right_off.gif" width="16" height="16" alt="Next" border="0"/>
+        <img src="{$mediaPath}/arrow_right_off.gif" width="16" height="16" alt="Prossima" border="0"/>
       </xsl:if>
       <xsl:if test="($i = $maxPages) and ($currPage &lt; $maxPages)">
         <a>
           <xsl:attribute name="href">
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)+1"/></xsl:attribute>
-          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Go to page [{($currPage)+1}]" border="0"/>
+          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Vai alla pagina [{($currPage)+1}]" border="0"/>
         </a>
       </xsl:if>
       <xsl:call-template name="pagingWidget">
@@ -454,14 +454,14 @@
 
             <tr class="uportal-channel-strong" valign="top">
               <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
             <tr valign="top">
               <td colspan="2">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td class="uportal-channel-table-header" nowrap="nowrap">Workflow:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/></td>
+                    <td class="uportal-channel-table-header" nowrap="nowrap">Workflow:<img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="10" height="10"/></td>
                     <xsl:apply-templates select="manageChannels//step" mode="workflow"/>
                   </tr>
                 </table>
@@ -469,7 +469,7 @@
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
           </table>
@@ -488,7 +488,7 @@
             <table border="0" cellspacing="0" cellpadding="0" width="100%">
               <tr>
                 <td class="uportal-background-shadow">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
               </tr>
             </table>
@@ -505,7 +505,7 @@
                         <xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) !=''"><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Channel Parameters</xsl:otherwise>
+                          <xsl:otherwise>Parametri del Canale</xsl:otherwise>
                         </xsl:choose>
                       </a>
                     </td>
@@ -521,14 +521,14 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-shadow">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
               </td>
             </tr>
           </table>
         </td>
       </xsl:if>
       <td>
-        <img alt="interface image" src="{$mediaPath}/arrow_right_timeline.gif"/>
+        <img alt="immagine dell'interfaccia" src="{$mediaPath}/arrow_right_timeline.gif"/>
       </td>
       <td>
         <table border="0" cellspacing="0" cellpadding="1" class="uportal-background-dark">
@@ -540,7 +540,7 @@
                     <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) != ''"><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Channel Parameters</xsl:otherwise>
+                          <xsl:otherwise>Parametri del Canale</xsl:otherwise>
                         </xsl:choose>
                     </a>
                   </td>
@@ -555,7 +555,7 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-med">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
               </td>
             </tr>
           </table>
@@ -571,7 +571,7 @@
                         <xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name)!='' "><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Channel Parameters</xsl:otherwise>
+                          <xsl:otherwise>Parametri del Canale</xsl:otherwise>
                         </xsl:choose>
                       </a>
                     </td>
@@ -595,21 +595,21 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Settings [one]:</strong> Complete the Settings form below</td>
+            <strong>Impostazioni \[uno\]:</strong> Scrivi le impostazioni nelle schede sottostanti</td>
         </tr>
         <tr>
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
-                <!--<td align="center" nowrap="nowrap">User can<br/> Modify?</td>-->
+                <!--<td align="center" nowrap="nowrap">L'utente può <br/> Modificare?</td>-->
 
                 <td align="center" nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Opzioni
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
                 <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%">General Settings</td>
+                <td width="100%">Impostazioni generali</td>
               </tr>
               
               <tr class="uportal-channel-table-header">
@@ -617,7 +617,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -627,13 +627,13 @@
               <!-- Channel Title -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Title\n\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  <a href="javascript:alert('Nome: Titolo del Canale\n\nEsempio: Grafici di stoccaggio\n\nDescrizione: Questo è titolo del canale. Tipicamente, questo testo appare in cima al canale. Tipicamente, il titolo ed il nome del canale coincidono.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Title:</span> <span class="uportal-text-small">[example - StockCharts]<br/>
+                  <span class="uportal-label">Titolo del Canale:</span> <span class="uportal-text-small">[esempio - StockCharts]<br/>
                   <input type="text" name="title" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@title">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
@@ -645,7 +645,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -655,13 +655,13 @@
               <!-- Channel name -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Name\n\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  <a href="javascript:alert('Name: Channel Name\n\nEsempio: Grafici di stoccaggio\n\nDescrizione: Questo è il nome del canale. Questo è il nome che gli utenti vedranno nella sottoscrizione del canale. Tipicamente il titolo ed il nome del canale coincidono.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/>
+                  <span class="uportal-label">Nome del Canale:</span> <span class="uportal-text-small">[esempio - StockCharts]<br/>
                   <input type="text" name="name" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@name">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>
@@ -673,7 +673,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -683,13 +683,13 @@
               <!-- Channel fname -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Functional Name\n\nExample: stock-charts\n\nDescription: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identify this channel definition.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  <a href="javascript:alert('Nome: Nome funzionale del canale\n\nEsempio: stock-charts\n\nDescrizione: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identify this channel definition.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Functional Name:</span> <span class="uportal-text-small">[example - stock-charts]<br/>
+                  <span class="uportal-label">Nome funzionale del canale:</span> <span class="uportal-text-small">[esempio - stock-charts]<br/>
                   <input type="text" name="fname" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@fname">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@fname"/></xsl:attribute></xsl:if></input>
@@ -701,7 +701,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -711,13 +711,13 @@
               <!-- Channel Description -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel that is used when it is helpful to provide additional information to a user about a channel.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  <a href="javascript:alert('Nome: Descrizione del canale:\n\nEsempio: Il grafico dei stoccaggi è un esempio finanziario che mostra i grafici di stoccaggio nel tempo.\n\nDescrizione: This is the description of the channel that is used when it is helpful to provide additional information to a user about a channel.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Description:</span><br/>
+                  <span class="uportal-label">Descrizione del Canale</span><br/>
                   <textarea name="description" cols="50" rows="3" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
                       <xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/>
@@ -731,7 +731,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -744,17 +744,17 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will be given to render itself before the portal terminates that channels rendering.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  <a href="javascript:alert('Nome: Timeout del Canale\n\nEsempio: 10000\n\nDescrizione: This is the number of milliseconds a channel will be given to render itself before the portal terminates that channels rendering.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Timeout:</span> <br/>
+                  <span class="uportal-label">Timeout del canale:</span> <br/>
                    <input type="text" name="timeout" size="6" class="uportal-input-text">
                                        <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@timeout">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute></xsl:if></input>
-                   milliseconds (1000 = 1 second)</td>
+                   millisecondi (1000 = 1 secondo)</td>
               </tr>
               
               <tr>
@@ -762,13 +762,48 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
                 </td>
               </tr>
+
+              <!-- Channel Secure -->
+              <tr class="uportal-channel-text">
+                <!--<td align="center" valign="top">
+                  <input type="checkbox" name="modifySecure" value="checkbox"/>
+                </td>-->
+                 <td align="center" valign="top">
+                  <a href="javascript:alert('Name: Channel Secure\n\nDescrizione: This indicates whether or not a channel should only be rendered in a secure setting (i.e. https).')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
+                  </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Secure:</span><br/>
+                    <input type="checkbox" name="secure" class="uportal-input-text">
+                      <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@secure = 'true'">
+                        <xsl:attribute name="checked">
+                          checked
+                        </xsl:attribute>
+                      </xsl:if>
+                    </input>
+		</td>
+              </tr>
               
+              <tr>
+                <td colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
               <!-- Channel Java Class -->
               <xsl:choose>
                 <xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
@@ -777,14 +812,14 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Class\n\nExample: edu.myuniversity.portal.channels.myChannel.MyChannelClass\n\nDescription: This is the java class for a custom channel. A channel class is mandatory')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    <a href="javascript:alert('Nome: Classe del Canale\n\nExampio: edu.myuniversity.portal.channels.myChannel.MyChannelClass\n\nDescrizione: This is the java class for a custom channel. A channel class is mandatory')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
     </a></td>
 
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Class:</span> <br/>
+                  <span class="uportal-label">Classe del canale:</span> <br/>
                    <input type="text" name="class" size="50" class="uportal-input-text">
                                        <xsl:if test="/manageChannels/selectGeneralSettings/params/step/channel/@class">
                      <xsl:attribute name="value"><xsl:value-of select="/manageChannels/selectGeneralSettings/params/step/channel/@class"/></xsl:attribute></xsl:if></input></td>
@@ -795,7 +830,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -811,10 +846,10 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='channelParams'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='channelParams'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
     </form>
@@ -848,13 +883,13 @@
             <xsl:when test="normalize-space(params/step[position()=$stepID]/name) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/name"/>
             </xsl:when>
-            <xsl:otherwise>Step Name</xsl:otherwise></xsl:choose>:</strong>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+            <xsl:otherwise>Nome del Passo</xsl:otherwise></xsl:choose>:</strong>
+            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
                         <xsl:choose>
             <xsl:when test="normalize-space(params/step[position()=$stepID]/description) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/description"/>
             </xsl:when>
-            <xsl:otherwise>Description</xsl:otherwise></xsl:choose>
+            <xsl:otherwise>Descrizione</xsl:otherwise></xsl:choose>
           </td>
         </tr>
         <tr>
@@ -863,21 +898,21 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
                 <td align="center" nowrap="nowrap">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Opzioni
+                <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
-                <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
+                <td align="center" nowrap="nowrap">L'utente può <br/> Modificare?</td>
                 <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%">General Settings</td>
+                <td width="100%">Impostazioni generali</td>
               </tr>
               <tr class="uportal-channel-table-header">
                 <td align="center" colspan="4">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -891,7 +926,7 @@
         <tr>
         
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="&lt; Indietro" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = 1">document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -899,7 +934,7 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="Avanti &gt;" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = count(params/step)">document.workflow.uPCM_action.value='selectControls';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -907,8 +942,8 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
+            <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
           </td>
         </tr>
       </table>
@@ -929,13 +964,13 @@
             <xsl:when test="normalize-space(params/step[position()=$stepID]/name) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/name"/>
             </xsl:when>
-            <xsl:otherwise>Step Name</xsl:otherwise></xsl:choose>:</strong>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+            <xsl:otherwise>Nome del Passo</xsl:otherwise></xsl:choose>:</strong>
+            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
                         <xsl:choose>
             <xsl:when test="normalize-space(params/step[position()=$stepID]/description) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/description"/>
             </xsl:when>
-            <xsl:otherwise>Description</xsl:otherwise></xsl:choose>
+            <xsl:otherwise>Descrizione</xsl:otherwise></xsl:choose>
           </td>
         </tr>
 
@@ -954,13 +989,13 @@
 
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Name:<br />
+                    <td>Nome:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td>Value:<br />
+                    <td>Valore:<br />
                      <input type="text" name="value" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -968,38 +1003,38 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" />
-                     User can modify?
+                     <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     L'utente può modificare?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="add" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="aggiungi" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="interface image" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="immagine dell'interfaccia" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Modify?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="8" height="8" /></td>
-                    <td width="100%" class="uportal-channel-table-header">Value</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">L'utente può <br/>Modificare?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Nome</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="8" height="8" /></td>
+                    <td width="100%" class="uportal-channel-table-header">Valore</td>
                   </tr>
 
                   <tr class="uportal-channel-text" valign="top">
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -1010,26 +1045,26 @@
                       <xsl:for-each select="params/step[ID=$stepID]/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Rimuovi questo parametro"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="interface image" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="interface image" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="immagine dell'interfaccia" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="immagine dell'interfaccia" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="substring(@name,$prefixLength+1)"/></strong></td>
-                          <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="immagine dell'interfaccia" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -1037,7 +1072,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                       <tr class="uportal-channel-text" valign="top">
-                        <td colspan="5" align="left">No parameters</td>
+                        <td colspan="5" align="left">Nessun parametro</td>
                       </tr>
                     </xsl:otherwise>
                   </xsl:choose>
@@ -1054,10 +1089,10 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
       </tr>-->
@@ -1067,7 +1102,7 @@
       <input type="hidden" name="uPCM_capture" value="channelDef"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="&lt; Indietro" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = 1">document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -1075,7 +1110,7 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="Avanti &gt;" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = count(params/step)">document.workflow.uPCM_action.value='selectControls';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -1083,8 +1118,8 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
+            <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
           </td></form>
         </tr>
     </table>
@@ -1122,7 +1157,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -1165,7 +1200,7 @@
           </input>
         </xsl:when>
         <xsl:otherwise>
-          <img alt="interface image" src="{$mediaPath}/nocheck.gif" width="16" height="16"/>
+          <img alt="immagine dell'interfaccia" src="{$mediaPath}/nocheck.gif" width="16" height="16"/>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -1474,20 +1509,20 @@
   </xsl:template>
 
   <xsl:template match="example">
-    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
-    <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
+    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <span class="uportal-text-small">[esempio - <xsl:value-of select="."/>]</span>
   </xsl:template>
 
     <xsl:template match="units">
-    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small"><xsl:value-of select="."/></span>
   </xsl:template>
 
       <xsl:template name="help">
     <a>
     <xsl:attribute name="href">
-    javascript:alert('Name: <xsl:value-of select="label"/>\n\nExample: <xsl:value-of select="example"/>\n\nDescription: <xsl:value-of select="description"/>')</xsl:attribute>
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    javascript:alert('Name: <xsl:value-of select="label"/>\n\nEsempio: <xsl:value-of select="example"/>\n\nDescrizione: <xsl:value-of select="description"/>')</xsl:attribute>
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Mostra l'aiuto"/>
     </a>
   </xsl:template>
 
@@ -1502,33 +1537,33 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Channel Controls:</strong>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Select channel controls in the form below</td>
+            <strong>Controlli del Canale:</strong>
+            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Seleziona i controli del canale dalla lista sottostante</td>
         </tr>
         <tr>
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header">
-                <td align="center">Select</td>
+                <td align="center">Selezionato</td>
                 <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap" align="center">Channel Controls</td>
+                <td nowrap="nowrap" align="center">Controlli del Canale</td>
                 <td nowrap="nowrap" align="center">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap" align="center">Icon</td>
+                <td nowrap="nowrap" align="center">Icona</td>
                 <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%">Description</td>
+                <td width="100%">Descrizione</td>
               </tr>
 
               <tr class="uportal-channel-table-header">
                 <td align="center" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/></td>
+                      <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="2" height="2"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1554,12 +1589,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Editable</strong></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td>when selected, passes edit events</td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Modificabile</strong></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td>quando viene selezionata, tramette l'evento di modifica</td>
               </tr>
 
               </xsl:when>
@@ -1574,12 +1609,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Editable</strong></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>when selected, passes edit events</td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Modificabile</strong></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>quando viene selezionata, tramette l'evento di modifica</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1590,7 +1625,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+                      <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1616,12 +1651,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Has Help</strong></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td>when selected, passes help events</td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Ha l'aiuto</strong></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td>quando viene selezionato, trasmette l'evento di aiuto</td>
               </tr>
 
               </xsl:when>
@@ -1636,12 +1671,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Has Help</strong></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>when selected, passes help events</td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Ha l'aiuto</strong></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>quando viene selezionato, trasmette l'evento di aiuto</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1652,7 +1687,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+                      <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1678,12 +1713,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Has About</strong></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
-                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                <td>when selected, passes about events</td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Ha informazioni</strong></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                <td>quando viene selezionato, trasmette l'evento di richiesta informazioni</td>
               </tr>
 
               </xsl:when>
@@ -1698,12 +1733,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Has About</strong></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>when selected, passes about events</td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Ha informazioni</strong></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>quando viene selezionato, trasmette l'evento di richiesta informazioni</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1713,10 +1748,10 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelParams';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='channelParams';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
     </form>
@@ -1740,10 +1775,10 @@
 
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
       </tr>
 
@@ -1760,7 +1795,7 @@
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
       <tr class="uportal-channel-text">
-        <td><strong>Review:</strong> Please review the settings for accuracy (click workflow icons or items in the table below to edit settings)</td>
+        <td><strong>Revisione:</strong> Revisionare le impostazioni in modo accurato (selezionare gli elementi o le icone su cui si vuole effetture modifiche)</td>
       </tr>
       <!-- Display an error message when appropriate -->
       <xsl:if test="$errorMsg='NO_CATEGORIES'"><tr><td class="uportal-channel-error">Please select at least one category before continuing.</td></tr></xsl:if>
@@ -1770,29 +1805,29 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
 
             <tr class="uportal-channel-table-header" valign="bottom">
-              <td nowrap="nowrap" align="center">User can<br />
-                modify?</td>
-              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td nowrap="nowrap">Name</td>
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td width="100%">Value</td>
+              <td nowrap="nowrap" align="center">L'utente può<br />
+                modificarlo?</td>
+              <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td nowrap="nowrap">Nome</td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td width="100%">Valore</td>
             </tr>
 
             <tr class="uportal-channel-text">
               <td nowrap="nowrap" colspan="5">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                   <tr>
-                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                    <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                   </tr>
                 </table>
              </td>
            </tr>
 
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Channel Type:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Tipo di Canale:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">
                <xsl:value-of select="//selectChannelType/params/step/channelTypes/channelType[@ID=/manageChannels/reviewChannel/params/step/channel/@typeID]/name"/></a></td>
            </tr>
@@ -1801,24 +1836,24 @@
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
            </tr>
 
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Title:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Titolo del Canale:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@title"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1826,17 +1861,17 @@
            
            <!-- Channel name -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Name:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Nome del Canale:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@name"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1844,17 +1879,17 @@
            
            <!-- Channel fname -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Functional Name:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Nome funzionale del canale:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@fname"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1862,10 +1897,10 @@
 
            <!-- Channel Description -->           
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Description:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Descrizione del Canale</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@description"/></a></td>
            </tr>
 
@@ -1873,7 +1908,7 @@
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1881,40 +1916,63 @@
 
            <!-- Channel Timeout -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Timeout:</a></strong></td>
-             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Timeout del canale:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@timeout"/>
-               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>milliseconds</a></td>
+               <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>millisecondi</a></td>
            </tr>
 
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
               </table>
             </td>
           </tr>
 
-           <!-- Channel Parameters -->
+           <!-- Channel Secure -->
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Secure:</a></strong></td>
+             <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">
+             <xsl:choose>
+               <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@secure = 'true'"><img alt="Secure" title="Secure" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+               <xsl:otherwise><img alt="Not Secure" title="Not Secure" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
+             </xsl:choose></a></td>
+           </tr>
+
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" colspan="5">
+               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                 <tr>
+                   <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                 </tr>
+              </table>
+            </td>
+          </tr>
+
+           <!-- Parametri del Canale -->
           <xsl:choose>
             <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@typeID = -1">
 
           <tr class="uportal-channel-text">
-            <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-            <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Class:</a></strong></td>
-            <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+            <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Classe del canale:</a></strong></td>
+            <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@class"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                 <tr>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                 </tr>
               </table>
             </td>
@@ -1923,20 +1981,20 @@
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">
             <xsl:choose>
-              <xsl:when test="@override = 'yes'"><img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
-              <xsl:otherwise><img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
+              <xsl:when test="@override = 'yes'"><img alt="L'utente può modificare" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+              <xsl:otherwise><img alt="L'utente può modificare" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
             </xsl:choose></a>
             </td>
-            <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">Parameter:</a></strong></td>
-            <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">Parametri:</a></strong></td>
+            <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                 <tr>
-                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                  <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                 </tr>
               </table>
             </td>
@@ -1954,12 +2012,12 @@
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@override = 'yes'">
-            <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
-            <xsl:otherwise><img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise></xsl:choose></a>
+            <img alt="L'utente può modificare" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+            <xsl:otherwise><img alt="L'utente può modificare" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise></xsl:choose></a>
             </td>
-            <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}"><xsl:value-of select="//parameter/name[.=$name]/../label"/></a></strong></td>
-            <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@value = //channelDef//restriction/value and //channelDef//restriction/value[.=$value]/@display"><xsl:value-of select="//channelDef//restriction/value[.=$value]/@display"/></xsl:when>
             <xsl:otherwise><xsl:value-of select="@value"/></xsl:otherwise></xsl:choose>
@@ -1969,7 +2027,7 @@
             <td nowrap="nowrap" colspan="5">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
             </table>
             </td>
@@ -1984,21 +2042,21 @@
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}">
             <xsl:choose>
             <xsl:when test="@override = 'yes'">
-            <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+            <img alt="L'utente può modificare" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
             <xsl:otherwise>
-            <img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" />
+            <img alt="L'utente può modificare" src="{$mediaPath}/check.gif" width="16" height="16" border="0" />
             </xsl:otherwise>
             </xsl:choose></a></td>
-            <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@name"/></a></strong></td>
-            <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@value"/></a></td>
             </tr>
             <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
             </table>
             </td>
@@ -2014,42 +2072,42 @@
 
       <tr class="uportal-channel-text">
 
-        <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
-        <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">Channel Controls</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">Controlli del Canale</a></strong></td>
 
 
 
-        <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
         <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
-        Editable<br/>
+        Modificabile<br/>
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@hasHelp='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@hasHelp='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
-        Has Help<br/>
+        Ha l'aiuto<br/>
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@hasAbout='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@hasAbout='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
-        Has About<br/>
+        Ha informazioni<br/>
 
         <!--
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@printable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@printable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
         Printable<br/>
         -->
@@ -2070,7 +2128,7 @@
 
             <tr>
 
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
             </tr>
 
@@ -2084,26 +2142,26 @@
 
       <tr class="uportal-channel-text">
 
-        <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
 
 
-        <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">Selected Categories:</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">Categorie selezionate:</a></strong></td>
 
 
 
-        <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
         <td ><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">
 
         <xsl:for-each select="//selectedCategory">
-          <img alt="interface image" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
+          <img alt="immagine dell'interfaccia" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
           <xsl:value-of select="@name"/>
           <br/>
         </xsl:for-each>
@@ -2124,7 +2182,7 @@
 
             <tr>
 
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
             </tr>
 
@@ -2136,14 +2194,14 @@
 
       <!-- Selected groups/people -->
       <tr class="uportal-channel-text">
-        <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
-        <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Selected Groups and/or People:</a></strong></td>
-        <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap" align="center"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Grouppi e/o Utenti selezionati:</a></strong></td>
+        <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
         <td>
           <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
             <xsl:for-each select="//selectedGroup">
-              <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
+              <img alt="immagine dell'interfaccia" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
               <xsl:value-of select="@name"/>
               <br/>
             </xsl:for-each>
@@ -2156,7 +2214,7 @@
         <td nowrap="nowrap" colspan="5">
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
           </table>
         </td>
@@ -2166,9 +2224,9 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
-          <input type="submit" name="uPCM_submit" value="Finished" onclick="document.workflow.uPCM_action.value='finished'" class="uportal-button" />
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button" />
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
+          <input type="submit" name="uPCM_submit" value="Finito" onclick="document.workflow.uPCM_action.value='finished'" class="uportal-button" />
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button" />
         </td>
       </tr>
 
@@ -2181,7 +2239,7 @@
     <xsl:call-template name="workflow"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
-        <td><strong>Add Parameters:</strong> Complete the form below to add channel parameters</td>
+        <td><strong>Parametri aggiunti:</strong> Completa le schede sottostanti per aggiungere parametri al canale</td>
       </tr>
 
       <tr>
@@ -2196,13 +2254,13 @@
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Name:<br />
+                    <td>Nome:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td>Value:<br />
+                    <td>Valore:<br />
                      <input type="text" name="value" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -2210,38 +2268,38 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" />
-                     User can modify?
+                     <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     L'utente può modificare?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="add" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="aggiungi" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="interface image" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="immagine dell'interfaccia" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Modify?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="8" height="8" /></td>
-                    <td width="100%" class="uportal-channel-table-header">Value</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">L'utente può <br/>Modificare?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Nome</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="8" height="8" /></td>
+                    <td width="100%" class="uportal-channel-table-header">Valore</td>
                   </tr>
 
                   <tr class="uportal-channel-text" valign="top">
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -2252,26 +2310,26 @@
                       <xsl:for-each select="manageChannels/customSettings/params/step/channel/parameter">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Rimuovi questo parametro"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="interface image" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="interface image" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="immagine dell'interfaccia" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="immagine dell'interfaccia" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="@name"/></strong></td>
-                          <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="immagine dell'interfaccia" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -2279,7 +2337,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                       <tr class="uportal-channel-text" valign="top">
-                        <td colspan="5" align="left">No parameters</td>
+                        <td colspan="5" align="left">Nessun parametro</td>
                       </tr>
                     </xsl:otherwise>
                   </xsl:choose>
@@ -2296,10 +2354,10 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
       </tr>
@@ -2319,13 +2377,13 @@
                   <input type="hidden" name="uPCM_step" value="{$stepID}"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Name:<br />
+                    <td>Nome:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td>Value:<br />
+                    <td>Valore:<br />
                      <input type="text" name="value" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -2333,38 +2391,38 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" />
-                     User can modify?
+                     <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     L'utente può modificare?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="add" onclick="document.addParameter.name.value='{/manageChannels/channelDef/params/step[position()=$stepID]/arbitrary-parameters/paramName-prefix[1]}' + document.addParameter.name.value" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="aggiungi" onclick="document.addParameter.name.value='{/manageChannels/channelDef/params/step[position()=$stepID]/arbitrary-parameters/paramName-prefix[1]}' + document.addParameter.name.value" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="interface image" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="immagine dell'interfaccia" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Modify?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="8" height="8" /></td>
-                    <td width="100%" class="uportal-channel-table-header">Value</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">L'utente può <br/>Modificare?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Nome</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="immagine dell'interfaccia" src="transparent.gif" width="8" height="8" /></td>
+                    <td width="100%" class="uportal-channel-table-header">Valore</td>
                   </tr>
 
                   <tr class="uportal-channel-text" valign="top">
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -2376,26 +2434,26 @@
                       <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Rimuovi questo parametro"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="interface image" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="interface image" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="immagine dell'interfaccia" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="immagine dell'interfaccia" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="substring(@name,$prefixLength+1)"/></strong></td>
-                          <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="immagine dell'interfaccia" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="immagine dell'interfaccia" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -2403,7 +2461,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                       <tr class="uportal-channel-text" valign="top">
-                        <td colspan="5" align="left">No parameters</td>
+                        <td colspan="5" align="left">Nessun parametro</td>
                       </tr>
                     </xsl:otherwise>
                   </xsl:choose>
@@ -2420,10 +2478,10 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
       </tr>
@@ -2448,10 +2506,10 @@
 
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Indietro" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Avanti &gt;" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Revisione" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancella" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
       </tr>
 
