@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,18 +36,20 @@
 package org.jasig.portal;
 
 /**
- * Internal adapter for a multithreaded channel that is also privileged.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * An interface that a multithreaded privileged channel must implement.
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
- * @see MultithreadedChannelAdapter
  */
 
-public class MultithreadedPrivilegedChannelAdapter extends MultithreadedChannelAdapter implements IPrivilegedChannel {
-    public MultithreadedPrivilegedChannelAdapter(IMultithreadedChannel channel, String uid) {
-        super(channel,uid);
-    }
+public interface IMultithreadedPrivileged {
+  
+	/**
+	 * Passes portal control structure to the channel.
+	 * @see PortalControlStructures
+	 */
+	public void setPortalControlStructures(PortalControlStructures pcs, String uid) throws PortalException;
 
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-        ((IMultithreadedPrivileged)channel).setPortalControlStructures(pcs, uid);
-    }
 }
+
+
+

@@ -44,10 +44,10 @@ package org.jasig.portal;
 
 public class MultithreadedPrivilegedCacheableChannelAdapter extends MultithreadedCacheableChannelAdapter implements IPrivilegedChannel {
     public MultithreadedPrivilegedCacheableChannelAdapter(IMultithreadedChannel channel, String uid) {
-	super(channel,uid);
+        super(channel,uid);
     }
 
     public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-	((IPrivileged)channel).setPortalControlStructures(pcs);
+        ((IMultithreadedPrivileged)channel).setPortalControlStructures(pcs, uid);
     }
 }

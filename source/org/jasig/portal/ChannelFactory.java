@@ -134,7 +134,7 @@ public class ChannelFactory {
         // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
         if(cobj instanceof IMultithreadedChannel) {
             if(cobj instanceof IMultithreadedCacheable) {
-                if(cobj instanceof IPrivileged) {
+                if(cobj instanceof IMultithreadedPrivileged) {
                     // both cacheable and privileged
                     ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
                 } else if (cobj instanceof IMultithreadedMimeResponse){
@@ -144,7 +144,7 @@ public class ChannelFactory {
                     // just cacheable
                     ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
                 }
-            } else if(cobj instanceof IPrivileged) {
+            } else if(cobj instanceof IMultithreadedPrivileged) {
                 ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
             } else if (cobj instanceof IMultithreadedMimeResponse) {
                 // download-worker enabled
