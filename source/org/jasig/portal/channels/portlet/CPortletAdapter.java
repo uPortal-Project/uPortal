@@ -120,7 +120,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             environment.addContainerService(logService);
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
-            System.out.println("Adding services: thread=" + Thread.currentThread().getName());
 
             portletContainer = new PortletContainerImpl();
             portletContainer.init("pluto-in-uPortal", servletConfig, environment, new Properties());
@@ -317,9 +316,16 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
-            System.out.println("CPortletAdapter: " + wrappedRequest.getClass().getClassLoader().getClass().getName());
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+            
+            // Process action if there is something to process
+            System.out.println("Rendering portlet window " + cd.getPortletWindow().getId());
+            if (rd.getParameters().size() > 0) {     
+                System.out.println("Processing action on portlet window " + cd.getPortletWindow().getId());
+                portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            }
+            
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             markup = sw.toString();
             
