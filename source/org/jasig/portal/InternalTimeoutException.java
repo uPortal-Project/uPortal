@@ -58,16 +58,20 @@ public class InternalTimeoutException extends PortalException {
 	l_timeoutValue=new Long(timeoutValue);
     }
 
-    public InternalTimeoutException(String msg,long timeoutValue,boolean reinstantiate) {
-	super(msg,reinstantiate);
+    public InternalTimeoutException(String msg,long timeoutValue,boolean refresh,boolean reinstantiate) {
+	super(msg,refresh, reinstantiate);
 	l_timeoutValue=new Long(timeoutValue);
     }
 
-    public InternalTimeoutException(String msg,boolean reinstantiate) {
-	super(msg,reinstantiate);
+    public InternalTimeoutException(String msg,boolean refresh, boolean reinstantiate) {
+	super(msg,refresh,reinstantiate);
     }
 
     public Long getTimeoutValue() {
 	return l_timeoutValue;
+    }
+
+    public int getExceptionCode() {
+	return PortalException.INTERNAL_TIMEOUT_EXCEPTION;
     }
 }

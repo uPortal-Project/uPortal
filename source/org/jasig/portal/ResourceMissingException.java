@@ -47,15 +47,18 @@ public class ResourceMissingException extends PortalException {
 
     // URI of the missing resource
     private String str_resourceURI=null;
+    private String str_description=null;
 
-    public ResourceMissingException(String resourceURI, String msg) {
+    public ResourceMissingException(String resourceURI, String resourceDescription, String msg) {
 	super(msg);
 	str_resourceURI=resourceURI;
+	str_description=resourceDescription;
     }
 
-    public ResourceMissingException(String resourceURI, String msg, boolean reinstantiate) {
-	super(msg,reinstantiate);
+    public ResourceMissingException(String resourceURI, String resourceDescription, String msg, boolean refresh, boolean reinstantiate) {
+	super(msg,refresh,reinstantiate);
 	str_resourceURI=resourceURI;
+	str_description=resourceDescription;
     }
 
     public ResourceMissingException() {
@@ -64,6 +67,14 @@ public class ResourceMissingException extends PortalException {
 
     public String getResourceURI() {
 	return str_resourceURI;
+    }
+
+    public String getResourceDescription() {
+	return str_description;
+    }
+
+    public int getExceptionCode() {
+	return PortalException.RESOURCE_MISSING_EXCEPTION;
     }
 
 }

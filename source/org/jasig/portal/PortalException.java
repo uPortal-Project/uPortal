@@ -45,11 +45,20 @@ package org.jasig.portal;
  */
 
 public abstract class PortalException extends Exception {
+    // enumerating possible exceptions
+    public static final int GENERAL_RENDERING_EXCEPTION=0;
+    public static final int INTERNAL_TIMEOUT_EXCEPTION=1;
+    public static final int AUTHORIZATION_EXCEPTION=2;
+    public static final int RESOURCE_MISSING_EXCEPTION=3;
+
     // should the user be given an option to reinstantiate
     // the channel in a given session ?
     boolean b_reinst=true;
+    // should the user be given an option to retry rendering
+    // that same channel instance ?
+    boolean b_refresh=true;
 
-    public PortalException(boolean reinstantiate) {
+    public PortalException(boolean refresh, boolean reinstantiate) {
 	b_reinst=reinstantiate;
     }
 
@@ -57,11 +66,21 @@ public abstract class PortalException extends Exception {
 	super(msg);
     }
 
-    public PortalException(String msg, boolean reinstantiate) {
+    public PortalException(String msg, boolean refresh, boolean reinstantiate) {
 	super(msg);
 	b_reinst=reinstantiate;
     }
 
     public PortalException() {
+    }
+
+    abstract public int getExceptionCode();
+    
+    public boolean allowRefresh() {
+	return b_refresh;
+    }
+
+    public boolean allowReinstantiation() {
+	return b_reinst;
     }
 }
