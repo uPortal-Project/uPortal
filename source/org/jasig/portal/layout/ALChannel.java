@@ -49,8 +49,6 @@ package org.jasig.portal.layout;
 
 public class ALChannel extends ALNode {
 
-    public static final int CHANNEL_TYPE = 1;
-
     public ALChannel() {
         super();
     }

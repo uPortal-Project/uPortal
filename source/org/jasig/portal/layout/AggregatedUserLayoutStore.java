@@ -219,7 +219,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         PreparedStatement  psAddChannelParam = null, psAddChannel = null;
 
-        if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
+        if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
           int subscribeId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId());
           if ( subscribeId > 0 ) {
            rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
@@ -271,7 +271,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       IALNodeDescription nodeDesc = node.getNodeDescription();
 
-      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
+      boolean isFolder = (node.getNodeType() == ALNodeTypes.FOLDER);
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
       int nodeId = CommonUtils.parseInt(nodeDesc.getId());
@@ -657,7 +657,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       int count = 0;
 
-      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
+      boolean isFolder = (node.getNodeType() == ALNodeTypes.FOLDER);
       IALNodeDescription nodeDesc = node.getNodeDescription();
       int nodeId = CommonUtils.parseInt(nodeDesc.getId());
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
@@ -980,7 +980,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
 
-      boolean isFolder = (node.getNodeType() == ALFolder.FOLDER_TYPE);
+      boolean isFolder = (node.getNodeType() == ALNodeTypes.FOLDER);
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
       int tmpValue = -1;
@@ -1240,7 +1240,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                boolean channelParamsExist = false;
 
-               if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
+               if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
                 int subscribeId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelSubscribeId());
                   ResultSet rsChan = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
                   try {
@@ -1604,7 +1604,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 }
 
               // Setting node description attributes
-              if ( node.getNodeType() == ALFolder.FOLDER_TYPE )
+              if ( node.getNodeType() == ALNodeTypes.FOLDER )
                  nodeDesc.setName(rs.getString(7));
               nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
               nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
@@ -1673,7 +1673,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     nodeDesc.setId(fragNode.getId());
                     nodeDesc.setFragmentNodeId(fragNode.getFragmentNodeId());
                     fragNode.setNodeDescription(nodeDesc);
-                    if ( fragNode.getNodeType() == ALFolder.FOLDER_TYPE ) {
+                    if ( fragNode.getNodeType() == ALNodeTypes.FOLDER ) {
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
                     }
                     layout.put(nodeDesc.getId(),fragNode);
@@ -1683,7 +1683,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // If there is a channel we need to get its parameters
               IALChannelDescription channelDesc = null;
-              if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
+              if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
                 channelDesc = (IALChannelDescription) nodeDesc;
                 chanIds.add(nodeDesc.getId());
               }
@@ -1731,7 +1731,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               } else { // Do second SELECT later on for structure parameters
 
                   // Adding the channel ID to the String buffer
-                  if ( node.getNodeType() == ALChannel.CHANNEL_TYPE ) {
+                  if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
                    structParms.append(sepChar + chanId);
                    sepChar = ",";
                   }
@@ -1793,8 +1793,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 //ChannelDefinition channelDef = crs.getChannel(Integer.parseInt(channelDesc.getChannelPublishId()), true, pstmtChannel, pstmtChannelParm);
 
                 IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
-                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(channelDesc.getChannelPublishId()));
 
+
+               String publishId =  channelDesc.getChannelPublishId();
+               System.out.println ( "channelPubId: " + publishId );
+               if ( publishId != null ) {
+                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
                 if ( channelDef != null ) {
 
                  channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
@@ -1821,8 +1825,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  channelDesc.setTitle(channelDef.getTitle());
 
                 }
+               } // end if
 
-              }
+              } // end for
             /*} finally {
               if (pstmtChannelParm != null) {
                 pstmtChannelParm.close();
@@ -1948,7 +1953,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 } else
                     rootNode.setFirstChildNodeId(newId);
 
-                if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
+                if ( node.getNodeType() == ALNodeTypes.FOLDER ) {
                     //Changing the parent Ids for all the children
                     for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
                         ALNode child = (ALNode) layout.get(nextIdStr);
@@ -1965,7 +1970,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         for ( Enumeration fragmentNodesEnum = fragmentNodes.keys(); fragmentNodesEnum.hasMoreElements() ;) {
                String key = fragmentNodesEnum.nextElement().toString();
                ALNode node  = (ALNode ) fragmentNodes.get(key);
-               if ( node.getNodeType() == ALFolder.FOLDER_TYPE ) {
+               if ( node.getNodeType() == ALNodeTypes.FOLDER ) {
                    String parentId = node.getId();
                  for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
                      ALNode child = (ALNode) layout.get(nextIdStr);

@@ -33,56 +33,22 @@
  *
  */
 
-
-
 package org.jasig.portal.layout;
 
-import java.util.*;
-
 /**
- * <p>Title: UserLayoutFolder </p>
+ * <p>Title: ALNodeTypes interface </p>
  * <p>Description: </p>
  * <p>Company: Instructional Media & Magic</p>
  * @author Michael Ivanov mailto:mvi@immagic.com
- * @version 1.2
+ * @version 1.0
  */
 
+public interface ALNodeTypes {
 
-public class ALFolder extends ALNode {
-
-    protected String firstChildNodeId;
-
-    public ALFolder() {
-        super();
-    }
-
-
-    /**
-     * Gets the first child node ID
-     * @return a first child node ID
-     */
-    public String getFirstChildNodeId() {
-        return firstChildNodeId;
-    }
-
-	/*
-	 * @see org.jasig.portal.layout.ALNode#getNodeType()
+        /*
+	 * Constants indicating the type of ALNode
 	 */
-    public int getNodeType() {
-        return FOLDER_TYPE;
-    }
-
-    public static ALFolder createLostFolder() {
-        ALFolder lostFolder = new ALFolder();
-        ALFolderDescription folderDesc = new ALFolderDescription();
-        folderDesc.setId(IALFolderDescription.LOST_FOLDER_ID);
-        folderDesc.setHidden(false);
-        folderDesc.setImmutable(false);
-        folderDesc.setUnremovable(true);
-        folderDesc.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-        lostFolder.setNodeDescription(folderDesc);
-        lostFolder.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
-        return lostFolder;
-    }
+        public static final int CHANNEL = 1;
+	public static final int FOLDER = 2;
 
 }

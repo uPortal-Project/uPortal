@@ -53,7 +53,7 @@ import org.w3c.dom.Element;
  * @version 1.2
  */
 
-public abstract class ALNode {
+public abstract class ALNode implements ALNodeTypes {
 
      protected String parentNodeId;
      protected String nextNodeId;
