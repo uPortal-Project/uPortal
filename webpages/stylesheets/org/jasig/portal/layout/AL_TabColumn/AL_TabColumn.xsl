@@ -170,7 +170,7 @@ Version $Revision$
           <xsl:otherwise>
             <xsl:value-of select="round(@width div $sumOfWidths * 100)"/>
           </xsl:otherwise>
-        </xsl:choose>%      
+        </xsl:choose>      
       </xsl:attribute>
       <xsl:apply-templates select="descendant::channel|descendant::move_target|descendant::add_target"/>
     </column>

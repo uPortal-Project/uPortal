@@ -1977,7 +1977,7 @@ Version $Revision$
 	<xsl:template match="column">
 		<xsl:choose>
 			<xsl:when test="$mode='preferences'">
-				<td valign="top" width="{@width}">
+				<td valign="top" width="{@width}%">
 					<!-- Begin Column Table -->
 					<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
 						<xsl:choose>
@@ -2085,14 +2085,14 @@ Version $Revision$
 											</a>
 										</td>
 										<xsl:if test="count(../column)&gt;1">
-											<xsl:if test="number(substring-before(@width,'%'))&gt;4">
+											<xsl:if test="number(@width)&gt;4">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
 													<td>
 														<xsl:call-template name="calculateShrinkColumn"/>
 													</td>
 												</form>
 											</xsl:if>
-											<xsl:if test="number(substring-before(@width,'%'))&lt;96">
+											<xsl:if test="number(@width)&lt;96">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
 													<td>
 														<xsl:call-template name="calculateExpandColumn"/>
@@ -2104,7 +2104,7 @@ Version $Revision$
 										<td valign="middle" nowrap="nowrap">
 											<img src="{$mediaPathSkin}/transparent.gif" width="5" height="1"/>
 											<span class="uportal-channel-strong">
-												<xsl:value-of select="@width"/>
+												<xsl:value-of select="@width"/>%
 											</span>
 										</td>
 									</tr>
@@ -2154,19 +2154,19 @@ Version $Revision$
 				</td>
 			</xsl:when>
 			<xsl:otherwise>
-				<td valign="top" width="{@width}" class="uportal-background-dark">
+				<td valign="top" width="{@width}%" class="uportal-background-dark">
 					<xsl:apply-templates/>
 				</td>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<xsl:template name="calculateShrinkColumn">
-		<xsl:if test="number(substring-before(@width,'%'))&gt;4">
+		<xsl:if test="number(@width)&gt;4">
 			<xsl:variable name="thisId" select="@ID"/>
 			<xsl:choose>
 				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
-					<xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
-					<xsl:variable name="followingColumnExpanded" select="number(substring-before(following-sibling::column/@width,'%'))+5"/>
+					<xsl:variable name="thisColumnCondensed" select="number(@width)-5"/>
+					<xsl:variable name="followingColumnExpanded" select="number(following-sibling::column/@width)+5"/>
 					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
@@ -2181,8 +2181,8 @@ Version $Revision$
 					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnExpanded}"/>
 				</xsl:when>
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
-					<xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
-					<xsl:variable name="precedingColumnExpanded" select="number(substring-before(preceding-sibling::column/@width,'%'))+5"/>
+					<xsl:variable name="thisColumnCondensed" select="number(@width)-5"/>
+					<xsl:variable name="precedingColumnExpanded" select="number(preceding-sibling::column/@width)+5"/>
 					<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
@@ -2200,12 +2200,12 @@ Version $Revision$
 		</xsl:if>
 	</xsl:template>
 	<xsl:template name="calculateExpandColumn">
-		<xsl:if test="number(substring-before(@width,'%'))&lt;96">
+		<xsl:if test="number(@width)&lt;96">
 			<xsl:variable name="thisId" select="@ID"/>
 			<xsl:choose>
 				<xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
-					<xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
-					<xsl:variable name="followingColumnCondensed" select="number(substring-before(following-sibling::column/@width,'%'))-5"/>
+					<xsl:variable name="thisColumnExpanded" select="number(@width)+5"/>
+					<xsl:variable name="followingColumnCondensed" select="number(following-sibling::column/@width)-5"/>
 					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
@@ -2220,8 +2220,8 @@ Version $Revision$
 					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnCondensed}"/>
 				</xsl:when>
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
-					<xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
-					<xsl:variable name="precedingColumnCondensed" select="number(substring-before(preceding-sibling::column/@width,'%'))-5"/>
+					<xsl:variable name="thisColumnExpanded" select="number(@width)+5"/>
+					<xsl:variable name="precedingColumnCondensed" select="number(preceding-sibling::column/@width)-5"/>
 					<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
 					<input type="hidden" name="uP_sparam" value="mode"/>
 					<input type="hidden" name="mode" value="{$mode}"/>
