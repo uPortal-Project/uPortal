@@ -204,6 +204,7 @@ public class StylesheetSet extends SAXFilterImpl
 
   protected StylesheetDescription getStylesheetDescription (String media)
   {
+      if(media==null) Logger.log(Logger.ERROR,"StylesheetSet::getStylesheetDescription() : media argument is null");
     // search for a non-alternate stylesheet for a particular media
     StylesheetDescription sd=null;
 
@@ -251,6 +252,16 @@ public class StylesheetSet extends SAXFilterImpl
       return null;
   }
 
+    public XSLTInputSource getStylesheetByMedia (String media)
+  {
+    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
+    StylesheetDescription sd=getStylesheetDescription (media);
+
+    if (sd!=null)
+      return new XSLTInputSource (sd.getURI ());
+    else
+      return null;
+  }
 
   public void addStyleSheet (StylesheetDescription sd)
   {
@@ -457,6 +468,7 @@ public class StylesheetSet extends SAXFilterImpl
      */
     String getValue (String s)
     {
+	if(s==null) return null;
       int i, j = attVec.size ();
 
       for (i = 0; i < j; i++)
