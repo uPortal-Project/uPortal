@@ -91,7 +91,7 @@ public class Authentication {
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
       // Add the person's login username
-      person.setAttribute("username", username);
+      person.setAttribute("username",principalInstance.getUID());
       // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // Process the additional descriptor if one was created
@@ -177,82 +177,6 @@ public class Authentication {
     }
   }
 
-  /**
-   * Authenticate a user.
-   * @param sUserName User name
-   * @param sPassword User password
-   * @return true if successful, otherwise false.
-   */
-  public boolean authenticate (String sUserName, String sPassword) throws PortalSecurityException {
-    IPrincipal me;
-    IOpaqueCredentials op;
-    ic = new InitialSecurityContext("root");
-    me = ic.getPrincipalInstance();
-    op = ic.getOpaqueCredentialsInstance();
-    me.setUID(sUserName);
-    op.setCredentials(sPassword);
-    ic.authenticate();
-    me = ic.getPrincipal();
-
-    /* get the principal which may have changed */
-    // Check to see if the user is authenticated
-    boolean bAuthenticated = ic.isAuthenticated();
-    if (bAuthenticated) {
-      // Get the AdditionalDescriptor from the security context
-      // This is created by the SecurityContext and should be an
-      // IPerson object if present.  This is a likely scenario if the
-      // security provider also supplies directory information.
-      IAdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
-      // If the IPerson object was not provided by the security context then
-      // creating an IPerson object at this point and populating it from
-      // directory information is the recommended scenario.
-      if (addInfo == null || !(addInfo instanceof PersonImpl)) {
-        // Create a new IPerson
-        m_Person = new PersonImpl();
-        // username attribute comes from principal
-        // It is either what was typed in or supplied by the security provider
-        m_Person.setAttribute("username", me.getUID());
-        java.util.Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation(me.getUID());
-        java.util.Enumeration en = attribs.keys();
-        while (en.hasMoreElements()) {
-          String key = (String)en.nextElement();
-          String value = (String)attribs.get(key);
-          m_Person.setAttribute(key, value);
-        }
-        // use portal display name if one exists
-        if (attribs.get("portalDisplayName") != null)
-          m_Person.setFullName((String)attribs.get("portalDisplayName"));
-        // if not try the eduPerson displyName
-        else if (attribs.get("displayName") != null)
-          m_Person.setFullName((String)attribs.get("displayName"));
-        // if still no FullName use an unrecognized string
-        if (m_Person.getFullName() == null)
-          m_Person.setFullName("Unrecognized person: " + m_Person.getAttribute("username"));
-      }
-      else {
-        // Set the IPerson to be the AdditionalDescriptor object
-        m_Person = (IPerson)addInfo;
-      }
-      // find the uPortal userid for this user or flunk authentication if not found
-      // The template username should actually be derived from directory information.
-      // The reference implemenatation sets the uPortalTemplateUserName to the default in
-      // the portal.properties file.
-      // A more likely template would be staff or faculty or undergraduate.
-      PropertiesManager pm = new PropertiesManager();
-      boolean autocreate = pm.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
-      if (autocreate && m_Person.getAttribute("uPortalTemplateUserName") == null) {
-        m_Person.setAttribute("uPortalTemplateUserName", pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
-      }
-      IUserIdentityStore UIDStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
-      try {
-        int newUID = UIDStore.getPortalUID(m_Person, autocreate);
-        m_Person.setID(newUID);
-      } catch (AuthorizationException ae) {
-        return  (false);
-      }
-    }
-    return  (bAuthenticated);
-  }
 
   /**
    * Returns an IPerson object that can be used to hold site-specific attributes
