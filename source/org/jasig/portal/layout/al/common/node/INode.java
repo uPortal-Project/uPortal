@@ -21,7 +21,4 @@ public interface INode extends INodeDescription {
     public INode getNextSiblingNode();
     public INode getPreviousSiblingNode();
     
-	
-	public void setNodeDescription(INodeDescription nd);
-    public INodeDescription getNodeDescription();
 }
