@@ -168,7 +168,7 @@ class GPreferencesState extends BaseState {
    * put your documentation comment here
    * @return
    */
-  public UserLayoutManager getUserLayoutManager () {
+  public IUserLayoutManager getUserLayoutManager () {
     return  context.getUserLayoutManager();
   }
 

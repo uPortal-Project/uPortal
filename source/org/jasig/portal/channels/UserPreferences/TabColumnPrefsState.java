@@ -37,6 +37,7 @@ package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IUserLayoutManager;
 import org.jasig.portal.UserLayoutManager;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.StructureStylesheetUserPreferences;
@@ -160,7 +161,7 @@ final class TabColumnPrefsState extends BaseState
   private final Document getUserLayout() throws Exception
   {
     // Get the profile currently being used
-    UserLayoutManager ulm = context.getUserLayoutManager();
+    IUserLayoutManager ulm = context.getUserLayoutManager();
     int currentProfileId = ulm.getCurrentProfile().getProfileId();
 
     // Get the profile associated with the layout currently being modified
@@ -244,7 +245,7 @@ final class TabColumnPrefsState extends BaseState
     Element destinationTab = userLayout.getElementById(destinationTabId);
     Element layout = userLayout.getDocumentElement();
     Node siblingTab = method.equals("insertBefore") ? destinationTab : null;
-    context.getUserLayoutManager().moveNode(sourceTab, layout, siblingTab);
+    UserLayoutManager.moveNode(sourceTab, layout, siblingTab);
 
     saveLayout();
   }
@@ -262,7 +263,7 @@ final class TabColumnPrefsState extends BaseState
     Element destinationTab = userLayout.getElementById(destinationTabId);
     Node parent = destinationTab.getParentNode();
     Element siblingTab = method.equals("insertBefore") ? destinationTab : null;
-    context.getUserLayoutManager().moveNode(newTab, parent, siblingTab);
+    UserLayoutManager.moveNode(newTab, parent, siblingTab);
 
     saveLayout();
   }
@@ -284,13 +285,13 @@ final class TabColumnPrefsState extends BaseState
     if (isTab(destinationFolder))
     {
       Element aColumn = createFolder("");
-      context.getUserLayoutManager().moveNode(aColumn, destinationFolder, null);
+      UserLayoutManager.moveNode(aColumn, destinationFolder, null);
       destinationFolder = aColumn;
     }
 
     Node parent = destinationFolder.getParentNode();
     Node siblingFolder = method.equals("insertBefore") ? destinationFolder : null;
-    context.getUserLayoutManager().moveNode(newColumn, parent, siblingFolder);
+    UserLayoutManager.moveNode(newColumn, parent, siblingFolder);
 
     saveLayout();
   }
@@ -359,7 +360,7 @@ final class TabColumnPrefsState extends BaseState
       for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
       {
         Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
-        boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, sourceColumn, null);
+        boolean moveSuccessful = UserLayoutManager.moveNode(channel, sourceColumn, null);
         // Not done yet: Need to deal with case when move isn't successful!!!
       }
 
@@ -376,7 +377,7 @@ final class TabColumnPrefsState extends BaseState
       for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
       {
         Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
-        boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, destinationColumn, null);
+        boolean moveSuccessful = UserLayoutManager.moveNode(channel, destinationColumn, null);
         // Not done yet: Need to deal with case when move isn't successful!!!
       }
 
@@ -386,7 +387,7 @@ final class TabColumnPrefsState extends BaseState
     // Move the source column before the destination column or at the end
     Node targetTab = destinationColumn.getParentNode();
     Node siblingColumn = method.equals("insertBefore") ? destinationColumn : null;
-    context.getUserLayoutManager().moveNode(sourceColumn, targetTab, siblingColumn);
+    UserLayoutManager.moveNode(sourceColumn, targetTab, siblingColumn);
 
     saveLayout();
   }
@@ -411,20 +412,20 @@ final class TabColumnPrefsState extends BaseState
       // Create a new column in this tab and move the source channel there
       Element newColumn = createFolder("");
       Node destinationTab = userLayout.getElementById(destinationElementId);
-      context.getUserLayoutManager().moveNode(newColumn, destinationTab, null);
-      context.getUserLayoutManager().moveNode(sourceChannel, newColumn, null);
+      UserLayoutManager.moveNode(newColumn, destinationTab, null);
+      UserLayoutManager.moveNode(sourceChannel, newColumn, null);
     }
     else if (isColumn(destinationElement))
     {
       // Move the source channel into the destination column
-      context.getUserLayoutManager().moveNode(sourceChannel, destinationElement, null);
+      UserLayoutManager.moveNode(sourceChannel, destinationElement, null);
     }
     else
     {
       // Move the source channel before the destination channel or at the end
       Node targetColumn = destinationElement.getParentNode();
       Node siblingChannel = method.equals("insertBefore") ? destinationElement : null;
-      context.getUserLayoutManager().moveNode(sourceChannel, targetColumn, siblingChannel);
+      UserLayoutManager.moveNode(sourceChannel, targetColumn, siblingChannel);
     }
 
     saveLayout();
@@ -454,20 +455,20 @@ final class TabColumnPrefsState extends BaseState
       // Create a new column in this tab and move the source channel there
       Element newColumn = createFolder("");
       Node destinationTab = userLayout.getElementById(destinationElementId);
-      context.getUserLayoutManager().moveNode(newColumn, destinationTab, null);
-      context.getUserLayoutManager().moveNode(newChannel, newColumn, null);
+      UserLayoutManager.moveNode(newColumn, destinationTab, null);
+      UserLayoutManager.moveNode(newChannel, newColumn, null);
     }
     else if (isColumn(destinationElement))
     {
       // Move the source channel into the destination column
-      context.getUserLayoutManager().moveNode(newChannel, destinationElement, null);
+      UserLayoutManager.moveNode(newChannel, destinationElement, null);
     }
     else
     {
       // Move the source channel before the destination channel or at the end
       Node targetColumn = destinationElement.getParentNode();
       Node siblingChannel = position.equals("before") ? destinationElement : null;
-      context.getUserLayoutManager().moveNode(newChannel, targetColumn, siblingChannel);
+      UserLayoutManager.moveNode(newChannel, targetColumn, siblingChannel);
     }
     
     // Remove the <registry> XML from the user layout before saving
@@ -488,7 +489,7 @@ final class TabColumnPrefsState extends BaseState
     Element element = userLayout.getElementById(elementId);
     // for some reason I am getting a null here for any newly added element
     // I remember some other people mentioning this problem
-    boolean deleteSuccessful = context.getUserLayoutManager().deleteNode(element);
+    boolean deleteSuccessful = UserLayoutManager.deleteNode(element);
     if (deleteSuccessful)
       saveLayout();
     else
@@ -545,14 +546,14 @@ final class TabColumnPrefsState extends BaseState
   private void saveLayout () throws PortalException
   {
     // Persist user preferences
-    UserLayoutManager ulm = context.getUserLayoutManager();
+    IUserLayoutManager ulm = context.getUserLayoutManager();
     ulm.setNewUserLayoutAndUserPreferences(userLayout, null);
   }
 
   private void saveUserPreferences () throws PortalException
   {
     // Persist user preferences
-    UserLayoutManager ulm = context.getUserLayoutManager();
+    IUserLayoutManager ulm = context.getUserLayoutManager();
     ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
   }
 

@@ -50,7 +50,7 @@ import  java.io.File;
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {
-  UserLayoutManager ulm;
+  IUserLayoutManager ulm;
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
   StylesheetSet set = null;
@@ -88,7 +88,7 @@ public class CUserPreferences implements IPrivilegedChannel {
    * put your documentation comment here
    * @return
    */
-  protected UserLayoutManager getUserLayoutManager () {
+  protected IUserLayoutManager getUserLayoutManager () {
     return  ulm;
   }
 

@@ -61,7 +61,7 @@ import  java.util.*;
  */
 public class CSubscriber
     implements IPrivilegedChannel {
-  UserLayoutManager ulm;
+  IUserLayoutManager ulm;
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;

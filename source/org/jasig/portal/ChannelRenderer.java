@@ -59,6 +59,7 @@ public class ChannelRenderer
     protected IChannel channel;
     protected ChannelRuntimeData rd;
     protected Map channelCache;
+    protected Map cacheTables;
     
     protected boolean rendering;
     protected boolean donerendering;
@@ -94,6 +95,16 @@ public class ChannelRenderer
     }
   }
 
+    Map getChannelCache() {
+	if(channelCache==null) {
+	    if((channelCache=(SoftHashMap)cacheTables.get(channel))==null) {
+		channelCache=new SoftHashMap(1);
+		cacheTables.put(channel,channelCache);
+	    }
+	}
+	return channelCache;
+    }
+
   /**
    * Set the timeout value
    * @param value timeout in milliseconds
@@ -103,8 +114,8 @@ public class ChannelRenderer
     timeOut = value;
   }
 
-    public void setChannelCache(Map cache) {
-	this.channelCache=cache;
+    public void setCacheTables(Map cacheTables) {
+	this.cacheTables=cacheTables;
     }
 
   /**
@@ -276,7 +287,7 @@ public class ChannelRenderer
 		
 		if(CACHE_CHANNELS) {
 		    // try to obtain rendering from cache
-		    if(channel instanceof ICacheable && channelCache!=null) {
+		    if(channel instanceof ICacheable ) {
 			ChannelCacheKey key=((ICacheable)channel).generateKey();
 			if(key!=null) {
 			    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
@@ -296,7 +307,7 @@ public class ChannelRenderer
 				}
 			    } else {
 				// by default we assume INSTANCE_KEY_SCOPE
-				ChannelCacheEntry entry=(ChannelCacheEntry)channelCache.get(key.getKey());
+				ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
 				if(entry!=null) {
 				    // found cached page
 				    // check page validity
@@ -306,7 +317,7 @@ public class ChannelRenderer
 					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
 				    } else {
 					// remove it
-					channelCache.remove(key.getKey());
+					getChannelCache().remove(key.getKey());
 					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
 				    }
 				}
@@ -325,7 +336,7 @@ public class ChannelRenderer
 				    systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
 				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
 				} else {
-				    channelCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+				    getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
 				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
 				}
 			    }

@@ -154,13 +154,13 @@ public class PortalSessionManager extends HttpServlet {
           session.removeAttribute("forwarded");
         // proceed with rendering
         //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
-        // look if the LayoutBean object is already in the session, otherwise
+        // look if the UserInstance object is already in the session, otherwise
         // make a new one
-        LayoutBean layout = (LayoutBean)session.getAttribute("LayoutBean");
+        UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
         if (layout == null) {
-          layout = new LayoutBean();
-          session.setAttribute("LayoutBean", layout);
-          //			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+          layout = UserInstanceFactory.getUserInstance(myReq);
+          session.setAttribute("UserInstance", layout);
+          //			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new UserInstance");
         }
         RequestParamWrapper oreqp = null;
         if (forwarded != null && forwarded.booleanValue())

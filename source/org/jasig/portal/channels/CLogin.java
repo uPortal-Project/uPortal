@@ -38,7 +38,7 @@ package org.jasig.portal.channels;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.LayoutBean;
+import org.jasig.portal.UserInstance;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
@@ -168,7 +168,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
 	ChannelCacheKey k=new ChannelCacheKey();
 	// guest pages are cached system-wide
-	if(staticData.getPerson().getID()==LayoutBean.guestUserId) {
+	if(staticData.getPerson().getID()==UserInstance.guestUserId) {
 	    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
 	} else {
 	    k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
