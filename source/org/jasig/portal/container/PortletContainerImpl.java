@@ -36,7 +36,6 @@
 package org.jasig.portal.container;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -51,8 +50,6 @@ import org.apache.pluto.factory.PortletObjectAccess;
 import org.apache.pluto.invoker.PortletInvoker;
 import org.apache.pluto.invoker.PortletInvokerAccess;
 import org.apache.pluto.om.window.PortletWindow;
-import org.apache.pluto.services.information.DynamicInformationProvider;
-import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.log.Log;
 
 /**

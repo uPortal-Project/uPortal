@@ -37,10 +37,8 @@ package org.jasig.portal.container.servlet;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.factory.FactoryManager;
 
 public class ServletObjectAccess {

@@ -50,7 +50,7 @@ import java.util.StringTokenizer;
 
 import org.apache.pluto.om.common.Language;
 import org.apache.pluto.util.Enumerator;
-import org.jasig.portal.utils.CommonUtils;
+
 
 /**
  * Implementation of Apache Pluto object model.

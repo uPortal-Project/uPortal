@@ -94,7 +94,7 @@ public class ParameterImpl implements Parameter, ParameterCtrl, Serializable {
     }
 
     public void setDescriptionSet(DescriptionSet descriptions) {
-        this.descriptions = descriptions;
+        this.descriptions = ( descriptions != null ) ? descriptions : new DescriptionSetImpl();
     }
     
 }
