@@ -19,6 +19,7 @@ A:hover {
 	COLOR: #cc0000; FONT-FAMILY: Arial, Verdana, sans-serif; TEXT-DECORATION: underline
 }
 .highlight {  color: #FF0066}
+TD.content   { width: 592 }
 
 
 A.sidelinks:link {
