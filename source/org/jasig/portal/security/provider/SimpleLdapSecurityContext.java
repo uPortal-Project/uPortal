@@ -6,7 +6,6 @@
 package  org.jasig.portal.security.provider;
 
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.naming.AuthenticationException;
 import javax.naming.NamingEnumeration;
