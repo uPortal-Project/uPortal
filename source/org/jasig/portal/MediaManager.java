@@ -43,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.net.URL;
@@ -279,8 +280,8 @@ public class MediaManager {
    * @param out
    * @return the serializer
    */
-  public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.OutputStream out) {
-    return getSerializerByName(serializerName, new OutputStreamWriter(out));
+  public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.OutputStream out) throws UnsupportedEncodingException {
+      return getSerializerByName(serializerName, new OutputStreamWriter(out,"UTF-8"));
   }
 
   /**
@@ -324,8 +325,8 @@ public class MediaManager {
    * @param out output stream
    * @return the markup serializer
    */
-  public BaseMarkupSerializer getSerializer (String mediaType, java.io.OutputStream out) {
-    return getSerializer(mediaType, new OutputStreamWriter(out));
+  public BaseMarkupSerializer getSerializer (String mediaType, java.io.OutputStream out) throws UnsupportedEncodingException {
+    return getSerializer(mediaType, new OutputStreamWriter(out,"UTF-8"));
   }
 
   /**
@@ -353,8 +354,8 @@ public class MediaManager {
    * @param out the output stream object
    * @return the markup serializer
    */
-  public BaseMarkupSerializer getSerializer (HttpServletRequest req, java.io.OutputStream out) {
-    return getSerializer(req, new OutputStreamWriter(out));
+  public BaseMarkupSerializer getSerializer (HttpServletRequest req, java.io.OutputStream out) throws UnsupportedEncodingException {
+    return getSerializer(req, new OutputStreamWriter(out,"UTF-8"));
   }
 
   /**
@@ -377,7 +378,7 @@ public class MediaManager {
      */
     OrderedProps (InputStream inputStream) throws IOException
     {
-      BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
+      BufferedReader input = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
       String currentLine, Key = null;
       StringTokenizer currentTokens;
       while ((currentLine = input.readLine()) != null) {
