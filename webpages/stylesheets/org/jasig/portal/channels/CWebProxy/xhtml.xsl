@@ -29,7 +29,17 @@
         <!--handles script code in head-->
         <xsl:if test="//head/script">
           <xsl:element name="script">
-            <xsl:copy-of select="//head/script/@*"/>
+	    <xsl:copy-of select="//head/script/@*[not(name()='src')]"/>
+            <xsl:choose>
+	      <xsl:when test="not(contains(//head/script/@src, ':')) or not( contains(//head/script/@src, ':') and not(contains(substring-before(//head/script/@src, ':'), '/')) )">
+                <xsl:attribute name="src">
+		  <xsl:value-of select="portal:getAbsURI(string($base), string(//head/script/@src))"/>
+                </xsl:attribute>
+              </xsl:when>
+              <xsl:otherwise>
+	        <xsl:copy-of select="//head/script/@src"/>
+              </xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="//head/script/comment()">
               <xsl:value-of select="//head/script/comment()"/>
             </xsl:if>
@@ -225,6 +235,24 @@
  
    <!--handles relative URIs for src attributes-->
    <xsl:template match="img">
+      <xsl:copy>
+      <xsl:choose>
+         <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
+           <xsl:copy-of select="attribute::*[not(name()='src')]"/>
+           <xsl:attribute name="src">
+             <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
+           </xsl:attribute>
+           <xsl:apply-templates/>
+         </xsl:when>
+         <xsl:otherwise>
+           <xsl:apply-templates select="@*|*|text()|comment()"/> 
+         </xsl:otherwise>
+      </xsl:choose>
+      </xsl:copy>
+   </xsl:template>
+
+   <!--handles relative URIs for src attributes when script found in body-->
+   <xsl:template match="script">
       <xsl:copy>
       <xsl:choose>
          <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
