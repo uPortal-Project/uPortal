@@ -531,7 +531,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
-                                                <input name="frag_prop_fname" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/>
+                                                <input name="fragment_fname" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
