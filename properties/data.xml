@@ -1565,14 +1565,6 @@
         <column><name>PARAM_NAME</name><value>activeTab</value></column>
         <column><name>PARAM_VAL</name><value>1</value></column>
       </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>SS_ID</name><value>1</value></column>
-        <column><name>SS_TYPE</name><value>1</value></column>
-        <column><name>PARAM_NAME</name><value>userPreferencesClass</value></column>
-        <column><name>PARAM_VAL</name><value>org.jasig.portal.channels.UserPreferences.GPreferencesState</value></column>
-      </row>      
     </rows>
   </table>
 
@@ -1806,14 +1798,7 @@
          <column><name>PARAM_DEFAULT_VAL</name><value>1</value></column>
          <column><name>PARAM_DESCRIPT</name><value>The number of teh tab that is initially active</value></column>
          <column><name>TYPE</name><value>1</value></column>
-        </row>
-       <row>
-         <column><name>SS_ID</name><value>1</value></column>
-         <column><name>PARAM_NAME</name><value>userPreferencesClass</value></column>
-         <column><name>PARAM_DEFAULT_VAL</name><value>org.jasig.portal.channels.UserPreferences.GPreferencesState</value></column>
-         <column><name>PARAM_DESCRIPT</name><value>The structure-dependent user preferences class</value></column>
-         <column><name>TYPE</name><value>1</value></column>
-        </row>        
+        </row>       
        <row>
          <column><name>SS_ID</name><value>1</value></column>
          <column><name>PARAM_NAME</name><value>width</value></column>
