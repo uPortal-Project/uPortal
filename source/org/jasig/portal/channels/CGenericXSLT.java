@@ -296,6 +296,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
+      state.runtimeData.put("isRenderingAsRoot", Boolean.toString(state.runtimeData.isRenderingAsRoot()));
       
       // OK, pass everything we got cached in params...
       if (state.params != null)
@@ -379,6 +380,12 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
     sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
+    sbKey.append("isRenderingAsRoot:").append(state.runtimeData.isRenderingAsRoot()).append(", ");
+
+    // If a local connection context is configured, include its descriptor in the key
+    if (state.localConnContext != null)
+      sbKey.append("descriptor:").append(state.localConnContext.getDescriptor(state.xmlUri, state.runtimeData)).append(", ");    
+
     sbKey.append("params:").append(state.params.toString());
     return sbKey.toString();
   }
