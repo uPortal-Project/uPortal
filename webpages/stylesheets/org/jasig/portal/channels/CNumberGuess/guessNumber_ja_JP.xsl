@@ -60,7 +60,7 @@ Version $Revision$
   <xsl:value-of select="minNum"/> と 
   <xsl:value-of select="maxNum"/> の間の数を頭に思い浮かべてるんだけど，いくつだと思う?<br />
   
-    <form action="{$baseActionURL}?locale={$locale}" method="post">
+    <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
       <input type="submit" value="送信" class="uportal-button"/>

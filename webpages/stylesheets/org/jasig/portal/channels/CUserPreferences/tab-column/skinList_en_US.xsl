@@ -21,11 +21,11 @@
             <td>
               <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr class="uportal-channel-table-header">
-                  <td>Option</td>
+                  <td nowrap="nowrap">Option</td>
                   <td>
                     <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td>Thumbnail</td>
+                  <td nowrap="nowrap">Thumbnail</td>
                   <td>
                     <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>

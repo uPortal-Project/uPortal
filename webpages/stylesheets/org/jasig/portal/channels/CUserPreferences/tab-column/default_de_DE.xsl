@@ -582,7 +582,7 @@ $Revision$
                 <TD ALIGN="CENTER" CLASS="uportal-channel-text"><B>
                 <A HREF="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
                 
-                  <xsl:if test="@name = ''">Kein Kanalname</xsl:if>
+                  <xsl:if test="@name = ''">Kein Channelname</xsl:if>
                   <xsl:value-of select="@name"/>
                 </A>
                 </B></TD>
@@ -1072,7 +1072,7 @@ $Revision$
                     <img alt="Schnittstellenbild" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="#">Benennen Sie diesen Kanal um :</a>
+                    <a href="#">Benennen Sie diesen Channel um :</a>
                     <img alt="Schnittstellenbild" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0" />
                     <input type="hidden" name="action" value="renameChannel" />
                     <input type="hidden" name="elementID" value="{$elementID}" />
@@ -1090,7 +1090,7 @@ $Revision$
                     <img alt="Schnittstellenbild" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">Verschieben Sie diesen Kanal auf eine andere Position</a>
+                    <a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}">Verschieben Sie diesen Channel auf eine andere Position</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1100,7 +1100,7 @@ $Revision$
                     <img alt="Schnittstellenbild" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}">Ändern dieser Kanalparameter</a>
+                    <a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}">Ändern dieser Channelparameter</a>
                   </td>
                 </tr>
               </xsl:if>
@@ -1111,7 +1111,7 @@ $Revision$
                     <img alt="Schnittstellenbild" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
                   </td>
                   <td width="100%" class="uportal-channel-text">
-                    <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Löschen Sie diesen Kanal</a>
+                    <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}">Löschen Sie diesen Channel</a>
                   </td>
                 </tr>
               </xsl:if>

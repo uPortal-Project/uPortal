@@ -2,9 +2,9 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <xsl:param name="baseActionURL">base url not set</xsl:param>
-  <xsl:param name="locale">en_US</xsl:param>
   <xsl:param name="CURLSelectId">CURLSelect id is not set</xsl:param>
   <xsl:param name="passExternally">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="urlselector">
 
@@ -28,10 +28,10 @@
       <xsl:attribute name="href">
         <xsl:choose>
           <xsl:when test="$passExternally='true'">
-            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
@@ -42,7 +42,7 @@
     </p>
 
     <p>Hitting one of the URLs in the above list will cause CHistory to pass the URL to the CViewer channel.  One way of doing this is internally (through JNDI contexts, directly to the CViewer channel).  Another is by using uPortal's URL syntax (uP_channelTarget) and passing a "url" parameter to the CURLSelector, so that the selector channel could then signal CViewer. 
-    <form action="{$baseActionURL}?locale={$locale}">
+    <form action="{$baseActionURL}">
       <xsl:choose>
         <xsl:when test="$passExternally='true'">Currently passing URLs externally, using uP_channelTarget: 
           <input type="submit" name="passExternally" class="uportal-button" value="Switch to pass internally" />

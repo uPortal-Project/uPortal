@@ -2,9 +2,9 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <xsl:param name="baseActionURL">base url not set</xsl:param>
-  <xsl:param name="locale">ja_JP</xsl:param>
   <xsl:param name="CURLSelectId">CURLSelect id is not set</xsl:param>
   <xsl:param name="passExternally">false</xsl:param>
+  <xsl:param name="locale">ja_JP</xsl:param>
 
   <xsl:template match="urlselector">
 
@@ -28,10 +28,10 @@
       <xsl:attribute name="href">
         <xsl:choose>
           <xsl:when test="$passExternally='true'">
-            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
@@ -42,7 +42,7 @@
     </p>
 
     <p>上記の一覧から URL をクリックすると，CHistory は CViewer チャネルにその URL を渡します．これを実現する1つの方法として考えられるのは， 内部的に行う方法です．もう1つ uPortal の URL シンタックス(uP_channelTarget)を用いる方法で，"url" パラメータが CURLSelector に渡されますので，セレクタチャネルは CViewer に情報を伝えることができます． 
-    <form action="{$baseActionURL}?locale={$locale}">
+    <form action="{$baseActionURL}">
       <xsl:choose>
         <xsl:when test="$passExternally='true'">現在，uP_channelTarget により外部的に URL を渡しています： 
           <input type="submit" name="passExternally" class="uportal-button" value="Switch to pass internally" />

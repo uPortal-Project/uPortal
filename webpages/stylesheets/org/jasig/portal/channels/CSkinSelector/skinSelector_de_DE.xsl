@@ -20,12 +20,12 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 				<tr class="uportal-channel-text">
 					<td>
-						<strong>Skin Selection:</strong>Select a portal skin below, then click [Change Skin].</td>
+						<strong>Skin Selection:</strong>Wählen Sie von unten einen Portal-Skin, und klicken dann auf[Skin Wechseln].</td>
 				</tr>
 				<tr>
 					<td>
 						<input type="hidden" name="action" value="completeEdit"/>
-						<input type="submit" name="submitSave" value="Change Skin" class="uportal-button"/>
+						<input type="submit" name="submitSave" value="Skin Wechseln" class="uportal-button"/>
 					</td>
 				</tr>
 				<tr class="uportal-channel-text">
@@ -64,7 +64,7 @@
 				<tr>
 					<td>
 						<input type="hidden" name="action" value="completeEdit"/>
-						<input type="submit" name="submitSave" value="Change Skin" class="uportal-button"/>
+						<input type="submit" name="submitSave" value="Skin Wechseln" class="uportal-button"/>
 					</td>
 				</tr>
 			</table>
@@ -106,7 +106,7 @@
 						</td>
 					</tr>
 					<tr valign="top">
-						<td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
+						<td nowrap="nowrap" class="uportal-channel-table-header">Beschreibung:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
 						<td class="uportal-channel-text">
 							<xsl:value-of select="skin-description"/>
 						</td>

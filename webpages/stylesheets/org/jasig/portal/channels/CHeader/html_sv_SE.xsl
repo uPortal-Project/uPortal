@@ -41,9 +41,9 @@ $Revision$
   <xsl:param name="locale">sv_SE</xsl:param>
   <xsl:template match="header">
     <xsl:if test="$authenticated != 'false'">
-      <a href="{$baseActionURL}?uP_root=root&amp;locale={$locale}" class="uportal-navigation-category">Hem </a> | <xsl:if test="chan-mgr-chanid">
-      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}&amp;locale={$locale}" class="uportal-navigation-category"> Kanaladministration </a> | </xsl:if>
-      <a href="{$baseActionURL}?uP_fname={preferences-chanid}&amp;locale={$locale}" class="uportal-navigation-category"> Inställningar </a> | <a href="Logout" class="uportal-navigation-category"> Logga ut </a>
+      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">Hem </a> | <xsl:if test="chan-mgr-chanid">
+      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> Kanaladministration </a> | </xsl:if>
+      <a href="{$baseActionURL}?uP_fname={preferences-chanid}" class="uportal-navigation-category"> Inställningar </a> | <a href="Logout" class="uportal-navigation-category"> Logga ut </a>
     </xsl:if>
   </xsl:template>
 </xsl:stylesheet>

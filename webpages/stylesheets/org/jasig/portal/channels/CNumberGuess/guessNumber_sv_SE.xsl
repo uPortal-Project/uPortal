@@ -60,7 +60,7 @@ Version $Revision$
   <xsl:value-of select="minNum"/> och 
   <xsl:value-of select="maxNum"/>.<br />
   Vad gissar du?
-    <form action="{$baseActionURL}?locale={$locale}" method="post">
+    <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
       <input type="submit" value="Gissa" class="uportal-button"/>

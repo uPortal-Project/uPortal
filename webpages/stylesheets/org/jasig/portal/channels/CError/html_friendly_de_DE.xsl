@@ -19,15 +19,15 @@
         </td>
         <td class="uportal-channel-subtitle" width="100%">Fehler:<br/><span class="uportal-channel-error">
               <xsl:choose>
-                <xsl:when test="@code='4'">Der Kanal ist zu Ende</xsl:when>
-              <xsl:when test="@code='1'">Dieser Kanal konnte nicht übertragen werden</xsl:when>
-              <xsl:when test="@code='2'">Dieser Kanal konnte nicht initialisiert werden</xsl:when>
-              <xsl:when test="@code='3'">Dieser Kanal konnte die erforderlichen Daten nicht annehmen</xsl:when>
-              <xsl:when test="@code='0'">Dieser Kanal stieß auf einen allgemeinen Fehler</xsl:when>
-              <xsl:when test="@code='5'">Dieser Kanal konnte PCS nicht akzeptieren</xsl:when>
-              <xsl:when test="@code='6'">Sie sind nicht berechtigt, diesen Kanal zu sehen</xsl:when>
-              <xsl:when test="@code='7'">Dieser Kanal ist nicht vorhanden</xsl:when>
-              <xsl:when test="@code='-1'">Dieser Kanal stieß auf einen allgemeinen uPortal Fehler</xsl:when></xsl:choose></span>
+                <xsl:when test="@code='4'">Der Channel ist zu Ende</xsl:when>
+              <xsl:when test="@code='1'">Dieser Channel konnte nicht übertragen werden</xsl:when>
+              <xsl:when test="@code='2'">Dieser Channel konnte nicht initialisiert werden</xsl:when>
+              <xsl:when test="@code='3'">Dieser Channel konnte die erforderlichen Daten nicht annehmen</xsl:when>
+              <xsl:when test="@code='0'">Dieser Channel stieß auf einen allgemeinen Fehler</xsl:when>
+              <xsl:when test="@code='5'">Dieser Channel konnte PCS nicht akzeptieren</xsl:when>
+              <xsl:when test="@code='6'">Sie sind nicht berechtigt, diesen Channel zu sehen</xsl:when>
+              <xsl:when test="@code='7'">Dieser Channel ist nicht vorhanden</xsl:when>
+              <xsl:when test="@code='-1'">Dieser Channel stieß auf einen allgemeinen uPortal Fehler</xsl:when></xsl:choose></span>
           <br/>
           <br/>
 
@@ -35,7 +35,7 @@
             <a href="{$baseActionURL}?action=retry">
               <img src="{$baseMediaURL}error_refresh.gif" border="0" width="16" height="16" alt="Refresh the channel"/>
               <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
-              <span class="uportal-label">Den Kanal erneuern</span>
+              <span class="uportal-label">Den Channel erneuern</span>
             </a>
 
             <br/>
@@ -45,7 +45,7 @@
             <a href="{$baseActionURL}?action=restart">
               <img src="{$baseMediaURL}error_reboot.gif" border="0" width="16" height="16" alt="Reboot the channel"/>
               <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
-              <span class="uportal-label">Den Kanal neu laden</span>
+              <span class="uportal-label">Den Channel neu laden</span>
             </a>
           </xsl:if>
         </td>

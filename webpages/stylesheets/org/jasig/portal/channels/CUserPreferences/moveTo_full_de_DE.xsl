@@ -15,7 +15,7 @@
       	  <p align="center"><input type="submit" name="move" value=\"Bewegen\"/></p>
       	    <input type="radio" name="destination" value="top"/>
             <img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
-            Meine Kanäle<br/>      
+            Meine Channels<br/>      
             <xsl:apply-templates select="layout"/>      
       	  <p align="center"><input type="submit" name="move" value=\"Bewegen\"/></p>
         </form>

@@ -14,12 +14,11 @@
         <td nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
           <strong>
-   	  Language: <xsl:value-of select="current-locale"/>
+   	  <xsl:value-of select="current-locale"/>
           </strong>
         </td>
         -->
         <td align="right" nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
-          <strong>Language:</strong>
   	  <select class="uportal-button" name="locale">
               <option value="en_US" selected="selected">English</option>
               <option value="ja_JP">Japanese</option>

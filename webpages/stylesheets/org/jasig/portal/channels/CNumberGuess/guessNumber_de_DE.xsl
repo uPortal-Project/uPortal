@@ -44,12 +44,12 @@ Version $Revision$
 <xsl:template match="content">
   <xsl:choose>
     <xsl:when test="suggest">
-      Deine Entscheidung<xsl:value-of select="guess"/> war falsch.
-      Versuche es noch einmal-- Rate<span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
-      Du hast  <xsl:value-of select="guesses"/> Versuche gemacht.
+      Ihre Entscheidung<xsl:value-of select="guess"/> war falsch.
+      Versuchen Sie es noch einmal-- Rate<span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
+      Sie haben <xsl:value-of select="guesses"/> Versuche gemacht.
     </xsl:when>
     <xsl:when test="answer">
-      Du hast es nach <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span>Versuchen geschafft!
+      Sie haben es nach <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span>Versuchen geschafft!
       Die Antwort war<span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
       <p>Bitte spielen Sie noch einmal...</p>
     </xsl:when>
@@ -60,7 +60,7 @@ Version $Revision$
   <xsl:value-of select="minNum"/> und 
   <xsl:value-of select="maxNum"/>.<br />
   Was ist Ihre Entscheidung?
-    <form action="{$baseActionURL}?locale={$locale}" method="post">
+    <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
       <input type="submit" value="Submit" class="uportal-button"/>

@@ -17,7 +17,7 @@
 <table width="100%" border="0"><tr><td align="left">Profilname: <xsl:value-of select="$profileName"/></td><td align="right">
 <input type="submit" name="submit" value="manage"/>
 <select name="userPreferencesAction">
-<option selected="" value="layout">Kanäle und Ordner</option>
+<option selected="" value="layout">Channels und Ordner</option>
 <option value="gpref">Globale Einstellungen</option>
 <option value="manageProfiles">Profile</option>
 </select>

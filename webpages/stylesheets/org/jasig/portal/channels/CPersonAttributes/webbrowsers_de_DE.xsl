@@ -7,7 +7,7 @@
 
   <xsl:template match="/">
     <p class="uportal-text">
-      uPortal-Kanäle haben Zugang zu den Benutzerattributen
+      uPortal-Channels haben Zugang zu den Benutzerattributen
       über den <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span> Objekt.
       Attributnamen sind definiert in der 
       <a href="http://www.educause.edu/eduperson/">eduPerson Objekt-Klasse</a> version 1.0.

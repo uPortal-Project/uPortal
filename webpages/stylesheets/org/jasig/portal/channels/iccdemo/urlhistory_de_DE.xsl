@@ -2,9 +2,9 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <xsl:param name="baseActionURL">base url not set</xsl:param>
-  <xsl:param name="locale">de_DE</xsl:param>
   <xsl:param name="CURLSelectId">CURLSelect id is not set</xsl:param>
   <xsl:param name="passExternally">false</xsl:param>
+  <xsl:param name="locale">de_DE</xsl:param>
 
   <xsl:template match="urlselector">
 
@@ -28,10 +28,10 @@
       <xsl:attribute name="href">
         <xsl:choose>
           <xsl:when test="$passExternally='true'">
-            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />&amp;locale={$locale}
+            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
@@ -42,7 +42,7 @@
     </p>
 
     <p>Das Klicken einer URL in der oben genannten Liste veranlaßt CHistory das URL zum CViewer-Kanal zu führen.  Ein Weg dieses zu machen ist intern (durch JNDI Kontexte direkt zum CViewer-Channel).  Ein anderer ist es, die URL Syntax des uPortals zu benutzen (uP_channelTarget) und ein "url"-Parameter zum CURLSelector hinzuführen, so dass der Wählerchannel CViewer signalieren kann. 
-    <form action="{$baseActionURL}?locale={$locale}">
+    <form action="{$baseActionURL}">
       <xsl:choose>
         <xsl:when test="$passExternally='true'">URLs z.Z., außen führend mit uP_channelTarget: 
           <input type="submit" name="passExternally" class="uportal-button" value="Switch to pass internally" />

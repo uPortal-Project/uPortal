@@ -81,7 +81,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td width="100%" class="uportal-channel-text">
-                <a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;locale={$locale}">Publish a new channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectChannelType">Publish a new channel</a>
               </td>
             </tr>
             <tr valign="top">
@@ -89,7 +89,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel&amp;locale={$locale}">Modify a currently published channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modify a currently published channel</a>
               </td>
             </tr>
           </table>
@@ -101,7 +101,7 @@
   <xsl:template name="selectChannelType">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
-    <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+    <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="none"/>
       <input type="hidden" name="uPCM_capture" value="selectChannelType"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -259,7 +259,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?uPCM_action=cancel&amp;locale={$locale}">Cancel and return</a>
+                <a href="{$baseActionURL}?uPCM_action=cancel">Cancel and return</a>
               </td>
             </tr>
           </table>
@@ -276,12 +276,12 @@
               <xsl:with-param name="maxPages" select="$maxPages"/>
             </xsl:call-template>
           </td>
-          <form method="post" action="{$baseActionURL}?locale={$locale}">
+          <form method="post" action="{$baseActionURL}">
           <input type="hidden" name="uPCM_action" value="filterByCategory"/>
           <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]">
           <xsl:for-each select="ancestor::category">
           <a class="uportal-navigation-category-selected"><xsl:attribute name="href">
-          <xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/>&amp;locale={$locale}</xsl:attribute>
+          <xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
                   <em>
                     <xsl:value-of select="@name"/>
                   </em></a>::</xsl:for-each>
@@ -331,12 +331,12 @@
                   <xsl:if test="(position() &gt; ($recsPerPage * $currPage)-$recsPerPage) and (position() &lt;= $recsPerPage * $currPage)">
                     <tr class="uportal-channel-text" valign="top">
                       <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}&amp;locale={$locale}">
+                        <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}&amp;locale={$locale}">
+                        <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}">
                           <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
                         </a>
                       </td>
@@ -380,7 +380,7 @@
         </td>
       </tr>
       <tr class="uportal-channel-text">
-        <form name="formRecordsDisplayed" method="post" action="{$baseActionURL}?locale={$locale}">
+        <form name="formRecordsDisplayed" method="post" action="{$baseActionURL}">
           <input type="hidden" name="uPCM_action" value="changeRecordsPerPage"/>
           <input type="hidden" name="uPCM_step" value="changeMe"/>
           <td nowrap="nowrap" valign="top">
@@ -409,7 +409,7 @@
       <xsl:if test="($i = 1) and ($currPage &gt; 1)">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)-1"/>&amp;locale={$locale}</xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)-1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" ID="left" alt="Go to page [{($currPage)-1}]" border="0"/>
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
@@ -423,7 +423,7 @@
       <xsl:if test="$i != $currPage">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/>&amp;locale={$locale}</xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
           <xsl:value-of select="$i"/>
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
@@ -434,7 +434,7 @@
       <xsl:if test="($i = $maxPages) and ($currPage &lt; $maxPages)">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)+1"/>&amp;locale={$locale}</xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)+1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Go to page [{($currPage)+1}]" border="0"/>
         </a>
       </xsl:if>
@@ -588,7 +588,7 @@
   <xsl:template name="selectGeneralSettings">
     <xsl:call-template name="workflow"/>
 
-    <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+    <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="none"/>
       <input type="hidden" name="uPCM_capture" value="selectGeneralSettings"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -836,7 +836,7 @@
 
   <xsl:template match="channelDef" mode="dynamicSettings">
     <!-- form begin -->
-    <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+    <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
       <input type="hidden" name="uPCM_capture" value="channelDef"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -945,7 +945,7 @@
             <tr valign="top">
               <td class="uportal-label">
 
-                <form name="addParameter" method="post" action="{$baseActionURL}?locale={$locale}">
+                <form name="addParameter" method="post" action="{$baseActionURL}">
                   <input type="hidden" name="uPCM_action" value="customSettings"/>
                   <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
@@ -1010,7 +1010,7 @@
                       <xsl:for-each select="params/step[ID=$stepID]/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}&amp;locale={$locale}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
@@ -1049,7 +1049,7 @@
         </td>
       </tr>
 <!--      <tr>
-        <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+        <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="none"/>
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -1062,7 +1062,7 @@
         </form>
       </tr>-->
       <tr>
-            <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+            <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
       <input type="hidden" name="uPCM_capture" value="channelDef"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -1494,7 +1494,7 @@
   <xsl:template name="selectControls">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
-    <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+    <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
       <input type="hidden" name="uPCM_capture" value="selectControls"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -1733,7 +1733,7 @@
 
   <xsl:template name="selectCategoriesButtons">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+      <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_capture" value="selectCategories"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -1756,7 +1756,7 @@
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 
-      <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+      <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
       <tr class="uportal-channel-text">
@@ -1791,9 +1791,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Type:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Channel Type:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">
                <xsl:value-of select="//selectChannelType/params/step/channelTypes/channelType[@ID=/manageChannels/reviewChannel/params/step/channel/@typeID]/name"/></a></td>
            </tr>
 
@@ -1810,9 +1810,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Title:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Title:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@title"/></a></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@title"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
@@ -1828,9 +1828,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Name:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Name:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@name"/></a></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@name"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
@@ -1846,9 +1846,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Functional Name:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Functional Name:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@fname"/></a></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@fname"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
@@ -1864,9 +1864,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Description:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Description:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@description"/></a></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@description"/></a></td>
            </tr>
 
            <tr class="uportal-channel-text">
@@ -1883,9 +1883,9 @@
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Timeout:</a></strong></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Timeout:</a></strong></td>
              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@timeout"/>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@timeout"/>
                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>milliseconds</a></td>
            </tr>
 
@@ -1906,9 +1906,9 @@
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Class:</a></strong></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Class:</a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@class"/></a></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@class"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
@@ -1921,16 +1921,16 @@
           </tr>
           <xsl:for-each select="/manageChannels/reviewChannel/params/step/channel/parameter">
           <tr class="uportal-channel-text">
-            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">
+            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">
             <xsl:choose>
               <xsl:when test="@override = 'yes'"><img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
               <xsl:otherwise><img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
             </xsl:choose></a>
             </td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Parameter:</a></strong></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">Parameter:</a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel&amp;locale={$locale}"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
@@ -1952,15 +1952,15 @@
           <xsl:choose>
           <xsl:when test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden'">
           <tr class="uportal-channel-text">
-            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}&amp;locale={$locale}">
+            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@override = 'yes'">
             <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
             <xsl:otherwise><img alt="User cannot modify" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise></xsl:choose></a>
             </td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}&amp;locale={$locale}"><xsl:value-of select="//parameter/name[.=$name]/../label"/></a></strong></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}"><xsl:value-of select="//parameter/name[.=$name]/../label"/></a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}&amp;locale={$locale}">
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@value = //channelDef//restriction/value and //channelDef//restriction/value[.=$value]/@display"><xsl:value-of select="//channelDef//restriction/value[.=$value]/@display"/></xsl:when>
             <xsl:otherwise><xsl:value-of select="@value"/></xsl:otherwise></xsl:choose>
             </a></td>
@@ -1981,7 +1981,7 @@
           <xsl:when test="/manageChannels/channelDef/params/step/arbitrary-parameters">
           <xsl:variable name="firstArbParamID" select="/manageChannels/channelDef/params/step[arbitrary-parameters][1]/ID"/>
           <tr class="uportal-channel-text">
-            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}&amp;locale={$locale}">
+            <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}">
             <xsl:choose>
             <xsl:when test="@override = 'yes'">
             <img alt="User can modify" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
@@ -1990,9 +1990,9 @@
             </xsl:otherwise>
             </xsl:choose></a></td>
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}&amp;locale={$locale}"><xsl:value-of select="@name"/></a></strong></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@name"/></a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}&amp;locale={$locale}"><xsl:value-of select="@value"/></a></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@value"/></a></td>
             </tr>
             <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
@@ -2018,7 +2018,7 @@
 
         <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Channel Controls</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">Channel Controls</a></strong></td>
 
 
 
@@ -2026,7 +2026,7 @@
 
 
 
-        <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">
+        <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">
 
         <xsl:choose>
           <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
@@ -2092,7 +2092,7 @@
 
 
 
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Selected Categories:</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">Selected Categories:</a></strong></td>
 
 
 
@@ -2100,7 +2100,7 @@
 
 
 
-        <td ><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">
+        <td ><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">
 
         <xsl:for-each select="//selectedCategory">
           <img alt="interface image" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
@@ -2138,10 +2138,10 @@
       <tr class="uportal-channel-text">
         <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
         <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">Selected Groups and/or People:</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Selected Groups and/or People:</a></strong></td>
         <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
         <td>
-          <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel&amp;locale={$locale}">
+          <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
             <xsl:for-each select="//selectedGroup">
               <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
               <xsl:value-of select="@name"/>
@@ -2190,7 +2190,7 @@
             <tr valign="top">
               <td class="uportal-label">
 
-                <form name="addParameter" method="post" action="{$baseActionURL}?locale={$locale}">
+                <form name="addParameter" method="post" action="{$baseActionURL}">
                   <input type="hidden" name="uPCM_action" value="customSettings"/>
                   <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
@@ -2252,7 +2252,7 @@
                       <xsl:for-each select="manageChannels/customSettings/params/step/channel/parameter">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;locale={$locale}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
@@ -2291,7 +2291,7 @@
         </td>
       </tr>
       <tr>
-        <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+        <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="none"/>
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -2312,7 +2312,7 @@
             <tr valign="top">
               <td class="uportal-label">
 
-                <form name="addParameter" method="post" action="{$baseActionURL}?locale={$locale}">
+                <form name="addParameter" method="post" action="{$baseActionURL}">
                   <input type="hidden" name="uPCM_action" value="channelDef"/>
                   <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
@@ -2376,7 +2376,7 @@
                       <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;locale={$locale}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
@@ -2415,7 +2415,7 @@
 <!--        </td>
       </tr>
       <tr>
-        <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+        <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="none"/>
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
@@ -2441,7 +2441,7 @@
 
 <xsl:template name="selectGroupsButtons">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <form name="workflow" method="post" action="{$baseActionURL}?locale={$locale}">
+      <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_capture" value="selectGroups"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>

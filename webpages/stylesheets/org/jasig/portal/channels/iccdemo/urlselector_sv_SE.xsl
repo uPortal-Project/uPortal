@@ -15,7 +15,7 @@
     </xsl:for-each>
 
     <p>
-      <form action="{$baseActionURL}?locale={$locale}">
+      <form action="{$baseActionURL}">
         <xsl:choose>
           <xsl:when test="@grouped='false'">Renderar utan gruppering 
             <input type="submit" name="groupedRendering" class="uportal-button" value="Byt till grupperad rendering" />
@@ -38,12 +38,12 @@
       Pick one of the predefined URLs: 
       <xsl:for-each select="url">
         <br />
-        <a href="{$baseActionURL}?url={.}&amp;locale={$locale}"><xsl:value-of select="." /></a>
+        <a href="{$baseActionURL}?url={.}"><xsl:value-of select="." /></a>
       </xsl:for-each>
       </p>
 
       <p>
-        <form action="{$baseActionURL}&amp;locale={$locale}">
+        <form action="{$baseActionURL}">
           Eller skriv in en URL: <br />
           <input name="url" type="text" size="30" />
         </form>

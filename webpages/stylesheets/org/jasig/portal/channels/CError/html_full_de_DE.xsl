@@ -17,7 +17,7 @@
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Kanal ID:</p>
+          <p class="uportal-channel-error">Channel ID:</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:value-of select="channel/id"/>
@@ -38,14 +38,14 @@
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:choose>
-            <xsl:when test="@code='4'">Kanalzeit zu Ende (code 4)</xsl:when>
-            <xsl:when test="@code='1'">Kanal konnte nicht übertragen werden (code 1)</xsl:when>
-            <xsl:when test="@code='2'">Kanal konnte nicht initialisiert werden (code 2)</xsl:when>
-            <xsl:when test="@code='3'">Kanal konnte Laufzeitdaten nicht annehmen (code 3)</xsl:when>
+            <xsl:when test="@code='4'">Channelzeit zu Ende (code 4)</xsl:when>
+            <xsl:when test="@code='1'">Channel konnte nicht übertragen werden (code 1)</xsl:when>
+            <xsl:when test="@code='2'">Channel konnte nicht initialisiert werden (code 2)</xsl:when>
+            <xsl:when test="@code='3'">Channel konnte Laufzeitdaten nicht annehmen (code 3)</xsl:when>
             <xsl:when test="@code='0'">Allgemeiner Fehler (code 0)</xsl:when>
-            <xsl:when test="@code='5'">Kanal konnte PCS nicht annehmen (code 5)</xsl:when>
+            <xsl:when test="@code='5'">Channel konnte PCS nicht annehmen (code 5)</xsl:when>
             <xsl:when test="@code='6'">Benutzer nicht berechtigt (code 6)</xsl:when>
-            <xsl:when test="@code='7'">Kanal nicht vorhanden (code 7)</xsl:when>
+            <xsl:when test="@code='7'">Channel nicht vorhanden (code 7)</xsl:when>
             <xsl:when test="@code='-1'">uPortal-Fehler (code -1)</xsl:when>
           </xsl:choose>
         </td>
@@ -57,7 +57,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Wiederhole den Kanal">
+              <img border="0" width="16" height="16" alt="Wiederhole den Channel">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
               </img>
@@ -71,7 +71,7 @@
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Starte den Kanal wieder">
+              <img border="0" width="16" height="16" alt="Starte den Channel wieder">
                 <xsl:attribute name="src">
                   <xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
               </img>
@@ -178,7 +178,7 @@
     <table border="0" width="100%" cellspacing="0" cellpadding="4">
       <tr>
         <td valign="top" align="center" class="uportal-background-med">
-          <p class="uportal-channel-title">Spapelprotokoll</p>
+          <p class="uportal-channel-title">Stapelprotokoll</p>
         </td>
       </tr>
       <xsl:if test="exception/stack/innerException">
