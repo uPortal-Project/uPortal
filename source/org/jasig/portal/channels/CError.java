@@ -89,7 +89,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public static final int AUTHORIZATION_EXCEPTION=3;
     public static final int RESOURCE_MISSING_EXCEPTION=4;
 
-    protected Exception channelException=null;
+    protected Throwable channelException=null;
     protected String str_channelID=null;
     protected String str_message=null;
     protected IChannel the_channel=null;
@@ -104,7 +104,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public CError() {
     }
 
-    public CError(int errorCode, Exception exception, String channelID,IChannel channelInstance) {
+    public CError(int errorCode, Throwable exception, String channelID,IChannel channelInstance) {
         this();
         str_channelID=channelID;
         this.channelException=exception;

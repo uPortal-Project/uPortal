@@ -512,7 +512,7 @@ public class ChannelManager {
                 // this implies that the channel has thrown an exception during
                 // renderXML() call. No events had been placed onto the ContentHandler,
                 // so that an Error channel can be rendered in place.
-                Exception channelException=ipe.getException();
+                Throwable channelException=ipe.getException();
                 if(channelException!=null) {
                     // see if the renderXML() has thrown a PortalException
                     // hand it over to the Error channel
@@ -547,6 +547,9 @@ public class ChannelManager {
                 // a buffer output routine threw. This means that we are likely to have partial
                 // output in the document handler. Really bad !
                 LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
+            } catch (Throwable t) {
+              // Some strange runtime error
+                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+t);
             }
         }
         else {
@@ -628,7 +631,7 @@ public class ChannelManager {
                 // this implies that the channel has thrown an exception during
                 // renderXML() call. No events had been placed onto the ContentHandler,
                 // so that an Error channel can be rendered in place.
-                Exception channelException=ipe.getException();
+                Throwable channelException=ipe.getException();
                 if(channelException!=null) {
                     // see if the renderXML() has thrown a PortalException
                     // hand it over to the Error channel
@@ -662,7 +665,10 @@ public class ChannelManager {
                 // method, but somewhere down the line things went wrong. Most likely,
                 // a buffer output routine threw. This means that we are likely to have partial
                 // output in the document handler. Really bad !
-                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
+                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e, e);
+            } catch (Throwable t) {
+              LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+t, t);
+
             }
             return dh;
         } else {

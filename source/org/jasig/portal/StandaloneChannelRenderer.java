@@ -140,7 +140,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param req http request
      * @param res http response
      */
-    public void render(HttpServletRequest req,HttpServletResponse res) throws Exception {
+    public void render(HttpServletRequest req,HttpServletResponse res) throws Throwable {
 	ChannelRuntimeData rd=null;
 	if(!dataIsSet) {
 	    if(this instanceof IPrivilegedChannel) {

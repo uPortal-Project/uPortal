@@ -165,9 +165,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 }
                 try {
                     state.p_browserMapper.render(req, res);
-                } catch (Exception e) {
+                } catch (Throwable t) {
                     // something went wrong trying to show CSelectSystemProfileChannel
-                    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
+                    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+t);
                 }
                 // don't go any further!
                 return;

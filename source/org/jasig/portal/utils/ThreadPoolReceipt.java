@@ -46,7 +46,7 @@ public class ThreadPoolReceipt {
   protected ThreadPoolWorker worker;
   protected boolean jobdone;
   protected boolean jobsuccessful;
-  protected Exception thrownException;
+  protected Throwable thrownException;
 
 
   public ThreadPoolReceipt(ThreadPoolWorker w) {
@@ -64,7 +64,7 @@ public class ThreadPoolReceipt {
    return s;
   }
 
-  public synchronized void updateStatus(ThreadPoolWorker currentWorker, boolean isdone, boolean issuccessful,Exception ex) {
+  public synchronized void updateStatus(ThreadPoolWorker currentWorker, boolean isdone, boolean issuccessful,Throwable ex) {
    this.worker=currentWorker;
    this.jobdone=isdone;
    this.jobsuccessful=issuccessful;
@@ -88,7 +88,7 @@ public class ThreadPoolReceipt {
       }
   }
 
-  public Exception getThrownException() {
+  public Throwable getThrownException() {
     return thrownException;
   }
   public boolean isJobsuccessful() {

@@ -155,9 +155,9 @@ public class UserInstance implements HttpSessionBindingListener {
                 }
                 try {
                     p_browserMapper.render(req, res);
-                } catch (Exception e) {
+                } catch (Throwable t) {
                     // something went wrong trying to show CSelectSystemProfileChannel
-                    LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
+                    LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+t);
                 }
                 // don't go any further!
                 return;
@@ -509,7 +509,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 if (printXMLBeforeStructureTransformation) {
                   LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
                 }
-                
+
                 // prepare for the theme transformation
 
                 // set up of the parameters

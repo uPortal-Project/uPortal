@@ -42,14 +42,14 @@ package org.jasig.portal;
  * @version $Revision$
  */
 
-public class InternalPortalException extends Exception {
-    protected Exception exc;
+public class InternalPortalException extends Throwable {
+    protected Throwable exc;
 
-    public InternalPortalException(Exception e) {
+    public InternalPortalException(Throwable e) {
         this.exc=e;
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return this.exc;
     }
 

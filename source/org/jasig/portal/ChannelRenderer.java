@@ -170,7 +170,7 @@ public class ChannelRenderer
    * @param out Document Handler that will receive information rendered by the channel.
    * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
    */
-  public int outputRendering (ContentHandler out) throws Exception
+  public int outputRendering (ContentHandler out) throws Throwable
   {
 
 
@@ -244,14 +244,24 @@ public class ChannelRenderer
           return RENDERING_SUCCESSFUL;
       } else {
           // rendering was not successful
-          Exception e;
-          if((e=worker.getException())!=null) throw new InternalPortalException(e);
+          Throwable e;
+          if((e=worker.getThrowable())!=null) throw new InternalPortalException(e);
           // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
           return RENDERING_FAILED;
       }
     } else {
-        // rendering has timed out
-        return RENDERING_TIMED_OUT;
+        Throwable e;
+        if(POOL_THREADS) {
+          e = workerReceipt.getThrownException();
+        } else {
+          e = worker.getThrowable();
+        }
+        if (e != null) {
+          throw new InternalPortalException(e);
+        } else {
+          // Assume rendering has timed out
+          return RENDERING_TIMED_OUT;
+        }
     }
   }
 
@@ -262,7 +272,7 @@ public class ChannelRenderer
      *
      * @return an <code>int</code> return status value
      */
-    public int completeRendering () throws Exception
+    public int completeRendering () throws Throwable
   {
     if (!rendering)
       this.startRendering ();
@@ -320,8 +330,8 @@ public class ChannelRenderer
           return RENDERING_SUCCESSFUL;
       } else {
           // rendering was not successful
-          Exception e;
-          if((e=worker.getException())!=null) throw new InternalPortalException(e);
+          Throwable e;
+          if((e=worker.getThrowable())!=null) throw new InternalPortalException(e);
           // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
           return RENDERING_FAILED;
       }
@@ -389,7 +399,7 @@ public class ChannelRenderer
         private ChannelRuntimeData rd;
 	private SAX2BufferImpl buffer;
         private String cbuffer;
-        private Exception exc=null;
+        private Throwable exc=null;
 
 	protected class ChannelCacheEntry {
 	    private Object buffer;
@@ -497,8 +507,8 @@ public class ChannelRenderer
 		    channel.renderXML (buffer);
 		}
                 successful = true;
-            } catch (Exception e) {
-                this.exc=e;
+            } catch (Throwable t) {
+              exc = t;
             }
             done = true;
         }
@@ -568,7 +578,7 @@ public class ChannelRenderer
             return this.done;
         }
 
-        public Exception getException() {
+        public Throwable getThrowable() {
             return exc;
         }
 
