@@ -10,7 +10,7 @@ function xml(nodelist){
 
 	<xsl:param name="baseActionURL">Default</xsl:param>
 	<xsl:param name="currentStep" select="1"/>
-	<xsl:param name="numSteps" select="1"/>
+	<xsl:param name="numSteps" select="count(*/params/step)"/>
 	<xsl:param name="modified">false</xsl:param>
 	<xsl:param name="mode">publish</xsl:param>
 	<xsl:param name="profileName">default profile</xsl:param>
@@ -36,14 +36,19 @@ function xml(nodelist){
 			<input type="submit" name="choose" value="Choose"/>
 		</form>
 	</xsl:template>
+	
 	<xsl:template match="channelDef">
-		<xsl:param name="numSteps" select="count(params/step)"/>
+        <form action="{$baseActionURL}" method="post">
+      	  <input type="hidden" name="action" value="publish"/>
+		<!--<xsl:param name="numSteps" select="count(params/step)"/>-->
 		<p align="center">
 			<xsl:value-of select="description"/>
 		</p>
 		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$numSteps"/>
 		</p>
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
+      	  <p align="center"><input type="submit" name="publish" value="Next"/></p>
+        </form>
 	</xsl:template>
 	
 	<!-- The current step info-->
@@ -66,7 +71,7 @@ function xml(nodelist){
 		<xsl:if test="@modify != 'subscribe-only'">
 			<tr>
 				<xsl:choose>
-					<xsl:when test="type/display='text'">
+					<xsl:when test="type/base='text'">
 						<xsl:call-template name="text"/>
 					</xsl:when>
 					<xsl:when test="type/base='single-choice'">
@@ -237,6 +242,9 @@ function xml(nodelist){
 					</textarea>
 				</td>
 				<xsl:call-template name="subscribe"/>
+			</xsl:when>
+			<xsl:when test="type/display='hidden'">
+				<input type="hidden" name="{name}" value="{defaultValue}"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<td>
