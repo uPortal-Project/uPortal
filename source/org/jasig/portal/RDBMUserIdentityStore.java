@@ -91,7 +91,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      if (RDBMServices.supportsTransactions)  
+      if (RDBMServices.supportsTransactions)
         con.setAutoCommit(false);
 
       try {
@@ -131,26 +131,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        /* remove from all groups */
-        try{
-          IGroupMember user = GroupService.getEntity(String.valueOf(uPortalUID), Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator userGroups =  user.getContainingGroups();
-          LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing group memberships.");
-          while (userGroups.hasNext())
-          {
-                IEntityGroup eg = (IEntityGroup) userGroups.next();
-
-                LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing user from group "+eg.getName());
-                eg.removeMember(user);
-                eg.updateMembers();
-          }
-        }
-        catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error removing user from groups: ", e);
-        }
-
-
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.commit();
 
       } finally {
@@ -159,7 +140,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.rollback();
       }
       catch (SQLException e) {
