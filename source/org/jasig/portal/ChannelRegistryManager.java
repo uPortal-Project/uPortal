@@ -76,6 +76,9 @@ public class ChannelRegistryManager {
   private static final String CHANNEL_REGISTRY_CACHE_KEY = "channelRegistryCacheKey";
   private static final String CHANNEL_TYPES_CACHE_KEY = "channelTypesCacheKey";
   private static final String CPD_CACHE_KEY = "cpdCacheKey";
+  private static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";
+  private static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  private static final String GRANT_PERMISSION_TYPE = "GRANT";
 
   /**
    * Returns the channel registry as a Document.  This list is not filtered by roles.
@@ -143,49 +146,6 @@ public class ChannelRegistryManager {
    * Publishes a channel.
    * @param the channel XML fragment
    * @param a list of categories that the channel belongs to
-   * @param a list of roles that are permitted to subscribe to the channel
-   * @param the user ID of the channel publisher
-   * @throws java.lang.Exception
-   * @deprecated
-   */
-  /*
-  public static void publishChannel (Element channel, Set categoryIDs, Set roles, IPerson publisher) throws Exception {
-    // Reset the channel registry cache
-    channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
-
-    // Use current channel ID if modifying previously published channel, otherwise get a new ID
-    int ID = 0;
-    String chanID = channel.getAttribute("ID");
-    if (chanID != null && chanID.trim().length() > 0) {
-      ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
-      LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
-    }
-    else {
-      ID = chanRegStore.getNextId();
-      LogService.instance().log(LogService.INFO, "Attempting to publish new channel " + ID + "...");
-    }
-
-    // Add channel
-    String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
-    Document channelDoc = DocumentFactory.getNewDocument();
-    channelDoc.appendChild(channelDoc.importNode(channel, true));
-    chanRegStore.addChannel(ID, publisher, channelDoc, catIDs);
-
-    // Set roles
-    org.jasig.portal.security.IAuthorization.RoleAuthorization[] aRoles = (org.jasig.portal.security.IAuthorization.RoleAuthorization[])roles.toArray(new org.jasig.portal.security.IAuthorization.RoleAuthorization[0]);
-    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, aRoles);
-
-    // Approve channel
-    chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
-
-    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
-  }
-  */
-
-  /**
-   * Publishes a channel.
-   * @param the channel XML fragment
-   * @param a list of categories that the channel belongs to
    * @param a list of group keys that are permitted to subscribe to and view the channel
    * @param the user ID of the channel publisher
    * @throws java.lang.Exception
@@ -215,22 +175,24 @@ public class ChannelRegistryManager {
 
     // Set groups
     AuthorizationService authService = AuthorizationService.instance();
-    String owner = "UP_FRAMEWORK"; // the whole framework
-    IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(owner);
+    String target = "CHAN_ID." + ID;
+    IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
     IPermission[] permissions = new IPermission[groups.length];
     for (int i = 0; i < groups.length; i++) {
       String principalKey = groups[i].getKey();
       IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
       permissions[i] = upm.newPermission(authPrincipal);
-      permissions[i].setType("GRANT");
-      permissions[i].setActivity("SUBSCRIBE");
-      permissions[i].setTarget("CHAN_ID." + ID);
+      permissions[i].setType(GRANT_PERMISSION_TYPE);
+      permissions[i].setActivity(SUBSCRIBER_ACTIVITY);
+      permissions[i].setTarget(target);
     }
 
-    if (newChannel)
-       upm.addPermissions(permissions);
-    else
-       upm.updatePermissions(permissions); // this doesn't change the principal! shouldn't it?
+    // If modifying the channel, remove the existing permissions before adding the new ones
+    if (!newChannel) {
+      IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
+      upm.removePermissions(oldPermissions);
+    }
+    upm.addPermissions(permissions);
 
     // Approve channel - this can be removed when there is a mechanism to approve channels
     chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
