@@ -107,21 +107,21 @@ public interface IChannelRegistryStore {
   /**
    * Publishes a channel.
    * @param id the identifier for the channel
-   * @param publisherId the identifier for the user who is publishing this channel
+   * @param publisher the user who is publishing this channel
    * @param chanXML XML that describes the channel
    * @param catID an array of category IDs
    * @exception Exception
    */
-  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws Exception;
+  public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws Exception;
 
   /**
    * Approves a channel.
    * @param chanId
-   * @param approverId
+   * @param approver
    * @param approveDate
    * @exception Exception
    */
-  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception;
+  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception;
 }
 
 

@@ -140,7 +140,7 @@ public class ChannelRegistryManager {
    * @param the user ID of the channel publisher
    * @throws java.lang.Exception
    */
-  public static void publishChannel (Element channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
+  public static void publishChannel (Element channel, Set categoryIDs, Set roles, IPerson publisher) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
@@ -160,14 +160,14 @@ public class ChannelRegistryManager {
     String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
     Document channelDoc = DocumentFactory.getNewDocument();
     channelDoc.appendChild(channelDoc.importNode(channel, true));
-    chanRegStore.addChannel(ID, publisherID, channelDoc, catIDs);
+    chanRegStore.addChannel(ID, publisher, channelDoc, catIDs);
 
     // Set roles
     org.jasig.portal.security.IAuthorization.RoleAuthorization[] aRoles = (org.jasig.portal.security.IAuthorization.RoleAuthorization[])roles.toArray(new org.jasig.portal.security.IAuthorization.RoleAuthorization[0]);
     int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, aRoles);
 
     // Approve channel
-    chanRegStore.approveChannel(ID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));
+    chanRegStore.approveChannel(ID, publisher, new java.sql.Timestamp(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
   }

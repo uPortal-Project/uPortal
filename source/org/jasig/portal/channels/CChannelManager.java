@@ -410,10 +410,9 @@ public class CChannelManager extends BaseChannel {
         state = DEFAULT_STATE; // we need to add a confirmation and channel preview screen
         Set catIDs = categorySettings.getSelectedCategories();
         Set roles = roleSettings.getSelectedRoles();
-        int publisherID = person.getID();
         try {
           Element channelE = channelDef.toXML();
-          ChannelRegistryManager.publishChannel(channelE, catIDs, roles, publisherID);
+          ChannelRegistryManager.publishChannel(channelE, catIDs, roles, person);
         } catch (Exception e) {
           // need to revisit this and handle the error!
           e.printStackTrace();

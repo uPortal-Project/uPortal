@@ -1341,10 +1341,10 @@ public class RDBMUserLayoutStore
    *   ChannelRegistry
    *
    */
-  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws SQLException {
+  public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, publisherId, chanXML, con);
+      addChannel(id, publisher, chanXML, con);
       // Set autocommit false for the connection
       setAutoCommit(con, false);
       Statement stmt = con.createStatement();
@@ -1380,14 +1380,14 @@ public class RDBMUserLayoutStore
   /**
    * Publishes a channel.
    * @param id
-   * @param publisherId
+   * @param publisher
    * @param chanXML
    * @exception java.sql.SQLException
    */
-  public void addChannel (int id, int publisherId, Document chanXML) throws SQLException {
+  public void addChannel (int id, IPerson publisher, Document chanXML) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, publisherId, chanXML, con);
+      addChannel(id, publisher, chanXML, con);
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1471,15 +1471,15 @@ public class RDBMUserLayoutStore
   /**
    * put your documentation comment here
    * @param chanId
-   * @param approverId
+   * @param approver
    * @exception Exception
    */
-  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception {
+  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception {
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approverId + ", CHAN_APVL_DT = " +
+        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() + ", CHAN_APVL_DT = " +
         tsStart + " '" + approveDate.toString() + "'" + tsEnd +
         " WHERE CHAN_ID = " + chanId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
@@ -1500,7 +1500,7 @@ public class RDBMUserLayoutStore
    * @param con
    * @exception Exception
    */
-  protected void addChannel (int id, int publisherId, Document doc, Connection con) throws SQLException {
+  protected void addChannel (int id, IPerson publisher, Document doc, Connection con) throws SQLException {
     Element channel = (Element)doc.getFirstChild();
     // Set autocommit false for the connection
     setAutoCommit(con, false);
@@ -1535,7 +1535,7 @@ public class RDBMUserLayoutStore
         "CHAN_DESC='" + sqlDescription + "', " +
         "CHAN_CLASS='" + sqlClass + "', " +
         "CHAN_TYPE_ID=" + sqlTypeID + ", " +
-        "CHAN_PUBL_ID=" + publisherId + ", " +
+        "CHAN_PUBL_ID=" + publisher.getID() + ", " +
         "CHAN_PUBL_DT=" + sysdate + ", " +
         "CHAN_APVL_ID=NULL, " +
         "CHAN_APVL_DT=NULL, " +
@@ -1554,7 +1554,7 @@ public class RDBMUserLayoutStore
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
             + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
         sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-            + publisherId + ", " + sysdate + ", " + timeout + ", '" + sqlMinimizable
+            + publisher.getID() + ", " + sysdate + ", " + timeout + ", '" + sqlMinimizable
             + "', '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
             + "', '" + sqlDetachable + "', '" + sqlName + "', '" + sqlFName + "')";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);

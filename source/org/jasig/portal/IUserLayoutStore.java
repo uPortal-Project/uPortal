@@ -68,15 +68,15 @@ public interface IUserLayoutStore {
   public void deleteUserProfile(IPerson Person,int profileId) throws Exception;
 
   /* ChannelRegistry */
-  public void addChannel(int id, int publisherId, Document doc) throws Exception;
-  public void addChannel(int id, int publisherId, Document doc, String catID[]) throws Exception;
+  public void addChannel(int id, IPerson publisher, Document doc) throws Exception;
+  public void addChannel(int id, IPerson publisher, Document doc, String catID[]) throws Exception;
   public void removeChannel(String chanID) throws Exception;
   public Document getChannelRegistryXML(IPerson person) throws Exception;
   public Document getChannelTypesXML() throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
-  public String getNextStructChannelId(IPerson Person) throws Exception;
-  public String getNextStructFolderId(IPerson Person) throws Exception;
-  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception;
+  public String getNextStructChannelId(IPerson person) throws Exception;
+  public String getNextStructFolderId(IPerson person) throws Exception;
+  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception;
 
   /* CoreStylesheetDescription */
     public Integer getStructureStylesheetId(String ssName) throws Exception;

@@ -100,19 +100,19 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @param catID an array of category IDs
    * @throws java.lang.Exception
    */
-  public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws Exception {
-    UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisherId, chanXML, catID);
+  public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws Exception {
+    UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisher, chanXML, catID);
   }
 
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
    * @param id the identifier for the channel
-   * @param publisherId the identifier for the user who is publishing this channel
+   * @param publisher the user who is publishing this channel
    * @param chanXML XML that describes the channel
    */
-  public void addChannel (int id, int publisherId, Document chanXML) {
+  public void addChannel (int id, IPerson publisher, Document chanXML) {
     try {
-      UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisherId, chanXML);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisher, chanXML);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -121,11 +121,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /** A method for approving a channel so that users are allowed to subscribe to it.
    *  This would be called by the publish channel or the administrator channel
    *  @param chanId Channel to approve
-   *  @param approvedId Account approving the channel
+   *  @param approved Account approving the channel
    *  @param approveDate When should the channel appear
    */
-  public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception {
-    UserLayoutStoreFactory.getUserLayoutStoreImpl().approveChannel(chanId, approverId, approveDate);
+  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception {
+    UserLayoutStoreFactory.getUserLayoutStoreImpl().approveChannel(chanId, approver, approveDate);
   }
 
   /** A method for getting the next available channel ID.
