@@ -408,6 +408,24 @@
         <column><name>CHAN_FNAME</name><value>WebMail</value></column>
       </row>
       <row>
+        <column><name>CHAN_ID</name><value>90</value></column>
+        <column><name>CHAN_TITLE</name><value>Channel Manager</value></column>
+        <column><name>CHAN_DESC</name><value>Channel Manager</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CChannelManager</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
+        <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_DETACHABLE</name><value>N</value></column>
+        <column><name>CHAN_NAME</name><value>Channel Manager</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/channelmanager/general</value></column>
+      </row>
+      <row>
         <column><name>CHAN_ID</name><value>91</value></column>
         <column><name>CHAN_TITLE</name><value>Publish</value></column>
         <column><name>CHAN_DESC</name><value>Publish channel</value></column>
@@ -1758,6 +1776,11 @@
   <table>
     <name>UP_CAT_CHAN</name>
     <rows>
+      <!-- This is the Channel Manager which is temporary -->
+      <row>
+        <column><name>CAT_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>90</value></column>
+      </row>
       <row>
         <column><name>CAT_ID</name><value>0</value></column>
         <column><name>CHAN_ID</name><value>3</value></column>
