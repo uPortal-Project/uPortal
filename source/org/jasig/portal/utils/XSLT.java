@@ -44,6 +44,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 
 
 /**
@@ -165,15 +166,28 @@ public class XSLT
     stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
 
-    public static void transform (XSLTResultTarget xmlResult, org.w3c.dom.Document sourceDocument, String xslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
-    {
-	XSLTInputSource xmlSource=new XSLTInputSource(sourceDocument);
-	XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison ());
-	StylesheetRoot stylesheetRoot = getStylesheetRoot(UtilitiesBean.fixURI(xslUri));
-	processor.reset();
-	setStylesheetParams(processor, stylesheetParams);
-	stylesheetRoot.process(processor, xmlSource, xmlResult);
-    }
+  /**
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
+   * @param out a document handler
+   * @param doc the xml document
+   * @param xslUri the URI of the stylesheet file (.xsl)
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @throws org.xml.sax.SAXException
+   * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static void transform (DocumentHandler out, Document doc, String xslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  {
+    XSLTInputSource xmlSource = new XSLTInputSource(doc);
+    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+
+    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison ());
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(UtilitiesBean.fixURI(xslUri));
+    processor.reset();
+    setStylesheetParams(processor, stylesheetParams);
+    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  }
 
 
 
@@ -198,7 +212,7 @@ public class XSLT
     }
   }
 
-    private static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
+  private static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
   {
     // First, check the cache...
     StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
