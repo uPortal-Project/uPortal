@@ -1,5 +1,7 @@
 package org.jasig.portal;
 
+import org.w3c.dom.*;
+
 /**
  * Interface defining how the portal retrieves it's channels and categories.
  * Methods are also provided to allow for publishing and unpublishing content.
@@ -9,8 +11,10 @@ package org.jasig.portal;
  */
 
 public interface IChannelRegistry {
-    public String getRegistryXML(String category, String role);
+    public Document getRegistryXML(String category, String role);
     public void setRegistryXML(String registryXML);
+    public Document getChannelTypesXML();
+    public Document getChannelCatsXML();
     public void removeChannel(String catID[], String chanID, String role[]);
     public void addChannel(String catID[], String chanXML, String role[]);
 }
