@@ -122,7 +122,7 @@
         <desc>Locale - the locale of meta data element</desc>
         <key>PK</key>
       </column>
-      <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>15</param>
+      <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>128</param>
         <desc>Layout title - the name of the layout in text</desc>
       </column>
     </columns>
