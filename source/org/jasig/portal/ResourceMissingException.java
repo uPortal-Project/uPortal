@@ -73,8 +73,4 @@ public class ResourceMissingException extends PortalException {
         return str_description;
     }
 
-    public int getExceptionCode() {
-        return PortalException.RESOURCE_MISSING_EXCEPTION;
-    }
-
 }

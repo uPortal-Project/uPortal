@@ -44,6 +44,7 @@ package org.jasig.portal;
  */
 
 public class InternalTimeoutException extends PortalException {
+    
     private Long l_timeoutValue=null;
 
     public InternalTimeoutException() {
@@ -71,7 +72,4 @@ public class InternalTimeoutException extends PortalException {
         return l_timeoutValue;
     }
 
-    public int getExceptionCode() {
-        return PortalException.INTERNAL_TIMEOUT_EXCEPTION;
-    }
 }

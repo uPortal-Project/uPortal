@@ -37,19 +37,14 @@ package org.jasig.portal;
 
 
 /**
- * An abstract base for the uPortal channel exceptions.
+ * Base portal exception class.
  * Information contained in this class allows ErrorChannel
  * to handle errors gracefully.
  * @author Peter Kharchenko
  * @version $Revision$
  */
 
-public abstract class PortalException extends Exception {
-    // enumerating possible exceptions
-    public static final int GENERAL_RENDERING_EXCEPTION=0;
-    public static final int INTERNAL_TIMEOUT_EXCEPTION=1;
-    public static final int AUTHORIZATION_EXCEPTION=2;
-    public static final int RESOURCE_MISSING_EXCEPTION=3;
+public class PortalException extends Exception {
 
     // should the user be given an option to reinstantiate
     // the channel in a given session ?
@@ -58,29 +53,106 @@ public abstract class PortalException extends Exception {
     // that same channel instance ?
     boolean b_refresh=true;
 
-    public PortalException(boolean refresh, boolean reinstantiate) {
-        b_reinst=reinstantiate;
+    // exception trace
+    Exception e_exc;
+
+    public PortalException() {
     }
 
+    /**
+     * Construct a new portal exception, recording the
+     * exception that originally caused the error.
+     *
+     * @param exc an <code>Exception</code> value
+     */
+    public PortalException(Exception exc) {
+        this.e_exc=exc;
+    }
+
+    /**
+     * Creates a new <code>PortalException</code> instance,
+     * with a contained text message.
+     *
+     * @param msg a <code>String</code> value
+     */
     public PortalException(String msg) {
         super(msg);
+    }
+
+    public PortalException(String msg,Exception exc) {
+        super(msg);
+        this.e_exc=exc;
     }
 
     public PortalException(String msg, boolean refresh, boolean reinstantiate) {
         super(msg);
         b_reinst=reinstantiate;
+        b_refresh=refresh;
     }
 
-    public PortalException() {
+    public PortalException(String msg, Exception exc, boolean refresh, boolean reinstantiate) {
+        this(msg,refresh,reinstantiate);
+        this.e_exc=exc;
     }
 
-    abstract public int getExceptionCode();
-
+    /**
+     * Check if user-mediated referesh is allowed.
+     *
+     * @return a <code>boolean</code> value
+     */
     public boolean allowRefresh() {
         return b_refresh;
     }
 
+    /**
+     * Check if user-mediated reinstantiation is allowed.
+     *
+     * @return a <code>boolean</code> value
+     */
     public boolean allowReinstantiation() {
         return b_reinst;
+    }
+
+    /**
+     * Retrieve an optionally recorded exception that
+     * caused the error.
+     *
+     * @return an <code>Exception</code> value
+     */
+    public Exception getRecordedException() {
+        return this.e_exc; 
+    }
+
+    /**
+     * Set if the user should be presented with an option
+     * to retry the same operation on the component that
+     * has generated the error.
+     *
+     * @param refresh a <code>boolean</code> value
+     */
+    public void setRefershable(boolean refresh) {
+        this.b_refresh=refresh;
+    }
+
+    /**
+     * Set if the user should be presented with an option
+     * to reinstantiate the component (channel) that generated
+     * the error.
+     *
+     * @param reinstantiate a <code>boolean</code> value
+     */
+    public void setReinstantiable(boolean reinstantiate) {
+        this.b_reinst=reinstantiate;
+    }
+
+    /**
+     * Allows to record the exception that caused the error.
+     * The exception information can later be used in error 
+     * reporting and user interaction.
+     *
+     * @param exc an <code>Exception</code> value
+     */
+    public void setRecordedException(Exception exc) {
+        this.e_exc=exc;
     }
 }

@@ -51,12 +51,16 @@ public class GeneralRenderingException extends PortalException {
         super(msg);
     }
 
+    public GeneralRenderingException(String msg, Exception e) {
+        super(msg,e);
+    }
+
     public GeneralRenderingException(String msg,boolean refresh,boolean reinstantiate) {
         super(msg,refresh,reinstantiate);
     }
 
-    public int getExceptionCode() {
-        return PortalException.GENERAL_RENDERING_EXCEPTION;
+    public GeneralRenderingException(String msg,Exception e,boolean refresh,boolean reinstantiate) {
+        super(msg,e,refresh,reinstantiate);
     }
 
 }

@@ -55,7 +55,4 @@ public class AuthorizationException extends PortalException {
         super(msg,refresh, reinstantiate);
     }
 
-    public int getExceptionCode() {
-        return PortalException.AUTHORIZATION_EXCEPTION;
-    }
 }
