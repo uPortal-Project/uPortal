@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import org.apache.pluto.om.window.PortletWindow;
+import org.apache.pluto.core.InternalActionResponse;
 
 
 import org.jasig.portal.ChannelRuntimeData;
@@ -118,9 +119,12 @@ public class PortletStateManager {
 	
 	private void analizeRequestInformation() {
 		params.clear();
-		Map renderParams = windowOfAction.getInternalActionResponse().getRenderParameters();
-		if ( renderParams != null && !renderParams.isEmpty() )
-		 params.putAll(renderParams);
+		InternalActionResponse response = windowOfAction.getInternalActionResponse();
+		if ( response != null ) {
+		 Map renderParams = response.getRenderParameters();
+		 if ( renderParams != null && !renderParams.isEmpty() )
+		  params.putAll(renderParams);
+	    }  
 		String windowId = windowOfAction.getId().toString();
 		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
