@@ -361,21 +361,18 @@
 			</tr>
 			<xsl:if test="not($grpServantMode='true')">
 			  <xsl:if test="$ignorePermissions or key('can',concat('CREATE','|',$grpKey))">
-				<form action="{$baseActionURL}" method="POST">
-				  <input type="hidden" name="grpCommand" value="Create" /> <input type="hidden" name="grpCommandArg" value="{$highlightedGroupID}" />
 				  <tr>
 					<td>
 					  <xsl:text>
 					  </xsl:text>
 					</td>
 					<td colspan="2" nowrap="true">
-					  <input type="submit" value="Create New Member Group" class="uportal-button" />
+					  <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Create';" value="Create New Member Group" class="uportal-button" />
 					  <xsl:text>
 					  </xsl:text>
 					  <input type="text" size="25" name="grpName" value="(new group name)" class="uportal-channel-text" />
 					</td>
 				  </tr>
-				</form>
 			  </xsl:if>
 			</xsl:if>
         </xsl:if>
