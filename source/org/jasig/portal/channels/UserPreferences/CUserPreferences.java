@@ -83,7 +83,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return UserLayoutManager
    */
   protected IUserLayoutManager getUserLayoutManager () {
     return  ulm;
@@ -91,7 +91,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return UserPreferences
    */
   protected UserPreferences getCurrentUserPreferences () {
     return  up;
@@ -99,7 +99,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return ChannelRuntimeData
    */
   protected ChannelRuntimeData getRuntimeData () {
     return  runtimeData;
@@ -107,7 +107,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return StylesheetSet
    */
   protected StylesheetSet getStylesheetSet () {
     return  set;
