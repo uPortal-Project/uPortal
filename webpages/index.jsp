@@ -63,4 +63,11 @@ else
 }
 %>
 
+<%
+  if(sPortalBaseDir != null)
+  {
+%>
 <jsp:forward page="layout.jsp" />
+<%
+  }
+%>
