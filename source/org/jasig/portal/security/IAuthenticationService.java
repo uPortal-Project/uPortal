@@ -33,7 +33,7 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.security;
 
 import org.jasig.portal.security.IPerson;
 
