@@ -97,8 +97,8 @@ public class AddressTester {
               if (DEBUG) {
                 System.out.println("timed out on " + urlToTry);
               }
-              log.info(
-                                        "AddressTest::checkURL(): timed out on " +
+              if (log.isInfoEnabled())
+                  log.info("AddressTest::checkURL(): timed out on " +
                                         urlToTry);
 
             } catch (Exception e) { /* Something went wrong */
@@ -106,10 +106,9 @@ public class AddressTester {
                 System.out.println(urlToTry + " generated exception: " +
                                    e.getMessage());
               }
-              log.info(
-                                        "AddressTest::checkURL(): "
-                                        + urlToTry + " generated exception: " +
-                                        e.getMessage());
+              if (log.isInfoEnabled())
+                  log.info( "AddressTest::checkURL(): "
+                                        + urlToTry + " generated exception: ", e);
             } finally {
               rt.cancel();
             }
