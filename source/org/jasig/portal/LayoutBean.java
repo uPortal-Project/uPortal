@@ -126,18 +126,18 @@ public class LayoutBean extends GenericPortalBean
       String sATabColor = layout.getAttribute ("activeTabColor");
       String sTabColor = layout.getAttribute ("tabColor");
       String sChanColor = layout.getAttribute ("channelHeadingColor");
-      out.println ("<STYLE>");
-      out.println ("<!-- BODY { color: " + sFgColor + "; background: " + sBgColor + "; }");
+      out.println ("<style>");
+      out.println ("<!-- body { color: " + sFgColor + "; background: " + sBgColor + "; }");
       out.println ("td { color: " + sFgColor + "}");
       out.println ("A:link { color: " + sATabColor + "}");
       out.println ("A:visited { color: " + sTabColor + "}");
       out.println ("A:active { color: " + sChanColor + "}");
-      out.println (" --></STYLE>");
+      out.println (" --></style></head>");
 
       /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
          and ignores the color setting for the body.   When browser versions do handle this, you should remove
          this redundant body tag code below.  */
-      out.println ("<BODY BGCOLOR=" + sBgColor + " TEXT=" + sFgColor + " LINK=" + sATabColor + " VLINK=" + sTabColor + " ALINK=" + sChanColor + ">");
+      out.println ("<body bgcolor=" + sBgColor + " text=" + sFgColor + " link=" + sATabColor + " vlink=" + sTabColor + " alink=" + sChanColor + ">");
 
     }
     catch (Exception e)
@@ -419,7 +419,7 @@ public class LayoutBean extends GenericPortalBean
         if (i == iTab)
           out.println ("      <td><span class=\"PortalTitleText\">&nbsp;" + sTabName + "</span>&nbsp;</td>");
         else
-          out.println ("      <td><a href=\"layout.jsp?tab=" + i + "\"><SPAN CLASS=\"PortalTitleText\">" + sTabName + "</SPAN></a>&nbsp;</td>");
+          out.println ("      <td><a href=\"layout.jsp?tab=" + i + "\"><span CLASS=\"PortalTitleText\">" + sTabName + "</span></a>&nbsp;</td>");
 
         out.println ("    </tr>");
         out.println ("  </table>");
@@ -515,7 +515,7 @@ public class LayoutBean extends GenericPortalBean
             out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
             out.println ("        <tr>");
             out.println ("          <td>");
-            out.println ("            <SPAN CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</SPAN>");
+            out.println ("            <span CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</span>");
             out.println ("          </td>");
             out.println ("          <td nowrap valign=center align=right>");
             out.println ("            &nbsp;");
