@@ -137,6 +137,23 @@ public class CGroupsManager
                   }
                }
             }
+
+            IEntityGroup allChans = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
+            targets.put(allChans.getKey(), allChans.getName());
+            Iterator allcgroups = allChans.getAllMembers();
+            while (allcgroups.hasNext()) {
+               IGroupMember g = (IGroupMember)allcgroups.next();
+               if (g.isGroup()) {
+                  if (targets.get(g.getKey()) == null) {
+                     try {
+                        targets.put(g.getKey(), ((IEntityGroup)g).getName());
+                     } catch (Exception e) {
+                        LogService.instance().log(LogService.ERROR, "CGroupsManager.init():: unable to add target"
+                              + e);
+                     }
+                  }
+               }
+            }
          }
       } catch (Exception e) {
          LogService.instance().log(LogService.ERROR, "CGroupsManager.init():: unable to set targets"
