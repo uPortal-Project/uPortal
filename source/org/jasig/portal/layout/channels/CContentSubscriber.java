@@ -143,7 +143,7 @@ public class CContentSubscriber extends FragmentManager {
 			String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_fragmentID"));
 		    String channelId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_channelID"));
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
-			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
+			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"),"init");
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channel-state"),"browse");
 			boolean all = false,
 			        expand = action.equals("expand"),
@@ -193,10 +193,11 @@ public class CContentSubscriber extends FragmentManager {
 				 
 			
 		} else if ( action.equals("init") ) {
-			 	//if ( alm.isFragmentLoaded() )
-			 	//alm.loadUserLayout();	
+			 if ( initRegistry ) {
 			 	refreshFragmentMap(); 
 			 	initRegistry();
+			 	initRegistry = false;
+			 }	
 		} else if ( action.equals("search") ) {
 			searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
 			searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
@@ -316,12 +317,9 @@ public class CContentSubscriber extends FragmentManager {
 		 return pulledFragments;    
 	}
 
-    public void initRegistry() throws PortalException {
-      if ( initRegistry ) {	
+    public void initRegistry() throws PortalException {	
       	registry = DocumentFactory.getNewDocument();
-      	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));	
-      	initRegistry = false;
-      }	
+      	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));		
         getFragmentList(registry,registry.getDocumentElement());
     }
 
