@@ -90,7 +90,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
     // To debug structure and/or theme transformations, set these to true
     // and the XML fed to those transformations will be printed to the log.
-    private static final boolean printXMLBeforeStructureTransformation = true;
+    private static final boolean printXMLBeforeStructureTransformation = false;
     private static final boolean printXMLBeforeThemeTransformation = false;
 
     // manages layout and preferences
