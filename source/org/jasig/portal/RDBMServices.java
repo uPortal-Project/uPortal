@@ -50,11 +50,12 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-
+import javax.sql.DataSource;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.commons.dbcp.BasicDataSource;
 /**
  * Provides relational database access and helper methods.
  * A static routine determins if the database/driver supports
@@ -64,9 +65,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class RDBMServices {
-    
+
     private static final Log log = LogFactory.getLog(RDBMServices.class);
-    
+
   private static boolean bPropsLoaded = false;
   private static String sJdbcDriver = null;
   private static String sJdbcUrl = null;
@@ -76,7 +77,6 @@ public class RDBMServices {
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
 
-  protected static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi");
   protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.usePreparedStatements");
   protected static boolean supportsPreparedStatements = false;
   public static boolean supportsOuterJoins = false;
@@ -92,10 +92,11 @@ public class RDBMServices {
   public static final String PERSON_DB = "PersonDb"; // JNDI name for person database
   private static boolean useToDate = false; // Use TO_DATE() function
 
+  private static DataSource ds;
   static {
     try {
       loadProps();
-      if (!bPropsLoaded && !getDatasourceFromJndi)
+      if (!bPropsLoaded)
         {
         System.err.println("Unable to connect to database");
         throw new PortalException("Unable to connect to database");
@@ -243,32 +244,63 @@ public class RDBMServices {
   /**
    * Loads the JDBC properties from rdbm.properties file.
    */
-  protected static void loadProps () throws Exception {
-      InputStream inStream = null;
-      try {
-          if (!bPropsLoaded) {
-              inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
-              Properties jdbcProps = new Properties();
-              jdbcProps.load(inStream);
-              sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
-              sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
-              sJdbcUser = jdbcProps.getProperty("jdbcUser");
-              jdbcDriverProps.put("user", sJdbcUser);
-              jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
-              jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
-              bPropsLoaded = true;
-          }
-      } catch (Exception e) {
-      	// if using jndi then don't throw an exception here
-      	if (!getDatasourceFromJndi)
-          // let caller handle situation where no proerties file is found.
-          // When getting datasource from jndi properties file is optional
-          // and would be used as a fallback only
-      	  throw new RuntimeException(e.getMessage());
-      } finally {
-          if(inStream != null)
-              inStream.close();        	
+  protected synchronized static void loadProps() throws Exception {
+    String errorMsg = "";
+
+    /* Try for JNDI connection first */
+    try {
+      Context initCtx = new InitialContext();
+      Context envCtx = (Context) initCtx.lookup("java:comp/env");
+      ds = (DataSource) envCtx.lookup("jdbc/" + PORTAL_DB);
+      if (ds != null) {
+        sJdbcDriver = "JNDI";
+        bPropsLoaded = true;
       }
+    } catch (Throwable t) {
+      /* ClassNotFound, etc */
+      errorMsg = t.getMessage();
+    }
+
+    if (ds == null) {
+      /* Try basic JDBC connection */
+      try {
+        if (!bPropsLoaded) {
+          InputStream inStream = RDBMServices.class.getResourceAsStream(
+            "/properties/rdbm.properties");
+          try {
+            Properties jdbcProps = new Properties();
+            jdbcProps.load(inStream);
+            sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
+            sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
+            sJdbcUser = jdbcProps.getProperty("jdbcUser");
+            jdbcDriverProps.put("user", sJdbcUser);
+            jdbcDriverProps.put("password",
+                                jdbcProps.getProperty("jdbcPassword"));
+            Class.forName(sJdbcDriver);
+
+            ds = new BasicDataSource();
+            ((BasicDataSource) ds).setDriverClassName(sJdbcDriver);
+            ((BasicDataSource) ds).setUsername(sJdbcUser);
+            ((BasicDataSource) ds).setPassword(jdbcProps.getProperty(
+              "jdbcPassword"));
+            ((BasicDataSource) ds).setUrl(sJdbcUrl);
+
+            bPropsLoaded = true;
+          } finally {
+            inStream.close();
+          }
+        }
+      } catch (Exception e) {
+        // let caller handle situation where no proerties file is found.
+        // When getting datasource from jndi properties file is optional
+        // and would be used as a fallback only
+        errorMsg = e.getMessage();
+      }
+    }
+
+    if (ds == null) {
+      throw new RuntimeException(errorMsg);
+    }
   }
 
   /**
@@ -317,16 +349,9 @@ public class RDBMServices {
   public static Connection getConnection () {
     Connection conn = null;
 
-    // Look in the JNDI context for the DataSource which produces the Connection
-    if (getDatasourceFromJndi) {
-      if ((conn = getConnection(PORTAL_DB)) != null)
-        return conn;
-    }
-
-    if (bPropsLoaded)
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
-        conn = jdbcDriver.connect(sJdbcUrl, jdbcDriverProps);
+        conn = ds.getConnection();
         // Make sure autocommit is set to true
         if (conn != null && !conn.getAutoCommit()) {
           conn.rollback();
@@ -358,58 +383,58 @@ public class RDBMServices {
     }
   }
 
-  /** 
-   * Close a PreparedStatement 
-   * @param ps a database PreparedStatement object 
-   */ 
-  public static void closePreparedStatement (java.sql.PreparedStatement ps) { 
-    try { 
-      if (ps != null) 
-        ps.close(); 
-    } catch (Exception e) { 
-      log.error("Exception closing prepared statement [" + ps +"]", e); 
-    } 
-  } 
-    
-  /** 
-   * Close a PreparedStatement 
-   * @param ps a database PreparedStatement object 
-   */ 
-  public static void closePreparedStatement (PreparedStatement ps) { 
-    try { 
-      if (ps != null) 
-        ps.close(); 
-    } catch (Exception e) { 
-      log.error("Exception closing PreparedStatement [" + ps + "]", e); 
-    } 
-  } 
-    
-  /** 
-   * Close a ResultSet 
-   * @param rs a database ResultSet object 
-   */ 
-  public static void closeResultSet (ResultSet rs) { 
-    try { 
-      if (rs != null) 
-        rs.close(); 
-    } catch (Exception e) { 
-      log.error("Exception closing result set [" + rs + "]", e); 
-    } 
-  } 
-    
-  /** 
-   * Close a Statement 
-   * @param st a database Statement object 
-   */ 
-  public static void closeStatement (Statement st) { 
-    try { 
-      if (st != null) 
-        st.close(); 
-    } catch (Exception e) { 
-      log.error("Exception closing statement [" + st + "]", e); 
-    } 
-  } 
-    
+  /**
+   * Close a PreparedStatement
+   * @param ps a database PreparedStatement object
+   */
+  public static void closePreparedStatement (java.sql.PreparedStatement ps) {
+    try {
+      if (ps != null)
+        ps.close();
+    } catch (Exception e) {
+      log.error("Exception closing prepared statement [" + ps +"]", e);
+    }
+  }
+
+  /**
+   * Close a PreparedStatement
+   * @param ps a database PreparedStatement object
+   */
+  public static void closePreparedStatement (PreparedStatement ps) {
+    try {
+      if (ps != null)
+        ps.close();
+    } catch (Exception e) {
+      log.error("Exception closing PreparedStatement [" + ps + "]", e);
+    }
+  }
+
+  /**
+   * Close a ResultSet
+   * @param rs a database ResultSet object
+   */
+  public static void closeResultSet (ResultSet rs) {
+    try {
+      if (rs != null)
+        rs.close();
+    } catch (Exception e) {
+      log.error("Exception closing result set [" + rs + "]", e);
+    }
+  }
+
+  /**
+   * Close a Statement
+   * @param st a database Statement object
+   */
+  public static void closeStatement (Statement st) {
+    try {
+      if (st != null)
+        st.close();
+    } catch (Exception e) {
+      log.error("Exception closing statement [" + st + "]", e);
+    }
+  }
+
   /**
    * Get the JDBC driver
    * @return the JDBC driver
@@ -757,4 +782,3 @@ public class RDBMServices {
   }
 
 }
-

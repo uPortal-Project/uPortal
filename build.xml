@@ -11,8 +11,8 @@
      files and other resources.
 
      "ant initportal" will deploy uPortal and load your database,
-     but you must first set up the JDBC properties in 
-     rdbm.properties and possibly PersonDirs.xml, 
+     but you must first set up the JDBC properties in
+     rdbm.properties and possibly PersonDirs.xml,
      both of which are in the properties directory.
 
      Author: Ken Weiner, kweiner@unicon.net
@@ -74,7 +74,7 @@
   build.home           The directory into which the "prepare" and
                        "compile" targets will generate their output.
                        Defaults to "build".
-                       
+
   server.home          The root directory of the application server
                        or servlet container such as Tomcat.
 
@@ -222,7 +222,7 @@
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
-                       
+
   commons-discovery.jar
                        The Discovery component, from the Apache Commons project,
                        is about discovering, or finding, implementations for
@@ -235,13 +235,13 @@
                        for Axis. Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://jakarta.apache.org/commons/logging.html
-                       
+
   portlet-api.jar      Portlet API based on JSR-168.
                        Version: (from jakarta-pluto CVS on September 22, 2004)
                        URL: http://www.jcp.org/en/jsr/detail?id=168
-  
+
   pluto.jar            Reference Implementation of the Java Portlet Specfication.
-                       This Portlet container provides a runtime environment for 
+                       This Portlet container provides a runtime environment for
                        portlets implemented according to the Portlet API.
                        The project is still in the Apache Incubator.
                        Version: (from jakarta-pluto CVS on September 22, 2004)
@@ -261,40 +261,40 @@
   proxyportlet.jar     WSRP4J Consumer Proxy Portlet.
                        Comes with WSRP4J.
                        Version: (same as wsrp4j-shared.jar version)
-                       
+
                        The following modifications were made to the
                        WSRP4J proxy portlet source:
-                       
+
                        - org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet:
-                       
+
                           IS: protected PortletKey getPortletKey(Map preferences)
                          WAS: private PortletKey getPortletKey(Map preferences)
-                           
+
                           IS: protected Producer getProducer(String producerID) throws WSRPException
                          WAS: private Producer getProducer(String producerID) throws WSRPException
-                         
+
                           IS: personName.setGiven(userInfo.get("name.given").toString());
                          WAS: personName.setPrefix((String)userInfo.get("user.name.prefix"));
                               personName.setGiven((String)userInfo.get("user.name.given"));
                               personName.setFamily((String)userInfo.get("user.name.family"));
                               personName.setMiddle((String)userInfo.get("user.name.middle"));
                               personName.setSuffix((String)userInfo.get("user.name.suffix"));
-                              personName.setNickname((String)userInfo.get("user.name.nickName"));            
-                       
+                              personName.setNickname((String)userInfo.get("user.name.nickName"));
+
                          Added new method
-                             protected ConsumerEnvironment getConsumerEnvironment() 
+                             protected ConsumerEnvironment getConsumerEnvironment()
                              {
                                  return consumerEnv;
                              }
-                             
+
                        - portlet.xml
-                       
+
                           IS: <portlet-class>org.jasig.portal.wsrp.consumer.portlet.ProxyPortlet</portlet-class>
                          WAS: <portlet-class>org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet</portlet-class>
 
                           IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
                          WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
-                                            
+
                          Added user attributes section:
                               <user-attribute>
                                   <description>User Prefix</description>
@@ -320,13 +320,13 @@
                                   <description>User Nickname</description>
                                   <name>user.name.nickName</name>
                               </user-attribute>
-        
+
                        - wsrp4j-logger.properties
-                       
+
                           IS: log4j.appender.A1.File=wsrp4j-consumer.log
                          WAS: log4j.appender.A1.File=@HOME@/logs/wsrp4j-consumer.log
 
-                       
+
                        URL: http://ws.apache.org/wsrp4j/
 
   jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
@@ -341,7 +341,7 @@
                        more robust like Oracle or PostgreSQL.
                        Version: (depends on your database)
                        URL: (depends on your database)
-                       
+
   hsqldb.jar           Comes with uPortal only as a convenience.  It can and
                        probably should be replaced with another database driver.
                        Version: 1.7.2.4
@@ -351,7 +351,22 @@
                        to implement unit tests in Java.
                        Version: 3.8.1
                        URL: http://www.junit.org/
-                       
+
+  commons-collection.jar Collection components from the Apache Commons project - needed
+                       for database pooling.
+                       Version: 3.1
+                       URL: http://jakarta.apache.org/commons/logging.html
+
+  commons-dbcp.jar     Dbcp components from the Apache Commons project - needed
+                       for database pooling.
+                       Version: 1.2.1
+                       URL: http://jakarta.apache.org/commons/dbcp
+
+  commons-pool.jar     Pool components from the Apache Commons project - needed
+                       for database pooling.
+                       Version: 1.2
+                       URL: http://jakarta.apache.org/commons/pool
+
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2, 2.3, or 2.4
@@ -383,6 +398,9 @@
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
   <property name="junit.jar" value="(set this in build.properties!)"/>
+  <property name="commons-collection.jar" value="(set this in build.properties!)"/>
+  <property name="commons-dbcp.jar" value="(set this in build.properties!)"/>
+  <property name="commons-pool.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
 
 
@@ -426,6 +444,9 @@
     <pathelement location="${proxyportlet.jar}"/>
     <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
+    <pathelement location="${commons-collection.jar}"/>
+    <pathelement location="${commons-dbcp.jar}"/>
+    <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
 
   </path>
@@ -508,10 +529,10 @@
       <fileset dir="properties" includes="**/*"/>
     </copy>
 
-  	<!-- Copy the Logger.properties file to the well-known location
-  	log4j expects.-->
-  	<copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
-  	
+        <!-- Copy the Logger.properties file to the well-known location
+        log4j expects.-->
+        <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
+
     <!-- Copy serializer resources -->
     <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
       <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
@@ -526,16 +547,16 @@
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="webpages/media" excludes="CVS,**/*.gif,**/*.jpg,**/*.css"/>
     </copy>
-    
+
     <!-- Copy DTDs -->
     <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>
     <copy file="${basedir}/webpages/dtd/web-app_2_3.dtd" todir="${build.home}/WEB-INF/classes/org/jasig/portal/container/deploy"/>
-    
+
     <!-- Build Unicode-encoded property files from UTF-8 encoded ones-->
     <native2ascii encoding="UTF-8" src="webpages/stylesheets" dest="${build.home}/WEB-INF/classes" includes="**/*.UTF-8.properties">
         <mapper type="glob" from="*.UTF-8.properties" to="*.properties"/>
     </native2ascii>
-    
+
   </target>
 
 
@@ -578,25 +599,28 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-discovery.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-collection.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
-    
+
     <!-- This is Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
     <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
     <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
-    
-    <!-- This is Tomcat-specific and server name-specific!  
-         We need to find out the best way to ensure cross-context 
+
+    <!-- This is Tomcat-specific and server name-specific!
+         We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
     -->
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml"/>
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
-  	
-  	<!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
-  	     Consider making these classes part of the proxyportlet.war distribution.
-  	-->
+
+        <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
+             Consider making these classes part of the proxyportlet.war distribution.
+        -->
     <mkdir     dir="${deploy.home}/../proxyportlet/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet"/>
     <copy    todir="${deploy.home}/../proxyportlet/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet">
       <fileset dir="${build.home}/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet"/>
@@ -705,18 +729,18 @@
 
   The "initportal" target runs all the targets necessary to deploy the portal
   and prepare the portal database: deploy, db, i18n-db, pubchan, pubfragments
-  
+
 -->
-  
-  <target name="initportal" 
+
+  <target name="initportal"
    description="Runs all the targets necessary to deploy the portal and prepare the portal database">
-    <echo message="Initializing uPortal"/> 
-    <antcall target="deploy"/>   
-    <antcall target="db"/>   
-    <antcall target="i18n-db"/>   
+    <echo message="Initializing uPortal"/>
+    <antcall target="deploy"/>
+    <antcall target="db"/>
+    <antcall target="i18n-db"/>
     <antcall target="pubchan">
       <param name="channel" value="all"/>
-    </antcall>   
+    </antcall>
     <antcall target="pubfragments">
       <param name="fragmentFile" value="/properties/al/fragments.xml"/>
     </antcall>
@@ -725,7 +749,7 @@
     </antcall>
     <echo message="Finished initializing uPortal"/>
   </target>
-  
+
 
 
 <!-- ==================== DbLoader Target ================================= -->
@@ -939,7 +963,7 @@
 
 <!-- ========= The fragment loader for aggregated layouts =========  -->
 <!--
-     
+
      The variable fragmentFile points to the XML file of the fragments definition
 
      ant fragment -DfragmentFile=/properties/al/fragments.xml
@@ -1019,7 +1043,7 @@
    ant deluser -Duser=ashenoy
 -->
 
-  <target name="deluser" 
+  <target name="deluser"
    description="Delete traces of a user from the portal database">
     <echo message="Invoking DeleteUser"/>
     <property name="user" value=" "/>
@@ -1304,7 +1328,7 @@
 
   The "pubchan" target runs the ChannelPublisher tool.
   Channel definitions are defined in XML files.  Each
-  channel definition is published or modified if one 
+  channel definition is published or modified if one
   already existed with the same functional name.  You
   can publish all the channel definitions at once or just
   one at a time.
@@ -1314,10 +1338,10 @@
 
 -->
 
-  
+
   <target name="pubchan" description="Publishes channels" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
-        
+
     <property name="channel" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
       <classpath refid="compile.classpath"/>
@@ -1328,7 +1352,7 @@
       <arg value="${channel}"/>
     </java>
   </target>
-  
+
 
 
 <!-- ===================== deployPortlet Target ========================= -->
@@ -1346,10 +1370,10 @@
 
 -->
 
-  
+
   <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
     <echo message="Invoking Portlet Application Deployment Tool"/>
-        
+
     <property name="portletApp" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
       <classpath refid="compile.classpath"/>
