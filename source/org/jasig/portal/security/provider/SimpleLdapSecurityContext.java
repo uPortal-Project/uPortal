@@ -49,7 +49,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.ldap.LdapServices;
-import org.jasig.portal.ldap.ILdapConnection;
+import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
@@ -123,13 +123,13 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
    */
   public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
-    ILdapConnection ldapConn;
+    ILdapServer ldapConn;
     
     String propFile = ctxProperties.getProperty(LDAP_PROPERTIES_CONNECTION_NAME);
     if(propFile != null && propFile.length() > 0)
-        ldapConn = LdapServices.getLDAPConnection(propFile);
+        ldapConn = LdapServices.getLdapServer(propFile);
     else
-        ldapConn = LdapServices.getLDAPConnection();    
+        ldapConn = LdapServices.getDefaultLdapServer();    
     
     String creds = new String(this.myOpaqueCredentials.credentialstring);
     if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring

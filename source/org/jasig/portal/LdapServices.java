@@ -49,9 +49,9 @@ import javax.naming.directory.DirContext;
 public class LdapServices {
     /**
      * Creates a new <code>LdapServices</code> object. Simply wraps
-     * an the {@link org.jasig.portal.ldap.ILdapConnection} returned by {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()}.
+     * an the {@link org.jasig.portal.ldap.ILdapServer} returned by {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * <code>LdapServices</code> objects should not be created. No reference
-     * to the {@link org.jasig.portal.ldap.ILdapConnection} is held in
+     * to the {@link org.jasig.portal.ldap.ILdapServer} is held in
      * an instance of <code>LdapServices</code>
      * 
      * @deprecated Use {@link org.jasig.portal.ldap.LdapServices} instead.
@@ -60,46 +60,46 @@ public class LdapServices {
     }
 
     /**
-     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapConnection} returned by
-     * {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()}.
+     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapServer} returned by
+     * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
-     * @see org.jasig.portal.ldap.ILdapConnection#getConnection()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()} and {@link org.jasig.portal.ldap.ILdapConnection#getConnection()}.
+     * @see org.jasig.portal.ldap.ILdapServer#getConnection()
+     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getConnection()}.
      */
     public DirContext getConnection() {
-        return org.jasig.portal.ldap.LdapServices.getLDAPConnection().getConnection();
+        return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getConnection();
     }
 
     /**
-     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapConnection} returned by
-     * {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()}.
+     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapServer} returned by
+     * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
-     * @see org.jasig.portal.ldap.ILdapConnection#getBaseDN()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()} and {@link org.jasig.portal.ldap.ILdapConnection#getBaseDN()}. 
+     * @see org.jasig.portal.ldap.ILdapServer#getBaseDN()
+     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getBaseDN()}. 
      */
     public String getBaseDN() {
-      return org.jasig.portal.ldap.LdapServices.getLDAPConnection().getBaseDN();
+      return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getBaseDN();
     }
 
     /**
-     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapConnection} returned by
-     * {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()}.
+     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapServer} returned by
+     * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
-     * @see org.jasig.portal.ldap.ILdapConnection#getUidAttribute()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()} and {@link org.jasig.portal.ldap.ILdapConnection#getUidAttribute()}.
+     * @see org.jasig.portal.ldap.ILdapServer#getUidAttribute()
+     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getUidAttribute()}.
      */
     public String getUidAttribute() {
-      return org.jasig.portal.ldap.LdapServices.getLDAPConnection().getUidAttribute();
+      return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getUidAttribute();
     }
 
     /**
-     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapConnection} returned by
-     * {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()}.
+     * Simply wraps an the {@link org.jasig.portal.ldap.ILdapServer} returned by
+     * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
-     * @see org.jasig.portal.ldap.ILdapConnection#releaseConnection(DirContext)
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getLDAPConnection()} and {@link org.jasig.portal.ldap.ILdapConnection#releaseConnection(DirContext)}.
+     * @see org.jasig.portal.ldap.ILdapServer#releaseConnection(DirContext)
+     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#releaseConnection(DirContext)}.
      */
     public void releaseConnection (DirContext conn) {
-        org.jasig.portal.ldap.LdapServices.getLDAPConnection().releaseConnection(conn);
+        org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().releaseConnection(conn);
     }
 }

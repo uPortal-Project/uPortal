@@ -47,7 +47,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
-import org.jasig.portal.ldap.ILdapConnection;
+import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
@@ -60,8 +60,8 @@ import org.w3c.dom.Text;
 /**
  * Provides LDAP access in a way similar to a relational DBMS. This class
  * was modified for the 2.4 release to function more like {@link org.jasig.portal.RDBMServices}.
- * The class should be used via the static {@link #getLDAPConnection()} and
- * {@link #getLDAPConnection(String)} methods.
+ * The class should be used via the static {@link #getDefaultLdapServer()} and
+ * {@link #getLdapServer(String name)} methods.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
@@ -74,37 +74,37 @@ public class LdapServices
     private static final String LDAP_XML_CONNECTION_XPATH = "ldapConnections/connection";
     
     private static final Map ldapConnections = new Hashtable();
-    private static ILdapConnection defaultConn = null;
+    private static ILdapServer defaultConn = null;
     private static boolean initialized = false;
     
     /**
-     * Get the default {@link ILdapConnection}. A one-time initialization
-     * is performed when this method or {@link #getLDAPConnection(String)}
+     * Get the default {@link ILdapServer}. A one-time initialization
+     * is performed when this method or {@link #getLdapServer(String name)}
      * is called. If a default connection is not found during initialization
      * an <code>IllegalStateException</code> will be thrown.
      * 
-     * @return The default {@link ILdapConnection}. 
+     * @return The default {@link ILdapServer}. 
      */
-    public static ILdapConnection getLDAPConnection() {
+    public static ILdapServer getDefaultLdapServer() {
         initConnections();
         
         return defaultConn;
     }
   
     /**
-     * Get a named {@link ILdapConnection}. A one-time initialization
-     * is performed when this method or {@link #getLDAPConnection()}
+     * Get a named {@link ILdapServer}. A one-time initialization
+     * is performed when this method or {@link #getDefaultLdapServer()}
      * is called. If a default connection is not found during initialization
      * an <code>IllegalStateException</code> will be thrown.
      * 
      * @param name The name of the connection to return.
-     * @return An {@link ILdapConnection} with the specified name, <code>null</code> if there is no connection with the specified name.
+     * @return An {@link ILdapServer} with the specified name, <code>null</code> if there is no connection with the specified name.
      */
-    public static ILdapConnection getLDAPConnection(String name) {
+    public static ILdapServer getLdapServer(String name) {
         initConnections();
         
         synchronized (ldapConnections) {
-            return (ILdapConnection)ldapConnections.get(name);
+            return (ILdapServer)ldapConnections.get(name);
         }
     }
   
@@ -246,9 +246,9 @@ public class LdapServices
                                     }
                                 }
 
-                                //Create a new ILdapConnection
+                                //Create a new ILdapServer
                                 if (name != null) {
-                                    ILdapConnection newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol);
+                                    ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol);
                                     ldapConnections.put(name, newConn);
                                     
                                     if (isDefaultConn && defaultConn == null) {
@@ -259,12 +259,12 @@ public class LdapServices
                                     }
                                 }
                                 else {
-                                    LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapConnection, no name specified.");
+                                    LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapServer, no name specified.");
                                 }
                             }
                         }
                         catch (Exception e) {
-                            LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapConnection from node: " + connElement.getNodeName(), e);
+                            LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapServer from node: " + connElement.getNodeName(), e);
                         }
                     }
                 }
@@ -297,11 +297,11 @@ public class LdapServices
     
 
     /**
-     * Internal implementation of the {@link ILdapConnection} interface.
+     * Internal implementation of the {@link ILdapServer} interface.
      * 
      * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
      */
-    private static class LdapConnectionImpl implements ILdapConnection {
+    private static class LdapConnectionImpl implements ILdapServer {
         private final String ldapName;
         private final String ldapHost;
         private final String ldapPort;

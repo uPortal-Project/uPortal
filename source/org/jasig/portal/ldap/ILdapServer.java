@@ -39,14 +39,14 @@ import javax.naming.directory.DirContext;
 
 
 /**
- * The <code>ILdapConnection</code> interface defines a set of methods
+ * The <code>ILdapServer</code> interface defines a set of methods
  * to be used to create a connection to an LDAP server, release the
  * connection and get information about the connection.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision $
  */
-public interface ILdapConnection {
+public interface ILdapServer {
 
     /**
      * Gets an LDAP directory context.
