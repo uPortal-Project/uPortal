@@ -216,6 +216,9 @@ public class CGroupsManager
             if (sessionData.rootViewGroupID != null) {
                xslt.setStylesheetParameter("rootViewGroupID", sessionData.rootViewGroupID);
             }
+            else if (sessionData.defaultRootViewGroupID != null){
+              xslt.setStylesheetParameter("rootViewGroupID", sessionData.defaultRootViewGroupID);
+            }
             if (sessionData.feedback != null) {
                xslt.setStylesheetParameter("feedback", sessionData.feedback);
                sessionData.feedback = null;

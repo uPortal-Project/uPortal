@@ -79,7 +79,7 @@ public class AddMembers extends GroupsManagerCommand {
       // child members could have changed.
       Element parentElem = GroupsManagerXML.getElementById(model, parentAddElemId);
       GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
-
+      sessionData.returnToMode = sessionData.mode;
       sessionData.mode=SELECT_MODE;
       sessionData.highlightedGroupID = sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", "AddMembers::execute(): Uid of parent element = " +
