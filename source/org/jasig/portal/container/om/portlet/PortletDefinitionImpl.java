@@ -154,8 +154,11 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
 
             if (e instanceof IOException)
                 throw (IOException)e;
-            else
-                throw new IOException("Could not store portlet definition preferences: " + e.getMessage());
+            else {
+                IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
+                ioe.initCause(e);
+                throw ioe;
+            }
         }
     }
     
@@ -192,8 +195,11 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
 
             if (e instanceof IOException)
                 throw (IOException)e;
-            else
-                throw new IOException("Could not load portlet definition preferences: " + e.getMessage());
+            else {
+                IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
+                ioe.initCause(e);
+                throw ioe;
+            }
         }
     }
 

@@ -360,8 +360,8 @@ private void initializeCompositeService() throws GroupsException
     catch (Exception e)
     {
         eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        log.error( eMsg);
-        throw new GroupsException(eMsg);
+        log.error( eMsg, e);
+        throw new GroupsException(eMsg, e);
     }
 }
     public static synchronized GroupService instance() throws GroupsException {

@@ -82,8 +82,10 @@ public class BoundedThreadPool extends AbstractPool{
 
               } catch ( Exception e ) {
                   LOG.error("Failed to execute task: " + task, e);
-                  throw new IllegalStateException("Failed to execute task: " + task + " With message: " + e.getMessage());
-                }
+                  IllegalStateException ise = new IllegalStateException("Failed to execute task: " + task + " With message: " + e.getMessage());
+                  ise.initCause(e);
+                  throw ise;
+              }
 
 
 	}

@@ -105,8 +105,11 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             
             if (e instanceof IOException)
                 throw (IOException)e;
-            else
-                throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
+            else {
+                IOException ioe = new IOException("Could not store portlet entity preferences: " + e.getMessage());
+                ioe.initCause(e);
+                throw ioe;
+            }
         }
     }
     
@@ -152,8 +155,11 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             
             if (e instanceof IOException)
                 throw (IOException)e;
-            else
-                throw new IOException("Could not load portlet entity preferences: " + e.getMessage());
+            else {
+                IOException ioe = new IOException("Could not store portlet entity preferences: " + e.getMessage());
+                ioe.initCause(e);
+                throw ioe;
+            }
         }
     }
     
@@ -171,8 +177,11 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             
             if (e instanceof IOException)
                 throw (IOException)e;
-            else
-                throw new IOException("Could not delete portlet entity preferences: " + e.getMessage());
+            else {
+                IOException ioe = new IOException("Could not store portlet entity preferences: " + e.getMessage());
+                ioe.initCause(e);
+                throw ioe;
+            }
         }
     }
 

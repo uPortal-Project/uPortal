@@ -214,8 +214,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           log.error(e.getMessage(), e);
           if (e instanceof SQLException)
               throw (SQLException)e;
-          else
-              throw new SQLException(e.getMessage());
+          else {
+            SQLException sqle = new SQLException(e.getMessage());
+            sqle.initCause(e);
+            throw sqle;
+        }
       } finally {
         RDBMServices.releaseConnection(con);
       }
@@ -258,8 +261,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           log.error(e.getMessage(), e);
           if (e instanceof SQLException)
               throw (SQLException)e;
-          else
-              throw new SQLException(e.getMessage());
+          else {
+            SQLException sqle = new SQLException(e.getMessage());
+            sqle.initCause(e);
+            throw sqle;
+        }
       } finally {
         RDBMServices.releaseConnection(con);
       }
@@ -319,8 +325,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         log.error(e.getMessage(), e);
         if (e instanceof SQLException)
             throw (SQLException)e;
-        else
-            throw new SQLException(e.getMessage());
+        else {
+            SQLException sqle = new SQLException(e.getMessage());
+            sqle.initCause(e);
+            throw sqle;
+        }
     } finally {
       RDBMServices.releaseConnection(con);
     }
