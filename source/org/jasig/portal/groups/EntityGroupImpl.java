@@ -115,6 +115,10 @@ private void checkIfAlreadyMember(IGroupMember gm) throws GroupsException
  */
 private void checkProspectiveMember(IGroupMember gm) throws GroupsException
 {
+    if ( gm.equals(this) )
+    {
+        throw new GroupsException("Attempt to add " + gm + " to itself.");
+    }
     checkIfAlreadyMember(gm);
     checkProspectiveMemberEntityType(gm);
 
