@@ -37,6 +37,7 @@ package org.jasig.portal.services;
 
 import org.jasig.portal.security.*;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.GenericPortalBean;
 
 /**
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -76,20 +77,39 @@ public class Authentication
     {
       // Get the AdditionalDescriptor from the security context
       // This is created by the SecurityContext and should be an
-      // IPerson object
+      // IPerson object if present.  This is a likely scenario if the
+      // security provider also supplies directory information.
       IAdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
 
-      // Create a new IPerson if the descriptor is missing or is not an IPerson
+      // If the IPerson object was not provided by the security context then
+      // creating an IPerson object at this point and populating it from
+      // directory information is the recommended scenario.
       if (addInfo == null || !(addInfo instanceof PersonImpl))
       {
         // Create a new IPerson
         m_Person = new PersonImpl();
-        
-        // Make sure the user's global ID is set
+
+        // Set the user's GlobalUID and Userid (also known as username)
+        // GlobalUID is the integer key to to user data in uPortal reference implementation
+        // username is a string also called uid in the eduPerson 1.0 specification.
+        // These two attributes generally would come from the principal created for
+        // the current security context.
         m_Person.setID(me.getGlobalUID());
-        
+        m_Person.setAttribute("username",me.getUID());
+
+        try {
+        // Directory information to be filled in for the user would usually come from a
+        // directory service such as LDAP.  In the reference implementation we retrieve these
+        // attributes from the database.
+        String directoryInfo[] = GenericPortalBean.getDbImplObject().getUserDirectoryInformation(me.getUID());
         // Set the user's full name
-        m_Person.setFullName(me.getFullName());
+        m_Person.setFullName(directoryInfo[0]+" "+directoryInfo[1]);
+        // And set the email address
+        m_Person.setAttribute("Email",directoryInfo[2]);
+        }
+        catch (Exception e) {
+        // nothing do do if no directory info
+        }
       }
       else
       {
