@@ -43,11 +43,10 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 
 /**
- * A class that allows {@link GuestUserpreferencesManager} to be presented as {@link IUserpreferencesManager}
+ * A class that allows {@link GuestUserpreferencesManager} to be presented as <code>IUserpreferencesManager</code>
+ *
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
- * @see IUserpreferencesManager
- * @see GuestUserpreferencesManager
  */
 public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManager {
     String sessionId;

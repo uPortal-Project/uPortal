@@ -694,8 +694,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Return the next available channel structure id for a user
-   * @parameter userId
-   * @result
+   * @param userId
+   * @return the next available channel structure id
    */
   public String generateNewChannelSubscribeId (IPerson person) throws Exception {
     return  getNextStructId(person, channelPrefix);
@@ -774,8 +774,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   /**
-   * Obtain structure stylesheet description object for a given structure stylesheet id
-   * @para id id of the structure stylesheet
+   * Obtain structure stylesheet description object for a given structure stylesheet id.
+   * @para id the id of the structure stylesheet
    * @return structure stylesheet description
    */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
@@ -1066,8 +1066,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   /**
-   * Obtain theme stylesheet description object for a given theme stylesheet id
-   * @para id id of the theme stylesheet
+   * Obtain theme stylesheet description object for a given theme stylesheet id.
+   * @param id the id of the theme stylesheet
    * @return theme stylesheet description
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {

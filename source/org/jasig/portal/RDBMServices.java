@@ -389,7 +389,7 @@ public class RDBMServices {
   /**
    * return DB format of a boolean
    * @param boolean
-   * @result String
+   * @return String
    */
   public static final String dbFlag(boolean flag) {
     return (flag ? "Y" : "N");
@@ -398,7 +398,7 @@ public class RDBMServices {
   /**
    * return boolean value of DB flag
    * @param String
-   * @result boolean
+   * @return boolean
    */
   public static final boolean dbFlag(String flag) {
     return (flag != null && (flag.equalsIgnoreCase("Y") || flag.equalsIgnoreCase("T")) ? true : false);
@@ -406,7 +406,7 @@ public class RDBMServices {
 
   /**
    * SQL format of current time
-   * @result SQL TimeStamp
+   * @return SQL TimeStamp
    */
   public static final String sqlTimeStamp() {
     return sqlTimeStamp(System.currentTimeMillis());
@@ -415,7 +415,7 @@ public class RDBMServices {
   /**
    * SQL format a long timestamp
    * @param date
-   * @result SQL TimeStamp
+   * @return SQL TimeStamp
    */
   public static final String sqlTimeStamp(long date) {
     return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" + tsEnd;
@@ -424,7 +424,7 @@ public class RDBMServices {
   /**
    * SQL format a Date
    * @param date
-   * @result SQL TimeStamp or "NULL" if date is null
+   * @return SQL TimeStamp or "NULL" if date is null
    */
   public static final String sqlTimeStamp(Date date) {
     if (date == null)

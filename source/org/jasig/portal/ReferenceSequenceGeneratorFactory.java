@@ -1,7 +1,7 @@
 package org.jasig.portal;
 
 /**
-  * @author: Dan Ellentuck
+  * @author Dan Ellentuck
   * @version $Revision$
  */
 public class ReferenceSequenceGeneratorFactory implements ISequenceGeneratorFactory {

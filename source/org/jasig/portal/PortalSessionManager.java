@@ -76,7 +76,7 @@ import com.oreilly.servlet.multipart.ParamPart;
 /**
  * This is an entry point into the uPortal.
  * @author Peter Kharchenko <pkharchenko@interactivebusiness.com>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
 
@@ -583,7 +583,7 @@ public class PortalSessionManager extends HttpServlet {
         /**
          * Return a String[] for this parameter
          * @param parameter name
-         * @result String[] if parameter is not an Object[]
+         * @return String[] if parameter is not an Object[]
          */
         public String[] getParameterValues(String name) {
             Object[] pars = (Object[])this.parameters.get(name);
@@ -606,7 +606,7 @@ public class PortalSessionManager extends HttpServlet {
         /**
          * Return the Object represented by this parameter name
          * @param parameter name
-         * @result Object
+         * @return Object
          */
         public Object[] getObjectParameterValues(String name) {
             return  (Object[])this.parameters.get(name);

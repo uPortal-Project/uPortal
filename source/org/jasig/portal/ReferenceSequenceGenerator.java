@@ -42,7 +42,7 @@ import java.sql.Statement;
 
 import org.jasig.portal.services.LogService;
 /**
- * @author: Dan Ellentuck
+ * @author Dan Ellentuck
  * @version $Revision$
  */
 public class ReferenceSequenceGenerator implements ISequenceGenerator
