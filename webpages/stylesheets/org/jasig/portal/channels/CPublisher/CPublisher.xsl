@@ -84,7 +84,7 @@ function xml(nodelist){
 	</xsl:choose>
 	<form action="{$baseActionURL}" method="post">
 	<input type="hidden" name="action" value="cancel"/>
-      	  <p align="center"><input type="submit"  value="Cancel"/></p>
+      	  <p align="center"><input type="submit"  value="Finished"/></p>
 	</form>
 	</xsl:template>
 	
@@ -126,13 +126,18 @@ function xml(nodelist){
 	<xsl:template name="subscribe">
 		<td>
 			<!-- <xsl:value-of select="@modify"/>  just for debug -->
-			<xsl:if test="@modify!='publish-only'">
-				<input type="checkbox" name="{name}_sub">
-					<xsl:if test="@modify='subscribe'">
-						<xsl:attribute name="checked">checked</xsl:attribute>
-					</xsl:if>
-				</input>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="@modify!='publish-only'">
+					<input type="checkbox" name="{name}_sub">
+		                <xsl:if test="@modify='subscribe'">
+		                    <xsl:attribute name="checked">checked</xsl:attribute>
+		                </xsl:if>
+					</input>
+				</xsl:when>
+				<xsl:otherwise>
+				    <xsl:text>&#160;</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
 		</td>
 	</xsl:template>
 	
@@ -266,7 +271,7 @@ function xml(nodelist){
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
-					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" length="{$length}"/>
+					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}"/>
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:when>
@@ -287,7 +292,7 @@ function xml(nodelist){
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
-					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" length="{$length}"/>
+					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}"/>
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:otherwise>
