@@ -19,6 +19,7 @@
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
   <xsl:key name="groupByID" match="group" use="@id"/>
+  <xsl:key name="members" match="node()[((name()='group') and ((//principal/permission[@type='GRANT' and @activity='VIEW']/@target=@key) or $ignorePermissions)) or name()='entity']" use="parent::group/@id"/>
   <xsl:variable name="rootGroup" select="key('groupByID',$rootViewGroupID)"/>
   <xsl:variable name="highlightedGroup" select="key('groupByID',$highlightedGroupID)"/>
 
@@ -383,7 +384,7 @@
     <tr><td><img src="{$spacerIMG}" height="10" width="1"/>
     </td></tr>
     <xsl:call-template name="hrow"/>
-    <xsl:variable name="siblingCount" select="count($group/node()[name()='group' or name()='entity'])"/>
+    <xsl:variable name="siblingCount" select="count(key('members',$group/@id))"/>
     <tr>
 	  <td colspan="3">
 	  	<table width="100%" border="0">
@@ -454,7 +455,7 @@
 
     <xsl:call-template name="hrow"/>
 
-    <xsl:for-each select="$group/node()[name()='group' or name()='entity']">
+    <xsl:for-each select="key('members',$group/@id)">
     	<xsl:sort data-type="text" order="descending" select="name()"/>
     	<xsl:sort data-type="text" order="ascending" select="RDF/Description/title"/>
     	<xsl:sort data-type="text" order="ascending" select="@displayName"/>
@@ -651,7 +652,7 @@
            <xsl:variable name="stype" select="$rootGroup/@entityType"/>
           <xsl:for-each select="/CGroupsManager/group[@searchResults='true']">
           	<xsl:sort data-type="number" order="ascending" select="@id"/>
-          	<xsl:if test="not($stype) or @entityType=$stype"> 
+          	<xsl:if test="not($stype) or (@entityType=$stype)"> 
 				 <xsl:apply-templates select="." />
 			</xsl:if>
           </xsl:for-each>
@@ -659,7 +660,7 @@
   </xsl:template>
   
   <xsl:template match="group">
-    <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key)) or (@id=0)">
+    <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key)) or (@id=0) or (@searchResults='true')">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">	
       <tr>
         <td width="100%" colspan="2">
@@ -669,7 +670,7 @@
               
               <td>
               	<xsl:choose>
-              		<xsl:when test="(@expanded='true') and (@hasMembers='true') and (count(group) &gt; 0) and not(@id=0)">
+              		<xsl:when test="(@expanded='true') and (@hasMembers='true') and (count(key('members',@id)[name()='group']) &gt; 0) and not(@id=0)">
 					  <a href="{$baseActionURL}?grpCommand=Collapse&amp;grpCommandArg={@id}"> <img border="0" height="16" width="16" src="{$mediaBase}/expanded.gif" align="bottom" vspace="1" hspace="0" alt="Collapse Group"/> </a>
 					</xsl:when>
               		<xsl:when test="(@expanded='false') and (@hasMembers='true') and not(@id=0)">
@@ -708,7 +709,7 @@
         </td>
       </tr>
 
-      <xsl:if test="(@expanded='true') and (count(group) &gt; 0)">
+      <xsl:if test="(@expanded='true') and (count(key('members',@id)[name()='group']) &gt; 0)">
       	<tr>
       		<td background="{$mediaBase}/dot.gif">
                 <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="16"/>
