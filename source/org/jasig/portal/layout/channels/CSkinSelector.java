@@ -60,7 +60,7 @@ import org.xml.sax.ContentHandler;
     private static final String SKINS_PATH = "media/org/jasig/portal/layout/AL_TabColumn/integratedModes";
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;
-    private static IUserPreferencesManager upm;
+    private IUserPreferencesManager upm;
     private static IUserLayoutStore store = UserLayoutStoreFactory.getUserLayoutStoreImpl();
 
     public CSkinSelector() {
