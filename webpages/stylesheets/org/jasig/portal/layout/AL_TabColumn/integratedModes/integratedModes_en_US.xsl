@@ -156,7 +156,7 @@ Version $Revision$
 								</xsl:if>
 								<xsl:if test="$userLayoutRoot='root'">
 									<xsl:choose>
-										<xsl:when test="$mode=not('preferences') and $authenticated='true'">
+										<xsl:when test="$mode='view' and $authenticated='true'">
 											<td>
 												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}">
 													<img width="24" height="24" alt="Turn on Preferences" title="Turn on Preferences" src="{$mediaPathIcons}/preferences.gif" border="0"/>
