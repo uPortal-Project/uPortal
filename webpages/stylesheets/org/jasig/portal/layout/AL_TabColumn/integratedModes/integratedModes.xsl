@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -231,7 +231,7 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-selected">
                             <span class="uportal-channel-title">
-                                <xsl:value-of select="@name"/>
+                                <a name="{@title}"><xsl:value-of select="@name"/></a>
                                 <xsl:text/>(selected)</span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -268,7 +268,7 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-semidark">
                             <span class="uportal-channel-title">
-                                <xsl:value-of select="@name"/>
+                                <a name="{@title}"><xsl:value-of select="@name"/></a>
                             </span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborder.gif); background-repeat:repeat-y;">
@@ -2333,7 +2333,7 @@ Version $Revision$
     <!-- - Channel maximize  -->
     <!-- - -->
     <xsl:template name="channel.action.maximize">
-        <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
+        <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@title}">
             <img alt="maximize" title="maximize" src="{$mediaPathIcons}/contentmaximize.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
@@ -2341,7 +2341,7 @@ Version $Revision$
     <!-- - Channel minimize -->
     <!-- - -->
     <xsl:template name="channel.action.minimize">
-        <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true">
+        <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@title}">
             <img alt="minimize" title="minimize" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
