@@ -35,25 +35,21 @@
 
 package org.jasig.portal.security;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * <p>An exception handler that will provide portal security-specific
+ * information during an exception condition.</p>
+ *
+ * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-public interface IRole
-{
-  // Get the title of this role
-  public String getRoleTitle();
 
-  // Get an attribute for this role
-  public Object getAttribute(String key);
+public class PortalSecurityException extends Exception {
 
-  // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
+  public PortalSecurityException() {
+    super();
+  }
 
-  // Get all attributes for this role
-  public Enumeration getAttributes();
+  public PortalSecurityException(String s) {
+    super(s);
+  }
 }

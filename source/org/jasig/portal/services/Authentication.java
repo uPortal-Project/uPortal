@@ -33,27 +33,69 @@
  *
  */
 
-package org.jasig.portal.security;
+package org.jasig.portal.services;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
+import org.jasig.portal.security.*;
 
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public interface IRole
+public class Authentication
 {
-  // Get the title of this role
-  public String getRoleTitle();
+  protected org.jasig.portal.security.IPerson m_Person = null;
 
-  // Get an attribute for this role
-  public Object getAttribute(String key);
+  /**
+   * Authenticate a user.
+   * @param sUserName User name
+   * @param sPassword User password
+   * @return true if successful, otherwise false.
+   */
+  public boolean authenticate (String sUserName, String sPassword)
+  {
+    SecurityContext ic;
+    Principal me;
+    OpaqueCredentials op;
 
-  // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
+    ic = new InitialSecurityContext("root");
+    me = ic.getPrincipalInstance();
+    op = ic.getOpaqueCredentialsInstance();
 
-  // Get all attributes for this role
-  public Enumeration getAttributes();
+    me.setUID(sUserName);
+    op.setCredentials(sPassword);
+    ic.authenticate();
+
+    boolean bAuthenticated = ic.isAuthenticated ();
+
+    if(bAuthenticated)
+    {
+      AdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
+
+      if (addInfo == null || !(addInfo instanceof PersonImpl))
+      {
+        m_Person = new PersonImpl ();
+        m_Person.setID(sUserName);
+        m_Person.setFullName(me.getFullName());
+        m_Person.setAttribute("globalUID", me.getGlobalUID());
+      }
+      else
+      {
+        m_Person = (IPerson)addInfo;
+      }
+    }
+
+    return (bAuthenticated);
+  }
+
+  /**
+   * Returns an IPerson object that can be used to hold site-specific attributes
+   * about the logged on user.  This information is established during
+   * authentication.
+   * @return An object that implements the
+   * <code>org.jasig.portal.security.IPerson</code> interface.
+   */
+  public IPerson getPerson ()
+  {
+    return m_Person;
+  }
 }

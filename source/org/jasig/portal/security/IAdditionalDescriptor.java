@@ -35,25 +35,14 @@
 
 package org.jasig.portal.security;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * <p>A marker interface that should be extended by security providers that
+ * have some incidental additional information that should be associated with
+ * a security context.</p>
+ *
+ * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-public interface IRole
-{
-  // Get the title of this role
-  public String getRoleTitle();
 
-  // Get an attribute for this role
-  public Object getAttribute(String key);
-
-  // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
-
-  // Get all attributes for this role
-  public Enumeration getAttributes();
+public interface IAdditionalDescriptor {
 }

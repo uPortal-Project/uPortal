@@ -35,25 +35,32 @@
 
 package org.jasig.portal.security;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
+import java.util.Vector;
+
+import org.jasig.portal.security.IRole;
+import org.jasig.portal.security.IPerson;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public interface IRole
+public interface IAuthorization
 {
-  // Get the title of this role
-  public String getRoleTitle();
+  // For the publish mechanism to use
+  public boolean isUserInRole(IPerson person, IRole role);
+  public Vector  getAllRoles();
+  public int     setChannelRoles(int channelID, Vector roles);
+  public boolean canUserPublish(IPerson person);
 
-  // Get an attribute for this role
-  public Object getAttribute(String key);
+  // For the subscribe mechanism to use
+  public Vector  getAuthorizedChannels(IPerson person);
+  public boolean canUserSubscribe(IPerson person, int channelID);
 
-  // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
+  // For the render mechanism to use
+  public boolean canUserRender(IPerson person, int channelID);
 
-  // Get all attributes for this role
-  public Enumeration getAttributes();
+  // For the administration mechanism to use
+  public Vector getUserRoles(IPerson person);
+  public void addUserRoles(IPerson person, Vector roles);
+  public void removeUserRoles(IPerson person, Vector roles);
 }
