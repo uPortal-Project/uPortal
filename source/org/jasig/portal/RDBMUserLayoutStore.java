@@ -493,10 +493,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
       sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
+      LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : setting mimetype=\""
           + sssd.getMimeType() + "\"");
       sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
+      LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : setting serializerName=\""
           + sssd.getSerializerName() + "\"");
       sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
@@ -1642,7 +1642,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
           // Make sure the next struct id is set in case the user adds a channel
           sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           int nextStructId;
           rs = stmt.executeQuery(sQuery);
           try {
