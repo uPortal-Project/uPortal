@@ -99,8 +99,8 @@ public class CRSSChannel implements org.jasig.portal.IChannel
         m_RSSCache.put (sUrl, xml);
       }
       
-      IRss rss = (IRss) xml.getRoot ();            
-      
+      IRss rss = (IRss) xml.getRoot ();
+
       // Get Channel
       org.jasig.portal.channels.rss.IChannel channel = (org.jasig.portal.channels.rss.IChannel) rss.getChannel ();
       
@@ -112,73 +112,88 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       for (int i = 0; i < channelAttr.length; i++)
       {
         if (channelAttr[i].getLink () != null)
-          sTitleLink = channelAttr[i].getLink ();  
-          
+          sTitleLink = channelAttr[i].getLink ();
+
         if (channelAttr[i].getDescription () != null)
-          sDescription = channelAttr[i].getDescription ();  
-          
+          sDescription = channelAttr[i].getDescription ();
+
         if (channelAttr[i].getImage () != null)
           image = (IImage) channelAttr[i].getImage ();          
       }
-            
-      ITitleOrUrlOrLinkOrWidthOrHeightOrDescription[] imageAttr = image.getTitleOrUrlOrLinkOrWidthOrHeightOrDescriptions ();
-      
-      String sImageUrl = null;
-      
-      for (int i = 0; i < imageAttr.length; i++)
+// An image is optional but there should be a description and a link for the channel
+      if (image != null)
       {
-        if (imageAttr[i].getUrl () != null)
-          sImageUrl = imageAttr[i].getUrl ();  
+        ITitleOrUrlOrLinkOrWidthOrHeightOrDescription[] imageAttr = image.getTitleOrUrlOrLinkOrWidthOrHeightOrDescriptions ();
+        String sImageUrl = null;
+        String sImageLink = null;
+
+        for (int i = 0; i < imageAttr.length; i++)
+        {
+          if (imageAttr[i].getUrl () != null)
+            sImageUrl = imageAttr[i].getUrl ();
+          if (imageAttr[i].getLink () != null)
+            sImageLink = imageAttr[i].getLink ();
+        }
+        // if there is an image and an image-link use it as intended
+        if (sImageLink!= null) out.println ("<a href=\"" + sImageLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right /></a>");
+        else
+          // if no image-link but have title-link put title-link on the image
+          if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right /></a>");
+          // if no image-link and no title-link just put the image out with no link
+          else out.println ("<img src=\"" + sImageUrl + "\" border=0 align=right />");
       }
-      
-      out.println ("<p><a href=\"" + sTitleLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right></a>");
+      // if there is a title link but no image then insert our own little icon for the link
+      else
+        if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"images/rsslink.gif\" border=0 align=right /></a>");
+
       out.println ("<p><em>" + sDescription + "</em>");
-      
+
+      out.println ("<ul>");
       for (int i = 0; i < channelAttr.length; i++)
       {
         if (channelAttr[i].getItems () != null)
         {
           IItem[] items = channelAttr[i].getItems ();
-                    
+
           ITitleOrLinkOrDescription[] itemAttr = null;
-          
+
           for (int j = 0; j < items.length; j++)
           {
             if (items[j].getTitleOrLinkOrDescriptions () != null)
             {
               itemAttr = items[j].getTitleOrLinkOrDescriptions ();
-              
+
               String sItemTitle = null;
               String sItemLink = null;
               String sItemDescription = null;
-                        
+
               for (int k = 0; k < itemAttr.length; k++)
               {
                 if (itemAttr[k].getTitle () != null)
                   sItemTitle = itemAttr[k].getTitle ();
-                  
+
                 if (itemAttr[k].getLink () != null)
                   sItemLink = itemAttr[k].getLink ();
-                  
+
                 if (itemAttr[k].getDescription () != null)
                   sItemDescription = itemAttr[k].getDescription ();
               }
-              
-              out.println ("<ul>");
-              
+
+
               if (sItemTitle.length() > 0)
-                out.println ("<li><a href=\"" + sItemLink + "\">" + sItemTitle + "</a><br>");
+                out.println ("<p><li /><a href=\"" + sItemLink + "\">" + sItemTitle + "</a>");
               else
-                out.println ("<p>" + sItemTitle);
-                
+                out.println ("<p>" + sItemTitle );
+
               if (sItemDescription != null)
-                out.println (sItemDescription);
-              
-              out.println ("</ul>");
+                out.println ("<br />" + sItemDescription + "<p />");
+              else out.println ("<br /><p />");
+
             }
           }
-        }          
+        }
       }
+        out.println ("</ul>");
     }
     catch (Exception e)
     {
