@@ -286,7 +286,6 @@ public class CPermissionsManager
                 } catch (Exception e) {
                     LogService.instance().log(LogService.ERROR, "CPermissionsManager: failed to use servant"
                             + e);
-                    hackPrincipals();
                 }
             }
             if (!session.view.equals("Select Principals")
@@ -349,28 +348,6 @@ public class CPermissionsManager
 
     }
 
-    /**
-     * put your documentation comment here
-     */
-    private void hackPrincipals () {
-        //temporary hack until Groups Manager is ready to provide runtime principal selection
-        try {
-            ArrayList princs = new ArrayList();
-            AuthorizationService as = AuthorizationService.instance();
-            IAuthorizationPrincipal ap = as.newPrincipal("1", Class.forName("org.jasig.portal.security.IPerson"));
-            princs.add(ap);
-            IAuthorizationPrincipal ap2 = as.newPrincipal("2", Class.forName("org.jasig.portal.security.IPerson"));
-            princs.add(ap2);
-            IAuthorizationPrincipal ap3 = as.newPrincipal("0", Class.forName("org.jasig.portal.groups.IEntityGroup"));
-            princs.add(ap3);
-            IAuthorizationPrincipal ap4 = as.newPrincipal("4", Class.forName("org.jasig.portal.groups.IEntityGroup"));
-            princs.add(ap4);
-            session.principals= (IAuthorizationPrincipal[]) princs.toArray(new IAuthorizationPrincipal[0]);
-            session.staticData.setParameter("prmView", "Select Owners");
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-        }
-    }
 
     /**
      * put your documentation comment here
