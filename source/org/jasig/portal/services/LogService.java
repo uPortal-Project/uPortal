@@ -51,9 +51,8 @@ import org.jasig.portal.utils.ResourceLoader;
  *  watch the config file for changes and reload them (thus, letting you make
  *  changes without restarting the Portal).
  *
- *@author     Ken Weiner, Bernie Durfee, Vikrant Joshi, Zed A. Shaw
- *@created    June 7, 2001
- *@version    $Revision$
+ * @author     Ken Weiner, Bernie Durfee, Vikrant Joshi, Zed A. Shaw
+ * @version    $Revision$
  */
 public final class LogService {
   // Log levels, create fake ones if they don't match the Log4J standard ones

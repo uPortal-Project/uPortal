@@ -60,7 +60,7 @@ import org.xml.sax.Attributes;
  * is specified in the service description.
  * 
  * @author Sridhar Venkatesh <svenkatesh@interactivebusiness.com>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class ExternalServices {
   private ServiceHandler svcHandler;

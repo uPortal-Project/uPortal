@@ -43,7 +43,7 @@ import java.io.IOException;
  * An interface for common methods in <code>Writer</code>s and <code>OutputStream</code>s.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public interface IWriteable {
 

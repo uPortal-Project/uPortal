@@ -142,8 +142,9 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     }
 
     /**
-     * Construct an XML filter based on a unified handler
-     * <p> Same default flag settings as with empty constructor</p>
+     * Construct an XML filter based on a unified handler.
+     * <p>
+     * Same default flag settings as with empty constructor.
      */
     public SAX2BufferImpl(ContentHandler ch) {
         super(ch);
