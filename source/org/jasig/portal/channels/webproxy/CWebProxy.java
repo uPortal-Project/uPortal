@@ -252,7 +252,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @param sd channel static data
    * @see ChannelStaticData
    */
-  public void setStaticData (ChannelStaticData sd, String uid) throws ResourceMissingException
+  public void setStaticData (ChannelStaticData sd, String uid)
   {
     ChannelState state = new ChannelState();
 
@@ -638,7 +638,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
       }
       catch (Exception e)
       {
-        throw new ResourceMissingException (state.fullxmlUri, "", e.getMessage());
+        throw new GeneralRenderingException ("Problem occured while rendering channel.  Please restart channel.", e, false, true);
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
