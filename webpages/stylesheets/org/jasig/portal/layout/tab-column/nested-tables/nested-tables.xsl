@@ -345,10 +345,19 @@
               <img alt="detach" src="{$mediaPath}/detach.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
+          <!--
           <xsl:if test="not(@unremovable='true')">
             <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
               <img alt="remove" src="{$mediaPath}/remove.gif" width="16" height="16" border="0"/>
             </a>
+          </xsl:if>
+          -->
+          <xsl:if test="not(@unremovable='true')">
+            <xsl:if test="not(/layout/navigation/tab[@activeTab='true' and @immutable='true'])">
+              <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
+                <img alt="remove" src="{$mediaPath}/remove.gif" width="16" height="16" border="0"/>
+              </a>
+            </xsl:if>
           </xsl:if>
         </td>
       </tr>
