@@ -40,6 +40,7 @@ import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
 import  java.util.Enumeration;
 import  java.util.Hashtable;
+import org.jasig.portal.EntityIdentifier;
 
 
 /**
@@ -55,6 +56,7 @@ public class PersonImpl
   protected String m_FullName = null;
   protected int m_ID = -1;
   protected ISecurityContext m_securityContext = null;
+  protected EntityIdentifier m_eid= new EntityIdentifier(null,IPerson.class);
 
 
   public void setSecurityContext (ISecurityContext securityContext) {
@@ -109,6 +111,10 @@ public class PersonImpl
    * Sets the specified attribute to a value.
    * This reference implementation supports the attribute: Email
    * corresponding to the eduPerson attribute: mail.
+   * 
+   * Reference impementation checks for the setting of the username attribute
+   * and updates the EntityIdentifier accordingly
+   * 
    * @param key Attribute's name
    * @param value Attribute's value
    */
@@ -116,6 +122,9 @@ public class PersonImpl
     if (m_Attributes == null)
       m_Attributes = new Hashtable();
     m_Attributes.put(key, value);
+    if (key.equals(IPerson.USERNAME)){
+       m_eid = new EntityIdentifier(String.valueOf(value),IPerson.class);
+    }
   }
 
   /**
@@ -169,6 +178,16 @@ public class PersonImpl
     else {
       return  (false);
     }
+  }
+  
+  /**
+   * Returns an EntityIdentifier for this person.  The key contains the value
+   * of the eudPerson username attribute, or null 
+   * 
+   * @return EntityIdentifier with attribute 'username' as key.
+   */
+  public EntityIdentifier getEntityIdentifier(){
+    return m_eid; 
   }
 }
 
