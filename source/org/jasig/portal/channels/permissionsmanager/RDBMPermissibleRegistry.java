@@ -140,19 +140,21 @@ public class RDBMPermissibleRegistry {
         if (!owners.containsKey(classname)) {
             try {
                 IPermissible ip = (IPermissible)Class.forName(classname).newInstance();
-                Connection conn = null;
-                Statement st = null;
-                try {
-                    conn = getConnection();
-                    st = conn.createStatement();
-                    st.executeUpdate("INSERT INTO UPC_PERM_MGR VALUES('" + classname
-                            + "')");
-                    owners.put(classname, Class.forName(classname));
-                } catch (Exception e) {
-                    log.error(e, e);
-                } finally {
-                    RDBMServices.closeStatement(st);
-                    releaseConnection(conn);
+                if (ip != null){
+	                Connection conn = null;
+	                Statement st = null;
+	                try {
+	                    conn = getConnection();
+	                    st = conn.createStatement();
+	                    st.executeUpdate("INSERT INTO UPC_PERM_MGR VALUES('" + classname
+	                            + "')");
+	                    owners.put(classname, Class.forName(classname));
+	                } catch (Exception e) {
+	                    log.error(e, e);
+	                } finally {
+	                    RDBMServices.closeStatement(st);
+	                    releaseConnection(conn);
+	                }
                 }
             } catch (Throwable th) {
                 if (log.isDebugEnabled())
