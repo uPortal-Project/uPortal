@@ -1192,14 +1192,14 @@ $Revision$
                                 <xsl:choose>
                                   <xsl:when test="$catID = 'all'">
                                     <xsl:for-each select="/layout/registry//channel[not(@ID=following::channel/@ID)]">
-                                      <option value="@ID">
+                                      <option value="{@ID}">
                                         <xsl:value-of select="@name"/>
                                       </option>
                                     </xsl:for-each>
                                   </xsl:when>
                                   <xsl:otherwise>
                                     <xsl:for-each select="/layout/registry//category[@ID=$catID]/channel">
-                                      <option value="@ID">
+                                      <option value="{@ID}">
                                         <xsl:value-of select="@name"/>
                                       </option>
                                     </xsl:for-each>
