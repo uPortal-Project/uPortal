@@ -353,57 +353,57 @@ public class RDBMServices {
   }
 
   /**
-   * Close a PreparedStatement
-   * @param ps a database PreparedStatement object
-   */
-  public static void closePreparedStatement (java.sql.PreparedStatement ps) {
-    try {
-      if (ps != null)
-        ps.close();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-    }
-  }
-
-  /**
-   * Close a PreparedStatement
-   * @param ps a database PreparedStatement object
-   */
-  public static void closePreparedStatement (PreparedStatement ps) {
-    try {
-      if (ps != null)
-        ps.close();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-    }
-  }
-
-  /**
-   * Close a ResultSet
-   * @param rs a database ResultSet object
-   */
-  public static void closeResultSet (ResultSet rs) {
-    try {
-      if (rs != null)
-        rs.close();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-    }
-  }
-
-  /**
-   * Close a Statement
-   * @param st a database Statement object
-   */
-  public static void closeStatement (Statement st) {
-    try {
-      if (st != null)
-        st.close();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-    }
-  }
-
+   * Close a PreparedStatement 
+   * @param ps a database PreparedStatement object 
+   */ 
+  public static void closePreparedStatement (java.sql.PreparedStatement ps) { 
+    try { 
+      if (ps != null) 
+        ps.close(); 
+    } catch (Exception e) { 
+      LogService.log(LogService.ERROR, e); 
+    } 
+  } 
+    
+  /** 
+   * Close a PreparedStatement 
+   * @param ps a database PreparedStatement object 
+   */ 
+  public static void closePreparedStatement (PreparedStatement ps) { 
+    try { 
+      if (ps != null) 
+        ps.close(); 
+    } catch (Exception e) { 
+      LogService.log(LogService.ERROR, e); 
+    } 
+  } 
+    
+  /** 
+   * Close a ResultSet 
+   * @param rs a database ResultSet object 
+   */ 
+  public static void closeResultSet (ResultSet rs) { 
+    try { 
+      if (rs != null) 
+        rs.close(); 
+    } catch (Exception e) { 
+      LogService.log(LogService.ERROR, e); 
+    } 
+  } 
+    
+  /** 
+   * Close a Statement 
+   * @param st a database Statement object 
+   */ 
+  public static void closeStatement (Statement st) { 
+    try { 
+      if (st != null) 
+        st.close(); 
+    } catch (Exception e) { 
+      LogService.log(LogService.ERROR, e); 
+    } 
+  } 
+    
   /**
    * Get the JDBC driver
    * @return the JDBC driver
