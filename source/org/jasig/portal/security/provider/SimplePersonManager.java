@@ -31,57 +31,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
+package org.jasig.portal.security.provider;
 
-package  org.jasig.portal.security.provider;
-
-import  java.util.HashMap;
-import  javax.servlet.http.HttpServletRequest;
-import  javax.servlet.http.HttpSessionBindingListener;
-import  javax.servlet.http.HttpSessionBindingEvent;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.security.IPersonManager;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.security.InitialSecurityContextFactory;
-
+import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.InitialSecurityContextFactory;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
+ * Manages the storage of an IPerson object in a user's session.
+ * @author Bernie Durfee, bdurfee@interactivebusiness.com
  */
-public class SimplePersonManager
-    implements IPersonManager {
-
+public class SimplePersonManager implements IPersonManager {
   /**
    * Retrieve an IPerson object for the incoming request
-   * @param request
-   * @return IPerson object for the incoming request
+   * @param request, the servlet request object
+   * @return person, IPerson object for the incoming request
    */
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException {
     // Return the person object if it exists in the user's session
-    IPerson person = (IPerson)request.getSession(false).getAttribute("org.jasig.portal.IPerson");
-    if (person != null) {
-      return  (person);
+    IPerson person = (IPerson)request.getSession(false).getAttribute(PERSON_SESSION_KEY);
+    if (person == null) {
+      // Create a new instance of a person
+      person = new PersonImpl();
+      try {
+        // Add the initial security context to the person
+        person.setSecurityContext(
+          InitialSecurityContextFactory.getInitialContext("root"));
+      } catch (Exception e) {
+        // Log the exception
+        LogService.log(LogService.ERROR, e);
+      }
+      // By default new user's have the UID of 1
+      person.setID(1);
+      // Add this person object to the user's session
+      request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
     }
-    // Create a new instance of a person
-    person = new PersonImpl();
-    try {
-      // Add the initial security context to the person
-      person.setSecurityContext(
-        InitialSecurityContextFactory.getInitialContext("root"));
-    } catch (Exception e) {
-      // Log the exception
-      LogService.log(LogService.ERROR, e);
-    }
-    // By default new user's have the UID of 1
-    person.setID(1);
-    // Add this person object to the user's session
-    request.getSession(false).setAttribute("org.jasig.portal.IPerson", person);
-    // Return the new person object
-    return  (person);
+    return person;
   }
 }
 
