@@ -132,6 +132,9 @@ public class DoneWithSelection extends GroupsManagerCommand {
          sessionData.mode=EDIT_MODE;
          sessionData.highlightedGroupID = parentId;
          sessionData.rootViewGroupID="0";
+         // Parent was locked so no other thread or process could have changed it, but
+         // child members could have changed.
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       }
       else {
          princResults = (IGroupMember[])gmCollection.toArray(new IGroupMember[0]);
@@ -140,9 +143,6 @@ public class DoneWithSelection extends GroupsManagerCommand {
             staticData.setParameter("groupManagerFinished", "true");
          }
       }
-      // Parent was locked so no other thread or process could have changed it, but
-      // child members could have changed.
-      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
    }
 
    /**
@@ -154,8 +154,8 @@ public class DoneWithSelection extends GroupsManagerCommand {
     * @throws ChainedException
     */
    public void addGroupMemberToCollection (Vector gmCollection, NodeList nList)
-         throws ChainedException {
-      try{
+         throws Exception {
+//      try{
          boolean addit;
          for (int i = 0; i < nList.getLength(); i++) {
             Element elem = (org.w3c.dom.Element)nList.item(i);
@@ -178,12 +178,11 @@ public class DoneWithSelection extends GroupsManagerCommand {
                }
             }
          }
-      }
-      catch (Exception e) {
-         String errMsg = "DoneWithSelection::addGroupMemberToCollection(): ";
-         Utility.logMessage("ERROR", errMsg);
-         throw new ChainedException(errMsg, e);
-      }
+//      } catch (Exception e) {
+//         String errMsg = "DoneWithSelection::addGroupMemberToCollection(): ";
+//         Utility.logMessage("ERROR", errMsg);
+//         throw new ChainedException(errMsg, e);
+//      }
    }
 
    /**
@@ -195,7 +194,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
     * @param model
     */
    public void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
-      Element parentElem, Document model) throws ChainedException {
+      Element parentElem, Document model) throws Exception {
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
       IEntityGroup parentGroup = null;
@@ -203,7 +202,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
       Element childElem;
       String parentName = parentElem.getAttribute("key");
       String childName = "";
-      try{
+//      try{
          parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
          Iterator gmItr = gmCollection.iterator();
          while (gmItr.hasNext()) {
@@ -226,11 +225,11 @@ public class DoneWithSelection extends GroupsManagerCommand {
                parent.setAttribute("hasMembers", "true");
             }
          }
-      } catch (Exception e) {
-         String errMsg = "DoneWithSelection::addChildrenToGroup(): Unable to add : " + childName + " to: " + parentName;
-         Utility.logMessage("ERROR", errMsg);
-         throw new ChainedException(errMsg, e);
-      }
+//      } catch (Exception e) {
+//         String errMsg = "DoneWithSelection::addChildrenToGroup(): Unable to add : " + childName + " to: " + parentName;
+//         Utility.logMessage("ERROR", errMsg);
+//         throw new ChainedException(errMsg, e);
+//      }
    }
 
    /**
@@ -242,7 +241,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
     * @param model
     */
    public void addChildrenToContext (Vector gmCollection, CGroupsManagerSessionData sessionData,
-         Element parentElem, Document model) throws ChainedException {
+         Element parentElem, Document model) throws Exception {
           ChannelRuntimeData runtimeData = sessionData.runtimeData;
       // Considerations:
       // The parent element is myGroups and there is only one.
@@ -252,7 +251,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
       String ownerType = "p";
       int ordinal = 1;
       boolean expanded = false;
-      try{
+//      try{
          /** @todo should put this in the RDBM add method */
          java.sql.Timestamp dateCreated = new java.sql.Timestamp(System.currentTimeMillis());
          Element childElem;
@@ -281,11 +280,11 @@ public class DoneWithSelection extends GroupsManagerCommand {
                parentElem.setAttribute("hasMembers", "true");
             }
          }
-      } catch (Exception e) {
-         String errMsg = "DoneWithSelection::addChildrenToContext(): Unable to add child to context";
-         Utility.logMessage("ERROR", errMsg);
-         throw new ChainedException(errMsg, e);
-      }
+//      } catch (Exception e) {
+//         String errMsg = "DoneWithSelection::addChildrenToContext(): Unable to add child to context";
+//         Utility.logMessage("ERROR", errMsg);
+//         throw new ChainedException(errMsg, e);
+//      }
    }
 }
 

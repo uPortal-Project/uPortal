@@ -743,34 +743,38 @@ public class GroupsManagerXML
     * @param parentElem Element
     */
    public static void refreshAllNodesRecursivelyIfRequired (Document model, Element parentElem){
-         /** @todo not really recursive, we only go one level down, reconcile this
-          *  in code or by changing name */
-         Element childElem;
-         Node childNode;
-         NodeList childNodes;
-         String childType;
-         refreshAllNodesIfRequired(model, parentElem);
-         String parentType = parentElem.getAttribute("type");
-         Node parentNode = (Node)parentElem;
-         childNodes = parentNode.getChildNodes();
-         for (int i = 0; i < childNodes.getLength(); i++) {
-            childNode = (org.w3c.dom.Node)childNodes.item(i);
-            childElem = (Element)childNode;
-            childType = childElem.getAttribute("type");
-            if (Utility.notEmpty(childType)){
-               refreshAllNodesIfRequired(model, childElem);
-            }
-            // Does parent have any new children
-            // The wrapper will automatically add new children if expanded attribute is set to "true"
-            // but we have to set it back to the original value.
-            String saveExpand = parentElem.getAttribute("expanded");
-            // Have to check for non persistent search element before doing retrieval
-            IGroupMember parentGM = ((!isPersistentGroup(parentElem) ?
-               null :
-               (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
-            getGroupMemberXml (parentGM , true, parentElem, model);
-            parentElem.setAttribute("expanded", saveExpand);
+      /** @todo not really recursive, we only go one level down, reconcile this
+       *  in code or by changing name */
+      if (parentElem == null){
+         /** @todo this should be an error */
+         Utility.logMessage("INFO", "GroupsManagerXML::refreshAllNodesRecursivelyIfRequired(): parentElem is null");
+      }
+      Element childElem;
+      Node childNode;
+      NodeList childNodes;
+      String childType;
+      refreshAllNodesIfRequired(model, parentElem);
+      String parentType = parentElem.getAttribute("type");
+      Node parentNode = (Node)parentElem;
+      childNodes = parentNode.getChildNodes();
+      for (int i = 0; i < childNodes.getLength(); i++) {
+         childNode = (org.w3c.dom.Node)childNodes.item(i);
+         childElem = (Element)childNode;
+         childType = childElem.getAttribute("type");
+         if (Utility.notEmpty(childType)){
+            refreshAllNodesIfRequired(model, childElem);
          }
+         // Does parent have any new children
+         // The wrapper will automatically add new children if expanded attribute is set to "true"
+         // but we have to set it back to the original value.
+         String saveExpand = parentElem.getAttribute("expanded");
+         // Have to check for non persistent search element before doing retrieval
+         IGroupMember parentGM = ((!isPersistentGroup(parentElem) ?
+            null :
+            (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
+         getGroupMemberXml (parentGM , true, parentElem, model);
+         parentElem.setAttribute("expanded", saveExpand);
+      }
       return;
    }
 
