@@ -1,3 +1,38 @@
+/**
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal;
 
 import java.sql.Connection;
@@ -13,50 +48,71 @@ import org.jasig.portal.utils.SqlTransaction;
  */
 public class ReferenceSequenceGenerator implements ISequenceGenerator {
 
-	// Constant strings for SEQUENCE table:
-	private static String SEQUENCE_TABLE = "UP_SEQUENCE";
-	private static String NAME_COLUMN = "SEQUENCE_NAME";
-	private static String VALUE_COLUMN = "SEQUENCE_VALUE";
+    // Constant strings for SEQUENCE table:
+    private static String SEQUENCE_TABLE = "UP_SEQUENCE";
+    private static String NAME_COLUMN = "SEQUENCE_NAME";
+    private static String VALUE_COLUMN = "SEQUENCE_VALUE";
+    private static int INITIAL_COUNTER_VALUE = 0;
+    private static int NO_COUNTER_VALUE = -1;
 
-	// SQL strings for SEQUENCE crud:
-	private static String DEFAULT_COUNTER_NAME = "DEFAULT";
-	private static String selectSequenceSql;
-	private static String updateSequenceSql;
-	private static String updateSequenceWhereSql;
+    // SQL strings for SEQUENCE crud:
+    private static String QUOTE = "'";
+    private static String EQ = " = ";
+    private static String DEFAULT_COUNTER_NAME = "DEFAULT";
+    private static String selectCounterSql;
+    private static String updateCounterSql;
+    private static String updateCounterForIncrementSql;
 /**
  * ReferenceOIDGenerator constructor comment.
  */
 public ReferenceSequenceGenerator() {
-	super();
+    super();
 }
 /**
  * @param tableName java.lang.String
  * @exception java.lang.Exception
  */
-public synchronized void createCounter (String tableName) throws Exception
+public synchronized void createCounter (String tableName) throws SQLException
 {
-	Connection con = null;
-	Statement stmt = null;
+    Connection conn = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        createCounter(tableName, conn);
+    }
+    finally
+    {
+        RDBMServices.releaseConnection(conn);
+    }
+}
+/**
+ * @param tableName java.lang.String
+ * @exception java.lang.SQLException
+ */
+private void createCounter (String tableName, Connection conn) throws SQLException
+{
+    Statement stmt = null;
+    try
+    {
+        stmt = conn.createStatement();
+        String sql = getCreateCounterSql(tableName);
 
-	try
-	{
-		con = RDBMServices.getConnection();
-		stmt = con.createStatement();
-		String sInsert = getCreateCounterSql(tableName);
-		stmt.executeUpdate(sInsert);
-	}
-	catch ( SQLException sqle )
-	{
-		LogService.instance().log
-			(LogService.ERROR, "ReferenceSequenceGenerator::createCounter(): " + sqle.getMessage());
-		throw sqle;
-	}
-	finally
-	{
-		if ( stmt != null )
-			{ stmt.close(); }
-		RDBMServices.releaseConnection(con);
-	}
+        LogService.instance().log
+            (LogService.DEBUG, "ReferenceSequenceGenerator.createCounter: " + sql);
+
+        stmt.executeUpdate(getCreateCounterSql(tableName));
+    }
+    catch ( SQLException sqle )
+    {
+        LogService.instance().log
+            (LogService.ERROR, "ReferenceSequenceGenerator::createCounter(): " + sqle.getMessage());
+        throw sqle;
+    }
+    finally
+    {
+        if ( stmt != null )
+            { stmt.close(); }
+    }
 }
 /**
  * @param table java.lang.String
@@ -64,28 +120,62 @@ public synchronized void createCounter (String tableName) throws Exception
  */
 private String getCreateCounterSql(String table)
 {
-	StringBuffer buff = new StringBuffer(100);
-	buff.append("INSERT INTO ");
-	buff.append(SEQUENCE_TABLE);
-	buff.append(" (");
-	buff.append(NAME_COLUMN);
-	buff.append(", ");
-	buff.append(VALUE_COLUMN);
-	buff.append(") VALUES (");
-	buff.append("'");
-	buff.append(table);
-	buff.append("'");
-	buff.append(",");
-	buff.append("0");
-	buff.append(")");
-	return buff.toString();
+    StringBuffer buff = new StringBuffer(100);
+    buff.append("INSERT INTO ");
+    buff.append(SEQUENCE_TABLE);
+    buff.append(" (");
+    buff.append(NAME_COLUMN);
+    buff.append(", ");
+    buff.append(VALUE_COLUMN);
+    buff.append(") VALUES (");
+    buff.append(sqlQuote(table));
+    buff.append(", ");
+    buff.append(INITIAL_COUNTER_VALUE);
+    buff.append(")");
+    return buff.toString();
+}
+/**
+ * @return int
+ * @param tableName java.lang.String
+ * @param conn java.sql.Connection
+ * @exception java.sql.SQLException
+ */
+private int getCurrentCounterValue(String tableName, Connection conn)
+throws SQLException
+{
+    ResultSet rs = null;
+    RDBMServices.PreparedStatement ps = null;
+    try
+    {
+        ps = new RDBMServices.PreparedStatement( conn, getSelectCounterSql() );
+        try
+        {
+            ps.setString(1, tableName);
+            LogService.instance().log(LogService.DEBUG,
+                "ReferenceSequenceGenerator.getNextInt(): " + ps + "(" + tableName + ")");
+            rs = ps.executeQuery();
+            int currentInt = ( rs.next() ) ? rs.getInt(VALUE_COLUMN) : NO_COUNTER_VALUE;
+            return currentInt;
+        }
+        finally
+        {
+            if ( rs != null )
+                { rs.close(); }
+        }
+    }
+
+    finally
+    {
+        if ( ps != null )
+            { ps.close(); }
+    }
 }
 /**
  * @return java.lang.String
  * @exception java.lang.Exception
  */
 public String getNext() throws Exception {
-	return getNext(DEFAULT_COUNTER_NAME);
+    return getNext(DEFAULT_COUNTER_NAME);
 }
 /**
  * @param table String
@@ -93,172 +183,196 @@ public String getNext() throws Exception {
  * @exception java.lang.Exception
  */
 public String getNext(String table) throws Exception {
-	return getNextInt(table) + "";
+    return getNextInt(table) + "";
 }
 /**
  * @return int
  * @exception java.lang.Exception
  */
 public int getNextInt() throws Exception {
-	return getNextInt(DEFAULT_COUNTER_NAME);
+    return getNextInt(DEFAULT_COUNTER_NAME);
 }
 /**
+ * Increments the counter and returns the incremented value.  If the counter
+ * does not exist, creates and then increments it to verify that it has been
+ * created successfully.
  * @return int
  * @param tableName java.lang.String
  * @exception java.lang.Exception
  */
 public synchronized int getNextInt(String tableName) throws Exception
 {
-	int id = 1;
-	String sQuery = getSelectSequenceSql(tableName);
-	Connection con = null;
-	Statement stmt = null;
-	ResultSet rs = null;
+    Connection conn = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        int current = getCurrentCounterValue(tableName, conn);
 
-	try
-	{
-		con = RDBMServices.getConnection();
-		stmt = con.createStatement();
+        if ( current == NO_COUNTER_VALUE )
+        {
+            createCounter(tableName, conn);
+            current = INITIAL_COUNTER_VALUE;
+        }
 
-		SqlTransaction.begin(con);
-
-		rs = stmt.executeQuery(sQuery);
-
-		if ( rs.next() )
-			{ id = rs.getInt(VALUE_COLUMN) + 1; }
-		else
-			{ createCounter(tableName); }
-		String sInsert = getUpdateSequenceSql(id, tableName);
-		stmt.executeUpdate(sInsert);
-
-		SqlTransaction.commit(con);
-
-		return id;
-	}
-
-	catch ( SQLException sqle )
-	{
-		SqlTransaction.rollback(con);
-		LogService.instance().log
-			(LogService.ERROR, "ReferenceSequenceGenerator::incrementCounter(): " + sqle.getMessage());
-		throw sqle;
-	}
-
-	finally {
-		if ( rs != null )
-			{ rs.close(); }
-		if ( stmt != null )
-			{ stmt.close(); }
-		RDBMServices.releaseConnection(con);
+        incrementCounter(tableName, current, conn);
+        return ++current;
     }
+
+    catch ( SQLException sqle )
+    {
+        LogService.instance().log
+            (LogService.ERROR, "ReferenceSequenceGenerator::incrementCounter(): " + sqle.getMessage());
+        throw sqle;
+    }
+
+    finally
+        { RDBMServices.releaseConnection(conn); }
 }
 /**
  * @return java.lang.String
  */
-private String getSelectSequenceSql()
+private String getSelectCounterSql()
 {
-	if ( selectSequenceSql == null )
-	{
-		StringBuffer buff = new StringBuffer(100);
-		buff.append("SELECT ");
-		buff.append(VALUE_COLUMN);
-		buff.append(" FROM ");
-		buff.append(SEQUENCE_TABLE);
-		buff.append(" WHERE ");
-		buff.append(NAME_COLUMN);
-		buff.append(" = ");
-		selectSequenceSql = buff.toString();
-	}
-	return selectSequenceSql;
-}
-/**
- * @param table java.lang.String
- * @return java.lang.String
- */
-private String getSelectSequenceSql(String table)
-{
-	StringBuffer buff = new StringBuffer(getSelectSequenceSql());
-	buff.append("'");
-	buff.append(table);
-	buff.append("'");
-	return buff.toString();
+    if ( selectCounterSql == null )
+    {
+        selectCounterSql = "SELECT " + VALUE_COLUMN + " FROM " + SEQUENCE_TABLE +
+        " WHERE " + NAME_COLUMN + EQ + "?";
+    }
+    return selectCounterSql;
 }
 /**
  * @return java.lang.String
  */
-private String getUpdateSequenceSql()
+private String getUpdateCounterForIncrementSql()
 {
-	if ( updateSequenceSql == null )
-	{
-		StringBuffer buff = new StringBuffer(100);
-		buff.append("UPDATE ");
-		buff.append(SEQUENCE_TABLE);
-		buff.append(" SET ");
-		buff.append(VALUE_COLUMN);
-		buff.append(" = ");
-		updateSequenceSql = buff.toString();
-	}
-	return updateSequenceSql;
+    if ( updateCounterForIncrementSql == null )
+    {
+        updateCounterForIncrementSql =
+          "UPDATE " + SEQUENCE_TABLE + " SET " + VALUE_COLUMN + EQ + " ? " +
+          " WHERE " + NAME_COLUMN + EQ + "? AND " + VALUE_COLUMN + EQ + "?";
+    }
+    return updateCounterForIncrementSql;
 }
 /**
  * @return java.lang.String
  */
-private String getUpdateSequenceSql(int id, String table)
+private String getUpdateCounterSql()
 {
-	StringBuffer buff = new StringBuffer(getUpdateSequenceSql());
-	buff.append(id);
-	buff.append(getUpdateSequenceWhereSql());
-	buff.append("'");
-	buff.append(table);
-	buff.append("'");
-	return buff.toString();
-}
-/**
- * @return java.lang.String
- */
-private String getUpdateSequenceWhereSql()
-{
-	if ( updateSequenceWhereSql == null )
-	{
-		StringBuffer buff = new StringBuffer(100);
-		buff.append(" WHERE ");
-		buff.append(NAME_COLUMN);
-		buff.append(" = ");
-		updateSequenceWhereSql = buff.toString();
-	}
-	return updateSequenceWhereSql;
+    if ( updateCounterSql == null )
+    {
+        updateCounterSql =
+          "UPDATE " + SEQUENCE_TABLE + " SET " + VALUE_COLUMN + EQ + " ? " +
+          " WHERE " + NAME_COLUMN + EQ + "?";
+    }
+    return updateCounterSql;
 }
 /**
  * @param tableName java.lang.String
- * @param newValue int
- * @exception java.lang.Exception
+ * @param current int
+ * @param conn java.sql.Connection
+ * @exception java.sql.SQLException
  */
-public synchronized void setCounter (String tableName, int value) throws Exception
+private void incrementCounter(String tableName, int currentCounterValue, Connection conn)
+throws SQLException
 {
-
-	Connection con = null;
-	Statement stmt = null;
-	String sUpdate = getUpdateSequenceSql(value, tableName);
-
-	try
-	{
-		con = RDBMServices.getConnection();
-		stmt = con.createStatement();
-		stmt.executeUpdate(sUpdate);
-	}
-
-	catch ( SQLException sqle )
-	{
-		LogService.instance().log
-			(LogService.ERROR, "ReferenceSequenceGenerator::setCounter(): " + sqle.getMessage());
-		throw sqle;
-	}
+    RDBMServices.PreparedStatement ps = null;
+    int nextCounterValue = currentCounterValue + 1;
+    try
+    {
+        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterForIncrementSql() );
+        try
+        {
+            ps.setInt(1, nextCounterValue);
+            ps.setString(2, tableName);
+            ps.setInt(3, currentCounterValue);
+            LogService.instance().log(LogService.DEBUG,
+                "ReferenceSequenceGenerator.incrementCounter(): " + ps +
+                  "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
+            int rc = ps.executeUpdate();
+            if (rc != 1)
+                { throw new SQLException("Data integrity error; could not update counter."); }
+        }
+        catch (SQLException sqle)
+        {
+            LogService.instance().log(LogService.ERROR, sqle.getMessage());
+            throw sqle;
+        }
+    }
 
     finally
     {
-	    if ( stmt != null )
-	    	{ stmt.close(); }
-	    RDBMServices.releaseConnection(con);
+        if ( ps != null )
+            { ps.close(); }
     }
+}
+/**
+ * @param tableName java.lang.String
+ * @param newCounterValue int
+ * @exception java.lang.Exception
+ */
+public synchronized void setCounter (String tableName, int newCounterValue) throws Exception
+{
+
+    Connection conn = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        setCounter(tableName, newCounterValue, conn);
+    }
+
+    catch ( SQLException sqle )
+    {
+        LogService.instance().log
+            (LogService.ERROR, "ReferenceSequenceGenerator::setCounter(): " + sqle.getMessage());
+        throw sqle;
+    }
+
+    finally
+    {
+        RDBMServices.releaseConnection(conn);
+    }
+}
+/**
+ * @param tableName java.lang.String
+ * @param current int
+ * @param conn java.sql.Connection
+ * @exception java.sql.SQLException
+ */
+private void setCounter(String tableName, int newCounterValue, Connection conn)
+throws SQLException
+{
+    RDBMServices.PreparedStatement ps = null;
+    try
+    {
+        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterSql() );
+        try
+        {
+            ps.setInt(1, newCounterValue);
+            ps.setString(2, tableName);
+            LogService.instance().log(LogService.DEBUG,
+                "ReferenceSequenceGenerator.setCounter(): " + ps + "(" + newCounterValue + ", " + tableName + ")");
+            int rc = ps.executeUpdate();
+            if (rc != 1)
+                { throw new SQLException("Data integrity error; could not update counter."); }
+         }
+        catch (SQLException sqle)
+        {
+            LogService.instance().log(LogService.ERROR, sqle.getMessage());
+            throw sqle;
+        }
+    }
+
+    finally
+    {
+        if ( ps != null )
+            { ps.close(); }
+    }
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String sqlQuote(Object o)
+{
+    return QUOTE + o + QUOTE;
 }
 }
