@@ -593,7 +593,7 @@ public class XSLT {
                                 e.removeChild(cl.item(j));
                             }
                         }
-                       e.setAttribute("select","'"+localization.getString(name)+"'");
+                       e.setAttribute("select","'"+escape(localization.getString(name))+"'");
                         keys.remove(name);
                     }
                 }
@@ -602,7 +602,7 @@ public class XSLT {
 
         for(int z=0;z<keys.size();z++){
             String k = (String)keys.get(z);
-            String v = localization.getString(k);
+            String v = escape(localization.getString(k));
             Element e = xsl.createElementNS("http://www.w3.org/1999/XSL/Transform","xsl:variable");
             e.setAttribute("name",k);
             e.setAttribute("select","'"+v+"'");
@@ -611,7 +611,41 @@ public class XSLT {
         }
 
     }
+    
+  /**
+   * Escape problem characters which will be inserted into XSL
+   *
+   * @param s the string to escape
+   */
+    protected static String escape(String s){
+        // for initial implementation, just look for single quote
+        s = replace(s,"'","\u2019");
+        return s;
+    }
+    
+    /**
+   * Basic string replacement
+   *
+   * @param input the string to search
+   * @param match the substring to search for
+   * @param replace the substring to replace matches
+   */
+    protected static final String replace(String input, String match, String replace){
+        String r=input;
+        int i=input.indexOf(match);
+        if(i>=0){
+            StringBuffer buffer = new StringBuffer();
+            int from=0;
+            while(i>=0){
+                buffer.append(input.substring(from,i)).append(replace);
+                from=i+match.length();
+                i=input.indexOf(match,from);
+            }
+            buffer.append(input.substring(from));
+            r= buffer.toString();
+        }
+        return r;
+    }   
 }
-
 
 
