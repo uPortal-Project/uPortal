@@ -85,13 +85,163 @@ public class CChannelManager extends BaseChannel {
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     runtimeData = rd;
     action = runtimeData.getParameter("uPCM_action");
-    captureChanges(); // Keep after "action = " because action might change inside captureChanges
+
+    // Capture information that the user entered on previous screen
+    doCapture(); // Keep after "action = " because action might change inside doCapture()
+
+    // Prepare the appropriate XML documents for the destination screen
+    doAction();
+  }
+
+  public void renderXML (DocumentHandler out) throws PortalException {
+    XSLT xslt = new XSLT();
+    xslt.setXML(channelManagerDoc);
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+
+    String action = null;
+    switch (state) {
+      case DEFAULT_STATE:
+        action = "none";
+        break;
+      case CHANNEL_TYPE_STATE:
+        action = "selectChannelType";
+        break;
+      case GENERAL_SETTINGS_STATE:
+        action = "selectGeneralSettings";
+        break;
+      case CHANNEL_DEF_STATE:
+        action = "channelDef";
+        xslt.setStylesheetParameter("stepID", fixStepID(stepID));
+        break;
+      case CHANNEL_CONTROLS_STATE:
+        action = "selectControls";
+        break;
+      case CHANNEL_CATEGORIES_STATE:
+        action = "selectCategories";
+        break;
+      case CHANNEL_ROLES_STATE:
+        action = "selectRoles";
+        break;
+      case CHANNEL_REVIEW_STATE:
+        action = "reviewChannel";
+        break;
+      case MODIFY_CHANNEL_STATE:
+        action = "selectModifyChannel";
+        break;
+      default:
+        action = "none";
+        break;
+    }
+
+    xslt.setStylesheetParameter("action", action);
+    // Temporary mediaPath param - makes it easier for Justin and I to work together
+    xslt.setStylesheetParameter("mediaPath", "media/org/jasig/portal/channels/CChannelManager");
+    xslt.transform();
+
+    // Remove this!!!
+    try {
+      if (true) {
+        System.out.println("-----------------------------------------------");
+        System.out.println("baseActionURL=" + runtimeData.getBaseActionURL());
+        System.out.println("action=" + action);
+        System.out.println("stepID=" + stepID);
+        System.out.println("fixedStepID=" + fixStepID(stepID));
+        System.out.println(UtilitiesBean.dom2PrettyString(channelManagerDoc));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private String fixStepID (String stepID) {
+    if (stepID == null) {
+      stepID = "1";
+    } else {
+      try {
+        Integer.parseInt(stepID);
+      }
+      catch (java.lang.NumberFormatException nfe) {
+        stepID = "1";
+      }
+    }
+    return stepID;
+  }
+
+  protected void doCapture() {
+    stepID = runtimeData.getParameter("uPCM_step");
+    String capture = runtimeData.getParameter("uPCM_capture");
+    if (capture != null) {
+      // Channel types
+      if (capture.equals("selectChannelType")) {
+        String typeID = runtimeData.getParameter("ID");
+        if (typeID != null)
+          channelDef.setTypeID(typeID);
+        else
+          action = "selectChannelType";
+      // General Settings (name and timeout)
+      } else if (capture.equals("selectGeneralSettings")) {
+        String name = runtimeData.getParameter("name");
+        String timeout = runtimeData.getParameter("timeout");
+        if (name != null)
+          channelDef.setName(name);
+        if (timeout != null)
+          channelDef.setTimeout(timeout);
+      // CPD parameters
+      } else if (capture.equals("channelDef")) {
+        Iterator iter = ((java.util.Hashtable)runtimeData).keySet().iterator();
+        while (iter.hasNext()) {
+          String name = (String)iter.next();
+
+          // Ignore parameters whose name starts with "uPCM_"
+          if (name.startsWith("uPCM_"))
+            continue;
+
+          String value = runtimeData.getParameter(name);
+          String override = runtimeData.getParameter(name + "_sub");
+          channelDef.addParameter(name, value, (override != null ? "yes" : "no"));
+        }
+      // Channel controls
+      } else if (capture.equals("selectControls")) {
+        String minimizable = runtimeData.getParameter("minimizable");
+        channelDef.setMinimizable(minimizable != null ? "true" : "false");
+        String editable = runtimeData.getParameter("editable");
+        channelDef.setEditable(editable != null ? "true" : "false");
+        String hasHelp = runtimeData.getParameter("hasHelp");
+        channelDef.setHasHelp(hasHelp != null ? "true" : "false");
+        String hasAbout = runtimeData.getParameter("hasAbout");
+        channelDef.setHasAbout(hasAbout != null ? "true" : "false");
+        String printable = runtimeData.getParameter("printable");
+        channelDef.setPrintable(printable != null ? "true" : "false");
+        String removable = runtimeData.getParameter("removable");
+        channelDef.setRemovable(removable != null ? "true" : "false");
+        String detachable = runtimeData.getParameter("detachable");
+        channelDef.setDetachable(detachable != null ? "true" : "false");
+      // Categories
+      } else if (capture.equals("selectCategories")) {
+        String selectedCategory = runtimeData.getParameter("selectedCategory");
+        if (selectedCategory != null && selectedCategory.trim().length() > 0) {
+          if (runtimeData.getParameter("uPCM_browse") != null)
+            categorySettings.setBrowsingCategory(selectedCategory);
+          else // runtimeData.getParameter("uPCM_select") != null
+            categorySettings.addSelectedCategory(selectedCategory);
+        }
+      // Roles
+      } else if (capture.equals("selectRoles")) {
+        String[] roles = runtimeData.getParameterValues("selectedRoles");
+        for (int i = 0; i < roles.length; i++) {
+          roleSettings.addSelectedRole(roles[i]);
+        }
+      }
+    }
+  }
+
+  protected void doAction () throws PortalException {
     if (action != null) {
       if (action.equals("selectChannelType")) {
-
         state = CHANNEL_TYPE_STATE;
         Workflow workflow = new Workflow();
-
         // Add channel types and channel def
         WorkflowSection chanTypeSection = new WorkflowSection("selectChannelType");
         WorkflowStep step = new WorkflowStep("1", "Channel Type");
@@ -147,6 +297,15 @@ public class CChannelManager extends BaseChannel {
         // Add CPD document
         CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getTypeID());
         workflow.setCPDSection(section);
+
+        // Add controlsSection
+        WorkflowSection controlsSection = new WorkflowSection("selectControls");
+        if (channelDef.getMinimizable() == null) // if one is null, they are all null
+          channelDef.resetChannelControls();
+        WorkflowStep step = new WorkflowStep("1", "Channel Controls");
+        step.addDataElement(channelDef.toXML());
+        controlsSection.addStep(step);
+        workflow.setControlsSection(controlsSection);
 
         channelManagerDoc = workflow.toXML();
 
@@ -210,9 +369,7 @@ public class CChannelManager extends BaseChannel {
         step.addDataElement(ChannelRegistryManager.getChannelTypes().getDocumentElement());
 
         reviewSection.addStep(step);
-
         channelManagerDoc = workflow.toXML();
-
       } else if (action.equals("selectModifyChannel")) {
 
         state = MODIFY_CHANNEL_STATE;
@@ -241,144 +398,6 @@ public class CChannelManager extends BaseChannel {
     if (action == null || action.equals("cancel")) {
       state = DEFAULT_STATE;
       channelManagerDoc = emptyDoc;
-    }
-  }
-
-  public void renderXML (DocumentHandler out) throws PortalException {
-    XSLT xslt = new XSLT();
-    xslt.setXML(channelManagerDoc);
-    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
-    xslt.setTarget(out);
-    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-
-    String action = null;
-    switch (state) {
-      case DEFAULT_STATE:
-        action = "none";
-        break;
-      case CHANNEL_TYPE_STATE:
-        action = "selectChannelType";
-        break;
-      case GENERAL_SETTINGS_STATE:
-        action = "selectGeneralSettings";
-        break;
-      case CHANNEL_DEF_STATE:
-        action = "channelDef";
-        xslt.setStylesheetParameter("stepID", fixStepID(stepID));
-        break;
-      case CHANNEL_CONTROLS_STATE:
-        action = "selectControls";
-        break;
-      case CHANNEL_CATEGORIES_STATE:
-        action = "selectCategories";
-        break;
-      case CHANNEL_ROLES_STATE:
-        action = "selectRoles";
-        break;
-      case CHANNEL_REVIEW_STATE:
-        action = "reviewChannel";
-        break;
-      case MODIFY_CHANNEL_STATE:
-        action = "selectModifyChannel";
-        break;
-      default:
-        action = "none";
-        break;
-    }
-
-    xslt.setStylesheetParameter("action", action);
-    // Temporary mediaPath param - makes it easier for Justin and I to work together
-    xslt.setStylesheetParameter("mediaPath", "media/org/jasig/portal/channels/CChannelManager");
-    xslt.transform();
-
-    // Remove this!!!
-    try {
-      if (false) {
-        System.out.println("-----------------------------------------------");
-        System.out.println("baseActionURL=" + runtimeData.getBaseActionURL());
-        System.out.println("action=" + action);
-        System.out.println("stepID=" + stepID);
-        System.out.println("fixedStepID=" + fixStepID(stepID));
-        System.out.println(UtilitiesBean.dom2PrettyString(channelManagerDoc));
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private String fixStepID (String stepID) {
-    if (stepID == null) {
-      stepID = "1";
-    } else {
-      try {
-        Integer.parseInt(stepID);
-      }
-      catch (java.lang.NumberFormatException nfe) {
-        stepID = "1";
-      }
-    }
-    return stepID;
-  }
-
-  protected void captureChanges() {
-    String capture = runtimeData.getParameter("uPCM_capture");
-    if (capture != null) {
-      // Channel types
-      if (capture.equals("selectChannelType")) {
-        String typeID = runtimeData.getParameter("ID");
-        if (typeID != null)
-          channelDef.setTypeID(typeID);
-        else
-          action = "selectChannelType";
-      // General Settings (name and timeout)
-      } else if (capture.equals("selectGeneralSettings")) {
-        String name = runtimeData.getParameter("name");
-        String timeout = runtimeData.getParameter("timeout");
-        if (name != null)
-          channelDef.setName(name);
-        if (timeout != null)
-          channelDef.setTimeout(timeout);
-      // CPD parameters
-      } else if (capture.equals("channelDef")) {
-        stepID = runtimeData.getParameter("uPCM_step");
-        Iterator iter = ((java.util.Hashtable)runtimeData).keySet().iterator();
-        while (iter.hasNext()) {
-          String name = (String)iter.next();
-
-          // Ignore parameters whose name starts with "uPCM_"
-          if (name.startsWith("uPCM_"))
-            continue;
-
-          String value = runtimeData.getParameter(name);
-          String modType = "unknown"; // ???? what should we do here ????
-          channelDef.addParameter(name, value, modType);
-        }
-      // Channel controls
-      } else if (capture.equals("selectControls")) {
-        String minimizable = runtimeData.getParameter("minimizable");
-        channelDef.setMinimizable(minimizable != null ? "true" : "false");
-        String editable = runtimeData.getParameter("editable");
-        channelDef.setEditable(editable != null ? "true" : "false");
-        String hasHelp = runtimeData.getParameter("hasHelp");
-        channelDef.setHasHelp(hasHelp != null ? "true" : "false");
-        String hasAbout = runtimeData.getParameter("hasAbout");
-        channelDef.setHasAbout(hasAbout != null ? "true" : "false");
-        String printable = runtimeData.getParameter("printable");
-        channelDef.setPrintable(printable != null ? "true" : "false");
-        String removable = runtimeData.getParameter("removable");
-        channelDef.setRemovable(removable != null ? "true" : "false");
-        String detachable = runtimeData.getParameter("detachable");
-        channelDef.setDetachable(detachable != null ? "true" : "false");
-      // Categories
-      } else if (capture.equals("selectCategories")) {
-        String selectedCategory = runtimeData.getParameter("selectedCategory");
-        if (selectedCategory != null && selectedCategory.trim().length() > 0) {
-          if (runtimeData.getParameter("uPCM_browse") != null)
-            categorySettings.setBrowsingCategory(selectedCategory);
-          else // runtimeData.getParameter("uPCM_select") != null
-            categorySettings.addSelectedCategory(selectedCategory);
-        }
-      }
     }
   }
 
@@ -423,11 +442,24 @@ public class CChannelManager extends BaseChannel {
     channelManager.appendChild(userSettingsE);
   }
 
+  /**
+   * Receive static channel data from the portal
+   * @param chanTypeID the channel type ID, "-1" if channel type is "custom"
+   * @return the CPD document matching the chanTypeID, <code>null</code> if "custom" channel
+   * @throws org.jasig.portal.PortalException
+   */
   protected static Document getCPDDoc(String chanTypeID) throws PortalException {
+    // This method needs some caching!!! Consider a CPDManager.java class.
+
+    //  There are no CPD docs for custom channels (chanTypeID = -1)
+    if (chanTypeID == null || chanTypeID.equals("-1"))
+      return null;
+
     Element channelTypes = ChannelRegistryManager.getChannelTypes().getDocumentElement();
 
     // Look for channel type element matching the channel type ID
     Element chanType = null;
+
     for (Node n = channelTypes.getFirstChild(); n != null; n = n.getNextSibling()) {
       if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("channelType")) {
         chanType = (Element)n;
@@ -639,6 +671,7 @@ public class CChannelManager extends BaseChannel {
                       String ID = n4.getNodeValue();
                       if (ID.equals(stepID)) {
                         n2.appendChild(cpdDoc.importNode(element, true));
+                        break;
                       }
                     }
                   }
@@ -706,32 +739,40 @@ public class CChannelManager extends BaseChannel {
     protected String printable;
     protected String removable;
     protected String detachable;
-    protected List parameters;
+    protected Map parameters;
 
     protected class Parameter {
       protected String name;
       protected String value;
-      protected String modType; // Need to make this part of parameter table
+      protected String override; // "yes" or "no"
 
       protected Parameter(String name, String value, String modType) {
         this.name = name;
         this.value = value;
-        this.modType = modType;
+        this.override = override;
       }
 
       protected String getName() { return name; }
       protected String getValue() { return value; }
-      protected String getModType() { return modType; }
+      protected String getOverride() { return override; }
       protected void setName(String name) { this.name = name; }
       protected void setValue(String value) { this.value = value; }
-      protected void setModType(String modType) { this.modType = modType; }
+      protected void setOverride(String override) { this.override = override; }
     }
 
     protected ChannelDefinition() {
-      parameters = new ArrayList();
+      parameters = new HashMap();
     }
 
     protected String getTypeID() { return typeID; }
+    protected String getMinimizable() { return minimizable; }
+    protected String getEditable() { return editable; }
+    protected String getHasHelp() { return hasHelp; }
+    protected String getHasAbout() { return hasAbout; }
+    protected String getPrintable() { return printable; }
+    protected String getRemovable() { return removable; }
+    protected String getDetachable() { return detachable; }
+
     protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
     protected void setTimeout(String timeout) { this.timeout = timeout; }
@@ -750,7 +791,30 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected void addParameter(String name, String value, String modType) {
-      parameters.add(new Parameter(name, value, modType));
+      parameters.put(name, new Parameter(name, value, modType));
+    }
+
+    protected void resetChannelControls() {
+      try {
+        // Look inside CPD for controls.
+        Document cpdDoc = getCPDDoc(typeID);
+        if (cpdDoc != null) {
+          for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
+            if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("defaultControls")) {
+              Element defaultControls = (Element)n1;
+              minimizable = defaultControls.getAttribute("minimizable");
+              editable = defaultControls.getAttribute("editable");
+              hasHelp = defaultControls.getAttribute("hasHelp");
+              hasAbout = defaultControls.getAttribute("hasAbout");
+              printable = defaultControls.getAttribute("printable");
+              removable = defaultControls.getAttribute("removable");
+              detachable = defaultControls.getAttribute("detachable");
+            }
+          }
+        }
+      } catch (PortalException pe) {
+        // Unable to open CPDDoc, just leave values uninitialized
+      }
     }
 
     protected Element toXML() {
@@ -769,13 +833,14 @@ public class CChannelManager extends BaseChannel {
       setAttribute(channelE, "hasAbout", hasAbout);
       setAttribute(channelE, "hasHelp", hasHelp);
 
-      Iterator iter = parameters.iterator();
+      Iterator iter = parameters.keySet().iterator();
       while (iter.hasNext()) {
-        Parameter param = (Parameter)iter.next();
+        String name = (String)iter.next();
+        Parameter param = (Parameter)parameters.get(name);
         Element parameterE = emptyDoc.createElement("parameter");
         parameterE.setAttribute("name", param.getName());
         parameterE.setAttribute("value", param.getValue());
-        parameterE.setAttribute("modType", param.getModType());
+        parameterE.setAttribute("override", param.getOverride());
         channelE.appendChild(parameterE);
       }
       return channelE;
