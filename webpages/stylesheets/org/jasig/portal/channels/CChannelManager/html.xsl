@@ -280,7 +280,7 @@
                 <em>
                   <xsl:value-of select="@name"/>
                 </em>
-              </a>--<select name="newCategory" class="uportal-input-text" size="1"><option value="{@ID}" selected="selected"/><xsl:for-each select="child::category"><option value="{@ID}"><xsl:value-of select="@name"/></option></xsl:for-each>
+              </a>--<select name="newCategory" class="uportal-input-text" size="1"><option value="{@ID}" selected="selected"/><xsl:for-each select="child::category"><xsl:sort select="@name"/><option value="{@ID}"><xsl:value-of select="@name"/></option></xsl:for-each>
                 <option value=" ">_________</option>
                 <option>
                   <xsl:attribute name="value">
