@@ -226,9 +226,10 @@ public class PortletStateManager {
 	  * @return a String hash key
 	  */ 
 	public static String getKey(PortletWindow window) {
-		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
-		    String sessionId = windowImpl.getHttpServletRequest().getSession().getId();
-			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
+            PortletWindowImpl windowImpl = (PortletWindowImpl)window; 
+            HttpSession session = windowImpl.getHttpServletRequest().getSession();
+            String sessionId = (session!=null) ? session.getId() : null;
+            return ((sessionId!=null) ? sessionId + "_" : "") + window.getId().toString() + "_"; 
 	}
 	
 	
@@ -257,12 +258,15 @@ public class PortletStateManager {
 	  * @param request a <code>HttpServletRequest</code> instance
 	  */  
 	public static void clearState( HttpServletRequest request ) {
+         HttpSession session = request.getSession();	
+         if ( session == null ) 
+             return;
 	 Map map = windowStates;	
 	 for ( int i = 0; i < 2; i++ )	{
 	  Iterator keyIterator = map.keySet().iterator();
 	  while ( keyIterator.hasNext() ) {
 		  String name = (String) keyIterator.next();
-		  if (name.startsWith(request.getSession().getId())) {
+		  if (name.startsWith(session.getId())) {
 			  keyIterator.remove();
 		  }
 	  }
