@@ -1,24 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragments>
-	<fragment name="pfragment1.0">
-		<description>The push fragment example</description>
+
+	<fragment name="uPortal">
+		<description>uPortal channels</description>
 		<groups>
-			<group>Students</group>
-                        <group>Developers</group>
+			<group>Guests</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-30000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="uPortal" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="uportal-home-page" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="uportal-powered-sites" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>
+	
+	<fragment name="news">
+		<description>News channels</description>
+		<groups>
+			<group>Everyone</group>
 		</groups>
 		<restrictions>
 			<restriction path="local" name="priority" value="0-20000"/>
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
-		<folder name="The push fragment folder" immutable="Y" unremovable="Y" hidden="N">
+		<folder name="News" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
-				<channel fname="word-of-the-day" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="salon.com" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="motley-fool" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 		</folder>
+	</fragment>	
+
+	<fragment name="entertainment">
+		<description>Entertaining channels</description>
+		<groups>
+			<group>Students</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="Entertainment" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="number-guessing-game" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="daily-business-cartoon" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
 	</fragment>
+	
+	<fragment name="developers">
+		<description>Channels geared towards uPortal developers</description>
+		<groups>
+			<group>Developers</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="Entertainment" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="css-viewer" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="uportal-development-books" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="uportal-developers-reference" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+	
 </fragments>
