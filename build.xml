@@ -439,7 +439,14 @@
     <javadoc sourcepath="source"
            classpathref="compile.classpath"
                 destdir="${dist.home}/docs/api"
-           packagenames="org.jasig.portal.*"/>
+           packagenames="org.jasig.portal.*"
+                 access="public"
+                 author="true"
+                version="true"
+            windowtitle="${app.name} ${app.version} API Documentation">
+      <doctitle><![CDATA[${app.name} ${app.version}<br/>API Documentation]]></doctitle>
+      <header><![CDATA[${app.name} ${app.version}<br/>API Documentation]]></header>
+    </javadoc>
 
   </target>
 
