@@ -10,6 +10,7 @@ package org.jasig.portal.security.provider;
  * instance of the JAASSecurityContext.</p>
  *
  * @author Nathan Jacobs
+ * @version $Revision$ $Date$
  */
 
 import org.jasig.portal.security.ISecurityContext;
