@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1061,11 +1061,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
       layoutData.put(rootId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
-      // initialize layout
-	  layout.setLayoutData(layoutData);
+    
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootId, layoutData );
-      // update layout for cheldren
+      
       layout.setLayoutData(layoutData);
       updateCacheKey();
     }
