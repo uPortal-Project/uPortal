@@ -47,13 +47,13 @@ import java.util.StringTokenizer;
 import org.jasig.portal.PortalSessionManager;
 
 /**
-   Loads classes and resources from installed CARs via the CarResources class.
-   If classes are visible via the parent class loader then they will be used
-   in place of those in the CARs. This is a singleton so that we have a single
-   unified class namespace for all car resources preventing linkage errors and
-   class cast exceptions.
-   
-   @author Mark Boyd <mark.boyd@engineer.com>
+ * Loads classes and resources from installed CARs via the CarResources class.
+ * If classes are visible via the parent class loader then they will be used
+ * in place of those in the CARs. This is a singleton so that we have a single
+ * unified class namespace for all car resources preventing linkage errors and
+ * class cast exceptions.
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $Revision$
  */
 public class CarClassLoader
     extends SecureClassLoader

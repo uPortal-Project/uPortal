@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,19 +43,21 @@ import java.util.LinkedList;
 import org.jasig.portal.services.LogService;
 
 /**
-   Holds onto a set of String path elements to assist with tracking where in
-   an XML structure SAX processing is currently working. So an XML structure
-   like the following would have a path of "<top>", "<next>", "<more>" when SAX
-   processing issued a startElement event call for the "more" element.
-   <code>
-   &lt;top>
-    &lt;next>
-     &lt;more>
-     ...
-   </code>
-
-   Use the fromXML method to create from a more visually symbolic view of
-   what the path represents.
+ * Holds onto a set of String path elements to assist with tracking where in
+ * an XML structure SAX processing is currently working. So an XML structure
+ * like the following would have a path of "<top>", "<next>", "<more>" when SAX
+ * processing issued a startElement event call for the "more" element.
+ * <code>
+ * &lt;top>
+ *  &lt;next>
+ *   &lt;more>
+ *   ...
+ * </code>
+ *
+ * Use the fromXML method to create from a more visually symbolic view of
+ * what the path represents.
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $Revision$
  */
 public class Path
 {

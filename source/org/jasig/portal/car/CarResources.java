@@ -63,9 +63,10 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
-   Provides access to resources stored in channel archive files or CARs for
-   short. 
-   @author Mark Boyd <mark.boyd@engineer.com>
+ * Provides access to resources stored in channel archive files or CARs for
+ * short. 
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $Revision$
  */
 public class CarResources {
 

@@ -53,24 +53,25 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 
 /**
-   Class to handle incoming portal requests with specified worker of
-   "carrsrc". These request are for loading web elements out of an installed
-   channel archive file. The form of the URL is the traditional UPFileSpec
-   with a worker of "carrsrc" and a query parameter "carrsrc=<resourcePath>".
-   The resourcePath is the path to the resource from within the channel
-   archive.
-
-   For example: if a channel existed with the directory structure of
-   "org/jasig/uportal/channels/email/" and within the email channel
-   base directory there was an "images" directory containing "mailbox.gif"
-   then the browser could access that image from the installed email channel
-   archive via "<uPFileSpecWithWorker.carrsrc>.uP?carrsrc=org/jasig/
-   uportal/channels/email/images/mailbox.gif".
-
-   See the ChannelRuntimeData.getBaseMediaURL methods from which channels
-   can obtain the base URL dynamically without having to know if they are
-   deployed as a traditional channel or as a channel archive.
-   @author Mark Boyd <mark.boyd@engineer.com>
+ * Class to handle incoming portal requests with specified worker of
+ * "carrsrc". These request are for loading web elements out of an installed
+ * channel archive file. The form of the URL is the traditional UPFileSpec
+ * with a worker of "carrsrc" and a query parameter "carrsrc=<resourcePath>".
+ * The resourcePath is the path to the resource from within the channel
+ * archive.
+ *
+ * For example: if a channel existed with the directory structure of
+ * "org/jasig/uportal/channels/email/" and within the email channel
+ * base directory there was an "images" directory containing "mailbox.gif"
+ * then the browser could access that image from the installed email channel
+ * archive via "<uPFileSpecWithWorker.carrsrc>.uP?carrsrc=org/jasig/
+ * uportal/channels/email/images/mailbox.gif".
+ *
+ * See the ChannelRuntimeData.getBaseMediaURL methods from which channels
+ * can obtain the base URL dynamically without having to know if they are
+ * deployed as a traditional channel or as a channel archive.
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $Revision$
  */
 public class CarResourceWorker implements IWorkerRequestProcessor {
 
