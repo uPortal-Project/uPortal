@@ -35,9 +35,12 @@
 
 package org.jasig.portal.groups;
 
-import java.sql.*;
-import java.util.*;
-import org.jasig.portal.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**

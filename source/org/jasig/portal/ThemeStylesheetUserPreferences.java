@@ -35,7 +35,10 @@
 
  package org.jasig.portal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 import org.jasig.portal.services.LogService;
 
 /**

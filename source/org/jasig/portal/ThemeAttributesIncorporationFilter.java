@@ -43,19 +43,14 @@
 package org.jasig.portal;
 
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import java.io.*;
-import java.util.Hashtable;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.List;
 
 import org.xml.sax.helpers.AttributesImpl;
-
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
 
 import org.jasig.portal.services.LogService;
 

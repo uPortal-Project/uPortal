@@ -34,10 +34,15 @@
  */
 package org.jasig.portal.groups;
 
-import java.util.*;
-import org.jasig.portal.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
 
 /**
  * Reference implementation for IEntityStore.

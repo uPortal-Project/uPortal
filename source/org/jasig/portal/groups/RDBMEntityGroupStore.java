@@ -35,9 +35,15 @@ package org.jasig.portal.groups;
  *
  */
 
-import java.sql.*;
-import java.util.*;
-import org.jasig.portal.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;

@@ -38,9 +38,9 @@
 
 package  org.jasig.portal.groups;
 
-import  java.sql.*;
-import  java.util.*;
-import  org.jasig.portal.services.*;
+import  java.util.HashMap;
+import  java.util.Map;
+import  org.jasig.portal.services.GroupService;
 import  org.jasig.portal.services.LogService;
 
 

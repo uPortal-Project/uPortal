@@ -1,6 +1,9 @@
 package org.jasig.portal;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SqlTransaction;

@@ -38,21 +38,16 @@ package org.jasig.portal;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.services.LogService;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
-import org.jasig.portal.serialize.*;
+import org.jasig.portal.serialize.CachingSerializer;
 
 public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
 {
@@ -178,7 +173,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                     // save the old cache state
                     try {
                         if(ser.stopCaching()) {
-                            //                            Logger.log(Logger.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following system character entry: \n"+ser.getCache());
+                            //                            LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following system character entry: \n"+ser.getCache());
                             systemCCacheBlocks.add(ser.getCache());
                         } else {
                             LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::startElement() : unable to reset cache state ! Serializer was not caching when it should've been !");
@@ -238,7 +233,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                                     // save the old cache state
                                     if(ser.stopCaching()) {
                                         try {
-                                            //                                            Logger.log(Logger.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following channel character entry: \n"+ser.getCache());
+                                            //                                            LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following channel character entry: \n"+ser.getCache());
                                             cm.setChannelCharacterCache(channelID,ser.getCache());
                                         } catch (UnsupportedEncodingException e) {
                                             LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to obtain character cache, invalid encoding specified ! "+e);
