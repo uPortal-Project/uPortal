@@ -597,7 +597,7 @@ public class PortalSessionManager extends HttpServlet {
         }
 
         public String getQueryString() {
-            return  req.getQueryString();;
+            return  req.getQueryString();
         }
 
         public String getServletPath() {

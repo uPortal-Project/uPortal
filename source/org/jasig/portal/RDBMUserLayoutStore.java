@@ -1340,7 +1340,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
     if (name != null) {
       return  this.getTextChildNodeValue(name);
-      ;
     }
     else {
       LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
@@ -1366,7 +1365,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
     if (name != null) {
       return  this.getTextChildNodeValue(name);
-      ;
     }
     else {
       LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
@@ -1867,7 +1865,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 structSsId, themeSsId);
           }
           else {
-            throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);;
+            throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);
           }
         } finally {
           rs.close();
