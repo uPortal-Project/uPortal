@@ -32,7 +32,7 @@ import java.net.*;
 // xml  parameter the XML to parse
 // ssl  parameter the ssl style sheet list
 
-public class CGenericXSLT extends GenericPortalBean implements org.jasig.portal.IXMLChannel
+public class CGenericXSLT extends GenericPortalBean implements org.jasig.portal.IChannel
 {
 
   protected Document sXml;

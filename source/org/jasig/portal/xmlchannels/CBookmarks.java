@@ -32,7 +32,7 @@ import java.io.*;
  */
 
 
-public class CBookmarks extends GenericPortalBean implements IXMLChannel
+public class CBookmarks extends GenericPortalBean implements IChannel
 {
 
   // a DOM where all the bookmark information will be contained
@@ -273,7 +273,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
   // the rest are private helper functions, should be rather self-explanatory
 
   private void renderViewXML (DocumentHandler out) throws org.xml.sax.SAXException {
-    // a block, typical for the IXMLChannel:
+    // a block, typical for the IChannel:
     //  - use the StylesheetSet to get an appropriate stylesheet
     //  - instansiation an XSLT processor
     //  - fire up the transformation
@@ -281,7 +281,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
     stylesheet.setSystemId (getPortalBaseDir () + stylesheet.getSystemId ());
     //Logger.log (Logger.INFO,stylesheet.getSystemId ());
     if (stylesheet!=null) {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison());
       processor.process (new XSLTInputSource (getBookmarkXML ()),stylesheet,new XSLTResultTarget (out));
     } else Logger.log (Logger.ERROR,"BookmarksChannel::renderViewXML() : unable to find a stylesheet for rendering");
   }
@@ -291,7 +291,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
     stylesheet.setSystemId (getPortalBaseDir () + stylesheet.getSystemId ());
     //Logger.log (Logger.INFO,stylesheet.getSystemId ());
     if (stylesheet!=null) {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison());
       processor.setStylesheetParam ("baseActionURL",processor.createXString (runtimeData.getBaseActionURL ()));
       processor.process (new XSLTInputSource (getBookmarkXML ()),stylesheet,new XSLTResultTarget (out));
     } else Logger.log (Logger.ERROR,"BookmarksChannel::renderEditXML() : unable to find a stylesheet for rendering");
@@ -304,7 +304,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
     stylesheet.setSystemId (getPortalBaseDir () + stylesheet.getSystemId ());
     //Logger.log (Logger.INFO,stylesheet.getSystemId ());
     if (stylesheet!=null) {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison());
       processor.setStylesheetParam ("channelID",processor.createXString (staticData.getChannelID ()));
       processor.setStylesheetParam ("bookmarkID",processor.createXString (String.valueOf (bookmarkNumber)));
       processor.process (new XSLTInputSource (bookmark),stylesheet,new XSLTResultTarget (out));
@@ -326,7 +326,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
     stylesheet.setSystemId (getPortalBaseDir () + stylesheet.getSystemId ());
     //Logger.log (Logger.INFO,stylesheet.getSystemId ());
     if (stylesheet!=null) {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison());
       processor.setStylesheetParam ("channelID",processor.createXString (staticData.getChannelID ()));
       processor.setStylesheetParam ("newBookmark",processor.createXString ("true"));
       processor.process (new XSLTInputSource (bookmark),stylesheet,new XSLTResultTarget (out));

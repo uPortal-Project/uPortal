@@ -171,7 +171,7 @@ public class BookmarksChannel extends GenericPortalBean implements IChannel
 
 	XSLTInputSource stylesheet=set.getStylesheet("view",runtimeData.getHttpRequest());
 	if(stylesheet!=null) {
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
 	    processor.process(new XSLTInputSource(getDoc()),stylesheet,new XSLTResultTarget(out));
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::renderViewXML() : unable to find a stylesheet for rendering");
     }
@@ -180,7 +180,7 @@ public class BookmarksChannel extends GenericPortalBean implements IChannel
 	XSLTInputSource stylesheet=set.getStylesheet("edit",runtimeData.getHttpRequest());
 	
 	if(stylesheet!=null) {
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
 	    processor.setStylesheetParam("baseActionURL",processor.createXString(runtimeData.getBaseActionURL()));
 	    processor.setStylesheetParam("channelID",processor.createXString(staticData.getChannelID()));
 	    processor.process(new XSLTInputSource(getDoc()),stylesheet,new XSLTResultTarget(out));
@@ -193,7 +193,7 @@ public class BookmarksChannel extends GenericPortalBean implements IChannel
 	XSLTInputSource stylesheet=set.getStylesheet("editbookmark",runtimeData.getHttpRequest());
 	
 	if(stylesheet!=null) {
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
 	    processor.setStylesheetParam("channelID",processor.createXString(staticData.getChannelID()));
 	    processor.setStylesheetParam("bookmarkID",processor.createXString(String.valueOf(bookmarkNumber)));
 	    processor.setStylesheetParam("baseActionURL",processor.createXString(runtimeData.getBaseActionURL()));
@@ -215,7 +215,7 @@ public class BookmarksChannel extends GenericPortalBean implements IChannel
 	XSLTInputSource stylesheet=set.getStylesheet("editbookmark",runtimeData.getHttpRequest());
 	
 	if(stylesheet!=null) {
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
 	    processor.setStylesheetParam("channelID",processor.createXString(staticData.getChannelID()));
 	    processor.setStylesheetParam("newBookmark",processor.createXString("true"));
 	    processor.process(new XSLTInputSource(bookmark),stylesheet,new XSLTResultTarget(out));

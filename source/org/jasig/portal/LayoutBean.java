@@ -69,7 +69,7 @@ public class LayoutBean extends GenericPortalBean
 	// instantiate the processors
 	try {
 	    sLayoutProcessor = XSLTProcessorFactory.getProcessor();
-	    uLayoutProcessor = XSLTProcessorFactory.getProcessor();
+	    uLayoutProcessor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
 	} catch (Exception e) {
 	    Logger.log (Logger.ERROR, "LayoutBean::LayoutBean() : caught an exception while trying initialize XLST processors. "+e);
 	}
