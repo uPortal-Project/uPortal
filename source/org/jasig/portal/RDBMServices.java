@@ -422,10 +422,13 @@ public class RDBMServices {
   /**
    * SQL format a Date
    * @param date
-   * @result SQL TimeStamp
+   * @result SQL TimeStamp or "NULL" if date is null
    */
   public static final String sqlTimeStamp(Date date) {
-    return sqlTimeStamp(date.getTime());
+    if (date == null)
+      return "NULL";
+    else
+      return sqlTimeStamp(date.getTime());
   }
 
   /**
