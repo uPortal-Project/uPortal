@@ -153,9 +153,9 @@ public class LocaleManager  {
         if (language.equals("sv")) return new Locale("sv", "SE");
         if (language.equals("zh")) return Locale.CHINA;
         
-        LogService.log(LogService.ERROR, "LocaleManager.defaultLocale: There is no default locale for " + language);
+        LogService.log(LogService.ERROR, "LocaleManager.defaultLocale: There is no default locale for " + language + ". Instead of it, en_US is used.");
         
-        return new Locale(language);
+        return new Locale("en", "US");
     
     }
 
