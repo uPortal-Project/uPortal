@@ -761,24 +761,38 @@ public class XSLT {
       Templates temp = (Templates)stylesheetRootCache.get(stylesheetURI);
       if (temp == null) {
           // Get the Templates and cache them
-          try {
+          try
+			 {
               TemplatesHandler thand = getSAXTFactory().newTemplatesHandler();
               XMLReader reader = XMLReaderFactory.createXMLReader();
               reader.setContentHandler(thand);
-              try {
-                  reader.parse(stylesheetURI);
-              } catch (IOException ioe) {
-                  throw new ResourceMissingException(stylesheetURI,"Stylesheet","Unable to read stylesheet from the specified location. Please check the stylesheet URL");
-              }
+				  reader.parse(stylesheetURI);
               temp = thand.getTemplates();
               if (stylesheetRootCacheEnabled) {
                   stylesheetRootCache.put(stylesheetURI, temp);
                   LogService.instance().log(LogService.INFO, "Caching templates for: " + stylesheetURI);
               }
+			 } catch (IOException ioe) {
+                  throw new ResourceMissingException(stylesheetURI,"Stylesheet","Unable to read stylesheet from the specified location. Please check the stylesheet URL");
+
           } catch (TransformerConfigurationException tce) {
               LogService.instance().log(LogService.ERROR, "XSLT::getTamplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
               throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");
-          }
+			 } catch (SAXParseException px) {
+				 throw new GeneralRenderingException("XSLT:getTemplates(): SAXParseExeption: "+
+																 px.getMessage()+" line:"+px.getLineNumber()+
+																 " col:"+px.getColumnNumber());
+			 } catch (SAXException sx) {
+				 // Catch the sax exception so we can report line number info 
+				 if ( null != sx.getException()
+						&& (sx.getException() instanceof TransformerException) )
+				 {
+					 TransformerException trx = (TransformerException)sx.getException();
+					 throw new GeneralRenderingException(
+						 "XSLT.getTemplates():"+ trx.getMessageAndLocation());
+				 }
+				 throw sx;
+			 }
       }
       return temp;
   }
