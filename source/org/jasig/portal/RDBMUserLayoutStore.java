@@ -416,62 +416,7 @@ public class RDBMUserLayoutStore
       }
     }
   }
-  private final class UserInChannelRole {
-    MyPreparedStatement pstmtUserInRole;
-    MyPreparedStatement pstmtReadAll;
-    public UserInChannelRole(Connection con, int userId) throws SQLException {
-      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
-        "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId +
-        " AND URC.APPROVAL_FLG = 'Y' AND URC.RELEASE_DT IS NOT NULL AND URC.RELEASE_DT <= " + tsStart + "'" + new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
-        " AND UR.ROLE_ID = UUR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-      pstmtUserInRole = new MyPreparedStatement(con, sQuery);
-      sQuery = "SELECT COUNT(ROLE_ID) FROM UP_ROLE_CHAN WHERE CHAN_ID=?";
-      pstmtReadAll = new MyPreparedStatement(con, sQuery);
-    }
-    public boolean isAllowed(int chanId) throws SQLException {
 
-      // First see if everyone has access to this channel
-      pstmtReadAll.clearParameters();
-      pstmtReadAll.setInt(1, chanId);
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::UserInRole::isAllowed(): " + pstmtReadAll);
-      ResultSet rs = pstmtReadAll.executeQuery();
-      try {
-        if (rs.next() && rs.getInt(1) == 0) { // none implies all
-          return true;
-        }
-      } finally {
-        rs.close();
-      }
-
-      // See if there is an explicit permission to the channel
-      pstmtUserInRole.clearParameters();
-      pstmtUserInRole.setInt(1, chanId);
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::UserInRole::isAllowed(): " + pstmtUserInRole);
-      rs = pstmtUserInRole.executeQuery();
-      try {
-        if (rs.next()) {
-          return true;
-        }
-      } finally {
-        rs.close();
-      }
-
-      return false;
-    }
-
-    public void close() {
-      try {
-        if (pstmtUserInRole != null) {
-          pstmtUserInRole.close();
-        }
-      } catch (Exception e) {}
-      try {
-        if (pstmtReadAll != null) {
-          pstmtReadAll.close();
-        }
-      } catch (Exception e) {}
-    }
-  }
   /**
    * LayoutStructure
    * Encapsulate the layout structure
@@ -967,7 +912,7 @@ public class RDBMUserLayoutStore
       rdbmService.releaseConnection(con);
     }
   }
-  protected void appendChildCategoriesAndChannels (Connection con, UserInChannelRole uir, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException {
+  protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
@@ -990,7 +935,7 @@ public class RDBMUserLayoutStore
         category.appendChild(childCategory);
 
         // Append child categories and channels recursively
-        appendChildCategoriesAndChannels(con, uir, chanStmt, childCategory, childCatId);
+        appendChildCategoriesAndChannels(con, ap, chanStmt, childCategory, childCatId);
       }
 
       // Append children channels
@@ -1001,7 +946,7 @@ public class RDBMUserLayoutStore
       try {
         while (rs.next()) {
           int chanId = rs.getInt(1);
-          if (uir.isAllowed(chanId)) {
+          if (ap.canSubscribe(chanId)) {
             Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
             if (channel == null) {
               LogService.instance().log(LogService.WARN, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): channel " + chanId +
@@ -1416,7 +1361,7 @@ public class RDBMUserLayoutStore
 
     return new MyPreparedStatement(con, sql);
   }
-  public Document getChannelRegistryXML (IPerson person) throws SQLException {
+  public Document getChannelRegistryXML (IPerson person) throws SQLException, AuthorizationException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
@@ -1426,7 +1371,9 @@ public class RDBMUserLayoutStore
       try {
         Statement stmt = con.createStatement();
         try {
-          UserInChannelRole uir = new UserInChannelRole(con, person.getID());
+          String userKey = "" + person.getID();
+          Class userType = org.jasig.portal.security.IPerson.class;
+          IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
           try {
             String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
@@ -1446,13 +1393,13 @@ public class RDBMUserLayoutStore
                 registry.appendChild(category);
 
                   // Add child categories and channels
-                appendChildCategoriesAndChannels(con, uir, chanStmt, category, catId);
+                appendChildCategoriesAndChannels(con, ap, chanStmt, category, catId);
               }
             } finally {
               rs.close();
             }
           } finally {
-            uir.close();
+            // ap.close();
           }
         } finally {
           stmt.close();
@@ -2489,7 +2436,7 @@ public class RDBMUserLayoutStore
             try {
             createLayout(layoutStructure, doc, root, firstStructId, ap);
           } finally {
-            // uir.close(); (?)
+            // ap.close(); (?)
           }
           layoutStructure.clear();
 
