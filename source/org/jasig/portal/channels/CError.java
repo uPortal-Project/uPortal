@@ -58,6 +58,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.net.URL;
 import java.util.Hashtable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Error channel (aka null channel) is designed to render in
@@ -389,7 +391,10 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xslt.setStylesheetParameter("allowReinstantiation", allowRel);
             xslt.transform();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e);
+            StringWriter sw=new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            sw.flush();
+            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
         }
     }
 
