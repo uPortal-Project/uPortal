@@ -14,6 +14,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.MediaManager;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
@@ -219,6 +220,15 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     public void setPortalControlStructures(PortalControlStructures pcs) {
         this.portcs = pcs;
     }
+    
+    public void receiveEvent(PortalEvent ev) {
+        if (the_channel != null) {
+            // propagate the portal events to the normal channel
+            the_channel.receiveEvent(ev);
+        }
+        super.receiveEvent(ev);
+    }
+
 
     /*
      * This is so CError can be used by getUserLayout() as a placeholder for
