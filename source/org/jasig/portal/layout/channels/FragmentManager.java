@@ -123,10 +123,8 @@ public abstract class FragmentManager extends BaseChannel implements IPrivileged
 				    continue;
 				}
 				Element fragmentNode = document.createElement("fragment");
+				fragmentNode.setAttribute("ID",fragmentId);
 				category.appendChild(fragmentNode);
-				Element id = document.createElement("ID");
-				id.appendChild(document.createTextNode(fragmentId));
-				fragmentNode.appendChild(id);
 				Element rootId = document.createElement("rootNodeID");
 				rootId.appendChild(document.createTextNode(fragmentRootId));
 				rootId.setAttribute("immutable",fragment.getNode(fragmentRootId).getNodeDescription().isImmutable()?"Y":"N");

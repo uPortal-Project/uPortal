@@ -44,6 +44,7 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 //import org.w3c.dom.Node;
+import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
@@ -81,6 +82,7 @@ public class CContentSubscriber extends FragmentManager {
 
 	protected void analyzeParameters( XSLT xslt ) throws PortalException {
 		
+	  try {
 		    //Document channelRegistry = (Document) CContentSubscriber.channelRegistry.cloneNode(true);
 		
 			String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_fragmentID"));
@@ -90,59 +92,64 @@ public class CContentSubscriber extends FragmentManager {
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
 			boolean allFragments = false, 
 			        allChannels = false, 
-			        allCategories = false;
+			        allCategories = false;          
 		           
 			 if (action.equals("expand")) {
 			 	
-				if ( CommonUtils.parseInt(fragmentId) > 0 ) {
-				  expandedFragments.add(fragmentId);
-				  condensedFragments.remove(fragmentId);
-				} else if ( fragmentId.equals("all") ) {
+				if ( fragmentId.equals("all") ) {
 				   allFragments = true;
 				   condensedFragments.removeAllElements(); 		    
+				} else if ( fragmentId.trim().length() > 0 ) {
+				   expandedFragments.add(fragmentId);
+				   condensedFragments.remove(fragmentId); 
 				}  
 				
-				if ( CommonUtils.parseInt(channelId) > 0 ) {
-				  expandedChannels.add(channelId);
-				  condensedChannels.remove(channelId);
-				} else if ( channelId.equals("all") ) {
+				
+				if ( channelId.equals("all") ) {
 				   allChannels = true;
 				   condensedChannels.removeAllElements();
+				} else if ( channelId.trim().length() > 0 ) {
+				   expandedChannels.add(channelId);
+				   condensedChannels.remove(channelId);
 				}  
 				   
-				if ( CommonUtils.parseInt(categoryId) > 0 ) {
-				  expandedCategories.add(categoryId);
-				  condensedCategories.remove(categoryId);
-				} else if ( categoryId.equals("all") ) {
+				
+				if ( categoryId.equals("all") ) {
 				   allCategories = true; 	
 				   condensedCategories.remove(categoryId);
-				}
+				} else if ( categoryId.trim().length() > 0 ) {
+		           expandedCategories.add(categoryId);
+		           condensedCategories.remove(categoryId);
+				}   
 				  	  		 	
 			 } else if ( action.equals("condense") ) {
 				
-				if ( CommonUtils.parseInt(fragmentId) > 0 ) {
-				  condensedFragments.add(fragmentId); 
-				  expandedFragments.remove(fragmentId);
-				} else if ( fragmentId.equals("all") ) {
+				
+				if ( fragmentId.equals("all") ) {
 				   allFragments = true;	
 				   expandedFragments.removeAllElements();
+				} else if ( fragmentId.trim().length() > 0 ) {
+				   condensedFragments.add(fragmentId); 
+				   expandedFragments.remove(fragmentId);  
 				}    		    
 				
-				if ( CommonUtils.parseInt(channelId) > 0 ) {
-				  condensedChannels.add(channelId);
-				  expandedChannels.remove(channelId);
-				} else if ( channelId.equals("all") ) {
+				
+				if ( channelId.equals("all") ) {
 				   allChannels = true;	
 				   expandedChannels.removeAllElements();
-				} 
+				} else if ( channelId.trim().length() > 0 ) {
+		           condensedChannels.add(channelId);
+		           expandedChannels.remove(channelId);
+			    }   
 				   
-				if ( CommonUtils.parseInt(categoryId) > 0 ) {
-				  condensedCategories.add(categoryId);	
-				  expandedCategories.remove(categoryId);
-				} else if ( categoryId.equals("all") ) {
+				
+				if ( categoryId.equals("all") ) {
 				   allCategories = true;	
 				   expandedCategories.removeAllElements();
-				  }  		 
+				} else if ( categoryId.trim().length() > 0 ) {
+		           condensedCategories.add(categoryId);	
+		           expandedCategories.remove(categoryId); 
+				} 		 
 			 }	
 			 
 						 
@@ -157,14 +164,20 @@ public class CContentSubscriber extends FragmentManager {
 			    
 			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
 			   Vector list = expandedItems[i];
-			   for ( int j = 0; j < list.size(); j++ )
-			    registry.getElementById((String)list.get(j)).setAttribute("view","expanded");
+			   for ( int j = 0; j < list.size(); j++ ) {
+			    //registry.getElementById((String)list.get(j)).setAttribute("view","expanded");
+				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)list.get(j)+"']");
+				elem.setAttribute("view","expanded");
+			   } 
 			 }  
 			  
 			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
 			   Vector list = condensedItems[i];
-			   for ( int j = 0; j < list.size(); j++ )
-				registry.getElementById((String)list.get(j)).setAttribute("view","condensed");
+			   for ( int j = 0; j < list.size(); j++ ) {
+				//registry.getElementById((String)list.get(j)).setAttribute("view","condensed");
+				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)list.get(j)+"']");
+				elem.setAttribute("view","condensed");
+			   }	
 			 }    
 			 
 		     for ( int i = 0; i < tagNames.size(); i++ ) {
@@ -181,6 +194,10 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
 		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );
 		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );
+		     
+	  } catch ( Exception e ) {
+	  	  throw new PortalException(e.getMessage());	     
+	  }
 			 
 	}		 	
 
@@ -207,16 +224,16 @@ public class CContentSubscriber extends FragmentManager {
     public void renderXML (ContentHandler out) throws PortalException {
     	
       initRegistry();
-      
-      System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(registry));    
 
       XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
       analyzeParameters(xslt);
+	  //System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(registry));    
       xslt.setXML(registry);
       xslt.setXSL(sslLocation, "contentSubscriber", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       xslt.transform();
+      
     }
 
   }
