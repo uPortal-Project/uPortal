@@ -66,6 +66,8 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.utils.ICounterStore;
+import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -79,6 +81,7 @@ public class RDBMUserLayoutStore
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
   protected IChannelRegistryStore crsdb;
+  protected ICounterStore csdb;
 
   /**
    * LayoutStructure
@@ -198,6 +201,7 @@ public class RDBMUserLayoutStore
    */
   public RDBMUserLayoutStore () throws Exception {
     crsdb = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+    csdb = CounterStoreFactory.getCounterStoreImpl();
     if (RDBMServices.supportsOuterJoins) {
       if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
         RDBMServices.joinQuery.addQuery("layout",
@@ -242,7 +246,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
-        int id = getIncrementIntegerId("UP_SS_STRUCT");
+        int id = csdb.getIncrementIntegerId("UP_SS_STRUCT");
         ssd.setId(id);
         String sQuery = "INSERT INTO UP_SS_STRUCT (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
             + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
@@ -302,7 +306,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
-        int id = getIncrementIntegerId("UP_SS_THEME");
+        int id = csdb.getIncrementIntegerId("UP_SS_THEME");
         tsd.setId(id);
         String sQuery = "INSERT INTO UP_SS_THEME (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_URI,SAMPLE_ICON_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS) VALUES ("
             + id + ",'" + tsd.getStylesheetName() + "','" + tsd.getStylesheetURI() + "','" + tsd.getStylesheetDescriptionURI()
@@ -527,7 +531,7 @@ public class RDBMUserLayoutStore
     // generate an id for this profile
     Connection con = RDBMServices.getConnection();
     try {
-      int id = getIncrementIntegerId("UP_USER_PROFILE");
+      int id = csdb.getIncrementIntegerId("UP_USER_PROFILE");
       profile.setProfileId(id);
       Statement stmt = con.createStatement();
       try {
@@ -553,26 +557,7 @@ public class RDBMUserLayoutStore
       java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
       return (approvedDate != null && rightNow.after(approvedDate));
    }
-  /**
-   * put your documentation comment here
-   * @param tableName
-   * @exception Exception
-   */
-  public synchronized void createCounter (String tableName) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + tableName + "',0)";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
-        stmt.executeUpdate(sInsert);
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
+
 
   /**
    * put your documentation comment here
@@ -663,53 +648,7 @@ public class RDBMUserLayoutStore
     dumpDoc(node.getNextSibling(), indent);
   }
 
-  /* DBCounter */
-  /*
-   * get&increment method.
-   */
-  public synchronized int getIncrementIntegerId (String tableName) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-        for (int i = 0; i < 25; i++) {
-          try {
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
-            ResultSet rs = stmt.executeQuery(sQuery);
-            int origId;
-            int nextId;
-            try {
-              rs.next();
-              origId = rs.getInt(1);
-              nextId = origId + 1;
-            } catch (SQLException e) { // If the query fails, there is no hope in h**k
-              throw new Exception("RDBMUserLayoutStore::getIncrementInteger():" + e);
-            } finally {
-              rs.close();
-            }
-            String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + tableName + "'" +
-              " AND SEQUENCE_VALUE=" + origId;
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
-            stmt.executeUpdate(sInsert);
-            return  nextId;
-          } catch (SQLException e) {
-            /**
-             * Assume a concurrent update. Try again after some random amount of milliseconds.
-             */
-            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
-          }
-        }
-      } finally {
-        stmt.close();
-      }
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-    throw new Exception("Unable to increment counter for " + tableName);
-  }
+
   /**
    *
    * CoreStyleSheet
@@ -744,7 +683,7 @@ public class RDBMUserLayoutStore
    * @parameter userId
    * @result
    */
-  public String getNextStructChannelId (IPerson person) throws Exception {
+  public String generateNewChannelInstanceId (IPerson person) throws Exception {
     return  getNextStructId(person, channelPrefix);
   }
   /**
@@ -753,7 +692,7 @@ public class RDBMUserLayoutStore
    * @return
    * @exception Exception
    */
-  public String getNextStructFolderId (IPerson person) throws Exception {
+  public String generateNewFolderId (IPerson person) throws Exception {
     return  getNextStructId(person, folderPrefix);
   }
   /**
@@ -935,7 +874,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT A.SS_ID FROM UP_SS_STRUCT A, UP_SS_THEME B WHERE B.MIME_TYPE='" + mimeType + "' AND B.STRUCT_SS_ID=A.SS_ID";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheeInfotList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -954,6 +893,39 @@ public class RDBMUserLayoutStore
     }
     return  list;
   }
+
+    /**
+     * Obtain a list of strcture stylesheet descriptions registered on the system
+     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
+     * @exception Exception
+     */
+    public Hashtable getStructureStylesheetList() throws Exception {
+        Connection con = RDBMServices.getConnection();
+        Hashtable list = new Hashtable();
+        try {
+            Statement stmt = con.createStatement();
+            try {
+                String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT";
+                    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheeList() : " + sQuery);
+                ResultSet rs = stmt.executeQuery(sQuery);
+                try {
+                    while (rs.next()) {
+                        StructureStylesheetDescription ssd = getStructureStylesheetDescription(rs.getInt("SS_ID"));
+                        if (ssd != null)
+                            list.put(new Integer(ssd.getId()), ssd);
+                    }
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            RDBMServices.releaseConnection(con);
+        }
+        return  list;
+    }
+
   /**
    * put your documentation comment here
    * @param person
@@ -1188,6 +1160,7 @@ public class RDBMUserLayoutStore
     }
     return  id;
   }
+
   /**
    * Obtain a list of theme stylesheet descriptions for a given structure stylesheet
    * @param structureStylesheetName
@@ -1201,7 +1174,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE STRUCT_SS_ID=" + structureStylesheetId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1220,6 +1193,39 @@ public class RDBMUserLayoutStore
     }
     return  list;
   }
+
+  /**
+   * Obtain a list of theme stylesheet descriptions registered on the system
+   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
+   * @exception Exception
+   */
+  public Hashtable getThemeStylesheetList() throws Exception {
+    Connection con = RDBMServices.getConnection();
+    Hashtable list = new Hashtable();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "SELECT SS_ID FROM UP_SS_THEME";
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            ThemeStylesheetDescription tsd = getThemeStylesheetDescription(rs.getInt("SS_ID"));
+            if (tsd != null)
+              list.put(new Integer(tsd.getId()), tsd);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return  list;
+  }
+
   /**
    * put your documentation comment here
    * @param person
@@ -1563,44 +1569,11 @@ public class RDBMUserLayoutStore
     return  null;
   }
 
-  /**
-   *
-   * Authorization
-   *
-   */
-  public String[] getUserAccountInformation (String username) throws Exception {
-    String[] acct = new String[] {
-      null, null, null, null
-    };
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE "
-            + "USER_NAME = '" + username + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
-        ResultSet rset = stmt.executeQuery(query);
-        try {
-          if (rset.next()) {
-            acct[0] = rset.getString("ENCRPTD_PSWD");
-            acct[1] = rset.getString("FIRST_NAME");
-            acct[2] = rset.getString("LAST_NAME");
-          }
-        } finally {
-          rset.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-    return  acct;
-  }
+
   /**
    *   UserPreferences
    */
-  public int getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
+  private int getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
     int userId = person.getID();
     int profileId = 0;
     Connection con = RDBMServices.getConnection();
@@ -1632,45 +1605,11 @@ public class RDBMUserLayoutStore
     }
     return  profileId;
   }
-  /**
-   *
-   * Example Directory Information
-   * Normally directory information would come from a real directory server using
-   * for example, LDAP.  The reference inplementation uses the database for
-   * directory information.
-   */
-  public String[] getUserDirectoryInformation (String username) throws Exception {
-    String[] acct = new String[] {
-      null, null, null
-    };
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR " + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
-            + "UP_USER.USER_NAME = '" + username + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserDirectoryInformation(): " + query);
-        ResultSet rset = stmt.executeQuery(query);
-        try {
-          if (rset.next()) {
-            acct[0] = rset.getString("FIRST_NAME");
-            acct[1] = rset.getString("LAST_NAME");
-            acct[2] = rset.getString("EMAIL");
-          }
-        } finally {
-          rset.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-    return  acct;
-  }
-  public Document getUserLayout (IPerson person, int profileId) throws Exception {
+
+  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
     int realUserId = userId;
+    ResultSet rs;
     Connection con = RDBMServices.getConnection();
     RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
@@ -1680,20 +1619,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
-        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
-            profileId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId;
-        ResultSet rs = stmt.executeQuery(subSelectString);
-        try {
-          rs.next();
-          layoutId = rs.getInt(1);
-          if (rs.wasNull()) {
-            layoutId = 0;
-          }
-        } finally {
-          rs.close();
-        }
+        int layoutId=profile.getLayoutId();
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -2303,27 +2229,7 @@ public class RDBMUserLayoutStore
     return  saveStructId;
   }
 
-  /**
-   * put your documentation comment here
-   * @param tableName
-   * @param value
-   * @exception Exception
-   */
-  public synchronized void setCounter (String tableName, int value) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + tableName + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2559,9 +2465,11 @@ public class RDBMUserLayoutStore
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout (IPerson person, int profileId, Document layoutXML, boolean channelsAdded) throws Exception {
+  public void setUserLayout (IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
     int userId = person.getID();
-    int layoutId = 0;
+    int layoutId=profile.getLayoutId();
+    int profileId=profile.getProfileId();
+    ResultSet rs;
     Connection con = RDBMServices.getConnection();
     try {
       RDBMServices.setAutoCommit(con, false);                // Need an atomic update here
@@ -2569,18 +2477,7 @@ public class RDBMUserLayoutStore
       try {
         long startTime = System.currentTimeMillis();
 
-        String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          rs.next();
-          layoutId = rs.getInt(1);
-          if (rs.wasNull()) {
-            layoutId = 0;
-          }
-        } finally {
-          rs.close();
-        }
+
         boolean firstLayout = false;
         if (layoutId == 0) { // First personal layout for this user/profile
           layoutId = 1;
@@ -2993,7 +2890,7 @@ public class RDBMUserLayoutStore
    * @param userAgent
    * @return
    */
-  public int getSystemBrowserMapping (String userAgent) throws Exception {
+  private int getSystemBrowserMapping (String userAgent) throws Exception {
     return  getUserBrowserMapping(systemUser, userAgent);
   }
 

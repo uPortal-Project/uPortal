@@ -46,35 +46,57 @@ import java.sql.Connection;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.List;
 import org.w3c.dom.Document;
 import org.jasig.portal.security.IPerson;
 import org.apache.xerces.dom.DocumentImpl;
 
 public interface IUserLayoutStore {
-  /* UserLayout  */
-  public Document getUserLayout(IPerson Person,int profileId) throws Exception;
-  public void setUserLayout(IPerson Person,int profileId,Document layoutXML, boolean channelsAdded) throws Exception;
+
+    /**
+     * Retreive a user layout document.
+     *
+     * @param Person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile 
+     * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
+     * @exception Exception if an error occurs
+     */
+    public Document getUserLayout(IPerson Person, UserProfile profile) throws Exception;
+
+    /**
+     * Persist user layout document.
+     *
+     * @param Person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param layoutXML a <code>Document</code> containing user layout (conforming to userLayout.dtd)
+     * @param channelsAdded a boolean flag specifying if new channels have been added to the current user layout (for performance optimization purposes)
+     * @exception Exception if an error occurs
+     */
+    public void setUserLayout(IPerson Person, UserProfile  profile,Document layoutXML, boolean channelsAdded) throws Exception;
 
     // user profiles
-    /** Obtain user profile
+    /** Obtain user profile associated with a particular browser
      *
      * @param person User
      * @param userAgent User-Agent header string
-     * @return user profile
+     * @return user profile or <code>null</code> if no user profiles are associated with the given user agent.
      */
     public UserProfile getUserProfile(IPerson person, String userAgent) throws Exception;
+
     /** update user profile
      *
      * @param person User
      * @param profile profile update
      */
     public void updateUserProfile(IPerson person,UserProfile profile) throws Exception;
+
     /** remove user profile from the database
      *
      * @param person User
      * @param profileId profile id
      */
     public void deleteUserProfile(IPerson person,int profileId) throws Exception;
+
     /**
      * Creates a new user profile in the database.
      * In the process, new profileId is assigned to the profile
@@ -86,48 +108,55 @@ public interface IUserLayoutStore {
      *     id
      */
     public UserProfile addUserProfile(IPerson person,UserProfile profile) throws Exception;
-    /**      *
-     * @param userId
-     * @param profileId
+
+    /**  Obtains a user profile by profile id.    
+     * @param person an <code>IPerson</code> object representing the user 
+     * @param profileId profile id
      */
     public UserProfile getUserProfileById(IPerson person,int profileId) throws Exception;
-    /** retreive a list of user profiles
+
+    /** retreive a list of profiles associated with a user
      *
      * @param person User
-     * @return hashtable mapping user profile ids (Integer objects) to the profile objects
+     * @return a <code>Hashtable</code> mapping user profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
     public Hashtable getUserProfileList(IPerson person) throws Exception;
 
     // syste profiles
-    /** retreive a system profile
+    /** retreive a system profile associated with a given browser
      *
      * @param userAgent User-Agent header string
      * @return profile object
      */
     public UserProfile getSystemProfile(String userAgent) throws Exception;
+
     /** update system profile
      *
      * @param profile profile object
      */
     public void updateSystemProfile(UserProfile profile) throws Exception;
+
     /** remove system profile from the database
      *
      * @param profileId profile id
      */
     public void deleteSystemProfile(int profileId) throws Exception;
+
     /** add a new system profile to the database. During this process, a new profile id will be assigned to the profile.
      *
      * @param profile profile object (profile id within will be overwritten)
      * @return profile with an newly assigned id
      */
     public UserProfile addSystemProfile(UserProfile profile) throws Exception;
-    /**      *
-     * @param profileId
+
+    /** Obtain a system profile
+     * @param profileId system profile id
      */
     public UserProfile getSystemProfileById(int profileId) throws Exception;
+
     /** obtain a list of system profiles
      *
-     * @return a hasbtable mapping system profile ids (Integer objects) to the profile objects
+     * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
     public Hashtable getSystemProfileList() throws Exception;
 
@@ -138,6 +167,7 @@ public interface IUserLayoutStore {
      * @param profileId profile id to which given user agent will be mapped
      */
     public void setUserBrowserMapping(IPerson person,String userAgent,int profileId) throws Exception;
+
     /** establish system profile browser mapping
      *
      * @param userAgent User-Agent header string
@@ -145,21 +175,6 @@ public interface IUserLayoutStore {
      *     user-agent will be mapped
      */
     public void setSystemBrowserMapping(String userAgent,int systemProfileId) throws Exception;
-
-    // returns profileId
-    /** Determine which profile a given browser mapped to
-     *
-     * @param person User
-     * @param userAgent User-Agent header string
-     * @return profile id
-     */
-    public int getUserBrowserMapping(IPerson person,String userAgent) throws Exception;
-    /** Determine which system profile given browser is mapped to
-     *
-     * @param userAgent User-Agent header string
-     * @return system profile id
-     */
-    public int getSystemBrowserMapping(String userAgent) throws Exception;
 
 
     /** Retreive the entire UserPreferences object
@@ -213,37 +228,60 @@ public interface IUserLayoutStore {
 
 
   /* ChannelRegistry */
-  public String getNextStructChannelId(IPerson person) throws Exception;
-  public String getNextStructFolderId(IPerson person) throws Exception;
+  /**
+   * Generate an instance id for a channel being added to the user layout
+   *
+   * @param person an <code>IPerson</code> value
+   * @return a <code>String</code> value
+   * @exception Exception if an error occurs
+   */
+    public String generateNewChannelInstanceId(IPerson person) throws Exception;
+    
+    /**
+     * Generate a folder id for a folder being added to the user layout
+     *
+     * @param person an <code>IPerson</code> value
+     * @return a <code>String</code> value
+     * @exception Exception if an error occurs
+     */
+    public String generateNewFolderId(IPerson person) throws Exception;
 
   /**
    *  CoreStylesheetDescription
    */
   // functions that allow one to browse available core stylesheets in various ways
-  /** Obtain a listing of structure stylesheets from the database
+  /** Obtain a list of all structure stylesheet registered in the portal
+   * that (given a proper theme stylesheet choice) can support a given mime type. 
+   * Even though structure stylesheets themselves do not carry any mime type 
+   * specification, the choice of available theme stylesheets determines if a certain
+   * structure is available for a given mime type.
    *
-   * @param mimeType
-   * @return Returns a hashtable mapping structure stylesheet names to a
-   *     word-description (a simple String) of that stylesheet
+   * @param mimeType mime type that should be supported
+   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
    */
   public Hashtable getStructureStylesheetList (String mimeType) throws Exception;
 
-  /** Obtains a list of theme stylesheets available for a particular structure stylesheet
+  /** Obtains a list of theme stylesheets available for a particular structure stylesheet.
    *
    * @param structureStylesheetName name of the structure stylehsset
-   * @return Returns a hashtable mapping theme stylesheet names to an array (String[])
-   * containing five string elements:
-   * <ol>
-   *  <li>stylesheet description text</li>
-   *  <li>mime type specified by the stylesheet</li>
-   *  <li>device type code specified by the stylesheet</li>
-   *  <li>sample image uri specified</li>
-   *  <li>sample image icon uri specified</li>
-   * </ol>
-   * stylesheet description and the mime type
+   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
    */
   public Hashtable getThemeStylesheetList (int structureStylesheetId) throws Exception;
 
+
+    /**
+     * Obtain a list of strcture stylesheet descriptions registered on the system
+     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
+     * @exception Exception
+     */
+    public Hashtable getStructureStylesheetList() throws Exception;
+
+    /**
+     * Obtain a list of theme stylesheet descriptions registered on the system
+     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
+     * @exception Exception
+     */
+    public Hashtable getThemeStylesheetList() throws Exception;
 
 
   /** Obtains a list of mime types available on the installation
@@ -332,28 +370,6 @@ public interface IUserLayoutStore {
    * @return id assigned to the stylesheet or null if the operation failed
    */
   public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) throws Exception;
-
-
-
-  /**
-   *  ReferenceAuthentication
-   *
-   */
-  public String[] getUserAccountInformation(String username) throws Exception;
-
-  /* ReferenceDirectoryInfo
-  Normally directory information would come from a real directory server using
-  for example, LDAP.  The reference inplementation uses the database for
-  directory information.
-  */
-
-  public String[] getUserDirectoryInformation(String username) throws Exception;
-
-  /* Counters */
-  public int getIncrementIntegerId(String tableName) throws Exception;
-  public void createCounter(String tableName) throws Exception;
-  public void setCounter(String tableName, int value) throws Exception;
-
 
 }
 
