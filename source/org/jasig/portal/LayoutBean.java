@@ -12,6 +12,7 @@ import java.net.*;
 import com.objectspace.xml.*;
 import org.jasig.portal.layout.*;
 
+
 /**
  * Provides methods associated with displaying and modifying
  * a user's layout.  This includes changing the colors, size and
@@ -932,7 +933,17 @@ public class LayoutBean extends GenericPortalBean
         }
         
         // Get new instance of channel
-        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
+	
+	//peterk 1.18 change -start
+	// old code :
+	//        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
+	// new code : 
+	Object channelObject = Class.forName (sClass).newInstance ();
+	if(channelObject instanceof org.jasig.portal.IChannel) 
+	    ch=(org.jasig.portal.IChannel) channelObject;
+	else if(channelObject instanceof org.jasig.portal.IXMLChannel)
+	    ch=new XMLChannelWarper((org.jasig.portal.IXMLChannel) channelObject);
+	//peterk 1.18 change -end
      
         // Send the channel its parameters
         ch.init (chConfig);   
