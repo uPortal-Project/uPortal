@@ -20,7 +20,7 @@ import org.apache.pluto.services.property.PropertyManagerService;
 
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$
  */
 public class PropertyManagerServiceImpl implements PropertyManagerService {
     private final Map propertyMapping = new Hashtable();
