@@ -56,8 +56,8 @@ public interface ICoreStylesheetDescriptionDB {
     /** Obtains a list of theme stylesheets available for a particular structure stylesheet
      *
      * @param structureStylesheetName name of the structure stylehsset
-     * @return Returns a hashtable mapping theme stylesheet names to a word
-     *     description of the stylesheet ( a simple String)
+     * @return Returns a hashtable mapping theme stylesheet names to an array (String[])
+     * containing two strings: stylesheet description and the mime type
      */
     public Hashtable getThemeStylesheetList(String structureStylesheetName);
     /** Obtains a list of mime types available on the installation
