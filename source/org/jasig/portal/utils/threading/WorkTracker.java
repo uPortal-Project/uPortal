@@ -76,6 +76,7 @@ public final class WorkTracker {
 		this.state = state;
 		jobSuccessful = succcessful;
 		this.exception = exception;
+                this.notifyAll();
 	}
 	
 	/**
