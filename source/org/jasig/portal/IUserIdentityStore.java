@@ -10,7 +10,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Interface for managing creation and removal of User Portal Data
  * @author Susan Bramhall
- * @version 1.0
+ * @version $Revision$ $Date$
  */
 public interface IUserIdentityStore {
   /**
