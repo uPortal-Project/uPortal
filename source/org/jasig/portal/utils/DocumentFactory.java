@@ -31,28 +31,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-
 
 package  org.jasig.portal.utils;
 
-import  org.w3c.dom.Document;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import org.jasig.portal.PortalException;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
+ * Produces an empty Document implementation
+ * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * @version $Revision$
  */
 public class DocumentFactory {
-
   /**
    * Returns a new copy of a Document implementation
-   * @return 
+   * @return an empty org.w3c.dom.Document implementation
    */
-  public static Document getNewDocument () {
-    return  (new DocumentImpl());
+  public static Document getNewDocument() {
+    Document doc = null;
+    try {
+      doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+    } catch (ParserConfigurationException pce) {
+      LogService.log(LogService.ERROR, pce);
+      throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new Document: " + pce.getMessage());
+    }
+    return doc;
   }
 }
 
