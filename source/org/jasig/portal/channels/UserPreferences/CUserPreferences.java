@@ -431,6 +431,7 @@ public class CUserPreferences implements ISpecialChannel
 
 		// load UserPreferences from the DB
 		up=updb.getUserPreferences(context.getUserLayoutManager().getPerson().getID(),this.getProfile());
+		up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
 	    } 
 	    return up;
 	}
@@ -484,10 +485,15 @@ public class CUserPreferences implements ISpecialChannel
 		    if(manageTarget.equals("layout")) {
 			this.folderID=this.getLayoutRootID();
 			// browse mode
-			this.internalState=new GBrowseState(this);
+			GBrowseState bstate=new GBrowseState(this);
+			bstate.setRuntimeData(rd);
+			this.internalState=bstate;
 			
 		    } else if(manageTarget.equals("gpref")) {
 			// invoke gpref mode
+			GGlobalPrefsState pstate=new GGlobalPrefsState(this);
+			pstate.setRuntimeData(rd);
+			this.internalState=pstate;
 		    }
 		}
 	    }
@@ -519,6 +525,7 @@ public class CUserPreferences implements ISpecialChannel
 		    if(submit.equals("Cancel")) {
 			// return to the browse state
 			CState bstate=new GBrowseState(context);
+			bstate.setRuntimeData(rd);
 			context.setState(bstate);
 		    } else if(submit.equals("Save")) {
 			prepareSaveEditedItem();
@@ -527,7 +534,7 @@ public class CUserPreferences implements ISpecialChannel
 	    }
 	}
 
-	private void prepareSaveEditedItem() throws ResourceMissingException {
+	private void prepareSaveEditedItem() throws PortalException {
 	    Element target=context.getUserLayoutXML().getElementById(editElementID);
 	    String elType=target.getTagName();
 	    
@@ -538,9 +545,8 @@ public class CUserPreferences implements ISpecialChannel
 	    if(elType.equals("folder")) {
 		// target is a folder
 		StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
-		List al=ssup.getFolderAttributeNames();
-		for(int i=0;i<al.size();i++) {
-		    String atName=(String) al.get(i);
+		for(Enumeration fe=ssup.getFolderAttributeNames(); fe.hasMoreElements();) {
+		    String atName=(String) fe.nextElement();
 		    String atValue=runtimeData.getParameter(atName);
 		    if(atValue.equals(context.getStructureStylesheetDescription().getFolderAttributeDefaultValue(atName)))
 			atValue=null;
@@ -549,9 +555,8 @@ public class CUserPreferences implements ISpecialChannel
 	    } else if(elType.equals("channel")) {
 		// target is a channel
 		StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
-		List al=ssup.getChannelAttributeNames();
-		for(int i=0;i<al.size();i++) {
-		    String atName=(String) al.get(i);
+		for(Enumeration ce=ssup.getChannelAttributeNames(); ce.hasMoreElements();) {
+		    String atName=(String) ce.nextElement();
 		    String atValue=runtimeData.getParameter(atName);
 		    if(atValue.equals(context.getStructureStylesheetDescription().getChannelAttributeDefaultValue(atName)))
 			atValue=null;
@@ -559,9 +564,8 @@ public class CUserPreferences implements ISpecialChannel
 		}
 		
 		ThemeStylesheetUserPreferences tsup=context.getUserPreferences().getThemeStylesheetUserPreferences();
-		al=tsup.getChannelAttributeNames();
-		for(int i=0;i<al.size();i++) {
-		    String atName=(String) al.get(i);
+		for(Enumeration ca=tsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
+		    String atName=(String) ca.nextElement();
 		    String atValue=runtimeData.getParameter(atName);
 		    if(atValue.equals(context.getThemeStylesheetDescription().getChannelAttributeDefaultValue(atName)))
 			atValue=null;
@@ -572,6 +576,7 @@ public class CUserPreferences implements ISpecialChannel
 	    context.setModified(true);
 	    // get back to browse mode
 	    CState bstate=new GBrowseState(context);
+	    bstate.setRuntimeData(runtimeData);
 	    context.setState(bstate);
 	}	
 	
@@ -604,11 +609,10 @@ public class CUserPreferences implements ISpecialChannel
 		// target is a folder
 		StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
 		Element saEl=doc.createElement("structureattributes");
-		List al=ssup.getFolderAttributeNames();
-		for(int i=0;i<al.size();i++) {
+		for(Enumeration fe=ssup.getFolderAttributeNames(); fe.hasMoreElements();) {
 		    Element atEl=doc.createElement("attribute");
 		    Element atNameEl=doc.createElement("name");
-		    String atName=(String) al.get(i);
+		    String atName=(String) fe.nextElement();
 		    atNameEl.appendChild(doc.createTextNode(atName));
 		    atEl.appendChild(atNameEl);
 		    
@@ -636,11 +640,10 @@ public class CUserPreferences implements ISpecialChannel
 		// target is a channel
 		StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
 		Element saEl=doc.createElement("structureattributes");
-		List al=ssup.getChannelAttributeNames();
-		for(int i=0;i<al.size();i++) {
+		for(Enumeration ce=ssup.getChannelAttributeNames(); ce.hasMoreElements(); ) {
 		    Element atEl=doc.createElement("attribute");
 		    Element atNameEl=doc.createElement("name");
-		    String atName=(String) al.get(i);
+		    String atName=(String) ce.nextElement();
 		    atNameEl.appendChild(doc.createTextNode(atName));
 		    atEl.appendChild(atNameEl);
 		    
@@ -663,11 +666,10 @@ public class CUserPreferences implements ISpecialChannel
 		
 		ThemeStylesheetUserPreferences tsup=context.getUserPreferences().getThemeStylesheetUserPreferences();
 		Element taEl=doc.createElement("themeattributes");
-		al=tsup.getChannelAttributeNames();
-		for(int i=0;i<al.size();i++) {
+		for(Enumeration ce=tsup.getChannelAttributeNames(); ce.hasMoreElements(); ) {
 		    Element atEl=doc.createElement("attribute");
 		    Element atNameEl=doc.createElement("name");
-		    String atName=(String) al.get(i);
+		    String atName=(String) ce.nextElement();
 		    atNameEl.appendChild(doc.createTextNode(atName));
 		    atEl.appendChild(atNameEl);
 		    
@@ -723,7 +725,7 @@ public class CUserPreferences implements ISpecialChannel
 	    
 	    if (xslURI != null) {
 		try {
-		    org.jasig.portal.utils.XSLT.transform(xmlResult,context.getUserLayoutXML(),xslURI,params);
+		    org.jasig.portal.utils.XSLT.transform(xmlResult,doc,xslURI,params);
 		} catch (org.xml.sax.SAXException e) {
 		    throw new GeneralRenderingException("Unable to complete transformation");
 		} catch (java.io.IOException i) {
@@ -734,7 +736,163 @@ public class CUserPreferences implements ISpecialChannel
     }
 
 
-    protected class GGolbalPrefsState extends BaseState { }
+    protected class GGlobalPrefsState extends BaseState { 
+	ChannelRuntimeData runtimeData;
+	protected GPreferencesState context;
+
+	public GGlobalPrefsState(GPreferencesState context) {
+	    this.context=context;
+	}	
+
+	public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
+	    this.runtimeData=rd;
+	    // internal state handling
+	    String action = runtimeData.getParameter ("action");
+	    if (action != null) {
+		if (action.equals ("submitEditValues")) {
+		    String submit=runtimeData.getParameter("submit");
+		    if(submit.equals("Cancel")) {
+			CState bstate=new GBrowseState(context);
+			bstate.setRuntimeData(runtimeData);
+			context.setState(bstate);
+		    } else if(submit.equals("Save")) {
+			prepareSaveEditGPrefs();
+		    }
+		}
+	    }
+	}
+
+
+	public void renderXML (DocumentHandler out) throws  PortalException {
+	    // construct gpref XML
+	    Document doc = new org.apache.xerces.dom.DocumentImpl();
+	    Element edEl=doc.createElement("gpref");
+	    
+	    StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
+	    Element spEl=doc.createElement("structureparameters");
+	    for(Enumeration e=context.getStructureStylesheetDescription().getStylesheetParameterNames(); e.hasMoreElements(); ) {
+		Element atEl=doc.createElement("parameter");
+		Element atNameEl=doc.createElement("name");
+		String atName=(String) e.nextElement();
+		atNameEl.appendChild(doc.createTextNode(atName));
+		atEl.appendChild(atNameEl);
+		
+		Element valueEl=doc.createElement("value");
+		String value=ssup.getParameterValue(atName);
+		if(value==null) {
+		    // set the default value
+		    value=context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(atName);
+		}
+		
+		valueEl.appendChild(doc.createTextNode(value));
+		atEl.appendChild(valueEl);
+		Element descrEl=doc.createElement("description");
+		descrEl.appendChild(doc.createTextNode(context.getStructureStylesheetDescription().getStylesheetParameterWordDescription(atName)));
+		atEl.appendChild(descrEl);
+		
+	    
+		
+		spEl.appendChild(atEl);
+	    }
+	    edEl.appendChild(spEl);
+	    
+	    ThemeStylesheetUserPreferences tsup=context.getUserPreferences().getThemeStylesheetUserPreferences();
+	    Element tpEl=doc.createElement("themeparameters");
+	    for(Enumeration e=context.getThemeStylesheetDescription().getStylesheetParameterNames(); e.hasMoreElements(); ) {
+		Element atEl=doc.createElement("parameter");
+		Element atNameEl=doc.createElement("name");
+		String atName=(String) e.nextElement();
+		atNameEl.appendChild(doc.createTextNode(atName));
+		atEl.appendChild(atNameEl);
+		
+		Element valueEl=doc.createElement("value");
+		String value=tsup.getParameterValue(atName);
+		if(value==null) {
+		    // set the default value
+		    value=context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(atName);
+		}
+	    
+		valueEl.appendChild(doc.createTextNode(value));
+		atEl.appendChild(valueEl);
+		Element descrEl=doc.createElement("description");
+		descrEl.appendChild(doc.createTextNode(context.getThemeStylesheetDescription().getStylesheetParameterWordDescription(atName)));
+		atEl.appendChild(descrEl);
+		
+		
+		
+		tpEl.appendChild(atEl);
+	    }
+	    edEl.appendChild(tpEl);
+	    doc.appendChild(edEl);
+
+	    // debug printout of the prepared xml
+	    try {
+		StringWriter outString = new StringWriter ();
+		org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+		format.setOmitXMLDeclaration(true);
+		format.setIndenting(true);
+		org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+		xsl.serialize (doc);
+		Logger.log(Logger.DEBUG,outString.toString());
+	    } catch (Exception e) {
+		Logger.log(Logger.DEBUG,e);
+	    }
+	    
+
+	    StylesheetSet set=context.getStylesheetSet();
+	    if(set==null) 
+		throw new GeneralRenderingException("Unable to determine the stylesheet list");
+	    String xslURI=null;
+	    xslURI=set.getStylesheetURI("editGPrefs", runtimeData.getHttpRequest()); 	    
+	    
+	    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+	    
+	    Hashtable params=new Hashtable();
+	    params.put("baseActionURL", runtimeData.getBaseActionURL());        
+	    
+	    if (xslURI != null) {
+		try {
+		    org.jasig.portal.utils.XSLT.transform(xmlResult,doc,xslURI,params);
+		} catch (org.xml.sax.SAXException e) {
+		    throw new GeneralRenderingException("Unable to complete transformation");
+		} catch (java.io.IOException i) {
+		    throw new GeneralRenderingException("IOException has been encountered");
+		}
+	    } else throw new ResourceMissingException("","stylesheet","Unable to find stylesheet to display content for this media");
+	}
+
+	private void prepareSaveEditGPrefs() throws PortalException {
+	    StructureStylesheetUserPreferences ssup=context.getUserPreferences().getStructureStylesheetUserPreferences();
+	    for(Enumeration e=context.getStructureStylesheetDescription().getStylesheetParameterNames(); e.hasMoreElements(); ) {
+		String parName=(String) e.nextElement();
+		String value=runtimeData.getParameter(parName);
+		if(value==null) {
+		    ssup.putParameterValue(parName,context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(parName));
+		} else {
+		    ssup.putParameterValue(parName,value);
+		    //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
+		}
+	    }	
+	    
+	    ThemeStylesheetUserPreferences tsup=context.getUserPreferences().getThemeStylesheetUserPreferences();
+	    for(Enumeration e=context.getThemeStylesheetDescription().getStylesheetParameterNames(); e.hasMoreElements(); ) {
+		String parName=(String) e.nextElement();
+		String value=runtimeData.getParameter(parName);
+		if(value==null) {
+		    tsup.putParameterValue(parName,context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(parName));
+		} else {
+		    tsup.putParameterValue(parName,value);
+		    //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
+		}
+	    }	
+	    
+	    context.setModified(true);
+	    CState bstate=new GBrowseState(context);
+	    bstate.setRuntimeData(runtimeData);
+	    context.setState(bstate);
+	}
+	
+    }
 
 
     protected class GBrowseState extends BaseState { 
@@ -803,7 +961,7 @@ public class CUserPreferences implements ISpecialChannel
 
 	    
 	
-	private void prepareSaveChanges () {
+	private void prepareSaveChanges () throws PortalException {
 	    context.setFolderID(context.getLayoutRootID());
 	    context.setModified(false);
 
@@ -812,12 +970,12 @@ public class CUserPreferences implements ISpecialChannel
 	    // changes in userLayoutXML are always related back to the UserLayoutManager.
 	    // (unless profile-specific layouts will be introduced)
 	    if(context.getUserLayoutManager().getCurrentProfile()==context.getProfile()) {
-		context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),up);
 		//		Logger.log(Logger.DEBUG,"CUserPreferences.GBrowseState::prepareSaveChanges() : changing current profile preferences.");
+		context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),context.getUserPreferences());
 	    } else {
 		// do a database save on the preferences
-		context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),null);
 		//		Logger.log(Logger.DEBUG,"CUserPreferences.GBrowseState::prepareSaveChanges() : changing preferences for another profile.");
+		context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),null);
 	    }
 	}
 
