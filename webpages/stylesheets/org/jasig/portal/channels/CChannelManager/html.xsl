@@ -2143,9 +2143,10 @@
               <td class="uportal-label">
 
                 <form name="addParameter" method="post" action="{$baseActionURL}">
-                  <input type="hidden" name="uPCM_action" value="customSettings"/>
-                  <input type="hidden" name="uPCM_capture" value="customSettings"/>
+                  <input type="hidden" name="uPCM_action" value="channelDef"/>
+                  <input type="hidden" name="uPCM_capture" value="channelDef"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
+                  <input type="hidden" name="uPCM_step" value="$stepID"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
                     <td>Name:<br />
@@ -2198,13 +2199,12 @@
                       </table>
                     </td>
                   </tr>
-
                   <xsl:choose>
-                    <xsl:when test="manageChannels/customSettings/params/step/channel/parameter">
-                      <xsl:for-each select="manageChannels/customSettings/params/step/channel/parameter">
+                    <xsl:when test="/manageChannels/channelDef/params/step/channel/parameter">
+                      <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=channelDef&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
