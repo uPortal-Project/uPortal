@@ -20,7 +20,7 @@
   <!-- DbLoader can dump DROP, CREATE, and INSERT statements to a file. If <create-script> is
        set to true, the script file will be created in <portal base directory>/properties -->
 
-  <create-script>true</create-script>
+  <create-script>false</create-script>
   <script-file-name>dbloader.script</script-file-name>
   <statement-terminator>;</statement-terminator>
 
@@ -66,8 +66,8 @@
 
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
-    <db-version>Microsoft SQL Server  7.00 - 7.00.699 (Intel X86) 
-	May 21 1999 14:08:18 
+    <db-version>Microsoft SQL Server  7.00 - 7.00.699 (Intel X86)
+	May 21 1999 14:08:18
 	Copyright (c) 1988-1998 Microsoft Corporation
 	Standard Edition on Windows NT 4.0 (Build 1381: Service Pack 4)
 </db-version>
@@ -108,8 +108,8 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <type><generic>TIMESTAMP</generic><local>DATE</local></type>
     <!-- map more types here -->
   </db-type-mapping>
-  
-<db-type-mapping>
+
+  <db-type-mapping>
     <db-name>PostgreSQL</db-name>
     <db-version>7.1.2</db-version>
     <driver-name>PostgreSQL Native Driver</driver-name>
@@ -118,6 +118,14 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
   </db-type-mapping>
 
+  <db-type-mapping>
+    <db-name>PostgreSQL</db-name>
+    <db-version>6.5.2</db-version>
+    <driver-name>PostgreSQL Native Driver</driver-name>
+    <driver-version>7.0</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+  </db-type-mapping>
 
 </properties>
 
