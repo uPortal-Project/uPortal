@@ -42,6 +42,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.security.IPerson;
 
 
@@ -77,7 +78,9 @@ public class UserLayoutManagerFactory {
             Class[] cArgsClasses={IPerson.class,UserProfile.class,IUserLayoutStore.class};
             Constructor c=coreUserLayoutManagerImpl.getConstructor(cArgsClasses);
             Object[] cArgs={person,profile,UserLayoutStoreFactory.getUserLayoutStoreImpl()};
-            return (IUserLayoutManager)c.newInstance(cArgs);
+            IUserLayoutManager ulm = (IUserLayoutManager)c.newInstance(cArgs);
+            ulm.addLayoutEventListener(StatsRecorder.newLayoutEventListener(person, profile));
+            return ulm;
         } catch (Exception e) {
             throw new PortalException("Unable to instantiate a \""+coreUserLayoutManagerImpl.getName()+"\"",e);
         }
