@@ -1,0 +1,48 @@
+<!ENTITY % DC_DTD SYSTEM "http://dublincore.org/documents/2001/04/11/dcmes-xml/dcmes-xml-dtd.dtd">
+%DC_DTD;
+
+<!ELEMENT CGroupsManager (principal,group*,entityType+)>
+
+<!ELEMENT principal (permission*)>
+
+<!ELEMENT permission EMPTY>
+<!ATTLIST permission
+	activity 	CDATA 			#REQUIRED
+	type 		(allow|deny) 	#REQUIRED
+	principal	CDATA			#REQUIRED
+	target 		CDATA 			#IMPLIED
+	effective 	CDATA 			#IMPLIED
+	expires 	CDATA 			#IMPLIED
+>
+
+<!ELEMENT group (rdf:RDF,group*,entity*)>
+<!ATTLIST group
+	id			CDATA			#REQUIRED 
+	key			CDATA			#REQUIRED
+	type		CDATA			#REQUIRED
+	entityType  CDATA			#REQUIRED
+	expanded 	(true|false) 	#REQUIRED	
+	selected	(true|false)	"false"
+	hasMembers  (true|false)	#REQUIRED
+>
+
+<!ELEMENT entity (property*)>
+<!ATTLIST entity
+	id			CDATA			#REQUIRED
+	key			CDATA			#REQUIRED
+	type		CDATA			#REQUIRED
+	displayName	CDATA			#REQUIRED
+	selected	(true|false)	"false"
+>
+
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+   name CDATA #REQUIRED
+   value CDATA #REQUIRED
+>
+
+<!ELEMENT entityType EMPTY>
+<!ATTLIST entityType
+	type 		CDATA			#REQUIRED
+	name		CDATA			#REQUIRED
+>
