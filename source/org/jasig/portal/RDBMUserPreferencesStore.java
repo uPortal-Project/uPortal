@@ -43,6 +43,7 @@ import  java.io.*;
 import org.w3c.dom.Document;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ISecurityContext;
 
 /**
  * Reference implementation of IUserPreferencesDB
@@ -63,6 +64,11 @@ public class RDBMUserPreferencesStore
       public void setAttribute (String key, Object value) {}
 
       public Enumeration getAttributes () {return null;}
+      
+      public boolean isGuest() {return(false);}
+      
+      public ISecurityContext getSecurityContext() { return(null); }
+      public void setSecurityContext(ISecurityContext context) {}
     }
 
     private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
