@@ -1,6 +1,7 @@
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
+
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
@@ -17,7 +18,7 @@
 <body>
 
 <%
-String sMethodName = request.getParameter ("method");
+String sMethodName = request.getParameter ("method");  
 String sTitle = ch.getName ();
 session.setAttribute ("headerTitle", sTitle);
 %>
@@ -33,7 +34,7 @@ method.invoke (ch, methodParams);
 %>
 
 <%-- Footer --%>
-<jsp:include page="footer.jsp" flush="true" />
+<%@ include file="footer.jsp" %>
 
 </body>
 </html>
