@@ -1431,7 +1431,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         else
              prevNode = getLastSiblingNode( parentFolder.getFirstChildNodeId());
 
-
+        // If currently a fragment is loaded the node desc should have a fragment ID
+        if ( isFragmentLoaded() )
+          ((IALNodeDescription)nodeDesc).setFragmentId(fragmentId);
 
         ALNode layoutNode=ALNode.createALNode(nodeDesc);
 

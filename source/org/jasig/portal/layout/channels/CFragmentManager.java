@@ -49,6 +49,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.ALFragment;
+import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
@@ -147,8 +148,9 @@ public class CFragmentManager extends FragmentManager {
     }
 
 	private String createFolder( ALFragment fragment ) throws PortalException {
-		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
+		IALFolderDescription folderDesc = (IALFolderDescription)alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
 		folderDesc.setName("Fragment column");
+		folderDesc.setFragmentId(fragment.getId());
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 

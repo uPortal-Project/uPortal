@@ -678,7 +678,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
          if ( fragmentId > 0 && layoutId == 0 ) {  	
          	
-           stmt.executeQuery("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId+" AND NODE_ID="+nodeId);	
+           //stmt.executeQuery("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId+" AND NODE_ID="+nodeId);	
 
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
@@ -1366,7 +1366,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @param layoutImpl a <code>IAggregatedLayout</code> containing an aggregated user layout
      * @exception PortalException if an error occurs
      */
- public void setAggregatedLayout (IPerson person, UserProfile profile, IAggregatedLayout layoutImpl ) throws PortalException {
+ public synchronized void setAggregatedLayout (IPerson person, UserProfile profile, IAggregatedLayout layoutImpl ) throws PortalException {
 
     if ( !(layoutImpl instanceof AggregatedLayout) )
        throw new PortalException("The user layout object should have \"AggregatedLayout\" type");
@@ -1432,11 +1432,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       PreparedStatement  psAddFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
       PreparedStatement  psAddLayoutNode = con.prepareStatement(LAYOUT_ADD_SQL);
       PreparedStatement  psAddLayoutRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
-      PreparedStatement  psAddChannelParam = con.prepareStatement(CHANNEL_PARAM_ADD_SQL);
-      PreparedStatement  psAddChannel = con.prepareStatement(CHANNEL_ADD_SQL);
-
-      PreparedStatement psLayout = con.prepareStatement("SELECT NODE_ID FROM UP_LAYOUT_STRUCT_AGGR WHERE NODE_ID=? AND USER_ID=? AND LAYOUT_ID=?");   
-      
+     
 
        // The loop for all the nodes from the layout
        for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
@@ -1450,9 +1446,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentId = CommonUtils.parseInt(node.getFragmentId());
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
-         if ( fragmentNodeId > 0 || fragmentId < 0 ) {
+         if ( fragmentNodeId > 0 || fragmentId <= 0 ) {
          
-           boolean channelParamsExist = false;
+          /* boolean channelParamsExist = false;
 
                if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
                 int publishId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelPublishId());
@@ -1463,13 +1459,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   } finally {
                      rsChan.close();
                     }
-               }
+               }*/
 
-               if ( channelParamsExist )
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,null,null,stmt);
-               else
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,psAddChannel,psAddChannelParam,stmt);
-
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null,stmt);
+              
              rs.close();
          }   
  
@@ -1481,9 +1474,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       // Commit all the changes
       RDBMServices.commit(con);
-
-      //if ( psFragment != null ) psFragment.close();
-      if ( psLayout != null ) psLayout.close();
 
       if ( psDeleteLayout != null ) psDeleteLayout.close();
       if ( psDeleteLayoutRestriction != null ) psDeleteLayoutRestriction.close();
@@ -1538,7 +1528,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @param fragment a <code>ILayoutFragment</code> containing a fragment
      * @exception Exception if an error occurs
      */
- public void setFragment (IPerson person, ILayoutFragment fragment ) throws PortalException {
+ public synchronized void setFragment (IPerson person, ILayoutFragment fragment ) throws PortalException {
 
     int userId = person.getID();
     String fragmentId = fragment.getId();
@@ -1998,7 +1988,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               //ALNode node = (ALNode) layout.get(structId+"");
               ALNode node;
               String childIdStr = null;
-              if ( ( chanId <= 0 && fragmentId <= 0 ) || ( fragmentId > 0 && ( childId > 0 || fragmentNodeId > 0 ) ) ) {
+              //if ( ( chanId <= 0 && fragmentId <= 0 ) || ( fragmentId > 0 && ( childId > 0 || fragmentNodeId > 0 ) ) ) {
+              if ( chanId <= 0 ) {
                 //if ( node == null )
                 node = new ALFolder();
                 IALFolderDescription folderDesc = new ALFolderDescription();
