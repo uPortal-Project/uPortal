@@ -35,12 +35,14 @@ public abstract class AbstractPool implements ThreadPool {
         private static int counter = 0;
 
         /**
-	 * AbstractPool Construcutor
-	 *
-	 * @param minThreads the min number of worker threads that can be in this pool
-	 * @param maxThreads the max number of worker threads that can be in this pool
-	 * @param threadPriority the priority these worker threads should have
-	 */
+         * AbstractPool Constructor
+         * @param minThreads
+         *                the min number of worker threads that can be in this pool
+         * @param maxThreads
+         *                the max number of worker threads that can be in this pool
+         * @param threadPriority
+         *                the priority these worker threads should have
+         */
 	public AbstractPool(int minThreads, int maxThreads, int threadPriority) {
                 idleThreads = new Vector();
                 busyThreads = new Vector();
