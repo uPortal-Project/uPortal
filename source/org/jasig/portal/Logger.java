@@ -60,7 +60,7 @@ import org.jasig.portal.PortalFileAppender;
  * INFO, or DEBUG (listed in order of decreasing severity).  Log messages
  * will only be logged if their log level is the same or more severe than
  * the static member log level, which can be changed by calling setLogLevel().
- * 
+ *
  * @author Ken Weiner (IBS)
  * @author Bernie Durfee (IBS)
  * @version $Revision$
@@ -75,33 +75,33 @@ public class Logger extends GenericPortalBean
   public static final int WARN = 3;
   public static final int INFO = 4;
   public static final int DEBUG = 5;
-  
+
   private static int iLogLevelSetting = DEBUG;
-  
+
   private static String sLogLevelSetting = "DEBUG";
-  
+
   private static final String sIllArgExMessage = "Log level must be NONE, SEVERE, ERROR, WARN, INFO, or DEBUG";
-  
+
   private static final String fs = File.separator;
-  
+
   private static final String sLogRelativePath = "logs" + fs + "portal.log";
-  
+
   private static boolean bInitialized = false;
-  
+
   private static Category m_catFramework = null;
-  
+
   private static PortalFileAppender m_logFile = null;
-  
+
   private static int m_maxBackupIndex = 10; // Maximum number of log files (Default is 10)
-  
+
   private static int m_maxFileSize = 500000; // Maximum size of each log file (Default is 500k)
-  
+
   /**
    * Sets the current log level.  Use one of the static integer members
    * of this class ranging from  Logger.DEBUG to Logger.NONE.
    * The log level setting will determine the severity threshold of all log
    * messages.  The more lenient the log level, the more log messages will be logged.
-   * 
+   *
    * @param a log level
    * @throws IllegalArgumentException if the log level is not one of the acceptable log levels
    */
@@ -120,7 +120,7 @@ public class Logger extends GenericPortalBean
       throw new IllegalArgumentException(sIllArgExMessage);
     }
   }
-  
+
   /**
    * Gets the current log level setting
    * @return the current log level setting
@@ -129,7 +129,7 @@ public class Logger extends GenericPortalBean
   {
     return iLogLevelSetting;
   }
-  
+
   /**
    * Increments the old logs and creates a new log with the
    * current time and log level written at the top
@@ -138,17 +138,17 @@ public class Logger extends GenericPortalBean
   {
     String sPortalBaseDir = getPortalBaseDir();
     File propertiesFile = null;
-    
+
     try
     {
       // Load the portal properties file
       propertiesFile = new File(sPortalBaseDir + "/properties/portal.properties");
-      
-      if(propertiesFile != null)
+
+      if(propertiesFile != null && propertiesFile.exists())
       {
         Properties portalProperties = new Properties();
         portalProperties.load(new FileInputStream(propertiesFile));
-        
+
         if(portalProperties.getProperty("logger.level") != null)
         {
           sLogLevelSetting = portalProperties.getProperty("logger.level");
@@ -188,7 +188,7 @@ public class Logger extends GenericPortalBean
       if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
       {
         m_logFile = new PortalFileAppender(new PatternLayout("%-5p %-23d{ISO8601} %m%n"), sPortalBaseDir + sLogRelativePath);
-        
+
         // Make sure to roll the logs to start fresh
         m_logFile.rollOver();
         m_logFile.setMaxBackupIndex(m_maxBackupIndex);
@@ -196,7 +196,7 @@ public class Logger extends GenericPortalBean
         m_catFramework = Category.getRoot();
         m_catFramework.addAppender(m_logFile);
         m_catFramework.setPriority(Priority.toPriority(sLogLevelSetting));
-        
+
         // Insures that initialization is only done once
         bInitialized = true;
       }
@@ -212,7 +212,7 @@ public class Logger extends GenericPortalBean
       er.printStackTrace();
     }
   }
-  
+
   public static void log(int iLogLevel, String sMessage)
   {
     try
@@ -221,32 +221,32 @@ public class Logger extends GenericPortalBean
       {
         initialize();
       }
-      
+
       switch(iLogLevel)
       {
         case NONE:
           return ;
-        
+
         case SEVERE:
           m_catFramework.fatal(sMessage);
           return ;
-        
+
         case ERROR:
           m_catFramework.error(sMessage);
           return ;
-        
+
         case WARN:
           m_catFramework.warn(sMessage);
           return ;
-        
+
         case INFO:
           m_catFramework.info(sMessage);
           return ;
-        
+
         case DEBUG:
           m_catFramework.debug(sMessage);
           return ;
-        
+
         default:
           throw new IllegalArgumentException();
       }
@@ -262,7 +262,7 @@ public class Logger extends GenericPortalBean
       er.printStackTrace();
     }
   }
-  
+
   public static void log(int iLogLevel, Throwable ex)
   {
     try
@@ -271,35 +271,35 @@ public class Logger extends GenericPortalBean
       {
         initialize();
       }
-      
+
       StringWriter stackTrace = new StringWriter();
       ex.printStackTrace(new PrintWriter(stackTrace));
-      
+
       switch(iLogLevel)
       {
         case NONE:
           return ;
-        
+
         case SEVERE:
           m_catFramework.fatal(stackTrace.toString());
           return ;
-        
+
         case ERROR:
           m_catFramework.error(stackTrace.toString());
           return ;
-        
+
         case WARN:
           m_catFramework.warn(stackTrace.toString());
           return ;
-        
+
         case INFO:
           m_catFramework.info(stackTrace.toString());
           return ;
-        
+
         case DEBUG:
           m_catFramework.debug(stackTrace.toString());
           return ;
-        
+
         default:
           throw new IllegalArgumentException();
       }
@@ -315,7 +315,7 @@ public class Logger extends GenericPortalBean
       er.printStackTrace();
     }
   }
-  
+
   /**
    * Translates integer version of log level into
    * string version for printing to the log
@@ -331,27 +331,27 @@ public class Logger extends GenericPortalBean
       case NONE:
         sLogLevel = "NONE  ";
         break;
-      
+
       case SEVERE:
         sLogLevel = "SEVERE";
         break;
-      
+
       case ERROR:
         sLogLevel = "ERROR ";
         break;
-      
+
       case WARN:
         sLogLevel = "WARN  ";
         break;
-      
+
       case INFO:
         sLogLevel = "INFO  ";
         break;
-      
+
       case DEBUG:
         sLogLevel = "DEBUG ";
         break;
-      
+
       default:
         throw new IllegalArgumentException();
     }
