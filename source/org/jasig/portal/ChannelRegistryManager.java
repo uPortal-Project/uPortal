@@ -38,20 +38,23 @@ package  org.jasig.portal;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 import java.util.Set;
 import java.sql.SQLException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xpath.XPathAPI;
 
 /**
  * Manages the channel registry which is a listing of published channels
  * that one can subscribe to (add to their layout).
- * Also currently manages the channel types data. (maybe this should be managed
- * by another class  -Ken)
+ * Also currently manages the channel types data and CPD documents.
+ * (maybe these should be managed by another class  -Ken)
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
@@ -59,10 +62,13 @@ public class ChannelRegistryManager {
   protected static final IChannelRegistryStore chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
+  protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
   protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
+  protected static final SmartCache cpdCache = new SmartCache(cpdCacheTimeout);
   private static final String CHANNEL_REGISTRY_CACHE_KEY = "channelRegistryCacheKey";
   private static final String CHANNEL_TYPES_CACHE_KEY = "channelTypesCacheKey";
+  private static final String CPD_CACHE_KEY = "cpdCacheKey";
 
   /**
    * Returns the channel registry as a Document.  This list is not filtered by roles.
@@ -76,9 +82,7 @@ public class ChannelRegistryManager {
       try {
         channelRegistry = chanRegStore.getChannelRegistryXML(person);
       } catch (Exception e) {
-        System.err.println(e);
-        e.printStackTrace();
-        throw new GeneralRenderingException(e.getMessage());
+        throw new PortalException(e);
       }
 
       if (channelRegistry != null)
@@ -202,6 +206,66 @@ public class ChannelRegistryManager {
       }
     }
     return channelTypes;
+  }
+
+  /**
+   * Returns a CPD (channel publishing document) as a Document
+   * @param chanTypeID the channel type ID, "-1" if channel type is "custom"
+   * @return the CPD document matching the chanTypeID, <code>null</code> if "custom" channel
+   * @throws org.jasig.portal.PortalException
+   */
+  public static Document getCPD(String chanTypeID) throws PortalException {
+    //  There are no CPD docs for custom channels (chanTypeID = -1)
+    if (chanTypeID == null || chanTypeID.equals("-1"))
+      return null;
+
+    Document cpd = (Document)cpdCache.get(CPD_CACHE_KEY + chanTypeID);
+    if (cpd == null) {
+      // CPD doc has expired, so get it and cache it
+      Element channelTypes = getChannelTypes().getDocumentElement();
+
+      // Look for channel type element matching the channel type ID
+      Element chanType = null;
+
+      for (Node n = channelTypes.getFirstChild(); n != null; n = n.getNextSibling()) {
+        if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("channelType")) {
+          chanType = (Element)n;
+          if (chanTypeID.equals(chanType.getAttribute("ID")))
+            break;
+        }
+      }
+
+      // Find the cpd-uri within this element
+      String cpdUri = null;
+      for (Node n = chanType.getLastChild(); n != null; n = n.getPreviousSibling()) {
+        if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("cpd-uri")) {
+          // Found the <cpd-uri> element, now get its value
+          for (Node m = n.getFirstChild(); m != null; m = m.getNextSibling()) {
+            if (m instanceof Text)
+              cpdUri = m.getNodeValue();
+          }
+          break;
+        }
+      }
+
+      if (cpdUri != null) {
+        try {
+          cpd = ResourceLoader.getResourceAsDocument(ChannelRegistryManager.class, cpdUri);
+        } catch (java.io.IOException ioe) {
+          throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe.getMessage());
+        } catch (org.xml.sax.SAXException se) {
+          throw new PortalException("Unable to parse CPD file: " + cpdUri, se);
+        } catch (ParserConfigurationException pce) {
+          throw new PortalException("Unable to parse CPD file: " + cpdUri, pce);
+        }
+      }
+
+      if (cpd != null) {
+        cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
+        LogService.instance().log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
+      }
+    }
+    return cpd;
   }
 }
 
