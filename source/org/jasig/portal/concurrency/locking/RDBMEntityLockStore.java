@@ -115,15 +115,18 @@ public void deleteAll() throws LockingException
     try
     {
         String sql = "DELETE FROM " + LOCK_TABLE;
-        log.debug("RDBMEntityLockStore.deleteAll(): " + sql);
+        if (log.isDebugEnabled())
+            log.debug("RDBMEntityLockStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
         {
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
-            String msg = "Deleted " + rc + " locks.";
-            log.debug("RDBMEntityLockStore.deleteAll(): " + msg);
+            if (log.isDebugEnabled()) {
+                String msg = "Deleted " + rc + " locks.";
+                log.debug("RDBMEntityLockStore.deleteAll(): " + msg);
+            }
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -367,8 +370,9 @@ throws SQLException, LockingException
             ps.setTimestamp(4, ts);          // lock expiration
             ps.setString(5, owner);          // lock owner
 
-            log.debug(
-                "RDBMEntityLockStore.primAdd(): " + ps);
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityLockStore.primAdd(): " + ps);
 
             int rc = ps.executeUpdate();
             if ( rc != 1 )
@@ -413,11 +417,13 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
             ps.setInt(4, lockType)   ;        // lock type
             ps.setString(5, owner);           // lock owner
 
-            log.debug(
-                "RDBMEntityLockStore.primDelete(): " + ps);
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityLockStore.primDelete(): " + ps);
 
             int rc = ps.executeUpdate();
-            log.debug("RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
+            if (log.isDebugEnabled())
+                log.debug("RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -461,14 +467,18 @@ throws LockingException, SQLException
 
     String sql = buff.toString();
 
-    log.debug("RDBMEntityLockStore.deleteExpired(): " + sql);
+    if (log.isDebugEnabled())
+        log.debug("RDBMEntityLockStore.deleteExpired(): " + sql);
 
     try
     {
         stmnt = conn.createStatement();
         int rc = stmnt.executeUpdate(sql);
-        String msg = "Deleted " + rc + " expired locks.";
-        log.debug("RDBMEntityLockStore.deleteExpired(): " + msg);
+        if (log.isDebugEnabled()) {
+            String msg = "Deleted " + rc + " expired locks.";
+            log.debug("RDBMEntityLockStore.deleteExpired(): " + msg);
+        }
+
     }
 
     catch (SQLException sqle)
@@ -489,7 +499,8 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     ResultSet rs = null;
     List locks = new ArrayList();
 
-    log.debug("RDBMEntityLockStore.primSelect(): " + sql);
+    if (log.isDebugEnabled())
+        log.debug("RDBMEntityLockStore.primSelect(): " + sql);
 
     try
     {
@@ -553,8 +564,9 @@ throws SQLException, LockingException
             ps.setTimestamp(6, oldTs);  // old expiration
             ps.setInt(7, oldLockType);  // old lock type;
 
-            log.debug(
-                "RDBMEntityLockStore.primUpdate(): " + ps);
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityLockStore.primUpdate(): " + ps);
 
             int rc = ps.executeUpdate();
             if ( rc != 1 )

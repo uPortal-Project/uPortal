@@ -102,7 +102,8 @@ public void deleteAll() throws CachingException
     try
     {
         String sql = "DELETE FROM " + ENTITY_INVALIDATION_TABLE;
-        log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
+        if (log.isDebugEnabled())
+            log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -110,7 +111,8 @@ public void deleteAll() throws CachingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " rows.";
-            log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
+            if (log.isDebugEnabled())
+                log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -313,9 +315,10 @@ throws SQLException, CachingException
             ps.setTimestamp(3, ts);          // invalidation time
             ps.setInt(4, cacheID);           // entity cache ID
 
-            log.debug(
-                "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
-                  " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
+                        " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
             int rc = ps.executeUpdate();
             if ( rc != 1 )
@@ -354,11 +357,14 @@ throws CachingException, SQLException
         {
             ps.setTimestamp(1, ts);
 
-            log.debug(
-                "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + ps + " (" + ts + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + 
+                        ps + " (" + ts + ")");
 
             int rc = ps.executeUpdate();
-            log.debug("Rows deleted: " + rc);
+            if (log.isDebugEnabled())
+                log.debug("Rows deleted: " + rc);
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -382,7 +388,8 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     ResultSet rs = null;
     List entities = new ArrayList();
 
-    log.debug("RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
+    if (log.isDebugEnabled())
+        log.debug("RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
 
     try
     {
@@ -433,8 +440,9 @@ throws SQLException, CachingException
             ps.setInt(3, typeID.intValue());  // entity type
             ps.setString(4, key);             // entity key
 
-            log.debug(
-                "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
                                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
             int rc = ps.executeUpdate();
