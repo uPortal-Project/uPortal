@@ -673,8 +673,8 @@ public class UserInstance implements HttpSessionBindingListener {
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
         if(channelManager!=null)
             channelManager.finishedSession();
-        if(uPreferencesManager!=null)
-            uPreferencesManager.finishedSession(bindingEvent);
+    if(uPreferencesManager!=null) {
+      uPreferencesManager.finishedSession(bindingEvent);
       try {      
         IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager(); 
 		if ( ulm instanceof TransientUserLayoutManagerWrapper )
@@ -684,6 +684,7 @@ public class UserInstance implements HttpSessionBindingListener {
       } catch ( Exception e ) {
 		  LogService.log(LogService.ERROR, "UserInstance::valueUnbound(): Error occured while saving the user layout "+e);    
       }
+    }
 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
