@@ -119,12 +119,12 @@ public class PortalSessionManager extends HttpServlet {
       if ((redirectBase = this.doRedirect(myReq)) != null) {
         // cache request
         sc.setAttribute("oreqp_" + session.getId(), myReq);
-        // initial request, requeres forwarding
+        // initial request, requires forwarding
         session.setAttribute("forwarded", new Boolean(true));
         // forward
         // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
         //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-        res.sendRedirect("http://" + req.getServerName() + ":" + req.getServerPort() + req.getContextPath() + redirectBase);
+        res.sendRedirect(req.getContextPath() + '/' + redirectBase);
       }
       else {
         // delete old request
@@ -204,7 +204,7 @@ public class PortalSessionManager extends HttpServlet {
         redirectBase = uPFile;
     }
     // redirect by default
-    return  "/" + renderBase;
+    return '/' + renderBase;
   }
 
   /**
