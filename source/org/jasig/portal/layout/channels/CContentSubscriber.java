@@ -63,7 +63,7 @@ import java.util.Collection;
 public class CContentSubscriber extends FragmentManager {
 
 	private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
-	private static Document channelRegistry;
+	private Document channelRegistry;
 	private Document registry;
 	private Vector expandedItems;
 	private Vector condensedItems;
