@@ -120,7 +120,7 @@ public class ChannelManager implements LayoutEventListener {
 
     private IAuthorizationPrincipal ap;
 
-    private static final BoundedThreadPool renderThreadPool = new BoundedThreadPool(20, 150, 5);
+    private static BoundedThreadPool renderThreadPool;
 
     public UPFileSpec uPElement;
 
@@ -140,6 +140,15 @@ public class ChannelManager implements LayoutEventListener {
         iccListeners=new HashMap();
         channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
         groupedRendering=false;
+        
+        // Set up a thread pool with init parameters from portal.properties
+        if (renderThreadPool == null) {
+            String prefix = this.getClass().getName() + ".threadPool_";
+            int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
+            int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
+            int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
+            renderThreadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
+        }
     }
     
     /**
