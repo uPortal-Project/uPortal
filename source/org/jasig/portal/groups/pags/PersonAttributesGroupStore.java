@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright � 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
@@ -62,12 +63,6 @@ import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.utils.ResourceLoader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine
@@ -78,49 +73,31 @@ import org.w3c.dom.Text;
  * @version $Revision$
  */
 public class PersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
+   private Properties props;
    private Map groupDefinitions;
    private Map groups;
    private Map containingGroups;
       
    public PersonAttributesGroupStore() {
-      Document config = null;
-      try {
-        config = ResourceLoader.getResourceAsDocument(this.getClass(), "/properties/groups/PAGSGroupStoreConfig.xml");
-      } catch(Exception rme){
-         throw new RuntimeException("PersonAttributesGroupStore: Unable to find configuration document");
-      }
-      init(config);
-      LogService.log(LogService.DEBUG, "PersonAttributeGroupStore: initialized with "+groupDefinitions.size()+" groups");
-   }
-   
-   public PersonAttributesGroupStore(Document config) {
-      init(config);
-   }
-   
-   /**
-    * Read the XML configuration and create a Map of GroupDefinition objects.
-    * 
-    * @param config xml config document
-    */
-   private void init(Document config) {
-      groupDefinitions = new HashMap();
       groups = new HashMap();
       containingGroups = new HashMap();
-      config.normalize();
-      Element groupStoreElement = config.getDocumentElement();
-      NodeList groupElements = groupStoreElement.getChildNodes();
-      for (int i = 0; i < groupElements.getLength(); i++) {
-         if (groupElements.item(i) instanceof Element) {
-            initGroupDef((Element)groupElements.item(i));
-         }
-      }
-      try { 
+      try {
+         props = new Properties();
+         props.load(PersonAttributesGroupStore.class.getResourceAsStream("/properties/groups/pags.properties"));
+         IPersonAttributesConfiguration config = getConfig(props.getProperty("org.jasig.portal.groups.pags.PersonAttributesGroupStore.configurationClass"));
+         groupDefinitions = config.getConfig();
          initGroups(); 
-      } catch ( GroupsException ge ) {
-         String errorMsg = "PersonAttributeGroupStore.init(): " + "Problem initializing groups: " + ge.getMessage();
-         LogService.log(LogService.ERROR, errorMsg);
+      } catch ( Exception e ) {
+         String errorMsg = "PersonAttributeGroupStore.init(): " + "Problem initializing groups: " + e.getMessage();
+         LogService.log(LogService.ERROR, e);
          throw new RuntimeException(errorMsg);
       }
+   }
+   
+   private IPersonAttributesConfiguration getConfig(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+      Class configClass = Class.forName(className);
+      Object o = configClass.newInstance();
+      return (IPersonAttributesConfiguration)o;
    }
 
    /**
@@ -142,82 +119,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        cacheContainingGroupsForGroups();
    }
    
-   private void initGroupDef(Element groupElement) {
-      GroupDefinition groupDef = new GroupDefinition();
-      NodeList children = groupElement.getChildNodes();
-      for (int i = 0; i < children.getLength(); i++) {
-         if (children.item(i) instanceof Element) {
-            Element element = (Element)children.item(i);
-            String tagName = element.getTagName();
-            element.normalize();
-            String text = null;
-            if (element.getFirstChild() instanceof Text) {
-               text = ((Text)element.getFirstChild()).getData();
-            }
-            if (tagName.equals("group-key")) {
-               groupDef.setKey(text);
-            } else if (tagName.equals("group-name")) {
-               groupDef.setName(text);
-            } else if (tagName.equals("group-description")) {
-               groupDef.setDescription(text);
-            } else if (tagName.equals("selection-test")) {
-               NodeList testGroups = element.getChildNodes();
-               for (int j = 0; j < testGroups.getLength(); j++) {
-                  Node testGroup = testGroups.item(j);
-                  if (testGroup instanceof Element && ((Element)testGroup).getTagName().equals("test-group")) {
-                     TestGroup tg = new TestGroup();
-                     NodeList tests = testGroup.getChildNodes();
-                     for (int k = 0; k < tests.getLength(); k++) {
-                        Node test = tests.item(k);
-                        if (test instanceof Element && ((Element)test).getTagName().equals("test")) {
-                           String attribute = null;
-                           String tester = null;
-                           String value = null;
-                           NodeList parameters = test.getChildNodes();
-                           for (int l = 0; l < parameters.getLength(); l++) {
-                              Node parameter = parameters.item(l);
-                              text = null;
-                              String nodeName = parameter.getNodeName();
-                              if (parameter.getFirstChild() != null &&
-                                  parameter.getFirstChild() instanceof Text) {
-                                     text = ((Text)parameter.getFirstChild()).getData();
-                              }
-                              if (nodeName.equals("attribute-name")) {
-                                 attribute = text;
-                              } else if (nodeName.equals("tester-class")) {
-                                 tester = text;
-                              } else if (nodeName.equals("test-value")) {
-                                 value = text;
-                              }
-                           }
-                           IPersonTester testerInst = initializeTester(tester, attribute, value);
-                           tg.addTest(testerInst);
-                        }
-                        groupDef.addTestGroup(tg);
-                    }
-                  }
-               }
-            } else if (tagName.equals("members")) {
-               addMemberKeys(groupDef, element);
-            }
-         }
-      }
-      groupDefinitions.put(groupDef.getKey(), groupDef);
-   }
-   
-   private void addMemberKeys(GroupDefinition groupDef, Element members) {
-      NodeList children = members.getChildNodes();
-      for (int i = 0; i < children.getLength(); i++) {
-         Node node = children.item(i);
-         if (node instanceof Element && node.getNodeName().equals("member-key")) {
-            Element member = (Element)node;
-            member.normalize();
-            if (member.getFirstChild() instanceof Text) {
-               groupDef.addMember(((Text)member.getFirstChild()).getData()); 
-            }
-         }
-      }
-   }
+
    
    private IPersonTester initializeTester(String tester, String attribute, String value) {
       try {
@@ -388,7 +290,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          case IS:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
                IEntityGroup g = (IEntityGroup)i.next();
-               if (g.getName().equals(query)) {
+               if (g.getName().equalsIgnoreCase(query)) {
                   results.add(g.getEntityIdentifier());
                }
             }
@@ -396,7 +298,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          case STARTS_WITH:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
                IEntityGroup g = (IEntityGroup)i.next();
-               if (g.getName().startsWith(query)) {
+               if (g.getName().toUpperCase().startsWith(query.toUpperCase())) {
                   results.add(g.getEntityIdentifier());
                }
             }
@@ -404,7 +306,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          case ENDS_WITH:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
                IEntityGroup g = (IEntityGroup)i.next();
-               if (g.getName().endsWith(query)) {
+               if (g.getName().toUpperCase().endsWith(query.toUpperCase())) {
                   results.add(g.getEntityIdentifier());
               }
             }
@@ -412,7 +314,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          case CONTAINS:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
                IEntityGroup g = (IEntityGroup)i.next();
-               if (g.getName().indexOf(query) != -1) {
+               if (g.getName().toUpperCase().indexOf(query.toUpperCase()) != -1) {
                   results.add(g.getEntityIdentifier());
               }
             }
@@ -429,7 +331,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       throw new UnsupportedOperationException("PersonAttributesGroupStore: Method updateMembers() not supported.");
    }
    
-   private class GroupDefinition {
+   public static class GroupDefinition {
       private String key;
       private String name;
       private String description;
@@ -486,7 +388,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       }
    }
    
-   private class TestGroup {
+   public static class TestGroup {
       private List tests;
       
       public TestGroup() {
