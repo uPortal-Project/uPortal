@@ -9,12 +9,14 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.ResourceMissingException;
+import org.apache.oro.text.perl.Perl5Util;
 
 public class LocaleAwareXSLT extends XSLT {
 
     private Object caller;
     private Locale[] locales;
     private static final String mediaProps = "/properties/media.properties";
+    private static Perl5Util perl5Util = new Perl5Util();
 
     public LocaleAwareXSLT(Object instance, Locale[] locales) {
 	super(instance);
@@ -59,7 +61,9 @@ public class LocaleAwareXSLT extends XSLT {
         }  else {
 
             for (i=0; i<locales.length; i++) {
-                localeAwareXslUri = xslUri.replaceAll("\\.xsl", "_" + locales[i] + ".xsl");
+                // localeAwareXslUri = xslUri.replaceAll("\\.xsl", "_" + locales[i] + ".xsl");
+                // replaceAll is introduced from JDK1.4
+                localeAwareXslUri = perl5Util.substitute("s/\\.xsl/_" + locales[i] + ".xsl" + "/g", xslUri);
                 LogService.log(LogService.DEBUG, "LocaleAwareXSLT.getLocaleAwareXslUri: locale aware xslUri=" + localeAwareXslUri);
                 try {
                     xslUri = ResourceLoader.getResourceAsURLString(caller.getClass(), localeAwareXslUri);

@@ -75,6 +75,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.oro.text.perl.Perl5Util;
+
 /**
  * <p>A tool to set up a uPortal database. This tool was created so that uPortal
  * developers would only have to maintain a single set of xml documents to define
@@ -705,7 +707,10 @@ public class DbLoader
       public String getDataUri() {
 	  String ret=dataUri;
 	  if (localeAware == true && admin_locale != null) {
-	      ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
+              Perl5Util perl5Util = new Perl5Util();
+	      // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
+              // replaceAll is introduced from JDK1.4
+              ret = perl5Util.substitute("s/\\.xml/_" + admin_locale + ".xml" + "/g", ret);
 	  }
 	  return ret;
       }
