@@ -566,8 +566,8 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td nowrap="nowrap">
-                                                <input name="fragment_foundation" type="checkbox" value="true" checked="checked"/>
-                                                <span class="uportal-channel-subtitle-reversed">Create a starting tab and column (recommended)</span>
+                                                <input name="fragment_add_column" type="checkbox" value="true" checked="checked"/>
+                                                <span class="uportal-channel-subtitle-reversed">Add a column to the new fragment tab (recommended)</span>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
