@@ -37,10 +37,12 @@ package org.jasig.portal.container.om.entity;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.pluto.om.common.Description;
 import org.apache.pluto.om.common.ObjectID;
+import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.apache.pluto.om.entity.PortletApplicationEntity;
 import org.apache.pluto.om.entity.PortletEntity;
@@ -49,8 +51,15 @@ import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.om.window.PortletWindowList;
 import org.apache.pluto.om.window.PortletWindowListCtrl;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.common.PreferenceImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
+import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.window.PortletWindowListImpl;
 
 /**
@@ -110,8 +119,35 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
 
     public void store() throws IOException {
         // Persist portlet entity (preferences)
-        //TODO Persist the portlet entity
-
+        try {
+            ChannelDefinition channelDefinition = ((PortletDefinitionImpl)this.portletDefinition).getChannelDefinition();
+            
+            // Clear out preferences parameters
+            ChannelParameter[] parameters = channelDefinition.getParameters();
+            for (int i = 0; i < parameters.length; i++) {
+                ChannelParameter parameter = parameters[i];
+                if (parameter.getName().startsWith(CPortletAdapter.portletPreferenceNamePrefix)) {
+                    channelDefinition.removeParameter(parameter);
+                }
+            }
+            
+            // Persist preferences parameters
+            Iterator iter = preferences.iterator();
+            while (iter.hasNext()) {
+                Preference preference = (Preference)iter.next();
+                String name = CPortletAdapter.portletPreferenceNamePrefix + preference.getName();
+                String value = ((PreferenceImpl)preference).getFirstValue();
+                if (value != null) {
+                    channelDefinition.addParameter(name, value, "false");
+                }
+            }
+            IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+            crs.saveChannelDefinition(channelDefinition);
+            
+        } catch (Exception e) {
+            throw new IOException("Problem storing portlet entity " + objectId.toString() + ": " + e.getMessage());
+        }
+        
         // Save preferences as original preferences
         originalPreferences = new PreferenceSetImpl();
         ((PreferenceSetImpl)originalPreferences).addAll(preferences);
