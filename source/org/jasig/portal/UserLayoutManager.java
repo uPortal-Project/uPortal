@@ -86,7 +86,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      *  @param the servlet request object
      *  @param person object
      */
-    public UserLayoutManager (HttpServletRequest req, IPerson person) {
+    public UserLayoutManager (HttpServletRequest req, IPerson person) throws PortalException {
         uLayoutXML = null;
         try {
             m_person = person;
@@ -131,10 +131,15 @@ public class UserLayoutManager implements IUserLayoutManager {
                 // read uLayoutXML
                 uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
                 if (uLayoutXML == null) {
-                    LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
-                               m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
+                    throw new PortalException("UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
-                complete_up=ulsdb.getUserPreferences(m_person, upl);
+                try {
+                    complete_up=ulsdb.getUserPreferences(m_person, upl);
+                } catch (Exception e) {
+                    LogService.instance().log(LogService.ERROR, "UserLayoutManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
+                    complete_up=new UserPreferences(upl);
+                }
+
                 try {
                     // Initialize the JNDI context for this user
                     JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),uLayoutXML);
@@ -143,14 +148,14 @@ public class UserLayoutManager implements IUserLayoutManager {
                 }
                 // set dirty flag on the layout
                 layout_write_lock.setValue(true);
-            }
-            else {
+            } else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 unmapped_user_agent = true;
-                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + m_person.getID()
-                           + "\" and userAgent=\"" + userAgent + "\".");
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
             }
+        } catch (PortalException pe) {
+            throw pe;
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);
         }
