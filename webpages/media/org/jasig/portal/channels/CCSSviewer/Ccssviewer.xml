@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cssviewer>
+	<theme>
+		<title>im+m</title>
+		<author>Justin Tilton</author>
+		<description>Originally designed by Mark Oehlschlager for the instructional media + magic, inc. website, and adapted to the uPortal.</description>
+		<image>immthumb001.gif</image>
+		<parameters>
+			<param>
+				<name>css</name>
+				<value>imm001</value>
+			</param>
+			<param>
+				<name>bgcolor</name>
+				<value>000000</value>
+			</param>
+			<param>
+				<name>uplogo</name>
+				<value>upimm001.gif</value>
+			</param>
+			<param>
+				<name>logo</name>
+				<value>imm001.gif</value>
+			</param>
+		</parameters>
+	</theme>
+	<theme>
+		<title>java</title>
+		<author>Justin Tilton</author>
+		<description>An adaptation of the recommended Look and Feel color theme from the Design Guideleines for Java</description>
+		<image>sunthumb001.gif</image>
+		<parameters>
+			<param>
+				<name>css</name>
+				<value>sun001</value>
+			</param>
+			<param>
+				<name>bgcolor</name>
+				<value>FFFFFF</value>
+			</param>
+			<param>
+				<name>uplogo</name>
+				<value>upsun001.gif</value>
+			</param>
+			<param>
+				<name>logo</name>
+				<value>ibs001.gif</value>
+			</param>
+		</parameters>
+	</theme>
+	<theme>
+		<title>vsac</title>
+		<author>Justin Tilton</author>
+		<description>A demonstration of an adaptation of a corporate website to the uPortal.</description>
+		<image>vsacthumb001.gif</image>
+		<parameters>
+			<param>
+				<name>css</name>
+				<value>vsac001</value>
+			</param>
+			<param>
+				<name>bgcolor</name>
+				<value>FFFFFF</value>
+			</param>
+			<param>
+				<name>uplogo</name>
+				<value>upvsac001.gif</value>
+			</param>
+			<param>
+				<name>logo</name>
+				<value>vsac001.gif</value>
+			</param>
+		</parameters>
+	</theme>
+	<theme>
+		<title>UoSM</title>
+		<author>Justin Tilton</author>
+		<description>A theme designed for the University of Santa Maria located near the ocean on the beautiful central coast of california.</description>
+		<image>uosmthumb001.gif</image>
+		<parameters>
+			<param>
+				<name>css</name>
+				<value>uosm001</value>
+			</param>
+			<param>
+				<name>bgcolor</name>
+				<value>000000</value>
+			</param>
+			<param>
+				<name>uplogo</name>
+				<value>upuosm001.gif</value>
+			</param>
+			<param>
+				<name>logo</name>
+				<value>uosm001.jpg</value>
+			</param>
+		</parameters>
+	</theme>
+</cssviewer>
