@@ -6,6 +6,10 @@
 
 <web-app>
 
+	<listener>
+		<listener-class>org.jasig.portal.tools.checks.CheckingContextListener</listener-class>
+	</listener>
+
   <servlet>
     <servlet-name>uPortal</servlet-name>
     <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
@@ -37,6 +41,11 @@
   <servlet>
     <servlet-name>MissingProperties</servlet-name>
     <servlet-class>org.jasig.portal.properties.MissingPropertiesServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>Instrumentation</servlet-name>
+    <servlet-class>org.jasig.portal.tools.checks.ChecksServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -72,6 +81,11 @@
   <servlet-mapping>
     <servlet-name>MissingProperties</servlet-name>
     <url-pattern>/missingProperties</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>Instrumentation</servlet-name>
+    <url-pattern>/instrumentation</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
