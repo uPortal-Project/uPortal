@@ -100,6 +100,16 @@ public class CoreStylesheetDescription {
         parameterTable.put(name,pair);
     }
 
+    public void setStylesheetParameterDefaultValue(String parameterName,String defaultValue) {
+	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) parameterTable.get(parameterName);
+	if(pair!=null) pair.defaultValue=defaultValue;
+    }
+
+    public void setStylesheetParameterWordDescription(String parameterName,String wordDescription) {
+	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) parameterTable.get(parameterName);
+	if(pair!=null) pair.wordDescription=wordDescription;
+    }
+
     protected class DescriptionDefaultValuePair {
         public String defaultValue;
         public String wordDescription;

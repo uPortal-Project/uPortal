@@ -66,6 +66,14 @@ public class StructureStylesheetDescription extends CoreXSLTStylesheetDescriptio
         if(pair!=null) return pair.defaultValue;
         else return null;
     }
+    public void setFolderAttributeWordDescription(String attributeName,String wordDescription) {
+        DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) folderAttributeTable.get(attributeName);
+        if(pair!=null) pair.wordDescription=wordDescription;
+    }
+    public void setFolderAttributeDefaultValue(String attributeName,String defaultValue) {
+        DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) folderAttributeTable.get(attributeName);
+        if(pair!=null) pair.defaultValue=defaultValue;
+    }
 
     public boolean containsFolderAttribute(String attributeName) {
         return folderAttributeTable.containsKey(attributeName);

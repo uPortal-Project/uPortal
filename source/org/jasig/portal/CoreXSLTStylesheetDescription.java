@@ -66,6 +66,14 @@ public class CoreXSLTStylesheetDescription extends CoreStylesheetDescription {
         if(pair!=null) return pair.defaultValue;
         else return null;
     }
+    public void setChannelAttributeWordDescription(String attributeName,String wordDescription) {
+        DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) channelAttributeTable.get(attributeName);
+        if(pair!=null) pair.wordDescription=wordDescription;
+    }
+    public void setChannelAttributeDefaultValue(String attributeName,String defaultValue) {
+        DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) channelAttributeTable.get(attributeName);
+        if(pair!=null) pair.defaultValue=defaultValue;
+    }
 
     public boolean containsChannelAttribute(String attributeName) {
         return channelAttributeTable.containsKey(attributeName);
