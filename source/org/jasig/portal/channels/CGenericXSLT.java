@@ -83,7 +83,7 @@ import java.net.MalformedURLException;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CGenericXSLT implements IChannel
+public class CGenericXSLT implements IChannel, ICacheable
 {
   protected String xmlUri;
   protected String sslUri;
@@ -93,23 +93,14 @@ public class CGenericXSLT implements IChannel
   protected String media;
   protected MediaManager mm;
 
-  // Cache transformed content in this smartcache - should be moved out of the channel
-  protected static SmartCache bufferCache = new SmartCache(15 * 60); // 15 mins
-
-  // cacheEnabled flag should be set to true for production to
-  // ensure that this channel's output is cached
-  // I'm hoping that this setting can come from some globally-set
-  // property.  I'll leave this for later.
-  // Until then, it'll stay checked in set to true.
-  // Change to false if you want to simply reload the page to see
-  // the effect of a modified XML document or XSLT stylesheet
-  private static boolean cacheEnabled = true;
-
   // Get channel parameters.
   public void setStaticData (ChannelStaticData sd)
   {
     this.xmlUri = sd.getParameter("xmlUri");
     this.sslUri = sd.getParameter("sslUri");
+    if (sslUri != null)
+      this.sslUri = UtilitiesBean.fixURI(sslUri);
+
     this.xslTitle = sd.getParameter("xslTitle");
     this.xslUri = sd.getParameter("xslUri");
     mm=new MediaManager();
@@ -127,7 +118,7 @@ public class CGenericXSLT implements IChannel
     String sslUri = runtimeData.getParameter("sslUri");
 
     if (sslUri != null)
-      this.sslUri = sslUri;
+      this.sslUri = UtilitiesBean.fixURI(sslUri);
 
     String xslTitle = runtimeData.getParameter("xslTitle");
 
@@ -157,75 +148,61 @@ public class CGenericXSLT implements IChannel
   {
     String xml;
     Document xmlDoc;
-    sslUri = UtilitiesBean.fixURI(sslUri);
 
-    String key = getKey(); // Generate a key to lookup cache
-    SAXBufferImpl cache = (SAXBufferImpl)bufferCache.get(key);
-
-    // If there is cached content then write it out
-    if (cache == null)
-    {
-      cache = new SAXBufferImpl();
-
-      try
-      {
-        org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
+    try	{
+	org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
         org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
         domParser.setEntityResolver(dtdResolver);
         domParser.parse(UtilitiesBean.fixURI(xmlUri));
         xmlDoc = domParser.getDocument();
-      }
-      catch (IOException e)
-      {
-        throw new ResourceMissingException (xmlUri, "", e.getMessage());
-      }
-      catch (SAXException se)
-      {
+    }
+    catch (IOException e) {
+	throw new ResourceMissingException (xmlUri, "", e.getMessage());
+    }
+    catch (SAXException se) {
         throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
-      }
+    }
 
-      runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
-      cache.startBuffering();
-
-      try
-      {
+    runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
+    
+    try {
         if (xslUri != null)
-          XSLT.transform(xmlDoc, new URL(xslUri), cache, runtimeData);
-        else
-        {
-          if (xslTitle != null)
-            XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, xslTitle, media);
-          else
-            XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
+	    XSLT.transform(xmlDoc, new URL(xslUri), out, runtimeData);
+        else {
+	    if (xslTitle != null)
+		XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, xslTitle, media);
+	    else
+		XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, media);
         }
-
-        if (cacheEnabled)
-        {
-          Logger.log(Logger.INFO, "Caching output of CGenericXSLT for: " + key);
-          bufferCache.put(key, cache);
-        }
-      }
-      catch (SAXException se)
-      {
-        throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
-      }
-      catch (IOException ioe)
-      {
+    }
+    catch (SAXException se) {
+	throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
+    }
+    catch (IOException ioe) {
         StringWriter sw = new StringWriter();
         ioe.printStackTrace(new PrintWriter(sw));
         sw.flush();
         throw new GeneralRenderingException(sw.toString());
-      }
-    }
-    try
-    {
-      cache.outputBuffer(out);
-    }
-    catch (SAXException se)
-    {
-      throw new GeneralRenderingException("Problem retreiving output from cache:" + se.toString());
     }
   }
+
+    // ICacheable-related methods
+    public ChannelCacheKey generateKey() {
+	ChannelCacheKey k=new ChannelCacheKey();
+	k.setKey(this.getKey());
+	k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+	k.setKeyValidity(new Long(System.currentTimeMillis()));
+	return k;
+    }
+
+    public boolean isCacheValid(Object validity) {
+	if(validity instanceof Long) {
+	    // set timeout to 15 minutes
+	    return (System.currentTimeMillis()-((Long)validity).longValue()<15*60*1000);
+	} else {
+	    return false;
+	}
+    }
 
   private String getKey()
   {
