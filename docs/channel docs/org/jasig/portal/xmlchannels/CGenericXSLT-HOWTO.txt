@@ -1,0 +1,41 @@
+CGenericXSLT HOWTO
+
+Purpose: To demonstrate how to use the CGenericXSLT Channel.
+
+Introduction and description:
+
+The XCGenericXSLT channel is simple to use. It takes an xml document and a stylesheet list as parameters.
+When a request to render is received, it takes the xml document and does a xsl transform on it.
+The specific transform is determined by the SSL and the browser used to request it.
+
+
+
+Example of channel definition:
+
+<channel minimized="false" class="org.jasig.portal.xmlchannels.CGenericXSLT">
+  <parameter value="Welcome to UBC" name="name"/>
+  <parameter value="http://localhost/portal/welcome.xml" name="xml"/>
+  <parameter value="webpages/ubc/stylesheets/channels/welcome.ssl" name="ssl"/>
+</channel>
+
+Channel description notes:
+  The xml and ssl values can either be a fully qualified URL, or a relative file name.
+  The file name is relative to the root directory of the portal.  Not the root directory of
+  the web pages.  Also, use a relative file name wherever possible since this is faster then a
+  URL.
+
+Example of SSL (StyleSheetList):
+
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="/stylesheets/regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="http://localhost:8080/portal/stylesheets/wml.xsl"  type="text/xsl" media="WAP"?>
+
+<document>
+</document>
+
+
+SSL Notes:
+
+The href can either be a relative file name (faster) or a fully qualified URL.
+Note that a URL MUST use the full name with the 'http://'.
