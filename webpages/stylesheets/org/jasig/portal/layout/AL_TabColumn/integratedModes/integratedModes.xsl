@@ -64,7 +64,9 @@ Version $Revision$
 	<xsl:variable name="focusedTabID" select="/layout/@focusedTabID"/>
 	<xsl:variable name="targetRestriction" select="/layout/@targetRestriction"/>
 	<xsl:variable name="targetAction" select="/layout/@targetAction"/>
+	<!-- Commented out due to lack of evidence that it is used anywhere
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
+	-->
 	<xsl:variable name="userLayoutRoot" select="/layout/@userLayoutRoot"/>
         <xsl:param name="contentPublishID" select="''"/>
 	<!--  Used for detached content  -->
@@ -183,8 +185,10 @@ Version $Revision$
 		</table>
 		<!-- END: Masthead and Header Channel -->
 	</xsl:template>
+	
+	<!-- Suspected Unused Code - template match="actions" being used instead
 	<xsl:template name="actions">
-		<!-- BEGIN: upActions Table -->
+		BEGIN: upActions Table - ****Comment this line out if this block is reinstated****
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
@@ -681,8 +685,10 @@ Version $Revision$
 				</td>
 			</tr>
 		</table>
-		<!-- End: upActions Table -->
+		End: upActions Table - ****Comment this line out if block is reinstated****
 	</xsl:template>
+	 End Suspected Duplicate Code - template match="actions" being used instead -->
+	
 	<xsl:template match="content">
 		<xsl:variable name="numCols" select="count(column)"/>
 		<table width="100%" border="0" cols="{$numCols}" cellspacing="9" cellpadding="0">
@@ -865,9 +871,10 @@ Version $Revision$
 				</a>
 			</xsl:otherwise>
 		</xsl:choose>
+		<!-- Channel Language Control Removed until later version of uPortal
 		<a href="#">
 			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="change language for this channel" title="change language for this channel" border="0"/>
-		</a>
+		</a> -->
 		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this channel?')">
 			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="delete this channel" title="delete this channel" border="0"/>
 		</a>
@@ -1352,9 +1359,10 @@ Version $Revision$
 												<a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=Tab Move">
 													<img alt="Move this tab" title="Move this tab" src="{$mediaPathIcons}/moveicon.gif" width="22" height="18" border="0"/>
 												</a>
+												<!-- Language Preferences Removed until Later version of uPortal
 												<a href="#">
 													<img alt="Change language for this tab" title="Change language for this tab" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
-												</a>
+												</a> -->
 												<xsl:if test="@unremovable='false'">
 													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
 														<img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
@@ -2049,7 +2057,7 @@ Version $Revision$
 						<a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
-						<a href="{$baseActionURL}?uP_fname=user-locales-selector">Layout Languages</a>
+						<a href="{$baseActionURL}?uP_fname=user-locales-selector">Languages</a>
 
 						<!--  Profiles action temporarily removed
 						<span>&#160;|<xsl:text> </xsl:text>
@@ -2569,11 +2577,12 @@ Version $Revision$
 												</xsl:otherwise>
 											</xsl:choose>
 										</td>
+										<!-- Language Button Removed until later version of uPortal
 										<td>
 											<a href="#">
 												<img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="change language for this column" title="change language for this column" border="0"/>
 											</a>
-										</td>
+										</td> -->
 										<td>
 											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this column?')">
 												<img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="delete this column" title="delete this column" border="0"/>
