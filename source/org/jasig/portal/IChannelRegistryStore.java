@@ -71,6 +71,14 @@ public interface IChannelRegistryStore {
   public void setRegistryXML (String registryXML) throws Exception;
 
   /**
+   * Registers a channel type.
+   * @param chanType a channel type
+   * @throws Exception
+   */
+  public void addChannelType (ChannelType chanType) throws Exception;
+
+
+  /**
    * Returns a string of XML which describes the channel types.
    * @return channelTypes, the list of publishable channel types
    * @throws java.lang.Exception

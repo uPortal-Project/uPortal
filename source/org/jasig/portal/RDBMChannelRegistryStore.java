@@ -488,7 +488,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHANNEL");
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
-      throw  new GeneralRenderingException("Unable to allocate new channel ID");
+      throw  new PortalException("Unable to allocate new channel ID", e);
     }
     return  nextID;
   }
@@ -535,6 +535,54 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   public void setRegistryXML (String registryXML) throws Exception{
     throw new Exception("not implemented yet");
   }
+
+  /**
+   * Registers a new channel type.
+   * @param chanType a channel type
+   * @throws SQLException
+   */
+  public void addChannelType (ChannelType chanType) throws SQLException {
+    Connection con = null;
+
+    try {
+      int nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHAN_TYPE");
+      String javaClass = chanType.getJavaClass();
+      String name = chanType.getName();
+      String descr = chanType.getDescription();
+      String cpdUri = chanType.getCpdUri();
+
+      con = RDBMServices.getConnection();
+
+      // Set autocommit false for the connection
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        // Insert channel type.
+        String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
+         "'" + nextID + "', " +
+         "'" + javaClass + "', " +
+         "'" + name + "', " +
+         "'" + descr + "', " +
+         "'" + cpdUri + "')";
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelType(): " + insert);
+        int rows = stmt.executeUpdate(insert);
+
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (SQLException sqle) {
+        // Roll back the transaction
+        RDBMServices.rollback(con);
+        throw sqle;
+      } finally {
+          stmt.close();
+      }
+    } catch (Exception e) {
+      throw new SQLException(e.getMessage());
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+  }
+
 
   /**
    * @param chanDoc
