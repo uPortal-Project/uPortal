@@ -47,8 +47,11 @@ import java.io.*;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CLayoutManager implements IChannel
+public class CLayoutManager implements ISpecialChannel
 {
+
+    UserLayoutManager ulm;
+
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;
@@ -82,6 +85,12 @@ public class CLayoutManager implements IChannel
     this.set = new StylesheetSet (stylesheetDir + fs + "CLayoutManager.ssl");
     this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
   }
+
+
+    public void setPortalControlStructures(PortalControlStructures pcs) {
+	ulm=pcs.getUserLayoutManager();
+    }
+
 
   /** Returns static channel properties to the portal
    * @return handle to subscription properties
@@ -132,22 +141,30 @@ public class CLayoutManager implements IChannel
     /* This won't work because the cloneNode method doesn't support the 
      * cloning of IDs.  We need another way to clone the DOM.
      *
+    */
     // Get an initial copy of the user layout xml
-    if (userLayoutXML == null)
-    {
-      HttpServletRequest req = runtimeData.getHttpRequest ();
-      HttpSession session = req.getSession (false);
-      Document userLayoutXMLFromSession = (Document) session.getAttribute ("userLayoutXML");
-      userLayoutXML = (Document) userLayoutXMLFromSession.cloneNode (true);
+    /*
+    if (userLayoutXML == null)	{
+	HttpServletRequest req = runtimeData.getHttpRequest ();
+	HttpSession session = req.getSession (false);
+	Document userLayoutXMLFromSession = (Document) session.getAttribute ("userLayoutXML");
+	userLayoutXML = (Document) UtilitiesBean.cloneDocument(userLayoutXMLFromSession);
     }
     */
+    
     
     // For now, use these 3 lines which will modify original user layout xml
     // When we figure out how to clone the document properly, replace with the
     // section above.
+    /*
     HttpServletRequest req = runtimeData.getHttpRequest ();
     HttpSession session = req.getSession (false);
     userLayoutXML = (Document) session.getAttribute ("userLayoutXML");
+    */
+    
+    if(userLayoutXML==null) {
+	userLayoutXML=ulm.getUserLayoutCopy();
+    }
     
     action = runtimeData.getParameter ("action");
     
@@ -296,5 +313,6 @@ public class CLayoutManager implements IChannel
     
     folderID = this.layoutID;
     modified = false;
+    ulm.setNewUserLayoutAndUserPreferences(userLayoutXML,null);
   }
 }
