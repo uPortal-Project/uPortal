@@ -43,7 +43,6 @@ import  org.w3c.dom.Text;
 import  java.util.Enumeration;
 import  java.util.HashMap;
 import  java.util.ArrayList;
-import  org.apache.xerces.dom.DocumentImpl;
 
 /**
  * An IPermissionCommand implementation that processes target selection
@@ -59,11 +58,9 @@ public class SelectTargets implements IPermissionCommand {
     public SelectTargets() {
     }
 
-    public void execute(PermissionsSessionData session) {
-       try {
+    public void execute(PermissionsSessionData session) throws Exception{
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
-            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerTgts = new HashMap();
@@ -111,9 +108,6 @@ public class SelectTargets implements IPermissionCommand {
             else {
                 session.runtimeData.setParameter("commandResponse", "You must select at least one target to continue");
             }
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-        }
     }
 
 }

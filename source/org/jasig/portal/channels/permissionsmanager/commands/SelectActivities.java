@@ -45,7 +45,6 @@ import  org.w3c.dom.Text;
 import  java.util.Enumeration;
 import  java.util.HashMap;
 import  java.util.ArrayList;
-import  org.apache.xerces.dom.DocumentImpl;
 
 
 /**
@@ -63,11 +62,9 @@ public class SelectActivities
     public SelectActivities () {
     }
 
-    public void execute (PermissionsSessionData session) {
-        try {
+    public void execute (PermissionsSessionData session) throws Exception{
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectActivities processing");
             boolean foundOne = false;
-            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerActs = new HashMap();
@@ -115,9 +112,6 @@ public class SelectActivities
             else {
                 session.runtimeData.setParameter("commandResponse", "You must select at least one activity to continue");
             }
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-        }
     }
 }
 

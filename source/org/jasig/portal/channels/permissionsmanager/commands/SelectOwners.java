@@ -44,7 +44,6 @@ import  org.w3c.dom.Text;
 import  java.util.Enumeration;
 import  java.util.HashMap;
 import  java.util.ArrayList;
-import  org.apache.xerces.dom.DocumentImpl;
 
 /**
  * An IPermissionCommand implementation that processes owner selection
@@ -61,10 +60,8 @@ public class SelectOwners implements IPermissionCommand {
     }
 
     public void execute(PermissionsSessionData session) {
-          try {
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectOwners processing");
             boolean foundOne = false;
-            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             ArrayList ownerkeys = new ArrayList();
@@ -96,9 +93,6 @@ public class SelectOwners implements IPermissionCommand {
             else {
                 session.runtimeData.setParameter("commandResponse", "You must select at least one owner to continue");
             }
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-        }
     }
 
 }

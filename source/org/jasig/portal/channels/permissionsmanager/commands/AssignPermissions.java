@@ -51,7 +51,6 @@ import  java.util.Enumeration;
 import  java.util.HashMap;
 import  java.util.ArrayList;
 import  java.util.Set;
-import  org.apache.xerces.dom.DocumentImpl;
 
 
 /**
@@ -72,10 +71,9 @@ public class AssignPermissions
      *  expects to receive all permissions in form
      *  key['permission//{owner}|{principal}|{activity}|{target}'] = value['INHERIT','GRANT','DENY']
      */
-    public void execute (PermissionsSessionData session) {
-        try {
+    public void execute (PermissionsSessionData session) throws Exception {
+        
             LogService.instance().log(LogService.DEBUG, "PermissionsManager->AssignPermissions processing");
-            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
@@ -119,9 +117,7 @@ public class AssignPermissions
             }
             IPermissionCommand wrapit = CommandFactory.get("Cancel");
             wrapit.execute(session);
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
-        }
+        
     }
 
     private class PermissionHolder {
