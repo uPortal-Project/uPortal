@@ -35,6 +35,7 @@
 
 package org.jasig.portal.security.provider;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -283,7 +284,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
 // entries in our subcontext list
-  private static class Entry {
+  private static class Entry implements Serializable {
     String key;
     ISecurityContext ctx;
     public Entry(String key, ISecurityContext ctx) {
