@@ -1,3 +1,8 @@
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
 package org.jasig.portal.security;
 
 import java.io.IOException;
@@ -13,8 +18,11 @@ import org.jasig.portal.ChannelStaticData;
 import junit.framework.TestCase;
 
 /**
- * @author jjohnson
- *
+ * Unit test for BasicLocalConnectionContext that tests that the username and 
+ * password are passed in correctly with the static data and that the headers
+ * get set on the HttpConnection object. 
+ * 
+ * @author Brad Johnson, brad.johnson@ttu.edu
  */
 public class BasicLocalConnectionContextTest extends TestCase{
     
