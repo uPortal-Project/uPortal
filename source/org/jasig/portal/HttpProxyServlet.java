@@ -49,7 +49,8 @@ import org.jasig.portal.services.LogService;
  * 
  * @author Drew Mazurek (drew.mazurek@yale.edu)
  * @author Susan Bramhall (susan.bramhall@yale.edu)
- * @version 
+ * @version 1.0
+ * @since uPortal 2.2
  */
 public class HttpProxyServlet extends HttpServlet {
 

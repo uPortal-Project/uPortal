@@ -253,9 +253,9 @@ public class LocaleManager  {
     }    
     
     /**
-     * Helper method to produce a java.util.Locale object from
-     * a locale string, e.g. en_US or ja_JP
-     * @param localeString, a locale string such as en_US
+     * Helper method to produce a <code>java.util.Locale</code> object from
+     * a locale string such as en_US or ja_JP.
+     * @param localeString a locale string such as en_US
      * @return a java.util.Locale object representing the locale string
      */
     public static Locale parseLocale(String localeString) {

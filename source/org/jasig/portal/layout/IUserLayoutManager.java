@@ -63,7 +63,7 @@ public interface IUserLayoutManager {
     /**
      * Sets a user layout (with appropriate markings).
      *
-     * @param the user layout
+     * @param userLayout the user layout
      * @exception PortalException if an error occurs
      */
     public void setUserLayout(IUserLayout userLayout) throws PortalException;
