@@ -38,6 +38,7 @@ package org.jasig.portal.tools;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.XSLT;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
@@ -46,6 +47,7 @@ import java.io.StringReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -65,10 +67,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.DocumentHandler;
-import org.apache.xalan.xslt.XSLTProcessorFactory;
-import org.apache.xalan.xslt.XSLTProcessor;
-import org.apache.xalan.xslt.XSLTInputSource;
-import org.apache.xalan.xslt.XSLTResultTarget;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DocumentImpl;
 
@@ -166,7 +164,7 @@ public class DbLoader
           //domParser.setFeature ("http://xml.org/sax/features/validation", true);
           //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
           tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
-          domParser.parse(tablesURI);
+          domParser.parse(tablesUri);
           tablesDoc = domParser.getDocument();
         }
         catch(Exception e)
@@ -184,12 +182,8 @@ public class DbLoader
         replaceDataTypes(tablesDoc);
 
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
-        XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-        XSLTInputSource tablesInputSource = new XSLTInputSource(tablesDoc);
         tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
-        XSLTInputSource tablesXslInputSource = new XSLTInputSource(tablesXslUri);
-        XSLTResultTarget tablesTarget = new XSLTResultTarget(new TableHandler());
-        processor.process (tablesInputSource, tablesXslInputSource, tablesTarget);
+        XSLT.transform(tablesDoc, new URL(tablesXslUri), new TableHandler());
 
         // data.xml --> INSERT sql statements
         readData(parser);
