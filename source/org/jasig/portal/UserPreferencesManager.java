@@ -93,6 +93,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
+            if(userAgent==null || userAgent.equals("")) { 
+                userAgent=MediaManager.NULL_USER_AGENT; 
+            }
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = ulsdb.getSystemProfile(userAgent);

@@ -73,6 +73,11 @@ public class MediaManager {
   private static boolean omitDoctype = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype");
 
   /**
+   * A user agent string to use when the user-agent header value itself is null.
+   */
+  public static final String NULL_USER_AGENT="null";
+
+  /**
    * Constructs a MediaManager
    */
   public MediaManager () {
@@ -178,7 +183,11 @@ public class MediaManager {
       this.setMediaProps((String)null);
     }
     if (mediaProps != null) {
-      return  mediaProps.getValue(req.getHeader("User-Agent"));
+        String ua=req.getHeader("User-Agent");
+        if(ua==null || ua.equals("")) { 
+            ua=NULL_USER_AGENT; 
+        }
+      return  mediaProps.getValue(ua);
     }
     return  (String)null;
   }
@@ -355,7 +364,11 @@ public class MediaManager {
       this.setMediaProps((String)null);
     }
     if (mediaProps != null) {
-      return  getSerializer(mediaProps.getValue(req.getHeader("User-Agent")), out);
+        String ua=req.getHeader("User-Agent");
+        if(ua==null || ua.equals("")) { 
+            ua=NULL_USER_AGENT; 
+        }
+        return getSerializer(mediaProps.getValue(ua), out);
     }
     else {
       LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");

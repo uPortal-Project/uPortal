@@ -121,8 +121,12 @@ public class BrowserInfo {
      * Obtain a "user-agent" header contained in the request.
      * @return a <code>String</code> value
      */
-    public String getUserAgent () {
-        return (String)headers.get("user-agent");
+    public String getUserAgent() {
+        String ua=(String)headers.get("user-agent");
+        if(ua==null || ua.equals("")) { 
+            ua=MediaManager.NULL_USER_AGENT; 
+        }
+        return ua;
     }
 
     /**
