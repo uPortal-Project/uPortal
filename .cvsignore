@@ -47,3 +47,10 @@ Tomcat
 .project
 .classpath
 libs
+deploy
+lib
+.#build.properties.1.25
+.#build.properties.1.26
+uPortal.jpx
+uPortal.oif
+webpages.war
