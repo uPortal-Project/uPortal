@@ -85,7 +85,7 @@
         </td>
       </tr>
       <tr>
-        <xsl:copy-of select="channel[@name='Locale Chooser']"/>
+        <xsl:copy-of select="channel[@fname='session-locales-selector']"/>
       </tr>
     </table>
     <xsl:copy-of select="channel[@name='Login']"/>
