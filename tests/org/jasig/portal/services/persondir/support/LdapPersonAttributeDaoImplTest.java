@@ -6,7 +6,9 @@
 package org.jasig.portal.services.persondir.support;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -39,7 +41,7 @@ public class LdapPersonAttributeDaoImplTest extends TestCase {
      * This testcase will cease to work on that fateful day when Andrew
      * no longer appears in Yale University LDAP.
      */
-    public void testYale() {
+    public void testYaleAttributesForUser() {
         LdapPersonAttributeDaoImpl impl = new LdapPersonAttributeDaoImpl();
         
         Map ldapAttribsToPortalAttribs = new HashMap();
@@ -55,6 +57,33 @@ public class LdapPersonAttributeDaoImplTest extends TestCase {
         
         Map attribs = impl.attributesForUser("awp9");
         assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+    }
+    
+    /**
+     * Test proper reporting of declared attribute names.
+     */
+    public void testAttributeNames() {
+        LdapPersonAttributeDaoImpl impl = new LdapPersonAttributeDaoImpl();
+        
+        Map ldapAttribsToPortalAttribs = new HashMap();
+        ldapAttribsToPortalAttribs.put("mail", "email");
+        ldapAttribsToPortalAttribs.put("shirtColor", "dressShirtColor");
+        
+        Set surNameAttributeNames = new HashSet();
+        surNameAttributeNames.add("surName");
+        surNameAttributeNames.add("lastName");
+        surNameAttributeNames.add("familyName");
+        surNameAttributeNames.add("thirdName");
+        ldapAttribsToPortalAttribs.put("lastName", surNameAttributeNames);
+        
+        impl.setLdapAttributesToPortalAttributes(ldapAttribsToPortalAttribs);
+        
+        Set expectedAttributeNames = new HashSet();
+        expectedAttributeNames.addAll(surNameAttributeNames);
+        expectedAttributeNames.add("email");
+        expectedAttributeNames.add("dressShirtColor");
+        
+        assertEquals(expectedAttributeNames, impl.getAttributeNames());
     }
     
 }
