@@ -157,8 +157,9 @@ public class CLogin implements IPrivilegedChannel, ICacheable
       xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      if (fullName != null && fullName.equals("Guest"))
-        xslt.setStylesheetParameter("guest", "true");            
+      if (staticData.getPerson().isGuest() && !staticData.getPerson().getSecurityContext().isAuthenticated()) {
+        xslt.setStylesheetParameter("guest", "true");
+      }
       xslt.transform();
     }
     catch (Exception e)
@@ -169,16 +170,16 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
     public ChannelCacheKey generateKey() {
 
-	ChannelCacheKey k=new ChannelCacheKey();
-	StringBuffer sbKey = new StringBuffer(1024);
-	// guest pages are cached system-wide
-	if(staticData.getPerson().getID()==UserInstance.guestUserId) {
-	    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+  ChannelCacheKey k=new ChannelCacheKey();
+  StringBuffer sbKey = new StringBuffer(1024);
+  // guest pages are cached system-wide
+  if(staticData.getPerson().isGuest()) {
+      k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
             sbKey.append(systemCacheId);
-	} else {
-	    k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
-	}
-	sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+  } else {
+      k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+  }
+  sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
 
         if(xslUriForKey==null) {
             try {
@@ -187,17 +188,17 @@ public class CLogin implements IPrivilegedChannel, ICacheable
                 xslUriForKey = "Not attainable!";
             }
         }
-	sbKey.append("xslUri:").append(xslUriForKey).append(", ");
-	sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
-	sbKey.append("bAuthorizationAttemptFailed:").append(bAuthorizationAttemptFailed).append(", ");
-	sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
-	sbKey.append("bSecurityError:").append(bSecurityError);
-	k.setKey(sbKey.toString());
-	k.setKeyValidity(new Long(System.currentTimeMillis()));
-	return k;
+  sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+  sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
+  sbKey.append("bAuthorizationAttemptFailed:").append(bAuthorizationAttemptFailed).append(", ");
+  sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
+  sbKey.append("bSecurityError:").append(bSecurityError);
+  k.setKey(sbKey.toString());
+  k.setKeyValidity(new Long(System.currentTimeMillis()));
+  return k;
     }
 
     public boolean isCacheValid(Object validity) {
-	return true;
+  return true;
     }
 }
