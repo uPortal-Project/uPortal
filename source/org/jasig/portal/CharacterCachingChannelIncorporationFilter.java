@@ -211,65 +211,19 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                         chanEntry.add(this.params);
                         chanEntry.add(this.channelPublishId);
                         channelIdBlocks.add(chanEntry);
-                        Object o=cm.getChannelCharacters (channelSubscribeId, this.channelPublishId, this.channelClassName,this.timeOut,this.params);
-                        if(o!=null) {
-                            if(o instanceof String) {
-                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received a character result for channelSubscribeId=\""+channelSubscribeId+"\"");
-                                try {
-                                    ser.printRawCharacters((String)o);
-                                } catch (IOException ioe) {
-                                    LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : exception thrown while trying to output character cache for channelSubscribeId=\""+channelSubscribeId+"\". Message: "+ioe.getMessage());
-                                }
-                            } else if(o instanceof SAX2BufferImpl) {
-                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received an XSLT result for channelSubscribeId=\""+channelSubscribeId+"\"");
-                                // extract a character cache
-
-                                // start new channel cache
-                                try {
-                                    if(!ser.startCaching()) {
-                                        LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to restart channel cache on a channel start!");
-                                    }
-
-                                    // output channel buffer
-                                    SAX2BufferImpl buffer=(SAX2BufferImpl) o;
-                                    buffer.setAllHandlers(this.contentHandler);
-                                    buffer.outputBuffer();
-
-                                    // save the old cache state
-                                    if(ser.stopCaching()) {
-                                        try {
-                                            //                                            LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following channel character entry: \n"+ser.getCache());
-                                            cm.setChannelCharacterCache(channelSubscribeId,ser.getCache());
-                                        } catch (UnsupportedEncodingException e) {
-                                            LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to obtain character cache, invalid encoding specified ! "+e);
-                                        } catch (IOException ioe) {
-                                            LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : IO exception occurred while retreiving character cache ! "+ioe);
-                                        }
-
-                                    } else {
-                                        LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to reset cache state ! Serializer was not caching when it should've been !");
-                                    }
-                                } catch (IOException ioe) {
-                                    LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to start/stop caching!");
-                                }
-                            } else {
-                                LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : ChannelManager.getChannelCharacters() returned an unidentified object!");
-                            }
-
-                            // start caching again
-                            try {
-                                if(!ser.startCaching()) {
-                                    LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
-                                }
-                            } catch (IOException ioe) {
-                                LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
-                            }
+                    }
+                    cm.outputChannel(channelSubscribeId,this.getContentHandler());
+                    // start caching again
+                    try {
+                        if(!ser.startCaching()) {
+                            LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
                         }
-                    } else {
-                        cm.outputChannel (channelSubscribeId, this.channelPublishId, this.getContentHandler (),this.channelClassName,this.timeOut,this.params);
+                    } catch (IOException ioe) {
+                        LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
                     }
                 }
             }
+            
         } else {
             super.endElement (uri,localName,qName);
         }

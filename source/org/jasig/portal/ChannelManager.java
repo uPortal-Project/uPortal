@@ -48,6 +48,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
@@ -59,14 +60,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 
 import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutNodeDescription;
 
 import tyrex.naming.MemoryContext;
+import org.jasig.portal.serialize.CachingSerializer;
 
 /**
  * This class shall have the burden of squeezing content
@@ -107,6 +112,8 @@ public class ChannelManager {
     public static final Hashtable staticChannels=new Hashtable();
     public static final String channelAddressingPathElement="channel";
 
+    private Set repeatRenderings=new HashSet();
+    private boolean ccaching=false;
 
     public ChannelManager() {
         channelTable=new Hashtable();
@@ -146,10 +153,19 @@ public class ChannelManager {
      * This is designed to be used by the error channel only.
      */
 
-    public void addChannelInstance(String channelSubscribeId,IChannel channelInstance) {
-        if(channelTable.get(channelSubscribeId)!=null)
+    public void setChannelInstance(String channelSubscribeId,IChannel channelInstance) {
+        if(channelTable.get(channelSubscribeId)!=null) {
             channelTable.remove(channelSubscribeId);
+        }
         channelTable.put(channelSubscribeId,channelInstance);
+    }
+
+    /**
+     * A method to notify <code>ChannelManager</code> that the channel set for
+     * the current rendering cycle is complete.
+     * Note: This information is used to identify relevant channel communication dependencies
+     */
+    public void commitToRenderingChannelSet() {
     }
 
 
@@ -159,6 +175,7 @@ public class ChannelManager {
     public void finishedRendering() {
         // clean up
         rendererTable.clear();
+        clearRepeatedRenderings();
         targetParams=null;
     }
 
@@ -169,141 +186,222 @@ public class ChannelManager {
      */
     public void finishedSession() {
         this.finishedRendering();
-        channelCacheTable.clear();
+
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
         for(Enumeration e=channelTable.elements();e.hasMoreElements();) {
             ((IChannel)e.nextElement()).receiveEvent(ev);
         }
+
+        //channelCacheTable.clear();
+        //channelTable.clear()
     }
 
+    public void outputChannel(String channelSubscribeId,ContentHandler ch) {
+        // obtain ChannelRenderer
+        ChannelRenderer cr=(ChannelRenderer)rendererTable.get(channelSubscribeId);
+        if(cr==null) {
+            // channel rendering wasn't started ?
+            try {
+                cr=startChannelRendering(channelSubscribeId);
+            } catch (PortalException pe) {
+                // record, and go on
+                LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : Encountered a portal exception while trying to start channel rendering! :"+pe);
+            }
+        }
+        
+        // complete rendering and check status
+        int renderingStatus=-1;
+        try {
+            renderingStatus=cr.completeRendering();
+        } catch (Throwable t) {
+            handleRenderingError(channelSubscribeId,ch,t,renderingStatus,"encountered problem while trying to complete rendering","ChannelRenderer.completeRendering() threw",false);
+            return;
+        }
+
+        if(renderingStatus==cr.RENDERING_SUCCESSFUL) {
+            // obtain content
+            if(ch instanceof CachingSerializer && this.isCharacterCaching()) {
+                CachingSerializer cs=(CachingSerializer) ch;
+                // need to get characters
+                String characterContent=cr.getCharacters();
+                if(characterContent==null) {
+                    // obtain a SAX Buffer content then
+                    SAX2BufferImpl bufferedContent=cr.getBuffer();
+                    if(bufferedContent!=null) {
+                        // translate SAX Buffer into the character version
+                        try {
+                            if(!cs.startCaching()) {
+                                LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : unable to restart character cache while compiling character cache for channel \""+channelSubscribeId+"\" !");
+                            }
+                            // dump SAX buffer into the serializer
+                            bufferedContent.outputBuffer(ch);
+                            // extract compiled character cache
+                            if(cs.stopCaching()) {
+                                try {
+                                    characterContent=cs.getCache();
+                                    if(characterContent!=null) {
+                                        // save compiled character cache
+                                        cr.setCharacterCache(characterContent);
+                                        //LogService.log(LogService.DEBUG,"------ channel "+channelSubscribeId+" character block (compiled):");
+                                        // LogService.log(LogService.DEBUG,characterContent);
+                                    } else {
+                                        LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : character caching serializer returned NULL character cache for channel \""+channelSubscribeId+"\" !");
+                                    }
+                                } catch (UnsupportedEncodingException e) {
+                                    LogService.log(LogService.ERROR,"ChannelManager::outputChannel() :unable to compile character cache for channel \""+channelSubscribeId+"\"! Invalid encoding specified.",e);
+                                } catch (IOException ioe) {
+                                    LogService.log(LogService.ERROR,"ChannelManager::outputChannel() :IO exception occurred while compiling character cache for channel \""+channelSubscribeId+"\" !",ioe);
+                                }
+                            } else {
+                                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : unable to reset cache state while compiling character cache for channel \""+channelSubscribeId+"\" ! Serializer was not caching when it should've been ! Partial output possible!");
+                                return;
+                            }
+                        } catch (IOException ioe) {
+                            handleRenderingError(channelSubscribeId,ch,ioe,renderingStatus,"encountered a problem compiling channel character content","Encountered IO exception while trying to output channel content SAX to the character caching serializer",true);
+                            return;
+                        } catch (org.xml.sax.SAXException se) {
+                            handleRenderingError(channelSubscribeId,ch,se,renderingStatus,"encountered a problem compiling channel character content","Encountered SAX exception while trying to output channel content SAX to the character caching serializer",true);
+                            return;
+                        }
+
+                    } else {
+                        handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","ChannelRenderer.getBuffer() returned null",false);
+                        return;
+                    }                    
+                } else { // non-null characterContent case
+                    // output character content
+                    try {
+                        cs.printRawCharacters(characterContent);
+                        // LogService.log(LogService.DEBUG,"------ channel "+channelSubscribeId+" character block (retrieved):");
+                        // LogService.log(LogService.DEBUG,characterContent);
+                    } catch (IOException ioe) {
+                        LogService.log(LogService.DEBUG,"ChannelManager::outputChannel() : exception thrown while trying to output character cache for channelSubscribeId=\""+channelSubscribeId+"\". Message: "+ioe.getMessage());
+                    }
+                }
+            } else { // regular serializer case
+                // need to output straight
+                SAX2BufferImpl bufferedContent=cr.getBuffer();
+                if(bufferedContent!=null) {
+                    try {
+                        // output to the serializer
+                        ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(ch);
+                        bufferedContent.outputBuffer(custodian);
+                    } catch (Exception e) {
+                        LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : encountered an exception while trying to output SAX2 content of channel \""+channelSubscribeId+"\" to a regular serializer. Partial output possible !",e);
+                        return;
+                    }
+                } else {
+                    handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","ChannelRenderer.getBuffer() returned null",false);
+                    return;
+                }
+            }
+        } else {
+            handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unsuccessfull rendering","unsuccessfull rendering",false);
+            return;
+        }
+    }
+
+    private boolean isRepeatedRenderingAttempt(String channelSubscribeId) {
+        return repeatRenderings.contains(channelSubscribeId);
+    }
+
+    private void setRepeatedRenderingAttempt(String channelSubscribeId) {
+        repeatRenderings.add(channelSubscribeId);
+    }
+
+    private void clearRepeatedRenderings() {
+        repeatRenderings.clear();
+    }
 
     /**
-     * Return channel rendering in a character form. If the character form is not available, SAXBufferImpl is returned, and
-     * later replaced with character representation.
+     * Handles rendering output errors by replacing a channel instance with that of an error channel.
+     * (or giving up if the error channel is failing as well)
      *
-     * @param channelSubscribeId channel subscribe Id
-     * @param className channel class name
-     * @param timeOut channel timeout
-     * @param params channel publish/subscribe params
-     * @return a character buffer (<code>String</code>) or a SAX buffer (<code>SAXBufferImpl</code>)
+     * @param channelSubscribeId a <code>String</code> value
+     * @param ch a <code>ContentHandler</code> value
+     * @param t a <code>Throwable</code> value
+     * @param renderingStatus an <code>int</code> value
+     * @param commonMessage a <code>String</code> value
+     * @param technicalMessage a <code>String</code> value
+     * @param partialOutput a <code>boolean</code> value
      */
-    public Object getChannelCharacters(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params) {
-        ChannelRenderer cr;
-
-        if(rendererTable.get(channelSubscribeId) == null) {
-            if(className!=null && params!=null) {
-                this.startChannelRendering(channelSubscribeId, channelPublishId, className, timeOut, params,true);
-            } else {
-                LogService.instance().log(LogService.ERROR,"ChannelManager:g:etChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
-            }
-        }
-        if((cr = (ChannelRenderer) rendererTable.get(channelSubscribeId)) != null) {
-
-            SAX2BufferImpl dh=new SAX2BufferImpl();
-            // in case there isn't a character cache
-            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter((ContentHandler)dh);
-            try {
-                int out = cr.completeRendering();
-                if(out==cr.RENDERING_SUCCESSFUL) {
-                    // try to get character output
-                    String cbuffer=cr.getCharacters();
-                    if(cbuffer!=null)  {
-                        return cbuffer;
-                    }
-                    dh=cr.getBuffer();
-                }
-
-                if(out==cr.RENDERING_TIMED_OUT) {
-                    // rendering has timed out
-                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
-                    channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,channelSubscribeId,badChannel);
-                    // replace the channel object in ChannelRenderer (for cache recording purposes)
-                    cr.setChannel(errorChannel);
-                    // replace the channel object in the channel table
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    // demand output
-                    try {
-                        ChannelRuntimeData rd = new ChannelRuntimeData();
-                        rd.setBrowserInfo(binfo);
-                        rd.setChannelSubscribeId(channelSubscribeId);
-
-                        UPFileSpec up=new UPFileSpec(uPElement);
-                        up.setTargetNodeId(channelSubscribeId);
-                        rd.setUPFile(up);
-
-                        errorChannel.setRuntimeData(rd);
-
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.renderXML(dh);
-                    } catch (Exception e) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-                }
-
-            } catch (InternalPortalException ipe) {
-                // this implies that the channel has thrown an exception during
-                // renderXML() call. No events had been placed onto the ContentHandler,
-                // so that an Error channel can be rendered in place.
-                Throwable channelException=ipe.getException();
-                if(channelException!=null) {
-                    // see if the renderXML() has thrown a PortalException
-                    // hand it over to the Error channel
-                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
-                    channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,channelSubscribeId,badChannel);
-                    // replace the channel object in ChannelRenderer (for cache recording purposes)
-                    cr.setChannel(errorChannel);
-                    // replace the channel object in the channel table
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    // demand output
-                    try {
-                        ChannelRuntimeData rd = new ChannelRuntimeData();
-                        rd.setBrowserInfo(binfo);
-                        rd.setChannelSubscribeId(channelSubscribeId);
-
-                        UPFileSpec up=new UPFileSpec(uPElement);
-                        up.setTargetNodeId(channelSubscribeId);
-                        rd.setUPFile(up);
-
-                        errorChannel.setRuntimeData(rd);
-
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.renderXML(dh);
-                    } catch (Exception e) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-
+    private void handleRenderingError(String channelSubscribeId,ContentHandler ch, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
+        if(isRepeatedRenderingAttempt(channelSubscribeId)) {
+            // this means that the error channel has failed :(
+            String message="ChannelManager::handleRenderingError() : Unable to handle a rendering error through error channel.";
+            if(t!=null) {
+                if(t instanceof InternalPortalException) {
+                    InternalPortalException ipe=(InternalPortalException) t;
+                    Throwable e=ipe.getException();
+                    message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
                 } else {
-                    LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
+                    message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
                 }
-            } catch (Exception e) {
-                // This implies that the channel has been successful in completing renderXML()
-                // method, but somewhere down the line things went wrong. Most likely,
-                // a buffer output routine threw. This means that we are likely to have partial
-                // output in the document handler. Really bad !
-                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e, e);
-            } catch (Throwable t) {
-              LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+t, t);
-
+            } else {
+                // check status
+                if(renderingStatus!=-1) {
+                    message=message+" channelRenderingStatus="+ChannelRenderer.renderingStatus[renderingStatus];
+                }
             }
-            return dh;
+            message=message+" "+technicalMessage;
+            LogService.log(LogService.ERROR,message);
         } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for channelSubscribeId=\""+channelSubscribeId+"\" is absent from cache !!!");
-        }
+            // first check for an exception
+            if(t!=null ){
+                if(t instanceof InternalPortalException) {
+                    InternalPortalException ipe=(InternalPortalException) t;
+                    Throwable channelException=ipe.getException();
+                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,false);
+                } else {
+                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,false);
+                }
+            } else {
+                if(renderingStatus==ChannelRenderer.RENDERING_TIMED_OUT) {
+                    replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,false);
+                } else {
+                    replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,false);
+                }
+            }
 
-        return null;
+            // remove channel renderer
+            rendererTable.remove(channelSubscribeId);
+            // re-try render
+            if(!partialOutput) {
+                setRepeatedRenderingAttempt(channelSubscribeId);
+                outputChannel(channelSubscribeId,ch);
+            }
+        }
     }
 
+    private IChannel replaceWithErrorChannel(String channelSubscribeId,int errorCode, Throwable t, String message,boolean setRuntimeData) {
+        // get and delete old channel instance
+        IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
+        channelTable.remove(channelSubscribeId);
+        rendererTable.remove(channelSubscribeId);
+
+        CError errorChannel=new CError(errorCode,t,channelSubscribeId,oldInstance,message);
+        if(setRuntimeData) {
+            ChannelRuntimeData rd=new ChannelRuntimeData();
+            rd.setBrowserInfo(binfo);
+            rd.setChannelSubscribeId(channelSubscribeId);
+            UPFileSpec up=new UPFileSpec(uPElement);
+            up.setTargetNodeId(channelSubscribeId);
+            rd.setUPFile(up);
+            try {
+                errorChannel.setRuntimeData(rd);
+                errorChannel.setPortalControlStructures(pcs);
+            } catch (Throwable e) {
+                // have to ignore this one, this is the last safety here
+                StringWriter sw=new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                sw.flush();
+                LogService.log(LogService.ERROR,"Encountered an exception while trying to set runtime data or portal control structures on the error channel!"+sw.toString());
+            }
+        }
+        channelTable.put(channelSubscribeId,errorChannel);
+        return errorChannel;
+    }
 
     /**
      * <code>getChannelContext</code> generates a JNDI context that
@@ -376,7 +474,7 @@ public class ChannelManager {
     }
 
 
-    private IChannel instantiateChannel(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params) throws Exception {
+    private IChannel instantiateChannel(String channelSubscribeId, String channelPublishId, String className, long timeOut, Map params) throws Exception {
         IChannel ch=null;
 
         // check if the user has permissions to instantiate this channel
@@ -455,111 +553,6 @@ public class ChannelManager {
         channelTable.put(channelSubscribeId,ch);
 
         return ch;
-    }
-
-
-    /**
-     * Output channel content.
-     * Note that startChannelRendering had to be invoked on this channel prior to calling this function.
-     * @param channelSubscribeId unique channel Id
-     * @param dh document handler that will receive channel content
-     */
-    public void outputChannel(String channelSubscribeId, String channelPublishId, ContentHandler dh, String className, long timeOut, Hashtable params) {
-        ChannelRenderer cr;
-
-        if (rendererTable.get(channelSubscribeId) == null) {
-            this.startChannelRendering(channelSubscribeId, channelPublishId, className, timeOut, params,false);
-        }
-        if ((cr = (ChannelRenderer) rendererTable.get(channelSubscribeId)) != null) {
-            rendererTable.remove(channelSubscribeId);
-            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(dh);
-            try {
-                int out = cr.outputRendering(custodian);
-                if(out==cr.RENDERING_TIMED_OUT) {
-                    // rendering has timed out
-                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
-                    channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,channelSubscribeId,badChannel);
-                    // replace the channel object in ChannelRenderer (for cache recording purposes)
-                    cr.setChannel(errorChannel);
-                    // replace the channel object in the channel table
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    // demand output
-                    try {
-                        ChannelRuntimeData rd = new ChannelRuntimeData();
-                        rd.setBrowserInfo(binfo);
-                        rd.setChannelSubscribeId(channelSubscribeId);
-
-                        UPFileSpec up=new UPFileSpec(uPElement);
-                        up.setTargetNodeId(channelSubscribeId);
-                        rd.setUPFile(up);
-
-                        errorChannel.setRuntimeData(rd);
-
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.renderXML(dh);
-                    } catch (Exception e) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-                }
-
-            } catch (InternalPortalException ipe) {
-                // this implies that the channel has thrown an exception during
-                // renderXML() call. No events had been placed onto the ContentHandler,
-                // so that an Error channel can be rendered in place.
-                Throwable channelException=ipe.getException();
-                if(channelException!=null) {
-                    // see if the renderXML() has thrown a PortalException
-                    // hand it over to the Error channel
-                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
-                    channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,channelSubscribeId,badChannel);
-                    // replace the channel object in ChannelRenderer (for cache recording purposes)
-                    cr.setChannel(errorChannel);
-                    // replace the channel object in the channel table
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    // demand output
-                    try {
-                        ChannelRuntimeData rd = new ChannelRuntimeData();
-                        rd.setBrowserInfo(binfo);
-                        rd.setChannelSubscribeId(channelSubscribeId);
-
-                        UPFileSpec up=new UPFileSpec(uPElement);
-                        up.setTargetNodeId(channelSubscribeId);
-                        rd.setUPFile(up);
-
-                        errorChannel.setRuntimeData(rd);
-
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.renderXML(dh);
-                    } catch (Exception e) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-
-                } else {
-                    LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels() : received InternalPortalException that doesn't carry a channel exception inside !?");
-                }
-            } catch (Exception e) {
-                // This implies that the channel has been successful in completing renderXML()
-                // method, but somewhere down the line things went wrong. Most likely,
-                // a buffer output routine threw. This means that we are likely to have partial
-                // output in the document handler. Really bad !
-                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+e);
-            } catch (Throwable t) {
-              // Some strange runtime error
-                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+t);
-            }
-        } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for channelSubscribeId=\""+channelSubscribeId+"\" is absent from cache !!!");
-        }
     }
 
 
@@ -761,6 +754,13 @@ public class ChannelManager {
         }
     }
 
+    public boolean isCharacterCaching() {
+        return this.ccaching;
+    }
+
+    public void setCharacterCaching(boolean setting) {
+        this.ccaching=setting;
+    }
 
     public void setUPElement(UPFileSpec uPElement) {
         this.uPElement=uPElement;
@@ -770,6 +770,100 @@ public class ChannelManager {
         upm=m;
     }
 
+    public ChannelRenderer startChannelRendering(String channelSubscribeId) throws PortalException {
+        return startChannelRendering(channelSubscribeId,false);
+    }
+
+    private ChannelRenderer startChannelRendering(String channelSubscribeId,boolean noTimeout) throws PortalException {
+        // see if the channel has already been instantiated
+        // see if the channel is cached
+        IChannel ch;
+        long timeOut=0;
+        
+        UserLayoutNodeDescription node=upm.getUserLayoutManager().getNode(channelSubscribeId);
+        if(!(node instanceof UserLayoutChannelDescription)) {
+            throw new PortalException("\""+channelSubscribeId+"\" is not a channel node !");
+        }
+        
+        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) node;
+        timeOut=channel.getTimeout();
+
+        if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
+            try {
+                ch=instantiateChannel(channelSubscribeId,channel.getChannelPublishId(),channel.getClassName(),channel.getTimeout(),channel.getParameterMap());
+            } catch (Exception e) {
+                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+            }
+        }
+
+        ChannelRuntimeData rd=null;
+
+        if(!channelSubscribeId.equals(channelTarget)) {
+            if((ch instanceof IPrivilegedChannel)) {
+                // send the control structures
+                try {
+                    ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
+                } catch (Exception e) {
+                    channelTable.remove(ch);
+                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelSubscribeId,ch);
+                    channelTable.put(channelSubscribeId,errorChannel);
+                    ch=errorChannel;
+                    // set portal control structures
+                    try {
+                        errorChannel.setPortalControlStructures(pcs);
+                    } catch (Exception e2) {
+                        // things are looking bad for our hero
+                        StringWriter sw=new StringWriter();
+                        e2.printStackTrace(new PrintWriter(sw));
+                        sw.flush();
+                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                    }
+                }
+            }
+            rd = new ChannelRuntimeData();
+            rd.setBrowserInfo(binfo);
+            rd.setChannelSubscribeId(channelSubscribeId);
+
+            UPFileSpec up=new UPFileSpec(uPElement);
+            up.setTargetNodeId(channelSubscribeId);
+            rd.setUPFile(up);
+
+        } else {
+            if(!(ch instanceof IPrivilegedChannel)) {
+                rd = new ChannelRuntimeData();
+                rd.setParameters(targetParams);
+                rd.setBrowserInfo(binfo);
+                rd.setChannelSubscribeId(channelSubscribeId);
+
+                UPFileSpec up=new UPFileSpec(uPElement);
+                up.setTargetNodeId(channelSubscribeId);
+                rd.setUPFile(up);
+
+            }
+        }
+
+        // Check if channel is rendering as the root element of the layout
+        String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root"))
+          rd.setRenderingAsRoot(true);
+
+        ChannelRenderer cr = new ChannelRenderer(ch,rd);
+        cr.setCharacterCacheable(this.isCharacterCaching());
+        if(ch instanceof ICacheable) {
+            cr.setCacheTables(this.channelCacheTable);
+        }
+
+        if(noTimeout) {
+            cr.setTimeout(0);
+        } else {
+            cr.setTimeout(timeOut);
+        }
+
+        cr.startRendering();
+        rendererTable.put(channelSubscribeId,cr);
+        return cr;        
+
+    }
 
     /**
      * Start rendering the channel in a separate thread.
@@ -780,7 +874,7 @@ public class ChannelManager {
      * @param className name of the channel class
      * @param params a table of parameters
      */
-    public void startChannelRendering(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
+    public ChannelRenderer startChannelRendering(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
     {
         // see if the channel is cached
         IChannel ch;
@@ -854,5 +948,6 @@ public class ChannelManager {
         cr.setTimeout(timeOut);
         cr.startRendering();
         rendererTable.put(channelSubscribeId,cr);
+        return cr;
     }
 }

@@ -110,7 +110,8 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl {
         if (insideChannelElement) {
             if (qName.equals ("channel")) {
                 if (this.getContentHandler() != null) {
-                    cm.outputChannel (channelSubscribeId, this.channelPublishId, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
+                    //cm.outputChannel (channelSubscribeId, this.channelPublishId, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
+                    cm.outputChannel(channelSubscribeId,this.getContentHandler());
                     insideChannelElement = false;
                 }
             }

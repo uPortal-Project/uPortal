@@ -329,6 +329,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
                     boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
+                    channelManager.setCharacterCaching(ccaching);
                     // initialize ChannelIncorporationFilter
                     //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
                     CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CACHE_ENABLED && this.CHARACTER_CACHE_ENABLED);
@@ -362,6 +363,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                 int ccsize=cCache.systemBuffers.size();
                                 if(cCache.channelIds.size()!=ccsize-1) {
                                     LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channelIds character cache has invalid size !");
+                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
+                                    
                                 }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                                 cSerializer.setDocumentStarted(true);
@@ -379,47 +382,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                     Long timeOut=(Long)chanEntry.get(2);
                                     Hashtable chanParams=(Hashtable)chanEntry.get(3);
                                     String channelPublishId=(String)chanEntry.get(4);
-                                    Object o=channelManager.getChannelCharacters (channelSubscribeId, channelPublishId, chanClassName,timeOut.longValue(),chanParams);
-                                    if(o!=null) {
-                                        if(o instanceof String) {
-                                            LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received a character result for channelSubscribeId=\""+channelSubscribeId+"\"");
-                                            cSerializer.printRawCharacters((String)o);
-                                            //LogService.instance().log(LogService.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
-                                            //LogService.instance().log(LogService.DEBUG,(String)o);
-                                        } else if(o instanceof SAX2BufferImpl) {
-                                            LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received an XSLT result for channelSubscribeId=\""+channelSubscribeId+"\"");
-                                            // extract a character cache
-
-                                            // start new channel cache
-                                            if(!cSerializer.startCaching()) {
-                                                LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to restart channel cache on a channel start!");
-                                            }
-
-                                            // output channel buffer
-                                            if(o instanceof SAX2BufferImpl) {
-                                                SAX2BufferImpl b=(SAX2BufferImpl) o;
-                                                b.outputBuffer(markupSerializer);
-                                            }
-
-                                            // save the old cache state
-                                            if(cSerializer.stopCaching()) {
-                                                try {
-                                                    channelManager.setChannelCharacterCache(channelSubscribeId,cSerializer.getCache());
-                                                    //LogService.instance().log(LogService.DEBUG,"----------generated channel cache #"+Integer.toString(sb));
-                                                    //LogService.instance().log(LogService.DEBUG,cSerializer.getCache());
-                                                } catch (UnsupportedEncodingException e) {
-                                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
-                                                } catch (IOException ioe) {
-                                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : IO exception occurred while retreiving character cache ! "+ioe);
-                                                }
-
-                                            } else {
-                                                LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to reset cache state ! Serializer was not caching when it should've been !");
-                                            }
-                                        } else {
-                                            LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : ChannelManager.getChannelCharacters() returned an unidentified object!");
-                                        }
-                                    }
+                                    
+                                    channelManager.outputChannel(channelSubscribeId,markupSerializer);
                                 }
 
                                 // print out the last block
