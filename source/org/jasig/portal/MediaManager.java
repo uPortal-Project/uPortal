@@ -306,6 +306,7 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
+      frmt.setOmitDocumentType(true); // Portal looks like crap on Netscape when the XHTML doctype is included!
       return  new CachingXHTMLSerializer(out, frmt);
     }
     else {
