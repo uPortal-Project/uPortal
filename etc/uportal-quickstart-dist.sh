@@ -42,7 +42,7 @@ echo "update server.home in uPortal build.properties"
 echo "start hsqldb - ant hsql"
 echo "set getDatasourceFromJNDI in portal.properties to true
 echo "run ant deploy in uPortal home"
-echo "start tomcat (ant tomcatstart) and check for no errors in portal.log"
+echo "start tomcat, ant tomcatstart, and check for no errors in portal.log"
 echo "stop HSQL and Tomcat"
 echo "run fix-unix-modes.sh"
 echo "zip -r uPortal_X-X-X-quick-start uPortal_X-X-X-quick-start"
