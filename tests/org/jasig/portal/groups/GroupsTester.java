@@ -289,6 +289,7 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testUpdateLockableGroupsWithRenewableLock"));
   suite.addTest(new GroupsTester("testContains"));
   suite.addTest(new GroupsTester("testDeleteChildGroup"));
+  suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -1211,6 +1212,83 @@ public void testUpdateMembersVisibility() throws Exception
 
 
     print(CR + "***** LEAVING GroupsTester.testUpdateMembersVisibility() *****" + CR);
+
+}
+
+/**
+ */
+public void testMixLockableAndNonLockableGroups() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    int totNumGroups = 3;
+    IEntityGroup[] groups = new IEntityGroup[totNumGroups];
+    boolean testValue = false;
+    Exception e = null;
+    int idx = 0;
+
+    msg = "Creating " + totNumGroups + " new groups.";
+    print(msg);
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groups[idx] = getNewGroup();
+        groups[idx].update();
+        assertNotNull(msg, groups[idx]);
+        groups[idx].update();
+    }
+    
+    msg = "Getting group keys.";
+    print(msg);
+    String[] groupKeys = new String[totNumGroups];
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groupKeys[idx] = groups[idx].getKey();
+    }
+
+    msg = "Retrieving nonLockable group " + groupKeys[0];
+    print(msg);
+    IEntityGroup group1 = findGroup(groupKeys[0]);
+    assertNotNull(msg, group1);
+
+    msg = "Retrieving lockable group for key " + groupKeys[0];
+    print(msg);
+    ILockableEntityGroup lockableGroup = findLockableGroup(groupKeys[0]);
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    msg = "Updating lockable group.";
+    print(msg);
+    String oldName = lockableGroup.getName();
+    String newName = "NEW GROUP NAME";
+    print(msg);
+    lockableGroup.setName(newName);
+    lockableGroup.update();
+
+    msg = "Retrieving a second nonLockable group for " + groupKeys[0];
+    print(msg);
+    IEntityGroup group2 = findGroup(groupKeys[0]);
+    assertNotNull(msg, group2);
+    assertEquals(msg, newName, group2.getName());
+
+    msg = "Updating second nonLockable group.";
+    print(msg);
+    group2.setName(oldName);
+    group2.update();
+
+    msg = "Retrieving a second lockable group for key " + groupKeys[0];
+    print(msg);
+    ILockableEntityGroup lockableGroup2 = findLockableGroup(groupKeys[0]);
+    testValue = lockableGroup2.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    msg = "Updating second lockable group.";
+    print(msg);
+    lockableGroup2.setName(newName);
+    lockableGroup2.update();
+    
+
+    print(CR + "***** LEAVING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
 
 }
 }
