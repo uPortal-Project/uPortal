@@ -365,7 +365,10 @@ function xml(nodelist){
 								<xsl:if test="@default='true'">
 									<xsl:attribute name="selected">selected</xsl:attribute>
 								</xsl:if>
-								<xsl:value-of select="."/>
+								<xsl:choose>
+								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+								</xsl:choose>
 							</option>
 						</xsl:for-each>
 					</select>
@@ -382,7 +385,10 @@ function xml(nodelist){
 								<xsl:attribute name="checked">checked</xsl:attribute>
 							</xsl:if>
 						</input>
-						<xsl:value-of select="."/>
+						<xsl:choose>
+						  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+						  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each>
 				</td>
 				<xsl:call-template name="subscribe"/>
@@ -397,7 +403,10 @@ function xml(nodelist){
 								<xsl:if test="@default='true'">
 									<xsl:attribute name="selected">selected</xsl:attribute>
 								</xsl:if>
-								<xsl:value-of select="."/>
+								<xsl:choose>
+								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+								</xsl:choose>
 							</option>
 						</xsl:for-each>
 					</select>
@@ -420,7 +429,10 @@ function xml(nodelist){
 								<xsl:if test="@default='true'">
 									<xsl:attribute name="selected">selected</xsl:attribute>
 								</xsl:if>
-								<xsl:value-of select="."/>
+								<xsl:choose>
+								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+								</xsl:choose>
 							</option>
 						</xsl:for-each>
 					</select>
@@ -437,7 +449,10 @@ function xml(nodelist){
 								<xsl:attribute name="checked">checked</xsl:attribute>
 							</xsl:if>
 						</input>
-						<xsl:value-of select="."/>
+						<xsl:choose>
+						  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+						  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each>
 				</td>
 				<xsl:call-template name="subscribe"/>
@@ -452,7 +467,10 @@ function xml(nodelist){
 								<xsl:if test="@default='true'">
 									<xsl:attribute name="selected">selected</xsl:attribute>
 								</xsl:if>
-								<xsl:value-of select="."/>
+								<xsl:choose>
+								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
+								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+								</xsl:choose>
 							</option>
 						</xsl:for-each>
 					</select>
