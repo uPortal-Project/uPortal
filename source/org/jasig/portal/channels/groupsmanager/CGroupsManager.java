@@ -481,8 +481,8 @@ public class CGroupsManager
       CGroupsManagerSessionData sessionData = getSessionData(uid);
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
-      String vkey = runtimeData.getParameter("grpView") + " - " + runtimeData.getParameter("grpViewId")
-            + " - " + runtimeData.getParameter("grpMode");
+      String vkey = sessionData.currentPage+" - "+sessionData.feedback+" - "+sessionData.highlightedGroupID+" - "
+        +sessionData.mode+" - "+sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", this.getClass().getName() + ".vKey() : vKey returns = " + vkey);
       return  vkey;
    }
