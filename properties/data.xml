@@ -23,11 +23,11 @@
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
