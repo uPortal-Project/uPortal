@@ -3143,6 +3143,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
       }
     }
+	  if ( rs != null ) rs.close();
       if ( stmt != null ) stmt.close();
   } catch ( Exception e ) {
        throw new PortalException(e);
@@ -3151,5 +3152,37 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       }
     return incorrectIds.elements();
  }
+ 
+   /**
+		* Returns the user group keys which the fragment is published to
+		* @param person an <code>IPerson</code> object specifying the user
+		* @param fragmentId a <code>String</code> value
+		* @return a <code>Enumeration</code> instance containing the group keys
+		* @exception PortalException if an error occurs
+		*/
+   public Enumeration getPublishGroups (IPerson person, String fragmentId ) throws PortalException {
+	  int userId = person.getID();
+	  Vector groupKeys = new Vector();
+	  Connection con = RDBMServices.getConnection();
+	  try {
+		String query1 = "SELECT UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID"+
+		" AND UGF.FRAGMENT_ID="+fragmentId+ " AND UOF.OWNER_ID="+userId;
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(query1);
+		
+		while ( rs.next() ) {
+		  String groupKey = rs.getString(1);
+		  if ( groupKey != null )
+		    groupKeys.add(groupKey);
+		}
+		  if ( rs != null ) rs.close();
+		  if ( stmt != null ) stmt.close();
+	  } catch ( Exception e ) {
+		   throw new PortalException(e);
+		} finally {
+		   RDBMServices.releaseConnection(con);
+		  }
+		return groupKeys.elements();
+   }
 
 }

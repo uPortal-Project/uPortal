@@ -38,6 +38,7 @@
 package org.jasig.portal.layout;
 
 import java.util.Set;
+import java.util.Enumeration;
 import org.jasig.portal.PortalException;
 
 /**
@@ -150,5 +151,13 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	  * @exception PortalException if an error occurs
 	  */
 	public String createFragment( String fragmentName, String fragmentDesc, String fragmentRootName ) throws PortalException;
+	
+	/**
+			* Returns the user group keys which the fragment is published to
+			* @param fragmentId a <code>String</code> value
+			* @return a <code>Enumeration</code> instance containing the group keys
+			* @exception PortalException if an error occurs
+			*/
+	public Enumeration getPublishGroups (String fragmentId ) throws PortalException;
 
 }

@@ -36,6 +36,7 @@
 package org.jasig.portal.layout;
 
 import java.util.Map;
+import java.util.Enumeration;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
@@ -143,6 +144,16 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
     public Map getFragments (IPerson person) throws PortalException;
+    
+	/**
+		* Returns the user group keys which the fragment is published to
+		* @param person an <code>IPerson</code> object specifying the user
+		* @param fragmentId a <code>String</code> value
+		* @return a <code>Enumeration</code> instance containing the group keys
+		* @exception PortalException if an error occurs
+		*/
+    public Enumeration getPublishGroups (IPerson person, String fragmentId ) throws PortalException;
+
 
     /**
      * Returns the next fragment ID

@@ -36,10 +36,14 @@
 package org.jasig.portal.layout.channels;
 
 import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IServant;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IGroupMember;
@@ -81,34 +85,53 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private static final String sslLocation = "/org/jasig/portal/channels/CFragmentManager/CFragmentManager.ssl";
 	private IAggregatedUserLayoutManager alm;
 	private ThemeStylesheetUserPreferences themePrefs;
-	private static IServant groupServant;
 	private Map fragments;
 	private boolean servantRender = false;
+	private static IServant groupServant;
+	private String fragmentId;
 
 	public CFragmentManager() throws PortalException {
 		super();
 	}
+
+    private synchronized IGroupMember[] getGroupMembers(String fragmentId) throws PortalException {
+       Enumeration groupsEnum = alm.getPublishGroups(fragmentId);	
+       ArrayList groups = new ArrayList(); 
+       while ( groupsEnum.hasMoreElements() ) {
+       	String groupKey = (String) groupsEnum.nextElement();
+       	IGroupMember member = GroupService.findGroup(groupKey); 
+       	if ( member != null )
+       	 groups.add(member);  
+       }
+        return (IGroupMember[]) groups.toArray();
+    }   
 
 
 	/**
 		 * Produces a group servant
 		 * @return the group servant
 		 */
-	private synchronized IServant getGroupServant() throws PortalException {
-			if (groupServant == null) {		
-				try {
-					// create the appropriate servant
-						groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+	private synchronized IServant getGroupServant() throws PortalException {	
+		if ( groupServant == null ) {
+				 try {
+				  // create the appropriate servant
+				  if ( fragmentId != null && CommonUtils.parseInt(fragmentId) > 0  ) {
+					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+													"Please select groups or people who should have access to this channel:",
+													GroupService.EVERYONE,false,true,getGroupMembers(fragmentId));	
+				  } else 
+					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
 								"Please select groups or people who should have access to this channel:",
-								GroupService.EVERYONE);					
+								GroupService.EVERYONE);								
 				} catch (Exception e) {
 					throw new PortalException(e);
 				  }
-			}
-			return  groupServant;
+		}	
+		 groupServant.setRuntimeData((ChannelRuntimeData)runtimeData.clone());				  
+		 return groupServant;
     }
 
-	private Element getGroupsXML ( Document doc ) throws PortalException {
+	/*private Element getGroupsXML ( Document doc ) throws PortalException {
 		   Element selectedGroupsE = doc.createElement("selectedGroups");
 		   IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
 		   System.out.println ( "gms size: " + gms.length );
@@ -127,7 +150,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 			   }
 		   }
 		   return  selectedGroupsE;
-	}
+	}*/
 
 	private String createFolder( ALFragment fragment ) throws PortalException {
 		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
@@ -137,8 +160,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	private String analyzeParameters( XSLT xslt, ContentHandler out ) throws PortalException {
-		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
+	private void analyzeParameters( XSLT xslt, ContentHandler out ) throws PortalException {
+		fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
 		if ( servantRender && getGroupServant().isFinished() ) 
 		   servantRender = false;
@@ -202,7 +225,6 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 			    xslt.setStylesheetParameter("uPcFM_action",action);	
 		
-		return fragmentId;
 	}
 	
 	
@@ -282,7 +304,6 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	}
 	public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
 	  runtimeData = rd;
-	  getGroupServant().setRuntimeData(rd);
 	}
 
 	public void refreshFragments() throws PortalException {
@@ -303,7 +324,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		
-		String fragmentId = analyzeParameters(xslt,out);
+		analyzeParameters(xslt,out);
 		if ( servantRender )
 		  getGroupServant().renderXML(out); 
 		else {

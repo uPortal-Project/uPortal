@@ -1106,6 +1106,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   return layoutStore.getFragments(person).keySet();	
 	}
 	
+	/**
+				* Returns the user group keys which the fragment is published to
+				* @param fragmentId a <code>String</code> value
+				* @return a <code>Enumeration</code> instance containing the group keys
+				* @exception PortalException if an error occurs
+				*/
+	public Enumeration getPublishGroups (String fragmentId ) throws PortalException {
+	  return layoutStore.getPublishGroups(person,fragmentId);	
+	}
+	
 	public ILayoutFragment getFragment ( String fragmentId ) throws PortalException {
 	   return layoutStore.getFragment(person,fragmentId);	
     }
