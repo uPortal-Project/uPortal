@@ -1691,43 +1691,81 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
 
         int firstStructId = -1;
-        String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-        rs = stmt.executeQuery(sQuery);
-        try {
-          if (rs.next()) {
-            firstStructId = rs.getInt(1);
-          } else {
-            throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for " + userId + " and LAYOUT_ID " + layoutId);
-          }
-        } finally {
-          rs.close();
-        }
+        
+        //Flags to enable a default layout lookup if it's needed
+        boolean foundLayout = false;
+        boolean triedDefault = false;
+        
+        //This loop is used to ensure a layout is found for a user. It tries
+        //looking up the layout for the current userID. If one isn't found
+        //the userID is replaced with the template user ID for this user and
+        //the layout is searched for again. This loop should only ever loop once.
+        do {
+            String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            rs = stmt.executeQuery(sQuery);
+            try {
+              if (rs.next()) {
+                firstStructId = rs.getInt(1);
+              } else {
+                throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for " + userId + " and LAYOUT_ID " + layoutId);
+              }
+            } finally {
+              rs.close();
+            }
 
-        String sql;
-        if (localeAware) {
-            // This needs to be changed to get the localized strings
-            sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
-          "ULS.UNREMOVABLE,ULS.IMMUTABLE";
-        }  else {
-            sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
-          "ULS.UNREMOVABLE,ULS.IMMUTABLE";
-        }
-        if (RDBMServices.supportsOuterJoins) {
-          sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
-        } else {
-          sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
-        }
-        sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
+            String sql;
+            if (localeAware) {
+                // This needs to be changed to get the localized strings
+                sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+              "ULS.UNREMOVABLE,ULS.IMMUTABLE";
+            }  else {
+                sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+              "ULS.UNREMOVABLE,ULS.IMMUTABLE";
+            }
+            if (RDBMServices.supportsOuterJoins) {
+              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
+            } else {
+              sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
+            }
+            sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+            rs = stmt.executeQuery(sql);
+            
+            //check for rows in the result set
+            foundLayout = rs.next();
+            
+            if (!foundLayout && !triedDefault && userId == realUserId) {
+                //If we didn't find any rows and we haven't tried the default user yet
+                triedDefault = true;
+                rs.close();
+                
+                //Get the default user ID and layout ID
+                sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                rs = stmt.executeQuery(sQuery);
+                try {
+                  rs.next();
+                  userId = rs.getInt(1);
+                  layoutId = rs.getInt(2);
+                } finally {
+                  rs.close();
+                }                
+            }
+            else {
+                //We tried the default or actually found a layout
+                break;
+            }
+        } while (!foundLayout);
+        
         HashMap layoutStructure = new HashMap();
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
         StringBuffer structChanIds = new StringBuffer();
-        rs = stmt.executeQuery(sql);
+        
         try {
           int lastStructId = 0;
           LayoutStructure ls = null;
           String sepChar = "";
-          if (rs.next()) {
+          if (foundLayout) {
             int structId = rs.getInt(1);
             // Result Set returns 0 by default if structId was null
             // Except if you are using poolman 2.0.4 in which case you get -1 back
@@ -1805,7 +1843,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
           // first, get the struct ids for the channels
-          sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
+          String sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
             " AND LAYOUT_ID=" + layoutId +
             " AND CHAN_ID IN (" + structChanIds.toString() + ") ORDER BY STRUCT_ID";
 
