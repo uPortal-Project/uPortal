@@ -82,7 +82,7 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <defaultValue></defaultValue>
-        <example>http://www.mun.ca/cc/portal/cw/num_help.html</example>
+        <example></example>
       </parameter>
 
       <parameter modify="publish-only">
@@ -93,7 +93,7 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <defaultValue></defaultValue>
-        <example>http://www.mun.ca/cc/portal/cw/num_info.html</example>
+        <example></example>
       </parameter>
 
       <parameter modify="publish-only">
@@ -104,7 +104,7 @@ Version $Revision$
                 <maxlength>2000</maxlength>
         </type>
         <defaultValue></defaultValue>
-        <example>http://www.mun.ca/cc/portal/cw/num_edit.html</example>
+        <example></example>
       </parameter>
 
       <parameter modify="publish-only">
@@ -134,7 +134,7 @@ Version $Revision$
       <!-- added for cacheable CWebProxy -->
       <parameter modify="publish-only">
       	<name>cw_cacheDefaultTimeout</name>
-	<label>Default Timeout (in seconds)</label>
+	<label>Default Cache Timeout (in seconds)</label>
         <type base="string" input="text" display="text">
           <length>7</length>
           <maxlength>10</maxlength>
@@ -143,24 +143,11 @@ Version $Revision$
       </parameter>
 
       <parameter modify="publish-only">
-      	<name>cw_cacheDefaultScope</name>
-	<label>Default Caching Scope</label>
-	<type base="string" input="single-choice" display="drop-down">
-          <restriction type="enumeration">
-            <value default="true">instance</value>
-            <value>user</value>
-            <value>system</value>
-          </restriction>
-        </type>
-      </parameter>
-
-      <parameter modify="publish-only">
         <name>cw_cacheDefaultMode</name>
-	<label>Default Caching Mode</label>
+	<label>Default Cache Mode</label>
 	<type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
 	    <value default="true">none</value>
-	    <value>http</value>
 	    <value>all</value>
 	  </restriction>
 	</type>
@@ -168,33 +155,21 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_cacheTimeout</name>
-	<label>Timeout for initial request only</label>
+	<label>Cache Timeout for initial request only</label>
 	<type base="string" input="text" display="text">
 	  <length>7</length>
 	  <maxlength>10</maxlength>
 	</type>
-	<defaultValue>900</defaultValue>
-      </parameter>
-
-      <parameter modify="publish-only">
-        <name>cw_cacheScope</name>
-	<label>Caching Scope for initial request only</label>
-	<type base="string" input="single-choice" display="drop-down">
-	  <restriction type="enumeration">
-	    <value default="true">instance</value>
-	    <value>user</value>
-	    <value>system</value>
-	  </restriction>
-	</type>
+	<defaultValue></defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_cacheMode</name>
-	<label>Caching Mode for initial request only</label>
+	<label>Cache Mode for initial request only</label>
 	<type base="string" input="single-choice" display="drop-down">
 	  <restriction type="enumeration">
-	    <value default="true">none</value>
-	    <value>http</value>
+	    <value default="true"></value>
+	    <value>none</value>
 	    <value>all</value>
 	  </restriction>                                
 	</type>                                        
@@ -212,7 +187,7 @@ Version $Revision$
       </parameter>
 
       <parameter modify="publish-only">
-        <name>cw_person_allow</name>
+        <name>cw_personAllow</name>
 	<label>Restrict IPerson Attributes Passing to These</label>
 	<type base="string" input="text" display="text">
 	  <length>40</length>
