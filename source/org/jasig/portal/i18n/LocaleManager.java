@@ -42,8 +42,14 @@ public class LocaleManager  {
 
     private static final Log log = LogFactory.getLog(LocaleManager.class);
     
+    /**
+     * Default value for localeAware.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    public static final boolean DEFAULT_LOCALE_AWARE = false;
+    
     private IPerson person;
-    private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+    private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
     private static Locale jvmLocale;
     private static Locale[] portalLocales;
     private Locale[] sessionLocales;
