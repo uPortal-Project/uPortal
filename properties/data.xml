@@ -1963,6 +1963,16 @@
         <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
         <column><name>PROFILE_ID</name><value>3</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>USER_AGENT</name><value>Mozilla/4.76 [en] (Windows NT 5.0; U)</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+      </row>
     </rows>
   </table>
 
