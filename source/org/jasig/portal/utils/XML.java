@@ -63,20 +63,18 @@ public class XML {
   /**
    * Gets the text value of an Element. For example, if an element nameElement
    * looks like this: <name>Fred</name>, then getElementText(nameElement) would
-   * return "Fred".
+   * return "Fred".  An empty String is returned in the case that there is no text
+   * under the element.
    * @param e the Element with a text value
    * @return the the text value of the element
    */
   public static String getElementText(Element e) {
-    String val = null;
+    String val = "";
     for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
       if (n.getNodeType() == Node.TEXT_NODE) {
         val = n.getNodeValue();
         break;
       }
-    }
-    if (val == null) {
-      val = new String();
     }
     return val;
   }
@@ -84,13 +82,14 @@ public class XML {
   /**
    * Gets the text value of a child Element.  For example, if an element nameElement
    * looks like this: <name><first>Fred</first><last>Flinstone</last></name>, then
-   * getChildElementText(nameElement, "first") would return "Fred".
+   * getChildElementText(nameElement, "first") would return "Fred".  An empty String
+   * is returned in the case that there is no text under the child Element.
    * @param e the Element to search under
    * @param childElementName the name of the child Element
    * @return the text value of the child element
    */
   public static String getChildElementText(Element e, String childElementName) {
-    String val = null;
+    String val = "";
     for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
        if (n.getNodeType() == Node.ELEMENT_NODE && 
            n.getNodeName() != null &&
