@@ -268,7 +268,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     ch.receiveEvent(ev);
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error("Error sending session done event to channel " + ch, e);
                 }
             }
         }
@@ -718,7 +718,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch.receiveEvent(le);
             } catch (Exception e) {
-                log.error(e);
+                log.error("Error sending layout event " + le + " to channel " + ch, e);
             }
         } else {
             log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
