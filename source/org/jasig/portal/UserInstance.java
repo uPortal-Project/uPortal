@@ -137,8 +137,8 @@ public class UserInstance implements HttpSessionBindingListener {
         // init the media manager
         if(mediaM==null) {
             String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
+            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
             mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
         }
     }
