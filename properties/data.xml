@@ -46,7 +46,7 @@
               <folder ID="col01" priority="0" name="Column 1">
                 <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
                 <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-                  <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
+                  <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
@@ -60,7 +60,7 @@
             <folder ID="t02" priority="0" name="More">
               <folder ID="col03" priority="0" name="Column 1">
                 <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-                  <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
+                  <parameter value="http://www.interactivebusiness.com/publish/ibs.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
@@ -303,7 +303,7 @@
 				<column><name>APPROVED</name><value>0</value></column>
 				<column><name>CHANNEL_XML</name><value><![CDATA[
 				  <channel ID="chan05" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-            <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
+            <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
             <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
           </channel>     				 
 				]]></value></column>
@@ -316,7 +316,7 @@
 				<column><name>APPROVED</name><value>0</value></column>
 				<column><name>CHANNEL_XML</name><value><![CDATA[
 				  <channel ID="chan06" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-            <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
+            <parameter value="http://www.interactivebusiness.com/publish/ibs.rss" name="xml"/>
             <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
           </channel>    				 
         ]]></value></column>
