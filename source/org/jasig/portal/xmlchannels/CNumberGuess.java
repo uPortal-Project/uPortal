@@ -208,10 +208,6 @@ public class CNumberGuess implements IXMLChannel
     XSLTInputSource xslSource = set.getStylesheet("main", runtimeData.getHttpRequest());
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
-    // This allows relative paths in the stylesheet set
-    // Remove in version 2.0!!!
-    //xslSource.setSystemId (portalBaseDir + xslSource.getSystemId());
-
     if (xslSource != null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
