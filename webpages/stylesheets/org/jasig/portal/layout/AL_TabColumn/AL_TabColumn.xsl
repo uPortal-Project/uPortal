@@ -50,7 +50,7 @@ Version $Revision$
     <!--<xsl:param name="selectedID" select="'10'"/>-->
     <xsl:param name="userLayoutRoot" select="'root'"/>
     <!--<xsl:param name="userLayoutRoot" select="'29'"/>-->
-    <xsl:param name="newNodeID" select="no newNodeID parameter"/>
+    <xsl:param name="newNodeID" select="'no newNodeID parameter'"/>
     <xsl:param name="focusedTabID">
         <!--Check if lastSession-->
         <xsl:choose>
