@@ -130,8 +130,10 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
             // Producer will rewrite the URLs, not the Consumer
             markupContext.value.setRequiresUrlRewriting(Boolean.FALSE);
             
+        } catch (RemoteException re) {
+            throw re;
         } catch (Throwable t) {
-            t.printStackTrace();
+            throw new RemoteException(t.getMessage());
         }        
     }
 
@@ -158,9 +160,11 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
 
             // The WSRP spec says that this method could optionally return the markup
             // right away, but the consumer should call getMarkup() if it doesn't.
-        } catch (Exception e) {
-            e.printStackTrace();
-        }                
+        } catch (RemoteException re) {
+            throw re;
+        } catch (Throwable t) {
+            throw new RemoteException(t.getMessage());
+        }        
     }
 
     public Extension[] releaseSessions(RegistrationContext registrationContext, String[] sessionIDs) throws java.rmi.RemoteException, org.jasig.portal.wsrp.types.InvalidRegistrationFault, org.jasig.portal.wsrp.types.OperationFailedFault, org.jasig.portal.wsrp.types.MissingParametersFault, org.jasig.portal.wsrp.types.AccessDeniedFault {
