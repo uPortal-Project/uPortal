@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v3.5 (http://www.xmlspy.com) by JTL (UD) -->
-<!ELEMENT channelDef (description, params)>
+<!ELEMENT channelDef (description, class, params)>
 <!ELEMENT description (#PCDATA)>
+<!ELEMENT class (#PCDATA)>
 <!ELEMENT params (step+)>
 <!ELEMENT step (ID, name, description, parameter+)>
 <!ELEMENT ID (#PCDATA)>
