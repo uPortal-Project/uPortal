@@ -200,6 +200,8 @@ public class PublisherBean extends GenericPortalBean{
       StringWriter sw = new StringWriter ();
       chanXml.saveDocument(sw);
       String sChanXml = sw.toString();
+      int trim = sChanXml.indexOf("<channel");
+      sChanXml = sChanXml.substring(trim);
 
       String sInsert = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, CHANNEL_XML) VALUES ("+nextID+",'" + sChanName + "','"+  sPubEmail +"','" + sChanXml + "')";
       int iInserted = stmt.executeUpdate (sInsert);
