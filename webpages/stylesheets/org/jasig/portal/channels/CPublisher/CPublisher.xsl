@@ -83,7 +83,7 @@ function xml(nodelist){
 	<!-- displays checkbox for publisher to allow subscribe time modification-->
 	<xsl:template name="subscribe">
 		<td>
-			<xsl:value-of select="@modify"/>
+			<!-- <xsl:value-of select="@modify"/>  just for debug -->
 			<xsl:if test="@modify!='publish-only'">
 				<input type="checkbox" name="{name}_sub">
 					<xsl:if test="@modify='subscribe'">
