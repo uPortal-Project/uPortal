@@ -52,6 +52,7 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.ThemeStylesheetDescription;
@@ -172,6 +173,15 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         this.errorID = Integer.parseInt(value);
       }
       placeHolder = true;  // Should only get here if we are a "normal channel"
+    }
+    
+    
+    public void receiveEvent(PortalEvent ev) {
+        if (the_channel != null) {
+            // propagate the portal events to the normal channel
+            the_channel.receiveEvent(ev);
+        }
+        super.receiveEvent(ev);
     }
 
     public void renderXML(ContentHandler out) {
