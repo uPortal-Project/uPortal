@@ -45,6 +45,7 @@ String sUserName = request.getParameter ("userName");
 String sPassword = request.getParameter ("password");
 
 boolean bAuthorized = auth.authenticate (sUserName, sPassword);
+session.setAttribute ("up_authorizationAttempted", "true");
 
 if (bAuthorized)
 {
