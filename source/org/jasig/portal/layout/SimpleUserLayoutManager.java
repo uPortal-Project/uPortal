@@ -47,6 +47,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import org.apache.xpath.XPathAPI;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.IUserLayoutStore;
@@ -57,6 +58,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
+
+import org.jasig.portal.services.LogService;
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.
@@ -74,6 +77,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
+    protected String rootNodeId;
 
 
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
@@ -87,6 +91,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
         this.owner=owner;
         this.profile=profile;
+        this.rootNodeId = null;
         this.setLayoutStore(store);
         this.loadUserLayout();
     }
@@ -336,7 +341,15 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public String getRootFolderId() {
-        return null;
+     try {
+      if ( rootNodeId == null ) {
+       Element rootNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//layout/folder");
+       rootNodeId = rootNode.getAttribute("ID");
+      }
+     } catch ( Exception e ) {
+         LogService.log(LogService.ERROR, e);
+       }
+       return rootNodeId;
     }
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
