@@ -97,9 +97,9 @@ public class LoginServlet extends HttpServlet {
             }
          }
       } catch(PortalException pe) {
-          log.error("LoginServlet::static "+pe);
+          log.error("LoginServlet::static ", pe);
       } catch(IOException ioe) {
-          log.error("LoginServlet::static "+ioe);
+          log.error("LoginServlet::static ", ioe);
       }
       redirectString=upFile;
       credentialTokens=cHash;
@@ -156,7 +156,7 @@ public class LoginServlet extends HttpServlet {
       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
-      log.error( e);
+      log.error("Exception authenticating the request", e);
       // Reset everything
       request.getSession(false).invalidate();
       // Add the authentication failure
