@@ -42,6 +42,7 @@ import  java.util.Map;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
 import  org.jasig.portal.security.PermissionManager;
+import  org.jasig.portal.services.LogService;
 import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  java.util.Hashtable;
@@ -211,7 +212,8 @@ public class ChannelStaticData extends Hashtable {
         InitialContext ctx = new InitialContext(environment);
         return  (ctx);
       } catch (Exception e) {
-        e.printStackTrace(System.err);
+        // Log the exception
+        LogService.log(LogService.ERROR, e);
         return  (null);
       }
     }
