@@ -116,13 +116,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   private void updateCacheKey() {
      cacheKey = guid.getNewGuid();
   }
-  
-  public IUserLayout getUserLayout() {
-      return layout;    
+
+  public IUserLayout getUserLayout() throws PortalException {
+      return layout;
   }
 
-  public void setUserLayout(IUserLayout userLayout) {
-      setUserLayout(userLayout);
+  public void setUserLayout(IUserLayout userLayout) throws PortalException {
+   if ( !(layout instanceof AggregatedLayout) )
+    throw new PortalException ( "The user layout instance must have AggregatedLayout type!" );
+    this.layout = (AggregatedLayout) layout;
+    updateCacheKey();
   }
 
   /**
@@ -151,23 +154,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       this.autoCommit = autoCommit;
     }
 
-  /**
-     * Sets the AggregatedLayout object.
-     * The user layout root node always has ID="root"
-     * @param layout a <code>Hashtable</code> object containing the UserLayout data
-     * @exception PortalException if an error occurs
+
+    /**
+     * Returns an Id of the current user layout.
+     *
+     * @return a <code>int</code> value
      */
-  public void setUserLayout(IAggregatedLayout layout) throws PortalException {
-    if ( !(layout instanceof AggregatedLayout) )
-     throw new PortalException ( "The user layout instance must have AggregatedLayout type!" );
-    this.layout = (AggregatedLayout) layout;
-    updateCacheKey();
-  }
-
-
-  public int getLayoutId() {
-    return userProfile.getLayoutId();
-  }
+     public int getLayoutId() {
+       return userProfile.getLayoutId();
+     }
 
 
   /**
@@ -902,7 +897,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       layout.writeTo(document);
       return document;
     }
-        
+
     private void setUserLayoutDOM( Node n, String parentNodeId, Hashtable layoutData ) throws PortalException {
 
       Element node = (Element) n;
