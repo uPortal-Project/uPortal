@@ -204,17 +204,17 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     if (RDBMServices.supportsOuterJoins) {
       if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
         RDBMServices.joinQuery.addQuery("layout",
-          "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
+          "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
         RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
         RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
       } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
          RDBMServices.joinQuery.addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
+          "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
         RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
         RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
      } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
         RDBMServices.joinQuery.addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND");
+          "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID AND");
         RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
         RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
       } else {
