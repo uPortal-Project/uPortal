@@ -57,7 +57,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Reference implementation of IChannelRegistry.
- * Reads in an XML string
  * @author  John Laker, jlaker@udel.edu
  * @version $Revision$
  */
@@ -641,8 +640,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return channel;
   }
 
-
-
   /**
    * Read a channel definition from the data store
    */
@@ -691,7 +688,12 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           if (pstmtChannelParm != null && !rs.next()) {
             break;
           }
-          channel.addParameter(rs.getString(dbOffset + 1), rs.getString(dbOffset + 2),rs.getString(dbOffset + 3));
+          String name = rs.getString(dbOffset + 1);
+          String value = rs.getString(dbOffset + 2);
+          String override = rs.getString(dbOffset + 3);
+          if (name != null) {
+            channel.addParameter(name, value, override);
+          }
           if (pstmtChannelParm == null && !rs.next()) {
             break;
           }
