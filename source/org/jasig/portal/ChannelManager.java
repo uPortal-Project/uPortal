@@ -862,7 +862,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,false);
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
                 }
             }
         }
