@@ -77,7 +77,7 @@
           <setting>
           </setting>
         </settings>
-        <channel TypeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
           <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
           <parameter name="host" value="imap.your.domain"/>
           <parameter name="port" value="143"/>
@@ -99,24 +99,24 @@
       <step>
         <ID>1</ID>
         <name>Custom Settings</name>
-        <channel TypeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
-          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
-          <parameter name="host" value="imap.your.domain"/>
-          <parameter name="port" value="143"/>
-          <parameter name="smtphost" value="mail.your.domain"/>
-          <parameter name="smtpport" value="25"/>
-          <parameter name="caption" value="WebMail (beta)"/>
-          <parameter name="organization" value="your organization"/>
-          <parameter name="domain" value="your.domain"/>
-          <parameter name="sentName" value="Sent"/>
-          <parameter name="trashName" value="Wastebasket"/>
-          <parameter name="folderDir" value="mail"/>
-          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta" override="yes"/>
+          <parameter name="host" value="imap.your.domain" override="yes"/>
+          <parameter name="port" value="143" override="yes"/>
+          <parameter name="smtphost" value="mail.your.domain" override="no"/>
+          <parameter name="smtpport" value="25" override="yes"/>
+          <parameter name="caption" value="WebMail (beta)" override="yes"/>
+          <parameter name="organization" value="your organization" override="yes"/>
+          <parameter name="domain" value="your.domain" override="no"/>
+          <parameter name="sentName" value="Sent" override="yes"/>
+          <parameter name="trashName" value="Wastebasket" override="yes"/>
+          <parameter name="folderDir" value="mail" override="no"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site." override="yes"/>
         </channel>
       </step>
     </params>
   </customSettings>
-<!--  <channelDef>
+  <!--  <channelDef>
     <description>This is a channel for rendering an image with an optional title and subtitle.</description>
     <class>org.jasig.portal.channels.CImage</class>
     <params>
@@ -217,68 +217,64 @@
   </channelDef>
 -->
 
-<channelDef>
-  <description>
-   	RDF Site Summary (RSS) is a lightweight multipurpose extensible metadata description and syndication format. The Resource Description Framework (RDF) integrates a variety of applications from library catalogs and world-wide directories to syndication and aggregation of news, software, and content to personal collections of music, photos, and events using XML as an interchange syntax. The RDF specifications provide a lightweight ontology system to support the exchange of knowledge on the Web.
-	</description>
-	<class>org.jasig.portal.channels.CGenericXSLT</class>
-	<params>
-    <step>
-		<ID>1</ID>
-		<name>Provide RSS URL.</name>
-		<!-- displayed at the top of the step screen -->
-		<description/>
-		<!-- intention is for documentation but could be used for other things -->
-		
-      <parameter modify="publish">
-  		  <name>xmlUri</name>
-  			<label>RSS URL</label>
-  			<type base="string" input="text" display="text">
-  			  <length>80</length>
-  				<!-- length and maxlength for text field -->
-  				<maxlength>100</maxlength>
-  				<restriction type="range">
-  				  <!-- range could be used for error checking -->
-  					<min>0</min>
-  					<max>40</max>
-  				</restriction>
-  			</type>
-  			<example>webpages/rss/stockcharts.rss</example>
-  			<!-- default value for text field -->
-      </parameter>
-			
-      <!-- Choose which RSS version from a drop down list-->
-      <parameter modify="publish">
-        <name>sslUri</name>
-  			<label>RSS Version</label>
-  			<type base="string" input="single-choice" display="drop-down">
-  			  <restriction type="enumeration">
-  			    <value display="0.9x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value>
-  			    <value display="1.0x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_0x.ssl</value>
-            <value display="1.1x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</value>
-            <value display="1.2x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_2x.ssl</value>
-            <defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</defaultValue>
-  			  </restriction>
-  			</type>
-  		</parameter>
+  <channelDef>
+    <description>RDF Site Summary (RSS) is a lightweight multipurpose extensible metadata description and syndication format. The Resource Description Framework (RDF) integrates a variety of applications from library catalogs and world-wide directories to syndication and aggregation of news, software, and content to personal collections of music, photos, and events using XML as an interchange syntax. The RDF specifications provide a lightweight ontology system to support the exchange of knowledge on the Web.</description>
+    <class>org.jasig.portal.channels.CGenericXSLT</class>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Provide RSS URL.</name>
+        <!-- displayed at the top of the step screen -->
+        <description/>
+        <!-- intention is for documentation but could be used for other things -->
 
-      <parameter modify="publish">
-  		  <name>cacheTimeout</name>
-  			<label>Cache timeout in seconds</label>
-  			<type base="integer" input="text" display="text">
-  			  <length>4</length>
-  				<!-- length and maxlength for text field -->
-  				<maxlength>10</maxlength>
-  			</type>
-        <units>seconds</units>
-  			<defaultValue>900</defaultValue>
-  			<!-- default value for text field -->
-      </parameter>
+        <parameter modify="publish">
+          <name>xmlUri</name>
+          <label>RSS URL</label>
+          <type base="string" input="text" display="text">
+            <length>80</length>
+            <!-- length and maxlength for text field -->
+            <maxlength>100</maxlength>
+            <restriction type="range">
+              <!-- range could be used for error checking -->
+              <min>0</min>
+              <max>40</max>
+            </restriction>
+          </type>
+          <example>webpages/rss/stockcharts.rss</example>
+          <!-- default value for text field -->
+        </parameter>
+        <!-- Choose which RSS version from a drop down list-->
+        <parameter modify="publish">
+          <name>sslUri</name>
+          <label>RSS Version</label>
+          <type base="string" input="single-choice" display="drop-down">
+            <restriction type="enumeration">
+              <value display="0.9x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+              <value display="1.0x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+              <value display="1.1x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</value>
+              <value display="1.2x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_2x.ssl</value>
+              <defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</defaultValue>
+            </restriction>
+          </type>
+        </parameter>
 
-	  </step>
-  </params>
-  <controls/>
-</channelDef>
+        <parameter modify="publish">
+          <name>cacheTimeout</name>
+          <label>Cache timeout in seconds</label>
+          <type base="integer" input="text" display="text">
+            <length>4</length>
+            <!-- length and maxlength for text field -->
+            <maxlength>10</maxlength>
+          </type>
+          <units>seconds</units>
+          <defaultValue>900</defaultValue>
+          <!-- default value for text field -->
+        </parameter>
+      </step>
+    </params>
+    <controls/>
+  </channelDef>
 
   <selectControls>
     <params>
@@ -518,7 +514,6 @@
             <name>Student</name>
             <description>Description for Channel Student</description>
           </role>
-
         </roles>
         <userSettings>
           <selectedRoles>
@@ -534,6 +529,10 @@
       <step>
         <ID>1</ID>
         <name>Review</name>
+        <channel typeID="0" ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" detachable="true" editable="false" fname="" hasAbout="false" hasHelp="false" minimizable="false" name="IBS News" timeout="10000">
+          <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
+          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        </channel>
         <settings>
           <setting>
             <name>
