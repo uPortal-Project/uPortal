@@ -18,27 +18,27 @@
  |	factory			value for the java.naming.factory.initial env property (com.sun.jndi.ldap.LdapCtxFactory is default)
  +-->
 <ldapConnections>
-	<!-- Example LDAP Connections -->
-	<!--
-	<connection default="true">
-		<name>Students</name>
-	    <host>yu.yale.edu</host>
-	    <port>389</port>
-	    <baseDN>dc=Students, dc=itstp, dc=yale, dc=edu</baseDN>
-	    <managerDN></managerDN>
-	    <managerPW></managerPW>
-	    <uidAttribute>uid</uidAttribute>
-	    <protocol>ssl</protocol>	    
+    <!-- Example LDAP Connections -->
+    <!--
+    <connection default="true">
+        <name>Students</name>
+        <host>yu.yale.edu</host>
+        <port>389</port>
+        <baseDN>dc=Students, dc=itstp, dc=yale, dc=edu</baseDN>
+        <managerDN></managerDN>
+        <managerPW></managerPW>
+        <uidAttribute>uid</uidAttribute>
+        <protocol>ssl</protocol>	    
     </connection>
     
-	<connection>
-		<name>Faculty</name>
-	    <host>yu.yale.edu</host>
-	    <port>389</port>
-	    <baseDN>dc=Faculty, dc=itstp, dc=yale, dc=edu</baseDN>
-	    <managerDN>cn=AuthUser,cn=Users,dc=itstp,dc=yale,dc=edu</managerDN>
-	    <managerPW>foobar</managerPW>
-	    <uidAttribute>uid</uidAttribute>
+    <connection>
+        <name>Faculty</name>
+        <host>yu.yale.edu</host>
+        <port>389</port>
+        <baseDN>dc=Faculty, dc=itstp, dc=yale, dc=edu</baseDN>
+        <managerDN>cn=AuthUser,cn=Users,dc=itstp,dc=yale,dc=edu</managerDN>
+        <managerPW>foobar</managerPW>
+        <uidAttribute>uid</uidAttribute>
     </connection>  
     -->
 </ldapConnections>
