@@ -27,9 +27,6 @@
       </tr>
      </table>
     </td>
-<td><input type="checkbox" name="test" value="check1"/>
-    <input type="checkbox" name="test" value="check2"/>
-</td>
     <td align="center">
 Directory Service<br/>
 My Address Book<br/>
