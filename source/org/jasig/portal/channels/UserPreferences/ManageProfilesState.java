@@ -214,10 +214,23 @@ class ManageProfilesState extends BaseState {
         protected UserProfile profile;         // profile currently being edited
         protected boolean modified=false;
 
+	// location of the properties file relative to the portal base dir.
+	protected static final String mimeImagesPropsFile="webpages/media/org/jasig/portal/channels/CUserPreferences/mimeImages.properties";
+	protected Properties mimeImagesProps=new Properties();
+
+
         public CEditProfile(ManageProfilesState context) {
+	    // load the mimetype image properties file
+	    try {
+		java.io.FileInputStream in = new java.io.FileInputStream(GenericPortalBean.getPortalBaseDir()+java.io.File.separator+mimeImagesPropsFile);
+		mimeImagesProps.load(in);
+		in.close();
+	    } catch (Exception e) {
+		Logger.log(Logger.ERROR,"UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at "+GenericPortalBean.getPortalBaseDir()+java.io.File.separator+mimeImagesPropsFile);
+	    }
             this.context=context;
         }
-
+	
         public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
             this.runtimeData=rd;
             // internal state handling
@@ -279,10 +292,10 @@ class ManageProfilesState extends BaseState {
                     if(newType!=null) currentMimeType=newType;
                 } else if(action.equals("setStructureStylesheet")) {
                     String sName=runtimeData.getParameter("structureStylesheet");
-                    if(sName!=null) profile.setStructureStylesheetName(sName);
+		    //FIXX                    if(sName!=null) profile.setStructureStylesheetName(sName);
                 } else if(action.equals("setThemeStylesheet")) {
                     String sName=runtimeData.getParameter("themeStylesheet");
-                    if(sName!=null) profile.setThemeStylesheetName(sName);
+		    //FIXX                    if(sName!=null) profile.setThemeStylesheetName(sName);
                 }
             }
         }
@@ -307,6 +320,7 @@ class ManageProfilesState extends BaseState {
                 pdescrEl.appendChild(doc.createTextNode(profile.getProfileDescription()));
                 profileEl.appendChild(pdescrEl);
             }
+	    /*
             // process mime type information
             {
                 Element mimeEl=doc.createElement("mimetypes");
@@ -400,44 +414,72 @@ class ManageProfilesState extends BaseState {
 
 
                 profileEl.appendChild(structEl);
-            }
+		}*/
             // deal with theme stylesheets
             {
                 Element themeEl=doc.createElement("themestylesheets");
-                Hashtable tsList=context.getCoreStylesheetDescriptionDB().getThemeStylesheetList(profile.getStructureStylesheetName());
-                if(tsList==null) throw new ResourceMissingException("","List of theme stylesheets for the structure stylesheet \""+profile.getStructureStylesheetName()+"\"","Unable to obtain a list of theme stylesheets for the specified structure stylesheet");
+		Hashtable tsList=context.getCoreStylesheetDescriptionDB().getThemeStylesheetList(profile.getStructureStylesheetId());
+                if(tsList==null) throw new ResourceMissingException("","List of theme stylesheets for the structure stylesheet \""+profile.getStructureStylesheetId()+"\"","Unable to obtain a list of theme stylesheets for the specified structure stylesheet");
                 // see if the current Theme stylesheet is still in the list, otherwise assign a first one in the hastable
-                if(tsList.get(profile.getThemeStylesheetName())==null) {
+                if(tsList.get(new Integer(profile.getThemeStylesheetId()))==null) {
                     if(!tsList.isEmpty()) {
                         Enumeration e=tsList.keys();
-                        profile.setThemeStylesheetName((String)e.nextElement());
+                        profile.setThemeStylesheetId(((Integer)e.nextElement()).intValue());
                     } else {
-                        profile.setThemeStylesheetName(null);
-                }
+			//                        profile.setThemeStylesheetId(-1);
+		    }
                 }
 
-                // if any theme stylesheet is currently assigned
-                if(profile.getThemeStylesheetName()!=null) {
-                    Element ctsEl=doc.createElement("current");
-                    Element ctsnEl=doc.createElement("name");
-                    ctsnEl.appendChild(doc.createTextNode(profile.getThemeStylesheetName()));
-                    Element ctsdEl=doc.createElement("description");
-                    ctsdEl.appendChild(doc.createTextNode((String)tsList.get(profile.getThemeStylesheetName())));
-                    ctsEl.appendChild(ctsnEl);
-                    ctsEl.appendChild(ctsdEl);
-                    themeEl.appendChild(ctsEl);
-                    tsList.remove(profile.getThemeStylesheetName());
-                }
-                // list alternative structure stylesheets
                 for(Enumeration me=tsList.keys();me.hasMoreElements();) {
-                    Element altEl=doc.createElement("alternate");
-                    String ssName=(String)me.nextElement();
+                    Integer ssId=(Integer)me.nextElement();
+
+		    // check if the stylesheet is current
+		    boolean current=(ssId.intValue()==profile.getThemeStylesheetId());
+		    Element altEl;
+		    if(current)
+			altEl=doc.createElement("current");
+		    else
+			altEl=doc.createElement("alternate");
+
+		    ThemeStylesheetDescription tsd=(ThemeStylesheetDescription) tsList.get(ssId);
                     Element altnEl=doc.createElement("name");
-                    altnEl.appendChild(doc.createTextNode(ssName));
+                    altnEl.appendChild(doc.createTextNode(tsd.getStylesheetName()));
+                    Element altidEl=doc.createElement("id");
+                    altidEl.appendChild(doc.createTextNode(Integer.toString(tsd.getId())));
+
                     Element altdEl=doc.createElement("description");
-                    altdEl.appendChild(doc.createTextNode((String)tsList.get(ssName)));
+
+                    altdEl.appendChild(doc.createTextNode(tsd.getStylesheetWordDescription()));
+		    Element altmEl=doc.createElement("mimetype");
+		    altmEl.appendChild(doc.createTextNode(tsd.getMimeType()));
+
+		    // determine device icon
+		    String deviceIconURI;
+		    if((deviceIconURI=mimeImagesProps.getProperty(tsd.getDeviceType()))==null)
+			deviceIconURI=mimeImagesProps.getProperty("unknown");
+		    Element altdiuEl=doc.createElement("deviceiconuri");
+		    altdiuEl.appendChild(doc.createTextNode(deviceIconURI));
+
+		    Element altsuEl=doc.createElement("sampleuri");
+		    if(tsd.getSamplePictureURI()==null || tsd.getSamplePictureURI().equals(""))
+			altsuEl.appendChild(doc.createTextNode(""));
+		    else 
+			altsuEl.appendChild(doc.createTextNode(tsd.getSamplePictureURI()));
+
+		    Element altsiuEl=doc.createElement("sampleiconuri");
+		    if(tsd.getSampleIconURI()==null || tsd.getSampleIconURI().equals("")) 
+			altsiuEl.appendChild(doc.createTextNode(""));
+		    else 
+			altsiuEl.appendChild(doc.createTextNode(tsd.getSampleIconURI()));
+
+
                     altEl.appendChild(altnEl);
+		    altEl.appendChild(altidEl);
                     altEl.appendChild(altdEl);
+                    altEl.appendChild(altmEl);
+		    altEl.appendChild(altdiuEl);
+		    altEl.appendChild(altsuEl);
+                    altEl.appendChild(altsiuEl);
                     themeEl.appendChild(altEl);
                 }
 
