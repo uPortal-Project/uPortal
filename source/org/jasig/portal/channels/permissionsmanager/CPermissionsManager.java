@@ -97,19 +97,20 @@ public class CPermissionsManager
             }
           }
           catch (Exception e){
-            log.error(e);
+            log.error(e, e);
           }
         }
 
-        if (session.runtimeData.getParameter("prmCommand") != null) {
-            IPermissionCommand pc = CommandFactory.get(session.runtimeData.getParameter("prmCommand"));
+        String prmCommand = session.runtimeData.getParameter("prmCommand");
+        if (prmCommand != null) {
+            IPermissionCommand pc = CommandFactory.get(prmCommand);
             if (pc != null) {
               try{
                 pc.execute(session);
               }
               catch(Exception e){
-                log.error(e);
-                session.runtimeData.setParameter("commandResponse","Error executing command "+session.runtimeData.getParameter("prmCommand")+": "+e.getMessage());
+                log.error("Error executing command [" + prmCommand + "]", e);
+                session.runtimeData.setParameter("commandResponse","Error executing command "+ prmCommand +": "+e.getMessage());
               }
             }
         }
@@ -220,7 +221,7 @@ public class CPermissionsManager
 
 
       } catch (Exception e) {
-          log.error( e);
+          log.error(e, e);
       }
     }
 
@@ -235,7 +236,7 @@ public class CPermissionsManager
           }
         }
         catch(Exception e){
-          log.error(e);
+          log.error(e, e);
         }
       }
     }
@@ -264,7 +265,7 @@ public class CPermissionsManager
         }
       }
       catch (Exception e) {
-        log.error( e);
+        log.error(e, e);
       }
     }
 
@@ -321,7 +322,7 @@ public class CPermissionsManager
                         + String.valueOf((time3 - session.startRD)) + " since start RD");
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         }
     }
 
@@ -336,7 +337,7 @@ public class CPermissionsManager
             }
             xslt.transform();
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         }
     }
 
@@ -354,7 +355,7 @@ public class CPermissionsManager
                 session.isAuthorized = true;
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         }
         session.isFinished=false;
 

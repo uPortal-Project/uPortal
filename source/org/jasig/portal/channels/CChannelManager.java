@@ -616,7 +616,7 @@ public class CChannelManager extends BaseChannel {
                     selectedGroupsE.appendChild(selectedGroupE);
                 }
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             el.appendChild(selectedGroupsE);
         }
@@ -640,7 +640,7 @@ public class CChannelManager extends BaseChannel {
                     selectedCategoriesE.appendChild(selectedCategoryE);
                 }
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             userSettingsE.appendChild(selectedCategoriesE);
         }

@@ -65,7 +65,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {
-    private static final Log log = LogFactory.getLog(CUserPreferences.class);
+  private static final Log log = LogFactory.getLog(CUserPreferences.class);
   IUserPreferencesManager upm;
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
@@ -155,7 +155,7 @@ public class CUserPreferences implements IPrivilegedChannel {
                 managePreferences = new GPreferencesState(this);
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error("Error instantiating user profile [" + profile + "]", e);
             managePreferences = new GPreferencesState(this);
         }
     }
