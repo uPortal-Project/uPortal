@@ -39,13 +39,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;

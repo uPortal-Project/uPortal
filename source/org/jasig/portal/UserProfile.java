@@ -36,14 +36,12 @@
 package org.jasig.portal;
 
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.services.LogService;
 
 /**
  * A user profile associates a user layout with a structure and theme stylesheet.
  * @author Peter Kharchenko
  * @version $Revision$
  */
-
 public class UserProfile {
     protected int id=-1;
     protected String pName;

@@ -36,9 +36,6 @@
 
 package  org.jasig.portal.services;
 
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.car.CarResources;
-import org.jasig.portal.PortalException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -49,10 +46,12 @@ import java.util.List;
 import javax.naming.Context;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.ContentHandler;
 
+import org.jasig.portal.PortalException;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.

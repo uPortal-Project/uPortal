@@ -35,11 +35,6 @@
 
 package  org.jasig.portal;
 
-import  java.io.InputStream;
-import  java.io.OutputStream;
-import  java.util.Map;
-import  java.io.IOException;
-
 /**
  * Internal adapter for a multithreaded privileged character channel that is
  * also cacheable and implements IMimeResponse (capable of using DonwloadWorker)

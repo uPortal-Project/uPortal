@@ -36,11 +36,10 @@
 
 package org.jasig.portal.car;
 
-import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
-import org.jasig.portal.services.LogService;
 
 /**
  * Holds onto a set of String path elements to assist with tracking where in
