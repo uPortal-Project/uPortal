@@ -46,13 +46,19 @@ public class ChannelData {
     private boolean portletWindowInitialized = false;
     private PortletWindow portletWindow = null;
     private boolean processedAction = false;
+    private boolean receivedEvent = false;
+    private boolean focused = false;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
     public boolean hasProcessedAction() { return this.processedAction; }
+    public boolean hasReceivedEvent() { return this.receivedEvent; }
+    public boolean isFocused() { return this.focused; }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
     public void setProcessedAction(boolean processedAction) { this.processedAction = processedAction; }
+    public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
+    public void setFocused(boolean focused) { this.focused = focused; }
 }
 

@@ -61,11 +61,13 @@ import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.information.PortletActionProvider;
+import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedCharacterChannel;
 import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.PortalControlStructures;
@@ -99,12 +101,14 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged {
+public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable {
 
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
     private static ServletConfig servletConfig;
+    private static ChannelCacheKey systemCacheKey;
+    private static ChannelCacheKey instanceCacheKey;
     
     private static final String uniqueContainerName = "Pluto-in-uPortal";
     
@@ -115,6 +119,14 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     static {
         channelStateMap = Collections.synchronizedMap(new HashMap());
         portletContainerInitialized = false;        
+
+        // Initialize cache keys
+        systemCacheKey = new ChannelCacheKey();
+        systemCacheKey.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+        systemCacheKey.setKey("SYSTEM_SCOPE_KEY");
+        instanceCacheKey = new ChannelCacheKey();
+        instanceCacheKey.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+        instanceCacheKey.setKey("INSTANCE_SCOPE_KEY");
     }
     
     /**
@@ -258,6 +270,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         try {
             PortletContainerServices.prepare(uniqueContainerName);
             
+            cd.setReceivedEvent(true);
             DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
             PortletActionProvider pap = dip.getPortletActionProvider(cd.getPortletWindow());
             
@@ -455,7 +468,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * This is called from both renderXML() and renderCharacters().
      * @param uid a unique ID used to identify the state of the channel
      */
-    protected synchronized String getMarkup(String uid) {
+    protected synchronized String getMarkup(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
@@ -509,6 +522,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         
         } catch (Throwable t) {
             t.printStackTrace();
+            LogService.log(LogService.ERROR, t);
+            throw new PortalException(t.getMessage());
         } finally {
             PortletContainerServices.release();
         }
@@ -516,4 +531,66 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         return markup;
     }
     
+    // IMultithreadedCacheable methods
+    
+    /**
+     * Generates a channel cache key.  The key scope is set to be system-wide
+     * when the channel is anonymously accessed, otherwise it is set to be
+     * instance-wide.  The caching implementation here is simple and may not
+     * handle all cases.  It may also violate the Portlet Specification so
+     * this obviously needs further discussion.
+     * @param uid the unique identifier
+     * @return the channel cache key
+     */
+    public ChannelCacheKey generateKey(String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+
+        ChannelCacheKey cck = null;
+        // Anonymously accessed pages can be cached system-wide
+        if(staticData.getPerson().isGuest()) {
+            cck = systemCacheKey;
+        } else {
+            cck = instanceCacheKey;
+        }
+        return cck;
+    }
+
+    /**
+     * Determines whether the cached content for this channel is still valid.
+     * <p>
+     * Return <code>true</code> when:<br>
+     * <ol>
+     * <li>We have not just received an event</li>
+     * <li>No runtime parameters are sent to the channel</li>
+     * <li>The focus hasn't switched.</li>
+     * </ol>
+     * Otherwise, return <code>false</code>.  
+     * <p>
+     * In other words, cache the content in all cases <b>except</b> 
+     * for when a user clicks a channel button, a link or form button within the channel, 
+     * or the <i>focus</i> or <i>unfocus</i> button.
+     * @param validity the validity object
+     * @param uid the unique identifier
+     * @return <code>true</code> if the cache is still valid, otherwise <code>false</code>
+     */
+    public boolean isCacheValid(Object validity, String uid) {
+        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelStaticData staticData = channelState.getStaticData();
+        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ChannelData cd = channelState.getChannelData();
+
+        // Determine if the channel focus has changed
+        boolean previouslyFocused = cd.isFocused();
+        cd.setFocused(runtimeData.isRenderingAsRoot());
+        boolean focusHasSwitched = cd.isFocused() != previouslyFocused;
+    
+        // Dirty cache only when we receive an event, one or more request params, or a change in focus
+        boolean cacheValid = !(cd.hasReceivedEvent() || runtimeData.isTargeted() || focusHasSwitched);
+    
+        cd.setReceivedEvent(false);
+        return cacheValid;
+    }
+
 }
