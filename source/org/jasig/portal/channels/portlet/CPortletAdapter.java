@@ -323,7 +323,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
             
             // Process action if there is something to process
-            if (rd.getParameters().size() > 0) {     
+            if (rd.isTargeted()) {
                 portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             }
             
