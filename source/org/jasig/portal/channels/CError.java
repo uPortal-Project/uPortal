@@ -35,13 +35,23 @@
 
 package org.jasig.portal.channels;
 
-import java.util.*;
 import org.xml.sax.DocumentHandler;
-import org.jasig.portal.*;
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelManager;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import java.net.URL;
+import java.util.Hashtable;
 
 /**
  * Error channel (aka null channel) is designed to render in
@@ -74,19 +84,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 
     private boolean showStackTrace=false;
 
-    protected ChannelRuntimeData runtimeData;
     private PortalControlStructures portcs;
-
-    private String fs=java.io.File.separator;
-    protected StylesheetSet set;
-    protected String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CError" + fs;
-
+    private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CError/CError.ssl");
 
     public CError() {
-        set = new StylesheetSet (stylesheetDir + "CError.ssl");
-        set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
     }
-
+    
     public CError(int errorCode, Exception exception, String channelID,IChannel channelInstance) {
         this();
         str_channelID=channelID;
@@ -115,19 +118,14 @@ public class CError extends BaseChannel implements IPrivilegedChannel
         this.str_message=message;
     }
 
-    public void setRuntimeData (ChannelRuntimeData rd)
-    {
-        this.runtimeData=rd;
-    }
-
     public void setPortalControlStructures(PortalControlStructures pcs) {
         this.portcs=pcs;
     }
 
     public void renderXML(DocumentHandler out) {
-	// runtime data processing needs to be done here, otherwise replaced 
-	// channel will get duplicated setRuntimeData() calls
-	if(str_channelID!=null) {
+	    // runtime data processing needs to be done here, otherwise replaced 
+	    // channel will get duplicated setRuntimeData() calls
+	    if(str_channelID!=null) {
             String chFate=runtimeData.getParameter("action");
             if(chFate!=null) {
                 // a fate has been chosen
@@ -142,8 +140,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
                         cm.addChannelInstance(this.str_channelID,this.the_channel);
-			the_channel.renderXML(out);
-			return;
+			                  the_channel.renderXML(out);
+			                  return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the error channel
                         resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
@@ -163,8 +161,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                                 if(the_channel instanceof IPrivilegedChannel)
                                     ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                                 the_channel.setRuntimeData (crd);
-				the_channel.renderXML(out);
-				return;
+				                        the_channel.renderXML(out);
+				                        return;
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a reload attempt.");
@@ -177,12 +175,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
-		    showStackTrace=!showStackTrace;
+		                showStackTrace=!showStackTrace;
                 }
             }
         }
-	// if channel's render XML method was to be called, we would've returned by now
-	localRenderXML(out);
+	      // if channel's render XML method was to be called, we would've returned by now
+	      localRenderXML(out);
     }
     
     private void localRenderXML(DocumentHandler out) {
@@ -317,7 +315,14 @@ public class CError extends BaseChannel implements IPrivilegedChannel
         // end of debug block
 
         try {
-            XSLTInputSource xmlSource = new XSLTInputSource (doc);
+            Hashtable stylesheetParams = new Hashtable(4);
+            stylesheetParams.put("baseActionURL", runtimeData.getBaseActionURL());
+            stylesheetParams.put("showStackTrace", new Boolean(showStackTrace).toString());
+            stylesheetParams.put("allowRefresh", allowRef);
+            stylesheetParams.put("allowReinstantiation", allowRel);
+            XSLT.transform(doc, new URL(sslLocation), out, stylesheetParams, runtimeData.getBrowserInfo());
+            
+/*            XSLTInputSource xmlSource = new XSLTInputSource (doc);
             XSLTInputSource xslSource = set.getStylesheet(portcs.getHttpServletRequest());
             if(xslSource==null) {
                 // some meaningful error-tolerant output should be generated here.
@@ -334,6 +339,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 
                 processor.process (xmlSource, xslSource, xmlResult);
             }
+ */
         } catch (Exception e) { 
             LogService.instance().log(LogService.ERROR,"CError::renderXML() : things are bad. Error channel threw: "+e); 
         }
