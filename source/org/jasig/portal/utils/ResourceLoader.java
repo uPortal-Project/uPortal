@@ -195,8 +195,17 @@ public class ResourceLoader {
    * @throws org.xml.sax.SAXException
    */
   public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
-    InputStream inputStream = getResourceAsStream(requestingClass, resource);
-    return f.newDocumentBuilder().parse(inputStream);
+    Document document = null;
+  	InputStream inputStream = null;
+  	try {
+  	inputStream = getResourceAsStream(requestingClass, resource);
+  	document = f.newDocumentBuilder().parse(inputStream);  	
+  	} finally {
+  		if (inputStream != null)
+  			inputStream.close();  		
+  	}
+    
+  	return document;
   }
 
   /**
@@ -208,10 +217,17 @@ public class ResourceLoader {
    * @throws java.io.IOException
    */
   public static Properties getResourceAsProperties (Class requestingClass, String resource) throws ResourceMissingException, IOException {
-    InputStream inputStream = getResourceAsStream(requestingClass, resource);
-    Properties props = new Properties();
+  	InputStream inputStream = null;
+  	Properties props = null;
+  	try {
+    inputStream = getResourceAsStream(requestingClass, resource);
+    props = new Properties();
     props.load(inputStream);
-	 inputStream.close();
+  	} finally {
+  		if(inputStream != null)
+  			inputStream.close(); 	
+  	}
+  	
     return props;
   }  
   
@@ -225,10 +241,18 @@ public class ResourceLoader {
    */
   public static String getResourceAsString (Class requestingClass, String resource) throws ResourceMissingException, IOException {
     String line = null;
-    BufferedReader in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, resource)));
-    StringBuffer sbText = new StringBuffer (1024);
+    BufferedReader in = null;
+    StringBuffer sbText = null;
+    try {
+    in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, resource)));
+    sbText = new StringBuffer (1024);
     while ((line = in.readLine()) != null)
       sbText.append (line).append ("\n");
+    } finally {
+    	if(in != null )
+    		in.close();    	
+    }
+    
     return sbText.toString ();
   }
 }
