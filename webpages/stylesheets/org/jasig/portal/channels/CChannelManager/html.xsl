@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">channelDef</xsl:param>
+  <xsl:param name="action">selectGeneralSettings</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -647,7 +647,8 @@
                   </table>
                 </td>
               </tr>
-<xsl:if test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
+              <xsl:choose>
+<xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
 <tr class="uportal-channel-text">
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
@@ -671,7 +672,10 @@
                   </table>
                 </td>
               </tr>
-</xsl:if>
+</xsl:when>
+<xsl:otherwise>
+
+</xsl:otherwise>
             </table>
           </td>
         </tr>
