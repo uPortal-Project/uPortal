@@ -14,7 +14,7 @@ import javax.naming.directory.DirContext;
  * connection and get information about the connection.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$
  */
 public interface ILdapServer {
 
