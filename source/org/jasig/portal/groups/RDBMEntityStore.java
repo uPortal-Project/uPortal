@@ -64,6 +64,7 @@ public RDBMEntityStore()
  * Find the <code>IEntities</code> that are members of the <code>IEntityGroup</code>.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @deprecated
  */
 public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
