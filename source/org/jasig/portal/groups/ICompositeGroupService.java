@@ -76,6 +76,11 @@ public interface ICompositeGroupService extends IComponentGroupService {
    */
   public IEntity getEntity(String key, Class type) throws GroupsException;
   /**
+   * Returns an <code>IEntity</code> representing a portal entity.  This does
+   * not guarantee that the entity actually exists.
+   */
+  public IEntity getEntity(String key, Class type, String service) throws GroupsException;
+  /**
    * Returns an <code>IGroupMember</code> representing either a group or a
    * portal entity.  If the parm <code>type</code> is the group type,
    * the <code>IGroupMember</code> is an <code>IEntityGroup</code>.  Otherwise

@@ -153,12 +153,26 @@ public String getDistinguishedGroupKey(String name)
     * not guarantee that the entity actually exists.
     * @param key String - the group key.
     * @param type Class - the Class of the underlying IGroupMember.
-    * @return org.jasig.portal.groups.IGroupMember
+    * @return org.jasig.portal.groups.IEntity
     */
     public static IEntity getEntity(String key, Class type)
     throws GroupsException
     {
-        return instance().igetEntity(key, type);
+        return getEntity(key, type, null);
+   
+    }
+    /*
+        * Returns an <code>IEntity</code> representing a portal entity.  This does
+        * not guarantee that the entity actually exists.
+        * @param key String - the group key.
+        * @param type Class - the Class of the underlying IGroupMember.
+        * @param service String - the name of the component service.
+        * @return org.jasig.portal.groups.IEntity
+        */
+    public static IEntity getEntity(String key, Class type, String service)
+    throws GroupsException
+    {
+        return instance().igetEntity(key, type, service);
     }
     /*
      * Returns an <code>IGroupMember</code> representing either a group or a
@@ -264,18 +278,17 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
         return compositeGroupService.findGroup(key);
     }
     catch (Exception ex)
-        { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }
-}
+        { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }}
     /*
      * Returns an <code>IEntity</code> representing a pre-existing portal entity.
      * @param key String - the group key.
      * @param type Class - the Class of the underlying IGroupMember.
      * @return org.jasig.portal.groups.IEntity
      */
-    protected IEntity igetEntity(String key, Class type) throws GroupsException
+    protected IEntity igetEntity(String key, Class type, String service) throws GroupsException
     {
-        return compositeGroupService.getEntity(key, type);
-    }
+        return compositeGroupService.getEntity(key, type, service);
+    }    
     /*
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,

@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.jasig.portal.EntityIdentifier;
@@ -147,7 +148,29 @@ protected IIndividualGroupService getDefaultService()
  */
 public IEntity getEntity(String key, Class type) throws GroupsException
 {
-    return getDefaultService().getEntity(key, type);
+    return getEntity(key, type, null);
+}
+/**
+ * Returns an <code>IEntity</code> representing a portal entity.  This does
+ * not guarantee that the entity actually exists.
+ */
+public IEntity getEntity(String key, Class type, String svcName) 
+throws GroupsException
+{
+    IIndividualGroupService svc = null;
+    if ( svcName == null )
+        { svc = getDefaultService(); }
+    else
+    {   
+        try
+        {  
+            Name n = GroupService.parseServiceName(svcName);
+            svc = getComponentService(n);
+        }
+        catch (InvalidNameException ine)
+            { throw new GroupsException("Invalid service name."); }
+    }
+    return ( svc == null ) ? null : svc.getEntity(key, type);
 }
 /**
  * Returns an <code>IGroupMember</code> representing either a group or a
