@@ -79,7 +79,7 @@ public class PersonDirInfoTest extends TestCase {
     }
     
     /**
-     * Test that validating valid PDIs throws no exception.
+     * Test that validating valid PDIs returns no error messages.
      */
     public void testValids() {
         assertNull(PersonDirXmlParserTest.getJdbcPersonDirInfo().validate());
