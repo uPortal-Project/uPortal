@@ -55,7 +55,7 @@ import  org.jasig.portal.services.LogService;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.jasig.portal.security.IRole;
-import org.jasig.portal.factories.DocumentFactory;
+import org.jasig.portal.utils.DocumentFactory;
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -151,6 +151,7 @@ public class RDBMUserLayoutStore
     String chanTitle = rs.getString("CHAN_TITLE");
     String chanDesc = rs.getString("CHAN_DESC");
     String chanClass = rs.getString("CHAN_CLASS");
+    int chanTypeId = rs.getInt("CHAN_TYPE_ID");
     int chanPupblUsrId = rs.getInt("CHAN_PUBL_ID");
     int chanApvlId = rs.getInt("CHAN_APVL_ID");
     java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
@@ -174,6 +175,7 @@ public class RDBMUserLayoutStore
     addChannelHeaderAttribute("description", chanDesc, channel);
     addChannelHeaderAttribute("fname", chanFName, channel);
     addChannelHeaderAttribute("class", chanClass, channel);
+    addChannelHeaderAttribute("typeID", chanTypeId, channel);
     addChannelHeaderAttribute("timeout", chanTimeout, channel);
     addChannelHeaderAttributeFlag("minimizable", chanMinimizable, channel);
     addChannelHeaderAttributeFlag("editable", chanEditable, channel);
@@ -220,7 +222,7 @@ public class RDBMUserLayoutStore
     Statement stmt = con.createStatement();
     try {
       String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
@@ -228,7 +230,7 @@ public class RDBMUserLayoutStore
           /* Channel hasn't been approved yet. Replace it with the error channel and a suitable message */
 
           /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-          Logger.log(Logger.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel hasn't been approved for publishing yet (ignored at the moment) for channel "
+          LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel hasn't been approved for publishing yet (ignored at the moment) for channel "
               + chanId);
           // return new ErrorChannel()
           }
@@ -237,7 +239,7 @@ public class RDBMUserLayoutStore
           createChannelNodeHeaders(doc, chanId, idTag, rs, channel);
           rs.close();
           sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           while (rs.next()) {
             createChannelNodeParameters(doc, rs, channel);
@@ -668,7 +670,7 @@ public class RDBMUserLayoutStore
    *   ChannelRegistry
    *
    */
-  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception {
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
       addChannel(id, publisherId, title, doc, con);
@@ -677,18 +679,21 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         for (int i = 0; i < catID.length; i++) {
-          String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + catID[i] + ")";
+          // Take out "cat" prefix if its there
+          String categoryID = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
+          String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
           stmt.executeUpdate(sInsert);
         }
         // Commit the transaction
         commit(con);
-      } catch (Exception e) {
+      } catch (SQLException sqle) {
         // Roll back the transaction
         rollback(con);
-        throw  e;
+        throw sqle;
       } finally {
-        stmt.close();
+        if (stmt != null)
+          stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -700,9 +705,9 @@ public class RDBMUserLayoutStore
    * @param id
    * @param title
    * @param doc
-   * @exception Exception
+   * @exception java.sql.SQLException
    */
-  public void addChannel (int id, int publisherId, String title, Document doc) throws Exception {
+  public void addChannel (int id, int publisherId, String title, Document doc) throws SQLException {
     //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
     Connection con = rdbmService.getConnection();
     try {
@@ -773,7 +778,7 @@ public class RDBMUserLayoutStore
    * @param con
    * @exception Exception
    */
-  protected void addChannel (int id, int publisherId, String title, Document doc, Connection con) throws Exception {
+  protected void addChannel (int id, int publisherId, String title, Document doc, Connection con) throws SQLException {
     Element channel = (Element)doc.getFirstChild();
     // Set autocommit false for the connection
     setAutoCommit(con, false);
@@ -784,10 +789,10 @@ public class RDBMUserLayoutStore
       String sqlTitle = sqlEscape(title);
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
-      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
+      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
           + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
-      sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") +
-          "'," + publisherId + "," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
+      sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") + "', " + channel.getAttribute("typeID") + ","
+          + publisherId + "," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
           + "'" + ",'" + dbBool(channel.getAttribute("editable")) + "'" + ",'" + dbBool(channel.getAttribute("hasHelp"))
           + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" + ",'" + dbBool(channel.getAttribute("unremovable"))
           + "'," + "'" + dbBool(channel.getAttribute("detachable")) + "'" + ",'" + sqlName + "','" + sqlFName + "')";
@@ -818,7 +823,7 @@ public class RDBMUserLayoutStore
               }
             }
             if (paramName == null && paramValue == null) {
-              throw new Exception("Invalid parameter node");
+              throw new RuntimeException("Invalid parameter node");
             }
             sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
@@ -829,9 +834,9 @@ public class RDBMUserLayoutStore
       }
       // Commit the transaction
       commit(con);
-    } catch (Exception e) {
+    } catch (SQLException sqle) {
       rollback(con);
-      throw  e;
+      throw  sqle;
     } finally {
       stmt.close();
     }
