@@ -51,6 +51,10 @@ public class AuthorizationException extends PortalException {
         super(msg);
     }
 
+    public AuthorizationException(String msg, Exception exc) {
+        super(msg,exc);
+    }
+
     public AuthorizationException(String msg,boolean refresh, boolean reinstantiate) {
         super(msg,refresh, reinstantiate);
     }
