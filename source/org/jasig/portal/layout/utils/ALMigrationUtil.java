@@ -35,6 +35,7 @@
 
 package org.jasig.portal.layout.utils;
 
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -56,13 +57,13 @@ public class ALMigrationUtil {
   private static final int DELETE = 2;
   private static final int DEFAULT_SS_ID = 1;
   private static IUserLayoutStore ulsdb = null;
-  private static Properties props = null;
+  private Properties props = new Properties();
 
   public ALMigrationUtil() throws Exception {
     if ( ulsdb == null )
      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-    if ( props == null )
-     props = ResourceLoader.getResourceAsProperties( ALMigrationUtil.class, "/properties/al.properties");
+     InputStream is = this.getClass().getResourceAsStream( "/properties/al.properties");
+     props.load(is);
   }
 
   public void registerStylesheet ( String stylesheetURI, String stylesheetDescriptionURI, int stylesheetId, boolean isTheme, int command ) {
@@ -85,7 +86,7 @@ public class ALMigrationUtil {
                     id = ulsdb.addStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
 
                 if (id == null) {
-                    System.out.println("Save failed: stylsheet ID = null");
+                    System.out.println("Save failed: stylesheet ID = null");
                     return;
                 } else {
                     stylesheetId = id.intValue();
@@ -137,9 +138,12 @@ public class ALMigrationUtil {
   }
 
   public String getProperty ( String name ) {
-     if ( props != null )
-       return props.getProperty(name);
-     return null;
+     if ( props != null ) {
+       String value = props.getProperty(name);
+       if ( value != null )
+        return value.trim();
+     }
+        return null;
   }
 
   public static void main(String[] args) {
