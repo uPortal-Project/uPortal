@@ -12,7 +12,6 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
-import org.jasig.portal.channels.webproxy.CWebProxy;
 import org.jasig.portal.concurrency.LockingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,7 +42,6 @@ public class CancelSelection extends GroupsManagerCommand {
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception {
       ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Document model = getXmlDoc(sessionData);
       /** @todo move to GroupManagerCommand.cleanUp */
