@@ -1,31 +1,49 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-  <HEAD>
-    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-    <TITLE>
-      The Groups Manager channel is a tool that runs within the uPort
-    </TITLE>
-    <META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.1  (Linux)">
-    <META NAME="AUTHOR" CONTENT="Don Fracapane">
-    <META NAME="CREATED" CONTENT="20021210;14440000">
-    <META NAME="CHANGEDBY" CONTENT="Don Fracapane">
-    <META NAME="CHANGED" CONTENT="20021220;15440000">
-    <STYLE>
-<!--
-@page { size: 21.59cm 27.94cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 1.25cm }
-P.sdfootnote-western { margin-bottom: 0cm; font-family: "Times New Roman", serif; font-size: 10pt; so-language: en-US }
-P.sdfootnote-cjk { margin-bottom: 0cm; font-family: "Times New Roman", serif; font-size: 10pt }
-P.sdfootnote-ctl { margin-bottom: 0cm }
-A.sdfootnoteanc { font-size: 57% }
--->
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+<HEAD> 
+<TITLE>Grous Manager Channel</TITLE> 
+<LINK HREF="../uportal.css" REL="stylesheet">
+
+</HEAD> 
+<BODY BGCOLOR="#FFFFFF"> 
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+<TR> 
+<TD ALIGN="LEFT" VALIGN="BOTTOM" COLSPAN="3"><IMG SRC="../images/uportal-head.gif" ALT="uPortal by JA-SIG" BORDER="0" HEIGHT="87" WIDTH="592"></TD> 
+</TR> 
+<TR> 
+<TD><IMG SRC="../images/spacer.gif" ALT="." BORDER="0" HEIGHT="4" WIDTH="1"></TD> 
+</TR> 
+</TABLE>
+
+<TABLE CELLSPACING="0" CELLPADDING="5" WIDTH="100%" BORDER="0"> 
+   <TBODY> 
+   <TR> 
+   <TD VALIGN="TOP" WIDTH="150" BGCOLOR="#CCCCFF">
+   <IMG SRC="../images/spacer.gif" BORDER="0" HEIGHT="4"><BR/>
+   <P><A CLASS="sidelinks" HREF="http://www.ja-sig.org/" ><B> JA-SIG Home</B></A></P>
+   <P><A CLASS="sidelinks"  HREF="../index.html" ><B> About uPortal</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../docs.html" ><B> Documentation</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../administrators/index.html" ><B> Getting Started</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../developers/index.html" ><B> Developers</B></A></P>
+	<P><A CLASS="sidelinks" HREF="index.html" ><B> Implementors</B></A></P>
+	<P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Background</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
+   <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
+   </TD>
+
+<!-- main body goes in this table cell -->
+   <TD valign="top">
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
+   
 </STYLE>
   </HEAD>
   <BODY LANG="en-US" TEXT="#000000">
     <P ALIGN=CENTER STYLE="margin-bottom: 0cm">
     <FONT SIZE=5>
       <B>
-        The Groups
-        Manager Channel
+        The Groups Manager Channel
       </B>
     </FONT>
     </P>
@@ -39,7 +57,7 @@ A.sdfootnoteanc { font-size: 57% }
     <FONT SIZE=4 STYLE="font-size: 16pt">
       <I>
         <B>
-          Overview
+        <A name = "overview">Overview</A>
         </B>
       </I>
     </FONT>
@@ -62,10 +80,10 @@ A.sdfootnoteanc { font-size: 57% }
     consistent manner. The default implementation is delivered with a
     group service that uses the portal database as its source. Therefore,
     as delivered, the composite group service only has one component
-    service that is called ‘local’.&nbsp; A demo LDAP component
+    service that is called &quot;local&quot;. A demo LDAP component
     service can be configured by uncommeting the ldap section in the
     property file compositeGroupServices.xml located in the
-    …/properties/group directory. This will setup an ‘ldap’ service
+    /properties/group directory. This will setup an &quot;ldap&quot; service
     that uses the Columbia LDAP directory as its source. If you want to
     use another LDAP directory, you should modify the
     LDAPGroupStoreConfig.xml file located in the same file directory. It
@@ -95,18 +113,18 @@ A.sdfootnoteanc { font-size: 57% }
     does not enforce this relationship, the groups manager channel
     requires root groups to organize the opening view. Root groups are
     also used by the search function to discover the entity types that
-    can be searched. In the default implementation, the ‘All
-    categories’ group (see Figure 1) is the root group of all channel
-    definition groups and the ‘Everyone’ group is the root group of
+    can be searched. In the default implementation, the &quot;All
+    categories&quot; group (see Figure 1) is the root group of all channel
+    definition groups and the &quot;Everyone&quot; group is the root group of
     all IPerson groups. Root groups are defined in the portal properties
     file as properties named with the prefix
-    ‘org.jasig.portal.services.GroupService.key_’ followed by an
+    &quot;org.jasig.portal.services.GroupService.key_&quot; followed by an
     entity type class name. These properties are used by a group service
     to determine which groups are root groups. The value of the property
     is the group key. This key takes the form groupServiceName.key in the
     default implementation. (See
     <I>
-      Appendix II: Creating New Root Groups
+      <A href = "#appendix2">Appendix II: Creating New Root Groups</A>
     </I>
     for more details)
     </P>
@@ -145,7 +163,7 @@ A.sdfootnoteanc { font-size: 57% }
     Manager channel is located in 
     <B>
       <I>
-        Appendix I: Test Drive
+      <A href = "#appendix1">Appendix I: Test Drive</A>
       </I>
     </B>
     section of this document. For a more detailed discussion of Groups,
@@ -167,7 +185,9 @@ A.sdfootnoteanc { font-size: 57% }
     <BR>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    When the Groups Manager opens, the channel displays all root groups (see Overview above) for which the
+    When the Groups Manager opens, the channel displays all root groups (see 
+    <A href = "#overview">Overview</A>
+     above) for which the
     user has view permissions (see Figure 1). A group can be expanded by
     clicking on the 
     <IMG SRC="images/expand.jpg" NAME="Graphic1" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
@@ -182,7 +202,7 @@ A.sdfootnoteanc { font-size: 57% }
     visible. If the group Tenured Professors is not a member of any other
     group that is displayed, it will be invisible to the user from the
     tree view. The only way for the user to see the group is to search
-    for it (See Searching below).
+    for it (See <A href = "#searching">Searching</A> below).
     </P>
     <P STYLE="margin-bottom: 0cm">
     <BR>
@@ -232,7 +252,7 @@ A.sdfootnoteanc { font-size: 57% }
     <IMG SRC="images/lock.jpg" NAME="Graphic7" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon (
     <B>
-      ‘Edit Group’
+      &quot;Edit Group&quot;
     </B>
     ). If this group is not being edited by
     someone else, the edit view will be rendered. This icon will only be
@@ -271,7 +291,7 @@ A.sdfootnoteanc { font-size: 57% }
     <P STYLE="margin-bottom: 0cm">
     The edit view (see Figure 3) is similar
     to the detail view but the group information is updatable and
-    additional functions are available based upon the user’s
+    additional functions are available based upon the user&quot;s
     privileges. The group can be 
     <B>
       deleted
@@ -285,12 +305,12 @@ A.sdfootnoteanc { font-size: 57% }
       Update
     </B>
     button. A new group can be created as a sub-group of Faculty by
-    typing the name of the new group in the input box where ‘
+    typing the name of the new group in the input box where &quot;
     <B>
       (new
       group name)
     </B>
-    ’ is displayed and then clicking on the 
+    &quot; is displayed and then clicking on the 
     <B>
       Create
       New Member Group
@@ -313,7 +333,7 @@ A.sdfootnoteanc { font-size: 57% }
     <IMG SRC="images/unlock.jpg" NAME="Graphic10" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     (
     <B>
-      ‘Finish Editing Group’
+      &quot;Finish Editing Group&quot;
     </B>
     ) that will allow another user to
     edit the Faculty group. 
@@ -436,7 +456,7 @@ A.sdfootnoteanc { font-size: 57% }
     be granting permissions for the target group that was being edited in
     the previous view. You can select the group members to which you want
     to grant permissions by clicking in the checkbox to the left of the
-    group member’s name and then clicking on 
+    group member&quot;s name and then clicking on 
     <B>
       Select Marked
     </B>
@@ -492,7 +512,7 @@ A.sdfootnoteanc { font-size: 57% }
     <FONT SIZE=4>
       <I>
         <B>
-          Searching
+        <A name = "searching">Searching</A>
         </B>
       </I>
     </FONT>
@@ -507,13 +527,13 @@ A.sdfootnoteanc { font-size: 57% }
     IPersons, IEntityGroups of IPersons, IChannelDefinitions, and
     IEntityGroups of IChannelDefinitions. Searching is not available
     while in edit mode. To search for the group Tenured Professors (see
-    Figure 5), change the first search argument to ‘Group of Person’,
-    the second argument to ‘contains’ or ‘starts with’ and the
-    third argument to ‘Tenured’. If you only want to search within
+    Figure 5), change the first search argument to &quot;Group of Person&quot;,
+    the second argument to &quot;contains&quot; or &quot;starts with&quot; and the
+    third argument to &quot;Tenured&quot;. If you only want to search within
     the currently selected group, click on the 
     <B>
-      ‘Search only
-      descendants of the selected group’
+      &quot;Search only
+      descendants of the selected group&quot;
     </B>
     checkbox. After clicking on
     <B>
@@ -536,8 +556,8 @@ A.sdfootnoteanc { font-size: 57% }
     permissions to a search element. Deleting a search element simply
     removes the element from the view and has no affect on the groups
     themselves. On the other hand, the search result elements held by the
-    search element are ‘real’ group members that can be manipulated
-    like any other persistent group within the limits of the user’s
+    search element are &quot;real&quot; group members that can be manipulated
+    like any other persistent group within the limits of the user&quot;s
     privileges. This includes being able to select the groups in order to
     add them to another group. Group members held by all component group
     services will be discovered once they are configured.  Group services
@@ -574,7 +594,7 @@ A.sdfootnoteanc { font-size: 57% }
     <B>
       <I>
         <FONT SIZE=4>
-          Appendix I: Test Drive
+          <A name = "appendix1">Appendix I: Test Drive</A>
         </FONT>
       </I>
     </B>
@@ -611,12 +631,12 @@ A.sdfootnoteanc { font-size: 57% }
       <P STYLE="margin-bottom: 0cm">
       Expand the Faculty group in the Groups Manager channel by clicking on the 
       <IMG SRC="images/expand.jpg" NAME="Graphic15" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
-      icon that is next to the group name ‘Faculty’.
+      icon that is next to the group name &quot;Faculty&quot;.
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Open the detail view of the
-      Faculty group by clicking on the group name ‘Faculty’ (to the
+      Faculty group by clicking on the group name &quot;Faculty&quot; (to the
       right of the 
       <IMG SRC="images/collapse.jpg" NAME="Graphic16" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon).
@@ -653,7 +673,7 @@ A.sdfootnoteanc { font-size: 57% }
     <OL>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the group name ‘Faculty’
+      Click on the group name &quot;Faculty&quot;
       to re-open the detail view.
       </P>
       <LI>
@@ -665,7 +685,7 @@ A.sdfootnoteanc { font-size: 57% }
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Change ‘(new group name)’ to ‘Nutty Prof’ and click on the 
+      Change &quot;(new group name)&quot; to &quot;Nutty Prof&quot; and click on the 
       <B>
         Create New Member Group
       </B>
@@ -691,8 +711,8 @@ A.sdfootnoteanc { font-size: 57% }
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Change the Nutty Prof group to
-      Nutty Professors and add a description the description ‘Son of
-      Flubber’. Click on the 
+      Nutty Professors and add a description the description &quot;Son of
+      Flubber&quot;. Click on the 
       <B>
         Update
       </B>
@@ -735,15 +755,15 @@ A.sdfootnoteanc { font-size: 57% }
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Show the properties for the entity
-      ‘demo’ by clicking on the 
+      &quot;demo&quot; by clicking on the 
       <IMG SRC="images/showprops.jpg" NAME="Graphic23" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
-      icon that is next to ‘demo’. You are doing this to make sure you
+      icon that is next to &quot;demo&quot;. You are doing this to make sure you
       have the right member.
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Click on the checkbox next to
-      ‘demo’. This visually selects the member.
+      &quot;demo&quot;. This visually selects the member.
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
@@ -756,7 +776,7 @@ A.sdfootnoteanc { font-size: 57% }
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Click on the checkbox next to
-      ‘demo’ but this time in the Selected Members section at the
+      &quot;demo&quot; but this time in the Selected Members section at the
       bottom of the view. You have visually selected the member.
       </P>
       <LI>
@@ -851,7 +871,7 @@ A.sdfootnoteanc { font-size: 57% }
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Open the detail view by clicking
-      on the Faculty group in the tree view on the left (you mean I don’t
+      on the Faculty group in the tree view on the left (you mean I don&quot;t
       have to explicitly unlock the group?).
       </P>
       <LI>
@@ -874,7 +894,7 @@ A.sdfootnoteanc { font-size: 57% }
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Respond ‘Yes’ to the prompt.
+      Respond &quot;Yes&quot; to the prompt.
       </P>
     </OL>
     <P STYLE="margin-left: 0.64cm; margin-bottom: 0cm">
@@ -909,8 +929,7 @@ A.sdfootnoteanc { font-size: 57% }
     <FONT SIZE=4>
       <I>
         <B>
-          Appendix II:
-          Creating New Root Groups
+          <A name = "appendix2">Appendix II: Creating New Root Groups</A>
         </B>
       </I>
     </FONT>
@@ -943,8 +962,8 @@ A.sdfootnoteanc { font-size: 57% }
     <BR>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    addEntityType(Class.forName(‘org.jasig.portal.IBook’), ‘Books
-    of all types’)
+    addEntityType(Class.forName(&quot;org.jasig.portal.IBook&quot;), &quot;Books
+    of all types&quot;)
     </P>
     <P STYLE="margin-bottom: 0cm">
     <BR>
@@ -957,13 +976,13 @@ A.sdfootnoteanc { font-size: 57% }
     <BR>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    GroupService.newGroup(Class.forName(‘org.jasig.portal.IBook’))
+    GroupService.newGroup(Class.forName(&quot;org.jasig.portal.IBook&quot;))
     </P>
     <P STYLE="text-indent: 1.27cm; margin-bottom: 0cm">
     OR 
     </P>
     <P STYLE="margin-bottom: 0cm">
-    GroupService.newGroup(Class.forName(‘org.jasig.portal.IBook’),
+    GroupService.newGroup(Class.forName(&quot;org.jasig.portal.IBook&quot;),
     amazonCom).
     </P>
     <P STYLE="margin-bottom: 0cm">
@@ -1033,5 +1052,49 @@ A.sdfootnoteanc { font-size: 57% }
       <BR>
       </P>
     </DIV>
-  </BODY>
+
+<!-- end of main body table cell -->
+
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
+	
+   </TD> 
+
+</TR> 
+
+</TBODY> 
+</TABLE>
+
+<!-- page footer -->
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+   <TBODY> 
+   <TR> 
+   <TD ALIGN="CENTER">&nbsp;</TD> 
+   </TR> 
+   
+   <TR> 
+   <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="../images/spacer.gif" WIDTH="1"
+   BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
+   SIZE="1"><A HREF="http://www.ja-sig.org/">JA-SIG Home</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../index.html"> About uPortal</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../faq.html">FAQ</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../download.html">Download</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../docs.html">Documentation</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../getinv.html">Getting Involved</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <BR><A HREF="../cvs.html">Code Repository</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../bugs.html">Reporting Bugs</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   <A HREF="../license.html">License</A>
+   <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+   </FONT></TD> 
+   </TR> 
+   </TBODY> 
+</TABLE><!-- end page footer -->
+</BODY>
 </HTML>
