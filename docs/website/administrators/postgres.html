@@ -1,13 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
 <HTML> 
 <HEAD> 
-<TITLE>PostgreSQL configuration guide</TITLE> 
+<TITLE>PostgreSQL database configuration</TITLE> 
 <LINK HREF="../uportal.css" REL="stylesheet">
-<!-- Use the following script to do rollovers in the left column of the
-page.  If you don't want to do rollovers, you can delete these script lines 
-from this html.  If you do use this .js file to do the rollovers, be sure 
-to name your images using the format filename-on.gif and filename-off.gif.  -->
-<SCRIPT LANGUAGE="Javascript" SRC="SwapImage.js"></SCRIPT> 
+
 </HEAD> 
 <BODY BGCOLOR="#FFFFFF"> 
 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
@@ -15,65 +11,35 @@ to name your images using the format filename-on.gif and filename-off.gif.  -->
 <TD ALIGN="LEFT" VALIGN="BOTTOM" COLSPAN="3"><IMG SRC="../images/uportal-head.gif" ALT="uPortal by JA-SIG" BORDER="0" HEIGHT="87" WIDTH="592"></TD> 
 </TR> 
 <TR> 
-<TD COLSPAN="3" BGCOLOR="#FF6600"><IMG SRC="../images/spacer.gif" ALT="" BORDER="0" HEIGHT="2" WIDTH="1"></TD> 
+<TD><IMG SRC="../images/spacer.gif" ALT="." BORDER="0" HEIGHT="4" WIDTH="1"></TD> 
 </TR> 
-<TR VALIGN="TOP"> 
-<TD ALIGN="LEFT" WIDTH="150"> 
-<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0"> 
-<TBODY> 
-<TR> 
-<TD>
-<A HREF="http://www.ja-sig.org/" ONMOUSEOVER="swapImage('jahome','on')" ONMOUSEOUT="swapImage('jahome','off')"> <IMG NAME="jahome" SRC="../images/jahome-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../index.html" ONMOUSEOVER="swapImage('about','on')" ONMOUSEOUT="swapImage('about','off')"> <IMG NAME="about" SRC="../images/about-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../faq.html" ONMOUSEOVER="swapImage('faq','on')" ONMOUSEOUT="swapImage('faq','off')"> <IMG NAME="faq" SRC="../images/faq-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../download.html" ONMOUSEOVER="swapImage('downld','on')" ONMOUSEOUT="swapImage('downld','off')"> <IMG NAME="downld" SRC="../images/downld-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../docs.html" ONMOUSEOVER="swapImage('docs','on')" ONMOUSEOUT="swapImage('docs','off')"> <IMG NAME="docs" SRC="../images/docs-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../getinv.html" ONMOUSEOVER="swapImage('getinv','on')" ONMOUSEOUT="swapImage('getinv','off')"> <IMG NAME="getinv" SRC="../images/getinv-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../cvs.html" ONMOUSEOVER="swapImage('coderep','on')" ONMOUSEOUT="swapImage('coderep','off')"> <IMG NAME="coderep" SRC="../images/coderep-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../bugs.html" ONMOUSEOVER="swapImage('bug','on')" ONMOUSEOUT="swapImage('bug','off')"> <IMG NAME="bug" SRC="../images/bug-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../license.html" ONMOUSEOVER="swapImage('license','on')" ONMOUSEOUT="swapImage('license','off')"> <IMG NAME="license" SRC="../images/license-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-</TBODY> 
 </TABLE>
-<BR><BR>
-<!--nested table for mellon logo -->
-<IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"> 
-</TD> 
-<TD WIDTH="10">&nbsp;</TD> 
 
-<!-- insert main body into this table cell here -->
-<TD>
+<TABLE CELLSPACING="0" CELLPADDING="5" WIDTH="100%" BORDER="0"> 
+   <TBODY> 
+   <TR> 
+   <TD VALIGN="TOP" WIDTH="150" BGCOLOR="#CCCCFF">
+   <IMG SRC="../images/spacer.gif" BORDER="0" HEIGHT="4"><BR/>
+   <P><A CLASS="sidelinks" HREF="http://www.ja-sig.org/" ><B> JA-SIG Home</B></A></P>
+   <P><A CLASS="sidelinks"  HREF="../index.html" ><B> About uPortal</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../docs.html" ><B> Documentation</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../administrators/index.html" ><B> Getting Started</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../developers/index.html" ><B> Developers</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Architecture</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+   <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
+   <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
+   </TD>
 
+<!-- main body goes in this table cell -->
+   <TD valign="top">
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
+   
+<blockquote> Documentation for this section is not available. You can contribute to uPortal
+by <a href="../getinv.html">Getting Involved</a>.</blockquote>
    <h4 class="title"> <a name="hsql-database"></a> Setting up A PostgreSQL Database</h4>
-	<blockquote class="highlight"> This document needs content.
- See the <a href="../getinv.html">Getting Involved</a> page
-to read how you can contribute to the uPortal project.
-</blockquote>
+	
 
    <p>
    Obtaining the Driver
@@ -91,8 +57,13 @@ to read how you can contribute to the uPortal project.
    Issues and Known Bugs
    </p>
    
-</TD> 
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
+	
+   </TD> 
+
 </TR> 
+
+</TBODY> 
 </TABLE>
 
 <!-- page footer -->
@@ -101,10 +72,7 @@ to read how you can contribute to the uPortal project.
    <TR> 
    <TD ALIGN="CENTER">&nbsp;</TD> 
    </TR> 
-   <TR> 
-   <TD BGCOLOR="#ff6600" ALIGN="CENTER"><IMG HEIGHT="2"
-   SRC="../images/spacer.gif" WIDTH="1" BORDER="0" ALT="."></TD> 
-   </TR> 
+   
    <TR> 
    <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="../images/spacer.gif" WIDTH="1"
    BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
