@@ -1,16 +1,13 @@
-<STYLE TYPE="text/css">
-<!--
-
 A 
 {
 	text-decoration : none;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color : #335500;
+	color : Black;
 }
 
 A:VISITED 
 {
-	color : #339966;
+	color : Black;
 }
 
 A:HOVER 
@@ -36,6 +33,40 @@ A.navigation:hover
 .uportal-text
 {
 	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : 12px;
+}
+
+.uportal-text-small{
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : 10px;
+}
+
+.uportal-button{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	background : #CCCC99;
+}
+
+.uportal-label{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	font-weight : bold;
+}
+
+.uportal-input-text
+{
+	color : Black;	
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
+	background : #CCCC99;
+}
+
+.uportal-text-reversed{
+	color : White;
 	font-family : Georgia, "Times New Roman", Times, serif;
 	font-size : 12px;
 }
@@ -124,9 +155,23 @@ A.uportal-navigation-channel:hover
 	font-weight : bold;
 }
 
+.uportal-channel-title-reversed{
+	color : #996666;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+}
+
 .uportal-channel-subtitle
 {
 	color : #999999;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+}
+
+.uportal-channel-subtitle-reversed{
+	color : #333333;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
@@ -149,8 +194,10 @@ A.uportal-navigation-channel:hover
 
 .uportal-channel-code
 {
-	font-size: 14px;
-	font-family: Monaco, Andale Mono, monospace
+	
+	color : Black;
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
 }
 
 .uportal-channel-copyright
@@ -163,15 +210,16 @@ A.uportal-navigation-channel:hover
 
 .uportal-channel-warning
 {
-	font-size: 14px;
-	font-family: Monaco, Andale Mono, monospace
+	font-size: 10px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
 }
 
 .uportal-channel-error
 {
-	color : red;
-	font-size: 14px;
-	font-family: Monaco, Andale Mono, monospace
+	color : Black;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 
 .uportal-channel-table-caption
@@ -231,16 +279,5 @@ A.uportal-navigation-channel:hover
 	background : #FFFFCC;
 }
 
-.uportal-background-uportal-logo 
-{
-	background : #666633 url(uportal001.gif) no-repeat;
-}
-
-.uportal-background-client-masthead 
-{
-	background : #CCCC99 url(imm001.gif) no-repeat;
-}
-
--->
-
-</STYLE>
+.uportal-background-uportal-logo { }
+.uportal-background-client-masthead { }
