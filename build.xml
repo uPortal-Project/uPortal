@@ -1212,15 +1212,23 @@
   Runs all uPortal JUnit-based test code
 
 -->
-
-
+  <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <java fork="true" classname="org.jasig.portal.AllTests">
+    <junit fork="true" printsummary="on" showoutput="off" dir=".." >
       <classpath>
-       <path refid="tests.classpath"/>
-       <path location="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="tests.classpath"/>
+        <path location="${build.home}/WEB-INF/classes"/>
       </classpath>
-    </java>
+      <batchtest>
+	    <fileset dir="${build.home}/WEB-INF/classes">
+	      <include name="**/*Test.class"/>
+	      <exclude name="**/Abstract*Test.class"/>
+          <exclude name="**/*AbstractTest.class"/>   
+          <exclude name="**/DbTest.class"/>   
+	    </fileset>
+	  </batchtest>
+	</junit>
   </target>
 
 
