@@ -214,7 +214,7 @@ public class ThreadPool extends ThreadGroup {
 	    // clean up currentReceipt if the thread didn't do it
 	    try {
 		if(w.currentReceipt!=null) {
-		    w.currentReceipt.updateStatus(null,true,false,null);
+		    w.currentReceipt.updateStatus(null,true,false,e);
 		}
 	    } catch (Exception bad) {};
 
