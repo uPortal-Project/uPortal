@@ -124,11 +124,15 @@ public class LdapServices
                             ldapProps.getProperty("ldap.factory"));
                     }
                     catch (IllegalArgumentException iae) {
-                        log.info( "Invalid data in " + LDAP_PROPERTIES_FILE, iae);
+                        if (log.isInfoEnabled())
+                            log.info( "Invalid data in " + LDAP_PROPERTIES_FILE, iae);
                     }
                 }
                 else {
-                    log.info( "LdapServices::initConnections(): " + LDAP_PROPERTIES_FILE + " was not found, all ldap connections will be loaded from " + LDAP_XML_FILE);
+                    if (log.isInfoEnabled())
+                        log.info( "LdapServices::initConnections(): " + 
+                                LDAP_PROPERTIES_FILE + " was not found, all ldap " +
+                                        "connections will be loaded from " + LDAP_XML_FILE);
                 }
             }
             catch(Exception e)
@@ -243,11 +247,17 @@ public class LdapServices
                                         
                                         if (isDefaultConn) {
                                             defaultConn = newConn;
-                                            log.info("LdapServices::initConnections(): Replaced '" + LDAP_PROPERTIES_FILE + "' connection with default connection '" + name + "' from '" + LDAP_XML_FILE + "'");
+                                            if (log.isInfoEnabled())
+                                                log.info("LdapServices::initConnections(): " +
+                                                        "Replaced '" + LDAP_PROPERTIES_FILE + 
+                                                        "' connection with default connection '" + 
+                                                        name + "' from '" + LDAP_XML_FILE + "'");
                                         }
                                     }
                                     catch (IllegalArgumentException iae) {
-                                        log.info( "Invalid data for server " + name + " in " + LDAP_XML_FILE, iae);
+                                        if (log.isInfoEnabled())
+                                            log.info( "Invalid data for server " + name + 
+                                                    " in " + LDAP_XML_FILE, iae);
                                     }                                    
                                 }
                                 else {

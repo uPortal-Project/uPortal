@@ -145,9 +145,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         try {
             ulnd = man.getNode(nodeId);
         } catch( PortalException pe ) {
-            // not found in layout...
-            log.debug(
-                           "Node '" + nodeId + "' is not in layout, " +
+            if (log.isDebugEnabled())
+                log.debug("Node '" + nodeId + "' is not in layout, " +
                            "checking for a transient node...");
         }
 
@@ -307,8 +306,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
         if ( null == chanDef ){
             String fname = getFname(subId);
-
-            log.debug("TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
+            if (log.isDebugEnabled())
+                log.debug("TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
                            "attempting to get a channel definition using functional name: " + fname );
             try{
                 chanDef = ChannelRegistryStoreFactory.
@@ -365,7 +364,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                     mChanMap.put(subId,chanDef);
                 }
             } catch (Exception e) {
-                log.error("TransientUserLayoutManagerWrapper::getSubscribeId() : an exception encountered while trying to obtain ChannelDefinition for fname \""+fname+"\" : "+e);
+                log.error("TransientUserLayoutManagerWrapper::getSubscribeId() : " +
+                        "an exception encountered while trying to obtain " +
+                        "ChannelDefinition for fname \""+fname+"\" : "+e);
                 subId=null;
             }
         }
