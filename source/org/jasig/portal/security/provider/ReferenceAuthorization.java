@@ -98,7 +98,7 @@ public class ReferenceAuthorization
       return  (false);
     }
     try {
-      return  GenericPortalBean.getUserLayoutStore().isUserInRole(userId, (String)role.getRoleTitle());
+      return  GenericPortalBean.getUserLayoutStore().isUserInRole(person, (String)role.getRoleTitle());
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       return  (false);
@@ -244,7 +244,7 @@ public class ReferenceAuthorization
       userRoles = new Vector();
     }
     try {
-      GenericPortalBean.getUserLayoutStore().getUserRoles(userRoles, userId);
+      GenericPortalBean.getUserLayoutStore().getUserRoles(userRoles, person);
       userRolesCache.put(new Integer(userId), userRoles);
       return  userRoles;
     } catch (Exception e) {
@@ -259,7 +259,7 @@ public class ReferenceAuthorization
       return;
     }
     try {
-      GenericPortalBean.getUserLayoutStore().addUserRoles(person.getID(), roles);
+      GenericPortalBean.getUserLayoutStore().addUserRoles(person, roles);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -275,7 +275,7 @@ public class ReferenceAuthorization
       return;
     }
     try {
-      GenericPortalBean.getUserLayoutStore().removeUserRoles(person.getID(), roles);
+      GenericPortalBean.getUserLayoutStore().removeUserRoles(person, roles);
       return;
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);

@@ -46,25 +46,26 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
 import org.w3c.dom.Document;
+import org.jasig.portal.security.IPerson;
 
 public interface IUserLayoutStore {
   /* UserLayout  */
-  public Document getUserLayout(int userId,int profileId) throws Exception;
-  public void setUserLayout(int userId,int profileId,Document layoutXML) throws Exception;
+  public Document getUserLayout(IPerson Person,int profileId) throws Exception;
+  public void setUserLayout(IPerson Person,int profileId,Document layoutXML) throws Exception;
 
   /* UserPreferences */
-  public int getUserBrowserMapping(int userId,String userAgent) throws Exception;
-  public void setUserBrowserMapping(int userId,String userAgent, int profileId) throws Exception;
-  public UserProfile getUserProfileById(int userId, int profileId) throws Exception;
-  public Hashtable getUserProfileList(int userId) throws Exception;
-  public void setUserProfile(int userId,UserProfile profile) throws Exception;
-  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,int stylesheetId) throws Exception;
-  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,int stylesheetId) throws Exception;
-  public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
-  public void setThemeStylesheetUserPreferences(int userId, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
-  public void updateUserProfile(int userId,UserProfile profile) throws Exception;
-  public UserProfile addUserProfile(int userId,UserProfile profile) throws Exception;
-  public void deleteUserProfile(int userId,int profileId) throws Exception;
+  public int getUserBrowserMapping(IPerson Person,String userAgent) throws Exception;
+  public void setUserBrowserMapping(IPerson Person,String userAgent, int profileId) throws Exception;
+  public UserProfile getUserProfileById(IPerson Person, int profileId) throws Exception;
+  public Hashtable getUserProfileList(IPerson Person) throws Exception;
+  public void setUserProfile(IPerson Person,UserProfile profile) throws Exception;
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(IPerson Person,int profileId,int stylesheetId) throws Exception;
+  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(IPerson Person,int profileId,int stylesheetId) throws Exception;
+  public void setStructureStylesheetUserPreferences(IPerson Person,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
+  public void setThemeStylesheetUserPreferences(IPerson Person, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
+  public void updateUserProfile(IPerson Person,UserProfile profile) throws Exception;
+  public UserProfile addUserProfile(IPerson Person,UserProfile profile) throws Exception;
+  public void deleteUserProfile(IPerson Person,int profileId) throws Exception;
 
   /* ChannelRegistry */
   public void addChannel(int id, int publisherId, Document doc) throws Exception;
@@ -73,8 +74,8 @@ public interface IUserLayoutStore {
   public Document getChannelRegistryXML() throws Exception;
   public Document getChannelTypesXML() throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
-  public String getNextStructChannelId(int userId) throws Exception;
-  public String getNextStructFolderId(int userId) throws Exception;
+  public String getNextStructChannelId(IPerson Person) throws Exception;
+  public String getNextStructFolderId(IPerson Person) throws Exception;
   public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception;
 
   /* CoreStylesheetDescription */
@@ -95,13 +96,13 @@ public interface IUserLayoutStore {
 
 
   /* ReferenceAuthorization */
-  public boolean isUserInRole(int userId, String role) throws Exception;
+  public boolean isUserInRole(IPerson Person, String role) throws Exception;
   public Vector getAllRoles() throws Exception;
   public void getChannelRoles(Vector roles, int channelID) throws Exception;
   public int setChannelRoles(int channelID, Vector roles) throws Exception;
-  public void getUserRoles(Vector userRoles, int userId) throws Exception;
-  public void addUserRoles(int userId, Vector roles) throws Exception;
-  public void removeUserRoles(int userId, Vector roles) throws Exception;
+  public void getUserRoles(Vector userRoles, IPerson Person) throws Exception;
+  public void addUserRoles(IPerson Person, Vector roles) throws Exception;
+  public void removeUserRoles(IPerson Person, Vector roles) throws Exception;
 
   /* ReferenceAuthentication */
   public String[] getUserAccountInformation(String username) throws Exception;

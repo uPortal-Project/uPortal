@@ -144,7 +144,7 @@ public class CSubscriber
       userLayoutXML = (DocumentImpl) ulm.getUserLayoutCopy();
     if(channelRegistry == null) {
         try {
-	channelRegistry = chanReg.getChannelRegistryXML();
+        channelRegistry = chanReg.getChannelRegistryXML();
         } catch (Exception e) {
           LogService.instance().log(LogService.ERROR, e);
         }
@@ -262,25 +262,25 @@ public class CSubscriber
       }
       else {
         for (int i = 0; i < subIDs.length; i++) {
-	    Element channel = channelRegistry.getElementById(subIDs[i]);
-	    // user wants to add an entire category to layout
-	    if (subIDs[i].startsWith("cat")) {
-		NodeList channels = channel.getChildNodes();
-		for (int j = 0; j < channels.getLength(); j++) {
-		    Element newNode=(Element)userLayoutXML.importNode(channels.item(j),true);
-		    setNextInstanceID(newNode);
-		    destination.insertBefore(newNode, null);
-		    // set the id (Xerces-specific)
-		    userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
-		}
-	    }
-	    else {
-		Element newNode=(Element)userLayoutXML.importNode(channel,true);
-		setNextInstanceID(newNode);
-		destination.insertBefore(newNode, null);
-		// set the id (Xerces-specific)
-		userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
-	    }
+            Element channel = channelRegistry.getElementById(subIDs[i]);
+            // user wants to add an entire category to layout
+            if (subIDs[i].startsWith("cat")) {
+                NodeList channels = channel.getChildNodes();
+                for (int j = 0; j < channels.getLength(); j++) {
+                    Element newNode=(Element)userLayoutXML.importNode(channels.item(j),true);
+                    setNextInstanceID(newNode);
+                    destination.insertBefore(newNode, null);
+                    // set the id (Xerces-specific)
+                    userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
+                }
+            }
+            else {
+                Element newNode=(Element)userLayoutXML.importNode(channel,true);
+                setNextInstanceID(newNode);
+                destination.insertBefore(newNode, null);
+                // set the id (Xerces-specific)
+                userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
+            }
         }
         modified = true;
       }
@@ -304,7 +304,7 @@ public class CSubscriber
    * @return String
    */
   public void setNextInstanceID (Node channel) throws Exception {
-    String sInstanceID = GenericPortalBean.getUserLayoutStore().getNextStructChannelId(staticData.getPerson().getID());
+    String sInstanceID = GenericPortalBean.getUserLayoutStore().getNextStructChannelId(staticData.getPerson());
     ((Element)channel).setAttribute("ID", sInstanceID);
   }
 }
