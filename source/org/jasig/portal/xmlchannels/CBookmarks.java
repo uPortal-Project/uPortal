@@ -33,7 +33,7 @@
  *
  */
 
-package org.jasig.portal.xmlchannels;
+package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 
@@ -69,7 +69,7 @@ import java.io.*;
  * @version $Revision$
  */
 
-public class CBookmarks extends GenericPortalBean implements IChannel
+public class CBookmarks implements IChannel
 {
   // a DOM where all the bookmark information will be contained
   protected Document bookmarksXML;
@@ -86,7 +86,7 @@ public class CBookmarks extends GenericPortalBean implements IChannel
   StylesheetSet set;
 
   // location of the stylesheet files
-  String stylesheetDir = getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
+  String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
 
   // some variables to keep the state in.
   boolean editMode = false;
@@ -102,7 +102,7 @@ public class CBookmarks extends GenericPortalBean implements IChannel
     // take a look at the *.ssl file for the stylesheet list format.
     // The format is a W3C-recommended default stylehseet binding
     set = new StylesheetSet (stylesheetDir + "CBookmarks.ssl");
-    set.setMediaProps (getPortalBaseDir () + "properties" + fs + "media.properties");
+    set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
   }
 
   // report static channel properties to the portal
