@@ -33,6 +33,8 @@
  *
  *
  * formatted with JxBeauty (c) johann.langhofer@nextra.at
+ * 
+ * @deprecated Use org.jasig.portal.utils.DocumentFactory instead
  */
 
 
