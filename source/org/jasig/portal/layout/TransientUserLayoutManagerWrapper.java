@@ -235,7 +235,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.canUpdateNode(node);
     }
 
-    public void markAddTargets(IUserLayoutNodeDescription node) {
+    public void markAddTargets(IUserLayoutNodeDescription node) throws PortalException {
         man.markAddTargets(node);
     }
 

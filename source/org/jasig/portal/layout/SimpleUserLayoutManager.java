@@ -523,7 +523,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         return !(node==null || node.isImmutable());
     }
 
-    public void markAddTargets(IUserLayoutNodeDescription node) {
+    public void markAddTargets(IUserLayoutNodeDescription node) throws PortalException {
         // get all folders
         //this.updateCacheKey();
     }

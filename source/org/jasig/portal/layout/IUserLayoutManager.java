@@ -189,8 +189,9 @@ public interface IUserLayoutManager {
      * The marks will appear next time <code>getUserLayout</code> method is called.
      *
      * @param node an <code>UserLayoutNodeDescription</code> value or <code>null</code> to stop outputting add markings.
+     * @exception PortalException if an error occurs
      */
-    public void markAddTargets(IUserLayoutNodeDescription node);
+    public void markAddTargets(IUserLayoutNodeDescription node) throws PortalException;
 
 
     /**

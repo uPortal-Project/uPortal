@@ -194,7 +194,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getParentId(String nodeId) throws PortalException {
-    return getLayoutNode(nodeId).getParentNodeId();
+    ALNode node = getLayoutNode(nodeId);
+    if ( node != null )
+      return node.getParentNodeId();
+    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
   }
 
 
@@ -226,7 +229,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getPreviousSiblingId(String nodeId) throws PortalException {
-    return getLayoutNode(nodeId).getPreviousNodeId();
+    ALNode node = getLayoutNode(nodeId);
+    if ( node != null )
+      return node.getPreviousNodeId();
+    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
   }
 
 
@@ -238,7 +244,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getNextSiblingId(String nodeId) throws PortalException {
-    return getLayoutNode(nodeId).getNextNodeId();
+    ALNode node = getLayoutNode(nodeId);
+    if ( node != null )
+      return node.getNextNodeId();
+    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
   }
 
 
@@ -1430,7 +1439,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
-        return getLayoutNode(nodeId).getNodeDescription();
+        ALNode node = getLayoutNode(nodeId);
+        if ( node != null )
+          return node.getNodeDescription();
+        throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
     }
 
 
@@ -1825,14 +1837,18 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         return true;
     }
 
-    public void markAddTargets(IUserLayoutNodeDescription nodeDesc) {
-      addTargetsNodeDesc = (IALNodeDescription)nodeDesc;
-      updateCacheKey();
+    public void markAddTargets(IUserLayoutNodeDescription nodeDesc) throws PortalException {
+     if ( nodeDesc != null && !( nodeDesc instanceof IALNodeDescription ) )
+       throw new PortalException ( "The given argument is not a node description!" );
+     addTargetsNodeDesc = (IALNodeDescription)nodeDesc;
+     updateCacheKey();
     }
 
     public void markMoveTargets(String nodeId) throws PortalException {
-      moveTargetsNodeId = nodeId;
-      updateCacheKey();
+     if ( nodeId != null && getLayoutNode(nodeId) == null )
+       throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+     moveTargetsNodeId = nodeId;
+     updateCacheKey();
     }
 
     /**
