@@ -51,6 +51,7 @@ public class FileSystemGroupsTester extends TestCase {
     private String NON_EXISTENT_ID = "xyzxyzxyz";
     private String GROUP_SERVICE_NAME = "filesystem";
     private IEntityGroupStore groupStore;
+    private String GROUP_SEPARATOR;
 /**
  * FileSystemGroupsTester.
  */
@@ -99,7 +100,7 @@ protected void addIdsToFile(File f)
 private IEntityGroup findGroup(File file) throws GroupsException
 {
     String key = getKeyFromFile(file);
-    return findGroup(GROUP_SERVICE_NAME + "." + key);
+    return findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + key);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -167,7 +168,8 @@ private String getKeyFromFile(File file) throws GroupsException
     if ( key.startsWith(GROUPS_ROOT) )
     {
         key = key.substring(GROUPS_ROOT.length());
-        key = key.replace(FileSystemGroupStore.PERIOD, FileSystemGroupStore.SUBSTITUTE_PERIOD);
+        if ( GROUP_SEPARATOR.equals(".") )
+            { key = key.replace(FileSystemGroupStore.PERIOD, FileSystemGroupStore.SUBSTITUTE_PERIOD); } 
     }
     return key;
 }
@@ -277,7 +279,8 @@ protected void setUp()
     GROUPS_ROOT = getGroupStore().getGroupsRootPath();
 
     // initialize composite service:
-    GroupService.findGroup("local.0");
+    GROUP_SEPARATOR = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
+    GroupService.findGroup("local" + GROUP_SEPARATOR + "0");
 
     IPERSON_GROUPS_ROOT = GROUPS_ROOT + IPERSON_CLASS.getName();
     iPersonGroupsRootDir = new File(IPERSON_GROUPS_ROOT);
@@ -505,7 +508,7 @@ public void testFindEmbeddedMemberGroups() throws Exception
     assertTrue(msg, group instanceof IEntityGroup);
     memberKeys = getGroupStore().findMemberGroupKeys(group);
     assertEquals(msg, 1, memberKeys.length);
-    memberGroup = findGroup(GROUP_SERVICE_NAME + "." + memberKeys[0]);
+    memberGroup = findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberKeys[0]);
     assertNotNull(msg, memberGroup);
     assertTrue(msg, memberGroup.isMemberOf(group));
 
@@ -590,7 +593,7 @@ public void testFindMemberGroupKeys() throws Exception
         assertEquals(msg, numTestFiles, memberKeys.length);
         for ( int i=0; i<memberKeys.length; i++ )
         {
-            memberGroup = findGroup(GROUP_SERVICE_NAME + "." + memberKeys[i]);
+            memberGroup = findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberKeys[i]);
             assertNotNull(msg, memberGroup);
             assertTrue(msg, memberGroup.isMemberOf(group));
         }
@@ -642,7 +645,7 @@ public void testFindMemberGroups() throws Exception
         {
             memberGroup = (IEntityGroup)memberGroups.next();
             assertNotNull(msg, memberGroup);
-            groupKey = GROUP_SERVICE_NAME + "." + memberGroup.getKey();
+            groupKey = GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberGroup.getKey();
             memberGroup = findGroup(groupKey);
             assertTrue(msg, memberGroup.isMemberOf(group));
         }
@@ -694,7 +697,7 @@ public void testSearchForGroups() throws Exception
         msg = "Searching for IS " + is;
         ids = getGroupStore().searchForGroups(is, IGroupConstants.IS, type);
         assertEquals(msg, ids.length, 1);
-        member = GroupService.findGroup(GROUP_SERVICE_NAME + "." + ids[0].getKey());
+        member = GroupService.findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + ids[0].getKey());
         assertTrue(msg, member.isGroup());
 
         msg = "Searching for STARTS WITH " + startsWith;

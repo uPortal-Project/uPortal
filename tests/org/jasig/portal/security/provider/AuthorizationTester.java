@@ -15,6 +15,7 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
+import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -32,14 +33,16 @@ import org.jasig.portal.services.GroupService;
  */
 public class AuthorizationTester extends TestCase
 {
-    private static String OWNER = "UP_FRAMEWORK";
-    private static String TEST_TARGET = "Test_Target.";
-    private static String TEST_ACTIVITY = "Test_Activity";
-    private static String EVERYONE_GROUP_PRINCIPAL_KEY = "3.local.0";
-    private static String NOONE_GROUP_PRINCIPAL_KEY = "3.local.999";
-    private static String STUDENT_GROUP_PRINCIPAL_KEY = "3.local.1";
-    private static String STUDENT_PRINCIPAL_KEY = "2.student";
-    private static int NUMBER_TEST_PERMISSIONS = 10;
+    private String OWNER = "UP_FRAMEWORK";
+    private String TEST_TARGET = "Test_Target.";
+    private String TEST_ACTIVITY = "Test_Activity";
+    private String EVERYONE_GROUP_KEY;
+    private String EVERYONE_GROUP_PRINCIPAL_KEY;
+    private String NOONE_GROUP_PRINCIPAL_KEY;
+    private String STUDENT_GROUP_PRINCIPAL_KEY;
+    private String STUDENT_PRINCIPAL_KEY = "2.student";
+    private String GROUP_SEPARATOR;
+    private int NUMBER_TEST_PERMISSIONS = 10;
 
     private IAuthorizationService authorizationService;
     private IPermissionStore permissionStore;
@@ -343,7 +346,6 @@ private static void printBlankLine()
  */
 protected void setUp()
 {
-
     String msg = null;
     IPermission[] retrievedPermissions = null;
     IPermission newPermission, retrievedPermission = null;
@@ -357,7 +359,13 @@ protected void setUp()
             { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
             { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
-
+            
+        GROUP_SEPARATOR = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
+        EVERYONE_GROUP_KEY = "local" + GROUP_SEPARATOR + "0";
+        EVERYONE_GROUP_PRINCIPAL_KEY = "3." + EVERYONE_GROUP_KEY;
+        NOONE_GROUP_PRINCIPAL_KEY = "3.local" + GROUP_SEPARATOR + "999";
+        STUDENT_GROUP_PRINCIPAL_KEY = "3.local" + GROUP_SEPARATOR + "1";
+ 
         msg = "Creating test permissions.";
         print(msg);
 
@@ -471,11 +479,11 @@ public void testAlternativePermissionPolicies() throws Exception
     String activity = IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.9999";
-    String everyoneKey = "local.0";
+    String everyoneKey = "local" + GROUP_SEPARATOR + "0";
 
-    msg = "Creating a group member for everyone (3." + everyoneKey + ").";
+    msg = "Creating a group member for everyone (" + EVERYONE_GROUP_PRINCIPAL_KEY + ").";
     print(msg);
-    IGroupMember everyone = GroupService.getGroupMember(everyoneKey, GROUP_CLASS);
+    IGroupMember everyone = GroupService.getGroupMember(EVERYONE_GROUP_KEY, GROUP_CLASS);
     assertNotNull(msg, everyone);
 
     msg = "Getting principal for " + everyone;
@@ -566,7 +574,7 @@ public void testPermissionStore() throws Exception
     String activity = IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.000";
-    String noonePrincipal = "3.local.999";
+//    String noonePrincipal = "3.local.999";
     IPermission[] permissions, addedPermissions = null;
     IPermission newPermission, retrievedPermission = null;
     java.util.Date effectiveDate = new java.util.Date();
@@ -630,20 +638,20 @@ public void testPermissionStore() throws Exception
     {
         addedPermissions[idx] = getPermissionStore().newInstance(OWNER);
         addedPermissions[idx].setActivity(activity);
-        addedPermissions[idx].setPrincipal(noonePrincipal);
+        addedPermissions[idx].setPrincipal(NOONE_GROUP_PRINCIPAL_KEY);
         addedPermissions[idx].setTarget(existingTarget + "_" + idx);
         addedPermissions[idx].setType(IPermission.PERMISSION_TYPE_GRANT);
         addedPermissions[idx].setEffective(effectiveDate);
         addedPermissions[idx].setExpires(expirationDate);
     }
     getPermissionStore().add(addedPermissions);
-    permissions = getPermissionStore().select(OWNER, noonePrincipal, activity, null, null);
+    permissions = getPermissionStore().select(OWNER, NOONE_GROUP_PRINCIPAL_KEY, activity, null, null);
     assertEquals(msg, numAddedPermissions, permissions.length);
 
     msg = "Deleting the Array of " + numAddedPermissions + " Permissions.";
     print(msg);
     getPermissionStore().delete(permissions);
-    permissions = getPermissionStore().select(OWNER, noonePrincipal, activity, null, null);
+    permissions = getPermissionStore().select(OWNER, NOONE_GROUP_PRINCIPAL_KEY, activity, null, null);
     assertEquals(msg, 0, permissions.length);
 
     print("***** LEAVING AuthorizationTester.testPermissionStore() *****" + CR);
