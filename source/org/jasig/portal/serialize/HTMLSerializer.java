@@ -305,8 +305,7 @@ public class HTMLSerializer
                         } else {
                             _printer.printText( name );
                             _printer.printText( "=\"" );
-                            if(_proxying)
-                               value = considerProxyRewrite(name,localName,value);                                                           
+			    value = ProxyWriter.considerProxyRewrite(name,localName,value);   
                             printEscaped( value );
                             _printer.printText( '"' );
                         }
@@ -318,8 +317,7 @@ public class HTMLSerializer
                         else if ( HTMLdtd.isURI( rawName, name ) ) {
                             _printer.printText( name );
                             _printer.printText( "=\"" );
-				if(_proxying)
-				value = considerProxyRewrite(name,localName,value);                                                           
+                            value = ProxyWriter.considerProxyRewrite(name,localName,value); 
                             _printer.printText( escapeURI( value ) );
                             _printer.printText( '"' );
                         } else if ( HTMLdtd.isBoolean( rawName, name ) )
@@ -387,26 +385,6 @@ public class HTMLSerializer
         } catch ( IOException except ) {
             throw new SAXException( except );
         }
-    }
-
-    private String considerProxyRewrite(String name, String localName, String value)
-                throws IOException	
-    {
-        if ((name.equalsIgnoreCase("src"))&&(value.indexOf("http://")!=-1))
-        {
-            for (int i=0; i<_proxiableElements.length; i++)
-            {
-                if (localName.equalsIgnoreCase(_proxiableElements[i]))
-                {
-                        try{
-                                _printer.printText( _rewritePrefix );                                        	
-                        }catch(IOException e){throw e;}
-                        value= value.substring(7);                	
-                        break;
-                }
-            }
-        }	
-        return value;   
     }
 
     public void endElement( String namespaceURI, String localName,
