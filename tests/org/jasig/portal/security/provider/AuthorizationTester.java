@@ -1,22 +1,30 @@
 package org.jasig.portal.security.provider;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.*;
-import junit.framework.*;
-import org.jasig.portal.security.*;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.EntityIdentifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IAuthorizationServiceFactory;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionPolicy;
+import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.concurrency.caching.*;
 
 /**
  * Tests the authorization framework.
@@ -44,6 +52,8 @@ public class AuthorizationTester extends TestCase
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
+    
+    private Random random = new Random();
 
     private class NegativePermissionPolicy implements IPermissionPolicy
     {
@@ -82,6 +92,64 @@ public class AuthorizationTester extends TestCase
        }
         public String toString() { return this.getClass().getName(); }
     }
+    
+    
+    private class PrincipalTester implements Runnable 
+    {
+        protected Class type;
+        protected String key;
+        int numTests = 0;
+        protected String testerID = null;
+        protected String printID = null;
+        protected IPermission testPermission;
+    
+        protected PrincipalTester(String pKey, Class pType, int tests, String id, IPermission permission) 
+        {
+            super();
+            key = pKey;
+            type = pType;
+            numTests = tests;
+            testerID = id;
+            testPermission = permission;
+        }
+        public void run() {
+            printID = "Tester " + testerID;
+            print(printID + " starting.");
+
+            runAndSleep(numTests, true);
+            print(printID + " finished first part of tests.  Will now sleep for 5000 ms to let main thread catch up.");
+            try { Thread.sleep(5000); }
+                catch (Exception ex) {}
+            print(printID + " starting second part of tests.");
+            runAndSleep(numTests, false);
+            print(printID + " is done.");
+        }
+ 
+        private void runAndSleep(int cycles, boolean expectedResult) {
+            for (int i=0; i<cycles; i++) 
+            {
+              //print(printID + " running test # " + (i+1));
+                try 
+                { 
+                    String msg = "Testing  for " + testPermission + " (should be " + expectedResult + ")";
+                    boolean testResult = ( runTest() == expectedResult );
+                    assertTrue(msg, testResult);
+                }
+                catch (Exception ex) {} 
+                int sleepMillis = random.nextInt(10);
+                //print(printID + " will now sleep for " + sleepMillis + " ms.");
+                try { Thread.sleep(sleepMillis); }
+                catch (Exception ex) {}
+            }
+        }
+
+        private boolean runTest() throws AuthorizationException {
+            IAuthorizationPrincipal principal = getService().newPrincipal(key,type);
+            //print("Testing  principal for " + testPermission);
+            return principal.hasPermission(OWNER, TEST_ACTIVITY, testPermission.getTarget());
+        }
+    } 
+    
 /**
  * AuthorizationTester constructor comment.
  */
@@ -372,7 +440,7 @@ public static junit.framework.Test suite() {
   suite.addTest(new AuthorizationTester("testAlternativePermissionPolicies"));
   suite.addTest(new AuthorizationTester("testPermissionStore"));
   suite.addTest(new AuthorizationTester("testDoesPrincipalHavePermission"));
-
+  suite.addTest(new AuthorizationTester("testPermissionPrincipal"));
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
 
@@ -580,5 +648,77 @@ public void testPermissionStore() throws Exception
 
     print("***** LEAVING AuthorizationTester.testPermissionStore() *****" + CR);
 
+}
+/**
+ * Tests concurrent access to permissions via "singleton" principal objects.  
+ * Only run this test when the property 
+ * org.jasig.portal.security.IAuthorizationService.cachePermissions=true, since
+ * performance of the db calls will distort the time needed to complete the
+ * various parts of the test. 
+ */
+public void testPermissionPrincipal() throws Exception
+{
+    print("***** ENTERING AuthorizationTester.testPermissionPrincipal() *****");
+    Class type = IPERSON_CLASS;
+    String key = "student";
+    int numPrincipals = 10;
+    int numTestingThreads = 10;
+    int idx = 0;
+    long pauseBeforeUpdateMillis = 3000;
+    long pauseAfterUpdateMillis = 10000;    
+    IAuthorizationPrincipal[] principals = new IAuthorizationPrincipal[numPrincipals];
+    for (idx=0; idx<numPrincipals; idx++){
+        principals[idx] = getService().newPrincipal(key,type);
+    }
+
+    String msg = "Test that principal " + principals[0] + " is being cached.";
+    print(msg);
+    for (idx=1; idx<numPrincipals; idx++){
+        assertTrue(msg, principals[idx] == principals[0]);
+    }
+    
+    IAuthorizationPrincipal p1 = principals[0];
+    
+    IPermission testPermission = (IPermission)testPermissions.get(0);
+    msg = "Testing  first principal for " + testPermission + " (should be TRUE -- inherited from Everyone)";
+    print(msg);
+    boolean testResult = p1.hasPermission(OWNER, TEST_ACTIVITY, testPermission.getTarget());
+    assertTrue(msg, testResult);
+    
+    print("Starting testing Threads.");
+    Thread[] testers = new Thread[numTestingThreads];
+    for (idx=0; idx<numTestingThreads; idx++)
+    {
+        String id = "" + idx;
+        PrincipalTester pt = new PrincipalTester(key, type, 10, id, testPermission); 
+        testers[idx] = new Thread(pt); 
+        testers[idx].start();
+    }
+
+    print("Will now sleep for " + pauseBeforeUpdateMillis + " ms to let testing threads run.");
+    try { Thread.sleep(pauseBeforeUpdateMillis); }
+    catch (Exception ex) {}
+    
+    /* 
+     * Remove a permission and test a principal.  After a pause, the testing threads
+     * will wake up and perform the 2nd part of their tests to confirm this update.
+     */
+    
+    msg = "Deleting " + testPermission;
+    print(msg);
+    IPermission[] perms = new IPermission[1];
+    perms[0] = testPermission;
+    getService().removePermissions(perms);
+    
+    msg = "Testing  first principal for " + testPermission + " (should be FALSE -- has been removed.)";
+    print(msg);
+    testResult = p1.hasPermission(OWNER, TEST_ACTIVITY, testPermission.getTarget());
+    assertTrue(msg, ! testResult);
+    
+    print("Will now sleep for " + pauseAfterUpdateMillis + " ms to let testing threads complete.");
+    try { Thread.sleep(pauseAfterUpdateMillis); }
+    catch (Exception ex) {}
+
+    print("***** LEAVING AuthorizationTester.testPermissionPrincipal() *****" + CR);
 }
 }
