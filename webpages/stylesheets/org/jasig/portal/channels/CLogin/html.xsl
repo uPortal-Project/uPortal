@@ -170,6 +170,7 @@ var time=new Date();
 var lmonth=months[time.getMonth() + 1];
 var date=time.getDate();
 var year=time.getYear();
+if (year &lt; 1000) {year = 1900 + year;} 
 document.write(lmonth + ' ');
 document.write(date + ', ' + year);
               </SCRIPT>
