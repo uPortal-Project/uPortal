@@ -100,10 +100,10 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   // ensure that this channel's output is cached
   // I'm hoping that this setting can come from some globally-set
   // property.  I'll leave this for later.
-  // Until then, it'll stay checked in set to true so that
-  // developers can simply reload the page to see the effect of
-  // a modified XML document or XSLT stylesheet
-  private static boolean developmentMode = true;
+  // Until then, it'll stay checked in set to false.
+  // Change to true if you want to simply reload the page to see
+  // the effect of a modified XML document or XSLT stylesheet
+  private static boolean developmentMode = false;
 
   public CGenericXSLT ()
   {
