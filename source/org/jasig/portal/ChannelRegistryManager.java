@@ -293,6 +293,7 @@ public class ChannelRegistryManager {
     channelDef.setHasAbout(chanHasAbout != null && chanHasAbout.equals("true") ? true : false);
 
     // Now set the channel parameters
+    channelDef.clearParameters();
     NodeList channelChildren = channelE.getChildNodes();
     if (channelChildren != null) {
       for (int i = 0; i < channelChildren.getLength(); i++) {
