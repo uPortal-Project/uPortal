@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XSLT;
 
 import javax.servlet.*;
 import javax.servlet.jsp.*;
@@ -50,6 +51,7 @@ import org.w3c.dom.*;
 import org.apache.xalan.xpath.*;
 import org.apache.xalan.xslt.*;
 import org.apache.xml.serialize.*;
+
 
 /**
  * LayoutBean is the central piece of the portal. It is responsible for presenting
@@ -67,10 +69,6 @@ public class LayoutBean
   // contains information relating client names to media and mime types
   private MediaManager mediaM;
 
-  XSLTProcessor sLayoutProcessor;
-  XSLTProcessor uLayoutProcessor;
-
-
   /**
    * Constructor initializes media manager and stylesheet sets.
    */
@@ -79,9 +77,9 @@ public class LayoutBean
     // init the media manager
     String fs = System.getProperty ("file.separator");
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
-    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "LayoutBean" + fs;
     mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
 
+    /*
     // instantiate the processors
     try
     {
@@ -91,12 +89,14 @@ public class LayoutBean
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, "LayoutBean::LayoutBean() : caught an exception while trying initialize XLST processors. "+e);
-    }
+      } */
   }
 
   /**
    * Gets the person object from the session.  Null is returned if
    * no person is logged in
+   * NOTE: this should be changed so that IPerson object is obtained
+   * from the AuthenicationService directly. -peter
    * @param req the servlet request object
    * @return the person object, null if no person is logged in
    */
@@ -105,7 +105,7 @@ public class LayoutBean
     HttpSession session = req.getSession (false);
     IPerson person = (IPerson) session.getAttribute ("up_person");
     return person;
-  }
+    } 
 
   /**
    * Renders the current state of the portal into the target markup language
@@ -144,7 +144,7 @@ public class LayoutBean
         uLayoutManager = new UserLayoutManager (req, getPerson(req));
       }
       if(uLayoutManager.userAgentUnmapped()) {
-          // do the redirect
+         // do the redirect
           // for debug purposes, we do the fake mapping to the "netscape" layout
           IUserPreferencesDB updb=new UserPreferencesDBImpl();
           IPerson person=getPerson(req);
@@ -159,25 +159,99 @@ public class LayoutBean
           uLayoutManager = new UserLayoutManager(req,getPerson(req));
       }
 
+
+      // deal with parameters that are meant for the LayoutBean
+      HttpSession session = req.getSession (false);
+
+
+      // determine rendering root -start
+      // In general transformations will start at the userLayoutRoot node, unless
+      // we are rendering something in a detach mode. 
+      Node rElement=null;
+      boolean detachMode=false;
+
+
+      // see if an old detach target exists in the servlet path
+      String detachId=null;
+      String servletPath=req.getServletPath();
+      String upFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
+      int upInd=upFile.indexOf(".uP");
+      if(upInd!=-1) {
+	  // found a .uP specification at the end of the context path
+	  int detachInd=upFile.indexOf("detach_");
+	  if(detachInd!=-1) {
+	      detachId=upFile.substring(detachInd+7,upInd);
+	      //		  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : found detachId=\""+detachId+"\" in the .uP spec.");
+	  }
+      }
+
+      // see if a new detach target has been specified
+      String newDetachId=req.getParameter("uP_detach_target");
+      if(newDetachId!=null && (!newDetachId.equals(detachId))) {
+	  // see if the new detach traget is valid
+	  rElement=uLayoutManager.getNode(newDetachId);
+	  if(rElement!=null) {
+	      // valid new detach id was specified. need to redirect
+	      res.sendRedirect(req.getContextPath()+"/detach_"+newDetachId+".uP");
+	      return;
+	  }
+      }
+
+      // else ignore new id, proceed with the old detach target (or the lack of such)
+      if(detachId!=null) {
+	  // Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : uP_detach_target=\""+detachId+"\".");
+	  rElement=uLayoutManager.getNode (detachId);
+	  detachMode=true;
+      }
+
+      // if we haven't found root node so far, set it to the userLayoutRoot
+      if(rElement==null) {
+	  rElement=uLayoutManager.getRoot ();
+	  detachMode=false;
+      }
+      String uPElement="render.uP";
+      if(detachMode) {
+	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : entering detach mode for nodeId=\""+detachId+"\".");
+	  uPElement="detach_"+detachId+".uP";
+      }
+
+
+      // determine rendering root -end
+
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
       //  basically things that directly affect the userLayout structure)
       processUserLayoutParameters (req, uLayoutManager);
 
+      // call layout manager to process all user-preferences-related request parameters
+      // this will update UserPreference object contained by UserLayoutManager, so that
+      // appropriate attribute incorporation filters and parameter tables can be constructed.
+      uLayoutManager.processUserPreferencesParameters(req);
 
+      // obtain both structure and theme transformation stylesheet roots
+      StylesheetRoot ss=XSLT.getStylesheetRoot(uLayoutManager.getStructureStylesheet());
+      StylesheetRoot ts=XSLT.getStylesheetRoot(uLayoutManager.getThemeStylesheet());
+
+      // obtain an XSLT processor 
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();      
+
+      // prepare .uP element and detach flag to be passed to the stylesheets
+      XString xuPElement=processor.createXString (uPElement);
+      XString xdm;
+      if(detachMode) 
+	  xdm=processor.createXString("true");
+      else 
+	  xdm=processor.createXString("false");
 
 
       // set up the channelManager
       if (channelManager == null)
-        channelManager = new ChannelManager (req, res,uLayoutManager);
+	  channelManager = new ChannelManager (req, res,uLayoutManager,uPElement);
       else
-        channelManager.setReqNRes (req, res);
-
-
+	  channelManager.setReqNRes (req, res,uPElement);
+      
       // set the response mime type
       res.setContentType (uLayoutManager.getMimeType());
-
-
 
       // get a serializer appropriate for the target media
       BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(uLayoutManager.getSerializerName(), out);
@@ -185,16 +259,65 @@ public class LayoutBean
       // set up the serializer
       markupSerializer.asContentHandler ();
 
-      // set up the transformation pipeline
-
       // initialize ChannelIncorporationFilter
       ChannelIncorporationFilter cif = new ChannelIncorporationFilter (markupSerializer, channelManager);
 
+      // The preferences we get below are complete, that is all of the default
+      // values that are sometimes null are filled out
+      UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
 
-      // set up the "theme" transformation
-      XSLTInputSource themeStylesheet = uLayoutManager.getThemeStylesheet ();
-      sLayoutProcessor.processStylesheet (themeStylesheet);
-      sLayoutProcessor.setDocumentHandler (cif);
+      // initialize ChannelRenderingBuffer
+      ChannelRenderingBuffer crb = new ChannelRenderingBuffer (channelManager);
+
+
+      // now that pipeline is set up, determine and set the stylesheet params
+      processor.setStylesheetParam ("baseActionURL",xuPElement);
+      processor.setStylesheetParam ("detachMode",xdm);
+
+      Hashtable supTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
+      for (Enumeration e = supTable.keys (); e.hasMoreElements ();) {
+          String pName= (String) e.nextElement ();
+          String pValue= (String) supTable.get (pName);
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting sparam \""+pName+"\"=\""+pValue+"\".");
+          processor.setStylesheetParam (pName,processor.createXString (pValue));
+      }
+
+
+      // all the parameters are set up, fire up structure transformation
+      processor.setStylesheet(ss);
+      processor.setDocumentHandler(crb);
+      // filter to fill in channel/folder attributes for the "structure" transformation.
+      StructureAttributesIncorporationFilter saif=new StructureAttributesIncorporationFilter(processor,cup.getStructureStylesheetUserPreferences());
+      
+      // if operating in the detach mode, need wrap everything
+      // in a document node and a <layout_fragment> node
+      if(detachMode) {
+	  saif.startDocument();
+	  saif.startElement("layout_fragment",new org.xml.sax.helpers.AttributeListImpl());
+	  UtilitiesBean.node2SAX(rElement,saif);
+	  saif.endElement("layout_fragment");
+	  saif.endDocument();
+      } else if(rElement.getNodeType() == Node.DOCUMENT_NODE) {
+	  UtilitiesBean.node2SAX(rElement,saif);
+      } else {
+
+      }
+	  
+	  
+      // all channels should be rendering now
+      // prepare processor for the theme transformation
+      processor.reset();
+      // set up of the parameters
+      processor.setStylesheetParam ("baseActionURL",xuPElement);
+      processor.setStylesheetParam ("detachMode",xdm);
+
+      Hashtable tupTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
+      for (Enumeration e = tupTable.keys (); e.hasMoreElements ();) {
+          String pName= (String) e.nextElement ();
+          String pValue= (String) tupTable.get (pName);
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting tparam \""+pName+"\"=\""+pValue+"\".");
+          processor.setStylesheetParam (pName,processor.createXString (pValue));
+      }
 
       // Peter, this is just temporary until you get the CHeader channel working.
       // I just needed a way for the Welcome message to change when a user logged in.
@@ -202,90 +325,22 @@ public class LayoutBean
       IPerson person = getPerson(req);
       String userDisplayName;
       if(person != null)
-        userDisplayName = person.getFullName();
+	  userDisplayName = person.getFullName();
       else
-        userDisplayName = "Guest";
-      sLayoutProcessor.setStylesheetParam("userName", sLayoutProcessor.createXString(userDisplayName));
+	  userDisplayName = "Guest";
+      processor.setStylesheetParam("userName", processor.createXString(userDisplayName));
       // End of temporary section
 
-      // call layout manager to process all stylesheet-related request parameters
-      uLayoutManager.processUserPreferencesParameters(req);
-
-      // The preferences we get below are complete, that is all of the default
-      // values that are usually null are filled out
-      UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
-
+      processor.setStylesheet(ts);
       // initialize a filter to fill in channel attributes for the
       // "theme" (second) transformation.
-      ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(sLayoutProcessor,cup.getThemeStylesheetUserPreferences());
 
-
-      // initialize ChannelRenderingBuffer
-      ChannelRenderingBuffer crb = new ChannelRenderingBuffer (taif, channelManager);
-
-      // filter to fill in channel/folder attributes for the "structure" transformation.
-      //      StructureAttributesIncorporationFilter saif=new StructureAttributesIncorporationFilter(sLayoutProcessor,cup.getStructureStylesheetUserPreferences());
-
-
-
-      // now that pipeline is set up, determine and set the stylesheet params
-
-      // deal with parameters that are meant for the LayoutBean
-      HttpSession session = req.getSession (false);
-
-      // "layoutRoot" signifies a node of the userLayout structure
-      // that will serve as a root for constructing structuredLayout
-      //      String req_layoutRoot = req.getParameter ("userLayoutRoot");
-      //String ses_layoutRoot = (String) session.getAttribute ("userLayoutRoot");
-
-      /*      if (req_layoutRoot != null)
-      {
-        session.setAttribute ("userLayoutRoot", req_layoutRoot);
-        rElement = uLayoutManager.getNode (req_layoutRoot);
-
-        if (rElement == null)
-        {
-          rElement = uLayoutManager.getRoot ();
-          Logger.log (Logger.DEBUG, "LayoutBean::writeChanels() : attempted to set layoutRoot to nonexistent node \"" + req_layoutRoot + "\", setting to the main root node instead.");
-        }
-        else
-        {
-          // Logger.log(Logger.DEBUG,"LayoutBean::writeChanels() : set layoutRoot to " + req_layoutRoot);
-        }
-      }
-      else if (ses_layoutRoot != null)
-      {
-        rElement=uLayoutManager.getNode (ses_layoutRoot);
-        // Logger.log(Logger.DEBUG,"LayoutBean::writeChannels() : retrieved the session value for layoutRoot=\""+ses_layoutRoot+"\"");
-      }
-      else
-      */
-
-      Node rElement=uLayoutManager.getRoot ();
-
-      Hashtable supTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
-      Hashtable tupTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
-
-      for (Enumeration e = supTable.keys (); e.hasMoreElements ();) {
-          String pName= (String) e.nextElement ();
-          String pValue= (String) supTable.get (pName);
-          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting sparam \""+pName+"\"=\""+pValue+"\".");
-          uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
-      }
-
-      for (Enumeration e = tupTable.keys (); e.hasMoreElements ();) {
-          String pName= (String) e.nextElement ();
-          String pValue= (String) tupTable.get (pName);
-          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting tparam \""+pName+"\"=\""+pValue+"\".");
-          sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
-      }
-
-
-
-      // all the parameters are set up, fire up the filter transforms
-      uLayoutProcessor.process (new XSLTInputSource (rElement),uLayoutManager.getStructureStylesheet(),new XSLTResultTarget (crb));
-      uLayoutProcessor.reset();
-      sLayoutProcessor.reset();
+      ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(processor,cup.getThemeStylesheetUserPreferences());
+      processor.setDocumentHandler (cif);
+      
+      // fire up theme transformation
+      crb.setDocumentHandler(taif);
+      crb.stopBuffering();
     }
     catch (Exception e)
     {
