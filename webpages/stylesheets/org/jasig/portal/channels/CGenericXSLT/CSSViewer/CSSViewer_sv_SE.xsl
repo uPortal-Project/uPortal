@@ -139,7 +139,7 @@ Version $Revision$
             <xsl:attribute name="class">
               <xsl:value-of select="substring-after(class,'.')"/>
             </xsl:attribute>
-            <img alt="interface image" src="{$genericMediaPath}/transparent.gif" width="1" height="1"/>
+            <img alt="" src="{$genericMediaPath}/transparent.gif" width="1" height="1"/>
           </td>
         </tr>
       </xsl:when>
