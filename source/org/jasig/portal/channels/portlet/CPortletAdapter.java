@@ -190,7 +190,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
-        ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
         
         try {
             synchronized(this) {
@@ -246,6 +245,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     cd.setUserInfo(userInfo);
                 }
             }
+            
+            // Wrap the request
+            ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), portletDefinition.getInitSecurityRoleRefSet());
              
             // Now create the PortletWindow and hold a reference to it
             PortletWindowImpl portletWindow = new PortletWindowImpl();
@@ -389,6 +391,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         channelState.setRuntimeData(rd);
         
+        ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         
         try {
@@ -396,7 +399,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             if (cd.isPortletWindowInitialized()) {
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
-				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
+				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
+                        cd.getPortletWindow().getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
                 
                 // Add the user information
                 wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
@@ -628,6 +632,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     public synchronized void setResponse(String uid, HttpServletResponse response) {        
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
+        ChannelStaticData sd = channelState.getStaticData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         
         try {
@@ -644,7 +649,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             pap.changePortletWindowState(new WindowState("exclusive"));
 
             //Create the request to send to the portlet container
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
+                    portletWindow.getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
             transferActionResultsToRequest(channelState, wrappedRequest);
                 
             // Add the user information to the request
