@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelDef>
+	<description>
+   	This is a channel for rendering web content inside an internal frame.
+	</description>
+	<class>org.jasig.portal.channels.CInlineFrame</class>	
+	<params>
+		<step>
+			<ID>1</ID>
+			<name></name>
+			<description></description>
+			<parameter modify="publish-only">
+				<name>url</name>
+				<label>URL</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://www.udel.edu/uPortal</defaultValue>
+			</parameter>
+			<parameter modify="subscribe">
+				<name>height</name>
+				<label>Frame Height</label>
+				<type base="integer" input="text" display="text">
+					<length>3</length>
+					<maxlength>4</maxlength>				
+				</type>
+				<defaultValue>600</defaultValue>
+			</parameter>
+		</step>
+	</params>
+	<controls/>
+</channelDef>
