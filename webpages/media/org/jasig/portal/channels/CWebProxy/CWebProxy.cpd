@@ -135,7 +135,10 @@ Version $Revision$
 
   </params>
 
-  <controls timeout="7000" minimized="false" editable="false"
-    hasHelp="false" hasAbout="false" removable="true" detachable="true" />
+  <controls>
+    <control type="edit" include="no" override="yes"/>
+    <control type="about" include="no" override="yes"/>
+    <control type="help" include="no" override="yes"/>
+  </controls>
 
 </channelDef>

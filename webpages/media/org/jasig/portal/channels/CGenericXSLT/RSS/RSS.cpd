@@ -113,5 +113,10 @@ Version $Revision$
     </step>
   </params>
 
-  <controls/>
+  <controls>
+    <control type="edit" include="no" override="no"/>
+    <control type="about" include="no" override="no"/>
+    <control type="help" include="no" override="no"/>
+  </controls>
+
 </channelDef>

@@ -34,7 +34,7 @@ Author: John Laker, jlaker@udel.edu
 $Revision$
 -->
 
-<!ELEMENT channelDef (description,class,params, defaultControls)>
+<!ELEMENT channelDef (description,class,params,controls)>
 <!ELEMENT description (#PCDATA)*>
 <!ELEMENT class (#PCDATA)*>
 <!ELEMENT params (step)+>
@@ -57,7 +57,6 @@ $Revision$
 	display  (drop-down|radio|select-list|checkbox|text|textarea|hidden) #IMPLIED>
 
 
-
 <!ELEMENT length (#PCDATA)*>
 <!ELEMENT maxlength (#PCDATA)*>
 
@@ -72,12 +71,14 @@ $Revision$
 <!ATTLIST value display CDATA #IMPLIED>
 
 
-<!ELEMENT defaultControls EMPTY>
-<!ATTLIST defaultControls 
-	editable  (true|false) "false"
-	hasHelp  (true|false) "false"
-	hasAbout  (true|false) "false"
-	printable  (true|false) "false">
+<!ELEMENT controls (control)*>
+
+<!ELEMENT control EMPTY>
+<!ATTLIST control 
+        type (edit|about|help) #REQUIRED
+        include (yes|no) #REQUIRED
+        override (yes|no) #REQUIRED>
+
 
 
 
