@@ -325,6 +325,16 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   /**
+   * Create a new ChannelDefinition object.
+   * @return channelDefinition, the new channel definition
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition newChannelDefinition() throws Exception {
+    int nextChanDefId = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHANNEL");
+    return new ChannelDefinition(nextChanDefId);
+  }
+
+  /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
    * @return channelDefinition, a definition of the channel
@@ -363,10 +373,21 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         if (rs.wasNull()) {
           timeout = 0;
         }
-        channelDef = new ChannelDefinition(channelPublishId, rs.getString(1), rs.getString(2), rs.getString(3),
-        chanType, publisherId, approverId, rs.getTimestamp(7), rs.getTimestamp(8), timeout,
-          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
-          rs.getString(14));
+        channelDef = new ChannelDefinition(channelPublishId);
+        channelDef.setTitle(rs.getString(1));
+        channelDef.setDescription(rs.getString(2));
+        channelDef.setJavaClass(rs.getString(3));
+        channelDef.setTypeId(chanType);
+        channelDef.setPublisherId(publisherId);
+        channelDef.setApproverId(approverId);
+        channelDef.setPublishDate(rs.getTimestamp(7));
+        channelDef.setApprovalDate(rs.getTimestamp(8));
+        channelDef.setTimeout(timeout);
+        channelDef.setEditable(RDBMServices.dbFlag(rs.getString(10)));
+        channelDef.setHasHelp(RDBMServices.dbFlag(rs.getString(11)));
+        channelDef.setHasAbout(RDBMServices.dbFlag(rs.getString(12)));
+        channelDef.setName(rs.getString(13));
+        channelDef.setFName(rs.getString(14));
 
         int dbOffset = 0;
         if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
@@ -558,6 +579,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         stmt.executeUpdate(delete);
 
         // Delete from UP_PERMISSION
+        // This needs to be updated to work with permission interfaces!!!
         delete = "DELETE FROM UP_PERMISSION WHERE OWNER='CHAN_ID." + channelPublishId + "' OR TARGET='CHAN_ID." + channelPublishId + "'";
         LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
@@ -704,7 +726,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
 
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RDBMServices.sqlTimeStamp();
+    sql += " UC.CHAN_ID=?";
 
     return new RDBMServices.PreparedStatement(con, sql);
   }
