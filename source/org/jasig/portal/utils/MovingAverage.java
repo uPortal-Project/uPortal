@@ -15,7 +15,6 @@ package org.jasig.portal.utils;
 public class MovingAverage {
   private long[] samples;
   private int ent = -1;
-  private int size = 0;
   private long sum = 0;
   private long totalSamples = 0;
   private long highMax = 0;
@@ -51,19 +50,20 @@ public class MovingAverage {
 
     final long lastSample = sample;
     final int first = ++ent % samples.length;
-    sum += sample - samples[first];
+    if (totalSamples >= samples.length) {
+      sum -= samples[first]; // We've wrapped, so we can remove the 'first' entry
+    }
+    sum += sample;
     samples[first] = sample;
     if (sample > highMax) {
       highMax = sample;
-    }
-    if (size < samples.length) {
-      size++;
     }
     totalSamples++;
 
     long max = 0;
     long min = Long.MAX_VALUE;
-    for (int i = 0; i < size; i++) {
+    final long arraySize = Math.min(totalSamples, samples.length);
+    for (int i = 0; i < arraySize; i++) {
       if (samples[i] > max) {
         max = samples[i];
       }
@@ -72,6 +72,6 @@ public class MovingAverage {
       }
     }
 
-    return new Sample(sum / size, highMax, lastSample, max, min, totalSamples);
+    return new Sample(sum / arraySize, highMax, lastSample, max, min, totalSamples);
   }
 }
