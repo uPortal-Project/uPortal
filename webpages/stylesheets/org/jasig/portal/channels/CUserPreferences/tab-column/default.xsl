@@ -45,44 +45,43 @@ $Revision$
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS-->
-  <!--  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
--->  
+  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--end remove-->
 
   <xsl:template match="layout">
     <!--remove for CVS-->
-    <!--    <html>
+<!--    <html>
       <head>
         <title>uPortal 2.0</title>
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
       </head>-->
-    <!--end remove-->
+      <!--end remove-->
 
-    <xsl:call-template name="optionMenu"/>
-    <br/>
-    <!--Begin Layout Table -->
-    <table width="100%" border="0" cellspacing="0" cellpadding="20">
-      <tr align="center" valign="top" class="uportal-background-dark">
-        <td class="uportal-background-dark">
-          <!--Begin Layout Sub-Table -->
-          <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td>
-                <xsl:call-template name="tabRow"/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <xsl:call-template name="contentRow"/>
-              </td>
-            </tr>
-          </table>
-          <!--End Layout Sub-Table -->
-        </td>
-      </tr>
-    </table>
-    <!--End Layout Table -->
-    <!--remove for CVS-->
+      <xsl:call-template name="optionMenu"/>
+      <br/>
+      <!--Begin Layout Table -->
+      <table width="100%" border="0" cellspacing="0" cellpadding="20">
+        <tr align="center" valign="top" class="uportal-background-dark">
+          <td class="uportal-background-dark">
+            <!--Begin Layout Sub-Table -->
+            <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <xsl:call-template name="tabRow"/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <xsl:call-template name="contentRow"/>
+                </td>
+              </tr>
+            </table>
+            <!--End Layout Sub-Table -->
+          </td>
+        </tr>
+      </table>
+      <!--End Layout Table -->
+      <!--remove for CVS-->
     <!--</html>-->
     <!--end remove-->
   </xsl:template>
@@ -658,7 +657,7 @@ $Revision$
                 <xsl:choose>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
                     <xsl:choose>
-                      <xsl:when test="parent::folder/following-sibling::folder/channel[1]/@ID">
+                      <xsl:when test="parent::folder/following-sibling::folder[1]/channel[1]/@ID">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
                           <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
