@@ -328,7 +328,9 @@ public class CPortletAdapter
                     try {
                         pe.removePreferences();
                     }
-                    catch (Exception e) { }
+                    catch (Exception e) {
+                        log.error(e,e);
+                    }
                     
                 case PortalEvent.SESSION_DONE:
                     // For both SESSION_DONE and UNSUBSCRIBE, we might want to

@@ -5,11 +5,15 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.channels.webproxy.CWebProxy;
+import org.jasig.portal.concurrency.LockingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +30,8 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class CancelSelection extends GroupsManagerCommand {
+    
+   private static final Log log = LogFactory.getLog(GroupsManagerCommand.class);
 
    public CancelSelection () {
    }
@@ -59,7 +65,9 @@ public class CancelSelection extends GroupsManagerCommand {
         if (sessionData.lockedGroup!=null){
           try{
             sessionData.lockedGroup.getLock().release();
-          }catch(Exception e){}
+          }catch(LockingException e){
+              log.error(e,e);
+          }
         }
          staticData.setParameter("groupManagerFinished", "true");
       }
