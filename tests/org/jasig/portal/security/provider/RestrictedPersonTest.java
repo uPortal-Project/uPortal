@@ -73,11 +73,11 @@ public class RestrictedPersonTest extends TestCase {
     
     /**
      * Test that the getEntityIdentifier() method of RestrictedPerson
-     * always returns null.
+     * reads through to the underlying IPerson's entity identifier.
      */
     public void testGetEntityIdentifier() {
         assertNotNull(this.person.getEntityIdentifier());
-        assertNull(this.restrictedPerson.getEntityIdentifier());
+        assertSame(this.person.getEntityIdentifier(), this.restrictedPerson.getEntityIdentifier());
     }
     
     /**
