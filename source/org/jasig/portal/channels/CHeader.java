@@ -148,7 +148,7 @@ public class CHeader extends BaseChannel
     timeStampShortEl.appendChild(doc.createTextNode(getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
-    if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
+    if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
