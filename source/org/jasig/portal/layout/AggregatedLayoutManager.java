@@ -989,7 +989,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              Node restrTypeNode = attributes.getNamedItem("type");
              String restrType = (restrTypeNode!=null)?restrTypeNode.getFirstChild().getNodeValue():"0";
 
-             if ( restrValue != null ) {
+             if ( restrValue != null && restrPathNode != null ) {
               IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(CommonUtils.parseInt(restrType),restrValue,restrPath);
               nodeDesc.addRestriction(restriction);
              }
