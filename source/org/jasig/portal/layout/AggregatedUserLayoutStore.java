@@ -50,9 +50,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
@@ -1693,7 +1696,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   try {
 
        EntityIdentifier personIdentifier = person.getEntityIdentifier();
-       IGroupMember groupMember = GroupService.getGroupMember(personIdentifier);
+       IGroupMember groupPerson = GroupService.getGroupMember(personIdentifier);
 
 
         con = RDBMServices.getConnection();
@@ -1702,10 +1705,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         layoutData = new Hashtable(50);
 
 
-        //delete from up_layout_struct_aggr where fragment_id in ( select uof.fragment_id from up_owner_fragment uof, up_layout_struct_aggr uls where uls.fragment_id != NULL and uof.fragment_id = uls.fragment_id and uof.pushed_fragment='Y' and uls.fragment_id not in (1) );
-
-
-       Iterator containingGroups = groupMember.getAllContainingGroups();
+       Iterator containingGroups = groupPerson.getAllContainingGroups();
 
        if ( containingGroups.hasNext() ) {
         //Connection extraCon = RDBMServices.getConnection();
@@ -1825,19 +1825,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           RDBMServices.commit(con); // Make sure it appears in the store
         } // end if layoutID == null
 
-        // we have to delete all the records from up_layout_struct_aggr table related to the pushed fragments that an user is not allowed to have
-        /*if ( pushFragmentIds != null ) {
-         ResultSet pushedFragRs = stmt.executeQuery("SELECT UOF.FRAGMENT_ID FROM UP_OWNER_FRAGMENT UOF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ULS.FRAGMENT_ID != NULL AND " +
-         "UOF.FRAGMENT_ID=ULS.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y' AND ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId+" AND ULS.FRAGMENT_ID NOT IN ("+pushFragmentIds+")");
-         PreparedStatement psDeletePushed =
-            con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND FRAGMENT_ID=?");
-         while ( pushedFragRs.next() ) {
-           psDeletePushed.setInt(1,pushedFragRs.getInt(1));
-           psDeletePushed.executeUpdate();
-         }
-           if ( pushedFragRs != null ) pushedFragRs.close();
-           if ( psDeletePushed != null ) psDeletePushed.close();
-        }*/
+        // we have to delete all the records from up_layout_struct_aggr table related to the lost nodes
+        stmt.executeQuery("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND PRNT_NODE_ID="+LOST_FOLDER_ID);
 
         // Instantiating the layout and setting the layout ID
         layout = new AggregatedLayout ( layoutId + "" );
@@ -2999,5 +2988,53 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     }
     return  ssup;
   }
+
+  /**
+     * Returns the list of pushed fragment node IDs that must be removed from the user layout.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @return a <code>Enumeration</code> list containing the fragment node IDs to be deleted from the user layout
+     * @exception PortalException if an error occurs
+     */
+ public Enumeration getIncorrectPushedFragmentNodes (IPerson person, UserProfile profile) throws PortalException {
+  int userId = person.getID();
+  int layoutId = profile.getLayoutId();
+  Vector incorrectIds = new Vector();
+  Connection con = RDBMServices.getConnection();
+  try {
+    IGroupMember groupPerson = null;
+    String query1 = "SELECT ULS.FRAGMENT_ID,ULS.NODE_ID,UGF.GROUP_KEY FROM UP_LAYOUT_STRUCT_AGGR ULS,UP_OWNER_FRAGMENT UOF,UP_GROUP_FRAGMENT UGF WHERE "+
+    "UOF.PUSHED_FRAGMENT='Y' AND ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId+" AND ULS.FRAGMENT_ID=UOF.FRAGMENT_ID AND ULS.FRAGMENT_ID=UGF.FRAGMENT_ID";
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query1);
+    String fragmentIds = null;
+    Set groupKeys = new HashSet();
+
+    while ( rs.next() ) {
+     if ( groupPerson == null ) {
+      EntityIdentifier personIdentifier = person.getEntityIdentifier();
+      groupPerson = GroupService.getGroupMember(personIdentifier);
+     }
+      int fragmentId = rs.getInt(1);
+      int nodeId = rs.getInt(2);
+      String groupKey = rs.getString(3);
+      if ( groupKeys.contains(groupKey) )
+         incorrectIds.add(nodeId+"");
+      else {
+        IEntityGroup group = GroupService.findGroup(groupKey);
+        if ( group == null || !groupPerson.isDeepMemberOf(group) ) {
+         incorrectIds.add(nodeId+"");
+         groupKeys.add(groupKey);
+        }
+      }
+    }
+      if ( stmt != null ) stmt.close();
+  } catch ( Exception e ) {
+       throw new PortalException(e);
+    } finally {
+       RDBMServices.releaseConnection(con);
+      }
+    return incorrectIds.elements();
+ }
 
 }

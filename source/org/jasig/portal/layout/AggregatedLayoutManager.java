@@ -70,7 +70,7 @@ import org.xml.sax.ContentHandler;
  */
 public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
-  private IAggregatedUserLayoutStore layoutStore;
+  private AggregatedUserLayoutStore layoutStore;
   private AggregatedLayout layout;
   private UserProfile userProfile;
   private static final String lostFolderId = IALFolderDescription.LOST_FOLDER_ID;
@@ -109,7 +109,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   public AggregatedLayoutManager( IPerson person, UserProfile userProfile, IUserLayoutStore layoutStore ) throws Exception {
     this ( person, userProfile );
-    this.layoutStore = (IAggregatedUserLayoutStore) layoutStore;
+    this.layoutStore = (AggregatedUserLayoutStore) layoutStore;
     this.loadUserLayout();
   }
 
@@ -256,6 +256,18 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      return restriction.checkRestriction(propertyValue);
      return true;
   }
+
+ private void moveWrongFragmentsToLostFolder() throws PortalException {
+  Enumeration nodes = layoutStore.getIncorrectPushedFragmentNodes(person,userProfile);
+  while ( nodes.hasMoreElements() ) {
+    String nodeId = (String) nodes.nextElement();
+    ALNode node = getLayoutNode(nodeId);
+    if ( node != null ) {
+     if ( !moveNodeToLostFolder(nodeId) )
+      LogService.log(LogService.INFO, "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
+    }
+  }
+ }
 
 
   /**
@@ -557,11 +569,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
    if ( lostFolder == null ) {
     lostFolder = ALFolder.createLostFolder();
    }
-
-    LogService.log(LogService.DEBUG, "LOST FOLDER node id: " + nodeId);
-    LogService.log(LogService.DEBUG, "LOST FOLDER parent id: " + getLayoutNode(nodeId).getParentNodeId());
-    LogService.log(LogService.DEBUG, "LOST FOLDER next id: " + getLayoutNode(nodeId).getNextNodeId());
-    LogService.log(LogService.DEBUG, "LOST FOLDER prev id: " + getLayoutNode(nodeId).getPreviousNodeId());
     // Moving the node to the lost folder
     return moveNode(nodeId,lostFolder.getId(),null);
   }
@@ -1040,7 +1047,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
 
     public void setLayoutStore(IUserLayoutStore layoutStore ) {
-      this.layoutStore = (IAggregatedUserLayoutStore) layoutStore;
+      this.layoutStore = (AggregatedUserLayoutStore) layoutStore;
     }
 
 
@@ -1051,6 +1058,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
        layout.setLayoutManager(this);
        fragments = (Hashtable) layoutStore.getFragments(person);
+       // Moving the wrong pushed fragments to the lost folder
+       moveWrongFragmentsToLostFolder();
        // Checking restrictions and move "wrong" nodes to the lost folder
        moveWrongNodesToLostFolder();
        updateCacheKey();
