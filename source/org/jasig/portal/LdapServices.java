@@ -62,7 +62,7 @@ public class LdapServices
   private static String sLdapUidAttribute   = null;
   private static String sLdapManagerDN      = null;
   private static String sLdapManagerPW      = null;
-
+  private static String sLdapManagerProto   = null;
   /**
    * Constructor that loads LDAP parameters from property file
    * upon first invocation.
@@ -81,6 +81,7 @@ public class LdapServices
         sLdapUidAttribute = ldapProps.getProperty ("ldap.uidAttribute", "");
         sLdapManagerDN    = ldapProps.getProperty ("ldap.managerDN",    "");
         sLdapManagerPW    = ldapProps.getProperty ("ldap.managerPW",    "");
+        sLdapManagerProto = ldapProps.getProperty ("ldap.protocol",     "");
 
         LogService.instance().log(LogService.DEBUG, "ldap.host = "         + sLdapHost);
         LogService.instance().log(LogService.DEBUG, "ldap.port = "         + sLdapPort);
@@ -88,7 +89,7 @@ public class LdapServices
         LogService.instance().log(LogService.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
         LogService.instance().log(LogService.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
         LogService.instance().log(LogService.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
-
+	LogService.instance().log(LogService.DEBUG, "ldap.protocol = "     + sLdapManagerProto);
         bPropsLoaded = true;
       }
     }
@@ -114,7 +115,7 @@ public class LdapServices
       env.put(Context.SECURITY_AUTHENTICATION, "simple");
       env.put(Context.SECURITY_PRINCIPAL,      sLdapManagerDN);
       env.put(Context.SECURITY_CREDENTIALS,    sLdapManagerPW);
-
+      if(sLdapManagerProto.equals("ssl")) env.put(Context.SECURITY_PROTOCOL,"ssl");
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
@@ -157,3 +158,4 @@ public class LdapServices
 }
 
 // eof: LdapServices.java
+
