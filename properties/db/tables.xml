@@ -181,7 +181,7 @@
         <desc>Foreign key user_id of table up_user</desc>
         <key>CK</key>
       </column>
-      <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>15</param>
+      <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>255</param>
         <desc>Layout title - the name of the layout in text</desc>
       </column>
       <column> <name>INIT_NODE_ID</name> <type>INTEGER</type>
