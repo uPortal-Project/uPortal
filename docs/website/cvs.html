@@ -96,21 +96,30 @@
 				HREF="http://mis105.mis.udel.edu/cgi-bin/viewcvs.cgi/">JA-SIG CVS Repository</A>
 				is a web interface to the uPortal CVS code repository. You can use this to
 				browse through all the branches of the uPortal Code.</P> 
-			 <P>If you are interested in contributing to the uPortal coding
-				effort, refer to the <A HREF="getinv.html">Getting Involved</A> section of the
-				website for more information.</P>
+			 
+<P>If you are interested in contributing to the uPortal coding effort, refer to 
+the <A HREF="getinv.html">Getting Involved</A> section of the website for more 
+information. For developer access to the CVS repository, refer to the 
+<A HREF="cvsaccess.html">CVS access</A> page.</P>
 
-			 <P><strong>Anonymous access to CVS:</strong><br/><br/>
 
-         The uPortal project's CVS repository can be checked out through anonymous
-         (pserver) CVS with the following instruction set. When prompted for a password
-         for anonymous, simply press the Enter key.<br/><br/>
+			 
+<P><strong>Anonymous access to CVS:</strong><br/>
+<br/>
+The uPortal project's CVS repository can be checked out through anonymous (pserver) 
+CVS with the following instruction set. When prompted for a password for anonymous, 
+simply press the Enter key.<br/>
+<br/>
+<code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig login</code><br/>
+<br/>
+Next, checkout the <b>portal</b> module with the following command:</p>
+<P><code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig co portal</code><br/>
 
-         <code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig login</code><br/><br/>
-
-         <code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig co portal</code><br/><br/>
-
-         Updates from within the module's directory do not need the -d parameter.</p>
+</P>
+<P>There are also a few uPortal channels kept as a separate module (<b>portal_channels</b>). Use
+the following command to checkout portal_channels:</P>
+<code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig co portal_channels</code>
+<p>Updates from within the module's directory do not need the -d parameter.</p>
 
         
 				<p>Current CVS branches:<br/>
