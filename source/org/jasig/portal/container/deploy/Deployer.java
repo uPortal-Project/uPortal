@@ -137,6 +137,7 @@ public class Deployer {
                     fos.write(buffer, 0, length);
                 }
                 fos.close();
+                fis.close();
             }
 
         }
@@ -353,6 +354,7 @@ public class Deployer {
             fos.write(buffer, 0, length);
         }
         fos.close();
+        fis.close();
     }
 
     public static void main(String args[]) {
