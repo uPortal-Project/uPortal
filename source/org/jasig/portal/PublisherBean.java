@@ -97,6 +97,8 @@ public class PublisherBean extends GenericPortalBean{
    * displays a preview of the channel
    * for the user to see before subscribing
    * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
    */
   public void previewChannel(HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
@@ -213,6 +215,54 @@ public class PublisherBean extends GenericPortalBean{
       rdbmService.releaseConnection (con);
     }    
   }      
+
+  /**
+   * Writes a list of publishable channel types
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
+  public void writeChannelTypes (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = null;
+    ResultSet rs = null;
+    Statement stmt = null;
+
+    try
+    {
+      con = rdbmService.getConnection ();
+      stmt = con.createStatement();
+
+      String sQuery = "SELECT TYPE, NAME, DESC FROM PORTAL_CHAN_TYPES";
+      Logger.log (Logger.DEBUG, sQuery);
+
+        rs = stmt.executeQuery (sQuery);
+
+        while(rs.next()) {
+        out.println("<tr valign=\"top\">");
+        out.println("<td width=\"26%\" height=\"37\">");
+        out.println("<input type=\"radio\" name=\"chan_type\" value=\""+rs.getString("TYPE")+"\">"+rs.getString("NAME")+"</td>");
+        out.println("<td width=\"3%\" height=\"37\">&nbsp;</td>");
+        out.println("<td width=\"71%\" height=\"37\"><font size=\"2\">"+rs.getString("DESC")+"</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td width=\"26%\" height=\"2\">&nbsp;</td>");
+        out.println("<td width=\"3%\" height=\"2\">&nbsp;</td>");
+        out.println("<td width=\"71%\" height=\"2\">&nbsp;</td>");
+        out.println("</tr>");
+        }
+        stmt.close();
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    finally
+    {
+      rdbmService.releaseConnection (con);
+    }    
+  }
 
   /**
    * Allows admin to approve channel for subscription
