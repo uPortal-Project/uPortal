@@ -64,6 +64,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
     private Hashtable params;
     private String channelClassName;
     private String channelID;
+    private String channelPublishID;
     private long timeOut;
     private boolean ccaching;
     private CachingSerializer ser;
@@ -170,6 +171,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                 // get class attribute
                 channelClassName = atts.getValue("class");
                 channelID = atts.getValue("ID");
+                channelPublishID = atts.getValue("chanID");
                 timeOut = java.lang.Long.parseLong (atts.getValue("timeout"));
                 params = new Hashtable(0);
                 if(ccaching) {
@@ -202,13 +204,14 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                 insideChannelElement = false;
                 if (this.getContentHandler() != null) {
                     if(ccaching) {
-                        Vector chanEntry=new Vector(4);
+                        Vector chanEntry=new Vector(5);
                         chanEntry.add(this.channelID);
                         chanEntry.add(this.channelClassName);
                         chanEntry.add(new Long(timeOut));
                         chanEntry.add(this.params);
+                        chanEntry.add(this.channelPublishID);
                         channelIdBlocks.add(chanEntry);
-                        Object o=cm.getChannelCharacters (channelID, this.channelClassName,this.timeOut,this.params);
+                        Object o=cm.getChannelCharacters (channelID, this.channelPublishID, this.channelClassName,this.timeOut,this.params);
                         if(o!=null) {
                             if(o instanceof String) {
                                 LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received a character result for channelId=\""+channelID+"\"");
@@ -263,7 +266,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                             }
                         }
                     } else {
-                        cm.outputChannel (channelID, this.getContentHandler (),this.channelClassName,this.timeOut,this.params);
+                        cm.outputChannel (channelID, this.channelPublishID, this.getContentHandler (),this.channelClassName,this.timeOut,this.params);
                     }
                 }
             }

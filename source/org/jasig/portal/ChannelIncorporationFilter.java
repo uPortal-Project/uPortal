@@ -58,6 +58,7 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl
   private Hashtable params;
   private String channelClassName;
   private String channelID;
+  private String channelPublishID;
   private long timeOut;
 
     // constructors
@@ -88,6 +89,7 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl
         // get class attribute
         channelClassName = atts.getValue ("class");
         channelID = atts.getValue ("ID");
+        channelPublishID = atts.getValue ("chanID");
         timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
         params = new Hashtable ();
       } else {
@@ -103,7 +105,7 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl
     if (insideChannelElement) {
       if (qName.equals ("channel")) {
         if (this.getContentHandler() != null) {
-            cm.outputChannel (channelID, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
+            cm.outputChannel (channelID, this.channelPublishID, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
             insideChannelElement = false;
         }
       }

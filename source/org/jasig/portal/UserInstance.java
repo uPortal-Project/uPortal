@@ -348,7 +348,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                 String chanClassName=(String)chanEntry.get(1);
                                 Long timeOut=(Long)chanEntry.get(2);
                                 Hashtable chanParams=(Hashtable)chanEntry.get(3);
-                                channelManager.startChannelRendering(chanId,chanClassName,timeOut.longValue(),chanParams,true);
+                                String channelPublishId=(String)chanEntry.get(4);
+                                channelManager.startChannelRendering(chanId,channelPublishId, chanClassName,timeOut.longValue(),chanParams,true);
                             } else {
                                 LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
                             }
@@ -373,7 +374,8 @@ public class UserInstance implements HttpSessionBindingListener {
                             String chanClassName=(String)chanEntry.get(1);
                             Long timeOut=(Long)chanEntry.get(2);
                             Hashtable chanParams=(Hashtable)chanEntry.get(3);
-                            Object o=channelManager.getChannelCharacters (chanId, chanClassName,timeOut.longValue(),chanParams);
+                            String channelPublishId=(String)chanEntry.get(4);
+                            Object o=channelManager.getChannelCharacters (chanId, channelPublishId, chanClassName,timeOut.longValue(),chanParams);
                             if(o!=null) {
                                 if(o instanceof String) {
                                     LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
