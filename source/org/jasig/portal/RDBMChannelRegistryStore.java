@@ -48,6 +48,7 @@ import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
@@ -899,7 +900,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public void deleteChannelCategory(ChannelCategory category) throws GroupsException {
     String key = String.valueOf(category.getId());
-    IEntityGroup categoryGroup = GroupService.findGroup(key);
+    ILockableEntityGroup categoryGroup = GroupService.findLockableGroup(key,"UP_FRAMEWORK");
     categoryGroup.delete();
   }
 
