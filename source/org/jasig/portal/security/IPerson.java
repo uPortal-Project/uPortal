@@ -58,7 +58,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Gets the ID of the user
-   * @return 
+   * @return ID of the user
    */
   public int getID ();
 
@@ -74,7 +74,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Gets the full name of the user
-   * @return 
+   * @return full name of the user
    */
   public String getFullName ();
 
@@ -83,7 +83,7 @@ public interface IPerson extends IAdditionalDescriptor
   /**
    * Gets an attribute associated with the user
    * @param key
-   * @return 
+   * @return attribute associated with the user
    */
   public Object getAttribute (String key);
 
@@ -100,7 +100,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Gets all of the attributes associated with the user
-   * @return 
+   * @return all of the attributes associated with the user
    */
   public Enumeration getAttributes ();
 
@@ -108,7 +108,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Returns the names of all of the attributes stored for the user
-   * @return 
+   * @return names of all of the attributes stored for the user
    */
   public Enumeration getAttributeNames ();
 
@@ -124,7 +124,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Gets the security context object associated with the user
-   * @return 
+   * @return security context object associated with the user
    */
   public ISecurityContext getSecurityContext ();
 
@@ -132,7 +132,7 @@ public interface IPerson extends IAdditionalDescriptor
 
   /**
    * Checks to see if this user is considered a guest
-   * @return
+   * @return true if user is considered a guest
    */
   public boolean isGuest ();
 }

@@ -93,7 +93,7 @@ public final class LogService {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return instance of LogService
    */
   public final static LogService instance () {
     return  (m_instance);

@@ -59,7 +59,7 @@ public abstract class Permission {
 
   /**
    * Returns the owner of this Permission
-   * @return 
+   * @return owner of this Permission
    */
   public String getOwner () {
     return  (m_owner);
@@ -67,7 +67,7 @@ public abstract class Permission {
 
   /**
    * Returns the principal that this object is bound to
-   * @return 
+   * @return principal that this object is bound to
    */
   public abstract String getPrincipal ();
 
@@ -79,7 +79,7 @@ public abstract class Permission {
 
   /**
    * Gets the activity that this Permission is associated with
-   * @return 
+   * @return activity that this Permission is associated with
    */
   public abstract String getActivity ();
 
@@ -91,7 +91,7 @@ public abstract class Permission {
 
   /**
    * Gets the target that this Permission is associated with
-   * @return 
+   * @return target that this Permission is associated with
    */
   public abstract String getTarget ();
 
@@ -114,7 +114,7 @@ public abstract class Permission {
 
   /**
    * Gets that date that this Permission should become effective on
-   * @return 
+   * @return date that this Permission should become effective on
    */
   public abstract Date getEffective ();
 
@@ -126,7 +126,7 @@ public abstract class Permission {
 
   /**
    * Gets the date that this Permission should expire on
-   * @return 
+   * @return date that this Permission should expire on
    */
   public abstract Date getExpires ();
 

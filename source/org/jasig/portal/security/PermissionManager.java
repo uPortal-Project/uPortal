@@ -74,7 +74,7 @@ public abstract class PermissionManager {
    * @param activity
    * @param target
    * @param type
-   * @return 
+   * @return array of Permissions
    * @exception AuthorizationException
    */
   public abstract Permission[] getPermissions (String principal, String activity, String target, String type) throws AuthorizationException;

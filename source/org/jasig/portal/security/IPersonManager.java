@@ -48,7 +48,7 @@ public interface IPersonManager {
   /**
    * Returns an IPerson associated with the incoming request
    * @param request
-   * @return 
+   * @return IPerson associated with the incoming request
    */
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException;
 }

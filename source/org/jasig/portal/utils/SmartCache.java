@@ -52,7 +52,7 @@ public class SmartCache extends HashMap {
   protected int iExpirationTimeout = 3600000;                   // default to 1 hour
 
   /**
-   * Instantiate a new SmartCache.  Usually instances of SmartCache are 
+   * Instantiate a new SmartCache.  Usually instances of SmartCache are
    * declared as static. When retrieving a value from SmartCache, it will
    * be null if the value has expired.  It is up to the client to then
    * retrieve the value and put it in the cache again.
@@ -62,7 +62,7 @@ public class SmartCache extends HashMap {
    *
    * public class CacheClient {
    *   private static SmartCache cache = new SmartCache(3600); // This cache's values will expire in one hour
-   *   
+   *
    *   public static void main (String[] args) {
    *     // Try to get a value from the cache
    *     String aKey = "exampleKey";
@@ -72,7 +72,7 @@ public class SmartCache extends HashMap {
    *       // If we are here, the value has either expired or not in the cache
    *       // so we will get the value and stuff it in the cache
    *       String freshValue = someMethodWhichReturnsAString();
-   *  
+   *
    *       // Make sure it isn't null before putting it into the cache
    *       if (freshValue != null) {
    *         cache.put(aKey, freshValue);
@@ -80,7 +80,7 @@ public class SmartCache extends HashMap {
    *       }
    *     }
    *
-   *     System.out.println ("Got the value: " + aValue);     
+   *     System.out.println ("Got the value: " + aValue);
    *   }
    * }
    * </code>
@@ -99,7 +99,7 @@ public class SmartCache extends HashMap {
   }
 
   /**
-   * Add a new value to the cache.  The value will expire in accordance with the 
+   * Add a new value to the cache.  The value will expire in accordance with the
    * cache's expiration timeout value which was set when the cache was created.
    * @param key the key, typically a String
    * @param value the value
@@ -115,7 +115,7 @@ public class SmartCache extends HashMap {
    * @param key the key, typically a String
    * @param value the value
    * @param lCacheInterval an expiration timeout value which will override the default cache value just for this item
-   * @return 
+   * @return Object
    */
   public synchronized Object put (Object key, Object value, long lCacheInterval) {
     ValueWrapper valueWrapper = new ValueWrapper(value, lCacheInterval);
@@ -136,8 +136,8 @@ public class SmartCache extends HashMap {
         return  null;
       }
       return  valueWrapper.getValue();
-    } 
-    else 
+    }
+    else
       return  null;
   }
 

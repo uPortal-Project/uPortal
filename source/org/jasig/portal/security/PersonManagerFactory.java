@@ -63,7 +63,7 @@ public class PersonManagerFactory {
 
   /**
    * Returns an instance of the IPersonManager specified in portal.properties
-   * @return 
+   * @return instance of the IPersonManager
    */
   public static IPersonManager getPersonManagerInstance () {
     return  (m_personManager);

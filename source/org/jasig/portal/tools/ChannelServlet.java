@@ -324,7 +324,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return boolean
      */
     public boolean successful () {
       return  this.successful;
@@ -332,7 +332,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return boolean
      */
     public boolean done () {
       return  this.done;
@@ -340,7 +340,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return Exception
      */
     public Exception getException () {
       return  exc;
@@ -350,7 +350,7 @@ public class ChannelServlet extends HttpServlet {
   /**
    * put your documentation comment here
    * @param req
-   * @return
+   * @return IPerson
    */
   protected IPerson getPerson (HttpServletRequest req) {
     HttpSession session = req.getSession(false);

@@ -42,7 +42,7 @@ import org.jasig.portal.AuthorizationException;
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @author Dan Ellentuck
- * @version $Revision$ 
+ * @version $Revision$
  */
 public interface IPermission {
 
@@ -54,57 +54,57 @@ public interface IPermission {
 
   /**
    * Gets that date that this <code>IPermission</code> should become effective on.
-   * @return 
+   * @return date that this <code>IPermission</code> should become effective on
    */
   public Date getEffective ();
 
   /**
    * Gets the date that this <code>IPermission</code> should expire on.
-   * @return 
+   * @return date that this <code>IPermission</code> should expire on
    */
   public Date getExpires ();
 
   /**
    * Returns the owner of this <code>IPermission</code>.
-   * @return 
+   * @return owner of this <code>IPermission</code>
    */
   public String getOwner ();
 
   /**
    * Gets the target associated with this <code>IPermission</code>.
-   * @return 
+   * @return target associated with this <code>IPermission</code>
    */
   public String getTarget ();
-  
+
   /**
    * Returns the <code>Permission</code> type.
    */
   public String getType ();
-  
+
   /**
    * Sets the activity associated with this <code>IPermission</code>.
    * @param activity String
    */
   public void setActivity (String activity);
-  
+
   /**
    * Sets the date that this <code>IPermission</code> should become effective on.
    * @param effective java.util.Date
    */
   public void setEffective (Date effective);
-  
+
   /**
    * Sets the date that this <code>IPermission</code> should expire on.
    * @param expires java.util.Date
    */
   public void setExpires (Date expires);
- 
+
   /**
    * Sets the target associated with this <code>IPermission</code>.
    * @param target
    */
   public void setTarget (String target);
-  
+
   /**
    * Sets the <code>IPermission</code> type.
    * @param type String
@@ -114,12 +114,12 @@ public interface IPermission {
   /**
    * Returns a String representing the <code>IAuthorizationPrincipal</code> associated
    * with this <code>IPermission</code>.
-   * @return 
+   * @return IAuthorizationPrincipal associated with this IPermission
    */
   public String getPrincipal();
 
   /**
-   * Sets the principal String representing the <code>IAuthorizationPrincipal</code> 
+   * Sets the principal String representing the <code>IAuthorizationPrincipal</code>
    * associated with this <code>IPermission</code>.
    * @param newPrincipal String
    */
