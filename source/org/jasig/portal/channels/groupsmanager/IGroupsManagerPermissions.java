@@ -64,7 +64,7 @@ public interface IGroupsManagerPermissions {
    public boolean canCreateGroup (IAuthorizationPrincipal ap, IGroupMember gm);
 
    /**
-    * Answers if the principal is able to manage the group member (e.g. add subgroup).
+    * Answers if the principal is able to manage the group member.
     * @param ap IAuthorizationPrincipal
     * @param gm IGroupMember
     * @return boolean

@@ -68,7 +68,9 @@ import org.xml.sax.ContentHandler;
 
 
 /**
- * <p>Manages channels, replaces CPublisher</p>
+ * CChannelManager is a Channel used to manage other Channels.
+ * This is a replacement for CPublisher.
+ * 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
