@@ -479,7 +479,9 @@ public class PersonDirectory {
           if (attValues.size() == 1) {
               // Single-valued result
               String attValue = (String)attValues.iterator().next();
-              attribs.put(attAlias, attValue);
+              if (attValue != null) { 
+                attribs.put(attAlias, attValue);
+              }
           } else if (attValues.size() > 1) {
               // Multi-valued result
               attribs.put(attAlias, new ArrayList(attValues));
@@ -490,7 +492,7 @@ public class PersonDirectory {
       // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error "+e);
+      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error ", e);
     } finally {
         if (rs!=null) try {rs.close();} catch (Exception e) {}
         if (stmt!=null) try {stmt.close();} catch (Exception e) {}
