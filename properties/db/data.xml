@@ -351,7 +351,7 @@
         <column><name>NODE_ID</name><value>1001</value></column>
       </row>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>6</value></column>
+        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
         <column><name>RESTRICTION_VALUE</name><value>Y</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>FRAGMENT_ID</name><value>1</value></column>
