@@ -1,5 +1,5 @@
 /**
- * IChannel.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * IChannel.java	Java 1.2.2 Thu May 25 11:55:37 PDT 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -22,6 +22,9 @@ public interface IChannel extends com.objectspace.xml.IDXMLInterface ,com.object
   {
 
   // element Attributes
+  public String getInstanceIDAttribute();
+  public void setInstanceIDAttribute( String value );
+  public String removeInstanceIDAttribute();
   public String getClassAttribute();
   public void setClassAttribute( String value );
   public String removeClassAttribute();

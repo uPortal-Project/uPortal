@@ -7,7 +7,7 @@ CREATE TABLE PORTAL_USERS (
 	PASSWORD VARCHAR(15),
 	FIRST_NAME VARCHAR(15),
 	LAST_NAME VARCHAR(15),
-	LAYOUT_XML LONGVARCHAR,
+	LAYOUT_XML LONGVARCHAR
 	);
 
 INSERT into PORTAL_USERS (USER_NAME, PASSWORD, FIRST_NAME, LAST_NAME) values ('guest', 'guest', 'Guest', 'Guest');
@@ -25,9 +25,9 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
 <layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
   <tab name="Main">
     <column width="20%">
-      <channel minimized="false" class="org.jasig.portal.channels.CAuthorization">
+      <channel instanceID="c0" minimized="false" class="org.jasig.portal.channels.CAuthorization">
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+      <channel instanceID="c1" minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="Clock" name="name"/>
         <parameter value="Clock3D.class" name="code"/>
         <parameter value="applets/" name="codeBase"/>
@@ -36,7 +36,7 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
         <parameter value="200" name="height"/>
         <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+      <channel instanceID="c2" minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ESPN Scoreboard" name="name"/>
         <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
         <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
@@ -47,17 +47,17 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
       </channel>
     </column>
     <column width="50%">
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c3" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c4" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
       </channel>
     </column>
     <column width="30%">
-      <channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      <channel instanceID="c5" minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CWeather">
+      <channel instanceID="c6" minimized="false" class="org.jasig.portal.channels.CWeather">
         <parameter value="CA" name="state"/>
         <parameter value="El Segundo" name="city"/>
       </channel>
@@ -65,14 +65,14 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
   </tab>
   <tab name="Misc">
     <column width="30%">
-      <channel minimized="false" class="org.jasig.portal.channels.CAuthorization">
+      <channel instanceID="c7" minimized="false" class="org.jasig.portal.channels.CAuthorization">
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c8" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
       </channel>
     </column>
     <column width="70%">
-      <channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+      <channel instanceID="c9" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
         <parameter value="Yahoo" name="name"/>
         <parameter value="http://www.yahoo.com" name="url"/>
       </channel>
@@ -88,7 +88,7 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
 <layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
   <tab name="Main">
     <column width="20%">
-      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+      <channel instanceID="c0" minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="Clock" name="name"/>
         <parameter value="Clock3D.class" name="code"/>
         <parameter value="applets/" name="codeBase"/>
@@ -97,7 +97,7 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
         <parameter value="200" name="height"/>
         <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CApplet">
+      <channel instanceID="c1" minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ESPN Scoreboard" name="name"/>
         <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
         <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
@@ -108,17 +108,17 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
       </channel>
     </column>
     <column width="50%">
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c2" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c3" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
       </channel>
     </column>
     <column width="30%">
-      <channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      <channel instanceID="c4" minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>
-      <channel minimized="false" class="org.jasig.portal.channels.CWeather">
+      <channel instanceID="c5" minimized="false" class="org.jasig.portal.channels.CWeather">
         <parameter value="CA" name="state"/>
         <parameter value="El Segundo" name="city"/>
       </channel>
@@ -126,18 +126,18 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
   </tab>
   <tab name="Page 2">
     <column width="100%">
-      <channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
+      <channel instanceID="c6" minimized="false" class="org.jasig.portal.channels.CBookmarks">
       </channel>
     </column>
   </tab>
   <tab name="Misc">
     <column width="30%">
-      <channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel instanceID="c7" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
       </channel>
     </column>
     <column width="70%">
-      <channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+      <channel instanceID="c8" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
         <parameter value="Yahoo" name="name"/>
         <parameter value="http://www.yahoo.com" name="url"/>
       </channel>

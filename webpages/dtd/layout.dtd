@@ -18,6 +18,7 @@
 
 <!ELEMENT channel (parameter*)>
 <!ATTLIST channel 
+  instanceID ID #REQUIRED
   minimized (true|false) "true"
   class CDATA #REQUIRED>
 

@@ -1,5 +1,5 @@
 /**
- * Channel.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * Channel.java	Java 1.2.2 Thu May 25 11:55:37 PDT 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -68,6 +68,21 @@ public class Channel implements IChannel
   public String removeAttribute( String name )
     {
     return (String) _Attributes.remove( name );
+    }
+  
+  public String getInstanceIDAttribute()
+    {
+    return getAttribute( "instanceID" );
+    }
+  
+  public void setInstanceIDAttribute( String value )
+    {
+    setAttribute( "instanceID", value );
+    }
+  
+  public String removeInstanceIDAttribute()
+    {
+    return removeAttribute( "instanceID" );
     }
   
   public String getClassAttribute()
