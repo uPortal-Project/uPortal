@@ -189,7 +189,7 @@ class DescriptorHandler
                 {
                     try
                     {
-                        this.sleep( 1000 );
+                        Thread.sleep( 1000 );
                         
                         if ( cRes == null )
                             cRes = CarResources.getInstance();

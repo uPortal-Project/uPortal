@@ -166,7 +166,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     {
         // check if the resource name has been passed via the
         // query string parm 'car_rsrc'
-        String resourceName = req.getParameter( resources.CAR_RESOURCE_PARM );
+        String resourceName = req.getParameter( CarResources.CAR_RESOURCE_PARM );
 
         if ( resourceName == null )
         {

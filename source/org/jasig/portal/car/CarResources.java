@@ -221,7 +221,7 @@ public class CarResources {
         }
         catch( RuntimeException re )
         {
-            LogService.instance().log( LogService.INFO,
+            LogService.log( LogService.INFO,
                                        "CAR directory property '" +
 				       CAR_DIR_PROP_NAME +
 				       "' not specified. Defaulting to " +
@@ -620,7 +620,7 @@ public class CarResources {
             String delim = "/";
             StringBuffer sb = new StringBuffer();
 
-            LogService.instance().log( LogService.DEBUG,
+            LogService.log( LogService.DEBUG,
                                        "CarResources resolveRegExpr() - " +
                                        " Parsing resource name: " + entry );
 
@@ -634,7 +634,7 @@ public class CarResources {
                 // up a directory
                 String token = st.nextToken();
 
-                LogService.instance().log( LogService.DEBUG,
+                LogService.log( LogService.DEBUG,
                                            "CarResources resolveRegExpr() - " +
                                            "Token is now: " + token );
 
@@ -646,7 +646,7 @@ public class CarResources {
                 {
                     String childToken = st1.nextToken();
 
-                    LogService.instance().log( LogService.DEBUG,
+                    LogService.log( LogService.DEBUG,
                                                "CarResources resolveRegExpr() - " +
                                                "Child token is: " + childToken );
 
@@ -675,7 +675,7 @@ public class CarResources {
             entry = sb.toString();
         }
 
-        LogService.instance().log( LogService.DEBUG,
+        LogService.log( LogService.DEBUG,
                                    "CarResources resolveRegExpr() - " +
                                    "resolved entry is: " + entry );
         return entry;
