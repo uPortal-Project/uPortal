@@ -77,12 +77,6 @@ public class PortalDocumentImpl implements IPortalDocument {
     PortalDocumentImpl(Document doc) {
         document = doc;
     }
-
-    
-    public void putIdentifier(String idName, Element element) {
-        putIdentifier(idName, element, XML.serializeNode(element) );
-    }
-    
     
     /**
      * Registers an identifier name with a specified element.
@@ -92,7 +86,7 @@ public class PortalDocumentImpl implements IPortalDocument {
      * @exception DOMException if the element does not belong to the
      * document.
      */
-    public void putIdentifier(String key, Element element, String serializedElement )
+    public void putIdentifier(String key, Element element)
     throws DOMException {
         if (element == null) {
             removeElement(key);
@@ -108,7 +102,6 @@ public class PortalDocumentImpl implements IPortalDocument {
         }
 
         identifiers.put(key, element);
-        keys.put(serializedElement,key);
     }
 
     /**
@@ -140,7 +133,7 @@ public class PortalDocumentImpl implements IPortalDocument {
                 getElementKey(serializedNode);
 
             if (key != null) {
-                putIdentifier(key, element, serializedNode );
+                putIdentifier(key, element);
             }
         }
 
