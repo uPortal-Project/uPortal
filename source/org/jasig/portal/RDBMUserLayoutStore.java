@@ -119,7 +119,15 @@ public class RDBMUserLayoutStore
       String sql;
       rdbmService = new RdbmServices();
       Connection con = rdbmService.getConnection();
-      setAutoCommit(con, false);
+
+      try {
+        supportsTransactions = con.getMetaData().supportsTransactions();
+      } catch (SQLException sqle) {}
+
+      try {
+        setAutoCommit(con, false);
+      } catch (SQLException e) {}
+
       try {
         sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
         try {
@@ -168,10 +176,6 @@ public class RDBMUserLayoutStore
           }
         } catch (SQLException sqle) {
         }
-
-        try {
-          supportsTransactions = con.getMetaData().supportsTransactions();
-        } catch (SQLException sqle) {}
 
         LogService.instance().log(LogService.INFO, "Database supports: Outer Joins=" + supportsOuterJoins +", Prepared statements=" +
           supportsPreparedStatements + ", Transactions=" + supportsTransactions + ", {ts ...} syntax=" + tsEnd.equals("}"));
@@ -2336,12 +2340,9 @@ public class RDBMUserLayoutStore
    * @param connection
    * @param autocommit
    */
-  static final protected void setAutoCommit (Connection connection, boolean autocommit) {
-    try {
-      if (supportsTransactions)
-        connection.setAutoCommit(autocommit);
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+  static final protected void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
+    if (supportsTransactions) {
+      connection.setAutoCommit(autocommit);
     }
   }
 
@@ -2349,12 +2350,9 @@ public class RDBMUserLayoutStore
    * put your documentation comment here
    * @param connection
    */
-  static final protected void commit (Connection connection) {
-    try {
-      if (supportsTransactions)
-        connection.commit();
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+  static final protected void commit (Connection connection) throws SQLException {
+    if (supportsTransactions) {
+      connection.commit();
     }
   }
 
@@ -2362,12 +2360,12 @@ public class RDBMUserLayoutStore
    * put your documentation comment here
    * @param connection
    */
-  static final protected void rollback (Connection connection) {
-    try {
-      if (supportsTransactions)
+  static final protected void rollback (Connection connection) throws SQLException {
+    if (supportsTransactions) {
         connection.rollback();
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+    } else {
+      LogService.instance().log(LogService.SEVERE, "RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
+      throw new SQLException("Unable to rollback user data");
     }
   }
 
