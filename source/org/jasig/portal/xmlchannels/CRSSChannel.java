@@ -2,37 +2,36 @@ package org.jasig.portal.xmlchannels;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
-import org.apache.xalan.xslt.*;
-import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*; 
 import org.jasig.portal.*;
-
+import org.apache.xalan.xslt.*;
 
 /**
- * A sample XMLChannel that views an XML document 
- * that has a default stylesheet binding in it.
+ * A simple example of IXMLChannel that views an RSS Document.
  * @author Peter Kharchenko
  * @version $Revision$
  */
 
 
-// This is a quick&dirty example of how to render
-// XML files with default (W3C recommended) XSL stylesheet
-// attachment. Note that in the current version document is
-// parsed twice. This demonstrates the fundamental wrongdoing
-// in including style information in the document content itself.
-// The easy way around that is to use a DOM structure instead
-// of SAX streams. 
-
-
-public class XMLDocumentChannel implements IXMLChannel
+public class CRSSChannel extends GenericPortalBean implements IXMLChannel
 {
     String uri;
+    StylesheetSet set;
     ChannelRuntimeData runtimeData;
 
+    
+    String fs=System.getProperty("file.separator");
+    String stylesheetDir=getPortalBaseDir()+"webpages"+fs+"stylesheets"+fs;
+
+    public CRSSChannel() {
+	// initialize a stylesheet set from a file
+	set=new StylesheetSet(stylesheetDir+"RSSDocumentChannel"+fs+"RSSDocumentChannel.ssl");
+	set.setMediaProps(getPortalBaseDir()+"properties"+fs+"media.properties");
+    }
+    
     public void setStaticData(ChannelStaticData sd) {
 	// all we need from the static data is the location of the document
 	this.uri= sd.getParameter("uri");
@@ -52,7 +51,7 @@ public class XMLDocumentChannel implements IXMLChannel
     public ChannelSubscriptionProperties getSubscriptionProperties() {
 	ChannelSubscriptionProperties csb=new ChannelSubscriptionProperties();
 	// leave most properties at their default values, except a couple.
-	csb.setName("XMLDocumentChannel");
+	csb.setName("RSSDocumentChannel");
 	return csb;
     }
     
@@ -61,12 +60,10 @@ public class XMLDocumentChannel implements IXMLChannel
 	// channel will always render, so the default values are ok
 	return new ChannelRuntimeProperties();
     }
-
+    
     public void renderXML(DocumentHandler out)
     {
 	try {
-	    Parser documentParser = ParserFactory.makeParser("org.apache.xerces.parsers.SAXParser");
-	    StylesheetSet set=new StylesheetSet(uri);
 	    if (set!=null) {
 		XSLTInputSource stylesheet=set.getStylesheet(runtimeData.getHttpRequest());
 		if(stylesheet!=null) {
@@ -76,5 +73,4 @@ public class XMLDocumentChannel implements IXMLChannel
 	    }
 	} catch (Exception e) {};
     }
-    
 }

@@ -24,7 +24,7 @@ import org.w3c.dom.*;
  */
 
 
-public class BookmarksChannel extends GenericPortalBean implements IXMLChannel
+public class CBookmarks extends GenericPortalBean implements IXMLChannel
 {
 
     // a DOM where all the bookmark information will be contained
@@ -53,7 +53,7 @@ public class BookmarksChannel extends GenericPortalBean implements IXMLChannel
     int currentBookmark;
 
 
-    public BookmarksChannel() {
+    public CBookmarks() {
 	// initialize a stylesheet set from a file
 	// take a look at the *.ssl file for the stylesheet list format. 
 	// The format is a W3C-recommended default stylehseet binding
