@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -37,7 +37,7 @@ $Revision$
 <!-- services.dtd -->
 <!-- A number of external services can be started for uPortal. -->
 <!-- The services to be started at the portal boot time are    -->
-<!-- specified using the format specified in this DTD.         --> 
+<!-- specified using the format specified in this DTD.         -->
 
 <!ELEMENT servicelist (service)*>
 <!ELEMENT service (name, class, method, arguments)>
@@ -60,7 +60,15 @@ $Revision$
 <!-- Arguments to the start method -->
 <!-- Any number of arguments can be specified -->
 
-<!ELEMENT arguments (argItem)*>
-<!ELEMENT argItem (datatype, value)>
+<!ELEMENT arguments (argitem)*>
+
+<!-- For arguments that are arrays, set the array attribute of
+     datatype equal to true and include one or more values -->
+<!ELEMENT argitem (datatype, value+)>
+
 <!ELEMENT datatype (#PCDATA)>
+<!ATTLIST datatype
+  array (true|false) "false"
+>
+
 <!ELEMENT value (#PCDATA)>
