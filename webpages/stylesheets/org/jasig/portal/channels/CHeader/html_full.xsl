@@ -14,9 +14,10 @@
           Welcome to uPortal 2.0 Please sign in...
         </xsl:when>
         <xsl:otherwise>
-          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Publish</a> |
-          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Subscribe</a> |
-          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">User Preferences</a>
+          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Home</a> |
+          <a href="{$baseActionURL}?uP_root=chan91&amp;please-fix-these-links!">Publish</a> |
+          <a href="{$baseActionURL}?uP_root=chan90&amp;please-fix-these-links!">Subscribe</a> |
+          <a href="{$baseActionURL}?uP_root=chan92&amp;please-fix-these-links!">User Preferences</a>
         </xsl:otherwise>        
         </xsl:choose>
       </td>
