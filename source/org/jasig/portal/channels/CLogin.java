@@ -47,6 +47,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.*;
 import org.xml.sax.ContentHandler;
 import javax.servlet.http.HttpSession;
@@ -167,37 +168,37 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     }
   }
 
-    public ChannelCacheKey generateKey() {
-
-  ChannelCacheKey k=new ChannelCacheKey();
-  StringBuffer sbKey = new StringBuffer(1024);
-  // guest pages are cached system-wide
-  if(staticData.getPerson().isGuest()) {
+  public ChannelCacheKey generateKey() {
+    ChannelCacheKey k = new ChannelCacheKey();
+    StringBuffer sbKey = new StringBuffer(1024);
+    // guest pages are cached system-wide
+    if(staticData.getPerson().isGuest()) {
       k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-            sbKey.append(systemCacheId);
-  } else {
+      sbKey.append(systemCacheId);
+    } else {
       k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+    }
+    sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+
+    if(xslUriForKey == null) {
+      try {
+        String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
+        xslUriForKey=XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo());
+      } catch (PortalException pe) {
+        xslUriForKey = "Not attainable!";
+      }
+    }
+    sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+    sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
+    sbKey.append("bauthenticationAttemptFailed:").append(bauthenticationAttemptFailed).append(", ");
+    sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
+    sbKey.append("bSecurityError:").append(bSecurityError);
+    k.setKey(sbKey.toString());
+    k.setKeyValidity(new Long(System.currentTimeMillis()));
+    return k;
   }
-  sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
 
-        if(xslUriForKey==null) {
-            try {
-                xslUriForKey=XSLT.getStylesheetURI(this.getClass().getResource(sslLocation).toString(), runtimeData.getBrowserInfo());
-            } catch (PortalException pe) {
-                xslUriForKey = "Not attainable!";
-            }
-        }
-  sbKey.append("xslUri:").append(xslUriForKey).append(", ");
-  sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
-  sbKey.append("bauthenticationAttemptFailed:").append(bauthenticationAttemptFailed).append(", ");
-  sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
-  sbKey.append("bSecurityError:").append(bSecurityError);
-  k.setKey(sbKey.toString());
-  k.setKeyValidity(new Long(System.currentTimeMillis()));
-  return k;
-    }
-
-    public boolean isCacheValid(Object validity) {
-  return true;
-    }
+  public boolean isCacheValid(Object validity) {
+    return true;
+  }
 }
