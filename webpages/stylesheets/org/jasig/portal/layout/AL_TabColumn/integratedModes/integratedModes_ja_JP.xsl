@@ -103,7 +103,7 @@ Version $Revision$
 	<xsl:template match="layout">
 		<html>
 			<head>
-				<title>uPortal 2.3.1</title>
+				<title>uPortal 2.3.1+</title>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}_portlet.css"/>
 				<xsl:call-template name="scripts"/>
