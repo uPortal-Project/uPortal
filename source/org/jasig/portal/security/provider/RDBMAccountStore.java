@@ -32,7 +32,8 @@ public class RDBMAccountStore implements IAccountStore {
             PreparedStatement pstmt = null;
             try {
                 String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME = ?";
-                log.debug("RDBMUserLayoutStore::getUserAccountInformation(): " + query);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::getUserAccountInformation(): " + query);
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, username);
                 ResultSet rset = pstmt.executeQuery();
