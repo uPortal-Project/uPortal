@@ -493,7 +493,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate group store " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
@@ -501,7 +501,7 @@ private void initialize() throws GroupsException
 
     if ( entityStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
+        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -514,7 +514,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity store " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
@@ -522,7 +522,7 @@ private void initialize() throws GroupsException
 
     if ( entitySearcherFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
+        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -535,7 +535,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity searcher " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity searcher " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
