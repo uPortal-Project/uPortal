@@ -374,12 +374,10 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param uri
    */
   public void setMediaProps (String uri) {
-    // Get the directory that the user is currently in
-    String CURRENTDIR = System.getProperty("user.dir") + System.getProperty("file.separator");
-    // Build the URI if it was not passed in
     if (uri == null) {
-      uri = "file://" + CURRENTDIR + "media.properties";
+      uri = "file://" + GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
     }
+    uri = UtilitiesBean.fixURI(uri);
     try {
       // Create a URL from the given URI
       URL url = expandSystemId(uri);
