@@ -93,7 +93,7 @@ public IEntityGroup findGroup(String key) throws GroupsException
   private void initialize() throws GroupsException
   {
     String eMsg = null;
-    entityFactory = new EntityStoreRDBM();
+    entityFactory = new RDBMEntityStore();
 
     String groupFactoryName = PropertiesManager.getProperty
         ("org.jasig.portal.groups.EntityGroupFactory.implementation");

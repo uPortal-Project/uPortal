@@ -35,7 +35,6 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.RdbmServices;
 import org.jasig.portal.security.*;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.ResourceLoader;

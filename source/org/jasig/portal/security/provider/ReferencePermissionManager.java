@@ -40,7 +40,7 @@ package  org.jasig.portal.security.provider;
 
 import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.security.Permission;
-import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.RDBMServices;
 import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.AuthorizationException;
 import  org.jasig.portal.PropertiesManager;
@@ -70,7 +70,7 @@ public class ReferencePermissionManager extends PermissionManager {
    * @param newPermission
    */
   public void setPermission (Permission newPermission) {
-    Connection connection = RdbmServices.getConnection();
+    Connection connection = RDBMServices.getConnection();
     try {
       StringBuffer updateStatement = new StringBuffer(1000);
       updateStatement.append("INSERT INTO UP_PERMISSION (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (");
@@ -101,13 +101,13 @@ public class ReferencePermissionManager extends PermissionManager {
       }
 
       if (newPermission.getEffective() != null) {
-        updateStatement.append(RdbmServices.sqlTimeStamp(newPermission.getEffective()) + ",");
+        updateStatement.append(RDBMServices.sqlTimeStamp(newPermission.getEffective()) + ",");
       } else {
         updateStatement.append("null,");
       }
 
       if (newPermission.getExpires() != null) {
-        updateStatement.append(RdbmServices.sqlTimeStamp(newPermission.getExpires()) + ",");
+        updateStatement.append(RDBMServices.sqlTimeStamp(newPermission.getExpires()) + ",");
       } else {
         updateStatement.append("null");
       }
@@ -123,7 +123,7 @@ public class ReferencePermissionManager extends PermissionManager {
       // Log the exception
       LogService.log(LogService.ERROR, e);
     } finally {
-      RdbmServices.releaseConnection(connection);
+      RDBMServices.releaseConnection(connection);
     }
   }
 
@@ -161,7 +161,7 @@ public class ReferencePermissionManager extends PermissionManager {
     if (type == null) {
       type = "*";
     }
-    Connection connection = RdbmServices.getConnection();
+    Connection connection = RDBMServices.getConnection();
     try {
       // Create the select statement to retrieve the permissions
       StringBuffer queryString = new StringBuffer(255);
@@ -215,7 +215,7 @@ public class ReferencePermissionManager extends PermissionManager {
     } catch (Exception e) {
       throw  new AuthorizationException(e.getMessage());
     } finally {
-      RdbmServices.releaseConnection(connection);
+      RDBMServices.releaseConnection(connection);
     }
   }
 }

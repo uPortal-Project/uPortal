@@ -58,13 +58,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     private static final int guestUID = 1;
     static int DEBUG = 0;
 
-  protected RdbmServices rdbmService = null;
+  protected RDBMServices rdbmService = null;
 
   /**
    * constructor gets an rdbm service
    */
   public void RDBMUserIdentityStore () {
-    rdbmService = new RdbmServices();
+    rdbmService = new RDBMServices();
   }
 
  /**

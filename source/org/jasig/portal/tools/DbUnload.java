@@ -35,7 +35,7 @@
 
 package org.jasig.portal.tools;
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -137,7 +137,7 @@ public class DbUnload {
         xmlOut = new PrintWriter(System.out);
       }
 
-      con = RdbmServices.getConnection ();
+      con = RDBMServices.getConnection ();
       if (con == null) {
         System.err.println("Unable to get a database connection");
         return;
@@ -158,7 +158,7 @@ public class DbUnload {
     } catch (Exception e) {
       e.printStackTrace();
       if (con != null) {
-        RdbmServices.releaseConnection(con);
+        RDBMServices.releaseConnection(con);
       }
       System.exit(1);
     }

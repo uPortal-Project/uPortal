@@ -36,7 +36,7 @@
 package org.jasig.portal.tools;
 
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.XSLT;
 import java.io.File;
@@ -99,7 +99,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * <p>DbLoader will perform the following steps:
  * <ol>
  * <li>Read configurable properties from dbloader.xml</li>
- * <li>Get database connection from RdbmServices
+ * <li>Get database connection from RDBMServices
  *     (reads JDBC database settings from rdbm.properties).</li>
  * <li>Read tables.xml and issue corresponding DROP TABLE and CREATE TABLE SQL statements.</li>
  * <li>Read data.xml and issue corresponding INSERT SQL statements.</li>
@@ -119,7 +119,7 @@ public class DbLoader
   private static Connection con;
   private static Statement stmt;
   private static PreparedStatement pstmt;
-  private static RdbmServices rdbmService;
+  private static RDBMServices rdbmService;
   private static Document tablesDoc;
   private static Document tablesDocGeneric;
   private static boolean createScript;
@@ -966,7 +966,7 @@ public class DbLoader
             else
             {
               sb.append("'");
-              sb.append(value.trim());
+              sb.append(sqlEscape(value.trim()));
               sb.append("'");
             }
           }
@@ -985,6 +985,36 @@ public class DbLoader
 
       return sb.toString();
     }
+
+    /**
+     * Make a string SQL safe
+     * @param string
+     * @return SQL safe string
+     */
+    public static final String sqlEscape (String sql) {
+      if (sql == null) {
+        return  "";
+      }
+      else {
+        int primePos = sql.indexOf("'");
+        if (primePos == -1) {
+          return  sql;
+        }
+        else {
+          StringBuffer sb = new StringBuffer(sql.length() + 4);
+          int startPos = 0;
+          do {
+            sb.append(sql.substring(startPos, primePos + 1));
+            sb.append("'");
+            startPos = primePos + 1;
+            primePos = sql.indexOf("'", startPos);
+          } while (primePos != -1);
+          sb.append(sql.substring(startPos));
+          return  sb.toString();
+        }
+      }
+    }
+
 
     private void insertRow (Table table, Row row)
     {
@@ -1132,7 +1162,8 @@ public class DbLoader
         pstmt = con.prepareStatement("SELECT A FROM PREP_TEST WHERE A=?");
         pstmt.clearParameters ();
         pstmt.setString(1, "D");
-        pstmt.executeQuery();
+        ResultSet rs = pstmt.executeQuery();
+        rs.close();
      }
       catch (SQLException sqle)
       {

@@ -36,7 +36,7 @@ package org.jasig.portal.groups;
 
 import java.sql.*;
 import java.util.*;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -80,7 +80,7 @@ private Map getDirectoryNames() throws java.sql.SQLException
     Map directoryNames = new HashMap();
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         try
         {
             stmnt = conn.createStatement();
@@ -111,7 +111,7 @@ private Map getDirectoryNames() throws java.sql.SQLException
 
     finally
     {
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
     return directoryNames;
 }
@@ -170,7 +170,7 @@ private Map getUserNames() throws java.sql.SQLException
     Map userNames = new HashMap();
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         try
         {
             stmnt = conn.createStatement();
@@ -198,7 +198,7 @@ private Map getUserNames() throws java.sql.SQLException
 
     finally
     {
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
     return userNames;
 }

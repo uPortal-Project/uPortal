@@ -66,7 +66,7 @@ public class md5passwd {
     Long date = new Long((new Date()).getTime());
     SecureRandom r = new SecureRandom((date.toString()).getBytes());
     MessageDigest md = MessageDigest.getInstance("MD5");
-    RdbmServices rdbm = new RdbmServices();
+    RDBMServices rdbm = new RDBMServices();
     Connection conn;
     PreparedStatement stmt;
     ResultSet rset;

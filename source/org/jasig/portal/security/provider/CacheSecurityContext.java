@@ -42,7 +42,6 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.RdbmServices;
 import org.jasig.portal.UserLayoutStoreFactory;
 import java.security.MessageDigest;
 

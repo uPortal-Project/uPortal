@@ -69,7 +69,7 @@ public final class ChannelStoreDefinition {
     boolean override;
 
     public ChannelParameter(String name, String value, String override) {
-      this(name, value, RdbmServices.dbFlag(override));
+      this(name, value, RDBMServices.dbFlag(override));
     }
 
     public ChannelParameter(String name, String value, boolean override) {
@@ -90,8 +90,8 @@ public final class ChannelStoreDefinition {
     java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
     String chanHasAbout, String chanName, String chanFName) {
       this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
-            RdbmServices.dbFlag(chanEditable), RdbmServices.dbFlag(chanHasHelp),
-            RdbmServices.dbFlag(chanHasAbout),
+            RDBMServices.dbFlag(chanEditable), RDBMServices.dbFlag(chanHasHelp),
+            RDBMServices.dbFlag(chanHasAbout),
             chanName, chanFName);
   }
 

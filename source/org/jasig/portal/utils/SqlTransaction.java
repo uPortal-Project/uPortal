@@ -2,7 +2,7 @@ package org.jasig.portal.utils;
 
 import java.sql.*;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 
 /**
  * This type is a place to centralize the portal's sql transaction code.
@@ -24,7 +24,7 @@ public static void begin(Connection conn) throws java.sql.SQLException
 {
 	try
 	{
-          RdbmServices.setAutoCommit(conn, false);
+          RDBMServices.setAutoCommit(conn, false);
 	}
 	catch (SQLException sqle)
 	{
@@ -40,8 +40,8 @@ public static void commit(Connection conn) throws java.sql.SQLException
 {
 	try
 	{
-			RdbmServices.commit(conn);
-			RdbmServices.setAutoCommit(conn, true);
+			RDBMServices.commit(conn);
+			RDBMServices.setAutoCommit(conn, true);
 
 	}
 	catch (SQLException sqle)
@@ -68,8 +68,8 @@ public static void rollback(Connection conn) throws java.sql.SQLException
 {
 	try
 	{
-			RdbmServices.rollback(conn);
-			RdbmServices.setAutoCommit(conn, true);
+			RDBMServices.rollback(conn);
+			RDBMServices.setAutoCommit(conn, true);
 	}
 	catch (SQLException sqle)
 	{
@@ -86,7 +86,7 @@ public static void setAutoCommit(Connection conn, boolean newValue) throws java.
 {
 	try
 	{
-          RdbmServices.setAutoCommit(conn, newValue);
+          RDBMServices.setAutoCommit(conn, newValue);
 	}
 	catch (SQLException sqle)
 	{

@@ -52,7 +52,7 @@ import  java.sql.DriverManager;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class RdbmServices {
+public class RDBMServices {
   private static boolean bPropsLoaded = false;
   private static String sJdbcDriver = null;
   private static String sJdbcUrl = null;
@@ -61,7 +61,7 @@ public class RdbmServices {
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
 
-  protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RdbmServices.usePreparedStatements");
+  protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.usePreparedStatements");
   protected static boolean supportsPreparedStatements = false;
   public static boolean supportsOuterJoins = false;
   public static boolean supportsTransactions = false;
@@ -81,6 +81,10 @@ public class RdbmServices {
        * See what the database allows us to do
        */
       Connection con = getConnection();
+      if (con == null) {
+        System.err.println("Unable to connect to database");
+        System.exit(1);
+      }
       try {
         String sql;
 
@@ -93,12 +97,17 @@ public class RdbmServices {
             java.sql.PreparedStatement pstmt = con.prepareStatement(sql);
             try {
               pstmt.clearParameters ();
-              pstmt.setInt(1, 0);
+              int userId = 0;
+              pstmt.setInt(1, userId);
               ResultSet rs = pstmt.executeQuery();
               try {
+                if (rs.next() && userId == rs.getInt(1)) {
+                  supportsPreparedStatements = true;
+                }
+              } catch (SQLException sqle) {
+              } finally {
                 rs.close();
-              } catch (SQLException sqle) {}
-              supportsPreparedStatements = true;
+              }
             } finally {
               pstmt.close();
             }
@@ -190,7 +199,7 @@ public class RdbmServices {
    */
   protected static void loadProps () throws Exception {
       if (!bPropsLoaded) {
-        InputStream inStream = RdbmServices.class.getResourceAsStream("/properties/rdbm.properties");
+        InputStream inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
         jdbcProps.load(inStream);
         sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
@@ -395,7 +404,7 @@ public class RdbmServices {
       this.con = con;
       this.query = query;
       activeQuery = this.query;
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt = con.prepareStatement(query);
       } else {
         stmt = con.createStatement();
@@ -403,7 +412,7 @@ public class RdbmServices {
     }
 
     public void clearParameters() throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.clearParameters();
       } else {
         lastIndex = 0;
@@ -411,7 +420,7 @@ public class RdbmServices {
       }
     }
     public void setDate(int index, java.sql.Date value) throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.setDate(index, value);
       } else {
         if (index != lastIndex+1) {
@@ -427,7 +436,7 @@ public class RdbmServices {
       }
     }
     public void setInt(int index, int value) throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.setInt(index, value);
       } else {
         if (index != lastIndex+1) {
@@ -443,7 +452,7 @@ public class RdbmServices {
       }
     }
     public void setNull(int index, int sqlType) throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.setNull(index, sqlType);
       } else {
         if (index != lastIndex+1) {
@@ -459,7 +468,7 @@ public class RdbmServices {
       }
     }
     public void setString(int index, String value) throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.setString(index, value);
       } else {
         if (index != lastIndex+1) {
@@ -475,7 +484,7 @@ public class RdbmServices {
        }
     }
     public ResultSet executeQuery() throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         return pstmt.executeQuery();
       } else {
         return stmt.executeQuery(activeQuery);
@@ -483,7 +492,7 @@ public class RdbmServices {
     }
 
     public int executeUpdate() throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         return pstmt.executeUpdate();
       } else {
         return stmt.executeUpdate(activeQuery);
@@ -491,7 +500,7 @@ public class RdbmServices {
     }
 
     public String toString() {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         return query;
       } else {
         return activeQuery;
@@ -499,7 +508,7 @@ public class RdbmServices {
     }
 
     public void close() throws SQLException {
-      if (RdbmServices.supportsPreparedStatements) {
+      if (RDBMServices.supportsPreparedStatements) {
         pstmt.close();
       } else {
         stmt.close();

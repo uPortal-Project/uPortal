@@ -42,7 +42,6 @@ import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.security.ISecurityContext;
 import  org.jasig.portal.LdapServices;
 import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.RdbmServices;
 import  java.util.Vector;
 import  java.security.MessageDigest;
 import  javax.naming.NamingException;
@@ -146,7 +145,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             this.myPrincipal.FullName = first_name + " " + last_name;
             LogService.instance().log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
           }                     // while (results != null && results.hasMore())
-        } 
+        }
         else {
           LogService.instance().log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
         }
@@ -155,7 +154,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       } finally {
         ldapservices.releaseConnection(conn);
       }
-    } 
+    }
     else {
       LogService.instance().log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     }

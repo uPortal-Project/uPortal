@@ -41,7 +41,6 @@ package  org.jasig.portal.groups;
 import  java.sql.*;
 import  java.util.*;
 import  org.jasig.portal.services.*;
-import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.services.LogService;
 
 

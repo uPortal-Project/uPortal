@@ -1,12 +1,12 @@
 package org.jasig.portal;
 
 import java.sql.*;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SqlTransaction;
 /**
  * @author: Dan Ellentuck
- * @version $Revision$ 
+ * @version $Revision$
  */
 public class ReferenceSequenceGenerator implements ISequenceGenerator {
 
@@ -30,14 +30,14 @@ public ReferenceSequenceGenerator() {
  * @param tableName java.lang.String
  * @exception java.lang.Exception
  */
-public synchronized void createCounter (String tableName) throws Exception 
+public synchronized void createCounter (String tableName) throws Exception
 {
 	Connection con = null;
 	Statement stmt = null;
-	
+
 	try
 	{
-		con = RdbmServices.getConnection();
+		con = RDBMServices.getConnection();
 		stmt = con.createStatement();
 		String sInsert = getCreateCounterSql(tableName);
 		stmt.executeUpdate(sInsert);
@@ -48,13 +48,13 @@ public synchronized void createCounter (String tableName) throws Exception
 			(LogService.ERROR, "ReferenceSequenceGenerator::createCounter(): " + sqle.getMessage());
 		throw sqle;
 	}
-	finally 
+	finally
 	{
 		if ( stmt != null )
 			{ stmt.close(); }
-		RdbmServices.releaseConnection(con);
+		RDBMServices.releaseConnection(con);
 	}
-}	
+}
 /**
  * @param table java.lang.String
  * @return java.lang.String
@@ -70,7 +70,7 @@ private String getCreateCounterSql(String table)
 	buff.append(VALUE_COLUMN);
 	buff.append(") VALUES (");
 	buff.append("'");
-	buff.append(table);	
+	buff.append(table);
 	buff.append("'");
 	buff.append(",");
 	buff.append("0");
@@ -85,7 +85,7 @@ public String getNext() throws Exception {
 	return getNext(DEFAULT_COUNTER_NAME);
 }
 /**
- * @param table String 
+ * @param table String
  * @return java.lang.String
  * @exception java.lang.Exception
  */
@@ -104,7 +104,7 @@ public int getNextInt() throws Exception {
  * @param tableName java.lang.String
  * @exception java.lang.Exception
  */
-public synchronized int getNextInt(String tableName) throws Exception 
+public synchronized int getNextInt(String tableName) throws Exception
 {
 	int id = 1;
 	String sQuery = getSelectSequenceSql(tableName);
@@ -112,13 +112,13 @@ public synchronized int getNextInt(String tableName) throws Exception
 	Statement stmt = null;
 	ResultSet rs = null;
 
-	try 
+	try
 	{
-		con = RdbmServices.getConnection();
+		con = RDBMServices.getConnection();
 		stmt = con.createStatement();
-			
+
 		SqlTransaction.begin(con);
-			
+
 		rs = stmt.executeQuery(sQuery);
 
 		if ( rs.next() )
@@ -146,13 +146,13 @@ public synchronized int getNextInt(String tableName) throws Exception
 			{ rs.close(); }
 		if ( stmt != null )
 			{ stmt.close(); }
-		RdbmServices.releaseConnection(con);
-    }	
+		RDBMServices.releaseConnection(con);
+    }
 }
 /**
  * @return java.lang.String
  */
-private String getSelectSequenceSql() 
+private String getSelectSequenceSql()
 {
 	if ( selectSequenceSql == null )
 	{
@@ -165,14 +165,14 @@ private String getSelectSequenceSql()
 		buff.append(NAME_COLUMN);
 		buff.append(" = ");
 		selectSequenceSql = buff.toString();
-	}	
+	}
 	return selectSequenceSql;
 }
 /**
  * @param table java.lang.String
  * @return java.lang.String
  */
-private String getSelectSequenceSql(String table) 
+private String getSelectSequenceSql(String table)
 {
 	StringBuffer buff = new StringBuffer(getSelectSequenceSql());
 	buff.append("'");
@@ -194,7 +194,7 @@ private String getUpdateSequenceSql()
 		buff.append(VALUE_COLUMN);
 		buff.append(" = ");
 		updateSequenceSql = buff.toString();
-	}	
+	}
 	return updateSequenceSql;
 }
 /**
@@ -207,7 +207,7 @@ private String getUpdateSequenceSql(int id, String table)
 	buff.append(getUpdateSequenceWhereSql());
 	buff.append("'");
 	buff.append(table);
-	buff.append("'");	
+	buff.append("'");
 	return buff.toString();
 }
 /**
@@ -230,32 +230,32 @@ private String getUpdateSequenceWhereSql()
  * @param newValue int
  * @exception java.lang.Exception
  */
-public synchronized void setCounter (String tableName, int value) throws Exception 
+public synchronized void setCounter (String tableName, int value) throws Exception
 {
 
 	Connection con = null;
 	Statement stmt = null;
 	String sUpdate = getUpdateSequenceSql(value, tableName);
-	
-	try 
+
+	try
 	{
-		con = RdbmServices.getConnection();
+		con = RDBMServices.getConnection();
 		stmt = con.createStatement();
 		stmt.executeUpdate(sUpdate);
 	}
-	
+
 	catch ( SQLException sqle )
 	{
 		LogService.instance().log
 			(LogService.ERROR, "ReferenceSequenceGenerator::setCounter(): " + sqle.getMessage());
 		throw sqle;
 	}
-	
-    finally 
+
+    finally
     {
 	    if ( stmt != null )
 	    	{ stmt.close(); }
-	    RdbmServices.releaseConnection(con);
+	    RDBMServices.releaseConnection(con);
     }
-}	
+}
 }

@@ -41,7 +41,6 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.RdbmServices;
 import org.jasig.portal.UserLayoutStoreFactory;
 import java.security.MessageDigest;
 
@@ -121,7 +120,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
           LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        LogService.log(LogService.ERROR, ep);
+        LogService.log(LogService.ERROR, e);
         throw  (ep);
       }
     }

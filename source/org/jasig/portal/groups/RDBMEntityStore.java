@@ -44,12 +44,12 @@ import java.sql.*;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class EntityStoreRDBM implements IEntityStore {
+public class RDBMEntityStore implements IEntityStore {
 private static IEntityStore singleton;
 /**
- * EntityStoreRDBM constructor.
+ * RDBMEntityStore constructor.
  */
-public EntityStoreRDBM()
+public RDBMEntityStore()
 {
     super();
 }
@@ -67,7 +67,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         try {
 
@@ -96,7 +96,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
         throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
     }
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 
     return entities.iterator();
 }
@@ -125,7 +125,7 @@ public IEntity newInstance(String key, Class type) throws GroupsException
 public static synchronized IEntityStore singleton()
 {
     if (singleton == null)
-        { singleton = new EntityStoreRDBM(); }
+        { singleton = new RDBMEntityStore(); }
     return singleton;
 }
 }

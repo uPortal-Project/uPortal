@@ -39,7 +39,7 @@
 package  org.jasig.portal.channels;
 
 import  org.jasig.portal.channels.BaseChannel;
-import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.RDBMServices;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelRuntimeProperties;
 import  org.jasig.portal.ChannelStaticData;
@@ -668,7 +668,7 @@ public class CBookmarks extends BaseChannel {
    */
   private Connection getConnection () {
     try {
-      RdbmServices rdbmServices = new RdbmServices();
+      RDBMServices rdbmServices = new RDBMServices();
       return  (rdbmServices.getConnection());
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
@@ -682,7 +682,7 @@ public class CBookmarks extends BaseChannel {
    */
   private void releaseConnection (Connection connection) {
     try {
-      RdbmServices rdbmServices = new RdbmServices();
+      RDBMServices rdbmServices = new RDBMServices();
       rdbmServices.releaseConnection(connection);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);

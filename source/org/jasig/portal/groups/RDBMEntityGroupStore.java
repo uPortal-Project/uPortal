@@ -47,8 +47,8 @@ import org.jasig.portal.utils.SqlTransaction;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class EntityGroupStoreRDBM implements IEntityGroupStore {
-    private static EntityGroupStoreRDBM singleton;
+public class RDBMEntityGroupStore implements IEntityGroupStore {
+    private static RDBMEntityGroupStore singleton;
 
     // Constant strings for GROUP table:
     private static String GROUP_TABLE = "UP_GROUP";
@@ -86,9 +86,9 @@ public class EntityGroupStoreRDBM implements IEntityGroupStore {
     private static String insertMemberSql;
 
 /**
- * EntityGroupStoreRDBM constructor.
+ * RDBMEntityGroupStore constructor.
  */
-public EntityGroupStoreRDBM()
+public RDBMEntityGroupStore()
 {
     super();
 }
@@ -135,13 +135,13 @@ public IEntityGroup find(String groupID) throws GroupsException
     java.sql.Connection conn = null;
     try
     {
-            conn = RdbmServices.getConnection();
+            conn = RDBMServices.getConnection();
             String sql = getFindGroupSql();
-            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, groupID);
-                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.find(): " + ps);
+                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.find(): " + ps);
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -156,11 +156,11 @@ public IEntityGroup find(String groupID) throws GroupsException
     }
     catch (Exception e)
     {
-        LogService.log (LogService.ERROR, "EntityGroupStoreRDBM.find(): " + e);
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.find(): " + e);
         throw new GroupsException("Error retrieving " + groupID + ": " + e);
     }
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 
     return ug;
 }
@@ -179,15 +179,15 @@ throws GroupsException
 
     try
     {
-            conn = RdbmServices.getConnection();
+            conn = RDBMServices.getConnection();
             String sql = getFindContainingGroupsSql();
-            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, memberKey);
                     ps.setInt(2, type);
                     ps.setString(3, groupOrEntity);
-                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findContainingGroups(): " + ps);
+                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.findContainingGroups(): " + ps);
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -205,12 +205,12 @@ throws GroupsException
     }
     catch (Exception e)
     {
-        LogService.log (LogService.ERROR, "EntityGroupStoreRDBM.findContainingGroups(): " + e);
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findContainingGroups(): " + e);
         throw new GroupsException("Problem retrieving containing groups: " + e);
     }
 
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 
     return groups.iterator();
 }
@@ -239,13 +239,13 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
 
     try
     {
-            conn = RdbmServices.getConnection();
+            conn = RDBMServices.getConnection();
             String sql = getFindGroupsByCreatorSql();
-            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
         try
         {
                 ps.setString(1, creatorID);
-                LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findGroupsByCreator(): " + ps);
+                LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.findGroupsByCreator(): " + ps);
                 ResultSet rs = ps.executeQuery();
                 try
                 {
@@ -263,12 +263,12 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
     }
     catch (Exception e)
     {
-        LogService.log (LogService.ERROR, "EntityGroupStoreRDBM.findGroupsByCreator(): " + e);
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findGroupsByCreator(): " + e);
         throw new GroupsException("Problem retrieving groups: " + e);
     }
 
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 
     return groups.iterator();
 }
@@ -285,13 +285,13 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
 
     try
     {
-            conn = RdbmServices.getConnection();
+            conn = RDBMServices.getConnection();
             String sql = getFindMemberGroupsSql();
-            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, group.getKey());
-                    LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findMemberGroups(): " + ps);
+                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.findMemberGroups(): " + ps);
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -309,11 +309,11 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
     }
     catch (Exception sqle)
         {
-            LogService.log (LogService.ERROR, "EntityGroupStoreRDBM.findMemberGroups(): " + sqle);
+            LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findMemberGroups(): " + sqle);
             throw new GroupsException("Problem retrieving member groups: " + sqle);
         }
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 
     return groups.iterator();
 }
@@ -725,7 +725,7 @@ private void primAdd(IEntityGroup group) throws SQLException, GroupsException
     try
     {
 
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         java.sql.PreparedStatement ps = conn.prepareStatement(getInsertGroupSql());
         try
         {
@@ -755,7 +755,7 @@ private void primAdd(IEntityGroup group) throws SQLException, GroupsException
     }
     finally
     {
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -774,7 +774,7 @@ private void primDelete(IEntityGroup group) throws SQLException
 
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         setAutoCommit(conn, false);
         try
@@ -795,7 +795,7 @@ private void primDelete(IEntityGroup group) throws SQLException
     finally
     {
         setAutoCommit(conn, true);
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -808,7 +808,7 @@ private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
 
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         java.sql.PreparedStatement ps = conn.prepareStatement(getUpdateGroupSql());
 
         try
@@ -840,7 +840,7 @@ private void primUpdate(IEntityGroup group) throws SQLException, GroupsException
     }
     finally
     {
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -856,7 +856,7 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
 
     try
     {
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         setAutoCommit(conn, false);
 
         if ( egi.hasDeletes() )
@@ -916,7 +916,7 @@ private void primUpdateMembers(EntityGroupImpl egi) throws java.sql.SQLException
     finally
     {
         setAutoCommit(conn, true);
-        RdbmServices.releaseConnection(conn);
+        RDBMServices.releaseConnection(conn);
     }
 }
 /**
@@ -937,13 +937,13 @@ protected static void setAutoCommit(Connection conn, boolean newValue) throws ja
     SqlTransaction.setAutoCommit(conn, newValue);
 }
 /**
- * @return org.jasig.portal.groups.EntityGroupStoreRDBM
+ * @return org.jasig.portal.groups.RDBMEntityGroupStore
  */
-public static synchronized EntityGroupStoreRDBM singleton()
+public static synchronized RDBMEntityGroupStore singleton()
 throws GroupsException
 {
     if ( singleton == null )
-        { singleton = new EntityGroupStoreRDBM(); }
+        { singleton = new RDBMEntityGroupStore(); }
     return singleton;
 }
 /**

@@ -78,7 +78,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
     */
   public int getIncrementIntegerId (String tableName) throws Exception {
     int id;
-    Connection con = RdbmServices.getConnection();
+    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -95,7 +95,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      RdbmServices.releaseConnection(con);
+      RDBMServices.releaseConnection(con);
     }
     return  id;
   }
@@ -116,7 +116,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
    * @exception Exception
    */
   protected void createCounter (String tableName, int startAt) throws Exception {
-    Connection con = RdbmServices.getConnection();
+    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -127,7 +127,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      RdbmServices.releaseConnection(con);
+      RDBMServices.releaseConnection(con);
     }
   }
 
@@ -138,7 +138,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
    * @exception Exception
    */
   public synchronized void setCounter (String tableName, int value) throws Exception {
-    Connection con = RdbmServices.getConnection();
+    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -152,7 +152,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      RdbmServices.releaseConnection(con);
+      RDBMServices.releaseConnection(con);
     }
   }
 }

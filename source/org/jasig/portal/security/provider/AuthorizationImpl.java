@@ -470,7 +470,7 @@ throws AuthorizationException
  */
 private void initialize() throws AuthorizationException
 {
-        setPermissionStore(new PermissionImplRDBM());
+        setPermissionStore(new RDBMPermissionImpl());
 }
 /**
  * Factory method for an <code>IPermission</code>.

@@ -37,7 +37,6 @@ package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.*;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.RdbmServices;
 import org.jasig.portal.PropertiesManager;
 import java.util.*;
 
@@ -151,7 +150,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     LogService.log(LogService.DEBUG,ep);
     return(null);
   }
-  
+
   public synchronized boolean doesSubContextExist(String name) {
     for (int i = 0; i < mySubContexts.size(); i++)
     {

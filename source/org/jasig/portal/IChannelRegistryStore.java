@@ -106,12 +106,12 @@ public interface IChannelRegistryStore {
   /**
    * Get a prepared statement for Channels
    */
-  public RdbmServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException;
+  public RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException;
 
   /**
    * Get a prepared statement for channel parameters (if needed)
    */
-  public RdbmServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException;
+  public RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException;
 
   /**
    * Get a channel definition
@@ -126,7 +126,7 @@ public interface IChannelRegistryStore {
   /**
    * Get a channel definition (from the store if necessary)
    */
-  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
+  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
 
   /**
    * Get an XML representation of a channel

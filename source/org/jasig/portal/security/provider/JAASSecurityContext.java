@@ -37,7 +37,7 @@ package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.*;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.RdbmServices;
+import org.jasig.portal.RDBMServices;
 import java.util.*;
 import java.sql.*;
 
@@ -69,7 +69,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
 
   public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = false;
-    RdbmServices rdbmservices = new RdbmServices();
+    RDBMServices rdbmservices = new RDBMServices();
 
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 

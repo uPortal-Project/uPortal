@@ -50,7 +50,6 @@ import  org.jasig.portal.security.IAuthorization;
 import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.PortalSessionManager;
 import  org.jasig.portal.UserLayoutStoreFactory;
-import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.services.LogService;
 
 

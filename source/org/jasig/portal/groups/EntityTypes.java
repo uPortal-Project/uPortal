@@ -170,7 +170,7 @@ private void initialize()
     {
         GROUP_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntityGroup");
 
-        conn = RdbmServices.getConnection();
+        conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         try
         {
@@ -194,7 +194,7 @@ private void initialize()
     catch (Exception ex)
         { LogService.log (LogService.ERROR, ex); }
     finally
-        { RdbmServices.releaseConnection(conn); }
+        { RDBMServices.releaseConnection(conn); }
 }
 /**
  * @return org.jasig.portal.groups.EntityTypes
