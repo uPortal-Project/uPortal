@@ -121,18 +121,28 @@ public class ALNodeProperties implements IALNodeProperties {
      }
 
      /**
-     * Gets a restriction by the type.
+     * Gets a restriction by the name and the restriction path.
      * @param restrictionName a <code>String</code>  name of the restriction
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-     public IUserLayoutRestriction getRestriction( String restrictionName ) {
+     public IUserLayoutRestriction getRestriction( String restrictionName, RestrictionPath restrictionPath ) {
      	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-            if ( restrictionName.equals(restriction.getName()) )
+            if ( restrictionName.equals(restriction.getName()) && restrictionPath.equals(restriction.getRestrictionPath()) )
                  return restriction;
         }
      	         return null;
      }
+     
+     /**
+      * Gets a local restriction by the given name.
+      * @param restrictionName a <code>String</code>  name of the restriction
+      * @return a IUserLayoutRestriction
+      */
+      public IUserLayoutRestriction getLocalRestriction( String restrictionName ) {
+      	return getRestriction(restrictionName,RestrictionPath.LOCAL_RESTRICTION_PATH);
+      }
 
      /**
      * Gets a restrictions list by a restriction path.

@@ -9,7 +9,7 @@ package org.jasig.portal.layout.al.common.restrictions;
 import java.util.StringTokenizer;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.al.IALNode;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -104,13 +104,13 @@ public class PriorityRestriction extends ALRestriction {
          */
          public boolean checkRestriction( ILayoutNode node ) throws PortalException {
          
-          if ( !(node instanceof ALNode) )
-          	throw new PortalException ( "The node must be ALNode type!");
-          ALNode alNode = (ALNode) node;
+          if ( !(node instanceof IALNode) )
+          	throw new PortalException ( "The node must be IALNode type!");
+          IALNode alNode = (IALNode) node;
 
           // if we have a related priority restriction we should check the priority ranges
           if ( restrictionPath != null && !restrictionPath.equals(RestrictionPath.LOCAL_RESTRICTION_PATH) ) {
-             PriorityRestriction restriction = (PriorityRestriction) alNode.getRestriction(getUniqueKey(RestrictionTypes.PRIORITY_RESTRICTION));
+             PriorityRestriction restriction = (PriorityRestriction) alNode.getLocalRestriction(RestrictionTypes.PRIORITY_RESTRICTION);
              if ( restriction != null ) {
               int[] range = restriction.getRange();
               if ( minPriority > range[1] || maxPriority < range[0] )

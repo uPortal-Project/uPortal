@@ -83,40 +83,6 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   	return true;
   }
 
-
-  /**
-     * Gets the restriction name
-     * @return a <code>String</code> restriction name
-     */
-  public String getUniqueKey() {
-     return getUniqueKey(getName(),restrictionPath);
-  }
-
-
-  /**
-     * Gets the restriction name based on a restriction name and a node path
-     * @param restrictionName a restriction name
-     * @param nodePath a <code>RestrictionPath</code> node path
-     * @return a <code>String</code> restriction name
-     */
-  public static String getUniqueKey( String restrictionName, RestrictionPath restrictionPath ) {
-  	 String nodePath = restrictionPath.toString();
-  	 if ( nodePath!=null && nodePath.length() > 0  ) 
-  	 	nodePath = RestrictionPath.LOCAL_RESTRICTION_PATH.toString();
-     return restrictionName+":"+nodePath;
-  }
-
-  /**
-   * Gets the local restriction name based on a restriction type
-   * @param restrictionName a restriction name
-   * @return a <code>String</code> restriction name
-   */
-  public static String getUniqueKey( String restrictionName) {
-	 return getUniqueKey(restrictionName,RestrictionPath.LOCAL_RESTRICTION_PATH);
-  }
-
-  
-
   /**
      * Sets the restriction expression
      * @param restrictionExpression a <code>String</code> expression

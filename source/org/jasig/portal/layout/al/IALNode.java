@@ -19,5 +19,9 @@ public interface IALNode extends ILayoutNode, IALNodeDescription {
 	
 	public void setNodeDescription(IALNodeDescription nd);
     public IALNodeDescription getNodeDescription();
+    /**
+     * Gets the priority value for this node.
+     */
+    public int getPriority();
     
 }

@@ -42,13 +42,6 @@ public interface IUserLayoutRestriction {
    */
   public void setName( String name );
 
-   /**
-     * Gets the unique key of the current restriction
-     * @return a <code>String</code> unique key
-     */
-  public String getUniqueKey();
-
-
   /**
      * Checks the restriction for the given property value
      * @param propertyValue a <code>String</code> property value to be checked

@@ -125,12 +125,21 @@ public abstract class ALNode implements IALNode {
         return priority;
     }
     /**
-     * Gets a restriction by the type.
+     * Gets a restriction by the given name and path.
+     * @param restrictionName a <code>String</code>  name of the restriction
+     * @param restrictionPath a <code>RestrictionPath</code>  restriction path
+     * @return a IUserLayoutRestriction
+     */
+    public IUserLayoutRestriction getRestriction(String restrictionName,RestrictionPath restrictionPath) {
+            return nodeDescription.getRestriction(restrictionName,restrictionPath);
+    }
+    /**
+     * Gets a restriction by the name.
      * @param restrictionName a <code>String</code>  name of the restriction
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction(String restrictionName) {
-            return nodeDescription.getRestriction(restrictionName);
+    public IUserLayoutRestriction getLocalRestriction(String restrictionName) {
+            return nodeDescription.getLocalRestriction(restrictionName);
     }
     /**
      * Gets a restrictions list by a restriction path.

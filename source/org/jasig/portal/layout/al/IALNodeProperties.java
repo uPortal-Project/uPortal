@@ -95,11 +95,19 @@ public interface IALNodeProperties {
     public void addRestriction( IUserLayoutRestriction restriction );
 
     /**
-     * Gets a restriction by the type.
+     * Gets a restriction by the name and the restriction path.
+     * @param restrictionName a <code>String</code>  name of the restriction
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
+     * @return a IUserLayoutRestriction
+     */
+    public IUserLayoutRestriction getRestriction( String restrictionName, RestrictionPath restrictionPath );
+    
+    /**
+     * Gets a local restriction by the given name.
      * @param restrictionName a <code>String</code>  name of the restriction
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction( String restrictionName );
+    public IUserLayoutRestriction getLocalRestriction( String restrictionName );
 
     /**
      * Gets a restrictions list by a restriction path.

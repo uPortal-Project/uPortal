@@ -84,7 +84,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkRestriction(IALNode node, String restrictionName, RestrictionPath restrictionPath, String propertyValue) throws PortalException {
-    IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
+    IUserLayoutRestriction restriction = node.getRestriction(restrictionName,restrictionPath);
     if ( restriction != null )
      return restriction.checkRestriction(propertyValue);
      return true;
@@ -278,7 +278,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public static IUserLayoutRestriction getRestriction( IALNode node, String restrictionName, RestrictionPath restrictionPath ) throws PortalException {
-     return node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
+     return node.getRestriction(restrictionName,restrictionPath);
   }
 
    /**
