@@ -48,15 +48,26 @@ import org.w3c.dom.Document;
 
 
 /**
- * This utility provides methods for transforming XML documents
+ * <p>This utility provides methods for transforming XML documents
  * via XSLT. It takes advantage of Xalan's ability to pre-compile
  * stylehseets into StylesheetRoot objects.  The first time a transform
- * is requested, a stylesheet is compiled and cached.
+ * is requested, a stylesheet is compiled and cached.</p>
+ * <p>None of the method signatures in this class should contain
+ * classes specific to a particular XSLT engine, e.g. Xalan, or
+ * XML parser, e.g. Xerces.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class XSLT
 {
+  // developmentMode flag should be set to false for production to
+  // ensure that pre-compiled stylesheets are cached
+  // I'm hoping that this setting can come from some globally-set
+  // property.  I'll leave this for later.
+  // Until then, it'll stay checked in set to true so that
+  // developers can simply reload the page to see the effect of
+  // a modified XSLT stylesheet
+  private static boolean developmentMode = true;
   private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
   private static Hashtable stylesheetRootCache = new Hashtable();
 
@@ -69,6 +80,7 @@ public class XSLT
    * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
   public static void transform (DocumentHandler out, String media, String xml, String sslUri, String stylesheetTitle) throws SAXException, IOException, ResourceMissingException
   {
@@ -83,6 +95,7 @@ public class XSLT
    * @param sslUri the URI of the stylesheet list file (.ssl)
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
   public static void transform (DocumentHandler out, String media, String xml, String sslUri) throws SAXException, IOException, ResourceMissingException
   {
@@ -99,6 +112,7 @@ public class XSLT
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
   public static void transform (DocumentHandler out, String media, String xml, String sslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
   {
@@ -116,8 +130,9 @@ public class XSLT
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
-    public static void transform (DocumentHandler out, String media, String xml, String sslUri, String stylesheetTitle, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  public static void transform (DocumentHandler out, String media, String xml, String sslUri, String stylesheetTitle, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
   {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
@@ -138,6 +153,7 @@ public class XSLT
    * @param xslUri the URI of the stylesheet file
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
   public static void transform (DocumentHandler out, String xml, String xslUri) throws SAXException, IOException, ResourceMissingException
   {
@@ -153,6 +169,7 @@ public class XSLT
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
    */
   public static void transform (DocumentHandler out, String xml, String xslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
   {
@@ -182,7 +199,7 @@ public class XSLT
     XSLTInputSource xmlSource = new XSLTInputSource(doc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison ());
+    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
     StylesheetRoot stylesheetRoot = getStylesheetRoot(UtilitiesBean.fixURI(xslUri));
     processor.reset();
     setStylesheetParams(processor, stylesheetParams);
@@ -217,7 +234,7 @@ public class XSLT
     // First, check the cache...
     StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
 
-    if (stylesheetRoot == null)
+    if (stylesheetRoot == null || developmentMode)
     {
       // Get the StylesheetRoot and cache it
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
