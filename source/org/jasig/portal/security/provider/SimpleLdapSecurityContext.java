@@ -33,7 +33,6 @@
  *
  */
 
-
 package  org.jasig.portal.security.provider;
 
 import java.util.Vector;
@@ -51,7 +50,6 @@ import org.jasig.portal.LdapServices;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -171,7 +169,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                          "SimpleLdapSecurityContext: No such user: " +
                          this.myPrincipal.UID);
         }
-      } catch (javax.naming.AuthenticationException ae) {
+      } catch (AuthenticationException ae) {
         LogService.log(LogService.INFO,"SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         LogService.log(LogService.ERROR,
