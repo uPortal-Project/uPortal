@@ -63,7 +63,8 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     public void init(ServletConfig servletConfig, Properties properties) throws Exception {
         this.servletConfig = servletConfig;
         this.properties = properties;
-		staticInfoProvider = new StaticInformationProviderImpl();	
+		staticInfoProvider = new StaticInformationProviderImpl();
+        ((StaticInformationProviderImpl)staticInfoProvider).init(servletConfig, properties);
     }
     
     public void destroy() throws Exception {
