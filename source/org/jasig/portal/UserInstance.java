@@ -810,22 +810,6 @@ public class UserInstance implements HttpSessionBindingListener {
          }
         }
 
-        // folder attributes processing
-        /*String[] sfattrs = req.getParameterValues("uP_sfattr");
-        if (sfattrs != null) {
-            for (int i = 0; i < sfattrs.length; i++) {
-                String aName = sfattrs[i];
-                String[] aNode = req.getParameterValues(aName + "_folderId");
-                if (aNode != null && aNode.length > 0) {
-                    for (int j = 0; j < aNode.length; j++) {
-                        String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
-                        uPreferencesManager.getUserPreferences().getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        LogService.log(LogService.DEBUG, "UserInstance: setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
-                    }
-                }
-            }
-        }*/
-
         if ((values = req.getParameterValues("uP_remove_target")) != null) {
             for (int i = 0; i < values.length; i++) {
                 ulm.deleteNode(values[i]);
