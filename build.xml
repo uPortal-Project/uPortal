@@ -422,7 +422,7 @@
 
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
-      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf"/>
+      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties"/>
     </copy>
 
     <!-- Copy everything in media except for files that are accessible from the web -->
