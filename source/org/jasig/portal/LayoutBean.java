@@ -146,17 +146,14 @@ public class LayoutBean
           uLayoutManager = new UserLayoutManager(req,getPerson(req));
       }
 
-
       // deal with parameters that are meant for the LayoutBean
       HttpSession session = req.getSession (false);
-
 
       // determine rendering root -start
       // In general transformations will start at the userLayoutRoot node, unless
       // we are rendering something in a detach mode.
       Node rElement=null;
       boolean detachMode=false;
-
 
       // see if an old detach target exists in the servlet path
       String detachId=null;
@@ -196,10 +193,12 @@ public class LayoutBean
           rElement=uLayoutManager.getRoot ();
           detachMode=false;
       }
-      String uPElement="render.uP";
+
+      // Including the context path in front of uPElement is necessary for phone.com browsers to work
+      String uPElement = req.getContextPath() + "/render.uP";
       if(detachMode) {
           Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : entering detach mode for nodeId=\""+detachId+"\".");
-          uPElement="detach_"+detachId+".uP";
+          uPElement = req.getContextPath() + "/detach_" + detachId + ".uP";
       }
 
 
@@ -266,6 +265,7 @@ public class LayoutBean
       // all the parameters are set up, fire up structure transformation
       processor.setStylesheet(ss);
       processor.setDocumentHandler(crb);
+
       // filter to fill in channel/folder attributes for the "structure" transformation.
       StructureAttributesIncorporationFilter saif=new StructureAttributesIncorporationFilter(processor,cup.getStructureStylesheetUserPreferences());
 
