@@ -45,6 +45,7 @@ package org.jasig.portal.security;
  *
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, replaced by {@link IAuthorizationServiceFactory}
  */
 
 public interface IAuthorizationFactory

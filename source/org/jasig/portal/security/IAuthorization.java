@@ -44,6 +44,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, replaced by {@link IAuthorizationService}
  */
 public interface IAuthorization
 {

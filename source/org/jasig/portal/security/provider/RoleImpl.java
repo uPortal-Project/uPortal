@@ -43,6 +43,7 @@ import java.util.Enumeration;
  /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, Roles are replaced by Groups. See {@link org.jasig.portal.groups}
  */
 public class RoleImpl implements IRole
 {

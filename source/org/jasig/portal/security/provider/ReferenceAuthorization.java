@@ -59,6 +59,7 @@ import  org.jasig.portal.services.LogService;
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, replaced by {@link AuthorizationImpl}
  */
 public class ReferenceAuthorization implements IAuthorization {
   // Clear the caches every 10 seconds

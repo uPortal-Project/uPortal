@@ -44,6 +44,7 @@ import  java.util.Date;
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
+ * @deprecated As of uPortal 2.0, replaced by {@link PermissionImpl}
  */
 public class ReferencePermission extends Permission {
   private String m_principal = null;

@@ -40,6 +40,7 @@ package org.jasig.portal.security.provider;
  *
  * @author Bernie Durfee
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, replaced by {@link AuthorizationServiceFactoryImpl}
  */
 
 import org.jasig.portal.security.IAuthorization;
