@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All Nrights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All Nrights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,8 @@ final class TabColumnPrefsState extends BaseState
   private String action = "none";
   private String activeTab = "none";
   private String elementID = "none";
+
+  private static final String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
@@ -244,10 +246,14 @@ final class TabColumnPrefsState extends BaseState
   {
     Element tab = userLayout.getElementById(tabId);
 
-    if (tab.getAttribute("immutable").equals("false"))
+    if (tab.getAttribute("immutable").equals("false")) {
+      // Ensure that tabs have a name or else you can't select them!
+      if (tabName != null && tabName.trim().length() == 0)
+        tabName = BLANK_TAB_NAME;
       tab.setAttribute("name", tabName);
-    else
+    } else {
       throw new Exception("Attempt to rename immutable tab " + tabId + "has failed");
+    }
 
     saveLayout(false);
   }
@@ -272,9 +278,19 @@ final class TabColumnPrefsState extends BaseState
    */
   private final void addTab(String tabName, String method, String destinationTabId) throws Exception
   {
+    // Ensure that tabs have a name or else you can't select them!
+    if (tabName != null && tabName.trim().length() == 0)
+      tabName = BLANK_TAB_NAME;
+
     Element newTab = createFolder(tabName);
     Element destinationTab = userLayout.getElementById(destinationTabId);
-    Node parent = destinationTab.getParentNode();
+
+    Node parent = null;
+    if ( destinationTab != null )
+      parent = destinationTab.getParentNode();
+    else
+      parent = userLayout.getDocumentElement();
+
     Element siblingTab = method.equals("insertBefore") ? destinationTab : null;
     UserLayoutManager.moveNode(newTab, parent, siblingTab);
 
