@@ -28,7 +28,7 @@ import org.jasig.portal.RDBMServices;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-public class md5passwd {
+public class Md5Passwd {
 
   static private final String SELECTSTMT =
     "SELECT COUNT(*) FROM UP_PERSON_DIR WHERE USER_NAME = ?";
@@ -38,7 +38,7 @@ public class md5passwd {
     "INSERT INTO UP_PERSON_DIR (USER_NAME, ENCRPTD_PSWD) " +
     "VALUES (?, ?)";
 
-  public md5passwd(String user, boolean create, boolean lock)
+  public Md5Passwd(String user, boolean create, boolean lock)
       throws IOException, NoSuchAlgorithmException, SQLException {
     byte[] hash, rnd = new byte[8], fin = new byte[24];
     Long date = new Long((new Date()).getTime());
@@ -110,18 +110,18 @@ public class md5passwd {
 
   public static void main(String[] args)
       throws IOException, NoSuchAlgorithmException, SQLException {
-    md5passwd me;
+    Md5Passwd me;
 
     if (args.length == 1 && args[0].charAt(0) != '-')
-      me = new md5passwd(args[0], false, false);
+      me = new Md5Passwd(args[0], false, false);
     else if (args.length == 2 && args[0].equals("-c") &&
         args[1].charAt(0) != '-')
-      me = new md5passwd(args[1], true, false);
+      me = new Md5Passwd(args[1], true, false);
     else if (args.length == 2 && args[0].equals("-l") &&
         args[1].charAt(0) != '-')
-      me = new md5passwd(args[1], false, true);
+      me = new Md5Passwd(args[1], false, true);
     else {
-      System.err.println("Usage \"md5passwd [-c| -l] <user>\"");
+      System.err.println("Usage \"Md5Passwd [-c| -l] <user>\"");
       return;
     }
   }

@@ -948,9 +948,9 @@
 
   <target name="md5passwd" depends="compile"
    description="Creates a user in the UP_PERSON_DIR table">
-    <echo message="Invoking md5passwd"/>
+    <echo message="Invoking Md5Passwd"/>
     <property name="username" value=" "/>
-    <java dir="${basedir}" classname="org.jasig.portal.security.md5passwd">
+    <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
