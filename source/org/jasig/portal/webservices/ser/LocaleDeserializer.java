@@ -87,7 +87,7 @@ public class LocaleDeserializer extends DeserializerImpl {
   /** 
    * Callback from our deserializers.  The hint serves as a key to
    * the localeInfo map to locate a particular locale value.
-   * @param val the value
+   * @param value the value
    * @param hint the hint
    * @throws SAXException
    */    

@@ -92,7 +92,7 @@ public class CookieDeserializer extends DeserializerImpl {
   /** 
    * Callback from our deserializers.  The hint serves as a key to
    * the cookieInfo map to locate a particular cookie value.
-   * @param val the value
+   * @param value the value
    * @param hint the hint
    * @throws SAXException
    */    

@@ -44,26 +44,27 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
  * @author Dan Ellentuck (de3@columbia.edu)
  * @version $Revision$
  */
-public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
-implements IUpdatingPermissionManager
+public class UpdatingPermissionManagerImpl extends PermissionManagerImpl implements IUpdatingPermissionManager
 {
-
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
-   * @param owner
+   * @param newOwner the new owner
+   * @param authService the authorization service
    */
   public UpdatingPermissionManagerImpl (String newOwner, AuthorizationImpl authService)
   {
     super(newOwner, authService);
   }
+  
   /**
    * Add a new set of IPermission objects to the system.
    * @param newPermissions
    */
-public void addPermissions (IPermission[] newPermissions) throws AuthorizationException
-{
+  public void addPermissions (IPermission[] newPermissions) throws AuthorizationException
+  {
     getAuthorizationService().addPermissions(newPermissions);
-}
+  }
+
   /**
    * Retrieve an array of <code>IPermission</code> objects based on the given parameters.
    * Includes inherited <code>IPermissions</code>.  Any null parameters will be ignored.
@@ -74,11 +75,12 @@ public void addPermissions (IPermission[] newPermissions) throws AuthorizationEx
    * @return IPermission[]
    * @exception AuthorizationException
    */
-public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target)
-throws AuthorizationException
-{
-    return principal.getAllPermissions(getOwner(), activity, target);
-}
+  public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target)
+  throws AuthorizationException
+  {
+      return principal.getAllPermissions(getOwner(), activity, target);
+  }
+
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
    * will be ignored.
@@ -89,35 +91,39 @@ throws AuthorizationException
    * @return IPermission[]
    * @exception AuthorizationException
    */
-public IPermission[] getPermissions (IAuthorizationPrincipal principal, String activity, String target)
-throws AuthorizationException
-{
+  public IPermission[] getPermissions (IAuthorizationPrincipal principal, String activity, String target)
+  throws AuthorizationException
+  {
     return getAuthorizationService().getUncachedPermissionsForPrincipal(principal, getOwner(), activity, target);
-}
-/**
- * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the
- * owner of this <code>IPermissionManager</code>.
- *
- * @param principal IAuthorizationPrincipal
- */
-public IPermission newPermission(IAuthorizationPrincipal principal) throws AuthorizationException
-{
-    return getAuthorizationService().newPermission(getOwner(), principal);
-}
+  }
+  
+  /**
+   * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the
+   * owner of this <code>IPermissionManager</code>.
+   *
+   * @param principal IAuthorizationPrincipal
+   */
+  public IPermission newPermission(IAuthorizationPrincipal principal) throws AuthorizationException
+  {
+      return getAuthorizationService().newPermission(getOwner(), principal);
+  }
+
   /**
    * Remove set of IPermission objects from the system.
-   * @param perms
+   * @param oldPermissions
    */
-public void removePermissions (IPermission[] oldPermissions) throws AuthorizationException
-{
-    getAuthorizationService().removePermissions(oldPermissions);
-}
+  public void removePermissions (IPermission[] oldPermissions) throws AuthorizationException
+  {
+      getAuthorizationService().removePermissions(oldPermissions);
+  }
+
   /**
    * Update a set of IPermission objects to the system.
-   * @param perms
+   * @param changedPermissions
    */
-public void updatePermissions (IPermission[] changedPermissions) throws AuthorizationException
-{
-    getAuthorizationService().updatePermissions(changedPermissions);
-}
+  public void updatePermissions (IPermission[] changedPermissions) throws AuthorizationException
+  {
+      getAuthorizationService().updatePermissions(changedPermissions);
+  }
+
 }

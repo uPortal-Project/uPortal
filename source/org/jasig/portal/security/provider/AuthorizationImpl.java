@@ -117,6 +117,7 @@ throws AuthorizationException
         getPermissionStore().add(permissions);
     }
 }
+
 /**
 * Adds the <code>IPermissionSet</code> to the entity cache.
 */
@@ -127,6 +128,7 @@ protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
     catch (CachingException ce)
         { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache: " + ce.getMessage() ); }
 }
+
 /**
 * Retrieves the <code>IPermissionSet</code> for the <code>IPermissionSet</code>
 * from the entity cache.
@@ -142,6 +144,7 @@ throws AuthorizationException
     catch (CachingException ce)
         { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache: " + ce.getMessage() ); }
 }
+
 /**
 * Removes the <code>IPermissionSet</code> for this principal from the 
 * entity cache.
@@ -153,6 +156,7 @@ protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationExcep
     catch (CachingException ce)
         { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache: " + ce.getMessage() ); }
 }
+
 /**
 * Updates the <code>IPermissionSet</code> in the entity cache.
 */
@@ -174,6 +178,7 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
     return doesPrincipalHavePermission
       (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
 }
+
 /**
  * Answers if the principal has permission to RENDER this Channel.
  * @return boolean
@@ -186,6 +191,7 @@ throws AuthorizationException
 {
     return canPrincipalSubscribe(principal, channelPublishId);
 }
+
 /**
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
  * @return boolean
@@ -201,6 +207,7 @@ throws AuthorizationException
     return doesPrincipalHavePermission
       (principal, owner, IPermission.CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }
+
 /**
  * Answers if the owner has given the principal (or any of its parents) permission
  * to perform the activity on the target.  Params <code>owner</code> and
@@ -224,6 +231,7 @@ throws AuthorizationException
 {
      return doesPrincipalHavePermission(principal, owner, activity, target, getDefaultPermissionPolicy());
 }
+
 /**
  * Answers if the owner has given the principal permission to perform the activity on
  * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code>
@@ -247,6 +255,7 @@ throws AuthorizationException
 {
     return policy.doesPrincipalHavePermission(this, principal, owner, activity, target);
 }
+
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
  * the specified activity and target.  Null parameters will be ignored, that is, all
@@ -281,6 +290,7 @@ throws AuthorizationException
     }
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
 }
+
 /**
  * Does this mean all channels the principal could conceivably subscribe
  * to or all channels principal is specifically authorized to subscribe to,
@@ -295,14 +305,15 @@ throws AuthorizationException
 {
     return new Vector();
 }
+
 /**
  * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for
  * the given owner, activity and target.
  *
  * @return IAuthorizationPrincipal[]
- * @param String owner
- * @param String activity
- * @param String target
+ * @param owner
+ * @param activity
+ * @param target
  */
 public IAuthorizationPrincipal[] getAuthorizedPrincipals(String owner, String activity, String target)
 throws AuthorizationException
@@ -310,21 +321,24 @@ throws AuthorizationException
     IPermission[] permissions = getPermissionsForOwner(owner, activity, target);
     return getPrincipalsFromPermissions(permissions);
 }
+
 /**
  * @return org.jasig.portal.security.IPermissionPolicy
  */
 protected IPermissionPolicy getDefaultPermissionPolicy() {
     return defaultPermissionPolicy;
 }
+
 /**
  * @return org.jasig.portal.groups.IGroupMember
- * @param user org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
 throws GroupsException
 {
     return getGroupMemberForPrincipal(principal);
 }
+
 /**
  * @return org.jasig.portal.groups.IGroupMember
  * @param user org.jasig.portal.security.IAuthorizationPrincipal
@@ -343,6 +357,7 @@ throws GroupsException
 
     return gm;
 }
+
 /**
  * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
  * an <code>IGroupMember</code>.  Returns ALL the groups the <code>IGroupMember</code>
@@ -356,6 +371,7 @@ throws GroupsException
     IGroupMember gm = getGroupMemberForPrincipal(principal);
     return gm.getAllContainingGroups();
 }
+
 /**
  * Hook into the Groups system, find all containing groups, and convert the
  * them to <code>IAuthorizationPrincipals</code>.
@@ -381,6 +397,7 @@ throws AuthorizationException
     }
     return al.iterator();
 }
+
 /**
  * Returns the <code>IPermissions</code> owner has granted for the specified activity
  * and target.  Null parameters will be ignored, that is, all <code>IPermissions</code>
@@ -398,6 +415,7 @@ throws AuthorizationException
 {
     return primRetrievePermissions(owner, null, activity, target);
 }
+
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
  * the specified activity and target.  Null parameters will be ignored, that is, all
@@ -422,6 +440,7 @@ throws AuthorizationException
 {
     return primGetPermissionsForPrincipal(principal, owner, activity, target);
 }
+
 /**
  * @return org.jasig.portal.security.IPermissionStore
  */
@@ -429,6 +448,7 @@ private IPermissionStore getPermissionStore()
 {
     return permissionStore;
 }
+
 /**
  * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.
  *
@@ -445,6 +465,7 @@ throws AuthorizationException
     String key = principalString.substring(idx + 1);
     return newPrincipal(key, type);
 }
+
 /**
  * @param org.jasig.portal.groups.IEntityGroup
  * @return user org.jasig.portal.security.IAuthorizationPrincipal
@@ -455,6 +476,7 @@ private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
     Class type = EntityTypes.GROUP_ENTITY_TYPE;
     return newPrincipal(key, type);
 }
+
 /**
  * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.
  *
@@ -472,6 +494,7 @@ throws AuthorizationException
     }
     return ((IAuthorizationPrincipal[])principals.toArray(new IAuthorizationPrincipal[principals.size()]));
 }
+
 /**
  * Returns the String used by an <code>IPermission</code> to represent an
  * <code>IAuthorizationPrincipal</code>.
@@ -485,6 +508,7 @@ private String getPrincipalString(Class pType, String pKey) {
     Integer type = EntityTypes.getEntityTypeID(pType);
     return type + PERIOD_STRING + pKey;
 }
+
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
  * the specified activity and target.  Null parameters will be ignored, that is, all
@@ -510,6 +534,7 @@ throws AuthorizationException
     String pString = getPrincipalString(principal);
     return primRetrievePermissions(owner, pString, activity, target);
 }
+
 /**
  *
  */
@@ -570,10 +595,8 @@ private void initialize() throws AuthorizationException
         LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
-
-//    setPermissionStore(new RDBMPermissionImpl());
-//    setDefaultPermissionPolicy(new DefaultPermissionPolicy());
 }
+
 /**
  * Factory method for an <code>IPermission</code>.
  * @param owner String
@@ -583,6 +606,7 @@ public IPermission newPermission(String owner)
 {
     return newPermission(owner, null);
 }
+
 /**
  * Factory method for an <code>IPermission</code>.
  * @param owner String
@@ -599,6 +623,7 @@ public IPermission newPermission(String owner, IAuthorizationPrincipal principal
     }
     return p;
 }
+
 /**
  * Factory method for IPermissionManager.
  * @return org.jasig.portal.security.IPermissionManager
@@ -608,6 +633,7 @@ public IPermissionManager newPermissionManager(String owner)
 {
     return new PermissionManagerImpl(owner, this);
 }
+
 /**
  * Factory method for IAuthorizationPrincipal.
  * First check the principal cache, and if not present, create the principal 
@@ -636,6 +662,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type)
     }
     return principal;
 }
+
 /**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
  * @return org.jasig.portal.security.IAuthorizationPrincipal
@@ -652,9 +679,11 @@ throws GroupsException
 
     return newPrincipal(key, type);
 }
+
 private IAuthorizationPrincipal primNewPrincipal(String key, Class type) {
     return new AuthorizationPrincipalImpl(key, type, this);
 }
+
 /**
  * Factory method for IUpdatingPermissionManager.
  * @return org.jasig.portal.security.IUpdatingPermissionManager
@@ -664,6 +693,7 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
 {
     return new UpdatingPermissionManagerImpl(owner, this);
 }
+
 /**
  * Returns permissions for a principal.  First check the entity caching
  * service, and if the permissions have not been cached, retrieve and
@@ -695,6 +725,7 @@ throws AuthorizationException
     }      // end synchronized
     return ps.getPermissions();
 }
+
 /**
  * @return IPermission[]
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
@@ -737,6 +768,7 @@ throws AuthorizationException
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
 
 }
+
 /**
  * @return IPermission[]
  * @param owner String
@@ -749,6 +781,7 @@ throws AuthorizationException
 {
     return getPermissionStore().select(owner, principal, activity, target, null);
 }
+
 /**
  * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipals</code> from
  * the cache.
@@ -760,6 +793,7 @@ throws AuthorizationException
     for ( int i=0; i<principals.length; i++ )
         { cacheRemove(principals[i]); }
 }
+
 /**
  * Removes <code>IPermissions</code> from the cache.
  * @param permissions IPermission[]
@@ -770,6 +804,7 @@ throws AuthorizationException
     IAuthorizationPrincipal[] principals = getPrincipalsFromPermissions(permissions);
     removeFromPermissionsCache(principals);
 }
+
 /**
  * Removes <code>IPermissions</code> from the back end store.
  * @param permissions IPermission[]
@@ -785,6 +820,7 @@ throws AuthorizationException
             { removeFromPermissionsCache(permissions); }  
     }
 }
+
 /**
  * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> in the store
  * and clears out the cache.
@@ -802,18 +838,21 @@ throws AuthorizationException
         getPermissionStore().delete(permissions);
     }
 }
+
 /**
  * @param newDefaultPermissionPolicy org.jasig.portal.security.IPermissionPolicy
  */
 protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
     defaultPermissionPolicy = newDefaultPermissionPolicy;
 }
+
 /**
  * @param newPermissionManager org.jasig.portal.security.provider.ReferencePermissionStore
  */
 private void setPermissionStore(IPermissionStore newPermissionStore) {
     permissionStore = newPermissionStore;
 }
+
 /**
  * @return org.jasig.portal.security.provider.IAuthorizationService
  */
@@ -824,6 +863,7 @@ throws AuthorizationException
         { singleton = new AuthorizationImpl(); }
     return singleton;
 }
+
 /**
  * Updates <code>IPermissions</code> in the back end store.
  * @param permissions IPermission[]
@@ -839,6 +879,7 @@ throws AuthorizationException
             { removeFromPermissionsCache(permissions); }
     }
 }
+
 /**
  * Updates <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code>, in the
  * store and clears out the cache.
@@ -856,18 +897,21 @@ throws AuthorizationException
         getPermissionStore().update(permissions);
     }
 }
+
 /**
  * @return Map
  */
 private synchronized Map getPrincipalCache() {
     return principalCache;
 }
+
 /**
  * @param map
  */
 private synchronized void setPrincipalCache(Map map) {
     principalCache = map;
 }
+
 /**
  * @return Map
  */
@@ -875,4 +919,5 @@ private Map copyPrincipalCache() {
     HashMap hm = (HashMap)getPrincipalCache();
     return (Map)hm.clone();
 }
+
 }

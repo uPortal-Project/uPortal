@@ -58,8 +58,8 @@ public class StatsRecorderLayoutEventListener implements LayoutEventListener {
 
   /**
    * Constructor for <code>StatsRecorderLayoutEventListener</code>.
-   * @param person, the owner of the layout for which this listener is listening
-   * @param profile, the profile of the layout for which this listener is listening
+   * @param person the owner of the layout for which this listener is listening
+   * @param profile the profile of the layout for which this listener is listening
    */  
   public StatsRecorderLayoutEventListener(IPerson person, UserProfile profile) {
     this.person = person;

@@ -148,7 +148,7 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     /**
      * Set the DTD event handler.
      *
-     * @param resolver The new DTD handler.
+     * @param handler The new DTD handler.
      * @see org.xml.sax.XMLReader#setDTDHandler
      */
     public void setDTDHandler2(DTDHandler handler)
@@ -172,7 +172,7 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     /**
      * Set the content event handler.
      *
-     * @param resolver The new content handler.
+     * @param handler The new content handler.
      * @see org.xml.sax.XMLReader#setContentHandler
      */
     public void setContentHandler2(ContentHandler handler)
@@ -196,7 +196,7 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     /**
      * Set the error event handler.
      *
-     * @param handle The new error handler.
+     * @param handler The new error handler.
      * @see org.xml.sax.XMLReader#setErrorHandler
      */
     public void setErrorHandler2(ErrorHandler handler)
@@ -207,7 +207,7 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     /**
      * Set the lexical handler.
      *
-     * @param handle The new lexical handler.
+     * @param handler The new lexical handler.
      */
     public void setLexicalHandler2(LexicalHandler handler) {
         this.lexicalHandler2 = handler;

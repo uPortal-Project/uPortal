@@ -155,7 +155,7 @@ public class XSLT {
 
   /**
    * Configures the xml source.
-   * @param xml an input stream to the serialized xml source
+   * @param is an input stream to the serialized xml source
    */
   public void setXML(java.io.InputStream is) {
     xmlSource = new StreamSource(is);
@@ -163,7 +163,7 @@ public class XSLT {
 
   /**
    * Configures the xml source.
-   * @param xml a File object representing the xml source
+   * @param file a File object representing the xml source
    */
   public void setXML(java.io.File file) {
     xmlSource = new StreamSource(file);
@@ -245,7 +245,8 @@ public class XSLT {
 
   /**
    * Sets all the stylesheet parameters at once.
-   * @param stylesheetParameters a Hashtable of stylesheet parameters
+   * @param name the name of the stylesheet parameter
+   * @param value the value of the stylesheet parameter
    */
   public void setStylesheetParameter(String name, String value) {
     stylesheetParams.put(name, value);

@@ -252,7 +252,7 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
      * <p>This will always fail if the parent is null.</p>
      *
      * @param name The property name.
-     * @param state The requested property value.
+     * @param value The requested property value.
      * @exception org.xml.sax.SAXNotRecognizedException When the
      *            XMLReader does not recognize the property name.
      * @exception org.xml.sax.SAXNotSupportedException When the
@@ -327,7 +327,7 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
     /**
      * Set the DTD event handler.
      *
-     * @param resolver The new DTD handler.
+     * @param handler The new DTD handler.
      * @see org.xml.sax.XMLReader#setDTDHandler
      */
     public void setDTDHandler (DTDHandler handler)
@@ -351,7 +351,7 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
     /**
      * Set the content event handler.
      *
-     * @param resolver The new content handler.
+     * @param handler The new content handler.
      * @see org.xml.sax.XMLReader#setContentHandler
      */
     public void setContentHandler (ContentHandler handler)
@@ -375,7 +375,7 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
     /**
      * Set the error event handler.
      *
-     * @param handle The new error handler.
+     * @param handler The new error handler.
      * @see org.xml.sax.XMLReader#setErrorHandler
      */
     public void setErrorHandler (ErrorHandler handler)
@@ -386,7 +386,7 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
     /**
      * Set the lexical handler.
      *
-     * @param handle The new lexical handler.
+     * @param handler The new lexical handler.
      */
     public void setLexicalHandler (LexicalHandler handler) {
         lexicalHandler = handler;

@@ -47,7 +47,7 @@ public class BoundedThreadPool extends AbstractPool{
 	/**
 	 * BoundedThreadPool Construcutor
 	 *
-	 * @param initialThreads the initial number of worker threads to place in the pool
+	 * @param minThreads the min number of worker threads that can be in this pool
 	 * @param maxThreads the max number of worker threads that can be in this pool
 	 * @param threadPriority the priority these worker threads should have
 	 */

@@ -111,9 +111,9 @@ public class ChannelInstanceManager {
 
     /**
      * Retrieves channel runtime data.
-     * @param runtimeContext, the channel runtime context
-     * @param markupParams, the channel markup parameters
-     * @param interactionParams, the channel interaction parameters
+     * @param runtimeContext the channel runtime context
+     * @param markupParams the channel markup parameters
+     * @param interactionParams the channel interaction parameters
      */
     public void setChannelRuntimeData(RuntimeContext runtimeContext, MarkupParams markupParams, InteractionParams interactionParams) throws PortalException {
         // Construct channel runtime data
@@ -137,9 +137,8 @@ public class ChannelInstanceManager {
     
     /**
      * Asks channel to render and retrieves channel markup.
-     * @param runtimeContext, the channel runtime context
-     * @param markupParams, the channel markup parameters
-     * @param interactionParams, the channel interaction parameters
+     * @param runtimeContext the channel runtime context
+     * @param markupParams the channel markup parameters
      */
     public String getChannelMarkup(RuntimeContext runtimeContext, MarkupParams markupParams) throws Throwable {
         // Set up channel runtime data if user hasn't yet interacted with the channel
@@ -263,7 +262,7 @@ public class ChannelInstanceManager {
     }
 
     /**
-     * Returns a person object that is a "guest" user
+     * Returns a person object that is a "guest" user.
      * @return person a person object that is a "guest" user
      * @throws org.jasig.portal.PortalException
      */

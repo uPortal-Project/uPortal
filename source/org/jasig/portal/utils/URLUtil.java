@@ -208,7 +208,7 @@ public class URLUtil
      * 
      * @param req An HttpServletRequest object.     
      * @param res An HttpServletResponse object.
-     * @param targetNodeId The target node Id of a channel.
+     * @param up the uPortal file spec.
      * @param ignoreParams An array of String objects containing
      * the parameters to be ignored.
      */
@@ -260,7 +260,7 @@ public class URLUtil
      * 
      * @param req An HttpServletRequest object.     
      * @param res An HttpServletResponse object.
-     * @param targetNodeId The target node Id of a channel.
+     * @param up the uPortal file spec.
      * @param ignoreParams An array of String objects containing
      * the parameters to be ignored.
      */

@@ -51,8 +51,8 @@ import org.jasig.portal.services.LogService;
 public class SimplePersonManager implements IPersonManager {
   /**
    * Retrieve an IPerson object for the incoming request
-   * @param request, the servlet request object
-   * @return person, IPerson object for the incoming request
+   * @param request the servlet request object
+   * @return the IPerson object for the incoming request
    */
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException {
     HttpSession session = request.getSession(false);

@@ -52,7 +52,7 @@ public class XMLEscaper
 {
   /**
    * Escapes an XML string
-   * @param a String to be escaped
+   * @param source a String to be escaped
    * @return an escaped String
    */
   public static String escape (String source)
@@ -75,7 +75,7 @@ public class XMLEscaper
 
   /**
    * Escapes an XML character
-   * @param a char to be escaped
+   * @param ch a char to be escaped
    * @return an escaped char
    */
   public static String escape (char ch)

@@ -53,7 +53,7 @@ public abstract class StatsRecorderWorkerTask extends WorkerTask {
   
   /**
    * Set the stats reocorder that this task should use
-   * @param statsRecorder, the stats recorder that this task should use
+   * @param statsRecorder the stats recorder that this task should use
    */  
   public void setStatsRecorder(IStatsRecorder statsRecorder) {
     this.statsRecorder = statsRecorder;

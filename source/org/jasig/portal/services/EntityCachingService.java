@@ -111,7 +111,7 @@ public IBasicEntity get(Class type, String key) throws CachingException
 }
 /**
  * Returns the cached entity referred to by entityID.
- * @param key String
+ * @param entityID entity identifier
  * @return IBasicEntity entity
  * @exception org.jasig.portal.concurrency.CachingException
  */

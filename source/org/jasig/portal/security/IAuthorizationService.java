@@ -146,7 +146,7 @@ public interface IAuthorizationService
 
 /**
  * @return org.jasig.portal.groups.IGroupMember
- * @param user org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
     public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
     throws GroupsException;
@@ -196,8 +196,8 @@ public interface IAuthorizationService
     public IPermission newPermission(String owner, IAuthorizationPrincipal principal)
     throws AuthorizationException;
 /**
+ * @param key java.lang.String
  * @return org.jasig.portal.security.IPermissionManager
- * @param owner java.lang.String
  * @exception org.jasig.portal.AuthorizationException
  */
     public IPermissionManager newPermissionManager(String key) throws AuthorizationException;
@@ -219,7 +219,7 @@ public interface IAuthorizationService
     throws GroupsException;
 /**
  * @return org.jasig.portal.security.IUpdatingPermissionManager
- * @param owner java.lang.String
+ * @param key java.lang.String
  * @exception org.jasig.portal.AuthorizationException
  */
     public IUpdatingPermissionManager newUpdatingPermissionManager(String key)

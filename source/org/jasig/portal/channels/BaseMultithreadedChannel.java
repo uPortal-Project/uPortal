@@ -85,7 +85,7 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
 
   /**
    * Sets channel runtime properties.
-   * @param uid, a unique ID used to identify the state of the channel
+   * @param uid a unique ID used to identify the state of the channel
    * @return channel runtime properties
    */
   public ChannelRuntimeProperties getRuntimeProperties (String uid) {
@@ -95,8 +95,8 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
   /**
    * React to portal events.
    * Removes channel state from the channel state map when the session expires.
-   * @param ev, a portal event
-   * @param uid, a unique ID used to identify the state of the channel
+   * @param ev a portal event
+   * @param uid a unique ID used to identify the state of the channel
    */
   public void receiveEvent (PortalEvent ev, String uid) {
     ChannelState channelState = (ChannelState)channelStateMap.get(uid);
@@ -110,8 +110,8 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
 
   /**
    * Sets the channel static data.
-   * @param sd, the channel static data
-   * @param uid, a unique ID used to identify the state of the channel
+   * @param sd the channel static data
+   * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
   public void setStaticData (ChannelStaticData sd, String uid) throws PortalException {
@@ -122,8 +122,8 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
 
   /**
    * Sets the channel runtime data.
-   * @param rd, the channel runtime data
-   * @param uid, a unique ID used to identify the state of the channel
+   * @param rd the channel runtime data
+   * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
   public void setRuntimeData (ChannelRuntimeData rd, String uid) throws PortalException {
@@ -133,8 +133,8 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
 
   /**
    * Render nothing.
-   * @param out, the content handler to which the channel sends SAX events
-   * @param uid, a unique ID used to identify the state of the channel
+   * @param out the content handler to which the channel sends SAX events
+   * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
   public void renderXML (ContentHandler out, String uid) throws PortalException {}

@@ -139,8 +139,8 @@ public class StatsRecorderSettings {
     
   /**
    * Get the value of a particular setting.
-   * @param setting, the setting
-   * @return value, the value for the setting
+   * @param setting the setting
+   * @return value the value for the setting
    */
   public boolean get(int setting) {
     boolean value = false;
@@ -209,8 +209,8 @@ public class StatsRecorderSettings {
     
   /**
    * Set the value of a particular setting.
-   * @param setting, the setting to change
-   * @param newValue, the new value for the setting
+   * @param setting the setting to change
+   * @param newValue the new value for the setting
    */
   public void set(int setting, boolean newValue) {
     switch (setting) {
@@ -276,7 +276,7 @@ public class StatsRecorderSettings {
   
   /**
    * Returns a String representation of this object.
-   * @param theSettings, the settings as a String
+   * @return the settings as a String
    */  
   public String toString() {
     StringBuffer sb = new StringBuffer(1024);

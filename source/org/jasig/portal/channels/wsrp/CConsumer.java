@@ -139,7 +139,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     /**
      * Sets channel runtime properties.
-     * @param uid, a unique ID used to identify the state of the channel
+     * @param uid a unique ID used to identify the state of the channel
      * @return channel runtime properties
      */
     public ChannelRuntimeProperties getRuntimeProperties(String uid) {
@@ -149,8 +149,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
     /**
      * React to portal events.
      * Removes channel state from the channel state map when the session expires.
-     * @param ev, a portal event
-     * @param uid, a unique ID used to identify the state of the channel
+     * @param ev a portal event
+     * @param uid a unique ID used to identify the state of the channel
      */
     public void receiveEvent(PortalEvent ev, String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
@@ -179,8 +179,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     /**
      * Sets the channel static data.
-     * @param sd, the channel static data
-     * @param uid, a unique ID used to identify the state of the channel
+     * @param sd the channel static data
+     * @param uid a unique ID used to identify the state of the channel
      * @throws org.jasig.portal.PortalException
      */
     public void setStaticData(ChannelStaticData sd, String uid) throws PortalException {
@@ -215,8 +215,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     /**
      * Sets the channel runtime data.
-     * @param rd, the channel runtime data
-     * @param uid, a unique ID used to identify the state of the channel
+     * @param rd the channel runtime data
+     * @param uid a unique ID used to identify the state of the channel
      * @throws org.jasig.portal.PortalException
      */
     public void setRuntimeData(ChannelRuntimeData rd, String uid) throws PortalException {
@@ -285,8 +285,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     /**
      * Sets the portal control structures.
-     * @param rd, the channel runtime data
-     * @param uid, a unique ID used to identify the state of the channel
+     * @param rd the channel runtime data
+     * @param uid a unique ID used to identify the state of the channel
      * @throws org.jasig.portal.PortalException
      */
     public void setPortalControlStructures(PortalControlStructures pcs, String uid) throws PortalException {

@@ -47,7 +47,7 @@ import org.jasig.portal.security.PortalSecurityException;
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
- * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContext} chained with {@link CacheSecurityContext} instead
+ * @deprecated As of uPortal 2.1.3, use {@link org.jasig.portal.security.provider.SimpleLdapSecurityContext} chained with {@link org.jasig.portal.security.provider.CacheSecurityContext} instead
  */
 public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
   private final int CACHELDAPSECURITYAUTHTYPE = 0xFF06;

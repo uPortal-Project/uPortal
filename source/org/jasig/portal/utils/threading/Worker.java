@@ -54,7 +54,7 @@ public final class Worker extends Thread {
 	 * Worker Constructor
 	 *
 	 * @param pool the ThreadPool that this worker belongs to
-	 * @param workQueue the queue of work for this thread
+	 * @param work the queue of work for this thread
 	 */
 	public Worker(ThreadPool pool, Queue work) {
 		this.pool = pool;

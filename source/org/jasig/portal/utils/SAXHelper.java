@@ -55,8 +55,8 @@ public class SAXHelper {
 
   /**
    * Outputs SAX events to specified ContentHandler based on the content String
-   * @param out, the ContentHandler
-   * @param content, an XML string
+   * @param out the ContentHandler
+   * @param content an XML string
    * @exception SAXException, IOException, ParserConfigurationException
    */
   public static synchronized void outputContent (ContentHandler out, String content) throws SAXException, IOException, ParserConfigurationException {

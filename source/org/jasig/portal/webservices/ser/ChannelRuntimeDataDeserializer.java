@@ -94,7 +94,7 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
   /** 
    * Callback from our deserializers.  The hint serves as a key to the 
    * channelRuntimeDataInfo map to locate a particular ChannelRuntimeData value.
-   * @param val the value
+   * @param value the value
    * @param hint the hint
    * @throws SAXException
    */    

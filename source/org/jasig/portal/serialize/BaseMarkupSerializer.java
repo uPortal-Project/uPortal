@@ -414,7 +414,7 @@ public abstract class BaseMarkupSerializer
      * writer and output format. Throws an exception only if
      * an I/O exception occured while serializing.
      *
-     * @param elem The element to serialize
+     * @param frag the document fragment to serialize
      * @throws IOException An I/O exception occured while
      *   serializing
      */

@@ -64,7 +64,7 @@ public class XML {
    * Gets the text value of an Element. For example, if an element nameElement
    * looks like this: <name>Fred</name>, then getElementText(nameElement) would
    * return "Fred".
-   * @param element the Element with a text value
+   * @param e the Element with a text value
    * @return the the text value of the element
    */
   public static String getElementText(Element e) {
@@ -92,10 +92,10 @@ public class XML {
   }
 
   /**
-   * Gets the contents of an XML Document or Element as a nicely formatted string.
+   * Gets the contents of an XML Document or Element as a formatted string.
    * This method is useful for debugging.
    * @param node the Node to print; must be of type Document or Element
-   * @param indent a boolean value, true if the output document should be indented to visually indicate its structure.
+   * @param format controls the formatting of the string
    * @return a nicely formatted String suitable for printing
    */
   public static String serializeNode(Node node, OutputFormat format ) {

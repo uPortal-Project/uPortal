@@ -112,7 +112,7 @@ public class StatsRecorder {
   
   /**
    * Creates an instance of this stats recorder service.
-   * @return statsRecorderInstance, a <code>StatsRecorder</code>
+   * @return a <code>StatsRecorder</code>
    * instance
    */
   private final static synchronized StatsRecorder instance() {
@@ -125,7 +125,7 @@ public class StatsRecorder {
   /**
    * Creates an instance of a 
    * <code>StatsRecorderLayoutEventListener</code>.
-   * @return layoutEventListener, a new stats recorder layout event listener instance
+   * @return a new stats recorder layout event listener instance
    */
   public final static StatsRecorderLayoutEventListener newLayoutEventListener(IPerson person, UserProfile profile) {
     return new StatsRecorderLayoutEventListener(person, profile);
@@ -135,8 +135,8 @@ public class StatsRecorder {
    * Gets the value of a particular stats recorder setting.
    * Possible settings are available from <code>StatsRecorderSettings</code>.
    * For example: <code>StatsRecorder.get(StatsRecorderSettings.RECORD_LOGIN)</code>
-   * @param setting, the setting
-   * @return value, the value for the setting
+   * @param setting the setting
+   * @return the value for the setting
    */
   public static boolean get(int setting) {
     return instance().statsRecorderSettings.get(setting);
@@ -146,8 +146,8 @@ public class StatsRecorder {
    * Sets the value of a particular stats recorder setting.
    * Possible settings are available from <code>StatsRecorderSettings</code>.
    * For example: <code>StatsRecorder.set(StatsRecorderSettings.RECORD_LOGIN, true)</code>
-   * @param setting, the setting to change
-   * @param newValue, the new value for the setting
+   * @param setting the setting to change
+   * @param newValue the new value for the setting
    */
   public static void set(int setting, boolean newValue) {
     instance().statsRecorderSettings.set(setting, newValue);
@@ -155,7 +155,7 @@ public class StatsRecorder {
   
   /**
    * Record the successful login of a user.
-   * @param person, the person who is logging in
+   * @param person the person who is logging in
    */
   public static void recordLogin(IPerson person) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGIN)) {
@@ -167,7 +167,7 @@ public class StatsRecorder {
 
   /**
    * Record the logout of a user.
-   * @param person, the person who is logging out
+   * @param person the person who is logging out
    */
   public static void recordLogout(IPerson person) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGOUT)) {
@@ -179,7 +179,7 @@ public class StatsRecorder {
   
   /**
    * Record that a new session is created for a user.
-   * @param person, the person whose session is being created
+   * @param person the person whose session is being created
    */
   public static void recordSessionCreated(IPerson person) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_CREATED)) {
@@ -193,7 +193,7 @@ public class StatsRecorder {
    * Record that a user's session is destroyed
    * (when the user logs out or his/her session
    * simply times out)
-   * @param person, the person whose session is ending
+   * @param person the person whose session is ending
    */
   public static void recordSessionDestroyed(IPerson person) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_DESTROYED)) {
@@ -205,8 +205,8 @@ public class StatsRecorder {
   
   /**
    * Record that a new channel is being published
-   * @param person, the person publishing the channel
-   * @param channelDef, the channel being published
+   * @param person the person publishing the channel
+   * @param channelDef the channel being published
    */
   public static void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_PUBLISHED)) {
@@ -218,8 +218,8 @@ public class StatsRecorder {
   
   /**
    * Record that an existing channel is being modified
-   * @param person, the person modifying the channel
-   * @param channelDef, the channel being modified
+   * @param person the person modifying the channel
+   * @param channelDef the channel being modified
    */
   public static void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_MODIFIED)) {
@@ -231,8 +231,8 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being removed
-   * @param person, the person removing the channel
-   * @param channelDef, the channel being modified
+   * @param person the person removing the channel
+   * @param channelDef the channel being modified
    */
   public static void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_REMOVED)) {
@@ -244,9 +244,9 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being added to a user layout
-   * @param person, the person adding the channel
-   * @param profile, the profile of the layout to which the channel is being added
-   * @param channelDesc, the channel being subscribed to
+   * @param person the person adding the channel
+   * @param profile the profile of the layout to which the channel is being added
+   * @param channelDesc the channel being subscribed to
    */
   public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_ADDED_TO_LAYOUT)) {
@@ -258,9 +258,9 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being updated in a user layout
-   * @param person, the person updating the channel
-   * @param profile, the profile of the layout in which the channel is being updated
-   * @param channelDesc, the channel being updated
+   * @param person the person updating the channel
+   * @param profile the profile of the layout in which the channel is being updated
+   * @param channelDesc the channel being updated
    */
   public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_UPDATED_IN_LAYOUT)) {
@@ -272,9 +272,9 @@ public class StatsRecorder {
 
   /**
    * Record that a channel is being moved in a user layout
-   * @param person, the person moving the channel
-   * @param profile, the profile of the layout in which the channel is being moved
-   * @param channelDesc, the channel being moved
+   * @param person the person moving the channel
+   * @param profile the profile of the layout in which the channel is being moved
+   * @param channelDesc the channel being moved
    */
   public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_MOVED_IN_LAYOUT)) {
@@ -286,9 +286,9 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being removed from a user layout
-   * @param person, the person removing the channel
-   * @param profile, the profile of the layout to which the channel is being added
-   * @param channelDesc, the channel being removed from a user layout
+   * @param person the person removing the channel
+   * @param profile the profile of the layout to which the channel is being added
+   * @param channelDesc the channel being removed from a user layout
    */
   public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_REMOVED_FROM_LAYOUT)) {
@@ -300,9 +300,9 @@ public class StatsRecorder {
   
   /**
    * Record that a folder is being added to a user layout
-   * @param person, the person adding the folder
-   * @param profile, the profile of the layout to which the folder is being added
-   * @param folderDesc, the folder being subscribed to
+   * @param person the person adding the folder
+   * @param profile the profile of the layout to which the folder is being added
+   * @param folderDesc the folder being subscribed to
    */
   public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_ADDED_TO_LAYOUT)) {
@@ -314,9 +314,9 @@ public class StatsRecorder {
   
   /**
    * Record that a folder is being updated in a user layout
-   * @param person, the person updating the folder
-   * @param profile, the profile of the layout in which the folder is being updated
-   * @param folderDesc, the folder being updated
+   * @param person the person updating the folder
+   * @param profile the profile of the layout in which the folder is being updated
+   * @param folderDesc the folder being updated
    */
   public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_UPDATED_IN_LAYOUT)) {
@@ -328,9 +328,9 @@ public class StatsRecorder {
 
   /**
    * Record that a folder is being moved in a user layout
-   * @param person, the person moving the folder
-   * @param profile, the profile of the layout in which the folder is being moved
-   * @param folderDesc, the folder being moved
+   * @param person the person moving the folder
+   * @param profile the profile of the layout in which the folder is being moved
+   * @param folderDesc the folder being moved
    */
   public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_MOVED_IN_LAYOUT)) {
@@ -342,9 +342,9 @@ public class StatsRecorder {
   
   /**
    * Record that a folder is being removed from a user layout
-   * @param person, the person removing the folder
-   * @param profile, the profile of the layout to which the folder is being added
-   * @param folderDesc, the folder being removed from a user layout
+   * @param person the person removing the folder
+   * @param profile the profile of the layout to which the folder is being added
+   * @param folderDesc the folder being removed from a user layout
    */
   public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_REMOVED_FROM_LAYOUT)) {
@@ -356,9 +356,9 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being instantiated
-   * @param person, the person for whom the channel is instantiated
-   * @param profile, the profile of the layout for whom the channel is instantiated
-   * @param channelDesc, the channel being instantiated
+   * @param person the person for whom the channel is instantiated
+   * @param profile the profile of the layout for whom the channel is instantiated
+   * @param channelDesc the channel being instantiated
    */
   public static void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_INSTANTIATED)) {
@@ -370,9 +370,9 @@ public class StatsRecorder {
   
   /**
    * Record that a channel is being rendered
-   * @param person, the person for whom the channel is rendered
-   * @param profile, the profile of the layout for whom the channel is rendered
-   * @param channelDesc, the channel being rendered
+   * @param person the person for whom the channel is rendered
+   * @param profile the profile of the layout for whom the channel is rendered
+   * @param channelDesc the channel being rendered
    */
   public static void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_RENDERED)) {
@@ -386,9 +386,9 @@ public class StatsRecorder {
    * Record that a channel is being targeted.  In other words,
    * the user is interacting with the channel via either a 
    * hyperlink or form submission.
-   * @param person, the person interacting with the channel
-   * @param profile, the profile of the layout in which the channel resides
-   * @param channelDesc, the channel being targeted
+   * @param person the person interacting with the channel
+   * @param profile the profile of the layout in which the channel resides
+   * @param channelDesc the channel being targeted
    */
   public static void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_TARGETED)) {

@@ -93,6 +93,7 @@ public class AuthorizationService
       // From our factory get an actual authorization instance
       m_authorization = m_Factory.getAuthorization();
   }
+  
  /**
    * @return org.jasig.portal.groups.IGroupMember
    * @param principal IAuthorizationPrincipal
@@ -103,6 +104,7 @@ public class AuthorizationService
    {
        return m_authorization.getGroupMember(principal);
    }
+   
   /**
    * @return Authorization
    */
@@ -114,8 +116,8 @@ public class AuthorizationService
   }
 
   /**
-   * @return org.jasig.portal.security.IPermissionManager
    * @param owner java.lang.String
+   * @return org.jasig.portal.security.IPermissionManager
    * @exception org.jasig.portal.AuthorizationException
    */
   public IPermissionManager newPermissionManager(String owner)
@@ -125,9 +127,9 @@ public class AuthorizationService
   }
 
   /**
-   * @return org.jasig.portal.security.IAuthorizationPrincipal
    * @param key java.lang.String
    * @param type java.lang.Class
+   * @return org.jasig.portal.security.IAuthorizationPrincipal
    * @exception org.jasig.portal.AuthorizationException
    */
   public IAuthorizationPrincipal newPrincipal(String key, Class type)
@@ -135,9 +137,10 @@ public class AuthorizationService
   {
        return m_authorization.newPrincipal(key, type);
   }
+  
   /**
+   * @param groupMember
    * @return org.jasig.portal.security.IAuthorizationPrincipal
-   * @param org.jasig.portal.groups.IGroupMember groupMember
    * @exception org.jasig.portal.groups.GroupsException
    */
    public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
@@ -145,9 +148,10 @@ public class AuthorizationService
    {
        return m_authorization.newPrincipal(groupMember);
    }
+   
   /**
+   * @param permission
    * @return org.jasig.portal.security.IAuthorizationPrincipal
-   * @param IPermission
    * @exception org.jasig.portal.AuthorizationException
    */
   public IAuthorizationPrincipal newPrincipal(IPermission permission)
@@ -157,8 +161,8 @@ public class AuthorizationService
   }
 
   /**
-   * @return org.jasig.portal.security.IUpdatingPermissionManager
    * @param owner java.lang.String
+   * @return org.jasig.portal.security.IUpdatingPermissionManager
    * @exception org.jasig.portal.AuthorizationException
    */
   public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)

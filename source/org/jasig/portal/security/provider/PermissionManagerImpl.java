@@ -51,9 +51,11 @@ public class PermissionManagerImpl implements IPermissionManager
     private AuthorizationImpl authorizationService;
     protected static IPermissionStore permissionStore;
     private java.lang.String owner;
+    
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
-   * @param owner
+   * @param newOwner the new owner
+   * @param authService the authorization service
    */
   public PermissionManagerImpl (String newOwner, AuthorizationImpl authService)
   {
@@ -61,6 +63,7 @@ public class PermissionManagerImpl implements IPermissionManager
     owner = newOwner;
     authorizationService = authService;
   }
+  
   /**
    * Retrieve an array of <code>IPermission</code> objects based on the given parameters.
    * Includes inherited <code>Permissions</code>.  Any null parameters will be ignored.
@@ -76,6 +79,7 @@ throws AuthorizationException
 {
     return principal.getAllPermissions(getOwner(), activity, target);
 }
+
 /**
  * @return org.jasig.portal.security.provider.AuthorizationImpl
  */
@@ -83,6 +87,7 @@ AuthorizationImpl getAuthorizationService()
 {
     return authorizationService;
 }
+
 /**
  * Returns <code>IAuthorizationPrincipals</code> granted <code>IPermissions</code>
  * by the owner of this <code>IPermissionManager</code>, for the given <code>activity</code>
@@ -97,12 +102,14 @@ throws AuthorizationException
 {
     return getAuthorizationService().getAuthorizedPrincipals(getOwner(), activity, target);
 }
+
 /**
  * @return java.lang.String
  */
 public java.lang.String getOwner() {
     return owner;
 }
+
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
    * will be ignored.
@@ -117,6 +124,7 @@ throws AuthorizationException
 {
     return getAuthorizationService().getPermissionsForOwner(getOwner(), activity, target);
 }
+
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
    * will be ignored.
