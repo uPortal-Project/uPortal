@@ -136,7 +136,6 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
-      Object[] results = null;
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.instance().get("Done");
       try{
          cmd.execute(sessionData);
@@ -145,7 +144,10 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
          LogService.instance().log(LogService.ERROR,e);
          sessionData.feedback = "Error executing command Done: "+e.getMessage();
       }
-      results = (Object[])staticData.get("princResults");
+      Object[] results = (Object[])staticData.get("princResults");
+      if (results == null){
+        results = new Object[0]; 
+      }
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;
    }
