@@ -750,6 +750,54 @@
     </java>
   </target>
 
+
+<!-- ----------       The push fragment loader for aggregated layouts          -------------- -->
+
+<target name="pushfragment" depends="compile">
+    <property name="tempDataXML" value="/properties/al/push.fragment.temp.data.xml"/>
+    <property name="fragmentFile" value=" "/>
+    <echo message="Resetting layout fragments configuration."/>
+<!-- create data.xml file -->
+    <java fork="true" dir="${basedir}" failonerror="true" classname="org.jasig.portal.layout.utils.PushFragmentLoader">
+        <arg value="${fragmentFile}"/>
+        <arg value="${build.home}/WEB-INF/classes/${tempDataXML}"/>
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
+      </classpath>
+    </java>
+<!-- load data.xml file -->
+    <echo message="Loading new push-fragments into the database."/>
+    <java fork="true" dir="${build.home}/WEB-INF/classes"
+          classname="org.jasig.portal.tools.dbloader.DbLoader">
+      <arg value="-d"/>
+      <arg value="${tempDataXML}"/>
+      <arg value="-nC"/>
+      <arg value="-nD"/>
+      <arg value="-P"/>
+      <classpath>
+            <pathelement path="${build.home}/WEB-INF/classes"/>
+            <pathelement location="${xalan.jar}"/>
+            <pathelement location="${xerces.jar}"/>
+            <pathelement location="${xml-apis.jar}"/>
+            <pathelement location="${log4j.jar}"/>
+            <pathelement location="${jdbcDriver.jar}"/>
+            <pathelement location="${poolman.jar}"/>
+            <pathelement location="${jdbc20.jar}"/>
+      </classpath>
+    </java>
+    <delete file="${build.home}/WEB-INF/classes/${tempDataXML}"/>
+    <echo message="Done updating fragment configuration."/>
+</target>
+
+
+
 <!-- ==================== md5passwd Target ================================ -->
 
 <!--
