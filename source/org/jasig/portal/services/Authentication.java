@@ -191,7 +191,7 @@ public class Authentication {
                   autocreate);
             person.setID(newUID);
          } catch (AuthorizationException ae) {
-            log.error( ae);
+            log.error("Exception retrieving ID", ae);
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          

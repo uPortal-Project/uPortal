@@ -120,7 +120,7 @@ public class GroupService implements IGroupConstants
         try 
             { instance().ifinishedSession(person); }
         catch (GroupsException ge)
-            { log.error( ge); }
+            { log.error("Error upon session finishing for person [" + person + "]", ge); }
     }
     /*
     * Returns the <code>ICompositeGroupService</code> implementation in use.
