@@ -113,6 +113,8 @@ final class TabColumnPrefsState extends BaseState
   private static final String errorMessageMoveTab = "Problem trying to move the tab";
   private static final String errorMessageAddTab = "Problem trying to add a new tab";
   private static final String errorMessageDeleteTab = "Problem trying to delete tab";
+  private static final String errorMessageLockTab = "Problem trying to lock tab";
+  private static final String errorMessageUnlockTab = "Problem trying to unlock tab";
   private static final String errorMessageChangeColumnWidths = "Problem changing column widths";
   private static final String errorMessageMoveColumn = "Problem trying to move column";
   private static final String errorMessageNewColumn = "Problem trying to add a new column";
@@ -504,7 +506,22 @@ final class TabColumnPrefsState extends BaseState
     else
       throw new Exception("Element " + elementId + " cannot be removed because it is either unremovable or it or one of its parent elements is immutable.");
   }
-
+  
+  private final void updateTabLock(String elementId, boolean locked) throws Exception
+  {
+    Element element = userLayout.getElementById(elementId);
+    if(locked)
+    {
+      element.setAttribute("unremovable", "true");
+      element.setAttribute("immutable", "true");
+    }
+    else
+    {
+      element.setAttribute("unremovable", "false");
+      element.setAttribute("immutable", "false");
+    }
+    saveLayout();
+  }
   /**
    * A folder is a tab if its parent element is the layout element
    * @param folder the folder in question
@@ -700,6 +717,38 @@ final class TabColumnPrefsState extends BaseState
             LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
+          }
+        }
+        // Lock tab
+        else if (action.equals("lockTab"))
+        {
+          try
+          {
+            String tabId = runtimeData.getParameter("elementID");
+
+            updateTabLock(tabId, true);
+          }
+          catch (Exception e)
+          {
+            LogService.instance().log(LogService.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageLockTab;
+          }
+        }
+        // Unlock tab
+        else if (action.equals("unlockTab"))
+        {
+          try
+          {
+            String tabId = runtimeData.getParameter("elementID");
+
+            updateTabLock(tabId, false);
+          }
+          catch (Exception e)
+          {
+            LogService.instance().log(LogService.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageUnlockTab;
           }
         }
         // Select column
