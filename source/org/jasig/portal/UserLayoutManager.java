@@ -70,7 +70,8 @@ public class UserLayoutManager extends GenericPortalBean {
     
     private UserPreferences up;
     private UserPreferences complete_up;
-    
+
+    private String str_userName;
 
 
     /**
@@ -83,9 +84,7 @@ public class UserLayoutManager extends GenericPortalBean {
 
   public UserLayoutManager (HttpServletRequest req, String sUserName)
   {
-    String sLayoutDtd = "userLayout.dtd";
-    String sPathToLayoutDtd = null;
-    boolean bPropsLoaded = false;
+
 
     String fs = System.getProperty ("file.separator");
     String propertiesDir = getPortalBaseDir () + "properties" + fs;
@@ -137,55 +136,30 @@ public class UserLayoutManager extends GenericPortalBean {
     updb.getUserPreferences("guest","netscape"); */
 
     try {
-	if (!bPropsLoaded) {
-	    File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
-	    Properties layoutProps = new Properties ();
-	    layoutProps.load (new FileInputStream (layoutPropsFile));
-	    sPathToLayoutDtd = layoutProps.getProperty ("pathToUserLayoutDTD");
-	    bPropsLoaded = true;
-	}
+
 	
 	// read uLayoutXML
 	
 	HttpSession session = req.getSession (false);
 	uLayoutXML = (Document) session.getAttribute ("userLayoutXML");
+
+	if (sUserName == null)
+	    sUserName = "guest";
+	str_userName=sUserName;
+
 	
 	if (uLayoutXML == null) {
-	    if (sUserName == null)
-		sUserName = "guest";
+
 	    
 	    IUserLayoutDB uldb=new UserLayoutDBImpl();
-	    
-	    str_uLayoutXML = uldb.getUserLayout(sUserName,"netscape");
-	    
-	    if(str_uLayoutXML!=null) {
-		// Tack on the full path to user_layout.dtd
-		//peterk: should be done on the SAX level or not at all
-		int iInsertBefore = str_uLayoutXML.indexOf (sLayoutDtd);
-		
-		if (iInsertBefore != -1) 
-		    str_uLayoutXML = str_uLayoutXML.substring (0, iInsertBefore) + sPathToLayoutDtd + str_uLayoutXML.substring (iInsertBefore);
-		
-		// read in the layout DOM
-		// note that we really do need to have a DOM structure here in order to introduce
-		// persistent changes on the level of userLayout.
-		//org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
-		org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-		
-		// set parser features
-		parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-		
-		parser.parse (new org.xml.sax.InputSource (new StringReader (str_uLayoutXML)));
-		uLayoutXML = parser.getDocument ();
-		session.setAttribute ("userLayoutXML", uLayoutXML);
-	    }
+	    uLayoutXML = uldb.getUserLayout(str_userName,"netscape");
 	}
 	
 
 	// load user preferences
 	IUserPreferencesDB updb=new UserPreferencesDBImpl();
-	UserPreferences temp_up=updb.getUserPreferences(sUserName,mediaM.getMedia(req)); 
-	if(temp_up==null) temp_up=updb.getUserPreferences(sUserName,mediaM.getDefaultMedia()); 
+	UserPreferences temp_up=updb.getUserPreferences(str_userName,mediaM.getMedia(req)); 
+	if(temp_up==null) temp_up=updb.getUserPreferences(str_userName,mediaM.getDefaultMedia()); 
 	this.setCurrentUserPreferences(temp_up);
 
     } catch (Exception e) { Logger.log(Logger.ERROR,e);}
@@ -206,11 +180,11 @@ public class UserLayoutManager extends GenericPortalBean {
 		String chID=el.getAttribute("ID");
 		if(!fsup.hasChannel(chID)) {
 		    fsup.addChannel(chID);
-		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+chID);
+		    //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+chID);
 		}
 		if(!ssup.hasChannel(chID)) {
 		    ssup.addChannel(chID);
-		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+chID);
+		    //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+chID);
 		}
 		channelSet.add(chID);
 	    }
@@ -226,7 +200,7 @@ public class UserLayoutManager extends GenericPortalBean {
 		String caID=el.getAttribute("ID");
 		if(!fsup.hasFolder(caID)) {
 		    fsup.addFolder(caID);
-		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
+		    //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
 		}
 		folderSet.add(caID);
 	    }
@@ -237,7 +211,7 @@ public class UserLayoutManager extends GenericPortalBean {
 	    String chID=(String)e.nextElement();
 	    if(!channelSet.contains(chID)) {
 		fsup.removeChannel(chID);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
+		//		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
 	    }
 	}
 
@@ -245,7 +219,7 @@ public class UserLayoutManager extends GenericPortalBean {
 	    String caID=(String)e.nextElement();
 	    if(!folderSet.contains(caID)) {
 		fsup.removeFolder(caID);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
+		//		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
 	    }
 	}
 
@@ -253,7 +227,7 @@ public class UserLayoutManager extends GenericPortalBean {
 	    String chID=(String)e.nextElement();
 	    if(!channelSet.contains(chID)) {
 		ssup.removeChannel(chID);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
+		//		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
 	    }
 	}
 	someup.setStructureStylesheetUserPreferences(fsup);	
@@ -327,24 +301,26 @@ public class UserLayoutManager extends GenericPortalBean {
 	
 	// deal with folder attributes first
 	NodeList folderElements=argumentedUserLayoutXML.getElementsByTagName("folder");
-	if(folderElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
+	if(folderElements==null) 
+	    Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
 	List cl=complete_fsup.getFolderAttributeNames();
 	for(int j=0;j<cl.size();j++) {
 	    for(int i=folderElements.getLength()-1;i>=0;i--) {
 		Element folderElement=(Element) folderElements.item(i);
 		folderElement.setAttribute((String) cl.get(j),complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j)));
-		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
+		//		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
 	    }
 	}
 	// channel attributes
 	NodeList channelElements=argumentedUserLayoutXML.getElementsByTagName("channel");
-	if(channelElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
+	if(channelElements==null) 
+	    Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
 	List chl=complete_fsup.getChannelAttributeNames();
 	for(int j=0;j<chl.size();j++) {
 	    for(int i=channelElements.getLength()-1;i>=0;i--) {
 		Element channelElement=(Element) channelElements.item(i);
 		channelElement.setAttribute((String) chl.get(j),complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j)));
-		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) chl.get(j)+"="+complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j))+" for a channel "+channelElement.getAttribute("ID"));
+		//		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) chl.get(j)+"="+complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j))+" for a channel "+channelElement.getAttribute("ID"));
 	    }
 	}
     }
@@ -354,13 +330,26 @@ public class UserLayoutManager extends GenericPortalBean {
      * Note that if any of the two are "null", old values will be used.
      */
     public void setNewUserLayoutAndUserPreferences(Document newLayout,UserPreferences newPreferences) {
-	if(newLayout!=null) uLayoutXML=newLayout;
-	this.setCurrentUserPreferences(newPreferences);
+	if(newLayout!=null) { 
+	    uLayoutXML=newLayout;
+	    IUserLayoutDB uldb=new UserLayoutDBImpl();
+	    uldb.setUserLayout(str_userName,"netscape",uLayoutXML);	    
+	}
+	if(newPreferences!=null) { 
+	    this.setCurrentUserPreferences(newPreferences);
+	    IUserPreferencesDB updb=new UserPreferencesDBImpl();
+	    updb.putUserPreferences(str_userName,up);
+	}
+	
     }
 
 
     public Document getUserLayoutCopy() {
 	return UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
+    }
+
+    public UserPreferences getUserPreferencesCopy() {
+	return new UserPreferences(up);
     }
 
 
@@ -420,4 +409,6 @@ public class UserLayoutManager extends GenericPortalBean {
 	}
 	return null;
     }
+
+    
 }
