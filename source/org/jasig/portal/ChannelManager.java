@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -610,6 +611,7 @@ public class ChannelManager implements LayoutEventListener {
         cic.bind("services",servicesContext);
         cic.bind("channel-ids",channel_idsContext);
         cic.bind("channel-obj",channel_objContext);
+        cic.bind("portlet-ids",new ArrayList());
 
         return cic;
     }

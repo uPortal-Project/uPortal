@@ -39,9 +39,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +71,7 @@ import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
 import org.jasig.portal.container.services.log.LogServiceImpl;
+import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.servlet.StoredServletResponseImpl;
 import org.jasig.portal.services.LogService;
@@ -233,7 +239,22 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     public void setStaticData(ChannelStaticData sd, String uid) throws PortalException {
         ChannelState channelState = new ChannelState();
         channelState.setStaticData(sd);
-        channelStateMap.put(uid, channelState);                
+        channelStateMap.put(uid, channelState);
+        
+        try {
+            // Register rendering dependencies to ensure that setRuntimeData is called on
+            // all CPortletAdapters before any of them is asked to render
+            List portletIds = (List)sd.getJNDIContext().lookup("/portlet-ids");
+            Iterator iter = portletIds.iterator();
+            while (iter.hasNext()) {
+                String portletId = (String)iter.next();
+                sd.getICCRegistry().addInstructorChannel(portletId);
+                sd.getICCRegistry().addListenerChannel(portletId);
+            }
+            portletIds.add(sd.getChannelSubscribeId());
+        } catch (Exception e) {
+            throw new PortalException(e);
+        }                   
     }
 
     /**
@@ -245,6 +266,22 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     public void setRuntimeData(ChannelRuntimeData rd, String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         channelState.setRuntimeData(rd);
+        
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ChannelData cd = channelState.getChannelData();
+        // Process action if this is the targeted channel
+        if (rd.isTargeted() && rd.getParameters().size() > 0) {
+            try {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+                HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+                portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            } catch (Exception e) {
+                throw new PortalException(e);
+            }
+        }
+        
     }
 
     /**
@@ -320,13 +357,11 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
-            
-            // Process action if there is something to process
-            if ( rd.isTargeted() && rd.getParameters().size() > 0 ) {
-                portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
-            } else {
-                wrappedRequest.getParameterMap().clear();
-              }
+                        
+            // Clear the request parameters if this portlet isn't targeted
+            if (!rd.isTargeted()) {
+                wrappedRequest = new EmptyRequestImpl(wrappedRequest);
+            }
             
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             
