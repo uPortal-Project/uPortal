@@ -368,7 +368,9 @@ public class UserInstance implements HttpSessionBindingListener {
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // set up the proxy rewrite flag for rewriting certain elemnts in serializer 
-                    markupSerializer.setProxying(PROXY_ENABLED,PROXY_REWRITE_PREFIX);
+                    if (req.isSecure()) {
+	                    markupSerializer.setProxying(PROXY_ENABLED,PROXY_REWRITE_PREFIX);
+                    }
                     // see if we can use character caching
                     boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
                     channelManager.setCharacterCaching(ccaching);

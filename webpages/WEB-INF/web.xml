@@ -37,6 +37,11 @@
     <load-on-startup>100</load-on-startup>
   </servlet>
 
+  <servlet>
+  	<servlet-name>HttpProxyServlet</servlet-name>
+  	<servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>uPortal</servlet-name>
     <url-pattern>*.uP</url-pattern>
@@ -71,6 +76,11 @@
     <servlet-name>AdminServlet</servlet-name>
     <url-pattern>/servlet/AdminServlet</url-pattern>
   </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>HttpProxyServlet</servlet-name>
+    <url-pattern>/servlet/ProxyServlet/*</url-pattern>
+  </servlet-mapping>  
 
   <mime-mapping>
     <extension>wbmp</extension>
