@@ -77,13 +77,11 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
       try {
         if (rs.next()) {
           channel = doc.createElement("channel");
-          Element system = doc.createElement("system");
           createChannelNodeHeaders(doc, chanId, idTag, rs, channel);
           do {
             createChannelNodeParameters(doc, rs, channel);
           } while (rs.next());
           rs.close();
-          channel.appendChild(system);
         }
       } finally {
         rs.close();
