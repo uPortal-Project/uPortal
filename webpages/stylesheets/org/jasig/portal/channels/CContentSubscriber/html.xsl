@@ -1241,7 +1241,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
-              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}">
+              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}">
                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
@@ -1368,7 +1368,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
-              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}">
                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
