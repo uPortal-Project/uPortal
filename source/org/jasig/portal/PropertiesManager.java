@@ -288,7 +288,7 @@ public class PropertiesManager {
    /**
     * Registers that a given property was sought but not found.
     * Currently adds the property to the set of missing properties and 
-    * logs as an error if this is the first time the property has been requested.
+    * logs if this is the first time the property has been requested.
     * @param name - the name of the missing property
     * @return true if the property was previously registered, false otherwise
    * 
@@ -297,7 +297,7 @@ public class PropertiesManager {
       final boolean previouslyReported = !PropertiesManager.missingProperties.add(name);
       
       if (!previouslyReported){
-        log.error("Property [" + name + "] was requested but not found.");
+        log.info("Property [" + name + "] was requested but not found.");
       }
       return previouslyReported;
   }
