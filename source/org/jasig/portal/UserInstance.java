@@ -671,6 +671,12 @@ public class UserInstance implements HttpSessionBindingListener {
             ulm.markMoveTargets(values[0]);
         }
 
+
+        if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
+            int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
+            ulm.markAddTargets(ulm.createNodeDescription(nodeType));
+        }
+
         if ((values = req.getParameterValues("uP_move_target")) != null) {
          String[] values1, values2;
          if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
