@@ -134,11 +134,10 @@ public class UserLayoutManager implements IUserLayoutManager {
                 }
                 complete_up=updb.getUserPreferences(m_person, upl);
                 try {
-                  // Initialize the JNDI context for this user
-                  JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
-                }
-                catch(PortalNamingException pne) {
-                  LogService.instance().log(LogService.ERROR, "UserLayoutManager(): Could not properly initialize user context", pne);
+                    // Initialize the JNDI context for this user
+                    JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),uLayoutXML);
+                } catch(InternalPortalException ipe) {
+                  LogService.instance().log(LogService.ERROR, "UserLayoutManager(): Could not properly initialize user context", ipe);
                 }
                 // set dirty flag on the layout
                 layout_write_lock.setValue(true);
