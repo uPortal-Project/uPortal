@@ -130,7 +130,7 @@ public class PortalException extends Exception {
      *
      * @param refresh a <code>boolean</code> value
      */
-    public void setRefershable(boolean refresh) {
+    public void setRefreshable(boolean refresh) {
         this.b_refresh=refresh;
     }
 
@@ -154,5 +154,46 @@ public class PortalException extends Exception {
      */
     public void setRecordedException(Exception exc) {
         this.e_exc=exc;
+    }
+    
+    /**
+     * Override <code>Exception</code> getMessage() method to 
+     * append the recorded exception message, if applicable
+     *
+     * @return the message
+     */
+    public String getMessage(){
+      StringBuffer sb = new StringBuffer(String.valueOf(super.getMessage()));
+      if (getRecordedException() !=null){
+        sb.append("; "+getRecordedException().getMessage()); 
+      }
+      return sb.toString();
+    }
+    
+    /**
+     * Overrides <code>Exception</code> printStackTrace() method 
+     */
+    public void printStackTrace(){
+      this.printStackTrace(System.out);
+    }
+    
+    /**
+     * Overrides <code>Exception</code> printStackTrace(PrintWriter writer) 
+     * method to print recorded exception stack trace if applicable
+     */
+    public void printStackTrace(PrintWriter writer){
+      if (getRecordedException()!=null){
+        getRecordedException().printStackTrace(writer);
+      }
+      else{
+        super.printStackTrace(writer);
+      }
+    }
+    
+    /**
+     * Overrides <code>Exception</code> printStackTrace(PrintStream stream) method 
+     */
+    public void printStackTrace(PrintStream stream){
+      this.printStackTrace(new PrintWriter(stream,true));
     }
 }
