@@ -511,7 +511,6 @@ class TabColumnPrefsState extends BaseState
    */
   private final void addChannel(String selectedChannelSubscribeId, String position, String destinationElementId) throws Exception
   {
-System.out.println("addChannel1");
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     Element newChannel = channelRegistry.getElementById(selectedChannelSubscribeId);
     addChannel(newChannel, position, destinationElementId);
