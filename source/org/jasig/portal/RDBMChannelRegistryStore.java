@@ -31,10 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-
 
 package  org.jasig.portal;
 
@@ -127,7 +124,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                 ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
                 registry.appendChild(category);
 
-                  // Add child categories and channels
+                // Add child categories and channels
                 appendChildCategoriesAndChannels(con, ap, chanStmt, category, catId);
               }
             } finally {
@@ -152,6 +149,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
+
     try {
       stmt = con.createStatement();
       String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=" + catId;
@@ -174,11 +172,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         appendChildCategoriesAndChannels(con, ap, chanStmt, childCategory, childCatId);
       }
 
+
+
       // Append children channels
       chanStmt.clearParameters();
       chanStmt.setInt(1, catId);
       LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): " + chanStmt);
       rs = chanStmt.executeQuery();
+
       try {
         while (rs.next()) {
           int chanId = rs.getInt(1);
@@ -230,6 +231,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     Element root = doc.createElement("channelTypes");
     doc.appendChild(root);
     Connection con = RdbmServices.getConnection();
+
     try {
       Statement stmt = con.createStatement();
       try {
@@ -247,7 +249,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             // <channelType>
             Element channelType = doc.createElement("channelType");
             channelType.setAttribute("ID", String.valueOf(ID));
-
             Element elem = null;
 
             // <class>
@@ -284,6 +285,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return doc;
   }
 
+
+
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
    * @param id the identifier for the channel
@@ -312,6 +315,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
           LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
           stmt.executeUpdate(sInsert);
+
         }
         // Commit the transaction
         RdbmServices.commit(con);
@@ -422,10 +426,12 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             String paramName = null;
             String paramValue = null;
             String paramOverride = "NULL";
+
             for (int j = 0; j < nm.getLength(); j++) {
               Node param = nm.item(j);
               String nodeName = param.getNodeName();
               String nodeValue = param.getNodeValue();
+
               if (nodeName.equals("name")) {
                 paramName = nodeValue;
               } else if (nodeName.equals("value")) {
@@ -434,9 +440,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                 paramOverride = "'Y'";
               }
             }
+
             if (paramName == null && paramValue == null) {
               throw new RuntimeException("Invalid parameter node");
             }
+
             String sInsert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
             LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
@@ -444,6 +452,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           }
         }
       }
+
       // Commit the transaction
       RdbmServices.commit(con);
       flushChannelEntry(id);
@@ -477,7 +486,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     } finally {
       RdbmServices.releaseConnection(con);
     }
-   }
+  }
 
   /** A method for getting the next available channel ID.
    * This would be called by a publish channel.
@@ -509,16 +518,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       try {
         chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
 
-        // Delete channel/category associations
-        //String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sDelete);
-        //stmt.executeUpdate(sDelete);
-
-        // Delete channel/role associations
-        //sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sDelete);
-        //stmt.executeUpdate(sDelete);
-
         // Delete channel.
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + chanID;
         LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sUpdate);
@@ -547,23 +546,22 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   /**
-   * put your documentation comment here
    * @param chanDoc
-   * @return
+   * @return the chanDoc as an XML string
    */
   private String serializeDOM (Document chanDoc) {
     StringWriter stringOut = null;
     try {
-      OutputFormat format = new OutputFormat(chanDoc);          //Serialize DOM
-      stringOut = new StringWriter();           //Writer will be a String
+      OutputFormat format = new OutputFormat(chanDoc); //Serialize DOM
+      stringOut = new StringWriter(); //Writer will be a String
       XMLSerializer serial = new XMLSerializer(stringOut, format);
-      serial.asDOMSerializer();                 // As a DOM Serializer
+      serial.asDOMSerializer(); // As a DOM Serializer
       serial.serialize(chanDoc.getDocumentElement());
     } catch (java.io.IOException ioe) {
       LogService.instance().log(LogService.ERROR, ioe);
     }
+
     return  stringOut.toString();
-    //LogService.instance().log(LogService.DEBUG, "STRXML = " + stringOut.toString());
   }
 
   /**
@@ -574,9 +572,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   protected static final boolean xmlBool (String value) {
       return (value != null && value.equals("true") ? true : false);
   }
-    /**
-     * Manage the Channel cache
-     */
+
+  /**
+   * Manage the Channel cache
+   */
+
   /**
    * See if the channel is already in the cache
    * @param channel id
@@ -598,13 +598,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     }
   }
 
-
   /**
    * Get a channel from the cache (it better be there)
    */
   public ChannelStoreDefinition getChannel(int chanId) {
     return (ChannelStoreDefinition)channelCache.get(new Integer(chanId));
   }
+
+
 
   /**
    * Get a channel from the cache (it better be there)
@@ -617,6 +618,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       return null;
     }
   }
+
   /**
    * Get a channel from the cache or the store
    */
@@ -648,6 +650,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return channel;
   }
 
+
+
   /**
    * Read a channel definition from the data store
    */
@@ -658,6 +662,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     pstmtChannel.setInt(1, chanId);
     LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannel(): " + pstmtChannel);
     ResultSet rs = pstmtChannel.executeQuery();
+
     try {
       if (rs.next()) {
         int chanType = rs.getInt(4);
@@ -707,18 +712,19 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     LogService.instance().log(LogService.DEBUG,
       "RDBMChannelRegistryStore.getChannelStoreDefinition(): Read channel " + chanId + " from the store");
+
     return  channel;
   }
+
   /**
-   * put your documentation comment here
+   * Get the channel node
    * @param con
    * @param doc
    * @param chanId
    * @param idTag
-   * @return
+   * @return the channel node as an XML Element
    * @exception java.sql.SQLException
    */
-
   public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
     RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
     try {
@@ -758,11 +764,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     } else {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
 
+    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
     return new RdbmServices.PreparedStatement(con, sql);
   }
 }
-
-
-
