@@ -71,14 +71,13 @@ public class PropertiesManager {
      * later on.
      */
     protected static void loadProps() {
-        Properties properties = new Properties();
+        PropertiesManager.props = new Properties();
         try {
             String pfile = System.getProperty(PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE);
             if (pfile == null) {
                 pfile = PORTAL_PROPERTIES_FILE_NAME;
             }
-            properties.load(PropertiesManager.class.getResourceAsStream(pfile));
-            PropertiesManager.props = properties;
+            PropertiesManager.props.load(PropertiesManager.class.getResourceAsStream(pfile));
         } catch (Throwable t) {
             log.error("Unable to read portal.properties file.", t);
         }
@@ -121,6 +120,12 @@ public class PropertiesManager {
     public static String getPropertyUntrimmed(String name) throws MissingPropertyException {
         if (PropertiesManager.props == null)
             loadProps();
+        
+        if (props == null) {
+            boolean alreadyReported = registerMissingProperty(name);
+            throw new MissingPropertyException(name, alreadyReported);
+        }
+        
       String val = props.getProperty(name);
       if (val == null) {
         boolean alreadyReported = registerMissingProperty(name);
