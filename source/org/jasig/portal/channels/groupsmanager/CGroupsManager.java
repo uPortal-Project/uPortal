@@ -57,6 +57,7 @@ import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -256,7 +257,7 @@ public class CGroupsManager
             //Utility.printDoc(viewDoc, "viewXMl ready:\n");
 
             Utility.logMessage("DEBUG","CGroupsManager::renderXML(): Servant services complete");
-            /** @todo remove following print statement */
+            /* @todo remove following print statement */
             Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
       } catch (Exception e) {
@@ -288,7 +289,7 @@ public class CGroupsManager
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       sessionData.startRD = Calendar.getInstance().getTime().getTime();
       if(sessionData.servantChannel == null){
-        if (hasValue(runtimeData.getParameter("grpCommand"))) {
+        if (Utility.hasValue(runtimeData.getParameter("grpCommand"))) {
             String theCommand = runtimeData.getParameter("grpCommand");
             Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): COMMAND PROCESS About to get the'"
                   + theCommand + "' command");
@@ -306,10 +307,10 @@ public class CGroupsManager
                }
             }
          }
-         if (hasValue(runtimeData.getParameter("grpPageForward"))){
+         if (Utility.hasValue(runtimeData.getParameter("grpPageForward"))){
             sessionData.currentPage += Integer.parseInt(runtimeData.getParameter("grpPageForward"));
          }
-         if (hasValue(runtimeData.getParameter("grpPageBack"))){
+         if (Utility.hasValue(runtimeData.getParameter("grpPageBack"))){
             sessionData.currentPage -= Integer.parseInt((String)runtimeData.getParameter("grpPageBack"));
          }
       }
@@ -433,35 +434,6 @@ public class CGroupsManager
         }
       }
       return  r;
-   }
-
-   /**
-    * put your documentation comment here
-    * @param o
-    * @return boolean
-    */
-   protected boolean hasValue (Object o) {
-      boolean rval = false;
-      if (o != null && !o.toString().trim().equals("")) {
-         rval = true;
-      }
-      return  rval;
-   }
-
-   /**
-    * put your documentation comment here
-    * @param o
-    * @param test
-    * @return boolean
-    */
-   protected boolean hasValue (Object o, String test) {
-      boolean rval = false;
-      if (hasValue(o)) {
-         if (String.valueOf(o).equals(test)) {
-            rval = true;
-         }
-      }
-      return  rval;
    }
 
    /**
