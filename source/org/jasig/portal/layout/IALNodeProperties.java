@@ -126,4 +126,6 @@ public interface IALNodeProperties {
      */
     public Vector getRestrictionsByPath( String restrictionPath );
 
+    public void addRestrictionChildren(Element node, Document root);
+
 }

@@ -64,6 +64,14 @@ public class ALNodeProperties {
     public ALNodeProperties() {
     }
 
+    public ALNodeProperties(IALNodeProperties p) {
+        this();
+        this.fragmentId=p.getFragmentId();
+        this.fragmentNodeId=p.getFragmentNodeId();
+        this.restrictions=p.getRestrictions();
+        this.group=p.getGroup();
+    }
+
     /**
      * Set fragment id
      *

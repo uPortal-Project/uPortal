@@ -58,52 +58,61 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * Add the new user layout node.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param node a <code>UserLayoutNode</code> object specifying the node
-     * @return a <code>UserLayoutNode</code> object specifying the node with the generated node ID
+     * @param node a <code>ALNode</code> object specifying the node
+     * @return a <code>ALNode</code> object specifying the node with the generated node ID
      * @exception PortalException if an error occurs
      */
-    public UserLayoutNode addUserLayoutNode (IPerson Person, UserProfile profile, UserLayoutNode node ) throws PortalException;
+    public ALNode addUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
 
     /**
      * Update the new user layout node.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param node a <code>UserLayoutNode</code> object specifying the node
+     * @param node a <code>ALNode</code> object specifying the node
      * @return a boolean result of this operation
      * @exception PortalException if an error occurs
      */
-    public boolean updateUserLayoutNode (IPerson Person, UserProfile profile, UserLayoutNode node ) throws PortalException;
+    public boolean updateUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
 
     /**
      * Update the new user layout node.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param nodeId a <code>String</code> node ID specifying the node
+     * @param node a <code>ALNode</code> node ID specifying the node
      * @return a boolean result of this operation
      * @exception PortalException if an error occurs
      */
-    public boolean deleteUserLayoutNode (IPerson Person, UserProfile profile, String nodeId ) throws PortalException;
+    public boolean deleteUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
 
     /**
      * Gets the user layout node.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
      * @param nodeId a <code>String</code> node ID specifying the node
-     * @return a <code>UserLayoutNode</code> object
+     * @return a <code>ALNode</code> object
      * @exception PortalException if an error occurs
      */
 
-    public UserLayoutNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId ) throws PortalException;
+    public ALNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId ) throws PortalException;
 
     /**
      * Returns the user layout internal representation.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @return a <code>Hashtable</code> object containing the internal representation of the user layout
+     * @return a <code>Object</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
 
-    public Hashtable getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception;
+    public Object getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception;
+
+    /**
+     * Persist user layout document.
+     * @param Person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param layout a <code>Document</code> containing an aggregated user layout
+     * @exception Exception if an error occurs
+     */
+    public void setAggregatedUserLayout (IPerson Person, UserProfile  profile, Object layout) throws Exception;
 
 
 }

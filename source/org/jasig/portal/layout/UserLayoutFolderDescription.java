@@ -91,6 +91,11 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
     public UserLayoutFolderDescription() {
     }
 
+    public UserLayoutFolderDescription(IUserLayoutFolderDescription d) {
+        super(d);
+        setFolderType(d.getFolderType());
+    }
+
     /**
      * Returns folder type.
      *

@@ -48,32 +48,30 @@ import java.util.Vector;
 
 
 /**
- * An extension of the FolderDescription for the Aggregated Layout implementation
+ * An extension of the ChannelDescription for the Aggregated Layout implementation
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public class ALFolderDescription extends UserLayoutFolderDescription implements IALFolderDescription {
+public class ALChannelDescription extends UserLayoutChannelDescription implements IALChannelDescription {
 
-    protected ALNodeProperties alproperties;
+    protected ALNodeProperties alproperties=new ALNodeProperties();
 
-    public ALFolderDescription() {
+    public ALChannelDescription() {
         super();
-        alproperties=new ALNodeProperties();
     }
 
-    public ALFolderDescription(IUserLayoutFolderDescription d) {
+    public ALChannelDescription(Element xmlNode) throws PortalException {
+        super(xmlNode);
+    }
+
+    public ALChannelDescription(IUserLayoutChannelDescription d) {
         super(d);
-        if(d instanceof IALFolderDescription) {
-            alproperties=new ALNodeProperties((IALNodeDescription)d);
-        } else {            
+        if(d instanceof IALChannelDescription) {
+            this.alproperties=new ALNodeProperties((IALNodeDescription)d);
+        } else {
             this.alproperties=new ALNodeProperties();
         }
-    }
-
-    public ALFolderDescription(Element xmlNode) throws PortalException {
-        super(xmlNode);
-        alproperties=new ALNodeProperties();
     }
 
     /**

@@ -69,7 +69,6 @@ public class ALNode {
        nodeDescription = nd;
      }
 
-
      public String getId() {
         return nodeDescription.getId();
      }
@@ -163,6 +162,39 @@ public class ALNode {
     protected void addNodeAttributes(Element node) {
         nodeDescription.addNodeAttributes(node);
         node.setAttribute("priority",priority+"");
+    }
+
+
+    /**
+     * A factory method to create a <code>IALNodeDescription</code> instance,
+     * based on the information provided in the user layout <code>Element</code>.
+     *
+     * @param xmlNode a user layout DTD folder/channel <code>Element</code> value
+     * @return an <code>IALNodeDescription</code> value
+     * @exception PortalException if the xml passed is somehow invalid.
+     */
+    public static IALNodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {
+        // is this a folder or a channel ?
+        String nodeName=xmlNode.getNodeName();
+        System.out.println( "Node name: " + nodeName );
+        if(nodeName.equals("channel")) {
+            return new ALChannelDescription(xmlNode);
+        } else if(nodeName.equals("folder")) {
+            return new ALFolderDescription(xmlNode);
+        } else {
+            throw new PortalException("Given XML element is neither folder nor channel");
+        }
+    }    
+
+    public static ALNode createALNode(IUserLayoutNodeDescription nodeDescription) throws PortalException {
+        if(nodeDescription instanceof IUserLayoutFolderDescription) {
+            // should be a folder
+            return new ALFolder(new ALFolderDescription((IUserLayoutFolderDescription)nodeDescription));
+        } else if(nodeDescription instanceof IUserLayoutFolderDescription) {
+            return new ALNode(new ALChannelDescription((IUserLayoutChannelDescription)nodeDescription));
+        } else {
+            throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
+        }
     }
 
   }

@@ -54,6 +54,16 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     protected boolean unremovable=false;
     protected boolean hidden=false;
 
+
+    public UserLayoutNodeDescription() {};
+    public UserLayoutNodeDescription(IUserLayoutNodeDescription d) {
+        this.id=d.getId();
+        this.name=d.getName();
+        this.immutable=d.isImmutable();
+        this.unremovable=d.isUnremovable();
+        this.hidden=d.isHidden();
+    }
+
     /**
      * Returns a node Id.
      * The Id has to be unique in the entire user layout document.

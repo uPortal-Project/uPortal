@@ -116,7 +116,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return false;
     }
 
-    public boolean canUpdateNode(String nodeId) throws PortalException {
+    public boolean canUpdateNode(IUserLayoutNodeDescription nodeId) throws PortalException {
         return false;
     }
 

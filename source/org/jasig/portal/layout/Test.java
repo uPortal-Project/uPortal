@@ -5,6 +5,8 @@ import java.util.*;
 import org.jasig.portal.security.*;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.restrictions.*;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import java.io.*;
 
+import org.jasig.portal.utils.XML;
 
 /**
  * <p>Title: Test class</p>
@@ -28,7 +31,7 @@ import java.io.*;
 public class Test {
 
 
-  protected class TestHandler extends DefaultHandler {
+  private class TestHandler extends DefaultHandler {
 
    private Writer out;
 
@@ -181,19 +184,35 @@ public class Test {
      person.setID(2);
 
      IUserLayoutStore layoutStore =  UserLayoutStoreFactory.getUserLayoutStoreImpl();
-     Document layoutDOM = layoutStore.getUserLayout(person,layoutStore.getUserProfileById(person,1));
-     //System.out.println( "The string representation of the DOM is : \n" + layoutDOM );
+     UserProfile userProfile = layoutStore.getUserProfileById(person,1);
 
      System.out.println( "Getting the internal layout representation from the UserLayout manager....");
-     Hashtable layout = ((IAggregatedUserLayoutStore)layoutStore).getAggregatedUserLayout(person,layoutStore.getUserProfileById(person,1));
+     //Hashtable layout = (Hashtable) ((IAggregatedUserLayoutStore)layoutStore).getAggregatedUserLayout(person,userProfile);
      //System.out.println( "The string representation of the AggregatedUserLayout is : \n" + layout );
 
      //Instantiate UserLayoutManager implementation
-     AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, 1 /*layoutId*/, (IAggregatedUserLayoutStore)layoutStore );
-     System.out.println("Setting DOM layout to the UserLayout manager....");
-     layoutManager.setUserLayoutDOM(layoutDOM);
-     //System.out.println("Setting the internal layout representation to the UserLayout manager....");
-     //layoutManager.setUserLayout(layout);
+     AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, userProfile, (IAggregatedUserLayoutStore)layoutStore );
+     System.out.println("Loading the layout to the UserLayout manager....");
+     layoutManager.loadUserLayout();
+     System.out.println( "Getting the DOM layout representation from the UserLayout manager....");
+     layoutManager.setAutoCommit(true);
+     layoutManager.markMoveTargets("17");
+     layoutManager.markAddTargets(new UserLayoutChannelDescription());
+     //boolean result = layoutManager.moveNode("39","10","13");
+     boolean result = layoutManager.deleteNode("39");
+     System.out.println ( "result: " + result );
+     IALNodeDescription nodeDesc = new ALChannelDescription();
+     //Hashtable restrictions = new Hashtable();
+
+     //nodeDesc = layoutManager.addNode(nodeDesc,"10","13");
+     System.out.println( "addNode node Id: " + nodeDesc.getId() );
+     Document layoutDOM = layoutManager.getUserLayoutDOM();
+     //System.out.println("DOM layout: " + XML.serializeNode(layoutDOM));
+     //System.out.println("Setting the DOM layout representation to the UserLayout manager....");
+     //layoutManager.setUserLayoutDOM(layoutDOM);
+
+     // Save the layout into the database
+     //layoutManager.saveUserLayout();
 
 
           // Use an instance of ourselves as the SAX event handler
@@ -213,7 +232,7 @@ public class Test {
           }
 
      } catch ( Exception e ) {
-        System.out.println ( "Test Exception: " + e );
+        e.printStackTrace();
        }
 
 

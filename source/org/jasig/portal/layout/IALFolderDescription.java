@@ -41,4 +41,6 @@ package org.jasig.portal.layout;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public interface IALFolderDescription extends IUserLayoutFolderDescription, IALNodeDescription {};
+public interface IALFolderDescription extends IUserLayoutFolderDescription, IALNodeDescription {
+    public static final String LOST_FOLDER_ID="lost_folder";
+};

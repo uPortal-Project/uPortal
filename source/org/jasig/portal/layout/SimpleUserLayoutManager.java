@@ -472,7 +472,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         return canUpdateNode(this.getNode(nodeId));
     }
 
-    protected boolean canUpdateNode(IUserLayoutNodeDescription node) {
+    public boolean canUpdateNode(IUserLayoutNodeDescription node) {
         return !(node==null || node.isImmutable());
     }
 

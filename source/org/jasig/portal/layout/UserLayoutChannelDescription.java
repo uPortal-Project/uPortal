@@ -40,6 +40,26 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         override=new Hashtable();
     }
 
+    public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
+        this();
+        this.title=d.getTitle();
+        this.description=d.getDescription();
+        this.className=d.getClassName();
+        this.channelPublishId=d.getChannelPublishId();
+        this.channelTypeId=d.getChannelTypeId();
+        this.functionalName=d.getFunctionalName();
+        this.timeout=d.getTimeout();
+        this.editable=d.isEditable();
+        this.hasHelp=d.hasHelp();
+        this.hasAbout=d.hasAbout();
+
+        for(Enumeration enum = d.getParameterNames(); enum.hasMoreElements();) {
+            String pName=(String)enum.nextElement();
+            this.setParameterValue(pName,d.getParameterValue(pName));
+            this.setParameterOverride(pName,d.getParameterOverrideValue(pName));
+        }
+    }
+
     /**
      * Reconstruct channel information from an xml <code>Element</code>
      *
