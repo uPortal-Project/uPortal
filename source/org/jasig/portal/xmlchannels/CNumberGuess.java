@@ -61,7 +61,7 @@ public class CNumberGuess implements IXMLChannel
   private int iGuesses = 0;
   private int iAnswer = 0;
   private boolean bFirstTime = true;
-  
+
   /** Constructs a CNumberGuess.
    */
   public CNumberGuess ()
@@ -78,7 +78,7 @@ public class CNumberGuess implements IXMLChannel
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    
+
     // Properties which are not specifically set here will assume default
     // values as determined by ChannelSubscriptionProperties
     csb.setName ("Number Guessing Game");
@@ -106,11 +106,11 @@ public class CNumberGuess implements IXMLChannel
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd)
-  { 
+  {
     this.staticData = sd;
     String sMinNum = null;
     String sMaxNum = null;
-    
+
     try
     {
       if ((sMinNum = sd.getParameter ("minNum")) != null )
@@ -118,7 +118,7 @@ public class CNumberGuess implements IXMLChannel
 
       if ((sMaxNum = sd.getParameter ("maxNum")) != null)
         iMaxNum = Integer.parseInt (sMaxNum);
-      
+
       iAnswer = getRandomNumber (iMinNum, iMaxNum);
     }
     catch (NumberFormatException nfe)
@@ -130,15 +130,15 @@ public class CNumberGuess implements IXMLChannel
    }
 
 
-  /** Receives channel runtime data from the portal and processes actions 
-   * passed to it.  The names of these parameters are entirely up to the channel. 
+  /** Receives channel runtime data from the portal and processes actions
+   * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    String sGuess = runtimeData.getParameter ("guess");   
-   
+    String sGuess = runtimeData.getParameter ("guess");
+
     if (sGuess != null)
     {
       try
@@ -149,7 +149,7 @@ public class CNumberGuess implements IXMLChannel
       {
         // Assume that the guess was the same as last time
       }
-      
+
       bFirstTime = false;
       iGuesses++;
     }
@@ -161,12 +161,12 @@ public class CNumberGuess implements IXMLChannel
   public void renderXML (DocumentHandler out)
   {
     String sSuggest = null;
-    
+
     if (iGuess < iAnswer)
       sSuggest = "higher";
     else if (iGuess > iAnswer)
       sSuggest = "lower";
-   
+
     try
     {
       if (set != null)
@@ -192,16 +192,16 @@ public class CNumberGuess implements IXMLChannel
           w.write ("  <suggest>" + sSuggest + "</suggest>\n");
 
         w.write ("</content>\n");
-        
+
         processXML (w.toString (), out);
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   private void processXML (String sXml, DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource xmlSource = new XSLTInputSource (new StringReader(sXml));
@@ -210,18 +210,18 @@ public class CNumberGuess implements IXMLChannel
 
     // This allows relative paths in the stylesheet set
     // Remove in version 2.0!!!
-    xslSource.setSystemId (portalBaseDir + xslSource.getSystemId());
+    //xslSource.setSystemId (portalBaseDir + xslSource.getSystemId());
 
     if (xslSource != null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));        
+      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
       processor.process (xmlSource, xslSource, xmlResult);
     }
-    else 
+    else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CNumberGuess: unable to find a stylesheet for rendering");
   }
-  
+
   private int getRandomNumber (int min, int max)
   {
     return new Double ((max - min) * Math.random () + min).intValue ();
