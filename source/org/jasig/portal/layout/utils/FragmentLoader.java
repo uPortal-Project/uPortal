@@ -346,12 +346,17 @@ public class FragmentLoader {
             } // Getting the channel ID by the fname
             else if ( qName.equals("channel") ) {
              String fname = atts.getValue("fname");
+             ChannelDefinition chanDef;
              try {
-              ChannelDefinition chanDef = channelStore.getChannelDefinition(fname);
-              ai.addAttribute(uri,"id","id","CDATA",chanDef.getId()+"");
+              chanDef = channelStore.getChannelDefinition(fname);
              } catch ( Exception e ) {
-                 throw new SAXException(e.getMessage());
-               }
+                 // We have to catch Exception because getChannelDefinition() throws Exception.
+                 throw new SAXException(e);
+             }
+             if (chanDef == null){
+                 throw new SAXException("Unable to find definition for channel fname: "+ fname);
+             }               
+             ai.addAttribute(uri,"id","id","CDATA",chanDef.getId()+"");
             }
 
             if(qName.equals("group")) { // this could be made more robust by adding another mode for "groups" element
