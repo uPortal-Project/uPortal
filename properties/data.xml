@@ -1555,6 +1555,23 @@
         <column><name>CHAN_FNAME</name><value>permissionsmanager</value></column>
       </row>
       <row>
+        <column><name>CHAN_ID</name><value>96</value></column>
+        <column><name>CHAN_TITLE</name><value>Locale Chooser</value></column>
+        <column><name>CHAN_NAME</name><value>Locale Chooser</value></column>
+        <column><name>CHAN_DESC</name><value>A user tool for choosing locale</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.localechooser.CLocaleChooser</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>localechooser</value></column>
+      </row>
+      <row>
         <column><name>CHAN_ID</name><value>99</value></column>
         <column><name>CHAN_TITLE</name><value>Login</value></column>
         <column><name>CHAN_NAME</name><value>Login</value></column>
@@ -2065,6 +2082,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <!-- Header -->
@@ -2076,6 +2094,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
           <!-- Header -->
           <row>
@@ -2083,13 +2102,23 @@
             <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>10</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Login -->
           <row>
             <column><name>STRUCT_ID</name><value>3</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>333</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>99</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
+          </row>
+          <!-- Locale -->
+          <row>
+            <column><name>STRUCT_ID</name><value>333</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>96</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Main -->
       <row>
@@ -2099,12 +2128,14 @@
         <column><name>CHLD_STRUCT_ID</name><value>5</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>5</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>7</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>6</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- uPortal-Powered Sites -->
           <row>
@@ -2113,12 +2144,14 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>5</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>8</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- uPortal Home Page -->
           <row>
@@ -2127,6 +2160,7 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>8</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Misc -->
       <row>
@@ -2136,12 +2170,14 @@
         <column><name>CHLD_STRUCT_ID</name><value>10</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>12</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>11</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Minesweeper -->
           <row>
@@ -2150,12 +2186,14 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>9</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>12</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>13</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Word of the Day -->
           <row>
@@ -2164,6 +2202,7 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>11</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- News -->
       <row>
@@ -2173,12 +2212,14 @@
         <column><name>CHLD_STRUCT_ID</name><value>15</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>15</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>17</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>16</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Salon.com -->
           <row>
@@ -2187,6 +2228,7 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>12</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>17</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -2194,6 +2236,7 @@
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>18</value></column>
           <column><name>UNREMOVABLE</name><value>N</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- IBS News -->
           <row>
@@ -2202,6 +2245,7 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>6</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Motley Fool -->
           <row>
@@ -2210,6 +2254,7 @@
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>13</value></column>
             <column><name>UNREMOVABLE</name><value>N</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Footer -->
       <row>
@@ -2220,6 +2265,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>26</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
           <!-- Footer -->
           <row>
@@ -2229,6 +2275,7 @@
             <column><name>CHAN_ID</name><value>19</value></column>
             <column><name>UNREMOVABLE</name><value>Y</value></column>
             <column><name>IMMUTABLE</name><value>Y</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
       <!-- Demo Layout -->
@@ -2241,6 +2288,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <!-- Header -->
@@ -2252,6 +2300,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
           <!-- Header -->
           <row>
@@ -2259,13 +2308,23 @@
             <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>10</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Login -->
           <row>
             <column><name>STRUCT_ID</name><value>3</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>333</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>99</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
+          </row>
+          <!-- Locale -->
+          <row>
+            <column><name>STRUCT_ID</name><value>333</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>96</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Main -->
       <row>
@@ -2273,12 +2332,14 @@
         <column><name>NAME</name><value>Main</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>10</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>5</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>5</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>8</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>6</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Word of the Day -->
           <row>
@@ -2286,6 +2347,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>7</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>11</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Number Guessing Game -->
           <row>
@@ -2293,12 +2355,14 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>14</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>8</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>29</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Daily Business Cartoon -->
           <row>
@@ -2306,6 +2370,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>1</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Development -->
       <row>
@@ -2313,12 +2378,14 @@
         <column><name>NAME</name><value>Development</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>21</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>11</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>11</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>13</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>12</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Person Attributes -->
           <row>
@@ -2326,6 +2393,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>18</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>4</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- CSS Viewer -->
           <row>
@@ -2333,12 +2401,14 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>15</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>13</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>15</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- uPortal Developer Recommended Reading -->
           <row>
@@ -2346,6 +2416,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>14</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>20</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- uPortal Developers Reference -->
           <row>
@@ -2353,6 +2424,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>16</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>7</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Snooper -->
           <row>
@@ -2360,6 +2432,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>37</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>16</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
           <!-- uPortal Data Dictionary -->
@@ -2368,6 +2441,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>22</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
        <!-- CWebProxy Examples -->
@@ -2376,12 +2450,14 @@
         <column><name>NAME</name><value>CWebProxy Examples</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>31</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>22</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>22</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>25</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>23</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Tomcat's NumGuess -->
           <row>
@@ -2389,6 +2465,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>24</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>17</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- Tomcat's NumGuess (another) -->
           <row>
@@ -2396,12 +2473,14 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>17</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>25</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>26</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- Tomcat's Servlet Examples -->
           <row>
@@ -2409,6 +2488,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>18</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
        <!-- CWebProxy Examples -->
@@ -2417,12 +2497,14 @@
         <column><name>NAME</name><value>ICC Demo</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>32</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
         <row>
           <column><name>STRUCT_ID</name><value>32</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 1</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>35</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>33</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- CURLSelect channel -->
           <row>
@@ -2430,6 +2512,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>34</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>23</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
           <!-- CHistory channel -->
           <row>
@@ -2437,12 +2520,14 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>25</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
         <row>
           <column><name>STRUCT_ID</name><value>35</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
           <column><name>CHLD_STRUCT_ID</name><value>36</value></column>
+          <column><name>LOCALE</name><value>en_US</value></column>
         </row>
           <!-- CViewer channel -->
           <row>
@@ -2450,6 +2535,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>24</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
       <!-- Footer -->
@@ -2459,6 +2545,7 @@
         <column><name>TYPE</name><value>footer</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>28</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
           <!-- Footer -->
           <row>
@@ -2466,6 +2553,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>19</value></column>
+            <column><name>LOCALE</name><value>en_US</value></column>
           </row>
       <!-- Admin Layout -->
       <!-- layout root node -->
@@ -2477,6 +2565,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <row>
@@ -2489,6 +2578,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2500,6 +2590,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2511,6 +2602,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2522,6 +2614,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2533,6 +2626,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2545,6 +2639,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2557,6 +2652,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2568,6 +2664,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2579,6 +2676,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2591,6 +2689,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2603,6 +2702,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2614,6 +2714,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2625,6 +2726,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2636,6 +2738,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2647,6 +2750,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2658,6 +2762,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2669,6 +2774,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2681,6 +2787,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2693,6 +2800,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2704,6 +2812,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2715,6 +2824,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2726,6 +2836,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2738,6 +2849,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2750,6 +2862,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2761,6 +2874,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2773,6 +2887,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2785,6 +2900,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2797,6 +2913,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2809,6 +2926,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2821,6 +2939,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -2833,6 +2952,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <!-- layout root node -->
@@ -2844,6 +2964,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <row>
@@ -2856,6 +2977,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2867,6 +2989,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2878,6 +3001,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2889,7 +3013,9 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
+<!-- OKI -->
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -2900,6 +3026,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2912,6 +3039,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name> <value>11</value></column>
@@ -2923,8 +3051,8 @@
         <column><name>TYPE</name><value>regular</value></column>
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
-        <column><name>UNREMOVABLE</name><value>N</value>
-        </column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2936,6 +3064,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2948,6 +3077,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2960,6 +3090,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -2972,6 +3103,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <!-- layout root node -->
@@ -2983,6 +3115,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <row>
@@ -2995,6 +3128,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3006,6 +3140,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3017,6 +3152,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3028,6 +3164,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3040,6 +3177,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3052,6 +3190,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3063,6 +3202,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3075,6 +3215,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3087,6 +3228,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3099,6 +3241,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <!-- layout root node -->
@@ -3110,6 +3253,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
       <row>
@@ -3122,6 +3266,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3133,6 +3278,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3144,6 +3290,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3155,6 +3302,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3166,6 +3314,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3177,6 +3326,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3189,6 +3339,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3201,6 +3352,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3212,6 +3364,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3224,6 +3377,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3236,6 +3390,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3248,6 +3403,7 @@
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
       </row>
     </rows>
   </table>
@@ -4333,6 +4489,14 @@
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.99</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.96</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
