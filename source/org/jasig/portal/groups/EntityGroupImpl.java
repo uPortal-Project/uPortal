@@ -687,16 +687,18 @@ private void setMemberKeysInitialized(boolean newMemberKeysInitialized) {
  */
 public void setName(java.lang.String newName) throws GroupsException
 {
-    Iterator i = getContainingGroups();
-    while ( i.hasNext() )
+    if ( (getName() != null) && (! getName().equals(newName)) )
     {
-        EntityGroupImpl eg = (EntityGroupImpl) i.next();
-        try
-            { eg.checkProspectiveMemberGroupName(newName); }
-        catch (GroupsException ge)
-            {throw new GroupsException("Cannot set Group name: " + ge.getMessage());}
+        Iterator i = getContainingGroups();
+        while ( i.hasNext() )
+        {
+            EntityGroupImpl eg = (EntityGroupImpl) i.next();
+            try
+                { eg.checkProspectiveMemberGroupName(newName); }
+            catch (GroupsException ge)
+                {throw new GroupsException("Cannot set Group name: " + ge.getMessage());}
+        }
     }
-
     primSetName(newName);
 }
 /**
