@@ -44,7 +44,7 @@ import org.jasig.portal.utils.CommonUtils;
  * BooleanRestriction checks the restriction on the boolean property for a given ALNode object.
  * <p>
  * Company: Instructional Media &amp; Magic
- * 
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
@@ -52,7 +52,7 @@ import org.jasig.portal.utils.CommonUtils;
 public abstract class BooleanRestriction extends UserLayoutRestriction {
 
 
-         boolean boolValue = false;
+         boolean boolValue1 = false, boolValue2 = false;
 
          public BooleanRestriction(String nodePath) {
            super(nodePath);
@@ -69,7 +69,13 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          protected void parseRestrictionExpression () throws PortalException {
           try {
             String restrictionExp = getRestrictionExpression();
-            boolValue = CommonUtils.strToBool(restrictionExp);
+            int commaIndex = restrictionExp.indexOf(',');
+            if ( commaIndex < 0 ) {
+             boolValue1 = boolValue2 = CommonUtils.strToBool(restrictionExp);
+            } else {
+             boolValue1 = CommonUtils.strToBool(restrictionExp.substring(0,commaIndex));
+             boolValue2 = CommonUtils.strToBool(restrictionExp.substring(commaIndex+1));
+            }
           } catch ( Exception e ) {
              throw new PortalException(e.getMessage());
             }
@@ -88,7 +94,7 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          */
          public boolean checkRestriction( ALNode node ) throws PortalException {
            boolean boolProperty = getBooleanPropertyValue(node);
-           if ( boolProperty == boolValue )
+           if ( boolProperty == boolValue1 || boolProperty == boolValue2 )
              return true;
              return false;
          }
@@ -100,7 +106,7 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          */
          public boolean checkRestriction( String propertyValue ) throws PortalException {
            boolean boolProperty = CommonUtils.strToBool(propertyValue);
-           if ( boolProperty == boolValue )
+           if ( boolProperty == boolValue1 || boolProperty == boolValue2 )
              return true;
              return false;
          }
