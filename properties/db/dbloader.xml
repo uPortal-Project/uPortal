@@ -166,6 +166,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
     <type><generic>LONGVARBINARY</generic><local>BYTEA</local></type>    
     <type><generic>VARBINARY</generic><local>BYTEA</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>  
   
   <db-type-mapping>
@@ -175,6 +176,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <driver-version>PostgreSQL 7.2 JDBC2</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
   <db-type-mapping>
@@ -184,6 +186,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <driver-version>PostgreSQL 7.1.3 JDBC2</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
   <db-type-mapping>
@@ -193,6 +196,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <driver-version>PostgreSQL 7.1.3 JDBC2</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
   <db-type-mapping>
@@ -202,6 +206,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <driver-version>PostgreSQL 7.1.2 JDBC2</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
   <db-type-mapping>
@@ -211,6 +216,7 @@ JServer Release 8.1.7.2.0 - Production</db-version>
     <driver-version>7.0</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
   <db-type-mapping>
