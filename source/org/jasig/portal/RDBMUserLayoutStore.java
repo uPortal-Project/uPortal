@@ -169,7 +169,7 @@ public class RDBMUserLayoutStore
           Statement stmt = con.createStatement();
           try {
             stmt.executeUpdate(sql);
-            tsStart = "{ts";
+            tsStart = "{ts ";
             tsEnd = "}";
           } finally {
             stmt.close();
@@ -733,7 +733,9 @@ public class RDBMUserLayoutStore
     MyPreparedStatement pstmtReadAll;
     public UserInRole(Connection con, int userId) throws SQLException {
       String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
-        "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId + " AND UR.ROLE_ID = UUR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+        "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId +
+        " AND URC.APPROVAL_FLG = 'Y' AND URC.RELEASE_DT <= " + tsStart + "'" + new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
+        " AND UR.ROLE_ID = UUR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
       pstmtUserInRole = new MyPreparedStatement(con, sQuery);
       sQuery = "SELECT COUNT(ROLE_ID) FROM UP_ROLE_CHAN WHERE CHAN_ID=?";
       pstmtReadAll = new MyPreparedStatement(con, sQuery);
@@ -1512,7 +1514,7 @@ public class RDBMUserLayoutStore
       String sqlDescription = sqlEscape(channel.getAttribute("description"));
       String sqlClass = channel.getAttribute("class");
       String sqlTypeID = channel.getAttribute("typeID");
-      String sysdate = tsStart + " '" + new Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
+      String sysdate = tsStart + " '" + new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
       String sqlTimeout = channel.getAttribute("timeout");
       String sqlMinimizable = dbBool(channel.getAttribute("minimizable"));
       String sqlEditable = dbBool(channel.getAttribute("editable"));
