@@ -263,10 +263,12 @@ public class CGroupsManager
             } catch (Exception e) {
                LogService.instance().log(LogService.ERROR, e);
             }
+            /*
             StringWriter sw = new StringWriter();
             XMLSerializer serial = new XMLSerializer(sw, new org.apache.xml.serialize.OutputFormat(viewDoc,"UTF-8", true));
             serial.serialize(viewDoc);
-            LogService.log(LogService.INFO,"viewXMl ready:\n"+sw.toString());
+            LogService.log(LogService.DEBUG,"viewXMl ready:\n"+sw.toString());
+            */
             //Utility.logMessage("DEBUG","CGroupsManager::renderXML(): Servant services complete");
             //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
