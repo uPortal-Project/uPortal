@@ -272,7 +272,7 @@
       <column> <name>PROFILE_ID</name>           <type>INTEGER</type>                       </column>
       <column> <name>SS_ID</name>      <type>INTEGER</type>   </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type> </column>
-      <column> <name>NODE_ID</name>      <type>VARCHAR</type>  <param>30</param> </column>
+      <column> <name>STRUCT_ID</name>      <type>INTEGER</type>                               </column>
       <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>  </column>
       <column> <name>PARAM_TYPE</name>             <type>INTEGER</type>    </column>
       <column> <name>PARAM_VAL</name>              <type>VARCHAR</type>     <param>255</param> </column>
