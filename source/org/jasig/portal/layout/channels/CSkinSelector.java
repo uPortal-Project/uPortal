@@ -65,10 +65,10 @@ import java.io.InputStream;
 
   public class CSkinSelector extends BaseChannel implements IPrivileged {
 
-    private static String SKINS_PATH = "media/org/jasig/portal/layout/AL_TabColumn/integratedModes";
+    private static final String SKINS_PATH = "media/org/jasig/portal/layout/AL_TabColumn/integratedModes";
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;
-    private IUserPreferencesManager upm;
+    private static IUserPreferencesManager upm;
     private static IUserLayoutStore store = UserLayoutStoreFactory.getUserLayoutStoreImpl();
 
     public CSkinSelector() {
@@ -81,7 +81,8 @@ import java.io.InputStream;
      */
     public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
         controlStructures = pcs;
-        upm = controlStructures.getUserPreferencesManager();
+        if ( upm == null )
+          upm = controlStructures.getUserPreferencesManager();
     }
 
 
