@@ -51,6 +51,10 @@ public class PublisherBean extends GenericPortalBean{
       param = (ParameterField)enum.nextElement();
       out.print(param.writeField());
     }
+    if (req.getParameter("chan_type").equals("CApplet")){
+       ParameterField param = new ParameterField();
+       out.print(param.writeUserFields(5));
+    }
     }
     catch (Exception e)
     {
@@ -74,9 +78,25 @@ public class PublisherBean extends GenericPortalBean{
       while (enum.hasMoreElements()) {
          String name = (String)enum.nextElement();
          IParameter param = Factory.newParameter();
-         param.setNameAttribute(name);
-         param.setValueAttribute(req.getParameter(name));
-         chan.addParameter(param);
+         if(!name.equals("numFields")&&!name.startsWith("usrParam_")&&!name.startsWith("usrValue_")&&!req.getParameter(name).equals("")){
+           param.setNameAttribute(name);
+           param.setValueAttribute(req.getParameter(name));
+           chan.addParameter(param);
+         }
+         
+      }
+      if(req.getParameter("numFields")!=null){
+        int i = new Integer(req.getParameter("numFields")).intValue();
+        for(int j=1; j<i+1; j++) {
+          String name = req.getParameter("usrParam_"+j);
+          String value = req.getParameter("usrValue_"+j);
+          if (!name.equals("") && !value.equals("")){
+            IParameter param = Factory.newParameter();
+            param.setNameAttribute("APPLET."+name);
+            param.setValueAttribute(value);
+            chan.addParameter(param);
+          }
+        }
       }
     }
     catch (Exception e)
