@@ -2234,9 +2234,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
 
-    if (localeAware) {
-        structStmt.setString(11, RDBMServices.dbFlag(xmlBool(structure.getAttribute("locale")))); // for i18n by Shoji
-    }
     LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
     structStmt.executeUpdate();
 
