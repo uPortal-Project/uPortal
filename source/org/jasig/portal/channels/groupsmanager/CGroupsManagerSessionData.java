@@ -68,6 +68,6 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public int currentPage = 1;
    public String rootViewGroupID = "0";
    public String mode = BROWSE_MODE; //"browse", "edit" or "select"
-   public String feedback;
+   public String feedback; // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
 }

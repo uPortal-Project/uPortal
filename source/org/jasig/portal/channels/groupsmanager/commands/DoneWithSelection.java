@@ -71,7 +71,7 @@ import  org.w3c.dom.Text;
 /** @todo LOOK FOR COMMON FUNCTIONALITY AGAIN AND SPLIT OUT
  *  IE ID => ELEMENT => GROUPMEMBER (EITHER ENTITY OR GROUP)
  */
-public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+public class DoneWithSelection extends GroupsManagerCommand {
 
    /** Creates new AddMember */
    public DoneWithSelection () {
@@ -79,85 +79,71 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Start");
       String parentId = null;
       boolean hasParentId = hasParentId(staticData);
-      try {
-         Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
-               + hasParentId);
-         IGroupMember[] princResults = null;
-         Document model = getXmlDoc(sessionData);
-         Element rootElem = model.getDocumentElement();
-         NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
-         NodeList nEntityList = rootElem.getElementsByTagName(ENTITY_TAGNAME);
-         Vector gmCollection = new Vector();
-         Element parentElem = null;
-         String cmdResponse;
-         try {
-            Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting group process");
-            addGroupMemberToCollection(gmCollection, nGroupList);
-            Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting entity process");
-            addGroupMemberToCollection(gmCollection, nEntityList);
-            // null pointer exception
-         } catch (org.jasig.portal.AuthorizationException ae) {
-            Utility.logMessage("ERROR", "DoneWithSelection::execute():AuthorizationException /n "
-                  + ae);
-         } catch (ClassNotFoundException cnfe) {
-            Utility.logMessage("ERROR", "DoneWithSelection::execute():ClassNotFoundException /n "
-                  + cnfe);
-         }
-         // check if selections were made
-         if (gmCollection.size() <1) {
-            sessionData.feedback = sessionData.feedback + "\n No groups or people were selected! ";
+      Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
+            + hasParentId);
+      IGroupMember[] princResults = null;
+      Document model = getXmlDoc(sessionData);
+      Element rootElem = model.getDocumentElement();
+      NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
+      NodeList nEntityList = rootElem.getElementsByTagName(ENTITY_TAGNAME);
+      Vector gmCollection = new Vector();
+      Element parentElem = null;
+      Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting group process");
+      addGroupMemberToCollection(gmCollection, nGroupList);
+      Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting entity process");
+      addGroupMemberToCollection(gmCollection, nEntityList);
+      // check if selections were made
+      if (gmCollection.size() <1) {
+         sessionData.feedback = sessionData.feedback + "\n No groups or people were selected! ";
+         return;
+      }
+
+      /** Presence of parentID means the process is not in servant mode. That is,
+       * the master channel is the Groups Manager channel and AddMembers had
+       * been selected
+       */
+      if (hasParentId) {
+         parentId = getParentId(staticData);
+         Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set to: "
+               + parentId);
+         parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, parentId);
+         if (parentElem == null) {
+            Utility.logMessage("ERROR", "DoneWithSelection::execute: Error parent element not found");
             return;
          }
-
-         /** Presence of parentID means the process is not in servant mode. That is,
-          * the master channel is the Groups Manager channel and AddMembers had
-          * been selected
-          */
-         if (hasParentId) {
-            parentId = getParentId(staticData);
-            Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set to: "
-                  + parentId);
-            parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, parentId);
-            if (parentElem == null) {
-               Utility.logMessage("ERROR", "DoneWithSelection::execute: Error parent element not found");
-               return;
-            }
-            /** @todo refactor: */
-            if (parentIsInitialGroupContext(staticData)) {
-               addChildrenToContext(gmCollection, sessionData, parentElem, model);
-            }
-            else {
-               addChildrenToGroup(gmCollection, sessionData, parentElem, model);
-            }
-            clearSelected(sessionData);
-            sessionData.mode=EDIT_MODE;
-            sessionData.highlightedGroupID = parentId;
-            sessionData.rootViewGroupID="0";
-            staticData.remove("groupParentId");
+         /** @todo refactor: */
+         if (parentIsInitialGroupContext(staticData)) {
+            addChildrenToContext(gmCollection, sessionData, parentElem, model);
          }
          else {
-            princResults = (IGroupMember[])gmCollection.toArray(new IGroupMember[0]);
-            if (princResults.length > 0) {
-               staticData.put("princResults", princResults);
-               staticData.setParameter("groupManagerFinished", "true");
-            }
+            addChildrenToGroup(gmCollection, sessionData, parentElem, model);
          }
-         // Parent was locked so no other thread or process could have changed it, but
-         // child members could have changed.
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
-      } catch (Exception e) {
-         Utility.logMessage("ERROR", "DoneWithSelection Error: " + sessionData.feedback
-               + "/n" + e);
+         clearSelected(sessionData);
+         sessionData.mode=EDIT_MODE;
+         sessionData.highlightedGroupID = parentId;
+         sessionData.rootViewGroupID="0";
+         staticData.remove("groupParentId");
       }
+      else {
+         princResults = (IGroupMember[])gmCollection.toArray(new IGroupMember[0]);
+         if (princResults.length > 0) {
+            staticData.put("princResults", princResults);
+            staticData.setParameter("groupManagerFinished", "true");
+         }
+      }
+      // Parent was locked so no other thread or process could have changed it, but
+      // child members could have changed.
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
    }
 
    /**
@@ -166,64 +152,66 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * member and passes the collection back.
     * @param gmCollection
     * @param nList
-    * @exception AuthorizationException
-    * @exception ClassNotFoundException
+    * @throws ChainedException
     */
-   public void addGroupMemberToCollection (Vector gmCollection, NodeList nList) throws org.jasig.portal.AuthorizationException,
-         ClassNotFoundException {
-      boolean addit;
-      for (int i = 0; i < nList.getLength(); i++) {
-         Element elem = (org.w3c.dom.Element)nList.item(i);
-         if (Utility.areEqual(elem.getAttribute("selected"), "true")) {
-            addit = true;
-            Iterator gmItr = gmCollection.iterator();
-            while (gmItr.hasNext()) {
-               IGroupMember ggmm = (IGroupMember)gmItr.next();
-               if ((ggmm.getKey().equals(elem.getAttribute("key")))
-                        && (ggmm.getType().equals(elem.getAttribute("type")))){
-                       addit = false;
-                       break;
+   public void addGroupMemberToCollection (Vector gmCollection, NodeList nList)
+         throws ChainedException {
+      try{
+         boolean addit;
+         for (int i = 0; i < nList.getLength(); i++) {
+            Element elem = (org.w3c.dom.Element)nList.item(i);
+            if (Utility.areEqual(elem.getAttribute("selected"), "true")) {
+               addit = true;
+               Iterator gmItr = gmCollection.iterator();
+               while (gmItr.hasNext()) {
+                  IGroupMember ggmm = (IGroupMember)gmItr.next();
+                  if ((ggmm.getKey().equals(elem.getAttribute("key")))
+                           && (ggmm.getType().equals(elem.getAttribute("type")))){
+                          addit = false;
+                          break;
+                  }
+               }
+               if (addit) {
+                  IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
+                  gmCollection.add(gm);
+                  Utility.logMessage("DEBUG", "DoneWithSelection::addGroupMemberToCollection(): " +
+                        "- adding group member" + elem.getAttribute("key"));
                }
             }
-            if (addit) {
-               IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
-               gmCollection.add(gm);
-               Utility.logMessage("DEBUG", "DoneWithSelection::addGroupMemberToCollection(): " +
-                     "- adding group member" + elem.getAttribute("key"));
-            }
          }
+      }
+      catch (Exception e) {
+         String errMsg = "DoneWithSelection::addGroupMemberToCollection(): ";
+         Utility.logMessage("ERROR", errMsg);
+         throw new ChainedException(errMsg, e);
       }
    }
 
    /**
     * This section adds the selected members to an IEntityGroup.
+    * @throws ChainedException
     * @param gmCollection
     * @param sessionData
     * @param parentElem
     * @param model
     */
    public void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
-      Element parentElem, Document model) {
+      Element parentElem, Document model) throws ChainedException {
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
       IEntityGroup parentGroup = null;
       IGroupMember childGm = null;
       Element childElem;
-      String parentName;
+      String parentName = parentElem.getAttribute("key");
       String childName = "";
-      parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
-      Iterator gmItr = gmCollection.iterator();
-      while (gmItr.hasNext()) {
-         childGm = (IGroupMember) gmItr.next();
-         try {
+      try{
+         parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
+         Iterator gmItr = gmCollection.iterator();
+         while (gmItr.hasNext()) {
+            childGm = (IGroupMember) gmItr.next();
             childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
-         }
-         catch (Exception e){
-            Utility.logMessage("ERROR", "DoneWithSelection::execute: erorr"+e);
-         }
-         parentName = parentGroup.getName();
-         Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
-         try {
+            parentName = parentGroup.getName();
+            Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
             // add to parent group
             parentGroup.addMember(childGm);
             // update parent group
@@ -238,24 +226,24 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                parent.appendChild((Node)childElem);
                parent.setAttribute("hasMembers", "true");
             }
-         } catch (GroupsException ge) {
-            // We let groups catch any error for the adds (ie. group member is already in the parent group).
-            // Processing subsequent adds is allowed to continue.
-            sessionData.feedback = sessionData.feedback + "\n Unable to add : "
-                  + childName + " to: " + parentName;
          }
+      } catch (Exception e) {
+         String errMsg = "DoneWithSelection::addChildrenToGroup(): Unable to add : " + childName + " to: " + parentName;
+         Utility.logMessage("ERROR", errMsg);
+         throw new ChainedException(errMsg, e);
       }
    }
 
    /**
     * This section adds the selected members to an IInitialContextGroup.
+    * @throws ChainedException
     * @param gmCollection
     * @param sessionData
     * @param parentElem
     * @param model
     */
    public void addChildrenToContext (Vector gmCollection, CGroupsManagerSessionData sessionData,
-         Element parentElem, Document model) {
+         Element parentElem, Document model) throws ChainedException {
           ChannelRuntimeData runtimeData = sessionData.runtimeData;
       // Considerations:
       // The parent element is myGroups and there is only one.
@@ -265,26 +253,21 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       String ownerType = "p";
       int ordinal = 1;
       boolean expanded = false;
-      /** @todo should put this in the RDBM add method */
-      java.sql.Timestamp dateCreated = new java.sql.Timestamp(System.currentTimeMillis());
-      Element childElem;
-      Iterator gmItr = gmCollection.iterator();
-      while (gmItr.hasNext()) {
-         childGm = (IGroupMember) gmItr.next();
-         String type = "";
-         try{
+      try{
+         /** @todo should put this in the RDBM add method */
+         java.sql.Timestamp dateCreated = new java.sql.Timestamp(System.currentTimeMillis());
+         Element childElem;
+         Iterator gmItr = gmCollection.iterator();
+         while (gmItr.hasNext()) {
+            childGm = (IGroupMember) gmItr.next();
+            String type = "";
             childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
             type = childGm.getType().getName();
-         }
-         catch (Exception e){
-            Utility.logMessage("ERROR", "DoneWithSelection::execute: erorr"+e);
-         }
-         String groupID = childGm.getKey();
+            String groupID = childGm.getKey();
 
-         // can only add groups as initial group contexts
-         if (type.equals(GROUP_CLASSNAME)) {
-            Utility.logMessage("DEBUG", "DoneWithSelection::addChildrenToContext: About to add child");
-            try {
+            // can only add groups as initial group contexts
+            if (type.equals(GROUP_CLASSNAME)) {
+               Utility.logMessage("DEBUG", "DoneWithSelection::addChildrenToContext: About to add child");
                // add to users initial contexts
                IInitialGroupContext igc = Utility.createInitialGroupContext(userID, ownerType,
                      groupID, ordinal, expanded, dateCreated);
@@ -297,11 +280,12 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                      null, model);
                parentElem.appendChild((Node)childElem);
                parentElem.setAttribute("hasMembers", "true");
-            } catch (Exception e) {
-               sessionData.feedback = sessionData.feedback + "\n Unable to add : "
-                     + childName;
             }
          }
+      } catch (Exception e) {
+         String errMsg = "DoneWithSelection::addChildrenToContext(): Unable to add child to context";
+         Utility.logMessage("ERROR", errMsg);
+         throw new ChainedException(errMsg, e);
       }
    }
 }

@@ -670,13 +670,17 @@ public class GroupsManagerXML
     * @param anElem Element
     * @return boolean
     */
-    public static boolean isPersistentGroup(Element anElem){
-       boolean rval = true;
-       if (!Utility.areEqual(anElem.getNodeName(), GROUP_TAGNAME)
-               || Utility.areEqual(anElem.getAttribute("searchResults"), "true")) {
-          rval= false;
-       }
-       return rval;
+   public static boolean isPersistentGroup(Element anElem){
+      boolean rval = true;
+      if (anElem == null){
+         /** @todo this should be an error */
+         Utility.logMessage("INFO", "GroupsManagerXML::isPersistentGroup(): anElem is null");
+      }
+      if (!Utility.areEqual(anElem.getNodeName(), GROUP_TAGNAME)
+              || Utility.areEqual(anElem.getAttribute("searchResults"), "true")) {
+         rval= false;
+      }
+      return rval;
    }
 
    /**
@@ -766,7 +770,6 @@ public class GroupsManagerXML
                (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
             getGroupMemberXml (parentGM , true, parentElem, model);
             parentElem.setAttribute("expanded", saveExpand);
-            /** @todo is this child still a child of parent */
          }
       return;
    }
@@ -884,7 +887,10 @@ public class GroupsManagerXML
    public static IGroupMember retrieveGroupMemberForElementId (Document aDoc, String id) {
       Element gmElem = getElementById(aDoc, id);
       IGroupMember gm;
-      if (gmElem == null || !isPersistentGroup(gmElem)) {
+
+      // A null is returned if the element is null OR if the element is for a group that
+      // is non-persistent
+      if (gmElem == null || (Utility.areEqual(gmElem.getNodeName(), GROUP_TAGNAME) && !isPersistentGroup(gmElem))) {
          Utility.logMessage("INFO", "GroupsManagerXML::retrieveGroupMemberForElementId(): Unable to retrieve the element with id = "
                + id);
          return  null;

@@ -53,7 +53,12 @@ public class ShowProperties extends GroupsManagerCommand {
   public ShowProperties() {
   }
 
-  public void execute (CGroupsManagerSessionData sessionData) {
+   /**
+    * put your documentation comment here
+    * @throws Exception
+    * @param sessionData
+    */
+  public void execute (CGroupsManagerSessionData sessionData) throws Exception{
     Document model = getXmlDoc(sessionData);
     String id = this.getCommandArg(sessionData.runtimeData);
     Element e = GroupsManagerXML.getElementById(model,id);
@@ -64,7 +69,7 @@ public class ShowProperties extends GroupsManagerCommand {
         ei = new EntityIdentifier(e.getAttribute("key"),Class.forName(e.getAttribute("type")));
       }
       catch (ClassNotFoundException ce){
-        throw new RuntimeException("Unable to instatiate class:  type "+e.getAttribute("type")+" unknown");
+        throw new RuntimeException("Unable to instantiate class:  type "+e.getAttribute("type")+" unknown");
       }
       String[] names = EntityPropertyRegistry.getPropertyNames(ei);
       //System.out.println("Found "+names.length+" properties");

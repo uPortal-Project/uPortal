@@ -60,7 +60,7 @@ import  org.w3c.dom.Document;
  *  Alternatively, the CancelSelection command is invoked to cancel the
  *  selection process and reset the mode and view control parameters.
  */
-public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+public class AddMembers extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
@@ -70,25 +70,23 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       Document model = getXmlDoc(sessionData);
       Utility.logMessage("DEBUG", "AddMembers::execute(): Start");
       String parentAddElemId = getCommandArg(runtimeData);
-      try{
-         IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(model, parentAddElemId);
-         sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),getXmlDoc(sessionData));
-         // Parent was locked so no other thread or process could have changed it, but
-         // child members could have changed.
-         Element parentElem = GroupsManagerXML.getElementById(model, parentAddElemId);
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
-      }
-      catch(Exception e){
-         LogService.instance().log(LogService.ERROR,e);
-      }
+
+      IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(model, parentAddElemId);
+      sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),getXmlDoc(sessionData));
+      // Parent was locked so no other thread or process could have changed it, but
+      // child members could have changed.
+      Element parentElem = GroupsManagerXML.getElementById(model, parentAddElemId);
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+
       sessionData.mode=SELECT_MODE;
       sessionData.highlightedGroupID = sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", "AddMembers::execute(): Uid of parent element = " +

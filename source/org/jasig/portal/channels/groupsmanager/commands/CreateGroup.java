@@ -67,7 +67,7 @@ import  javax.xml.parsers.*;
  * If the new group is an IInitialGroupContext, a new reference to the new
  * IGroupMember will be written to the IInitialGroupContextStore.
  */
-public class CreateGroup extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+public class CreateGroup extends GroupsManagerCommand {
 
    /** Creates new CreateGroup */
    public CreateGroup () {
@@ -75,9 +75,10 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
 
    /**
     * The execute() method is the main method for the CreateMember command.
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
@@ -102,102 +103,90 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          return;
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Parent element was found!");
-      try {
-         // The parent could be an IGroupMember or an IInitialGroupContext.
-         if (!parentIsInitialGroupContext) {
-            parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
-            if (parentGroup == null) {
-               retMsg = "Unable to retrieve Parent Entity Group!";
-               sessionData.feedback = retMsg;
-               return;
-            }
-            else {
-               parentEntityType = parentGroup.getLeafType();
-            }
+
+      // The parent could be an IGroupMember or an IInitialGroupContext.
+      if (!parentIsInitialGroupContext) {
+         parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
+         if (parentGroup == null) {
+            retMsg = "Unable to retrieve Parent Entity Group!";
+            sessionData.feedback = retMsg;
+            return;
          }
          else {
-            /** @todo A list will be presented to the user who will select the type
-             *  of group to create */
-            parentEntityType = Class.forName((String) GroupsManagerXML.getEntityTypes().get("IPerson"));
+            parentEntityType = parentGroup.getLeafType();
          }
-         Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
-               + newGrpName);
-         // Next line creates a group that will hold iEntities
-         String userID = getUserID(sessionData);
-         IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
-         childEntGrp.setName(newGrpName);
-         childEntGrp.setCreatorID(userID);
-         childEntGrp.update();
-         Utility.logMessage("DEBUG", "CreateGroup::execute(): About to add new group: "
-               + newGrpName);
-         if (parentIsInitialGroupContext) {
-            IInitialGroupContext igc = Utility.createInitialGroupContext(userID, "p",
-                  childEntGrp.getKey(), 1, false, null);
-            igc.update();
-            Node parentNode = (Node)parentElem;
-            Element childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)childEntGrp,
-                  false, null, model);
-            parentNode.appendChild((Node)childElem);
-         }
-         else {
-            parentGroup.addMember((IGroupMember)childEntGrp);
-            parentGroup.updateMembers();
-            parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
-            // add new group to all parent group xml nodes
-            while (parentNodes.hasNext()) {
-               Element parentNode = (Element)parentNodes.next();
-               GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
-                     model);
-               ((Element)parentNode).setAttribute("hasMembers", "true");
-            }
-         }
-
-         /** Grant all permissions for the new group to the creator */
-         /** @todo need to catch following exceptions for next block of code
-          *  org.jasig.portal.AuthorizationException
-          *  java.lang.IllegalAccessException
-          *  java.lang.InstantiationException */
-         ArrayList perms = new ArrayList();
-         IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
-         IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
-         Utility.logMessage("DEBUG", "CreateGroup::execute(): The IAuthorizationPrincipal: " + ap);
-         String[] activities = ((IPermissible)Class.forName(OWNER).newInstance()).getActivityTokens();
-         IPermission prm;
-         for (int a = 0; a < activities.length; a++) {
-            prm = upm.newPermission(ap);
-            prm.setActivity(activities[a]);
-            prm.setTarget(childEntGrp.getKey());
-            prm.setType("GRANT");
-            perms.add(prm);
-         }
-         upm.addPermissions((IPermission[])perms.toArray(new IPermission[perms.size()]));
-
-         // create permission elements
-         /** @todo should make sure there is one and only one principal element */
-         NodeList principals = model.getDocumentElement().getElementsByTagName("principal");
-         Element princElem = (Element)principals.item(0);
-         for (int p = 0; p < perms.size(); p++) {
-            prm = (IPermission)perms.get(p);
-            Element permElem = GroupsManagerXML.getPermissionXml(model, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
-            /** @todo should we check if element already exists??? */
-            princElem.appendChild(permElem);
-         }
-         // Parent was locked so no other thread or process could have changed it, but
-         // child members could have changed.
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
-      } catch (GroupsException ge) {
-         retMsg = "Unable to create new group\n" + ge;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + "\n" + ge);
-      } catch (ClassNotFoundException cnfe) {
-         retMsg = "Unable to instantiate class " + GROUP_CLASSNAME;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + "\n" + cnfe);
-      } catch (Exception e) {
-         retMsg = "Unable to create group";
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + ".\n" + e);
       }
+      else {
+         /** @todo A list will be presented to the user who will select the type
+          *  of group to create */
+         parentEntityType = Class.forName((String) GroupsManagerXML.getEntityTypes().get("IPerson"));
+      }
+      Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
+            + newGrpName);
+      // Next line creates a group that will hold iEntities
+      String userID = getUserID(sessionData);
+      IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
+      childEntGrp.setName(newGrpName);
+      childEntGrp.setCreatorID(userID);
+      childEntGrp.update();
+      Utility.logMessage("DEBUG", "CreateGroup::execute(): About to add new group: "
+            + newGrpName);
+      if (parentIsInitialGroupContext) {
+         IInitialGroupContext igc = Utility.createInitialGroupContext(userID, "p",
+               childEntGrp.getKey(), 1, false, null);
+         igc.update();
+         Node parentNode = (Node)parentElem;
+         Element childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)childEntGrp,
+               false, null, model);
+         parentNode.appendChild((Node)childElem);
+      }
+      else {
+         parentGroup.addMember((IGroupMember)childEntGrp);
+         parentGroup.updateMembers();
+         parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
+         // add new group to all parent group xml nodes
+         while (parentNodes.hasNext()) {
+            Element parentNode = (Element)parentNodes.next();
+            GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
+                  model);
+            ((Element)parentNode).setAttribute("hasMembers", "true");
+         }
+      }
+
+      /** Grant all permissions for the new group to the creator */
+      /** @todo need to catch following exceptions for next block of code
+       *  org.jasig.portal.AuthorizationException
+       *  java.lang.IllegalAccessException
+       *  java.lang.InstantiationException */
+      ArrayList perms = new ArrayList();
+      IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
+      IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
+      Utility.logMessage("DEBUG", "CreateGroup::execute(): The IAuthorizationPrincipal: " + ap);
+      String[] activities = ((IPermissible)Class.forName(OWNER).newInstance()).getActivityTokens();
+      IPermission prm;
+      for (int a = 0; a < activities.length; a++) {
+         prm = upm.newPermission(ap);
+         prm.setActivity(activities[a]);
+         prm.setTarget(childEntGrp.getKey());
+         prm.setType("GRANT");
+         perms.add(prm);
+      }
+      upm.addPermissions((IPermission[])perms.toArray(new IPermission[perms.size()]));
+
+      // create permission elements
+      /** @todo should make sure there is one and only one principal element */
+      NodeList principals = model.getDocumentElement().getElementsByTagName("principal");
+      Element princElem = (Element)principals.item(0);
+      for (int p = 0; p < perms.size(); p++) {
+         prm = (IPermission)perms.get(p);
+         Element permElem = GroupsManagerXML.getPermissionXml(model, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
+         /** @todo should we check if element already exists??? */
+         princElem.appendChild(permElem);
+      }
+      // Parent was locked so no other thread or process could have changed it, but
+      // child members could have changed.
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Finished");
    }
 }

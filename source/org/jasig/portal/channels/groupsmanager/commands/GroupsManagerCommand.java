@@ -59,7 +59,7 @@ import  org.w3c.dom.Text;
  * put your documentation comment here
  */
 public abstract class GroupsManagerCommand
-      implements org.jasig.portal.channels.groupsmanager.IGroupsManagerCommand, org.jasig.portal.channels.groupsmanager.GroupsManagerConstants {
+      implements IGroupsManagerCommand, GroupsManagerConstants {
 
    /**
     * GroupsManagerCommand is the parent of all Groups Manager commands. It
@@ -72,7 +72,7 @@ public abstract class GroupsManagerCommand
     * put your documentation comment here
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {}
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{}
 
    /**
     * Returns the grpCommand parameter from runtimeData

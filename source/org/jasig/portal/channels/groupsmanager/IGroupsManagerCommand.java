@@ -57,7 +57,7 @@ public interface IGroupsManagerCommand {
     * Execute the command
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData);
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception;
 }
 
 

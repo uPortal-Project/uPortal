@@ -48,20 +48,25 @@ import org.jasig.portal.services.*;
 
 public class HideProperties extends GroupsManagerCommand {
 
-  public HideProperties() {
-  }
+   public HideProperties() {
+   }
 
-  public void execute (CGroupsManagerSessionData sessionData) {
-    Document model = getXmlDoc(sessionData);
-    String id = this.getCommandArg(sessionData.runtimeData);
-    Element e = GroupsManagerXML.getElementById(model,id);
-    if (e != null){
-      NodeList nl = e.getChildNodes();
-      for(int i=(nl.getLength()-1); i>=0;i--){
-        if (nl.item(i).getNodeName().equals("properties")){
-          e.removeChild(nl.item(i));
-        }
+   /**
+    * put your documentation comment here
+    * @throws Exception
+    * @param sessionData
+    */
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
+      Document model = getXmlDoc(sessionData);
+      String id = this.getCommandArg(sessionData.runtimeData);
+      Element e = GroupsManagerXML.getElementById(model,id);
+      if (e != null){
+         NodeList nl = e.getChildNodes();
+         for(int i=(nl.getLength()-1); i>=0;i--){
+            if (nl.item(i).getNodeName().equals("properties")){
+               e.removeChild(nl.item(i));
+            }
+         }
       }
-    }
-  }
+   }
 }

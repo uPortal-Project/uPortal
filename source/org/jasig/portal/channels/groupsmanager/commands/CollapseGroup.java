@@ -54,7 +54,7 @@ import  org.w3c.dom.Document;
  * This command sets the expanded attribute for an element to "false" and lets
  * the transformation handle the tree collapse display.
  */
-public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+public class CollapseGroup extends GroupsManagerCommand {
 
    /** Creates new CollapseGroup */
    public CollapseGroup () {
@@ -62,9 +62,10 @@ public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.comma
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 

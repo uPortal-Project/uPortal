@@ -72,9 +72,10 @@ public class DeleteGroup extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
@@ -99,11 +100,6 @@ public class DeleteGroup extends GroupsManagerCommand {
         delElem.getParentNode().removeChild(delElem);
       }
       else{
-      try {
-         /** @todo remove this section, no more element caching */
-         // Needed to delete cached element
-         //IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.instance().get(ENTITY_TAGNAME);
-
          IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
          if (delGroup == null) {
             retMsg = "Unable to retrieve Group!";
@@ -160,19 +156,6 @@ public class DeleteGroup extends GroupsManagerCommand {
             }
          }
          sessionData.mode=BROWSE_MODE;
-      } catch (GroupsException ge) {
-         retMsg = "Unable to delete group : " + elemName;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ge);
-      } catch (ChainedException ce) {
-         retMsg = "Unable to delete group : " + elemName;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + ce);
-      } catch (Exception e) {
-         retMsg = "Unable to delete group : " + elemName;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + e);
-      }
       }
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Finished");
    }
@@ -205,7 +188,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          upm.removePermissions(allPerms);
       }
       catch (Exception e) {
-         String errMsg = "DeleteGropu::deletePermissions(): Error removing permissions for " + grpMbr;
+         String errMsg = "DeleteGroup::deletePermissions(): Error removing permissions for " + grpMbr;
          Utility.logMessage("ERROR", errMsg);
          throw new ChainedException(errMsg, e);
       }

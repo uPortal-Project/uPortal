@@ -54,6 +54,7 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Document;
 
+
 /**
  * put your documentation comment here
  */
@@ -68,12 +69,12 @@ public class UpdateGroup extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception {
       ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
-
+      ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Start");
       Document model = getXmlDoc(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
@@ -81,7 +82,8 @@ public class UpdateGroup extends GroupsManagerCommand {
       String newDescription = runtimeData.getParameter("grpDescription");
       String updId = getCommandArg(runtimeData);
       Node titleNode;
-      Element updElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, updId);
+      Element updElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME,
+            updId);
       String updKey = updElem.getAttribute("key");
       String retMsg;
       String curName = GroupsManagerXML.getElementValueForTagName(updElem, "dc:title");
@@ -92,50 +94,39 @@ public class UpdateGroup extends GroupsManagerCommand {
       }
       String curDescription = GroupsManagerXML.getElementValueForTagName(updElem, "dc:description");
       boolean hasChanged = false;
-      if (!Utility.areEqual(curName, newName)){
+      if (!Utility.areEqual(curName, newName)) {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group name: '" + curName
-            + "' will be updated to : '" + newName +"'");
+               + "' will be updated to : '" + newName + "'");
          hasChanged = true;
       }
-      if (!Utility.areEqual(curDescription, newDescription)){
+      if (!Utility.areEqual(curDescription, newDescription)) {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group: '" + newDescription
-            + "' will be updated to : '" + newDescription +"'");
+               + "' will be updated to : '" + newDescription + "'");
          hasChanged = true;
       }
-
       // Notify user if nothing was changed
-      if (!hasChanged){
+      if (!hasChanged) {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): Update was not applied because nothing has been changed.");
          retMsg = "Update was not applied. No changes were entered.";
          sessionData.feedback = retMsg;
          return;
       }
-
       IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
       if (updGroup == null) {
          retMsg = "Unable to retrieve Group!";
          sessionData.feedback = retMsg;
          return;
       }
-      try {
-         Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update group: "
-               + curName);
-         updGroup.setName(newName);
-         updGroup.setDescription(newDescription);
-         updGroup.update();
-         Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
-               + curName);
-         // update all xml nodes for this group
-         GroupsManagerXML.refreshAllNodes(model, updGroup);
-      } catch (GroupsException ge) {
-         retMsg = "Unable to create new group\n" + ge;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ge);
-      } catch (Exception e) {
-         retMsg = "Unable to update group : " + curName;
-         sessionData.feedback = retMsg;
-         Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ".\n" + e);
-      }
+      Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update group: " +
+            curName);
+      updGroup.setName(newName);
+      updGroup.setDescription(newDescription);
+      updGroup.update();
+      Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
+            + curName);
+      // update all xml nodes for this group
+      GroupsManagerXML.refreshAllNodes(model, updGroup);
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Finished");
    }
 }
+

@@ -52,7 +52,7 @@ import  org.w3c.dom.Document;
 /**
  * put your documentation comment here
  */
-public class SelectMembers extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
+public class SelectMembers extends GroupsManagerCommand {
 
    /**
     * SelectMembers sets the "selected" attribute for each elements that was
@@ -63,9 +63,10 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 

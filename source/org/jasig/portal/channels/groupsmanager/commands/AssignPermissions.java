@@ -51,23 +51,23 @@ public class AssignPermissions extends GroupsManagerCommand {
 
   public AssignPermissions() {
   }
-  
-   public void execute(CGroupsManagerSessionData sessionData) {
-         try {
-            ChannelRuntimeData slaveRD = sessionData.runtimeData;
-            String[] tgts = new String[1];
-            tgts[0] = this.getCommandArg(sessionData.runtimeData);
-            sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant((IPermissible)Class.forName(OWNER).newInstance(),
-                  sessionData.staticData, null, null, tgts);
-            slaveRD = (ChannelRuntimeData)sessionData.runtimeData.clone();
-            Enumeration srd = slaveRD.keys();
-            while (srd.hasMoreElements()) {
-               slaveRD.remove(srd.nextElement());
-            }
-            sessionData.runtimeData = slaveRD;
-         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-            sessionData.feedback="Error tring to assign permissions: "+e.getMessage();
-         }
+
+   /**
+    * put your documentation comment here
+    * @throws Exception
+    * @param sessionData
+    */
+   public void execute(CGroupsManagerSessionData sessionData) throws Exception{
+      ChannelRuntimeData slaveRD = sessionData.runtimeData;
+      String[] tgts = new String[1];
+      tgts[0] = this.getCommandArg(sessionData.runtimeData);
+      sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant((IPermissible)Class.forName(OWNER).newInstance(),
+            sessionData.staticData, null, null, tgts);
+      slaveRD = (ChannelRuntimeData)sessionData.runtimeData.clone();
+      Enumeration srd = slaveRD.keys();
+      while (srd.hasMoreElements()) {
+         slaveRD.remove(srd.nextElement());
+      }
+      sessionData.runtimeData = slaveRD;
    }
 }

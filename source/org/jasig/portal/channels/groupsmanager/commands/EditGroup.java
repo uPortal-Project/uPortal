@@ -68,9 +68,10 @@ public class EditGroup extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
+    * @throws Exception
     * @param sessionData
     */
-   public void execute (CGroupsManagerSessionData sessionData) {
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
@@ -78,29 +79,22 @@ public class EditGroup extends GroupsManagerCommand {
       Utility.logMessage("DEBUG", "EditGroup::execute(): Start");
       String parentElemId = getCommandArg(runtimeData);
       // if not IPerson group, then set view root to root for requested type
-      try{
-         String userID = getUserID(sessionData);
-         String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
-         String lockKey = userID + "::" + userName;
-         Element parentElem = GroupsManagerXML.getElementById(model, parentElemId);
-         String parentKey = parentElem.getAttribute("key");
-         ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
-         if (lockedGroup != null){
-            GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
-            // store in sessionData
-            sessionData.lockedGroup=lockedGroup;
-            sessionData.mode = EDIT_MODE;
-            staticData.setParameter("groupParentId", parentElemId);
-         }
-         else{
-            // need to display group name
-            String msg = "Unable to aquire lock for group: " + parentKey;
-            runtimeData.setParameter("cmdResponse", msg);
-         }
+
+      String userID = getUserID(sessionData);
+      String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
+      String lockKey = userID + "::" + userName;
+      Element parentElem = GroupsManagerXML.getElementById(model, parentElemId);
+      String parentKey = parentElem.getAttribute("key");
+      ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
+      // if lockedGroup is null, an exception has probably already been thrown
+      if (lockedGroup != null){
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+         // store in sessionData
+         sessionData.lockedGroup=lockedGroup;
+         sessionData.mode = EDIT_MODE;
+         staticData.setParameter("groupParentId", parentElemId);
       }
-      catch(Exception e){
-        LogService.instance().log(LogService.ERROR,e);
-      }
+
       Utility.logMessage("DEBUG", "EditGroup::execute(): Uid of parent element = " +
             parentElemId);
    }

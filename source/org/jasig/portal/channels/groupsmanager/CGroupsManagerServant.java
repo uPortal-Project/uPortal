@@ -138,7 +138,13 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Object[] results = null;
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.instance().get("Done");
-      cmd.execute(sessionData);
+      try{
+         cmd.execute(sessionData);
+      }
+      catch(Exception e){
+         LogService.instance().log(LogService.ERROR,e);
+         sessionData.feedback = "Error executing command Done: "+e.getMessage();
+      }
       results = (Object[])staticData.get("princResults");
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;

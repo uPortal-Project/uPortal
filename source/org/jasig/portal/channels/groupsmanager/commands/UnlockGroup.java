@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.groupsmanager.commands;
 
+import java.util.*;
 import org.jasig.portal.channels.groupsmanager.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -51,19 +52,24 @@ public class UnlockGroup extends GroupsManagerCommand{
   public UnlockGroup() {
   }
 
-   public void execute (CGroupsManagerSessionData sessionData) {
-      try{
-        sessionData.lockedGroup.getLock().release();
-      }
-      catch(Exception e){
-      }
+   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
+      Element parentElem = null;
       sessionData.mode = BROWSE_MODE;
+      Document model = sessionData.model;
+      String key = sessionData.lockedGroup.getLock().getEntityKey();
+      Utility.logMessage("DEBUG", "UnlockGroup::execute(): Locked group key = " + key);
+      sessionData.lockedGroup.getLock().release();
+      String parentID = getParentId(sessionData.staticData);
 
       // Parent was locked so no other thread or process could have changed it, but
       // child members could have changed.
-      Document model = sessionData.model;
-      String parentID = sessionData.staticData.getParameter("groupParentId");
-      Element parentElem = GroupsManagerXML.getElementById(model, parentID);
-      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+      // Parent element id is not always set.
+      if (!Utility.areEqual(parentID, "")){
+         parentElem = GroupsManagerXML.getElementById(model, parentID);
+      }
+      Utility.logMessage("DEBUG", "UnlockGroup::execute(): parentElem = " + parentElem);
+      if (parentElem != null){
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+      }
    }
 }
