@@ -2149,10 +2149,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
     String externalId = structure.getAttribute("external_id");
     if (externalId != null && externalId.trim().length() > 0) {
-      structStmt.setString(4, externalId.trim());
+      Integer eID = new Integer(externalId);
+      structStmt.setInt(4, eID.intValue());
     } else {
-      structStmt.setNull(4, java.sql.Types.VARCHAR);
-
+      structStmt.setNull(4, java.sql.Types.NUMERIC);
     }
     if (node.getNodeName().equals("channel")) {
       int chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
