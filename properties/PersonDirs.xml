@@ -2,8 +2,8 @@
 
 <!--
      PersonDirs.xml makes possible a standard way for the uPortal
-     framework and its installed channels to refer to particular person
-     attributes.  For example, if a channel wants to display a user's
+     framework and its installed channels (and portlets) to refer to particular
+     person attributes.  For example, if a channel wants to display a user's
      email address, it will look for an attribute called "mail", which
      appears as an alias in this file.  This alias maps to the actual
      name of the field containing an email address in your data repository.
@@ -44,6 +44,19 @@
      See the Portlet Specification, section PLT.D entitled
      User Information Attribute Names at
      http://www.jcp.org/en/jsr/detail?id=168
+     Note that attributes will only be available to portlets if configured
+     in the portlets deployment descriptor (portlet.xml) file.
+
+     Optionally, a special uPortal-specific attribute with the alias of
+     "uPortalTemplateUserName" may be included.  The value of whatever
+     attribute name this maps to will be used to determine the template
+     user on which default layouts and group memberships are based.  For example,
+
+     <attribute>
+         <alias>uPortalTemplateUserName</alias>
+         <name>eduPersonPrimaryAffiliation</name>
+     </attribute>
+
 
      Author: Howard Gilbert, howard.gilbert@yale.edu
      Version $Revision$
@@ -115,6 +128,75 @@
             <attribute><alias>userSMIMECertificate</alias>        <name></name></attribute>
 
 
+            <attribute><alias>user.bdate</alias>                                   <name></name></attribute>
+            <attribute><alias>user.gender</alias>                                  <name></name></attribute>
+            <attribute><alias>user.employer</alias>                                <name></name></attribute>
+            <attribute><alias>user.department</alias>                              <name></name></attribute>
+            <attribute><alias>user.jobtitle</alias>                                <name></name></attribute>
+            <attribute><alias>user.name.prefix</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.given</alias>                              <name>FIRST_NAME</name></attribute>
+            <attribute><alias>user.name.family</alias>                             <name>LAST_NAME</name></attribute>
+            <attribute><alias>user.name.middle</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.suffix</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.nickName</alias>                           <name></name></attribute>
+            <attribute><alias>user.home-info.postal.name</alias>                   <name></name></attribute>
+            <attribute><alias>user.home-info.postal.street</alias>                 <name></name></attribute>
+            <attribute><alias>user.home-info.postal.city</alias>                   <name></name></attribute>
+            <attribute><alias>user.home-info.postal.stateprov</alias>              <name></name></attribute>
+            <attribute><alias>user.home-info.postal.postalcode</alias>             <name></name></attribute>
+            <attribute><alias>user.home-info.postal.country</alias>                <name></name></attribute>
+            <attribute><alias>user.home-info.postal.organization</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.intcode</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.loccode</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.number</alias>      <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.ext</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.comment</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.intcode</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.loccode</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.number</alias>            <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.ext</alias>               <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.comment</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.intcode</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.loccode</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.number</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.ext</alias>            <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.comment</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.intcode</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.loccode</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.number</alias>          <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.ext</alias>             <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.comment</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.online.email</alias>                  <name>EMAIL</name></attribute>
+            <attribute><alias>user.home-info.online.uri</alias>                    <name></name></attribute>
+            <attribute><alias>user.business-info.postal.name</alias>               <name></name></attribute>
+            <attribute><alias>user.business-info.postal.street</alias>             <name></name></attribute>
+            <attribute><alias>user.business-info.postal.city</alias>               <name></name></attribute>
+            <attribute><alias>user.business-info.postal.stateprov</alias>          <name></name></attribute>
+            <attribute><alias>user.business-info.postal.postalcode</alias>         <name></name></attribute>
+            <attribute><alias>user.business-info.postal.country</alias>            <name></name></attribute>
+            <attribute><alias>user.business-info.postal.organization</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.intcode</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.loccode</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.number</alias>  <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.ext</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.comment</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.intcode</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.loccode</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.number</alias>        <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.ext</alias>           <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.comment</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.intcode</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.loccode</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.number</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.ext</alias>        <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.comment</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.intcode</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.loccode</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.number</alias>      <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.ext</alias>         <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.comment</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.online.email</alias>              <name></name></attribute>
+            <attribute><alias>user.business-info.online.uri</alias>                <name></name></attribute>
 
         </attributes>
 
@@ -144,6 +226,8 @@
         <usercontext>cn=Users</usercontext>
 
         <attributes>
+
+            <attribute><alias>uPortalTemplateUserName</alias>     <name>eduPersonPrimaryAffiliation</name></attribute>
 
             <attribute><alias>eduPersonAffiliation</alias>        <name>eduPersonAffiliation</name></attribute>
             <attribute><alias>eduPersonNickname</alias>           <name>eduPersonNickname</name></attribute>
@@ -180,6 +264,76 @@
             <attribute><alias>uid</alias>                         <name>uid</name></attribute>
             <attribute><alias>userCertificate</alias>             <name>userCertificate</name></attribute>
             <attribute><alias>userSMIMECertificate</alias>        <name>userSMIMECertificate</name></attribute>
+
+            <attribute><alias>user.bdate</alias>                                   <name></name></attribute>
+            <attribute><alias>user.gender</alias>                                  <name></name></attribute>
+            <attribute><alias>user.employer</alias>                                <name>eduPersonOrgDN</name></attribute>
+            <attribute><alias>user.department</alias>                              <name>eduPersonOrgUnitDN</name></attribute>
+            <attribute><alias>user.jobtitle</alias>                                <name></name></attribute>
+            <attribute><alias>user.name.prefix</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.given</alias>                              <name>givenName</name></attribute>
+            <attribute><alias>user.name.family</alias>                             <name>sn</name></attribute>
+            <attribute><alias>user.name.middle</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.suffix</alias>                             <name></name></attribute>
+            <attribute><alias>user.name.nickName</alias>                           <name>eduPersonNickname</name></attribute>
+            <attribute><alias>user.home-info.postal.name</alias>                   <name></name></attribute>
+            <attribute><alias>user.home-info.postal.street</alias>                 <name></name></attribute>
+            <attribute><alias>user.home-info.postal.city</alias>                   <name></name></attribute>
+            <attribute><alias>user.home-info.postal.stateprov</alias>              <name></name></attribute>
+            <attribute><alias>user.home-info.postal.postalcode</alias>             <name></name></attribute>
+            <attribute><alias>user.home-info.postal.country</alias>                <name></name></attribute>
+            <attribute><alias>user.home-info.postal.organization</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.intcode</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.loccode</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.number</alias>      <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.ext</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.telephone.comment</alias>     <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.intcode</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.loccode</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.number</alias>            <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.ext</alias>               <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.fax.comment</alias>           <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.intcode</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.loccode</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.number</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.ext</alias>            <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.mobile.comment</alias>        <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.intcode</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.loccode</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.number</alias>          <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.ext</alias>             <name></name></attribute>
+            <attribute><alias>user.home-info.telecom.pager.comment</alias>         <name></name></attribute>
+            <attribute><alias>user.home-info.online.email</alias>                  <name>mail</name></attribute>
+            <attribute><alias>user.home-info.online.uri</alias>                    <name></name></attribute>
+            <attribute><alias>user.business-info.postal.name</alias>               <name></name></attribute>
+            <attribute><alias>user.business-info.postal.street</alias>             <name></name></attribute>
+            <attribute><alias>user.business-info.postal.city</alias>               <name></name></attribute>
+            <attribute><alias>user.business-info.postal.stateprov</alias>          <name></name></attribute>
+            <attribute><alias>user.business-info.postal.postalcode</alias>         <name></name></attribute>
+            <attribute><alias>user.business-info.postal.country</alias>            <name></name></attribute>
+            <attribute><alias>user.business-info.postal.organization</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.intcode</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.loccode</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.number</alias>  <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.ext</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.telephone.comment</alias> <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.intcode</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.loccode</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.number</alias>        <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.ext</alias>           <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.fax.comment</alias>       <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.intcode</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.loccode</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.number</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.ext</alias>        <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.mobile.comment</alias>    <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.intcode</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.loccode</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.number</alias>      <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.ext</alias>         <name></name></attribute>
+            <attribute><alias>user.business-info.telecom.pager.comment</alias>     <name></name></attribute>
+            <attribute><alias>user.business-info.online.email</alias>              <name></name></attribute>
+            <attribute><alias>user.business-info.online.uri</alias>                <name></name></attribute>
 
         </attributes>
 
