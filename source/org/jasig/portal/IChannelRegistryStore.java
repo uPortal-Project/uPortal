@@ -158,6 +158,19 @@ public interface IChannelRegistryStore {
   public ChannelCategory newChannelCategory() throws Exception;
 
   /**
+   * Creates a new channel category with the specified values.
+   * @param name the name of the category 
+   * @param description the name of the description 
+   * @param creatorId the id of the creator or system 
+   * @return channelCategory the new channel category
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory newChannelCategory( String name,
+                                             String description,
+                                             String creatorId )
+      throws Exception;
+
+  /**
    * Gets an existing channel category.
    * @param channelCategoryId the id of the category to get
    * @return the channel category

@@ -11,6 +11,7 @@
 
 <xsl:template match="table" mode="drop">
 <statement type="drop">
+<xsl:attribute name="name"><xsl:value-of select="name"/></xsl:attribute>
 DROP TABLE <xsl:value-of select="name"/><xsl:text>
 </xsl:text>
 </statement><xsl:text>
@@ -21,6 +22,7 @@ DROP TABLE <xsl:value-of select="name"/><xsl:text>
 <xsl:choose>
 <xsl:when test="$upgradeMajor = 'noUpgrade' or @sinceMajor &gt; $upgradeMajor or @sinceMinor &gt; $upgradeMinor">
  <statement type="create">
+<xsl:attribute name="name"><xsl:value-of select="name"/></xsl:attribute>
  CREATE TABLE <xsl:value-of select="name"/>
  (
  <xsl:apply-templates select="columns/column">
@@ -37,6 +39,7 @@ DROP TABLE <xsl:value-of select="name"/><xsl:text>
   <xsl:for-each select="columns/column">
    <xsl:if test="@sinceMajor &gt; $upgradeMajor or @sinceMinor &gt; $upgradeMinor">
     <statement type="create">
+     <xsl:attribute name="name"><xsl:value-of select="name"/></xsl:attribute>
      ALTER TABLE <xsl:value-of select="../../name"/> ADD COLUMN <xsl:apply-templates select="."><xsl:with-param name="mode">alter</xsl:with-param></xsl:apply-templates>
     </statement>
    </xsl:if>

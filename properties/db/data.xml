@@ -3,6 +3,18 @@
 
 <data>
 
+  <table sinceMajor="2" sinceMinor="4">
+    <name>UP_VERSIONS</name>
+    <rows>
+      <row>
+        <column><name>FNAME</name><value>UP_FRAMEWORK</value></column>
+        <column><name>MAJOR</name><value>2</value></column>
+        <column><name>MINOR</name><value>4</value></column>
+        <column><name>MICRO</name><value>0</value></column>
+        <column><name>DESCRIPTION</name><value>The uPortal Framework.</value></column>
+      </row>
+    </rows>
+  </table>
   <table sinceMajor="2" sinceMinor="2">
     <name>UP_RESTRICTIONS</name>
     <rows>

@@ -130,16 +130,16 @@ public class CarClassLoader
                         throw new ClassNotFoundException( name,
                                                           e );
                     } finally {
-					try {
-                        if (in != null) {
-						    in.close();
+                        try {
+                            if (in != null) {
+                                in.close();
+                            }
+                        } catch (IOException ioe) {
+                            log.error(
+                                    "CarClassLoader::findClass() Could not close inputStream "
+                                            + ioe);
                         }
-					} catch (IOException ioe) {
-						log.error(
-								"CarClassLoader::findClass() Could not close inputStream "
-										+ ioe);
-					}
-				}
+                    }
 
                     // package must be defined prior to defined
                     // the class.

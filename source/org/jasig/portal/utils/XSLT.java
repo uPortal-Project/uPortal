@@ -62,6 +62,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jasig.portal.car.ResourceResolver;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalException;
@@ -166,6 +167,7 @@ public class XSLT {
     if (saxTFactory == null) {
       // attempt to instantiate a sax transformer factory
       TransformerFactory tFactory = TransformerFactory.newInstance();
+      tFactory.setURIResolver(new ResourceResolver());
       if (tFactory instanceof SAXTransformerFactory) {
         saxTFactory = ((SAXTransformerFactory)tFactory);
       }

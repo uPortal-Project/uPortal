@@ -35,7 +35,7 @@ Author: Ken Weiner, kweiner@unicon.net
 $Revision$
 -->
 
-<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?)>
+<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, makeFNameAccessibleOnly? )>
 
 <!ELEMENT categories (category)*>
 
@@ -47,6 +47,7 @@ $Revision$
 
 <!ELEMENT parameter (name, value, description, ovrd)>
 
+<!ELEMENT makeFNameAccessibleOnly EMPTY>
 <!ELEMENT title (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT fname (#PCDATA)>

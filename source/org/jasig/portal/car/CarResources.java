@@ -45,7 +45,9 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -60,6 +62,7 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -70,9 +73,11 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class CarResources {
+
+    // static, class variables
     private static final Log log = LogFactory.getLog(CarResources.class);
-    private static CarResources instance = new CarResources();
-    private static CarClassLoader loader = new CarClassLoader( PortalSessionManager.class.getClassLoader() );
+    private static CarResources instance = null;
+    private static CarClassLoader loader = null;
 
     public final static String RCS_ID = "@(#) $Header$";
     
@@ -80,21 +85,27 @@ public class CarResources {
     private static final String WELL_KNOWN_DIR = "/WEB-INF/cars";
     private static final String CAR_DIR_PROP_NAME = "org.jasig.portal.car.CarResources.directory";
 
+    public static final String CAR_WORKER_ID = "carRsrc";
+    public static final String CAR_RESOURCE_PARM = CAR_WORKER_ID;
+    private static final Map.Entry[] ENTRY_ARRAY = new Map.Entry[] {};
+    private static final String[] STRING_ARRAY = new String[] {};
+
+    // instance variables
+    
     private Hashtable resourceJars = new Hashtable();
     private Hashtable carsByJars = new Hashtable();
     private Hashtable carContents = new Hashtable();
     private Hashtable carsByPath = new Hashtable();
     
-    // package scope so DescriptorHandler can process extensions
-    Vector jarsWithDescriptors = new Vector();
+    private SAX2BufferImpl services = new SAX2BufferImpl();
+    private Properties workers = new Properties();
+    private boolean carsLoaded = false;
+
+    private Vector jarsWithDescriptors = new Vector();
 
     private String carDirPath = null;
     private boolean carDirExists = false;
-    
-    public static final String CAR_WORKER_ID = "carRsrc";
-    public static final String CAR_RESOURCE_PARM = CAR_WORKER_ID;
-    private static final Map.Entry[] ENTRY_ARRAY = new Map.Entry[] {};
-    private static final String[] STRING_ARRAY = new String[] {};
+
 
     /**
        A fileFilter for obtaining a list of CARs.
@@ -118,29 +129,69 @@ public class CarResources {
         }
     };
 
+    static
+    {
+        instance = new CarResources();
+        loader = new CarClassLoader( CarResources.class.getClassLoader() );
+        instance.processDescriptors();
+    }    
+
     /**
        Instantiate a CarResources object and load information about all CARs
        and their contained resources.
      */
     private CarResources()
     {
-	try
-	{
-	    loadCars();
-	}
-	catch( Exception e )
-	{
-	    StringWriter sw = new StringWriter();
-	    PrintWriter p = new PrintWriter( sw );
-	    e.printStackTrace( p );
-	    p.flush();
-	    log.error(
-				       "An Exception occurred while loading " +
-				       "channel archives. Any channels " +
-				       "deployed via CARs will not be " +
-				       "available. Details:\n"
-				       + sw );
-	}
+        try
+    {
+        loadCars();
+        }
+        catch( Exception e )
+        {
+            StringWriter sw = new StringWriter();
+            PrintWriter p = new PrintWriter( sw );
+            e.printStackTrace( p );
+            p.flush();
+            log.error(
+                "An Exception occurred while loading "
+                    + "channel archives. Any channels "
+                    + "deployed via CARs will not be "
+                    + "available. Details:\n"
+                                       + sw );
+        }
+    }
+
+    /**
+     * Process the descriptors of the channel archives if any.
+     */
+    private void processDescriptors()
+    {
+        if ( carsLoaded == true)
+        {
+            for( Enumeration jars = jarsWithDescriptors.elements();
+                 jars.hasMoreElements(); )
+            {
+                JarFile jarFile = null;
+                try
+                {
+                    jarFile = (JarFile) jars.nextElement();
+                    DescriptorHandler handler = new DescriptorHandler(jarFile);
+                    handler.getWorkers(workers);
+                    handler.getServices(services);
+                }
+                catch(Exception e)
+                {
+                    log.error(
+                        "An Exception occurred while processing deployment "
+                            + "descriptor "
+                            + DEPLOYMENT_DESCRIPTOR
+                            + " in "
+                            + jarFile.getName()
+                            + ". Details: "
+                            + e);
+                }
+            }
+        }
     }
 
     /**
@@ -188,9 +239,9 @@ public class CarResources {
 				       "' property in portal.properties." );
             return null;
         }
-        
+
         File carDir = new File( carDirRealPath );
-       
+
         if ( ! carDir.exists() )
         {
             log.info(
@@ -200,50 +251,50 @@ public class CarResources {
             return null;
         }
         carDirExists = true;
-	this.carDirPath = carDirRealPath;
+        this.carDirPath = carDirRealPath;
         return carDir;
     }
 
     /**
        Return a File object representing the channel archive base
-       directory whose fully-qualified path is specified by the 
+       directory whose fully-qualified path is specified by the
        'org.jasig.portal.car.CarResources.directory' property in
        portal.properties.
      */
     private File getPropertySpecifiedDir()
     {
         String carDirPath = null;
-	File carDir = null;
-	
+        File carDir = null;
+
         try
         {
             carDirPath = PropertiesManager.getProperty( CAR_DIR_PROP_NAME );
-	    carDir = new File( carDirPath );
+            carDir = new File( carDirPath );
         }
         catch( RuntimeException re )
         {
             log.info(
                                        "CAR directory property '" +
-				       CAR_DIR_PROP_NAME +
-				       "' not specified. Defaulting to " +
-				       "well-known directory '" +
-				       WELL_KNOWN_DIR + "'." );
-	    return null;
+                                       CAR_DIR_PROP_NAME +
+                                       "' not specified. Defaulting to " +
+                                       "well-known directory '" +
+                                       WELL_KNOWN_DIR + "'." );
+            return null;
         }
 
         if ( ! carDir.exists() )
         {
             log.error(
                                        "CAR directory '" + carDirPath +
-				       "' specified by property '" +
-				       CAR_DIR_PROP_NAME +
-				       "' does not exist. " +
-				       "Channel Archives can not be " +
+                                       "' specified by property '" +
+                                       CAR_DIR_PROP_NAME +
+                                       "' does not exist. " +
+                                       "Channel Archives can not be " +
                                        "loaded from this directory." );
             return null;
         }
         carDirExists = true;
-	this.carDirPath = carDirPath;
+        this.carDirPath = carDirPath;
         return carDir;
     }
 
@@ -252,19 +303,20 @@ public class CarResources {
      */
     private void loadCars()
     {
-	File carDir = getPropertySpecifiedDir();
-	
-	if ( carDir == null )
-	    carDir = getWellKnownDir();
-	
-	if ( carDir != null )
-	{    
-	    scanDir( carDir );
-	    log.info(
-				       "Channel Archives Loaded: " +
-				       carsByPath.size() +
-				       " from '" + this.carDirPath + "'" );
-	}
+        File carDir = getPropertySpecifiedDir();
+
+        if ( carDir == null )
+            carDir = getWellKnownDir();
+
+        if ( carDir != null )
+        {
+            scanDir( carDir );
+            log.info(
+                                   "Channel Archives Loaded: " +
+                                   carsByPath.size() +
+                                       " from '" + this.carDirPath + "'" );
+        }
+        carsLoaded = true;
     }
 
     /**
@@ -273,17 +325,17 @@ public class CarResources {
      */
     private void scanDir( File dir )
     {
-        
+
         // first get all of the cars in this directory
         File[] cars = dir.listFiles( carFilter );
-        
+
         if ( cars != null && cars.length != 0 )
             for( int i=0; i<cars.length; i++ )
                 loadCarEntries( cars[i] );
 
         // now get all of the sub-directories to be scanned
         File[] dirs = dir.listFiles( dirFilter );
-        
+
         if ( dirs != null && dirs.length != 0 )
             for( int i=0; i<dirs.length; i++ )
                 scanDir( dirs[i] );
@@ -319,7 +371,7 @@ public class CarResources {
         while( entries.hasMoreElements() )
         {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            
+
             if ( ! entry.isDirectory() )
             {
                 String name = entry.getName();
@@ -330,7 +382,7 @@ public class CarResources {
                 }
                 else
                     // add to map of which jar holds this resource
-                resourceJars.put( name, jar );
+                    resourceJars.put( name, jar );
 
                 // add to list of contents for this car
                 entryList.add( name );
@@ -345,12 +397,11 @@ public class CarResources {
      */
     public void getWorkers( Properties workers )
     {
-        for( Enumeration jars = jarsWithDescriptors.elements();
-             jars.hasMoreElements(); )
+        for(Iterator itr = this.workers.entrySet().iterator(); itr.hasNext(); )
         {
-            JarFile j = (JarFile) jars.nextElement();
-            DescriptorHandler handler = new DescriptorHandler( j );
-            handler.getWorkers( workers );
+            Map.Entry entry = (Entry) itr.next();
+            if (! workers.containsKey(entry.getKey()))
+                workers.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -369,20 +420,14 @@ public class CarResources {
     public void getServices( ContentHandler contentHandler )
         throws SAXException
     {
-        for( Enumeration jars = jarsWithDescriptors.elements();
-             jars.hasMoreElements(); )
-        {
-            JarFile j = (JarFile) jars.nextElement();
-            DescriptorHandler handler = new DescriptorHandler( j );
-            handler.getServices( contentHandler );
-        }
+        this.services.outputBuffer(contentHandler);
     }
 
     /**
        Return an input stream for reading the raw bytes making up the resource
        contained in one of the installed CARs. Returns null if the resource
        is not found.
-       
+
      */
     public InputStream getResourceAsStream( String resource )
         throws PortalException
@@ -491,10 +536,10 @@ public class CarResources {
     public String[] listCars()
     {
         Map.Entry[] entries = null;
-        
+
         entries = (Map.Entry[]) carsByJars.entrySet().toArray( ENTRY_ARRAY );
         String[] carNames = new String[entries.length];
-        
+
         for( int i=0; i<entries.length; i++ )
             carNames[i] = getCarPath( (File) entries[i].getValue() );
         return carNames;
@@ -511,7 +556,7 @@ public class CarResources {
         File car = (File) carsByPath.get( carPath );
         if ( car == null )
             return null;
-        
+
         Vector contents = (Vector) carContents.get( car );
 
         if ( contents == null )
@@ -519,7 +564,7 @@ public class CarResources {
 
         return (String[]) contents.toArray( STRING_ARRAY );
     }
-    
+
     /**
        Return the path of a car file relative to the car directory.
      */
@@ -528,7 +573,7 @@ public class CarResources {
         String carPath = car.getAbsolutePath();
         return carPath.substring( carDirPath.length() + 1 );
     }
-    
+
     /**
        Returns an enumeration of String objects each containing the path of a
        resource available from the installed CARs.

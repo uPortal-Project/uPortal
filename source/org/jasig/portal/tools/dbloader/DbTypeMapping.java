@@ -1,5 +1,5 @@
 /**
- * Copyright ?© 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,40 +33,51 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.tools.dbloader;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
- * Houses constants used in the portal code base. Developers, any constants
- * added here should be clearly documented.
+ * Holds mapping information from generic data types for table columns
+ * to specific types for different databases.
+ *
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */
-public class Constants
+public class DbTypeMapping
 {
+      String dbName;
+      String dbVersion;
+      String driverName;
+      String driverVersion;
+      ArrayList types = new ArrayList();
 
-    /**
-     * The query parameter name that can be appended to a baseActionUrl along
-     * with its value, the fname of a channel, to cause an instance of that
-     * channel to appear in focused mode without the user having to subcribe
-     * to that channel. Examples are infrastructure channels like
-     * CChannelManager and CUserPreferences. They don't reside in a user's
-     * layout but are merged in via the fname functionality as needed.
-     */
-    public static final String FNAME_PARAM = "uP_fname";
-    
-    /**
-     * The request parameter name that can be appended to a baseActionURL along
-     * with its value, the locales to which the portal should assign priority.
-     * These locales will be a priority for the remainder of a user's session.
-     * The value of this parameter should be a comma-delimited list of locale
-     * codes.  For example, en_US,ja_JP,de_DE
-     */
-    public static final String LOCALES_PARAM = "uP_locales";
+      public String getDbName() { return dbName; }
+      public String getDbVersion() { return dbVersion; }
+      public String getDriverName() { return driverName; }
+      public String getDriverVersion() { return driverVersion; }
+      public ArrayList getTypes() { return types; }
 
-    /**
-     * The name of a category into which automatically published channels from
-     * a channel archive are placed. It is expected to be found in the root
-     * category and if not found during publishing is automatically created.
-     */
-    public static final String AUTO_PUBLISH_CATEGORY = "Auto-Published";
+      public void setDbName(String dbName) { this.dbName = dbName; }
+      public void setDbVersion(String dbVersion) { this.dbVersion = dbVersion; }
+      public void setDriverName(String driverName) { this.driverName = driverName; }
+      public void setDriverVersion(String driverVersion) { this.driverVersion = driverVersion; }
+      public void addType(Type type) { types.add(type); }
+
+      public String getMappedDataTypeName(String genericDataTypeName)
+      {
+        String mappedDataTypeName = null;
+        Iterator iterator = types.iterator();
+
+        while (iterator.hasNext())
+        {
+          Type type = (Type)iterator.next();
+
+          if (type.getGeneric().equalsIgnoreCase(genericDataTypeName))
+            mappedDataTypeName = type.getLocal();
+        }
+        return mappedDataTypeName;
+      }
 }

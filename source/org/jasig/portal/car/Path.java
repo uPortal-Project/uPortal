@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,31 +36,29 @@
 
 package org.jasig.portal.car;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Holds onto a set of String path elements to assist with tracking where in
- * an XML structure SAX processing is currently working. So an XML structure
- * like the following would have a path of "<top>", "<next>", "<more>" when SAX
- * processing issued a startElement event call for the "more" element.
- * <code>
- * &lt;top>
- *  &lt;next>
- *   &lt;more>
- *   ...
- * </code>
- *
- * Use the fromXML method to create from a more visually symbolic view of
- * what the path represents.
- * @author Mark Boyd <mark.boyd@engineer.com>
- * @version $Revision$
+   Holds onto a set of String path elements to assist with tracking where in
+   an XML structure SAX processing is currently working. So an XML structure
+   like the following would have a path of "<top>", "<next>", "<more>" when SAX
+   processing issued a startElement event call for the "more" element.
+   <code>
+   &lt;top>
+    &lt;next>
+     &lt;more>
+     ...
+   </code>
+
+   Use the fromXML method to create from a more visually symbolic view of
+   what the path represents.
  */
 public class Path
 {
-    public final static String RCS_ID = "@(#) $Header$";
+    public static final String RCS_ID = "@(#) $Header$";
     private LinkedList list = new LinkedList();
 
     /**
@@ -73,6 +71,11 @@ public class Path
     private static final int OUT_OF_TAG = 0;
     private static final int IN_TAG = 1;
 
+    public static Path fromTag(String tagName)
+    {
+        return fromXML("<" + tagName + ">");
+    }
+    
     /** 
         Creates a Path from the XML structured snippet. The following call
         would create a path that contained "top", "next", and "more" in that
@@ -115,10 +118,11 @@ public class Path
     /**
        Add an item to the path.
      */
-    public void append( String item )
+    public Path append( String item )
     {
         if ( item != null )
             list.add( item );
+        return this;
     }
 
     /**

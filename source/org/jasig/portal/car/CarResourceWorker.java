@@ -83,16 +83,17 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     public final static String RCS_ID = "@(#) $Header$";
 
     /**
-     * Create a CarResourceWorker.
+       Create a CarResourceWorker.
      */
     public CarResourceWorker()
     {
     }
     
     /** 
-     * Provides web access to channel resources stored in the channel archive files.
-     * Housing the channel if the channel was installed in the uPortal using a CAR. 
-     */
+     Provides web access to channel resources stored in channel archive
+     files housing channels if the channels were installed in the portal
+     using a CAR. 
+    */
     public void processWorkerDispatch(PortalControlStructures pcs)
         throws PortalException
     {
@@ -134,16 +135,16 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
         {
             throw new PortalException( "Error writing resource" );
         } finally {
-			try {
-				in.close();
-				if (out != null)
-					out.close();
-			} catch (IOException ioe) {
-				log.error(
-						"CarResourceWorker::processWorkerDispatch() could not close IO Stream"
-								+ ioe);
-			}
-		}
+            try {
+                in.close();
+                if (out != null)
+                    out.close();
+            } catch (IOException ioe) {
+                log.error(
+                    "CarResourceWorker::processWorkerDispatch() could not close IO Stream"
+                        + ioe);
+            }
+        }
     }
 
     /**
@@ -159,19 +160,19 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
         throws PortalException
     {
         resourceName = resourceName.toLowerCase();
-        
+                
         ServletContext sc = PortalSessionManager.getInstance().
             getServletConfig().getServletContext();
-        
-        String mimeType = MimeTypeCache.getMimeType( sc, resourceName );
 
+        String mimeType = MimeTypeCache.getMimeType( sc, resourceName );
+        
         if ( null != mimeType )
             res.setContentType(mimeType);
-        else 
+        else
             throw new PortalException( "Unsupported resource type" +
                                        " '" + resourceName + "'" );
     }
-
+    
 
     /**
        Set the content type for the resource being served back.

@@ -51,8 +51,7 @@ public class TorqueStylesheetUtils
   * (If table is called 'UP_USER' in database, this method returns
   * the identifier as 'UpUser')
   */
-  public static String getName(org.apache.xalan.extensions.ExpressionContext ec,
-                               String orig)
+  public static String getName(String orig)
   {
     StringTokenizer stok = new StringTokenizer(orig, "_");
     String str = "" ;

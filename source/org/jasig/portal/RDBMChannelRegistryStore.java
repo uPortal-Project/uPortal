@@ -830,6 +830,32 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   /**
+   * Creates a new channel category with the specified values.
+   * @param name, the name of the category 
+   * @param description, the name of the description 
+   * @param creatorId, the id of the creator or system 
+   * @return channelCategory the new channel category
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory newChannelCategory( String name,
+                                             String description,
+                                             String creatorId )
+      throws GroupsException
+    {
+        IEntityGroup categoryGroup = GroupService.newGroup(ChannelDefinition.class);
+        categoryGroup.setName( name ); // name cannot be null
+        categoryGroup.setCreatorID( creatorId ); // creatorId cannot be null
+        categoryGroup.setDescription( description );
+        categoryGroup.update();
+        String id = categoryGroup.getKey();
+        ChannelCategory cat = new ChannelCategory(id);
+        cat.setName( name );
+        cat.setDescription( description );
+        cat.setCreatorId( creatorId );
+        return cat;
+  }
+    
+  /**
    * Gets an existing channel category.
    * @param channelCategoryId the id of the category to get
    * @return channelCategory the channel category

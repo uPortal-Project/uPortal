@@ -3,6 +3,41 @@
 
 <tables>
   <table sinceMajor="2" sinceMinor="4">
+    <name>UP_VERSIONS</name>
+    <desc>Holds version numbers of the portal and any channels that wish to register their versions</desc>
+    <columns>
+      <column>
+        <name>FNAME</name>
+        <type>VARCHAR</type>
+        <desc>The functional name of the entity.</desc>
+        <param>255</param>
+        <key>PK</key>
+     </column>
+      <column>
+        <name>MAJOR</name>
+        <type>INTEGER</type>
+        <desc>The entity's major portion of the version number which is currently installed in the portal</desc>
+      </column>
+      <column>
+        <name>MINOR</name>
+        <type>INTEGER</type>
+        <desc>The entity's minor portion of the version number which is currently installed in the portal</desc>
+      </column>
+      <column>
+        <name>MICRO</name>
+        <type>INTEGER</type>
+        <desc>The entity's micro portion of the version number which is currently installed in the portal</desc>
+      </column>
+      <column>
+        <name>DESCRIPTION</name>
+        <type>VARCHAR</type>
+        <desc>A description of the code represented by the functional name</desc>
+        <param>255</param>
+     </column>
+    </columns>
+    <primary-key>FNAME</primary-key>
+  </table>
+  <table sinceMajor="2" sinceMinor="4">
     <name>UP_PORTLET_DEFINITION_PREFS</name>
     <desc>Definition level portlet preferences</desc>
      <columns>
