@@ -51,7 +51,7 @@ import javax.naming.directory.*;
  * @author Russell Tokuyama (University of Hawaii)
  * @version $Revision$
  */
-public class LdapServices extends GenericPortalBean
+public class LdapServices
 {
   private static boolean bPropsLoaded = false;
   private static String sLdapHost           = null;
@@ -68,10 +68,10 @@ public class LdapServices extends GenericPortalBean
   public LdapServices () {
     try {
       if (!bPropsLoaded) {
-        File ldapPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "ldap.properties");
+        File ldapPropsFile = new File (PortalSessionManager.getPortalBaseDir () + "properties" + File.separator + "ldap.properties");
         Properties ldapProps = new Properties ();
         ldapProps.load (new FileInputStream (ldapPropsFile));
-        
+
 
         sLdapHost         = ldapProps.getProperty ("ldap.host",         "");
         sLdapPort         = ldapProps.getProperty ("ldap.port",         "389");
@@ -94,14 +94,14 @@ public class LdapServices extends GenericPortalBean
       Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   /**
    * Gets an LDAP directory context.
    * @return an LDAP directory context object
    */
   public DirContext getConnection() {
     DirContext conn = null;
-    
+
     try {
       Hashtable env = new Hashtable(5, 0.75f);
       env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -112,13 +112,13 @@ public class LdapServices extends GenericPortalBean
       env.put(Context.SECURITY_AUTHENTICATION, "simple");
       env.put(Context.SECURITY_PRINCIPAL,      sLdapManagerDN);
       env.put(Context.SECURITY_CREDENTIALS,    sLdapManagerPW);
-        
+
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
       Logger.log (Logger.ERROR, e);
     }
-    
+
     return conn;
   }
 
@@ -129,7 +129,7 @@ public class LdapServices extends GenericPortalBean
   public String getBaseDN() {
     return sLdapBaseDN;
   }
-    
+
   /**
    * Gets the uid attribute used to search the LDAP directory context.
    * @return a DN to use as reference point or context for queries
@@ -137,7 +137,7 @@ public class LdapServices extends GenericPortalBean
   public String getUidAttribute() {
     return sLdapUidAttribute;
   }
-    
+
   /**
    * Releases an LDAP directory context.
    * @param an LDAP directory context object

@@ -97,11 +97,8 @@ public class PortalSessionManager extends HttpServlet {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
 
-      // Get the portal base directory
+      // Get and set the portal base directory
       setPortalBaseDir(sc.getInitParameter("portalBaseDir"));
-
-      // Set the portal base directory
-      GenericPortalBean.setPortalBaseDir(portalBaseDir);
 
       JNDIManager.initializePortalContext();
       // Flag that the portal has been initialized

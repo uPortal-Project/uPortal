@@ -302,13 +302,13 @@ class ManageProfilesState extends BaseState {
     public CEditProfile (ManageProfilesState context) {
       // load the mimetype image properties file
       try {
-        java.io.FileInputStream in = new java.io.FileInputStream(GenericPortalBean.getPortalBaseDir() + java.io.File.separator
+        java.io.FileInputStream in = new java.io.FileInputStream(PortalSessionManager.getPortalBaseDir() + java.io.File.separator
             + mimeImagesPropsFile);
         mimeImagesProps.load(in);
         in.close();
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at "
-            + GenericPortalBean.getPortalBaseDir() + java.io.File.separator + mimeImagesPropsFile);
+            + PortalSessionManager.getPortalBaseDir() + java.io.File.separator + mimeImagesPropsFile);
       }
       this.context = context;
     }

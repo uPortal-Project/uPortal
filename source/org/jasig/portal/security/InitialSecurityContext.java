@@ -36,9 +36,13 @@
 package org.jasig.portal.security;
 
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.GenericPortalBean;
-import java.util.*;
-import java.io.*;
+import org.jasig.portal.PortalSessionManager;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * This concrete class is responsible for returning a security context that
@@ -86,7 +90,7 @@ public class InitialSecurityContext implements ISecurityContext {
 
     // Find our properties file and open it
 
-    secprops = new File (GenericPortalBean.getPortalBaseDir() + "properties" +
+    secprops = new File (PortalSessionManager.getPortalBaseDir() + "properties" +
         File.separator + "security.properties");
     pr = new Properties();
     try {

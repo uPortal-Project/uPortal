@@ -54,6 +54,7 @@ import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.PortalControlStructures;
 import  org.jasig.portal.BrowserInfo;
 import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.PortalSessionManager;
 import  org.jasig.portal.ChannelSAXStreamFilter;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.PortalException;
@@ -105,7 +106,7 @@ public class ChannelServlet extends HttpServlet {
         File portalBaseDir = new java.io.File(baseDir);
         if (portalBaseDir.exists()) {
           // initialize stylesheet set
-          GenericPortalBean.setPortalBaseDir(baseDir);
+          PortalSessionManager.setPortalBaseDir(baseDir);
           // once JNDI DB access is in place the following line can be removed
           GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
           try {
@@ -146,11 +147,11 @@ public class ChannelServlet extends HttpServlet {
             // some diagnostic state can be saved here
             e.printStackTrace();
           }
-        } 
-        else 
+        }
+        else
           System.out.println("base diretctory does not exist");
-      } 
-      else 
+      }
+      else
         System.out.println("base directory is null");
     }
   }
@@ -242,7 +243,7 @@ public class ChannelServlet extends HttpServlet {
                       th.startElement("","channel","channel", atl);
                       ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
                       custodian.setParent(buffer);
-                      buffer.stopBuffering(); buffer.outputBuffer(); 
+                      buffer.stopBuffering(); buffer.outputBuffer();
                       th.endElement("","channel","channel");
                       th.endDocument();
                   } catch (SAXException e) {
@@ -270,7 +271,7 @@ public class ChannelServlet extends HttpServlet {
           // some exception occurred during processor initialization or framing transformation
           showErrorMessage("Exception occurred during the framing transformation or XSLT processor initialization", res);
       }
-    } else 
+    } else
       showErrorMessage("failed to initialize", res);
   }
 
@@ -286,8 +287,8 @@ public class ChannelServlet extends HttpServlet {
       out.println("<html>");
       out.println("<body>");
       if (channelName != null)
-        out.println("<h1>" + channelName + "</h1>"); 
-      else 
+        out.println("<h1>" + channelName + "</h1>");
+      else
         out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
       out.println("<h3>Error !</h3>");
       out.println("<p>" + message + "<p>");
@@ -306,7 +307,7 @@ public class ChannelServlet extends HttpServlet {
 	private ChannelRuntimeData rd;
 	private ContentHandler contentHandler;
 	private Exception exc = null;
-	
+
     /**
      * put your documentation comment here
      * @param     IChannel ch
@@ -338,7 +339,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean successful () {
       return  this.successful;
@@ -346,7 +347,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean done () {
       return  this.done;
@@ -354,7 +355,7 @@ public class ChannelServlet extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Exception getException () {
       return  exc;
@@ -364,7 +365,7 @@ public class ChannelServlet extends HttpServlet {
   /**
    * put your documentation comment here
    * @param req
-   * @return 
+   * @return
    */
   protected IPerson getPerson (HttpServletRequest req) {
     HttpSession session = req.getSession(false);

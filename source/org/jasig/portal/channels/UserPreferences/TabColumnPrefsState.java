@@ -55,7 +55,7 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RdbmServices;
-import org.jasig.portal.GenericPortalBean;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.utils.DocumentFactory;
@@ -993,7 +993,7 @@ final class TabColumnPrefsState extends BaseState
     {
       File xmlFile = null;
       String sFS = File.separator;
-      String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
+      String XMLUri = PortalSessionManager.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
       xmlFile = new File (XMLUri);
 

@@ -43,7 +43,7 @@ import  java.io.File;
 import  java.io.FileInputStream;
 import  java.io.IOException;
 import  java.util.Properties;
-import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.PortalSessionManager;
 import  org.jasig.portal.security.IRole;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.IAuthorization;
@@ -61,7 +61,7 @@ public class Authorization {
   protected static IAuthorizationFactory m_Factory = null;
   static {
     // Get the security properties file
-    File secprops = new File(GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "security.properties");
+    File secprops = new File(PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "security.properties");
     // Get the properties from the security properties file
     Properties pr = new Properties();
     try {

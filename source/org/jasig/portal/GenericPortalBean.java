@@ -53,25 +53,7 @@ import  java.io.*;
  * @version $Revision$
  */
 public class GenericPortalBean {
-  private static String sPortalBaseDir = null;
   private static IUserLayoutStore m_userLayoutStore = null;
-
-  /**
-   * Set the top level directory for the portal.  This makes it possible
-   * to use relative paths in the application for loading properties files, etc.
-   * @param sPathToPortal
-   */
-  public static void setPortalBaseDir (String sPathToPortal) {
-    sPortalBaseDir = sPathToPortal;
-  }
-
-  /**
-   * Get the top level directory for the portal.  This makes it possible
-   * to use relative paths in the application for loading properties files, etc.
-   */
-  public static String getPortalBaseDir () {
-    return  sPortalBaseDir;
-  }
 
   /**
    * put your documentation comment here

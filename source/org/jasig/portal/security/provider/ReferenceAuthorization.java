@@ -50,6 +50,7 @@ import  org.jasig.portal.security.provider.RoleImpl;
 import  org.jasig.portal.security.provider.PersonImpl;
 import  org.jasig.portal.security.IAuthorization;
 import  org.jasig.portal.security.PortalSecurityException;
+import  org.jasig.portal.PortalSessionManager;
 import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.services.LogService;
@@ -59,8 +60,7 @@ import  org.jasig.portal.services.LogService;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public class ReferenceAuthorization
-    implements IAuthorization {
+public class ReferenceAuthorization implements IAuthorization {
   // Clear the caches every 10 seconds
   protected static SmartCache userRolesCache = new SmartCache(300);
   protected static SmartCache chanRolesCache = new SmartCache(300);
@@ -68,7 +68,7 @@ public class ReferenceAuthorization
   static {
     try {
       // Find our properties file and open it
-      String filename = GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "security.properties";
+      String filename = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "security.properties";
       File propFile = new File(filename);
       Properties securityProps = new Properties();
       try {

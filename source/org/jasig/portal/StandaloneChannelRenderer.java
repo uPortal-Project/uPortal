@@ -96,8 +96,8 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param person a user IPerson object
      */
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
-	this.set = new StylesheetSet(GenericPortalBean.getPortalBaseDir() + fs + relativeSSLLocation);
-	String propertiesDir = GenericPortalBean.getPortalBaseDir() + fs + "properties" + fs;
+	this.set = new StylesheetSet(PortalSessionManager.getPortalBaseDir() + fs + relativeSSLLocation);
+	String propertiesDir = PortalSessionManager.getPortalBaseDir() + fs + "properties" + fs;
 	this.set.setMediaProps(propertiesDir + "media.properties");
 	this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
 	this.channelName=channelName;
@@ -106,7 +106,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	this.hasEdit=hasEdit;
 	this.timeOut=timeOut;
 	this.pcs=pcs;
-	
+
         ChannelStaticData sd = new ChannelStaticData ();
         sd.setChannelID (chanID);
         sd.setTimeout (timeOut);
@@ -115,7 +115,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         sd.setPerson(person);
 	this.setStaticData(sd);
     }
-    
+
     /**
      * This request will cause setRuntimeData() method called on the channel. If this method is invoked,
      * the render() method, which usually invokes setRuntimeData() method will omit the call.
@@ -195,9 +195,9 @@ public class StandaloneChannelRenderer extends BaseChannel {
                 if(si2!=-1) {
                     channelTarget=sp.substring(si1,si2);
                     if(channelTarget==null) {
-                        Logger.log(Logger.ERROR,"StandaloneRenderer.render() : malformed channel address. Null channel target ID.");
+                        LogService.instance().log(LogService.ERROR,"StandaloneRenderer.render() : malformed channel address. Null channel target ID.");
                     }
-                    Logger.log(Logger.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+                    LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
                     Enumeration en = req.getParameterNames ();
                     if (en != null) {
                         while (en.hasMoreElements ()) {

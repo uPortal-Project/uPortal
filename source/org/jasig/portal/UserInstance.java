@@ -122,7 +122,7 @@ public class UserInstance implements HttpSessionBindingListener {
         // init the media manager
         if(mediaM==null) {
             String fs = System.getProperty("file.separator");
-            String propertiesDir = GenericPortalBean.getPortalBaseDir() + "properties" + fs;
+            String propertiesDir = PortalSessionManager.getPortalBaseDir() + "properties" + fs;
             mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
         }
     }
