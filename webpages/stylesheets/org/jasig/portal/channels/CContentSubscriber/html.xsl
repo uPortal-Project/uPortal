@@ -1251,6 +1251,7 @@ Version $Revision$
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <strong>
                 <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}">
+                  <img src="{$mediaPath}/folder_open.gif" width="16" height="16" border="0" alt="" title=""/>
                   <xsl:value-of select="@name"/>
                 </a>
               </strong>
@@ -1290,6 +1291,7 @@ Version $Revision$
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}">
                 <strong>
+                  <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
                   <xsl:value-of select="@name"/>
                 </strong>
               </a>
@@ -1450,6 +1452,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}">
+                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1487,6 +1490,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
+              <img src="{$mediaPath}/folder_open.gif" width="16" height="16" border="0" alt="" title=""/>
               <strong> Fragments </strong>
             </td>
           </tr>
@@ -1514,6 +1518,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
+              <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
               <strong> Fragments </strong>
             </td>
           </tr>
@@ -1624,12 +1629,12 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
                         </td>
                       </tr>
                     </table>
@@ -1664,6 +1669,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={@ID}">
+                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
                 <xsl:value-of select="./name"/>
               </a>
             </td>
