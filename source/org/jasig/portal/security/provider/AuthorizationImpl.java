@@ -9,7 +9,6 @@ import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.security.*;
 import org.jasig.portal.security.provider.ReferencePermissionManager;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.services.LogService;
 
 /**
