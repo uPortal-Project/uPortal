@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -1056,7 +1057,9 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
+    	InputStream xmlStream = null;
+    try {
+      xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
       XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
@@ -1068,6 +1071,14 @@ public class TabColumnPrefsState extends BaseState
       if(currentSkin!=null)
         xslt.setStylesheetParameter("currentSkin", currentSkin);
       xslt.transform();
+      } finally {
+				try {
+					if (xmlStream != null)
+						xmlStream.close();
+				} catch (IOException exception) {
+					LogService.log(LogService.ERROR,"TabColumnPrefsState:renderXML()::unalbe to close InputStream "+ exception);
+				}
+			}
     }
   }
 
