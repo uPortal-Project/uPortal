@@ -49,12 +49,22 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 
     public static final String NEW_FRAGMENT = "new_fragment";
 
+    // The priority coefficient for changing priority values through an user interface
+    public static final int PRIORITY_COEFF = 100;
+
     /**
      * Sets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
      * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
      * @param restrictionMask a restriction mask
      */
     public void setRestrictionMask (int restrictionMask);
+
+    /**
+     * Gets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
+     * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
+     * @return a restriction mask
+     */
+    public int getRestrictionMask ();
 
     /**
      * Sets a layout manager to auto-commit mode that allows to update the database immediately
@@ -74,5 +84,22 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void loadFragment( String fragmentId ) throws PortalException;
+
+    /**
+     * Returns the description of the node currently being added to the layout
+     *
+     * @return node an <code>IALNodeDescription</code> object
+     * @exception PortalException if an error occurs
+     */
+    public IALNodeDescription getNodeBeingAdded() throws PortalException;
+
+
+    /**
+     * Returns the description of the node currently being moved in the layout
+     *
+     * @return node an <code>IALNodeDescription</code> object
+     * @exception PortalException if an error occurs
+     */
+    public IALNodeDescription getNodeBeingMoved() throws PortalException;
 
 }

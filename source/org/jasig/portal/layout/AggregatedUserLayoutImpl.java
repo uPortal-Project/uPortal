@@ -110,13 +110,6 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   // The IDs and names of the fragments which a user is owner of
   private Hashtable fragments;
 
-  // Channel and folder perfixes
-  //private static final String CHANNEL_PREFIX="n";
-  //private static final String FOLDER_PREFIX="s";
-
-  // The priority coefficient for changing priority values through an user interface
-  public final int PRIORITY_COEFF = 100;
-
   // GUID generator
   private static GuidGenerator guid = null;
   private String cacheKey = null;
@@ -1853,6 +1846,28 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     }
 
     /**
+     * Returns the description of the node currently being added to the layout
+     *
+     * @return node an <code>IALNodeDescription</code> object
+     * @exception PortalException if an error occurs
+     */
+    public IALNodeDescription getNodeBeingAdded() throws PortalException {
+      return addTargetsNodeDesc;
+    }
+
+
+    /**
+     * Returns the description of the node currently being moved in the layout
+     *
+     * @return node an <code>IALNodeDescription</code> object
+     * @exception PortalException if an error occurs
+     */
+    public IALNodeDescription getNodeBeingMoved() throws PortalException {
+      return getLayoutNode(moveTargetsNodeId).getNodeDescription();
+    }
+
+
+    /**
      * Sets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
      * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
      * @param restrictionMask a restriction mask
@@ -1860,6 +1875,16 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     public void setRestrictionMask (int restrictionMask) {
       this.restrictionMask = restrictionMask;
     }
+
+    /**
+     * Gets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
+     * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
+     * @return a restriction mask
+     */
+    public int getRestrictionMask () {
+      return restrictionMask;
+    }
+
 
     public boolean addLayoutEventListener(LayoutEventListener l){
         return false;
