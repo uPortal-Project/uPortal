@@ -37,8 +37,11 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
+
+import org.jasig.portal.helpers.SAXHelper;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
+
 import org.w3c.dom.Document;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -89,7 +92,10 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
-
+  
+  // Cache transformed content in this smartcache
+  protected SmartCache m_cachedContent = new SmartCache(10000);
+  
   public CGenericXSLT ()
   {
     // The media will soon be passed to the channel I think.
@@ -103,8 +109,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   {
     try
     {
-      this.xmlUri = sd.getParameter ("xml");
-      this.sslUri = sd.getParameter ("ssl");
+      this.xmlUri = sd.getParameter("xml");
+      this.sslUri = sd.getParameter("ssl");
     }
     catch (Exception e)
     {
@@ -115,26 +121,38 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     runtimeData = rd;
-
+    
     String xmlUri = runtimeData.getParameter("xmlUri");
 
     if (xmlUri != null)
+    {
       this.xmlUri = xmlUri;
+      m_cachedContent = null;
+    }
 
     String sslUri = runtimeData.getParameter("sslUri");
 
     if (sslUri != null)
+    {
       this.sslUri = sslUri;
+      m_cachedContent = null;
+    }
 
     String xslTitle = runtimeData.getParameter("xslTitle");
 
     if (xslTitle != null)
+    {
       this.xslTitle = xslTitle;
+      m_cachedContent = null;
+    }
 
     String xslUri = runtimeData.getParameter("xslUri");
 
     if (xslUri != null)
+    {
       this.xslUri = xslUri;
+      m_cachedContent = null;
+    }
 
     media = runtimeData.getMedia();
   }
@@ -156,12 +174,32 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     return new ChannelSubscriptionProperties ();
   }
 
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML(DocumentHandler out) throws PortalException
   {
     String xml;
     Document xmlDoc;
     sslUri = UtilitiesBean.fixURI(sslUri);
 
+    String cachedContent = (String)m_cachedContent.get("content");
+    
+    // If there is cached content then write it out
+    if(cachedContent != null)
+    {
+      try
+      {
+        SAXHelper.outputContent(out, cachedContent);
+        return;
+      }
+      catch(SAXException se)
+      {
+        Logger.log(Logger.ERROR, se);
+      }
+      catch(IOException ioe)
+      {
+        Logger.log(Logger.ERROR, ioe);
+      }
+    }
+    
     try
     {
       org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
@@ -183,15 +221,29 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
 
     try
     {
+      StringWriter sw = new StringWriter();
+      
       if (xslUri != null)
-        XSLT.transform(xmlDoc, new URL(xslUri), out, runtimeData);
+      {
+        XSLT.transform(xmlDoc, new URL(xslUri), sw, runtimeData);
+      }
       else
       {
         if (xslTitle != null)
-          XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, xslTitle, media);
+        {
+          XSLT.transform(xmlDoc, new URL(sslUri), sw, runtimeData, xslTitle, media);
+        }
         else
-          XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, media);
+        {
+          XSLT.transform(xmlDoc, new URL(sslUri), sw, runtimeData, media);
+        }
       }
+      
+      // Cache the content
+      m_cachedContent.put("content", sw.toString(), 10000);
+      
+      // Write the content out
+      SAXHelper.outputContent(out, (String)m_cachedContent.get("content"));
     }
     catch (SAXException se)
     {
