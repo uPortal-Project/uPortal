@@ -115,6 +115,6 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	  * @return a new generated fragment ID
 	  * @exception PortalException if an error occurs
 	  */
-	public String createFragment( String fragmentName, String fragmentDesc ) throws PortalException;
+	public String createFragment( String fragmentName, String fragmentDesc) throws PortalException;
 
 }

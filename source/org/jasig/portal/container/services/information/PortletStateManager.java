@@ -51,13 +51,20 @@ import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 
 /**
- * Implementation of Portlet URL Manager
+ * The PortletStateManager implementation.
+ * Analyzes the incoming request parameters for the given PortletWindow, 
+ * changes the window states/portlet modes, stores them in the static hash maps, 
+ * builds a portlet URL based on the changed modes/states and 
+ * portlet render parameters for the current PortletWindow.
+ * 
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
 public class PortletStateManager {
-
-	static public final String ACTION = "P_JSR168_ACT";
+	
+	
+    // The portlet control parameter names
+	static public final String ACTION = "uP_portlet_action";
 	static public final String MODE = "mode";
 	static public final String MULTI = "multi_";
 	static public final String PREV_MODE = "pmode";
@@ -77,6 +84,10 @@ public class PortletStateManager {
 	
 	private Map params = new HashMap();
 
+
+    // The following maps store the window states 
+    // and portlet modes, get cleared at the end of
+    // the user session
 	private static Map windowStates = new HashMap();
 	private static Map portletModes = new HashMap();
 	
@@ -86,20 +97,14 @@ public class PortletStateManager {
 	
 	// Indicates the current action
 	private boolean isAction;
-	// Indicate the action of the next request
+	// Indicates the action of the next request
 	private boolean nextAction;
 	
 	private PortletMode nextMode;
 	private WindowState nextState;
 	
-	public void setNextMode(PortletMode mode) {
-	  nextMode = mode;	
-	}
 	
-	public void setNextState(WindowState state) {
-	  nextState = state;	
-	}
-	
+    
 	public PortletStateManager ( PortletWindow window ) {
 	  this.windowOfAction = (PortletWindowImpl) window;
 	  nextMode = null;
@@ -111,10 +116,35 @@ public class PortletStateManager {
 		analyzeRequestInformation();
 	}
 	
+	
+	/**
+	  * Sets the next portlet mode for the current PortletWindow
+	  * @param mode a portlet mode
+      */
+	public void setNextMode(PortletMode mode) {
+	  nextMode = mode;	
+	}
+	
+	/**
+	  * Sets the next window state for the current PortletWindow
+	  * @param state a window state
+	  */
+	public void setNextState(WindowState state) {
+	  nextState = state;	
+	}
+	
+	/**
+	  * Setting the portlet action parameter for the next request 
+	  *
+	  */
 	public void setAction() {
 		nextAction = true;
 	}
 	
+	
+	/**
+	  * Analyzes the request parameters and sets portlet modes/window states for the current PortletWindow
+	  */
     private void analyzeRequestInformation() {
         params.clear();
         String windowId = windowOfAction.getId().toString();
@@ -148,11 +178,19 @@ public class PortletStateManager {
         }
     }
 	
+	/**
+	  * Adds the render parameters to the portlet URL
+	  * @param parameters a <code>Map</code> containing the render parameters
+	  */
 	public void setParameters(Map parameters) {	
 	  if ( parameters != null && !parameters.isEmpty() )	
 	   params.putAll(parameters);
 	}
 
+	/**
+	  * Returns true if the current PortletRequest is ActionRequest,
+	  * false - otherwise
+	  */
     public boolean isAction() {
       return isAction;
     }
@@ -165,27 +203,39 @@ public class PortletStateManager {
 		return getKey(window) + MULTI + paramName;
 	}
 
-	public static String encodeValues( String values[] ) {
+	private static String encodeValues( String values[] ) {
 	   String value = ENC_SEP;
 	   for ( int i = 0; i < values.length; i++ )
 	     value += values[i] + ENC_SEP;
 	   return value;  
 	}
 
-    public static String[] decodeValues( String value ) {
+    private static String[] decodeValues( String value ) {
 	   StringTokenizer tokenizer = new StringTokenizer(value, ENC_SEP);
 	   String[] values = new String[tokenizer.countTokens()];
 	   for ( int i = 0; i < values.length && tokenizer.hasMoreTokens(); i++ )
 		 values[i] = tokenizer.nextToken();
 	   return values;  
 	}
-
+	
+	
+	/**
+	  * Generates the hash key for the given PortletWindow
+	  * based on the user session ID and portlet window ID
+	  * @param window a portlet window
+	  * @return a String hash key
+	  */ 
 	public static String getKey(PortletWindow window) {
 		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
 		    String sessionId = windowImpl.getHttpServletRequest().getSession().getId();
 			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
 	}
-
+	
+	
+	/**
+	  * Clears the states/modes of the given PortletWindow
+	  * @param window a portlet window
+	  */  
 	public static void clearState(PortletWindow portletWindow) {
 	  Map map = windowStates;	
 	  for ( int i = 0; i < 2; i++ )	{
@@ -201,6 +251,11 @@ public class PortletStateManager {
 	     
 	}
 	
+	/**
+	  * Clears the states/modes for the porlet windows
+	  * associated with the given HttpSession
+	  * @param request a <code>HttpServletRequest</code> instance
+	  */  
 	public static void clearState( HttpServletRequest request ) {
 	 Map map = windowStates;	
 	 for ( int i = 0; i < 2; i++ )	{
@@ -215,11 +270,19 @@ public class PortletStateManager {
 	 }	
 	}
 
-	
+	/**
+	  * Clears the render parameters for the current PortletWindow
+	  */  	
 	public void clearParameters() {
 	  params.clear();	  
 	}
-
+	
+	
+	/**
+	  * Returns the current portlet mode for the given PortletWindow
+	  * @param window a portlet window
+	  * @return a PortletMode instance
+	  */  
 	public static PortletMode getMode(PortletWindow window) {
 		String mode =
 			(String) portletModes.get(getKey(window)+MODE);
@@ -229,6 +292,11 @@ public class PortletStateManager {
 			return PortletMode.VIEW;
 	}
 
+	/**
+	  * Returns the previous portlet mode for the given PortletWindow
+	  * @param window a portlet window
+	  * @return a PortletMode instance
+	  */  
 	public static PortletMode getPrevMode(PortletWindow window) {
 		String mode =
 			(String) portletModes.get(getKey(window)+PREV_MODE);
@@ -238,6 +306,12 @@ public class PortletStateManager {
 			return PortletMode.VIEW;
 	}
 	
+	
+	/**
+	  * Returns the current portlet state for the given PortletWindow
+	  * @param window a portlet window
+	  * @return a WindowState instance
+	  */  
 	public static WindowState getState(PortletWindow window) {
 			String state =
 				(String) windowStates.get(getKey(window)+STATE);
@@ -247,6 +321,11 @@ public class PortletStateManager {
 				return WindowState.NORMAL;
 	}
 
+	/**
+	  * Returns the previous portlet state for the given PortletWindow
+	  * @param window a portlet window
+	  * @return a WindowState instance
+	  */ 
 	public static WindowState getPrevState(PortletWindow window) {
 		String state =
 			(String) windowStates.get(getKey(window)+PREV_STATE);
@@ -257,6 +336,11 @@ public class PortletStateManager {
 	}
 
 
+	/**
+	  * Sets the portlet mode for the given PortletWindow
+	  * @param window a portlet window
+	  * @param mode a portlet mode
+	  */ 
 	public static void setMode(PortletWindow window, PortletMode mode) {
 		PortletWindowImpl windowImpl = (PortletWindowImpl) window;
 		Object prevMode = portletModes.get(getKey(window)+MODE);
@@ -266,6 +350,11 @@ public class PortletStateManager {
 		portletModes.put(getKey(window)+MODE, mode.toString() );
 	}
 
+	/**
+	  * Sets the window state for the given PortletWindow
+	  * @param window a portlet window
+	  * @param state a window state
+	  */ 
 	public static void setState(PortletWindow window, WindowState state) {
 		Object prevState = windowStates.get(getKey(window)+STATE);
 		if (prevState != null)
@@ -274,6 +363,12 @@ public class PortletStateManager {
 	    windowStates.put(getKey(window)+STATE, state.toString() );
 	}
 
+
+	/**
+	  * Generates the string representation of the portlet URL based on the 
+	  * next/current portlet modes/states and render parameters for the current
+	  * PortletWindow
+	  */ 
 	public String toString() {
 		
 		if ( windowOfAction == null ) return "";

@@ -119,7 +119,17 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String fragmentDesc = runtimeData.getParameter("fragment_desc");
 					String fragmentType = runtimeData.getParameter("fragment_type");
+					boolean isPushedFragment = ("true".equals(fragmentType))?true:false;
 					fragmentId = alm.createFragment(CommonUtils.nvl(fragmentName),CommonUtils.nvl(fragmentDesc));
+					// Refreshing the fragment map
+					refreshFragments();
+					ALFragment newFragment = (ALFragment) fragments.get(fragmentId);
+					if ( newFragment != null ) { 
+					  if ( isPushedFragment ) 
+					    newFragment.setPushedFragment(); 
+					  else
+					    newFragment.setPulledFragment();
+					}     
 				} else if (action.equals("edit") && fragmentId != null) {
 					if (CommonUtils.parseInt(fragmentId) > 0)
 						alm.loadFragment(fragmentId);
