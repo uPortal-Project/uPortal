@@ -800,8 +800,10 @@ public class UserInstance implements HttpSessionBindingListener {
             // if the new node is a fragment being added - we need to re-load the layout
             if ( newNodeDescription instanceof IALFolderDescription ) {
               IALFolderDescription folderDesc = (IALFolderDescription) newNodeDescription;	
-              if ( folderDesc.getFragmentNodeId() != null )
+              if ( folderDesc.getFragmentNodeId() != null ) {
+                ulm.saveUserLayout();
                 ulm.loadUserLayout();
+              }  
             }
 			 
           }
