@@ -35,16 +35,15 @@
 
 package org.jasig.portal.container.servlet;
 
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.jasig.portal.container.services.information.PortletStateManager;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.container.services.information.PortletStateManager;
 
 /**
  * A wrapper of the real HttpServletRequest that allows
@@ -58,16 +57,8 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     
     public ServletRequestImpl(HttpServletRequest request) {
         super(request);
-        String url = getRequestURL().toString();
-        if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
-            int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
-            String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
-                                   url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
-            parameters = PortletStateManager.decodeURLParameters(URLDecoder.decode(encodedParams));
-            parameters.putAll(request.getParameterMap());
-        } else { 
-            parameters = new Hashtable(request.getParameterMap());
-        }
+        parameters = new Hashtable(request.getParameterMap());
+		parameters.putAll(PortletStateManager.getURLDecodedParameters(request));
     }
     
     public String getParameter(String name) {

@@ -36,13 +36,13 @@
 package org.jasig.portal.container.services.information;
 
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.net.URLDecoder;
 
 
 import javax.portlet.PortletMode;
@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.UPFileSpec;
 
@@ -120,10 +121,22 @@ public class PortletStateManager {
 	  isAction = nextAction = false;
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
-	  if ( windowOfAction != null && runtimeData != null && request != null )
+	  if ( windowOfAction != null && runtimeData != null && request != null ) {
+		runtimeData.setParameters(getURLDecodedParameters(request));
 		analyzeRequestInformation();
+	  } 	
 	}
 	
+	public static Map getURLDecodedParameters ( HttpServletRequest request ) {
+		String url = request.getRequestURL().toString();
+		if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
+		  int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
+			 String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
+									url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
+			return decodeURLParameters(URLDecoder.decode(encodedParams));
+		}	
+			return new Hashtable();	
+	}
 	
 	/**
 	  * Sets the next portlet mode for the current PortletWindow
@@ -156,10 +169,10 @@ public class PortletStateManager {
     private void analyzeRequestInformation() {
         params.clear();
         String windowId = windowOfAction.getId().toString();
-        for (Enumeration names =runtimeData.getParameterNames(); names.hasMoreElements();) {
-            String paramName = (String)names.nextElement();
+        for (Iterator i = runtimeData.getParameters().keySet().iterator(); i.hasNext();) {
+            String paramName = (String)i.next();
             String[] values = runtimeData.getParameterValues(paramName);
-
+        
             if (ACTION.equals(paramName)) {
                 if ("true".equals(values[0]))
                     isAction = true;
@@ -497,4 +510,14 @@ public class PortletStateManager {
 		
 		return strURL;
 	} 
+	
+	public String getActionURL() {
+		String baseActionURL = runtimeData.getBaseActionURL();
+		String encodedURLParams = encodeURLParameters(this.toString());
+        StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
+				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+
+				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
+				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
+		return url.toString();
+	}
 }

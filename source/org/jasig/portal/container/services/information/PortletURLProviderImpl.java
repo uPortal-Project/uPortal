@@ -42,9 +42,6 @@ import javax.portlet.WindowState;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletURLProvider;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.om.window.PortletWindowImpl;
-import org.jasig.portal.UPFileSpec;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
@@ -95,18 +92,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public String toString() {
-    	
-        ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
-        String baseActionURL = runtimeData.getBaseActionURL();
-		
-        
-        String encodedURLParams = PortletStateManager.encodeURLParameters(urlManager.toString());
-  
-		StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-		  (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+UPFileSpec.PORTLET_PARAMS_DELIM_END+
-		   UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
-		
-        return url.toString();
+       return urlManager.getActionURL();
     }
 
 }
