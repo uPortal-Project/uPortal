@@ -412,6 +412,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
                         HttpServletRequest request = pcs.getHttpServletRequest();
+                        request.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
                         HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                         //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
                         portletContainer.processPortletAction(cd.getPortletWindow(), request, wrappedResponse);
