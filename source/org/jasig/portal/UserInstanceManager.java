@@ -65,7 +65,7 @@ public class UserInstanceManager {
    * @param request Incoming HttpServletRequest
    * @return UserInstance object associated with the given request
    */
-  public static UserInstance getUserInstance(HttpServletRequest request) throws PortalSecurityException {
+  public static UserInstance getUserInstance(HttpServletRequest request) throws PortalException {
     IPerson person = null;
     try {
       // Retrieve the person object that is associated with the request

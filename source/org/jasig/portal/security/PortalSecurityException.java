@@ -43,7 +43,9 @@ package org.jasig.portal.security;
  * @version $Revision$
  */
 
-public class PortalSecurityException extends Exception {
+import org.jasig.portal.PortalException;
+
+public class PortalSecurityException extends PortalException {
 
   public PortalSecurityException() {
     super();
