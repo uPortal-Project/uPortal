@@ -23,22 +23,24 @@ import org.jasig.portal.services.persondir.support.merger.NoncollidingAttributeA
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class MergingPersonAttributeDaoImplTest extends TestCase {
-    private MockPersonAttributeDao sourceOne;
-    private MockPersonAttributeDao sourceTwo;
-    private MockPersonAttributeDao collidesWithOne;
+public class MergingPersonAttributeDaoImplTest 
+    extends AbstractPersonAttributeDaoTest {
+    
+    private StubPersonAttributeDao sourceOne;
+    private StubPersonAttributeDao sourceTwo;
+    private StubPersonAttributeDao collidesWithOne;
     private Map oneAndTwo;
     private Map oneAndTwoAndThree;
     private final String queryAttr = "ThisDoesntMatterForMockDaos";
         
     protected void setUp() {
-        this.sourceOne = new MockPersonAttributeDao();
+        this.sourceOne = new StubPersonAttributeDao();
         Map sourceOneMap = new HashMap();
         sourceOneMap.put("shirtColor", "blue");
         sourceOneMap.put("favoriteColor", "purple");
         this.sourceOne.setBackingMap(sourceOneMap);
         
-        this.sourceTwo = new MockPersonAttributeDao();
+        this.sourceTwo = new StubPersonAttributeDao();
         Map sourceTwoMap = new HashMap();
         sourceTwoMap.put("tieColor", "black");
         sourceTwoMap.put("shoeType", "closed-toe");
@@ -48,7 +50,7 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         this.oneAndTwo.putAll(sourceOneMap);
         this.oneAndTwo.putAll(sourceTwoMap);
         
-        this.collidesWithOne = new MockPersonAttributeDao();
+        this.collidesWithOne = new StubPersonAttributeDao();
         Map collidingMap = new HashMap();
         collidingMap.put("shirtColor", "white");
         collidingMap.put("favoriteColor", "red");
@@ -251,6 +253,18 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         public Set getPossibleUserAttributeNames() {
             return null;
         }
+    }
+
+    protected IPersonAttributeDao getPersonAttributeDaoInstance() {
+        List attributeSources = new ArrayList();
+        
+        attributeSources.add(this.sourceOne);
+        attributeSources.add(this.sourceTwo);
+        
+        MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
+        impl.setPersonAttributeDaos(attributeSources);
+        
+        return impl;
     }
     
 }

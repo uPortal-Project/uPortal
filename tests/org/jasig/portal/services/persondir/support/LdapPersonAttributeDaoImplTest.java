@@ -15,6 +15,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.jasig.portal.ldap.LdapServerImpl;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 /**
  * Testcase for LdapPersonAttributeDao.
@@ -22,7 +23,9 @@ import org.jasig.portal.ldap.LdapServerImpl;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class LdapPersonAttributeDaoImplTest extends TestCase {
+public class LdapPersonAttributeDaoImplTest 
+    extends AbstractPersonAttributeDaoTest {
+    
     private LdapServerImpl ldapServer;
     
     /*
@@ -164,5 +167,26 @@ public class LdapPersonAttributeDaoImplTest extends TestCase {
         expectedAttributeNames.add("dressShirtColor");
         
         assertEquals(expectedAttributeNames, impl.getPossibleUserAttributeNames());
+    }
+
+    protected IPersonAttributeDao getPersonAttributeDaoInstance() {
+        final String queryAttr = "uid";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr);
+        
+        LdapPersonAttributeDaoImpl impl = new LdapPersonAttributeDaoImpl();
+        
+        Map ldapAttribsToPortalAttribs = new HashMap();
+        ldapAttribsToPortalAttribs.put("mail", "email");
+        
+        impl.setLdapAttributesToPortalAttributes(ldapAttribsToPortalAttribs);
+        
+        impl.setLdapServer(this.ldapServer);
+        
+        impl.setQuery("(uid={0})");
+        
+        impl.setQueryAttributes(queryAttrList);
+        
+        return impl;
     }
 }

@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import junit.framework.TestCase;
 
 import org.jasig.portal.rdbm.TransientDatasource;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**
@@ -27,12 +28,11 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class JdbcPersonAttributeDaoImplTest extends TestCase {
+public class JdbcPersonAttributeDaoImplTest 
+    extends AbstractPersonAttributeDaoTest {
+    
     private DataSource testDataSource;
     
-    /*
-     * @see TestCase#setUp()
-     */
     protected void setUp() throws Exception {
         super.setUp();
         
@@ -59,13 +59,10 @@ public class JdbcPersonAttributeDaoImplTest extends TestCase {
         con.close();
     }
 
-    /*
-     * @see TestCase#tearDown()
-     */
     protected void tearDown() throws Exception {
         super.tearDown();
         
-        Connection con = testDataSource.getConnection();
+        Connection con = this.testDataSource.getConnection();
         
         con.prepareStatement("DROP TABLE user_table").execute();
         con.prepareStatement("SHUTDOWN").execute();
@@ -237,7 +234,7 @@ public class JdbcPersonAttributeDaoImplTest extends TestCase {
         queryMap.put(queryAttr, "blue");
         
         try {
-            Map attribs = impl.getUserAttributes(queryMap);
+            impl.getUserAttributes(queryMap);
         } 
         catch (IncorrectResultSizeDataAccessException irsdae) {
             // good, exception thrown for multiple results
@@ -245,6 +242,17 @@ public class JdbcPersonAttributeDaoImplTest extends TestCase {
         }
         
         fail("JdbcPersonAttributeDao should have thrown IncorrectResultSizeDataAccessException for multiple results");
+    }
+
+    protected IPersonAttributeDao getPersonAttributeDaoInstance() {
+        final String queryAttr = "shirt";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr);
+        JdbcPersonAttributeDaoImpl impl = 
+            new JdbcPersonAttributeDaoImpl(this.testDataSource, queryAttrList,
+                "SELECT netid, name, email FROM user_table WHERE shirt_color = ?");
+
+        return impl;
     }
 
 }
