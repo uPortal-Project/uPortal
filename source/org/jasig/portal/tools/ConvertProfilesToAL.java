@@ -39,7 +39,6 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -55,7 +54,6 @@ import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.services.LogService;
 
 /**
  * ConvertProfilesToAL prepares and upgraded 2.1 database to work with
