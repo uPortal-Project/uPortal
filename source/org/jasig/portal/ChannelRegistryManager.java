@@ -66,7 +66,7 @@ import org.apache.xpath.XPathAPI;
  * @version $Revision$
  */
 public class ChannelRegistryManager {
-  protected static final IChannelRegistryStore chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+  protected static final IChannelRegistryStoreOld chanRegStore = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
@@ -251,7 +251,7 @@ public class ChannelRegistryManager {
       try {
         channelTypes = chanRegStore.getChannelTypesXML();
       } catch (Exception e) {
-        throw new GeneralRenderingException(e.getMessage());
+        throw new PortalException(e);
       }
 
       if (channelTypes != null)

@@ -79,7 +79,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  protected IChannelRegistryStore crsdb;
+  protected IChannelRegistryStoreOld crsdb;
   protected ICounterStore csdb;
 
   /**
@@ -197,7 +197,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * put your documentation comment here
    */
   public RDBMUserLayoutStore () throws Exception {
-    crsdb = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+    crsdb = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
     csdb = CounterStoreFactory.getCounterStoreImpl();
     if (RDBMServices.supportsOuterJoins) {
       if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
