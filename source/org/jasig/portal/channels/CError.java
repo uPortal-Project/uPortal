@@ -348,6 +348,16 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
           allowRel = "false";
         }
 
+        // Decide whether to render a friendly or detailed screen
+        String ssTitle = "friendly";
+        try {
+          boolean viewDetailed = staticData.getAuthorizationPrincipal().hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS");
+          if (viewDetailed)
+            ssTitle = "detailed";
+        } catch (Exception e) {
+          // stay with friendly stylesheet
+        }
+
         // debug block
         try {
             java.io.StringWriter outString = new java.io.StringWriter ();
@@ -365,7 +375,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         try {
             XSLT xslt = new XSLT(this);
             xslt.setXML(doc);
-            xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+            xslt.setXSL(sslLocation, ssTitle, runtimeData.getBrowserInfo());
             xslt.setTarget(out);
             xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
             xslt.setStylesheetParameter("showStackTrace", String.valueOf(showStackTrace));
