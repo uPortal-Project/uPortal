@@ -6,6 +6,7 @@ The short version:
 
 If compiling and deploying under JDK 1.4.x, drop these .jar files into your /lib/endorsed/ directory of your JDK's JRE
 and into the /commmon/endorsed/ directory of your Tomcat.
+The 'JAXP-Install' target in the uPortal build.xml will do this for you.
 
 If using JDK 1.5:
 
