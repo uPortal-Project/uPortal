@@ -118,7 +118,7 @@ public class DeleteUser {
                       System.out.println("Deleting bookmarks from UPC_BOOKMARKS");
                       String bookmarksSql =
                         "DELETE FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + uid;
-                      boolean b= stmt.execute(bookmarksSql);
+                      stmt.execute(bookmarksSql);
                   }
               }
               finally
