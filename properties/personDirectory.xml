@@ -27,6 +27,9 @@
 	 |
      | When removing the comment around the spring example please find the
 	 | lines that begin and end with - below and comment them out
+	 |
+	 | The 'username' attribute is what is configured by default in the code
+	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
 	<!--
 	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
@@ -46,7 +49,7 @@
 		</constructor-arg> 
 		<constructor-arg>
 			<list>
-				<value>uid</value>
+				<value>username</value>
 			</list>
 		</constructor-arg>
 		<constructor-arg>
@@ -89,7 +92,7 @@
 		</property>
 		<property name="queryAttributes">
 			<list>
-				<value>uid</value>
+				<value>username</value>
 			</list>
 		</property>
 		<property name="query">

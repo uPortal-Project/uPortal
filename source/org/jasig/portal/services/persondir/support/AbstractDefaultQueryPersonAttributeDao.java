@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.security.IPerson;
 
 
 /**
@@ -27,7 +28,7 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
     /**
      * Defaults attribute to use for a simple query
      */
-    private String defaultAttribute = "uid";
+    private String defaultAttribute = IPerson.USERNAME;
     
     
     /**

@@ -5,6 +5,7 @@
 
 package org.jasig.portal.services.persondir.support;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,12 +19,12 @@ import java.util.Set;
 public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
 
     /**
-     * Returns the seed it is passed
+     * Returns a duplicate of the seed it is passed
      * 
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
-        return seed;
+        return new HashMap(seed);
     }
 
     /**
