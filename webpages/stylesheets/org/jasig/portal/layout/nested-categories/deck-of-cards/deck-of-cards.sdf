@@ -3,7 +3,7 @@
 <stylesheetdescription>
   <name>Deck of cards</name>
   <description>Renders tabs and columns as deck of cards</description>
-  <parentstylesheet>Tab and Column layout</parentstylesheet>
+  <parentStructureStylesheet>Tab and Column layout</parentStructureStylesheet>
   <mimetype>text/vnd.wap.wml</mimetype>
   <serializer>WML</serializer>
 
