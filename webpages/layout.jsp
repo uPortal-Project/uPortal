@@ -47,6 +47,28 @@
   <jsp:forward page="index.jsp"/>
 <% } %>
 
+<%
+  // This will check to see if the channel wants to go
+  //  to dispatch. This allow channels to behave the same way
+  //  in uPortal 2.0.
+  String sUserLayoutRoot = request.getParameter("userLayoutRoot");
+  if(sUserLayoutRoot != null && !sUserLayoutRoot.equals("root"))
+  {
+    // Reconstruct URL parameters
+    String jspfile = "dispatch.jsp?";
+
+    for(Enumeration e = request.getParameterNames(); e.hasMoreElements();)
+    {
+      String pName  = (String)e.nextElement();
+      String pValue = request.getParameter(pName);
+      jspfile += pName + "=" + pValue + "&";
+    }
+
+    response.sendRedirect(jspfile);
+    return;
+  }
+%>
+
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
 <%
