@@ -45,12 +45,20 @@ import  javax.servlet.http.*;
 import  java.io.*;
 import  java.util.*;
 import  java.text.*;
-import  java.net.*;
+import  java.net.URL;
+
 import  org.w3c.dom.*;
-import  org.apache.xalan.xpath.*;
-import  org.apache.xalan.xslt.*;
+
+import javax.xml.transform.*;
+import javax.xml.transform.sax.*;
+import javax.xml.transform.dom.*;
+import org.xml.sax.*;
+
 import  org.apache.xml.serialize.*;
+
 import org.jasig.portal.PropertiesManager;
+
+
 
 
 /**
@@ -352,7 +360,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                     cSerializer.printRawCharacters((String)o);
                                     //Logger.log(Logger.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
                                     //Logger.log(Logger.DEBUG,(String)o);
-                                } else if(o instanceof SAXBufferImpl) {
+                                } else if(o instanceof SAX2BufferImpl) {
                                     Logger.log(Logger.DEBUG,"UserInstance::renderState() : received an XSLT result for channelId=\""+chanId+"\"");
                                     // extract a character cache 
 
@@ -362,7 +370,11 @@ public class UserInstance implements HttpSessionBindingListener {
                                     }
 
                                     // output channel buffer
-                                    ((SAXBufferImpl)o).outputBuffer(markupSerializer);
+                                    if(o instanceof SAX2BufferImpl) {
+                                        SAX2BufferImpl b=(SAX2BufferImpl) o;
+                                        b.setAllHandlers(markupSerializer);
+                                        b.outputBuffer();
+                                    }
 
                                     // save the old cache state
                                     if(cSerializer.stopCaching()) {
@@ -398,15 +410,17 @@ public class UserInstance implements HttpSessionBindingListener {
                 if((!ccaching) || (!ccache_exists)) {
                     // obtain XSLT cache
 
-                    SAXBufferImpl cachedBuffer=(SAXBufferImpl) this.systemCache.get(cacheKey);
+                    SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
                     if(cachedBuffer!=null) {
                         // replay the buffer to channel incorporation filter
                         Logger.log(Logger.DEBUG,"UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
-                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
-                        // check for the character cache
-                        crb.setDocumentHandler(cif);
+                        // attach rendering buffer downstream of the cached buffer
+                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader)cachedBuffer,channelManager,ccaching);
+                        // attach channel incorporation filter downstream of the channel rendering buffer
+                        cif.setParent(crb);
                         crb.setOutputAtDocumentEnd(true);
-                        cachedBuffer.outputBuffer(crb);
+                        cachedBuffer.outputBuffer();
+
                         output_produced=true;
                     }
                 }
@@ -414,78 +428,89 @@ public class UserInstance implements HttpSessionBindingListener {
             // fallback on the regular rendering procedure
             if(!output_produced) {
 
-                // obtain both structure and theme transformation stylesheet roots
-                StylesheetRoot ss = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(ssd.getStylesheetURI()));
-                StylesheetRoot ts = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
-                // obtain an XSLT processor
-                XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-                //                processor.reset();
+                // obtain transformer handlers for both structure and theme stylesheets
+                TransformerHandler ssth = XSLT.getTransformerHandler(UtilitiesBean.fixURI(ssd.getStylesheetURI()));
+                TransformerHandler tsth = XSLT.getTransformerHandler(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
+
+                // obtain transformer references from the handlers
+                Transformer sst=ssth.getTransformer();
+                Transformer tst=tsth.getTransformer();
+                
+                // empty transformer to do dom2sax transition
+                Transformer emptyt=TransformerFactory.newInstance().newTransformer();
+                
+                // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
+                ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
+                ssth.setResult(new SAXResult(crb));
+                
+                // determine and set the stylesheet params
                 // prepare .uP element and detach flag to be passed to the stylesheets
                 // Including the context path in front of uPElement is necessary for phone.com browsers to work
-                XString xuPElement = processor.createXString(req.getContextPath() + "/" + uPElement);
-                
-                // initialize ChannelRenderingBuffer
-                ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
-                // now that pipeline is set up, determine and set the stylesheet params
-                processor.setStylesheetParam("baseActionURL", xuPElement);
+                sst.setParameter("baseActionURL", new String(req.getContextPath() + "/" + uPElement));
                 Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
                 for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
                     String pValue = (String)supTable.get(pName);
                     Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
-                    processor.setStylesheetParam(pName, processor.createXString(pValue));
+                    sst.setParameter(pName, pValue);
                 }
                 // all the parameters are set up, fire up structure transformation
-                processor.setStylesheet(ss);
-                processor.setDocumentHandler(crb);
+
                 // filter to fill in channel/folder attributes for the "structure" transformation.
-                StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, userPreferences.getStructureStylesheetUserPreferences());
+                StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth, userPreferences.getStructureStylesheetUserPreferences());
                 // if operating in the detach mode, need wrap everything
                 // in a document node and a <layout_fragment> node
                 if (detachMode) {
                     saif.startDocument();
-                    saif.startElement("layout_fragment", new org.xml.sax.helpers.AttributeListImpl());
-                    UtilitiesBean.node2SAX(rElement, saif);
-                    saif.endElement("layout_fragment");
+                    saif.startElement("","layout_fragment","layout_fragment", new org.xml.sax.helpers.AttributesImpl());
+                    emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
+                    saif.endElement("","layout_fragment","layout_fragment");
                     saif.endDocument();
                 } else if (rElement.getNodeType() == Node.DOCUMENT_NODE) {
-                    UtilitiesBean.node2SAX(rElement, saif);
+                    emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
                 } else {
                     // as it is, this should never happen
                     saif.startDocument();
-                    UtilitiesBean.node2SAX(rElement, saif);
+                    emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
                     saif.endDocument();
                 }
                 // all channels should be rendering now
-                // prepare processor for the theme transformation
-                processor.reset();
+                // prepare for the theme transformation
+
                 // set up of the parameters
-                processor.setStylesheetParam("baseActionURL", xuPElement);
+                tst.setParameter("baseActionURL", new String(req.getContextPath() + "/" + uPElement));
+
                 Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
                 for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
                     String pValue = (String)tupTable.get(pName);
                     Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
-                    processor.setStylesheetParam(pName, processor.createXString(pValue));
+                    tst.setParameter(pName, pValue);
                 }
-                processor.setStylesheet(ts);
-                // initialize a filter to fill in channel attributes for the
-                // "theme" (second) transformation.
-                ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter(processor, userPreferences.getThemeStylesheetUserPreferences());
+
+                // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
+                // attach it downstream of the channel rendering buffer
+                ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter((XMLReader)crb, userPreferences.getThemeStylesheetUserPreferences());
+                // attach theme transformation downstream of the theme attribute incorporation filter
+                taif.setAllHandlers(tsth);
                 
                 if(this.CACHE_ENABLED && !ccaching) {
                     // record cache
-                    SAXBufferImpl newCache=new SAXBufferImpl(cif);
+                    // attach caching buffer downstream of the theme transformer
+                    SAX2BufferImpl newCache=new SAX2BufferImpl();
+                    tsth.setResult(new SAXResult(newCache));
+
+                    // attach channel incorporation filter downstream of the caching buffer
+                    cif.setParent(newCache);
+                    
                     systemCache.put(cacheKey,newCache);
                     newCache.setOutputAtDocumentEnd(true);
-                    //                    newCache.stopBuffering()
-                    processor.setDocumentHandler(newCache);
                     Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
                 } else {
-                    processor.setDocumentHandler(cif);
+                    // attach channel incorporation filter downstream of the theme transformer
+                    tsth.setResult(new SAXResult(cif));
                 }
                 // fire up theme transformation
-                crb.setDocumentHandler(taif);
                 crb.stopBuffering();
 
 
