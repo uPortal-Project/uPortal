@@ -60,6 +60,7 @@ public class RdbmServices extends GenericPortalBean {
   private static String sJdbcPassword = null;
   private static String m_channelRegistryStoreClassName = null;
   private static String m_userLayoutStoreClassName = null;
+  private static String m_userIdentityStoreClassName = null;
   private static String m_userPreferencesStoreClassName = null;
   private static String m_coreStyleSheetDescriptionStoreClassName = null;
   public static int RETRY_COUNT = 5;
@@ -83,6 +84,7 @@ public class RdbmServices extends GenericPortalBean {
         sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
         m_channelRegistryStoreClassName = jdbcProps.getProperty("ChannelRegistryStore");
         m_userLayoutStoreClassName = jdbcProps.getProperty("UserLayoutStore");
+        m_userIdentityStoreClassName = jdbcProps.getProperty("UserIdentityStore");
         m_userPreferencesStoreClassName = jdbcProps.getProperty("UserPreferencesStore");
         m_coreStyleSheetDescriptionStoreClassName = jdbcProps.getProperty("CoreStyleSheetDescriptionStore");
         bPropsLoaded = true;
@@ -168,6 +170,19 @@ public class RdbmServices extends GenericPortalBean {
   public static IUserLayoutStore getUserLayoutStoreImpl () {
     try {
       return  ((IUserLayoutStore)Class.forName(m_userLayoutStoreClassName).newInstance());
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+      return  (null);
+    }
+  }
+
+    /**
+   * Return implementation for IUserIdentityStore
+   * @return
+   */
+  public static IUserIdentityStore getUserIdentityStoreImpl () {
+    try {
+      return  ((IUserIdentityStore)Class.forName(m_userIdentityStoreClassName).newInstance());
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
       return  (null);
