@@ -731,6 +731,7 @@ public class DbLoader
       }
       catch (Exception e)
       {
+        System.err.println(createTableStatement);
         e.printStackTrace();
       }
       finally
@@ -941,7 +942,7 @@ public class DbLoader
             Column column = (Column)iterator.next();
             String value = column.getValue();
 
-            if (value != null)
+            if (value != null && !value.equals("NULL"))
             {
               value = value.trim(); // portal can't read xml properly without this, don't know why yet
               int valueLength = value.length();
