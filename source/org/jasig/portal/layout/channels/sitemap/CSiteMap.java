@@ -53,15 +53,11 @@ import org.xml.sax.ContentHandler;
 public class CSiteMap extends BaseChannel implements IPrivileged {
 
     Document userLayoutDoc = null;
-    private String ssTitle = "simpleLayout";
     private static final String sslUri = "sitemap.ssl";
         
     public void setPortalControlStructures(PortalControlStructures pcs)
         throws PortalException {
         IUserLayout userLayout = pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout();
-        if (userLayout instanceof IAggregatedLayout) {
-            ssTitle = "aggregatedLayout";
-        }
         userLayoutDoc = DocumentFactory.getNewDocument();
         userLayout.writeTo(userLayoutDoc);
     }
@@ -69,7 +65,7 @@ public class CSiteMap extends BaseChannel implements IPrivileged {
     public void renderXML(ContentHandler out) throws PortalException {
         XSLT xslt = new XSLT(this);
         xslt.setXML(userLayoutDoc);
-        xslt.setXSL(sslUri, ssTitle, runtimeData.getBrowserInfo());
+        xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
