@@ -63,11 +63,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     ChannelManager cm;
 
     // information about the current channel
-    private Hashtable params;
-    private String channelClassName;
     private String channelSubscribeId;
-    private String channelPublishId;
-    private long timeOut;
     private boolean ccaching;
     private CachingSerializer ser;
 
@@ -168,13 +164,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             // recognizing "channel"
             if (qName.equals ("channel")) {
                 insideChannelElement = true;
-
-                // get class attribute
-                channelClassName = atts.getValue("class");
                 channelSubscribeId = atts.getValue("ID");
-                channelPublishId = atts.getValue("chanID");
-                timeOut = java.lang.Long.parseLong (atts.getValue("timeout"));
-                params = new Hashtable(0);
                 if(ccaching) {
                     // save the old cache state
                     try {
@@ -193,8 +183,6 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             } else {
                 super.startElement(uri,localName,qName,atts);
             }
-        } else if (qName.equals("parameter")) {
-            params.put (atts.getValue("name"), atts.getValue("value"));
         }
     }
 
@@ -204,13 +192,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                 insideChannelElement = false;
                 if (this.getContentHandler() != null) {
                     if(ccaching) {
-                        Vector chanEntry=new Vector(5);
-                        chanEntry.add(this.channelSubscribeId);
-                        chanEntry.add(this.channelClassName);
-                        chanEntry.add(new Long(timeOut));
-                        chanEntry.add(this.params);
-                        chanEntry.add(this.channelPublishId);
-                        channelIdBlocks.add(chanEntry);
+                        channelIdBlocks.add(channelSubscribeId);
                     }
                     cm.outputChannel(channelSubscribeId,this.getContentHandler());
                     // start caching again

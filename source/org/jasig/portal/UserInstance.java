@@ -261,7 +261,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // determine uPElement (optimistic prediction) --end
 
                     // set up the channel manager
-                    channelManager.setReqNRes(req, res, uPElement);
+                    channelManager.startRenderingCycle(req, res, uPElement);
                     // process events that have to be handed directly to the userPreferencesManager.
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
@@ -347,16 +347,15 @@ public class UserInstance implements HttpSessionBindingListener {
                                 LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                                 // start channel threads
                                 for(int i=0;i<cCache.channelIds.size();i++) {
-                                    Vector chanEntry=(Vector) cCache.channelIds.get(i);
-                                    if(chanEntry!=null || chanEntry.size()!=2) {
-                                        String channelSubscribeId=(String)chanEntry.get(0);
-                                        String chanClassName=(String)chanEntry.get(1);
-                                        Long timeOut=(Long)chanEntry.get(2);
-                                        Hashtable chanParams=(Hashtable)chanEntry.get(3);
-                                        String channelPublishId=(String)chanEntry.get(4);
-                                        channelManager.startChannelRendering(channelSubscribeId,channelPublishId, chanClassName,timeOut.longValue(),chanParams,true);
+                                    String channelSubscribeId=(String) cCache.channelIds.get(i);
+                                    if(channelSubscribeId!=null) {
+                                        try {
+                                            channelManager.startChannelRendering(channelSubscribeId);
+                                        } catch (PortalException e) {
+                                            LogService.log(LogService.ERROR,"UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+upm.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
+                                        }
                                     } else {
-                                        LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
+                                        LogService.log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
                                     }
                                 }
                                 // go through the output loop
@@ -376,13 +375,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                     //LogService.instance().log(LogService.DEBUG,(String)cCache.systemBuffers.get(sb));
 
                                     // get channel output
-                                    Vector chanEntry=(Vector) cCache.channelIds.get(sb);
-                                    String channelSubscribeId=(String)chanEntry.get(0);
-                                    String chanClassName=(String)chanEntry.get(1);
-                                    Long timeOut=(Long)chanEntry.get(2);
-                                    Hashtable chanParams=(Hashtable)chanEntry.get(3);
-                                    String channelPublishId=(String)chanEntry.get(4);
-                                    
+                                    String channelSubscribeId=(String) cCache.channelIds.get(sb);
                                     channelManager.outputChannel(channelSubscribeId,markupSerializer);
                                 }
 
@@ -569,17 +562,16 @@ public class UserInstance implements HttpSessionBindingListener {
                                   LogService.instance().log(LogService.DEBUG,"Printing transformation cache channel IDs:");
                                   for(int i=0;i<ce.channelIds.size();i++) {
                                   LogService.instance().log(LogService.DEBUG,"----------channel entry "+Integer.toString(i));
-                                  LogService.instance().log(LogService.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
+                                  LogService.instance().log(LogService.DEBUG,(String)ce.channelIds.get(i));
                                   }
                                 */
-
 
                             }
                         }
 
                     }
                     // signal the end of the rendering round
-                    channelManager.finishedRendering();
+                    channelManager.finishedRenderingCycle();
                 } catch (PortalException pe) {
                     throw pe;
                 } catch (Exception e) {
