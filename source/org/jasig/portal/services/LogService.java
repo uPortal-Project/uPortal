@@ -27,8 +27,6 @@
 
 package  org.jasig.portal.services;
 
-import java.io.File;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
@@ -36,23 +34,25 @@ import org.jasig.portal.utils.ResourceLoader;
 
 
 /**
- *  The Logger class is used to output messages to a log file. The first call to
- *  a log method triggers an initialization which renames old logs and creates a
- *  new log with a message stating the current time and log level. The maximum
- *  number of backup log files is specified as a member variable and can be set
- *  by calling setMaxBackupLogFiles (). When calling a log method, it is
- *  necessary to specify a log level which can be either NONE, SEVERE, ERROR,
- *  WARN, INFO, or DEBUG (listed in order of decreasing severity). Log messages
- *  will only be logged if their log level is the same or more severe than the
- *  static member log level, which can be changed by calling setLogLevel ().
- *  Zed's NOTES: This has been completely re-written to use the Log4J system
- *  entirely. This means that you can now write wonderful config files which let
- *  you pick your own log format and your own ouput methods. It will also now
- *  watch the config file for changes and reload them (thus, letting you make
- *  changes without restarting the Portal).
- *
- * @author     Ken Weiner, Bernie Durfee, Vikrant Joshi, Zed A. Shaw
- * @version    $Revision$
+ * As of uPortal 2.4, use Apache Commons Logging directly instead of using this
+ * LogService.  This LogService is retained here for backwards compatibility,
+ * and presumably will disappear in a future release.
+ * 
+ *  The LogService is a service offered by the uPortal framework whereby messages
+ * can be logged.  Each uPortal deployment can customize exactly where how and
+ * how much they want logged.  As of uPortal 2.4, this is accomplished by this class
+ * delegating all logging to Apache Commons Logging.  The expected typical (and
+ * default) local logging configuration is to use the Logger.properties file to configure
+ * Log4J as the underlying logging implementation, to a file on disk.  However, the
+ * options are endless under Log4J: you can configure it to log as XML, to log to a tree
+ * of files depending upon where the logging message is coming from and at what 
+ * logging level, to send log messages over the network to a Chainsaw instance listening to
+ * your uPortal...  Furthermore, you don't even have to use Log4J: Commons Logging supports
+ * JDK1.4 logging as well as the ability for you to plug in a custom logging implementation if
+ * you really want to.
+ * 
+ * @author     Ken Weiner, Bernie Durfee, Vikrant Joshi, Zed A. Shaw, andrew.petro@yale.edu
+ * @version    $Revision$ $Date$
  * @deprecated As of uPortal 2.4, please use Apache Commons Logging directly
  */
 public final class LogService {
