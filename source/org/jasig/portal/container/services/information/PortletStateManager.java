@@ -121,14 +121,12 @@ public class PortletStateManager {
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
 	  if ( windowOfAction != null && runtimeData != null && request != null ) {
-	  	Map decodedParameters = getURLDecodedParameters(request);
-		runtimeData.setParameters(decodedParameters);
-		request.getParameterMap().putAll(decodedParameters);
+		runtimeData.setParameters(getURLDecodedParameters(request));
 		analyzeRequestInformation();
 	  } 	
 	}
 	
-	public static Map getURLDecodedParameters ( HttpServletRequest request ) {
+	public static synchronized Hashtable getURLDecodedParameters ( HttpServletRequest request ) {
 		String url = request.getRequestURL().toString();
 		if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
 		  int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	

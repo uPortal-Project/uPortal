@@ -53,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.channels.portlet.CPortletAdapter;
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
@@ -238,8 +239,11 @@ public class PortalSessionManager extends HttpServlet {
                     if(!requestTags.add(newTag)) {
                         LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
+                    
+                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req,request_verified);
+					wrappedRequest.getParameterMap().putAll(PortletStateManager.getURLDecodedParameters(wrappedRequest));
 
-                    userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+                    userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (Exception e) {
             	ExceptionHelper.genericTopHandler(Errors.bug,e);
