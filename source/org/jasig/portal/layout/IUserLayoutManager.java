@@ -177,11 +177,11 @@ public interface IUserLayoutManager {
     /**
      * Test if a certain node can be updated.
      *
-     * @param nodeId a <code>String</code> node id.
+     * @param node a <code>IUserLayoutNodeDescription</code> node id.
      * @return a <code>boolean</code> value
      * @exception PortalException if an error occurs
      */
-    public boolean canUpdateNode(String nodeId) throws PortalException;
+    public boolean canUpdateNode(IUserLayoutNodeDescription node) throws PortalException;
 
     /**
      * Ask manager to output markings at the locations where a given node can be added.

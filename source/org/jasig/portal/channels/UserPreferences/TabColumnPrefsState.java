@@ -266,7 +266,7 @@ public class TabColumnPrefsState extends BaseState
   private final void renameTab(String tabId, String tabName) throws PortalException
   {
       IUserLayoutFolderDescription tab=(IUserLayoutFolderDescription)ulm.getNode(tabId);
-      if(ulm.canUpdateNode(tabId)) {
+      if(ulm.canUpdateNode(ulm.getNode(tabId))) {
           if (tabName == null || tabName.trim().length() == 0) {
               tab.setName(BLANK_TAB_NAME);
           } else {
