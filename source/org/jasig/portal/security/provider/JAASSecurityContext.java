@@ -35,14 +35,16 @@
 
 package org.jasig.portal.security.provider;
 
-import java.io.*;
+import java.io.Serializable;
 
-import javax.security.auth.login.*;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.security.IAdditionalDescriptor;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's

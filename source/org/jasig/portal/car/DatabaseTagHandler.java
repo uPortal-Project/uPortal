@@ -85,7 +85,7 @@ public class DatabaseTagHandler
      * a channel archive deployment descriptor but only for any contained 
      * database elements and their children.
      * 
-     * @param dh
+     * @param ctx
      */
     DatabaseTagHandler( ParsingContext ctx )
     {
@@ -180,9 +180,6 @@ public class DatabaseTagHandler
 
     /**
      * Load the database using DbLoader.
-     * 
-     * @param tables
-     * @param data
      */
     private void loadDatabase()
     {

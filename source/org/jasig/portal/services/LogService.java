@@ -30,8 +30,6 @@ package  org.jasig.portal.services;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Priority;
-import org.apache.log4j.PropertyConfigurator;
-import org.jasig.portal.utils.ResourceLoader;
 
 
 /**

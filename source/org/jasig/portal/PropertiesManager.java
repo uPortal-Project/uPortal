@@ -5,8 +5,6 @@
 
 package  org.jasig.portal;
 
-import java.util.Set;
-
 import org.jasig.portal.properties.BadPropertyException;
 import org.jasig.portal.properties.MissingPropertyException;
 

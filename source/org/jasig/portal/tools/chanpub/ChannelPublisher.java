@@ -336,7 +336,7 @@ public class ChannelPublisher
      * file name containing XML data structured according to the 
      * channel-definition dtd.
      *  
-     * @param is
+     * @param chanDefFile
      * @return
      * @throws Exception
      */
@@ -468,7 +468,6 @@ public class ChannelPublisher
      * Translate the declared channel type name into a channel type id.
      *  
      * @param ci
-     * @param tagName
      * @param value
      * @throws Exception
      */
@@ -548,7 +547,6 @@ public class ChannelPublisher
      * 
      * @param ci The ChannelInfo object being populated.
      * @param pele The Element containing the parameter elements.
-     * @throws Exception
      */
     private void getParameters(ChannelInfo ci, Element pele)
     {

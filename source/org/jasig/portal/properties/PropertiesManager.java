@@ -5,7 +5,6 @@
 
 package  org.jasig.portal.properties;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;

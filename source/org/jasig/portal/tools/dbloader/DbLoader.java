@@ -359,9 +359,9 @@ public class DbLoader
    }
 
     /**
-    * @param string
-    * @return
-    */
+     * @param file
+     * @return
+     */
     private static URL getDataFileUri(String file)
         throws IllegalArgumentException
     {

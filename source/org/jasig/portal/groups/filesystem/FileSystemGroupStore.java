@@ -878,9 +878,9 @@ throws GroupsException
 }
 /**
  * Answers if <code>file</code> contains <code>member</code>.  
+ * @param file
+ * @param member
  * @return boolean
- * @param directory java.io.File
- * @param group org.jasig.portal.groups.IEntityGroup
  */
 private boolean fileContains(File file, IGroupMember member)
 throws GroupsException
@@ -903,9 +903,9 @@ throws GroupsException
 /**
  * Answers if <code>directory</code> contains <code>member</code>.  A 
  * directory can only contain (other) groups.  
- * @return boolean
  * @param directory java.io.File
- * @param group org.jasig.portal.groups.IEntityGroup
+ * @param member
+ * @return boolean
  */
 private boolean directoryContains(File directory, IGroupMember member)
 {

@@ -71,7 +71,7 @@ public class ChannelDefinitionTagHandler
      * a channel archive deployment descriptor but only for any contained 
      * channel-definition elements and their children.
      * 
-     * @param dh
+     * @param ctx
      */
     ChannelDefinitionTagHandler( ParsingContext ctx )
     {
@@ -111,7 +111,6 @@ public class ChannelDefinitionTagHandler
     /**
      * Attempt to load the class specified.
      * @param handlerClass
-     * @return
      */
     private void loadTheClass( String handlerClass )
     {
@@ -173,7 +172,6 @@ public class ChannelDefinitionTagHandler
      * single argument of type DescriptorHandler. If found that constructor
      * will be used. If not found then the default constructor wil be used.
      * 
-     * @param handlerClass
      * @return
      */
     private Object instantiateTheClass()
