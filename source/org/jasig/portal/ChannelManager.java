@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -901,8 +901,7 @@ public class ChannelManager implements LayoutEventListener {
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
         this.uPElement=uPElement;
-        rendererTable.clear();
-        processRequestChannelParameters(request);
+        rendererTable.clear();       
 
         // check portal JNDI context
         if(portalContext==null) {
@@ -920,6 +919,7 @@ public class ChannelManager implements LayoutEventListener {
                 LogService.log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
             }
         }
+        processRequestChannelParameters(request);
     }
 
     /**
