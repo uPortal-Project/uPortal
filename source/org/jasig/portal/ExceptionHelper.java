@@ -36,6 +36,9 @@
 package org.jasig.portal;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -66,13 +69,91 @@ public class ExceptionHelper {
         ex.printStackTrace(new java.io.PrintWriter(sw));
         sw.flush();
         String stktr = sw.toString();
-        for (int i=0;i<boundaries.length;i++) {
-        	int cut = stktr.indexOf(boundaries[i]);
-        	if (cut > 0)
-        		return stktr.substring(0, cut).trim();
+        return trimStackTrace(stktr);
+    }
+    
+    /**
+     * Trims a String representation of a Stack Trace to remove
+     * the portion of the trace that is in the servlet container layer.
+     * @param stackTrace - String result of printStackTrace
+     * @return the stack trace with portions of the trace that dive into the container
+     * layer removed.
+     */
+    static String trimStackTrace(String stackTrace) {
+        
+        StringBuffer trimmedTrace = new StringBuffer();
+        
+        // a List of Strings to be trimmed and appended to the buffer
+        // these represent elements in the causal chain
+        List fragments = new ArrayList();
+        
+        int causeCut = (stackTrace.indexOf("Caused by"));
+        
+        if (causeCut > 0) {
+            // there are one or more Caused by fragments to consider
+            // we traverse stackTrace, parsing out fragments for later processing
+            // and updating stackTrace to contain the remaining unparsed portion
+            // as we go
+            
+            while (stackTrace.length() > 0) {
+                
+                if (stackTrace.startsWith("Caused by")){
+                    // don't count the "Caused by" leading the stackTrace
+                    causeCut = stackTrace.substring(9).indexOf("Caused by");
+                    if (causeCut > 0)
+                        causeCut += 9;
+                } else {
+                    causeCut = stackTrace.indexOf("Caused by");
+                }
+                
+                if (causeCut > -1) {
+                    // stackTrace currently includes multiple fragments
+                    // parse out the first and leave the rest for next iteration
+                    
+                    fragments.add(stackTrace.substring(0, causeCut));
+                    stackTrace = stackTrace.substring(causeCut);
+                } else {
+                    // stackTrace currently is a bare fragment
+                    // grab it
+                    fragments.add(stackTrace);
+                    stackTrace = "";
+                }
+            }
+        } else {
+            // there's ony a single Throwable in the chain
+            fragments.add(stackTrace);
         }
         
-        return stktr;
+        // now that we have fragments to consider
+        
+        for (Iterator iter = fragments.iterator(); iter.hasNext();){
+            String consideredFragment = (String) iter.next();
+            
+            // flag to indicate that a trimmed form of this fragment has been appended
+            // to the trimmed stack trace buffer
+            boolean appended = false;
+            for (int i=0; i < boundaries.length; i++) {
+                int cut = consideredFragment.indexOf(boundaries[i]);
+                if (cut > 0) {
+                    // stack trace includes a trace through our container
+                    // in which we are not interested: trim it.           
+                    // grab the desired portion up to the boundary
+                    trimmedTrace.append(consideredFragment.substring(0, cut).trim());
+                    trimmedTrace.append("\n");
+                    appended = true;
+                    break;
+                }
+            }
+            
+            if (! appended) {
+                // a trimmed version of this fragment was not appended
+                // because it doesn't need to be trimmed -- append the whole thing.
+                trimmedTrace.append(consideredFragment.trim());
+                trimmedTrace.append("\n");
+            }
+        }
+        
+        return trimmedTrace.toString();
     }
 
     /**
