@@ -237,9 +237,15 @@ public class Logger extends GenericPortalBean
     String sLogFile, sLogBase, sOldPath, sNewPath;
     String sLogExt = ".log";
     String sDelimiter = "-";
-    File oldFile, newFile;
+    File oldFile, newFile, logsDir;
     java.text.DecimalFormat df = new java.text.DecimalFormat ("00");
    
+    // Create logs directory if it doesn't already exist
+    logsDir = new File (getPortalBaseDir () + "logs");
+    
+    if (!logsDir.exists ())
+      logsDir.mkdir ();
+        
     // Get full path to current log file
     sLogFile = getPortalBaseDir () + sLogRelativePath;
     
