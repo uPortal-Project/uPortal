@@ -53,7 +53,7 @@ public class DBImplOracle extends DBImpl implements IDBImpl {
     Element channel = null;
     String sQuery = "SELECT UC.*, CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_H_D_IND,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL UC, UP_CHAN_PARAM UCP WHERE UC.CHAN_ID=" + chanId +
       " AND UC.CHAN_ID = UCP.CHAN_ID(+)";
-    Logger.log (Logger.DEBUG, sQuery);
+    Logger.log (Logger.DEBUG, "DBImplOracle::createChannelNode(): " + sQuery);
 
     Statement stmt = con.createStatement();
     try {
@@ -94,7 +94,7 @@ public class DBImplOracle extends DBImpl implements IDBImpl {
 
     String sQuery = "SELECT ULS.*,STRUCT_H_D_IND,STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_STRUCT ULS, UP_STRUCT_PARAM USP WHERE ULS.USER_ID=" + userId +
       " AND ULS.LAYOUT_ID = " + layoutId + " AND ULS.STRUCT_ID=" + structId + " AND ULS.STRUCT_ID = USP.STRUCT_ID(+)";
-    Logger.log (Logger.DEBUG, sQuery);
+    Logger.log (Logger.DEBUG, "DBImplOracle::createLayout(): " + sQuery);
     ResultSet rs = stmt.executeQuery (sQuery);
     try {
       rs.next();

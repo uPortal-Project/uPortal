@@ -185,7 +185,7 @@ public class DBImpl implements IDBImpl
   {
     Element channel = null;
     String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
-    Logger.log (Logger.DEBUG, sQuery);
+    Logger.log (Logger.DEBUG, "DBImpl::createChannelNode(): " + sQuery);
 
     Statement stmt = con.createStatement();
     try {
@@ -198,7 +198,7 @@ public class DBImpl implements IDBImpl
           rs.close();
 
           sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
-          Logger.log (Logger.DEBUG, sQuery);
+          Logger.log (Logger.DEBUG, "DBImpl::createChannelNode(): " + sQuery);
           rs = stmt.executeQuery (sQuery);
           while(rs.next()) {
             createChannelNodeParameters(doc, rs, channel, system);
@@ -250,7 +250,7 @@ public class DBImpl implements IDBImpl
     Element parameter = null;
     Element structure;
     String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
-    Logger.log (Logger.DEBUG, sQuery);
+    Logger.log (Logger.DEBUG, "DBImpl::createLayout()" + sQuery);
     ResultSet rs = stmt.executeQuery (sQuery);
     try {
       rs.next();
@@ -268,7 +268,7 @@ public class DBImpl implements IDBImpl
     }
 
     sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
-    Logger.log (Logger.DEBUG, sQuery);
+    Logger.log (Logger.DEBUG, "DBImpl::createLayout()" + sQuery);
     rs = stmt.executeQuery (sQuery);
     try {
       while (rs.next ()) {
@@ -317,7 +317,7 @@ public class DBImpl implements IDBImpl
       try {
         String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
           "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=" + chanId +" AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-        Logger.log (Logger.DEBUG, sQuery);
+        Logger.log (Logger.DEBUG, "DBImpl::channelInUserRole(): " + sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
         try {
           if (!rs.next()) {
@@ -341,7 +341,7 @@ public class DBImpl implements IDBImpl
         /* No access to channel. Replace it with the error channel and a suitable message */
 
         /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-        Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
+        Logger.log(Logger.INFO, "DBImpl::createLayoutStructure(): No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
       }
 
       return createChannelNode(stmt.getConnection(), doc, chanId, idTag);
@@ -388,7 +388,7 @@ public class DBImpl implements IDBImpl
       try {
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        Logger.log (Logger.DEBUG, subSelectString);
+        Logger.log (Logger.DEBUG, "DBImpl::getUserLayout()" + subSelectString);
 
         int layoutId;
         ResultSet rs = stmt.executeQuery (subSelectString);
@@ -400,7 +400,7 @@ public class DBImpl implements IDBImpl
         }
 
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        Logger.log (Logger.DEBUG, sQuery);
+        Logger.log (Logger.DEBUG, "DBImpl::getUserLayout()" + sQuery);
         rs = stmt.executeQuery (sQuery);
         try {
           if (rs.next ()) {
@@ -448,7 +448,7 @@ public class DBImpl implements IDBImpl
       Statement stmt = con.createStatement ();
       try {
         String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        Logger.log (Logger.DEBUG, query);
+        Logger.log (Logger.DEBUG, "DBImpl::setUserLayout()" + query);
 
         ResultSet rs = stmt.executeQuery (query);
         try {
@@ -461,11 +461,11 @@ public class DBImpl implements IDBImpl
 
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
         String sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
-        Logger.log (Logger.DEBUG, sQuery);
+        Logger.log (Logger.DEBUG, "DBImpl::setUserLayout()" + sQuery);
         stmt.executeUpdate(sQuery);
 
         sQuery = "DELETE UP_LAYOUT_STRUCT WHERE " + selectString;
-        Logger.log (Logger.DEBUG, sQuery);
+        Logger.log (Logger.DEBUG, "DBImpl::setUserLayout()" + sQuery);
         stmt.executeUpdate(sQuery);
         if (DEBUG > 0) {
           System.err.println("--> saving document");
@@ -542,7 +542,7 @@ public class DBImpl implements IDBImpl
         "'" + structure.getAttribute("name") + "','" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
         "'" + dbBool(structure.getAttribute("removable")) + "')";
-      Logger.log(Logger.DEBUG, sQuery);
+      Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
       stmt.executeUpdate(sQuery);
 
       NamedNodeMap nm = node.getAttributes();
@@ -557,7 +557,7 @@ public class DBImpl implements IDBImpl
           } else {
             sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
               userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nm.item(i).getNodeValue() + "','" + structHDInd + "')";
-            Logger.log(Logger.DEBUG, sQuery);
+            Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -578,7 +578,7 @@ public class DBImpl implements IDBImpl
               } else {
                 sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
                   userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "','" + structHDInd + "')";
-                Logger.log(Logger.DEBUG, sQuery);
+                Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
@@ -680,7 +680,7 @@ public class DBImpl implements IDBImpl
               if (DEBUG > 1) System.err.println("D" +  nodeName + "=" + nodeValue);
               sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_H_D_IND, CHAN_PARM_OVRD) VALUES ("+
                id + ",'" + nodeName + "','" + nodeValue + "','D','N')";
-              Logger.log(Logger.DEBUG, sInsert);
+              Logger.log(Logger.DEBUG, "DBImpl::addChannel()" + sInsert);
               stmt.executeUpdate(sInsert);
             }
           }
@@ -1117,7 +1117,7 @@ public class DBImpl implements IDBImpl
       try {
         String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
           + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, query);
+        Logger.log(Logger.DEBUG, "DBImpl::getUserAccountInformation()" + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1156,7 +1156,7 @@ public class DBImpl implements IDBImpl
         String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR "
             + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
             + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, query);
+        Logger.log(Logger.DEBUG, "DBImpl::getUserDirectoryInformation()" + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1188,7 +1188,7 @@ public class DBImpl implements IDBImpl
         Statement stmt = con.createStatement ();
         try {
           String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-          Logger.log (Logger.DEBUG, sQuery);
+          Logger.log (Logger.DEBUG, "DBImpl::getIncrementInteger()" + sQuery);
           ResultSet rs = stmt.executeQuery (sQuery);
           try {
             rs.next();
@@ -1198,7 +1198,7 @@ public class DBImpl implements IDBImpl
           }
 
           String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+id+" WHERE SEQUENCE_NAME='" + tableName + "'";
-          Logger.log (Logger.DEBUG, sInsert);
+          Logger.log (Logger.DEBUG, "DBImpl::getIncrementInteger()" + sInsert);
           stmt.executeUpdate(sInsert);
         } finally {
           stmt.close();
@@ -1215,7 +1215,7 @@ public class DBImpl implements IDBImpl
         Statement stmt = con.createStatement ();
         try {
             String sInsert = "INSERT INTO UP_SEQUENCE ('SEQUENCE_NAME,SEQUENCE_VALUE') VALUES ('"+tableName+"',0)";
-            Logger.log (Logger.DEBUG, sInsert);
+            Logger.log (Logger.DEBUG, "DBImpl::createCounter()" + sInsert);
             stmt.executeUpdate (sInsert);
         } finally {
           stmt.close();
@@ -1232,7 +1232,7 @@ public class DBImpl implements IDBImpl
           Statement stmt = con.createStatement ();
           try {
             String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+value+"WHERE SEQUENCE_NAME='" + tableName + "'";
-            Logger.log (Logger.DEBUG, sUpdate);
+            Logger.log (Logger.DEBUG, "DBImpl::setCounter()" + sUpdate);
             stmt.executeUpdate (sUpdate);
           } finally {
             stmt.close();
