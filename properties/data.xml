@@ -6,7 +6,7 @@
     <name>UP_SEQUENCE</name>
     <rows>
       <row>
-        <column><name>SEQUENCE_NAME</name><value>UP_USER_PROFILES</value></column>
+        <column><name>SEQUENCE_NAME</name><value>UP_USER_PROFILE</value></column>
         <column><name>SEQUENCE_VALUE</name><value>10</value></column>
       </row>
       <row>
@@ -22,11 +22,11 @@
         <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
-        <column><name>SEQUENCE_NAME</name><value>UP_STRUCT_SS</value></column>
+        <column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
       <row>
-        <column><name>SEQUENCE_NAME</name><value>UP_THEME_SS</value></column>
+        <column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
     </rows>
@@ -95,7 +95,7 @@
         <column><name>CHAN_PUBL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>3</value></column>        
+        <column><name>CHAN_TYPE_ID</name><value>3</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CImage</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -113,7 +113,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>         
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -131,7 +131,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>         
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CBookmarks</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -149,7 +149,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>         
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -167,7 +167,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>         
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -186,7 +186,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -205,7 +205,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>2</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>2</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -224,7 +224,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>5</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>5</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CApplet</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -243,7 +243,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CHeader</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -262,7 +262,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>  
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -280,7 +280,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>  
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -298,7 +298,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>0</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>0</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -316,7 +316,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CNumberGuess</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -334,7 +334,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -352,7 +352,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSnoop</value></column>
         <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -370,7 +370,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>4</value></column>  
+        <column><name>CHAN_TYPE_ID</name><value>4</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -389,7 +389,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>4</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>4</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -410,7 +410,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -429,7 +429,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -448,7 +448,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CIMAPMail</value></column>
         <column><name>CHAN_TIMEOUT</name><value>60000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>Y</value></column>
@@ -467,7 +467,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CChannelManager</value></column>
         <column><name>CHAN_TIMEOUT</name><value>30000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -486,7 +486,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.UserPreferences.CUserPreferences</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -505,7 +505,7 @@
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
-        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>          
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CLogin</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
@@ -514,12 +514,12 @@
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
-      </row>      
+      </row>
      </rows>
   </table>
 
   <table>
-    <name>UP_CHAN_PARAM</name>
+    <name>UP_CHANNEL_PARAM</name>
     <rows>
       <!-- Daily Business Channel -->
       <row>
@@ -557,7 +557,7 @@
         <column><name>CHAN_PARM_VAL</name><value>http://www.tedgoff.com</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      
+
       <!-- StockCharts.com -->
       <row>
         <column><name>CHAN_ID</name><value>2</value></column>
@@ -598,7 +598,7 @@
         <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      
+
       <!-- uPortal Developers Reference -->
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -785,7 +785,7 @@
         <column><name>CHAN_PARM_NM</name><value>minNum</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
         <column><name>CHAN_PARM_VAL</name><value>1</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>Y</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>14</value></column>
@@ -951,7 +951,7 @@
         <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      
+
       <!-- WebMail -->
       <row>
         <column><name>CHAN_ID</name><value>89</value></column>
@@ -1535,7 +1535,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>1</value></column>
-          </row>          
+          </row>
       <!-- Development -->
       <row>
         <column><name>STRUCT_ID</name><value>10</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -1568,7 +1568,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>14</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>20</value></column>
-          </row>        
+          </row>
           <!-- uPortal Developers Reference -->
           <row>
             <column><name>STRUCT_ID</name><value>14</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -1668,19 +1668,24 @@
   </table>
 
   <table>
-    <name>UP_STRUCT_PARAM</name>
+    <name>UP_LAYOUT_PARAM</name>
     <rows>
+      <!-- An example of how a user can override the dafault value of a channel parameter -->
       <row>
-        <!-- An example of how a user can override the dafault value of a channel parameter -->
         <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCT_PARM_NM</name><value>maxNum</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>150</value></column>
+      </row>
+      <row>
+        <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>minNum</value></column>
         <column><name>STRUCT_PARM_VAL</name><value>50</value></column>
       </row>
     </rows>
   </table>
 
   <table>
-    <name>UP_CHAN_TYPES</name>
+    <name>UP_CHAN_TYPE</name>
     <rows>
       <row>
         <column><name>TYPE_ID</name><value>0</value></column>
@@ -1754,7 +1759,7 @@
           <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
           <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
           <column><name>FST_CHLD_CAT_ID</name><value>3</value></column>
-        </row>        
+        </row>
       <row>
         <column><name>CAT_ID</name><value>3</value></column>
         <column><name>CAT_TITLE</name><value>Channel Types</value></column>
@@ -1853,7 +1858,7 @@
         <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
         <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
         <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>       
+      </row>
     </rows>
   </table>
 
@@ -1875,7 +1880,7 @@
       <row>
         <column><name>CAT_ID</name><value>1</value></column>
         <column><name>CHAN_ID</name><value>20</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>15</value></column>
@@ -1911,7 +1916,7 @@
       <row>
         <column><name>CAT_ID</name><value>6</value></column>
         <column><name>CHAN_ID</name><value>20</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>CAT_ID</name><value>7</value></column>
         <column><name>CHAN_ID</name><value>5</value></column>
@@ -1971,12 +1976,12 @@
       <row>
         <column><name>CAT_ID</name><value>13</value></column>
         <column><name>CHAN_ID</name><value>14</value></column>
-      </row>        
+      </row>
     </rows>
   </table>
 
   <table>
-    <name>UP_USER_PROFILES</name>
+    <name>UP_USER_PROFILE</name>
     <rows>
       <row>
         <column><name>USER_ID</name><value>0</value></column>
@@ -2051,7 +2056,7 @@
   </table>
 
   <table>
-    <name>UP_USER_SS_PARMS</name>
+    <name>UP_SS_USER_PARM</name>
     <rows>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
@@ -2081,7 +2086,7 @@
   </table>
 
   <table>
-    <name>UP_USER_SS_ATTS</name>
+    <name>UP_SS_USER_ATTS</name>
     <rows>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
@@ -2207,7 +2212,7 @@
   </table>
 
   <table>
-    <name>UP_STRUCT_SS</name>
+    <name>UP_SS_STRUCT</name>
     <rows>
       <row>
         <column><name>SS_ID</name><value>1</value></column>
@@ -2227,7 +2232,7 @@
   </table>
 
   <table>
-    <name>UP_THEME_SS</name>
+    <name>UP_SS_THEME</name>
     <rows>
       <row>
         <column><name>SS_ID</name><value>1</value></column>
@@ -2262,7 +2267,7 @@
   </table>
 
   <table>
-    <name>UP_THEME_PARAMS</name>
+    <name>UP_SS_THEME_PARM</name>
      <rows>
        <row>
          <column><name>SS_ID</name><value>1</value></column>
@@ -2282,7 +2287,7 @@
   </table>
 
   <table>
-    <name>UP_STRUCT_PARAMS</name>
+    <name>UP_SS_STRUCT_PAR</name>
      <rows>
        <row>
          <column><name>SS_ID</name><value>1</value></column>
@@ -2391,7 +2396,7 @@
   </table>
 
   <table>
-    <name>UP_MIME_TYPES</name>
+    <name>UP_MIME_TYPE</name>
     <rows>
       <row>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
@@ -2406,29 +2411,14 @@
 
   <!-- ReferencePermissionManager table -->
   <table>
-    <name>UP_PERMISSIONS</name>
+    <name>UP_PERMISSION</name>
     <rows>
       <row>
-        <column>
-          <name>OWNER</name>
-          <value>CHAN_ID.10</value>
-        </column>
-        <column>
-          <name>PRINCIPAL</name>
-          <value>*</value>
-        </column>
-        <column>
-          <name>ACTIVITY</name>
-          <value>PUBLISH</value>
-        </column>
-        <column>
-          <name>TARGET</name>
-          <value>*</value>
-        </column>
-        <column>
-          <name>PERMISSION_TYPE</name>
-          <value>GRANT</value>
-        </column>
+        <column><name>OWNER</name><value>CHAN_ID.10</value></column>
+        <column><name>PRINCIPAL</name><value>*</value></column>
+        <column><name>ACTIVITY</name><value>PUBLISH</value></column>
+        <column><name>TARGET</name><value>*</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
     </rows>
   </table>

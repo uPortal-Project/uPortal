@@ -73,29 +73,29 @@ public class ReferencePermissionManager extends PermissionManager {
     Connection connection = RdbmServices.getConnection();
     try {
       StringBuffer updateStatement = new StringBuffer(1000);
-      updateStatement.append("INSERT INTO UP_PERMISSIONS (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (");
+      updateStatement.append("INSERT INTO UP_PERMISSION (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (");
       updateStatement.append("'" + m_owner + "',");
       if (newPermission.getPrincipal() != null) {
         updateStatement.append("'" + newPermission.getPrincipal() + "',");
-      } 
+      }
       else {
         updateStatement.append("'*',");
       }
       if (newPermission.getActivity() != null) {
         updateStatement.append("'" + newPermission.getActivity() + "',");
-      } 
+      }
       else {
         updateStatement.append("'*',");
       }
       if (newPermission.getTarget() != null) {
         updateStatement.append("'" + newPermission.getTarget() + "',");
-      } 
+      }
       else {
         updateStatement.append("'*',");
       }
       if (newPermission.getType() != null) {
         updateStatement.append("'" + newPermission.getType() + "',");
-      } 
+      }
       else {
         updateStatement.append("'*',");
       }
@@ -129,7 +129,7 @@ public class ReferencePermissionManager extends PermissionManager {
    * @param activity
    * @param target
    * @param type
-   * @return 
+   * @return
    * @exception AuthorizationException
    */
   public Permission[] getPermissions (String principal, String activity, String target, String type) throws AuthorizationException {
@@ -149,7 +149,7 @@ public class ReferencePermissionManager extends PermissionManager {
     try {
       // Create the select statement to retrieve the permissions
       StringBuffer queryString = new StringBuffer(255);
-      queryString.append("SELECT * FROM UP_PERMISSIONS WHERE OWNER = '");
+      queryString.append("SELECT * FROM UP_PERMISSION WHERE OWNER = '");
       queryString.append(m_owner.toUpperCase());
       queryString.append("'");
       queryString.append(" AND PRINCIPAL = '");
@@ -164,16 +164,16 @@ public class ReferencePermissionManager extends PermissionManager {
       queryString.append(" AND PERMISSION_TYPE = '");
       queryString.append(type.toUpperCase());
       queryString.append("'");
-      
+
       // Create a JDBC statement to the database
       Statement statement = connection.createStatement();
-      
+
       // DEBUG
       if(DEBUG) LogService.log(LogService.DEBUG, queryString.toString());
-      
+
       // Execute the query
       ResultSet rs = statement.executeQuery(queryString.toString());
-      
+
       // Create an array list to store the retrieved permissions
       ArrayList permissions = new ArrayList();
       while (rs.next()) {
