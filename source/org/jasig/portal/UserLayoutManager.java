@@ -59,6 +59,7 @@ import  java.net.*;
  * UserLayoutManager participates in all operations associated with the
  * user layout and user preferences.
  * @author Peter Kharchenko
+ * @author Neil Blake
  * @version $Revision$
  */
 public class UserLayoutManager {
@@ -100,13 +101,13 @@ public class UserLayoutManager {
         // read uLayoutXML
         uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(m_person.getID(), upl.getProfileId());
         if (uLayoutXML == null) {
-          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
+          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
               m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
         }
         this.setCurrentUserPreferences(updb.getUserPreferences(m_person.getID(), upl));
         // Initialize the JNDI context for this user
         JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
-      }
+      } 
       else {
         // there is no user-defined mapping for this particular browser.
         // user should be redirected to a browser-registration page.
@@ -262,7 +263,7 @@ public class UserLayoutManager {
   public void setCurrentUserPreferences (UserPreferences current_up) {
     if (current_up != null)
       complete_up = current_up;
- }
+  }
 
   /*
    * Resets both user layout and user preferences.
@@ -278,7 +279,7 @@ public class UserLayoutManager {
     if (newLayout != null) {
       uLayoutXML = newLayout;
       try {
-        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(),
+        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), 
             uLayoutXML);
       } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
@@ -405,8 +406,8 @@ public class UserLayoutManager {
     Element node = uLayoutXML.getElementById(nodeID);
     if (node != null) {
       return  node.getAttribute("name");
-    }
-    else
+    } 
+    else 
       return  null;
   }
 
@@ -414,19 +415,28 @@ public class UserLayoutManager {
    * put your documentation comment here
    * @param str_ID
    */
-  public void removeChannel (String str_ID) {
+  public void removeChannel (String str_ID) throws PortalException {
     // warning .. the channel should also be removed from uLayoutXML
     Element channel = uLayoutXML.getElementById(str_ID);
     if (channel != null) {
-	if(!this.deleteNode(channel)) {
-	    // unable to remove channel due to unremovable/immutable restrictions
-	    Logger.log(Logger.DEBUG,"UserLayoutManager::removeChannel() : unabel to remove channel \""+str_ID+"\"");
-	} else {
-	    // channel has been removed from the userLayoutXML .. persist the layout ?
-	    Logger.log(Logger.DEBUG,"UserLayoutManager::removeChannel() : removed channel \""+str_ID+"\"");
-	}	
-    }
-    else
+      if (!this.deleteNode(channel)) {
+        // unable to remove channel due to unremovable/immutable restrictions
+        Logger.log(Logger.DEBUG, "UserLayoutManager::removeChannel() : unable to remove channel \"" + str_ID + "\"");
+      } 
+      else {
+        try {
+          // Persist the user's layout after the channel is removed
+          GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), 
+              uLayoutXML);
+        } catch (Exception e) {
+          Logger.log(Logger.ERROR, e);
+          throw  new GeneralRenderingException(e.getMessage());
+        }
+        // channel has been removed from the userLayoutXML .. persist the layout ?
+        Logger.log(Logger.DEBUG, "UserLayoutManager::removeChannel() : removed channel \"" + str_ID + "\"");
+      }
+    } 
+    else 
       Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
   }
 
@@ -458,8 +468,8 @@ public class UserLayoutManager {
    */
   public boolean isUnremovable (Node node) {
     if (getUnremovableParent(node) != null)
-      return  true;
-    else
+      return  true; 
+    else 
       return  false;
   }
 
@@ -470,8 +480,8 @@ public class UserLayoutManager {
    */
   public boolean isImmutable (Node node) {
     if (getImmutableParent(node) != null)
-      return  true;
-    else
+      return  true; 
+    else 
       return  false;
   }
 
@@ -513,31 +523,31 @@ public class UserLayoutManager {
     return  getUnremovableParent(node.getParentNode());
   }
 
-    
-    /**
-     * Returns true if a node has any unremovable children.
-     * This function does a depth-first traversal down the user layout, so it's rather expensive.
-     *
-     * @param node a <code>Node</code> current node
-     * @return a <code>boolean</code> true if there are any unremovable children of this node
-     */
-    public boolean hasUnremovableChildren(Node node) {
-	NodeList nl=node.getChildNodes();
-	if(nl!=null) 
-	    for(int i=0;i<nl.getLength();i++) {
-		Node n=nl.item(i);
-		if(n.getNodeType() == Node.ELEMENT_NODE) {
-		    String r=((Element)n).getAttribute("unremovable");
-		    if(r!=null) {
-			if(r.equals("true")) {
-			    return true;
-			}
-		    }
-		    if(hasUnremovableChildren(n)) return true;
-		}
-	    }
-	return false;
-    }
+  /**
+   * Returns true if a node has any unremovable children.
+   * This function does a depth-first traversal down the user layout, so it's rather expensive.
+   *
+   * @param node a <code>Node</code> current node
+   * @return a <code>boolean</code> true if there are any unremovable children of this node
+   */
+  public boolean hasUnremovableChildren (Node node) {
+    NodeList nl = node.getChildNodes();
+    if (nl != null)
+      for (int i = 0; i < nl.getLength(); i++) {
+        Node n = nl.item(i);
+        if (n.getNodeType() == Node.ELEMENT_NODE) {
+          String r = ((Element)n).getAttribute("unremovable");
+          if (r != null) {
+            if (r.equals("true")) {
+              return  true;
+            }
+          }
+          if (hasUnremovableChildren(n))
+            return  true;
+        }
+      }
+    return  false;
+  }
 
   /**
    * Removes a channel or a folder from the userLayout structure
@@ -555,8 +565,8 @@ public class UserLayoutManager {
     if (isImmutable(node.getParentNode()))
       return  false;
     // see if any of the node children are marked as unremovable
-    if(hasUnremovableChildren(node))
-	return false;
+    if (hasUnremovableChildren(node))
+      return  false;
     // all checks out, delete the node
     if (node.getParentNode() != null)
       (node.getParentNode()).removeChild(node);
@@ -575,8 +585,8 @@ public class UserLayoutManager {
     if (node == null)
       return  false;
     if (node == ancestor)
-      return  true;
-    else
+      return  true; 
+    else 
       return  isDescendentOf(ancestor, node.getParentNode());
   }
 
@@ -612,7 +622,7 @@ public class UserLayoutManager {
     // everything checks out, do the move
     if (sibiling != null && sibiling.getParentNode() == target) {
       target.insertBefore(node, sibiling);
-    }
+    } 
     else {
       target.appendChild(node);
     }
