@@ -130,12 +130,12 @@ Version $Revision$
 							<tr>
 								<td>
 									<a href="{$baseActionURL}?uP_root=root">
-										<img src="{$mediaPathIcons}/home.gif" width="24" height="24" alt="home" title="home" border="0"/>
+										<img src="{$mediaPathIcons}/home.gif" width="24" height="24" alt="Home" title="Home" border="0"/>
 									</a>
 								</td>
 								<td>
 									<a href="{$baseActionURL}?uP_fname=layout-sitemap">
-										Site Map
+										<img src="{$mediaPathIcons}/sitemap.gif" width="24" height="24" alt="View Sitemap" title="View Sitemap" border="0"/>
 									</a>
 								</td>
 								<xsl:if test="$userLayoutRoot='root'">
