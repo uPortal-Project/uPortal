@@ -724,7 +724,7 @@ public class UserInstance implements HttpSessionBindingListener {
 		StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
-        themePrefs.putParameterValue("authenticated", authenticated);
+        structPrefs.putParameterValue("authenticated", authenticated);
         String userName = person.getFullName();
         if (userName != null && userName.trim().length() > 0)
             themePrefs.putParameterValue("userName", userName);
@@ -734,6 +734,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
+        	e.printStackTrace();
             LogService.log(LogService.ERROR, e);
         }
         
