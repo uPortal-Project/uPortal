@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class PersonDirInfo {
+class PersonDirInfo {
     
     /**  protocol, server, and initial connection parameters */
     private String url; 
@@ -66,21 +66,21 @@ public class PersonDirInfo {
     /**
      * @param attributealiases The attributealiases to set.
      */
-    public void setAttributealiases(String[] attributealiases) {
+    void setAttributealiases(String[] attributealiases) {
         this.attributealiases = attributealiases;
     }
     
     /**
      * @return Returns the attributenames.
      */
-    public String[] getAttributenames() {
+    String[] getAttributenames() {
         return this.attributenames;
     }
     
     /**
      * @param attributenames The attributenames to set.
      */
-    public void setAttributenames(String[] attributenames) {
+    void setAttributenames(String[] attributenames) {
         this.attributenames = attributenames;
     }
     
@@ -88,7 +88,7 @@ public class PersonDirInfo {
      * Get the fully qualified class name of the JDBC driver to use.
      * @return fully qualified class name of JDBC driver.
      */
-    public String getDriver() {
+    String getDriver() {
         return this.driver;
     }
     
@@ -98,7 +98,7 @@ public class PersonDirInfo {
      * @param driver The driver to set.
      * @throws IllegalStateException if this is an LDAP or Res-Ref PDI.
      */
-    public void setDriver(String driver) {
+    void setDriver(String driver) {
         if (isLdap())
             throw new IllegalStateException("Cannot set driver for an LDAP source.");
         if (this.ResRefName != null)
@@ -112,7 +112,7 @@ public class PersonDirInfo {
      * Zero has the special meaning of no time limit.
      * @return time limit for ldap queries, in milliseconds. Zero means no time limit.
      */
-    public int getLdaptimelimit() {
+    int getLdaptimelimit() {
         return this.ldaptimelimit;
     }
     
@@ -123,7 +123,7 @@ public class PersonDirInfo {
      * @throws IllegalArgumentException if ldaptimelimt param < 0
      * @throws IllegalStateException if using JDBC.
      */
-    public void setLdaptimelimit(int ldaptimelimit) {
+    void setLdaptimelimit(int ldaptimelimit) {
         if (ldaptimelimit < 0)
             throw new IllegalArgumentException("Cannot set an LDAP time limit " +
                     "of less than zero milliseconds: [" + ldaptimelimit + "]");
@@ -140,7 +140,7 @@ public class PersonDirInfo {
      * JDBC or LDAP source.
      * @return the username for authenticating to the soruce
      */
-    public String getLogonid() {
+    String getLogonid() {
         return this.logonid;
     }
     
@@ -152,7 +152,7 @@ public class PersonDirInfo {
      * @param logonid The logonid to set.
      * @throws IllegalStateException if this is a ResRef or Ldap-ref source.
      */
-    public void setLogonid(String logonid) {
+    void setLogonid(String logonid) {
         if (this.ldapRefName != null)
             throw new IllegalStateException("Cannot set logon id for a source " +
                     "configured to use LdapServices to obtain the LDAP connection.");
@@ -166,7 +166,7 @@ public class PersonDirInfo {
      * Get the password to authenticate to the LDAP or JDBC source.
      * @return the password
      */
-    public String getLogonpassword() {
+    String getLogonpassword() {
         return this.logonpassword;
     }
     
@@ -174,7 +174,7 @@ public class PersonDirInfo {
      * Set the password to use to authenticate to the LDAP or JDBC source.
      * @param logonpassword password to directly configured source
      */
-    public void setLogonpassword(String logonpassword) {
+    void setLogonpassword(String logonpassword) {
         if (this.ldapRefName != null)
             throw new IllegalStateException("Cannot set logon password for a source " +
                     "configured to use LdapServices to obtain the LDAP connection.");
@@ -190,7 +190,7 @@ public class PersonDirInfo {
      * use an RDBMServices-configured DataSource.
      * @return the name of the RDBMServices-configured DataSource we should use.
      */
-    public String getResRefName() {
+    String getResRefName() {
         return this.ResRefName;
     }
     
@@ -201,7 +201,7 @@ public class PersonDirInfo {
      * @throws IllegalArgumentException if resRefName param is null
      * @throws IllegalStateException if url or ldapRefName already set
      */
-    public void setResRefName(String resRefName) {
+    void setResRefName(String resRefName) {
         if (resRefName == null)
             throw new IllegalArgumentException("Cannot set resRefName to null.");
         if (this.url != null)
@@ -216,7 +216,7 @@ public class PersonDirInfo {
      * should be the user identifier.
      * @return LDAP or JDBC query parameterized by user identifier
      */
-    public String getUidquery() {
+    String getUidquery() {
         return this.uidquery;
     }
     
@@ -225,7 +225,7 @@ public class PersonDirInfo {
      * @param uidquery The uidquery to set.
      * @throws IllegalArgumentException if param uidquery is null.
      */
-    public void setUidquery(String uidquery) {
+    void setUidquery(String uidquery) {
         if (uidquery == null)
             throw new IllegalArgumentException("You cannot set the uidquery to null.");
         this.uidquery = uidquery;
@@ -235,7 +235,7 @@ public class PersonDirInfo {
      * Get the LDAP or JDBC url.
      * @return Returns the url.
      */
-    public String getUrl() {
+    String getUrl() {
         return this.url;
     }
     
@@ -245,7 +245,7 @@ public class PersonDirInfo {
      * @throws IllegalArgumentException if the URL doesn't start with jdbc or ldap.
      * @throws IllegalStateException if ldapRefName or ResRefName is already set.
      */
-    public void setUrl(String url) {
+    void setUrl(String url) {
         if (this.ldapRefName != null)
             throw new IllegalStateException("Cannot set the URL of a PDI " +
                     "configured to use an LdapServices-configured LDAP source.");
@@ -263,7 +263,7 @@ public class PersonDirInfo {
      * Get the context in which users are to be found.
      * @return the context in which users are to be found.
      */
-    public String getUsercontext() {
+    String getUsercontext() {
         return this.usercontext;
     }
     
@@ -272,7 +272,7 @@ public class PersonDirInfo {
      * @param usercontext LDAP context for users
      * @throws IllegalStateException if this is a JDBC PDI.
      */
-    public void setUsercontext(String usercontext) {
+    void setUsercontext(String usercontext) {
         if (isJdbc())
             throw new IllegalStateException("Cannot set usercontext of a JDBC PDI.");
         this.usercontext = usercontext;
@@ -283,7 +283,7 @@ public class PersonDirInfo {
      * information source?
      * @return true if a JDBC source, false otherwise
      */
-    public boolean isJdbc() {
+    boolean isJdbc() {
         if (this.ResRefName != null && this.ResRefName.length() > 0)
             return true;
         if (this.url != null && this.url.startsWith("jdbc:"))
@@ -296,7 +296,7 @@ public class PersonDirInfo {
      * information source?
      * @return true if a LDAP source, false otherwise
      */
-    public boolean isLdap() {
+    boolean isLdap() {
         return (this.url != null && this.url.startsWith("ldap") 
                 || (this.ldapRefName != null && this.ldapRefName.length() > 0));
     }
@@ -305,7 +305,7 @@ public class PersonDirInfo {
      * Get the name of the LDAP source from LdapServices to use.
      * @return Returns the ldapRefName, or null if not set.
      */
-    public String getLdapRefName() {
+    String getLdapRefName() {
         return this.ldapRefName;
     }
     
@@ -314,7 +314,7 @@ public class PersonDirInfo {
      * @param ldapRefName The ldapRefName to set.
      * @throws IllegalStateException if ResRefName or url already set.
      */
-    public void setLdapRefName(String ldapRefName) {
+    void setLdapRefName(String ldapRefName) {
         if (this.ResRefName != null)
             throw new IllegalStateException("Cannot set ldapRefName when ResRefName is already set.");
         if (this.url != null)
@@ -472,7 +472,7 @@ public class PersonDirInfo {
      * ldapRefName refers to an actually configured resource.
      * @return null if valid or a String message describing problem
      */
-    public String validate() {
+    String validate() {
         String problemMessage = "";
         if (this.url == null && this.ldapRefName == null && this.ResRefName == null)
             problemMessage += "The url for the LDAP or JDBC source " +

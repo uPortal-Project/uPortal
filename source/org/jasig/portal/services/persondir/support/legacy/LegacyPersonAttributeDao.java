@@ -39,9 +39,12 @@ public class LegacyPersonAttributeDao implements IPersonAttributeDao {
     /**
      * This constructor builds a legacy PersonDirectory implementation suitable
      * for environments in which Spring configuration is not available.
+     * @throws SAXException when PersonDirs.xml is not well formed
+     * @throws ParserConfigurationException when ResourceLoader is misconfigured
+     * @throws IOException - when PersonDirs.xml cannot be read
+     * @throws ResourceMissingException - when /properties/PersonDirs.xml is missing
      */
-    public LegacyPersonAttributeDao() 
-        throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
+    public LegacyPersonAttributeDao() throws ResourceMissingException, IOException, ParserConfigurationException, SAXException  {
         // build up from the bottom
         
         // we need PersonAttributeDaos implementing each of the
@@ -56,9 +59,9 @@ public class LegacyPersonAttributeDao implements IPersonAttributeDao {
         for (final Iterator pdInfoItr = personDirectoryInfos.iterator(); pdInfoItr.hasNext();){
             final PersonDirInfo info = (PersonDirInfo)pdInfoItr.next();
             
-            final PersonDirInfoAdaptor adaptor = new PersonDirInfoAdaptor(info);
+            final IPersonAttributeDao adapted = PersonDirInfoAdaptor.adapt(info);
             
-            personAttributeDaos.add(adaptor);
+            personAttributeDaos.add(adapted);
         }
         
         // build a merger over the list of sources
@@ -72,23 +75,14 @@ public class LegacyPersonAttributeDao implements IPersonAttributeDao {
         this.delegate = merger;
     }
 
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
-     */
     public Set getPossibleUserAttributeNames() {
         return this.delegate.getPossibleUserAttributeNames();
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
-     */
     public Map getUserAttributes(Map seed) {
         return this.delegate.getUserAttributes(seed);
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
-     */
     public Map getUserAttributes(String uid) {
         return this.delegate.getUserAttributes(uid);
     }

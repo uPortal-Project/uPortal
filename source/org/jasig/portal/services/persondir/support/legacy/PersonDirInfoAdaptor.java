@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
@@ -25,6 +26,7 @@ import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jndi.JndiObjectFactoryBean;
 
 /**
  * Adapts from a {@link PersonDirInfo} to a {@link IPersonAttributeDao}.
@@ -32,7 +34,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class PersonDirInfoAdaptor implements IPersonAttributeDao {
+final class PersonDirInfoAdaptor {
     private static final Log LOG = LogFactory.getLog(PersonDirInfoAdaptor.class);
     
     //Needed since our Jdbc Dao needs an attribute to map queries with 
@@ -40,23 +42,18 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
     private static final List QUERY_ATTRIBUTE_LIST = Collections.singletonList(QUERY_ATTRIBUTE);
     
     /**
-     * Delegate IPersonAttributeDao which we construct from the PersonDirInfo
-     * provided at construction.
-     */
-    private IPersonAttributeDao delegate;
-    
-    /**
-     * Instantiate this class implementing the IPersonAttributeDao defined
+     * Return an IPersonAttributeDao implementing the source defined
      * by the given PersonDirInfo. Throws IllegalArgumentException if the
      * given info doesn't define a valid IPersonAttributeDao (and this class
      * succeeds in detecting the problem).
      * 
      * @param info PersonDirInfo defining the attribute source we implement
      * @throws IllegalArgumentException
+     * @return an IPersonAttributeDao implementing the defined source
      */
-    public PersonDirInfoAdaptor(final PersonDirInfo info) {
+    static IPersonAttributeDao adapt(final PersonDirInfo info) {
         if (LOG.isTraceEnabled())
-            LOG.trace("entering PersonDirInfoAdaptor(" + info + ")");
+            LOG.trace("entering adapt(" + info + ")");
         
         if (info == null)
             throw new IllegalArgumentException("info cannot be null.");
@@ -66,47 +63,26 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
             throw new IllegalArgumentException("The PersonDirInfo to be adapted has illegal state: " + validityMessage);
         }
         
+        IPersonAttributeDao returnMe = null;
+        
         if (info.isJdbc()) {
-            this.delegate = this.jdbcDao(info);
-        }
-        else if (info.isLdap()) {
-            this.delegate = this.ldapDao(info);
-        }
-        else {
-            throw new IllegalArgumentException("Provided PersonDirInfo is not JDBC or LDAP, unable to adapat:" + info);
+            returnMe = jdbcDao(info);
+        } else if (info.isLdap()) {
+            returnMe = ldapDao(info);
+        } else {
+            throw new IllegalArgumentException("Provided PersonDirInfo is not JDBC or LDAP, unable to adapt:" + info);
         }
         
-        if (this.delegate == null)
-            throw new IllegalStateException("There was an unknown problem creating the IPersonAttributeDao delegate.");
+        if (returnMe == null) {
+            throw new IllegalStateException("There was an unknown problem creating the IPersonAttributeDao delegate - it came out null!");
+        }
+            
+        
         
         if (LOG.isTraceEnabled())
-            LOG.trace("constructed " + this);
-    }
-    
-    /**
-     * Gets the attribute used for putting the single string queries
-     * into a Map.
-     */
-    public String getDefaultAttributeName() {
-        return QUERY_ATTRIBUTE;
-    }
-    
-    public Set getPossibleUserAttributeNames() {
-        return this.delegate.getPossibleUserAttributeNames();
-    }
-    
-    public Map getUserAttributes(Map seed) {
-        return this.delegate.getUserAttributes(seed);
-    }
-    
-    public Map getUserAttributes(String uid) {
-        return this.delegate.getUserAttributes(uid);
-    }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("PersonDirInfoAdaptor: delegate=[" + this.delegate + "]");
-        return sb.toString();
+            LOG.trace("constructed " + returnMe);
+        
+        return returnMe;
     }
     
     /**
@@ -115,7 +91,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
      * @param info The {@link PersonDirInfo} to use as a basis for the DAO
      * @return A fully configured {@link JdbcPersonAttributeDaoImpl}
      */
-    private IPersonAttributeDao jdbcDao(final PersonDirInfo info) {
+    private static IPersonAttributeDao jdbcDao(final PersonDirInfo info) {
         final String sql = info.getUidquery();
         
         // determine where to get our DataSource
@@ -123,10 +99,26 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         
         final String dsRefName = info.getResRefName();
         if (dsRefName != null && dsRefName.length() > 0) {
-            // get a DataSource from RDBMServices
-            source = new RDBMServicesDataSource(dsRefName);
-        }
-        else {
+            
+            if (dsRefName.equals(RDBMServices.DEFAULT_DATABASE)) {
+                // get a DataSource from RDBMServices
+                source = new RDBMServicesDataSource(dsRefName);
+            } else {
+                JndiObjectFactoryBean factory = new JndiObjectFactoryBean();
+                factory.setJndiName(dsRefName);
+                factory.setResourceRef(true);
+                
+                try {
+                    factory.afterPropertiesSet();
+                    source = (DataSource) factory.getObject();
+                } catch (Exception t) {
+                    LOG.error("Error looking up datasource [" + dsRefName + "] from JNDI.");
+                    throw new IllegalArgumentException("Referenced JNDI name did not map to a DataSource.");
+                }
+
+            }
+            
+        } else {
             // construct a DataSource adhoc
             DriverManagerDataSource ds = new DriverManagerDataSource();
             ds.setDriverClassName(info.getDriver());
@@ -172,7 +164,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
      * @param info The {@link PersonDirInfo} to use as a basis for the DAO
      * @return A fully configured {@link LdapPersonAttributeDaoImpl}
      */
-    private IPersonAttributeDao ldapDao(final PersonDirInfo info) {
+    private static IPersonAttributeDao ldapDao(final PersonDirInfo info) {
         final LdapPersonAttributeDaoImpl ldapImpl = new LdapPersonAttributeDaoImpl();
            
         ILdapServer ldapServer = null;
@@ -183,8 +175,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
             
             if (ldapServer == null)
                 throw new IllegalArgumentException("LdapServices does not have an LDAP server configured with name [" + ldapRefName + "]");
-        }
-        else {
+        } else {
             // instantiate an LDAP server ad-hoc.
        
             // set the "usercontext" attribute of the PersonDirInfo as the baseDN
@@ -220,6 +211,13 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         ldapImpl.setDefaultAttributeName(QUERY_ATTRIBUTE);
        
         return ldapImpl;
+    }
+    
+    /**
+     * This class is not intended to be instantiated, hence the private constructor.
+     */
+    private PersonDirInfoAdaptor() {
+        // this class is not intended to be instantiated
     }
 }
 

@@ -38,7 +38,7 @@ class PersonDirXmlParser {
      * @throws IllegalArgumentException if param personDirDoc is null
      * @throws DataAccessException on failure
      */
-    public static List getPersonDirInfos(Document personDirDoc) {
+    static List getPersonDirInfos(Document personDirDoc) {
         if (personDirDoc == null)
             throw new IllegalArgumentException(
                     "Cannot get PersonDirInfos from a null document.");
