@@ -41,6 +41,7 @@ import org.jasig.portal.*;
 import java.util.HashMap;
 import java.util.*;
 import java.lang.reflect.Constructor;
+import org.w3c.dom.*;
 
 /**
  * CGroupsManagerServantFactory
@@ -60,12 +61,8 @@ public class CGroupsManagerServantFactory {
     protected CGroupsManagerServantFactory() {
     }
 
-    protected static IServant getGroupsServant(){
-        return getGroupsServant("CGroupsManagerServant");
-    }
-
-    protected static IServant getGroupsServant(String name){
-        return instance().getServant(name);
+    protected static CGroupsManagerServant getGroupsServant(){
+      return new CGroupsManagerServant(new CGroupsManager(), getNextUid());
     }
 
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message) throws PortalException{
@@ -73,51 +70,64 @@ public class CGroupsManagerServantFactory {
     }
 
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect, IGroupMember[] members) throws PortalException{
-      long time1 = Calendar.getInstance().getTime().getTime();
-      IServant servant;
-      String typeKey = null;
-      if (type!=null && !type.equals("")){
-        try{
-          typeKey = GroupService.getDistinguishedGroup(type).getKey();
-        }
-        catch(Exception e){
-          ;
-        }
-      }
+      long time1 = System.currentTimeMillis();
+      CGroupsManagerServant servant;
+      
       try {
         servant = getGroupsServant();
         ChannelStaticData slaveSD =  cloneStaticData(staticData);
-        slaveSD.setParameter("grpView","tree");
-        slaveSD.setParameter("grpMode","select");
-        if (typeKey!=null){
-           slaveSD.setParameter("grpViewKey",typeKey);
-        }
-        if(!allowFinish){
-           slaveSD.setParameter("grpAllowFinish","false");
-        }
+        Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
+        servant.setStaticData(slaveSD);
+        
+        servant.getSessionData().mode = "select";
+        servant.getSessionData().allowFinish = allowFinish;
         if(!allowEntitySelect){
-           slaveSD.setParameter("grpBlockEntitySelect","true");
+           servant.getSessionData().blockEntitySelect = true;
         }
         if (message != null){
-          slaveSD.setParameter("grpServantMessage",message);
+          servant.getSessionData().customMessage = message;
         }
+        String typeKey = null;
+        if (type!=null && !type.equals("")){
+          try{
+            typeKey = GroupService.getDistinguishedGroup(type).getKey();
+          }
+          catch(Exception e){
+            ;
+          }
+        }
+        if (typeKey!=null){
+          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().model);
+        }
+        servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
         if (members!=null && members.length>0){
-           slaveSD.put("grpPreSelectedMembers",members);
+          Document viewDoc = servant.getSessionData().model;
+            Element rootElem = viewDoc.getDocumentElement();
+            try{
+                for (int mm = 0; mm< members.length;mm++){
+                  IGroupMember mem = members[mm];
+                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,viewDoc);
+                  memelem.setAttribute("selected","true");
+                  rootElem.appendChild(memelem);
+                }
+            }
+            catch (Exception e){
+              LogService.instance().log(LogService.ERROR,e);
+            }
         }
-        Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
-        ((IChannel)servant).setStaticData(slaveSD);
       }
       catch (Exception e){
+          LogService.instance().log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
-      long time2 = Calendar.getInstance().getTime().getTime();
+      long time2 = System.currentTimeMillis();
       Utility.logMessage("INFO", "CGroupsManagerFactory took  "
          + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
-      return servant;
+      return (IServant) servant;
     }
 
     public static IServant getGroupsServantforGroupMemberships(ChannelStaticData staticData, String message, IGroupMember member, boolean allowFinish) throws PortalException{
-      IServant servant = null;
+      CGroupsManagerServant servant = null;
       String typeKey = null;
 
         try{
@@ -130,26 +140,37 @@ public class CGroupsManagerServantFactory {
       try {
         servant = getGroupsServant();
         ChannelStaticData slaveSD = cloneStaticData(staticData);
-
-        slaveSD.setParameter("grpView","tree");
-        slaveSD.setParameter("grpMode","select");
-        slaveSD.setParameter("grpBlockEntitySelect","true");
-        slaveSD.put("grpPreSelectForMember",member);
+        servant.setStaticData(slaveSD);
         if (typeKey!=null){
-           slaveSD.setParameter("grpViewKey",typeKey);
+          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().model);
         }
-        if(!allowFinish){
-           slaveSD.setParameter("grpAllowFinish","false");
-        }
+        servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
+        servant.getSessionData().mode = "select";
+        servant.getSessionData().allowFinish = allowFinish;
+        servant.getSessionData().blockEntitySelect = true;
         if (message != null){
-          slaveSD.setParameter("grpServantMessage",message);
+          servant.getSessionData().customMessage = message;
         }
-        ((IChannel)servant).setStaticData(slaveSD);
+        Document viewDoc = servant.getSessionData().model;
+        Element rootElem = viewDoc.getDocumentElement();
+        try{
+          Iterator parents = member.getContainingGroups();
+          IEntityGroup parent;
+          while (parents.hasNext()){
+             parent = (IEntityGroup) parents.next();
+             Element parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
+             parentElem.setAttribute("selected","true");
+             rootElem.appendChild(parentElem);
+          }
+        }
+        catch (Exception e){
+          LogService.instance().log(LogService.ERROR,e);
+        }
       }
       catch (Exception e){
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
-      return servant;
+      return (IServant) servant;
     }
 
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type) throws PortalException{
@@ -161,15 +182,17 @@ public class CGroupsManagerServantFactory {
 
     public static IServant getGroupsServantforAddRemove(ChannelStaticData staticData, String groupKey) throws PortalException{
         long time1 = Calendar.getInstance().getTime().getTime();
-      IServant servant;
+      CGroupsManagerServant servant;
       try {
         IEntityGroup testgroup = GroupService.findGroup(groupKey);
         testgroup.getClass();
         servant = getGroupsServant();
         ChannelStaticData slaveSD = cloneStaticData(staticData);
-        slaveSD.setParameter("grpView","edit");
-        slaveSD.setParameter("grpViewKey",groupKey);
+        
         ((IChannel)servant).setStaticData(slaveSD);
+        servant.getSessionData().mode = "edit";
+        servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
+        servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
       catch (Exception e){
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
@@ -177,7 +200,7 @@ public class CGroupsManagerServantFactory {
         long time2 = Calendar.getInstance().getTime().getTime();
                 Utility.logMessage("INFO", "CGroupsManagerFactory took  "
                         + String.valueOf((time2 - time1)) + " ms to instantiate add/remove servant");
-        return servant;
+        return (IServant) servant;
     }
 
     protected static ChannelStaticData cloneStaticData(ChannelStaticData sd){
@@ -187,44 +210,6 @@ public class CGroupsManagerServantFactory {
             rsd.remove(srd.nextElement());
         }
         return rsd;
-    }
-
-    protected IServant getServant(String name){
-       Utility.logMessage("DEBUG", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
-       Utility.logMessage("DEBUG", "CGroupsManagerServantFactory::getServant(): A GROUPS SERVANT IS BEING CREATED");
-       Utility.logMessage("DEBUG", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
-       IServant rs = null;
-       /*
-       Until we need a cache of different type of servant classes, this code will be
-       commented out. The problem is the instantiation of a class with newInstance()
-       when parameters are involved for some servants (eg IMultithreadedChannels) and
-       not for other (IChannel).
-       Class cserv = null;
-       try{
-          if (servantClasses.get(name)==null){
-             cserv = Class.forName("org.jasig.portal.channels.groupsmanager."+name);
-             servantClasses.put(name,cserv);
-           }
-           else {
-             cserv = (Class) servantClasses.get(name);
-           }
-       }
-       catch(Exception e){
-          LogService.instance().log(LogService.ERROR,e);
-       }
-       */
-       try{
-          //rs = (IServant) ((Class) servantClasses.get(name)).newInstance();
-          CGroupsManagerServant cgms = new CGroupsManagerServant(new CGroupsManager(), getNextUid());
-          rs = (IServant) cgms;
-          Utility.logMessage("DEBUG", "]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
-          Utility.logMessage("DEBUG", "CGroupsManagerServantFactory::getServant(): GROUPS SERVANT RETURNED " + cgms.channel);
-          Utility.logMessage("DEBUG", "]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
-       }
-       catch(Exception e){
-          LogService.instance().log(LogService.ERROR,e);
-       }
-       return rs;
     }
 
     protected static synchronized CGroupsManagerServantFactory instance(){
@@ -250,4 +235,6 @@ public class CGroupsManagerServantFactory {
       String newUid = Calendar.getInstance().getTime().getTime() + "grpsservant" + ++UID;
       return  newUid;
    }
+   
+   
 }
