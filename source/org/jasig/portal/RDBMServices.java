@@ -86,6 +86,11 @@ public class RDBMServices {
   static {
     try {
       loadProps();
+      if (!bPropsLoaded && !getDatasourceFromJndi)
+        {
+        System.err.println("Unable to connect to database");
+        throw new PortalException("Unable to connect to database");
+      }
 
       /**
        * See what the database allows us to do
@@ -208,6 +213,7 @@ public class RDBMServices {
    * Loads the JDBC properties from rdbm.properties file.
    */
   protected static void loadProps () throws Exception {
+  try {
       if (!bPropsLoaded) {
         InputStream inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
@@ -219,7 +225,14 @@ public class RDBMServices {
         jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
         jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
         bPropsLoaded = true;
+        }
       }
+      catch (Exception e){
+        // let caller handle situation where no proerties file is found.
+        // When getting datasource from jndi properties file is optional
+        // and would be used as a dallback only
+        return;
+        }
   }
 
   /**
@@ -274,6 +287,7 @@ public class RDBMServices {
         return conn;
     }
 
+    if (bPropsLoaded)
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
         conn = jdbcDriver.connect(sJdbcUrl, jdbcDriverProps);
