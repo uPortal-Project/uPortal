@@ -1277,7 +1277,8 @@ Version $Revision$
                             <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
                         </td>
                         <td valign="middle">
-                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
+                            <!-- &amp;uP_sparam=selectedID&amp;selectedID='' -->
+                            <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_cancel_targets=true">
                                 <img alt="Click to add new tab here" title="Click to add new tab here" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
                             </a>
                         </td>
@@ -1608,13 +1609,27 @@ Version $Revision$
                                     </span>
                                     <!-- <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true"> -->
                                     <a href="{$baseActionURL}?uP_fragment_action=new&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">New Tab Fragment</a>
+                                    <xsl:if test="not($currentFragmentID = 'default_layout')">
+                                        <span> |<xsl:text>&#160;</xsl:text>
+                                        </span>
+                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Save Fragment</a>
+                                    </xsl:if>
+                                    <xsl:if test="$currentFragmentID = fragments/fragment/@ID and not($currentFragmentID = 'default_layout')">
+                                        <span> |<xsl:text>&#160;</xsl:text>
+                                        </span>
+                                        <a href="{$baseActionURL}?uP_fragment_action=publish&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Publish Fragment</a>
+                                    </xsl:if>
+                                    <xsl:if test="not($currentFragmentID = 'default_layout')">
+                                        <span> |<xsl:text>&#160;</xsl:text>
+                                        </span>
+                                        <a href="{$baseActionURL}?uP_fragment_action=delete&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Delete Fragment</a>
+                                    </xsl:if>
                                 </xsl:if>
                             </form>
                         </xsl:if>
-                        <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
+                        <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
                             <form name="addFragNameDesc" method="post" action="{$baseActionURL}"> New Fragment Name:<input name="uP_fragment_name" type="text" class="uportal-input-text" maxlength="30"/> New Fragment Description:<input name="uP_fragment_desc" type="text" class="uportal-input-text"/>
                                 <input type="submit" name="uPCM_submit" value="Submit" class="uportal-button"/>
-                                <!-- <input name="submitFragNameDesc" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Submit the Fragment Name & Description" title="Submit the Fragment Name & Description"/> -->
                                 <input type="hidden" name="uP_fragment_action" value="edit"/>
                                 <input type="hidden" name="uP_sparam" value="mode"/>
                                 <input type="hidden" name="mode" value="{$mode}"/>
@@ -1624,7 +1639,7 @@ Version $Revision$
                                 <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
                                 <input type="hidden" name="uP_cancel_targets" value="true"/>
                             </form>
-                        </xsl:if>
+                        </xsl:if> -->
                     </span>
                 </td>
                 <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/iconbarrightborder.gif); background-repeat:repeat-y;">
