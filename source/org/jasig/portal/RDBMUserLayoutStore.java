@@ -1578,6 +1578,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
       Statement stmt = con.createStatement();
+      Statement insertStmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
         // eventually, we need to fix template layout implementations so you can just do this:
@@ -1649,7 +1650,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 //            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
 
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-              stmt.executeUpdate(Insert);
+              insertStmt.executeUpdate(Insert);
           }
           RDBMServices.commit(con); // Make sure it appears in the store
         }
@@ -1745,7 +1746,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
 
-        // We have to retrieve the channel defition after the layout structure
+        // We have to retrieve the channel definition after the layout structure
         // since retrieving the channel data from the DB may interfere with the
         // layout structure ResultSet (in other words, Oracle is a pain to program for)
         if (chanIds.size() > 0) {
@@ -1813,6 +1814,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
       } finally {
         stmt.close();
+        insertStmt.close();
       }
       return  doc;
     } finally {
