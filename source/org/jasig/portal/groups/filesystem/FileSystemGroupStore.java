@@ -213,8 +213,9 @@ private IEntityGroup find(File file) throws GroupsException
  */
 public IEntityGroup find(String key) throws GroupsException
 {
-    log.debug(
-        DEBUG_CLASS_NAME + ".find(): group key: " + key);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".find(): group key: " + key);
 
     String path = getFilePathFromKey(key);
     File f = new File(path);
@@ -225,8 +226,9 @@ public IEntityGroup find(String key) throws GroupsException
 
     if ( groupHolder == null || (groupHolder.getLastModified() != f.lastModified()) )
     {
-        log.debug(
-          DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path);
+        if (log.isDebugEnabled())
+            log.debug(
+                    DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path);
 
         IEntityGroup group = newInstance(f);
         groupHolder = new GroupHolder(group, f.lastModified()) ;
@@ -242,9 +244,9 @@ public IEntityGroup find(String key) throws GroupsException
  */
 protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 {
-
-    log.debug(
-        DEBUG_CLASS_NAME + ".findContainingGroups(): for " + ent);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".findContainingGroups(): for " + ent);
 
     List groups = new ArrayList();
     File root = getFileRoot(ent.getType());
@@ -275,9 +277,9 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
  */
 protected Iterator findContainingGroups(IEntityGroup group) throws GroupsException
 {
-
-    log.debug(
-        DEBUG_CLASS_NAME + ".findContainingGroups(): for " + group);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".findContainingGroups(): for " + group);
 
     List groups = new ArrayList();
     {
@@ -329,8 +331,9 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
  */
 public java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
-    log.debug(
-        DEBUG_CLASS_NAME + ".findEntitiesForGroup(): retrieving entities for group " + group);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".findEntitiesForGroup(): retrieving entities for group " + group);
 
     Collection entities = null;
     File f = getFile(group);
@@ -448,8 +451,9 @@ protected Class getDefaultEntityType() {
  */
 protected Collection getEntitiesFromFile(File idFile) throws GroupsException
 {
-    log.debug(
-        DEBUG_CLASS_NAME + "getEntitiesFromFile(): for " + idFile.getPath());
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getEntitiesFromFile(): for " + idFile.getPath());
 
     Collection ids = null;
     Class type = getEntityType(idFile);
@@ -468,8 +472,9 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
         entities.add(GroupService.getEntity(key, type));
     }
 
-    log.debug(
-        DEBUG_CLASS_NAME + "getEntitiesFromFile(): Retrieved " + entities.size() + " entities");
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getEntitiesFromFile(): Retrieved " + entities.size() + " entities");
 
     return entities;
 }
@@ -479,13 +484,15 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
  */
 protected Collection getEntityIdsFromFile(File idFile) throws IOException, FileNotFoundException
 {
-    log.debug(
-        DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Reading " + idFile.getPath());
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Reading " + idFile.getPath());
 
     Collection ids = getIdsFromFile(idFile, false);
 
-    log.debug(
-        DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Retrieved " + ids.size() + " IDs");
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Retrieved " + ids.size() + " IDs");
 
     return ids;
 }
@@ -526,8 +533,9 @@ protected File getFile(IEntityGroup group)
  */
 protected String getFilePathFromKey(String key)
 {
-    log.debug(
-        DEBUG_CLASS_NAME + ".getFilePathFromKey(): for key: " + key);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".getFilePathFromKey(): for key: " + key);
         
     String groupKey = useSubstitutePeriod 
       ? key.replace(SUBSTITUTE_PERIOD, PERIOD) 
@@ -535,8 +543,9 @@ protected String getFilePathFromKey(String key)
 
     String fullKey = getGroupsRootPath() + groupKey;
 
-     log.debug(
-        DEBUG_CLASS_NAME + ".getFilePathFromKey(): full key: " + fullKey);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + ".getFilePathFromKey(): full key: " + fullKey);
 
     return conformSeparatorChars(fullKey);
 }
@@ -562,13 +571,15 @@ protected char getGoodSeparator() {
  */
 protected Collection getGroupIdsFromFile(File idFile) throws IOException, FileNotFoundException
 {
-    log.debug(
-        DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Reading " + idFile.getPath());
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Reading " + idFile.getPath());
 
     Collection ids = getIdsFromFile(idFile, true);
 
-    log.debug(
-        DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Retrieved " + ids.size() + " IDs");
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Retrieved " + ids.size() + " IDs");
 
     return ids;
 }
@@ -746,9 +757,10 @@ throws GroupsException
     List ids = new ArrayList();
     File baseDir = getFileRoot(leafType);
 
-    log.debug(
-        DEBUG_CLASS_NAME + "searchForGroups(): " + query + " method: " +
-        searchMethod + " type: " + leafType);
+    if (log.isDebugEnabled())
+        log.debug(
+                DEBUG_CLASS_NAME + "searchForGroups(): " + query + " method: " +
+                searchMethod + " type: " + leafType);
 
     if ( baseDir != null )
     {
@@ -790,8 +802,9 @@ throws GroupsException
         }
     }
 
-    log.debug(DEBUG_CLASS_NAME +
-      ".searchForGroups(): found " + ids.size() + " files.");
+    if (log.isDebugEnabled())
+        log.debug(DEBUG_CLASS_NAME +
+                ".searchForGroups(): found " + ids.size() + " files.");
 
     return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[ids.size()]);
 }
