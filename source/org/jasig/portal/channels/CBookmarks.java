@@ -113,6 +113,7 @@ public class CBookmarks extends BaseChannel {
       Statement stmt = connection.createStatement();
       try {
         // Get the result set
+        LogService.instance().log(LogService.DEBUG, "CBookmarks.getBookmarkXML(): " + query);        
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -165,6 +166,7 @@ public class CBookmarks extends BaseChannel {
       Statement stmt = connection.createStatement();
       try {
         // Try to get the 'default' bookmarks from the database
+        LogService.instance().log(LogService.DEBUG, "CBookmarks.getDefaultBookmarks(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -184,7 +186,7 @@ public class CBookmarks extends BaseChannel {
              strbuf.append("</xbel>");
              inputXML = strbuf.toString();
  
-            LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
+             LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
           }
         } finally {
           rs.close();
@@ -192,7 +194,7 @@ public class CBookmarks extends BaseChannel {
         // Now add a row to the database for the user
         String insert = "INSERT INTO UPC_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES (" + staticData.getPerson().getID()
             + ",'" + inputXML + "')";
-        //LogService.instance().log(LogService.DEBUG, insert);
+        LogService.instance().log(LogService.DEBUG, "CBookmarks.getDefaultBookmarks(): " + insert);
         stmt.executeUpdate(insert);
       } finally {
         stmt.close();
@@ -227,6 +229,7 @@ public class CBookmarks extends BaseChannel {
           + staticData.getPerson().getID();
       Statement stmt = connection.createStatement();
       try {
+        LogService.instance().log(LogService.DEBUG, "CBookmarks.saveXML(): " + update);        
         stmt.executeUpdate(update);
       } finally {
         stmt.close();
@@ -517,7 +520,7 @@ public class CBookmarks extends BaseChannel {
   private void renderAddNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML(): No active node type has been set");
       renderViewModeXML(out);
     }
     else if (m_activeNodeType.equals("bookmark")) {
@@ -529,7 +532,7 @@ public class CBookmarks extends BaseChannel {
       transformXML(out, "add_node", getBookmarkXML(), parameters);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML(): Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
@@ -545,7 +548,7 @@ public class CBookmarks extends BaseChannel {
   private void renderDeleteNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML(): No active node type has been set");
       renderViewModeXML(out);
     }
     else if (m_activeNodeType.equals("bookmark")) {
@@ -557,7 +560,7 @@ public class CBookmarks extends BaseChannel {
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML(): Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
