@@ -86,15 +86,30 @@ public class ChannelFactory {
     public static IChannel instantiateLayoutChannel(UserLayoutChannelDescription description, String sessionId) throws PortalException {
         return instantiateChannel(description.getChannelSubscribeId(),description.getChannelPublishId(), description.getClassName(),description.getTimeout(),description.getParameterMap(),sessionId);
     }
-    
+
     private static IChannel instantiateChannel(String channelSubscribeId, String channelPublishId, String className, long timeOut, Map params, String sessionId) throws PortalException {
+      String uid = sessionId + "/" + channelSubscribeId;
+      return instantiateChannel(className, uid);
+    }
+
+    /**
+     * Produce an IChannel based on a java class name.  If the java class
+     * specified implements a channel interface other than
+     * <code>org.jasig.portal.IChannel</code>, it will be wrapped by an
+     * appropriate adapter class that does implement IChannel.
+     * @param className the channel's java class name
+     * @param uid a unique ID for use with multithreaded channels
+     * @return an <code>IChannel</code> object
+     */
+    public static IChannel instantiateChannel(String className, String uid) throws PortalException {
         IChannel ch=null;
-        
+        String staticChannelKey = className + "_" + uid;
+
         boolean exists=false;
         // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
         // channel more then once, but it's difficult to implement "instanceof" operation on
         // the java.lang.Class. So, I just look into the staticChannels table.
-        Object cobj=staticChannels.get(className);
+        Object cobj=staticChannels.get(staticChannelKey);
         if(cobj!=null) {
             exists=true;
         } else {
@@ -108,7 +123,6 @@ public class ChannelFactory {
         // determine what kind of a channel it is.
         // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
         if(cobj instanceof IMultithreadedChannel) {
-            String uid=sessionId+"/"+channelSubscribeId;
             if(cobj instanceof IMultithreadedCacheable) {
                 if(cobj instanceof IPrivileged) {
                     // both cacheable and privileged
@@ -125,7 +139,7 @@ public class ChannelFactory {
             }
             // see if we need to add the instance to the staticChannels
             if(!exists) {
-                staticChannels.put(className,cobj);
+                staticChannels.put(staticChannelKey,cobj);
             }
         } else {
             // vanilla IChannel
