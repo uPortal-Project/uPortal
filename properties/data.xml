@@ -55,6 +55,41 @@
         <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
+      <!-- We need default layouts for student, faculty, staff, and developer and then
+           we should add these
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>USER_NAME</name><value>student</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>CURR_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>USER_NAME</name><value>faculty</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>CURR_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>USER_NAME</name><value>staff</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>CURR_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>6</value></column>
+        <column><name>USER_NAME</name><value>developer</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>CURR_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      -->
     </rows>
   </table>
 
@@ -2337,15 +2372,190 @@
     <name>UP_PERMISSION</name>
     <rows>
       <row>
-        <column><name>OWNER</name><value>CHAN_ID.10</value></column>
-        <column><name>PRINCIPAL</name><value>0.*</value></column>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
         <column><name>ACTIVITY</name><value>PUBLISH</value></column>
-        <column><name>TARGET</name><value>*</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.*</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
-        <column><name>PRINCIPAL</name><value>2.0</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.1</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.2</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.3</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.4</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.5</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.6</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.7</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.8</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.9</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.10</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.11</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.12</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.13</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.14</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.15</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.16</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.17</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.18</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.19</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.20</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.21</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.22</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.89</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.90</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.92</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL</name><value>3.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.99</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
@@ -2547,34 +2757,37 @@
      </row>
      <row>
         <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>MEMBER_KEY</name><value>demo</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-     </row>
-     <row>
-        <column><name>GROUP_ID</name><value>1</value></column>
-        <column><name>MEMBER_KEY</name><value>student</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-     </row>
-     <row>
-        <column><name>GROUP_ID</name><value>9</value></column>
-        <column><name>MEMBER_KEY</name><value>faculty</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-     </row>
-     <row>
-        <column><name>GROUP_ID</name><value>6</value></column>
-        <column><name>MEMBER_KEY</name><value>staff</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
      <row>
         <column><name>GROUP_ID</name><value>4</value></column>
-        <column><name>MEMBER_KEY</name><value>developer</value></column>
+        <column><name>MEMBER_KEY</name><value>2</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <!-- We need default layouts for student, faculty, staff, and developer before we
+          we can add these!
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
      <row>
-        <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>MEMBER_KEY</name><value>guest</value></column>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     -->
     </rows>
   </table>
 
