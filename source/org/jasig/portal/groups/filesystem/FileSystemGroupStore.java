@@ -39,7 +39,6 @@ import java.util.*;
 import org.apache.oro.io.GlobFilenameFilter;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupsException;
@@ -223,7 +222,7 @@ private IEntityGroup find(File file) throws GroupsException
  */
 public IEntityGroup find(String key) throws GroupsException
 {
-    LogService.instance().log(LogService.DEBUG,
+    LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".find(): group key: " + key);
 
     String path = getFilePathFromKey(key);
@@ -235,7 +234,7 @@ public IEntityGroup find(String key) throws GroupsException
 
     if ( groupHolder == null || (groupHolder.getLastModified() != f.lastModified()) )
     {
-        LogService.instance().log(LogService.DEBUG,
+        LogService.log(LogService.DEBUG,
           DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path);
 
         IEntityGroup group = newInstance(f);
@@ -253,7 +252,7 @@ public IEntityGroup find(String key) throws GroupsException
 protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 {
 
-    LogService.instance().log(LogService.DEBUG,
+    LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".findContainingGroups(): for " + ent);
 
     List groups = new ArrayList();
@@ -284,7 +283,7 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 protected Iterator findContainingGroups(IEntityGroup group) throws GroupsException
 {
 
-    LogService.instance().log(LogService.DEBUG,
+    LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".findContainingGroups(): for " + group);
 
     List groups = new ArrayList();
@@ -337,7 +336,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
  */
 public java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
-    LogService.instance().log(LogService.DEBUG,
+    LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".findEntitiesForGroup(): retrieving entities for group " + group);
 
     Collection entities = null;
