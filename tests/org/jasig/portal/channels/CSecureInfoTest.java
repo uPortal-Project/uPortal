@@ -31,7 +31,7 @@ public class CSecureInfoTest extends TestCase {
 			
 		assertTrue(irc.getEventsReceived().isEmpty());
 
-		cSecureInfo.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
+		cSecureInfo.receiveEvent(PortalEvent.SESSION_DONE_EVENT);
 		
 		List eventsReceived = irc.getEventsReceived();
 		assertFalse(eventsReceived.isEmpty());

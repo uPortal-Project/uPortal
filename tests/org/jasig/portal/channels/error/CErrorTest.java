@@ -29,7 +29,7 @@ public class CErrorTest extends TestCase {
 		
 		assertTrue(irc.getEventsReceived().isEmpty());
 
-		cError.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
+		cError.receiveEvent(PortalEvent.SESSION_DONE_EVENT);
 		
 		List eventsReceived = irc.getEventsReceived();
 		assertFalse(eventsReceived.isEmpty());
