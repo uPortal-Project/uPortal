@@ -59,6 +59,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private boolean renderingAsRoot;
     private static final String fs = File.separator;
     private BrowserInfo binfo;
+    private String channelId;
 
   /**
    * default empty constructor
@@ -96,6 +97,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 
   public void setBrowserInfo (BrowserInfo bi) {
     this.binfo = bi;
+  }
+
+  public void setChannelId(String chanId) {
+    this.channelId=chanId;
   }
 
   public BrowserInfo getBrowserInfo () {
@@ -141,13 +146,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    *
    */
   public String getWorkerActionURL (String worker) {
-    StringBuffer sBuff = new StringBuffer(128);
-    sBuff.append(baseActionURL.substring(0, baseActionURL.indexOf('/',1)));
-    sBuff.append("/servlet/uPortal/");
-    sBuff.append(baseActionURL.substring(baseActionURL.indexOf("channel"), baseActionURL.lastIndexOf('/')));
-    sBuff.append("/worker/");
-    sBuff.append(worker);
-    return sBuff.toString();
+      return PortalSessionManager.WORKER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+worker+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+this.channelId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX;
   }
 
   /**
