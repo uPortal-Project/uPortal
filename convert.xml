@@ -1,0 +1,290 @@
+<!--
+     convert.xml is the build file for running processes to
+	 convert from 2.0.x database to 2.1.  This is to be used in
+     conjunction with Ant (http://jakarta.apache.org/ant/).
+
+	 NOTES
+
+     You must first set up the JDBC properties in rdbm.properties 
+	 in the properties directory to point to the databse you want 
+	 to convert.  BE SURE TO BACK UP THE DATABASE FIRST!!!
+
+	 The target all will first unload the transform and reload the 
+	 database.  You can do the conversion one step at a time as in:
+		ant -f convert.xml unload
+		ant -f convert.xml transform
+		ant -f convert.xml reload
+
+     Author: Susan Bramhall, susan.bramhall@yale.edu
+     Version $Revision$
+-->
+<project name="uPortalConvert" default="unload" basedir=".">
+
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+  <property name="build.home"    value="build"/>
+
+<!-- ==================== All Target ====================================== -->
+<!--
+
+  The "all" target is a shortcut for running the whole process to transform
+  data from 2.0.x to 2.1
+
+-->
+
+  <target name="all" depends="unload,transform,reload"
+   description="unload tables, do xslt and reload database"/>
+
+<!-- ==================== unload Target ====================================== -->
+<!--
+
+  The "unload" target calls the main ant script using dbunload to get tables
+  from the database into xml format.
+
+-->
+
+  <target name="unload" >
+    <mkdir    dir="${build.home}/RunXSLT"/>
+
+	<copy todir="${build.home}/RunXSLT" file="properties/data.xml"/>
+	<copy todir="${build.home}/RunXSLT" >
+      <fileset dir="${build.home}/stylesheets/org/jasig/portal/tools/RunXSLT"/>
+	</copy>
+	<delete>
+	<fileset dir="${build.home}/RunXSLT" includes="*_20.XML"/>
+	</delete>
+
+    <echo message="unloading UPC_GROUP_MGR"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UPC_GROUP_MGR"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UPC_GROUP_MGR_20.XML"/>
+	</ant>
+
+    <echo message="unloading UPC_PERM_MGR"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UPC_PERM_MGR"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UPC_PERM_MGR_20.XML"/>
+	</ant>
+
+	<echo message="unloading UP_SEQUENCE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SEQUENCE"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SEQUENCE_20.XML"/>
+	</ant>
+	<echo message="unloading UP_CHANNEL"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_CHANNEL"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_CHANNEL_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_CHANNEL_PARAM"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_CHANNEL_PARAM"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_CHANNEL_PARAM_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_CHAN_TYPE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_CHAN_TYPE"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_CHAN_TYPE_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_GROUP"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_GROUP"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_GROUP_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_GROUP_ENTITY_TYPE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_GROUP_ENTITY_TYPE"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_GROUP_ENTITY_TYPE_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_GROUP_MEMBERSHIP"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_GROUP_MEMBERSHIP"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_GROUP_MEMBERSHIP_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_LAYOUT_PARAM"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_LAYOUT_PARAM"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_LAYOUT_PARAM_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_LAYOUT_STRUCT"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_LAYOUT_STRUCT"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_LAYOUT_STRUCT_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_MIME_TYPE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_MIME_TYPE"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_MIME_TYPE_20.XML"/>
+	</ant>
+	
+	<echo message="unloading UP_PERMISSION"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_PERMISSION"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_PERMISSION_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_PERSON_DIR"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_PERSON_DIR"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_PERSON_DIR_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_MAP"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_MAP"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_MAP_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_STRUCT"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_STRUCT"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_STRUCT_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_THEME"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_STRUCT_PAR"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_STRUCT_PAR_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SEQUENCE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_THEME"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_THEME_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_THEME_PARM"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_THEME_PARM"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_THEME_PARM_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_USER_ATTS"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_USER_ATTS"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_USER_ATTS_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_SS_USER_PARM"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_SS_USER_PARM"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_SS_USER_PARM_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_USER"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_USER"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_USER_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_USER_LAYOUT"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_USER_LAYOUT"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_USER_LAYOUT_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_USER_PARAM"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_USER_PARAM"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_USER_PARAM_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_USER_PROFILE"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_USER_PROFILE"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_USER_PROFILE_20.XML"/>
+	</ant>
+		
+	<echo message="unloading UP_USER_UA_MAP"/>
+	<ant target="dbunload" antfile="build.xml">
+		<property name="tablename" value="UP_USER_UA_MAP"/>
+		<property name="xmlfile" value="${build.home}/RunXSLT/UP_USER_UA_MAP_20.XML"/>
+	</ant>
+	</target>
+
+<!-- ==================== transform Target ====================================== -->
+<!--
+
+  The "transform" target calls the main ant script using RunXSLT to transform tables
+  into 2.1 formats using data from 2.0.x files.
+
+-->
+
+	<target name="transform" >
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_PERMISSION_20.XML"/>
+	<property name="outputFile" value="NEW_UP_PERMISSION.XML"/>
+	<property name="Xslfile" value="UP_PERMISSION.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_CHAN_TYPE_20.XML"/>
+	<property name="outputFile" value="NEW_UP_CHAN_TYPE.XML"/>
+	<property name="Xslfile" value="UP_CHAN_TYPE.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_CHANNEL_20.XML"/>
+	<property name="outputFile" value="NEW_UP_CHANNEL.XML"/>
+	<property name="Xslfile" value="UP_CHANNEL.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_CHANNEL_PARAM_20.XML"/>
+	<property name="outputFile" value="NEW_UP_CHANNEL_PARAM.XML"/>
+	<property name="Xslfile" value="UP_CHANNEL_PARAM.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_GROUP_ENTITY_TYPE_20.XML"/>
+	<property name="outputFile" value="NEW_UP_ENTITY_TYPE.XML"/>
+	<property name="Xslfile" value="UP_ENTITY_TYPE.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_GROUP_MEMBERSHIP_20.XML"/>
+	<property name="outputFile" value="NEW_UP_GROUP_MEMBERSHIP.XML"/>
+	<property name="Xslfile" value="UP_GROUP_MEMBERSHIP.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_SEQUENCE_20.XML"/>
+	<property name="outputFile" value="NEW_UP_SEQUENCE.XML"/>
+	<property name="Xslfile" value="UP_SEQUENCE.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="data.xml"/>
+	<property name="outputFile" value="data21.xml"/>
+	<property name="Xslfile" value="BuildNewData.xsl"/>
+	</ant>
+
+	</target>
+
+<!-- ==================== transform Target ====================================== -->
+<!--
+
+  The "reload" target calls the main ant script using db with new data file
+  to update database to 2.1 format.
+
+-->
+
+	<target name="reload">
+	<copy file="${build.home}/RunXSLT/data21.xml" todir="properties"/>
+	<ant dir="." target="db" >
+	<property name="usedata" value="-d"/>
+	<property name="datafile" value="/properties/data21.xml"/>
+	</ant>
+
+
+	</target>
+	</project>
+
