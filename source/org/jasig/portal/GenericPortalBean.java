@@ -46,6 +46,7 @@ import java.io.*;
  *
  * @author Ken Weiner
  * @author John Laker
+ * @version $Revision$
  */
 public class GenericPortalBean
 {
