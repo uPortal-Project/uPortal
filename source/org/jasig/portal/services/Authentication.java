@@ -146,8 +146,9 @@ public class Authentication {
             Enumeration en = attribs.keys();
             while (en.hasMoreElements()) {
                String key = (String)en.nextElement();
-               String value = (String)attribs.get(key);
-               person.setAttribute(key, value);
+               // String value = (String)attribs.get(key);
+               // person.setAttribute(key, value);
+               person.setAttribute(key, attribs.get(key));
             }
          }
          // Make sure the the user's fullname is set

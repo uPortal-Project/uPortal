@@ -357,8 +357,14 @@ public class PersonDirectory {
           if (pdi.attributenames[i] != null)
             tattrib = ldapattribs.get(pdi.attributenames[i]);
           if (tattrib!=null) {
-            String value = tattrib.get().toString();
-            attribs.put(pdi.attributealiases[i],value);
+            // determine if this attribute is a String or a binary (byte array)
+            Object att = tattrib.get();
+            if (att instanceof byte[]) {
+                attribs.put(pdi.attributealiases[i],(Object)att);
+            } else {
+                String value = att.toString();
+                attribs.put(pdi.attributealiases[i],value);
+            }
           }
         }
       }
