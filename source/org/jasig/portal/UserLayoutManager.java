@@ -66,7 +66,7 @@ import java.net.*;
 public class UserLayoutManager {
   private Document uLayoutXML;
 
-  private UserPreferences up;
+    //  private UserPreferences up;
   private UserPreferences complete_up;
 
     // caching of stylesheet descriptions is recommended
@@ -303,12 +303,12 @@ public class UserLayoutManager {
     }
 
     public void setCurrentUserPreferences(UserPreferences current_up) {
-        if(current_up!=null) up=current_up;
+        if(current_up!=null) complete_up=current_up;
         // load stylesheet description files and fix user preferences
         ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
 
         // clean up
-        StructureStylesheetUserPreferences fsup=up.getStructureStylesheetUserPreferences();
+        StructureStylesheetUserPreferences fsup=complete_up.getStructureStylesheetUserPreferences();
         StructureStylesheetDescription fssd=csddb.getStructureStylesheetDescription(fsup.getStylesheetName());
         if(fssd==null) {
             // assign a default stylesheet instead
@@ -317,7 +317,7 @@ public class UserLayoutManager {
             fsup.synchronizeWithDescription(fssd);
         }
 
-        ThemeStylesheetUserPreferences ssup=up.getThemeStylesheetUserPreferences();
+        ThemeStylesheetUserPreferences ssup=complete_up.getThemeStylesheetUserPreferences();
         ThemeStylesheetDescription sssd=csddb.getThemeStylesheetDescription(ssup.getStylesheetName());
         if(sssd==null) {
             // assign a default stylesheet instead
@@ -327,12 +327,12 @@ public class UserLayoutManager {
 
 
         // in case something was reset to default
-        up.setStructureStylesheetUserPreferences(fsup);
-        up.setThemeStylesheetUserPreferences(ssup);
+        complete_up.setStructureStylesheetUserPreferences(fsup);
+        complete_up.setThemeStylesheetUserPreferences(ssup);
 
 
         // now generate "filled-out copies"
-        complete_up=new UserPreferences(up);
+	//        complete_up=new UserPreferences(up);
         // syncronize up with layout
         synchUserPreferencesWithLayout(complete_up);
         StructureStylesheetUserPreferences complete_fsup=complete_up.getStructureStylesheetUserPreferences();
@@ -351,12 +351,12 @@ public class UserLayoutManager {
         if(newLayout!=null) {
             uLayoutXML=newLayout;
             IUserLayoutDB uldb=new UserLayoutDBImpl();
-            uldb.setUserLayout(person.getID(),up.getProfile().getProfileId(),uLayoutXML);
+            uldb.setUserLayout(person.getID(),complete_up.getProfile().getProfileId(),uLayoutXML);
         }
         if(newPreferences!=null) {
-            this.setCurrentUserPreferences(newPreferences);
             IUserPreferencesDB updb=new UserPreferencesDBImpl();
-            updb.putUserPreferences(person.getID(),up);
+            updb.putUserPreferences(person.getID(),newPreferences);
+            this.setCurrentUserPreferences(newPreferences);
         }
 
     }
@@ -371,7 +371,8 @@ public class UserLayoutManager {
     }
 
     private UserPreferences getUserPreferences() {
-        return up;
+	//        return up;
+	return complete_up;
     }
 
     public UserProfile getCurrentProfile() {
