@@ -60,8 +60,9 @@ public class SimpleLayout implements IUserLayout {
     private String layoutId;
     private String cacheKey;
 
-    public SimpleLayout(String layoutId) {
+    public SimpleLayout(String layoutId, Document layout) {
         this.layoutId = layoutId;
+        this.layout = layout;
     }
 
     public void writeTo(ContentHandler ch) throws PortalException {
@@ -81,11 +82,11 @@ public class SimpleLayout implements IUserLayout {
     }
 
     public void writeTo(Document document) throws PortalException {
-        document.appendChild(layout.getDocumentElement());
+        document.appendChild(document.importNode(layout.getDocumentElement(), true));
     }
 
     public void writeTo(String nodeId, Document document) throws PortalException {
-        document.appendChild(layout.getElementById(nodeId));
+        document.appendChild(document.importNode(layout.getElementById(nodeId), true));
     }
 
     public IUserLayoutNodeDescription getNodeDescription(String nodeId) throws PortalException {
