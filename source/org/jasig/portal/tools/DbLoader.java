@@ -67,8 +67,12 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.ContentHandler;
-import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>A tool to set up a uPortal database. This tool was created so that uPortal
@@ -158,14 +162,18 @@ public class DbLoader
 
         try
         {
-          // Read tables.xml
-          DOMParser domParser = new DOMParser();
-          // Eventually, write and validate against a DTD
-          //domParser.setFeature ("http://xml.org/sax/features/validation", true);
-          //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
-          tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
-          domParser.parse(tablesUri);
-          tablesDoc = domParser.getDocument();
+            // Read tables.xml
+            DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+            DocumentBuilder domParser = dbf.newDocumentBuilder();
+
+            // Eventually, write and validate against a DTD
+            //domParser.setFeature ("http://xml.org/sax/features/validation", true);
+            //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
+            tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
+            tablesDoc=domParser.parse(tablesUri);
+        } catch (ParserConfigurationException pce) {
+            System.out.println("Unable to instantiate DOM parser. Pease check your JAXP configuration.");
+            pce.printStackTrace();
         }
         catch(Exception e)
         {
@@ -230,18 +238,10 @@ public class DbLoader
     }
   }
 
-  private static XMLReader getXMLReader()
+  private static XMLReader getXMLReader() throws SAXException, ParserConfigurationException
   {
-    // This method of getting a parser won't compile until we start using Xerces 1.2.2 and higher
-    //
-    // SAXParserFactory spf = SAXParserFactory.newInstance();
-    // SAXParser saxParser = spf.newSAXParser();
-    // XMLReader xr = saxParser.getXMLReader();
-
-    // For now, we'll use the hard-coded instantiaiton of a Xerces SAX Parser
-    XMLReader xr = new org.apache.xerces.parsers.SAXParser();
-
-    return xr;
+      SAXParserFactory spf=SAXParserFactory.newInstance();
+      return spf.newSAXParser().getXMLReader();
   }
 
   private static void printInfo () throws SQLException
