@@ -82,8 +82,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Start");
-      //Document xmlDoc = (Document)staticData.get("xmlDoc");
-      Document xmlDoc = (Document)sessionData.model;
+      Document model = getXmlDoc(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
       String parentID = getCommandArg(runtimeData);
       boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
@@ -92,7 +91,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
             " will be added to parent element = " + parentID);
       IEntityGroup parentGroup = null;
       Class parentEntityType;
-      Element parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentID);
+      Element parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, parentID);
       String parentKey = parentElem.getAttribute("key");
       String retMsg;
       Iterator parentNodes;
@@ -137,18 +136,18 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
             igc.update();
             Node parentNode = (Node)parentElem;
             Element childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)childEntGrp,
-                  false, null, xmlDoc);
+                  false, null, model);
             parentNode.appendChild((Node)childElem);
          }
          else {
             parentGroup.addMember((IGroupMember)childEntGrp);
             parentGroup.updateMembers();
-            parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME, parentKey);
+            parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
             // add new group to all parent group xml nodes
             while (parentNodes.hasNext()) {
                Element parentNode = (Element)parentNodes.next();
                GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
-                     xmlDoc);
+                     model);
 
                ((Element)parentNode).setAttribute("hasMembers", "true");
             }
@@ -176,11 +175,11 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
 
          // create permission elements
          /** @todo should make sure there is one and only one principal element */
-         NodeList principals = xmlDoc.getDocumentElement().getElementsByTagName("principal");
+         NodeList principals = model.getDocumentElement().getElementsByTagName("principal");
          Element princElem = (Element)principals.item(0);
          for (int p = 0; p < perms.size(); p++) {
             prm = (IPermission)perms.get(p);
-            Element permElem = GroupsManagerXML.getPermissionXml(xmlDoc, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
+            Element permElem = GroupsManagerXML.getPermissionXml(model, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
             /** @todo should we check if element already exists??? */
             princElem.appendChild(permElem);
          }
