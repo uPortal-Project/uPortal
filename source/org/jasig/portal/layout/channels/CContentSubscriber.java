@@ -189,11 +189,12 @@ public class CContentSubscriber extends FragmentManager {
 		     } 
 		     
 		    
-		     xslt.setStylesheetParameter("uPcCS_action", action );
+		     xslt.setStylesheetParameter("channelState", channelState );
+		     /*xslt.setStylesheetParameter("uPcCS_action", action );
 		     xslt.setStylesheetParameter("channelState", channelState );
 		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
 		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );
-		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );
+		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );*/
 		     
 	  } catch ( Exception e ) {
 	  	  throw new PortalException(e.getMessage());	     
