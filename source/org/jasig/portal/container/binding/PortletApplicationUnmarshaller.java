@@ -205,7 +205,7 @@ public class PortletApplicationUnmarshaller {
                     Element valueE = (Element)valueNL.item(j);
                     values.add(XML.getElementText(valueE));
                 }
-                boolean readOnly = Boolean.getBoolean(XML.getChildElementText(preferenceE, "read-only"));
+                boolean readOnly = Boolean.valueOf(XML.getChildElementText(preferenceE, "read-only")).booleanValue();
                 preferences.add(name, values, readOnly);
             }
             preferences.setPreferencesValidator(XML.getChildElementText(portletPreferencesE, "preferences-validator"));

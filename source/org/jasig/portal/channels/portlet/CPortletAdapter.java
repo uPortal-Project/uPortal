@@ -68,9 +68,11 @@ import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedCharacterChannel;
 import org.jasig.portal.IMultithreadedDirectResponse;
 import org.jasig.portal.IMultithreadedPrivileged;
+import org.jasig.portal.IPortletPreferencesStore;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.PortletPreferencesStoreFactory;
 import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
@@ -302,8 +304,14 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 
                 // Detect end of session or portlet removed from layout
                 
-                case PortalEvent.SESSION_DONE:
                 case PortalEvent.UNSUBSCRIBE:
+                    PortletEntityImpl pe = (PortletEntityImpl)cd.getPortletWindow().getPortletEntity();
+                    try {
+                        pe.removePreferences();
+                    }
+                    catch (Exception e) { }
+                    
+                case PortalEvent.SESSION_DONE:
                     // For both SESSION_DONE and UNSUBSCRIBE, we might want to
                     // release resources here if we need to
                     PortletStateManager.clearState(pcs.getHttpServletRequest());

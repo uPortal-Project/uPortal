@@ -118,19 +118,23 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     }
 
     public void store() throws IOException {
-        // portletStore.saveEntityPreferences(preferences);
         try {
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             int userId = person.getID();
             int layoutId = Integer.parseInt(layout.getId());
             String channelDescId = channelDescription.getId();
             portletPrefsStore.setEntityPreferences(userId, layoutId, channelDescId, preferences);
+            
+            // Save preferences as original preferences      
+            originalPreferences = new PreferenceSetImpl();   
+            ((PreferenceSetImpl)originalPreferences).addAll(preferences);
+            
         } catch (Exception e) {
             LogService.log(LogService.ERROR, e);
             throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
         }
     }
-
+    
     public void reset() throws IOException {
         ((PreferenceSetImpl)preferences).clear();
         if (originalPreferences != null) {
@@ -157,9 +161,38 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     }
     
     public void loadPreferences() throws Exception {
-        //originalPreferences = portletStore.loadEntityPreferences();
-        reset();
+        try {
+            IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+            int userId = person.getID();
+            int layoutId = Integer.parseInt(layout.getId());
+            String channelDescId = channelDescription.getId();
+            
+            preferences = portletPrefsStore.getEntityPreferences(userId, layoutId, channelDescId);
+            
+            // Save preferences as original preferences      
+            originalPreferences = new PreferenceSetImpl();   
+            ((PreferenceSetImpl)originalPreferences).addAll(preferences);            
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+            throw new IOException("Could not load portlet entity preferences: " + e.getMessage());
+        }
     }
+    
+    
+    public void removePreferences() throws Exception {
+        try {
+            IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+            int userId = person.getID();
+            int layoutId = Integer.parseInt(layout.getId());
+            String channelDescId = channelDescription.getId();
+            
+            portletPrefsStore.deletePortletPreferencesByInstance(userId, layoutId, channelDescId);
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+            throw new IOException("Could not delete portlet entity preferences: " + e.getMessage());
+        }    
+    }
+
     
     public void addPortletWindow(PortletWindow portletWindow) {
         ((PortletWindowListCtrl)portletWindows).add(portletWindow);

@@ -46,6 +46,7 @@ import java.util.Map;
 import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
+import org.jasig.portal.services.LogService;
 
 /**
  * An implementation of IPortletPreferencesStore which uses a RDBM data source to
@@ -59,7 +60,6 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
     private static final String READ_ONLY_FALSE = "N";
 
     /**
-     * 
      * @see org.jasig.portal.IPortletPreferencesStore#setDefinitionPreferences(int, org.apache.pluto.om.common.PreferenceSet)
      */
     public void setDefinitionPreferences(final int chanId, final PreferenceSet prefs) throws Exception {
@@ -74,6 +74,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "(CHAN_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE, PORTLET_PREF_READONLY) " +
             "VALUES (?, ?, ?, ?)";
         
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setDefinitionPreferences(chanId=" + chanId + ")");
+        
         try {
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
@@ -85,6 +87,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deleteCurrentPrefsPstmt = con.prepareStatement(deleteCurrentPrefs);
                 insertPrefPstmt = con.prepareStatement(insertPref);
                 
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setDefinitionPreferences(): " + deleteCurrentPrefs);
                 deleteCurrentPrefsPstmt.setInt(1, chanId);
                 deleteCurrentPrefsPstmt.execute();
                 
@@ -104,6 +107,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         String value = (String)valueItr.next();
                         
+                        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPref);
                         insertPrefPstmt.setString(3, value);
                         insertPrefPstmt.executeUpdate();
                     }
@@ -127,7 +131,6 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
     }
     
     /**
-     * 
      * @see org.jasig.portal.IPortletPreferencesStore#getDefinitionPreferences(int)
      */
     public PreferenceSet getDefinitionPreferences(final int chanId) throws Exception {
@@ -139,12 +142,15 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "FROM UP_PORTLET_DEFINITION_PREFS " +
             "WHERE CHAN_ID=?";
         
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::getDefinitionPreferences(chanId=" + chanId + ")");
+                
         try {
             PreparedStatement selectCurrentPrefsPstmt = null;
             
             try {
                 selectCurrentPrefsPstmt = con.prepareStatement(selectCurrentPrefs);
                 
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::getDefinitionPreferences(): " + selectCurrentPrefs);
                 selectCurrentPrefsPstmt.setInt(1, chanId);
                 final ResultSet rs = selectCurrentPrefsPstmt.executeQuery();
                 
@@ -200,8 +206,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
     }
 
     /**
-     * 
-     * @see org.jasig.portal.IPortletPreferencesStore#setEntityPreferences(int, int, int, org.apache.pluto.om.common.PreferenceSet)
+     * @see org.jasig.portal.IPortletPreferencesStore#setEntityPreferences(int, int, String, org.apache.pluto.om.common.PreferenceSet)
      */
     public void setEntityPreferences(final int userId, final int layoutId, final String chanDescId, final PreferenceSet prefs) throws Exception {
         final Connection con = RDBMServices.getConnection();
@@ -215,6 +220,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "(USER_ID, LAYOUT_ID, CHAN_DESC_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE) " +
             "VALUES (?, ?, ?, ?, ?)";
         
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+
         try {
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
@@ -226,6 +233,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deleteCurrentPrefsPstmt = con.prepareStatement(deleteCurrentPrefs);
                 insertPrefPstmt = con.prepareStatement(insertPref);
                 
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setEntityPreferences(): " + deleteCurrentPrefs);
                 deleteCurrentPrefsPstmt.setInt(1, userId);
                 deleteCurrentPrefsPstmt.setInt(2, layoutId);
                 deleteCurrentPrefsPstmt.setString(3, chanDescId);
@@ -242,6 +250,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         final String value = (String)valueItr.next();
                         
+                        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPref);
                         insertPrefPstmt.setString(5, value);
                         insertPrefPstmt.executeUpdate();
                     }
@@ -264,6 +273,9 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
         }
     }
 
+    /**
+     * @see org.jasig.portal.IPortletPreferencesStore#getEntityPreferences(int, int, java.lang.String)
+     */
     public PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception {
         final PreferenceSetImpl prefs = new PreferenceSetImpl();
         final Connection con = RDBMServices.getConnection();
@@ -272,12 +284,16 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "SELECT USER_ID, LAYOUT_ID, CHAN_DESC_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE " +
             "FROM UP_PORTLET_ENTITY_PREFS " +
             "WHERE USER_ID=? AND LAYOUT_ID=? AND CHAN_DESC_ID=?";
-        
+
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::getEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+
         try {
             PreparedStatement selectCurrentPrefsPstmt = null;
             
             try {
                 selectCurrentPrefsPstmt = con.prepareStatement(selectCurrentPrefs);
+                
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::getEntityPreferences(): " + selectCurrentPrefs);
                 
                 selectCurrentPrefsPstmt.setInt(1, userId);
                 selectCurrentPrefsPstmt.setInt(2, layoutId);
@@ -323,4 +339,88 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
         
         return prefs;
     }
+    
+    /**
+     * @see org.jasig.portal.IPortletPreferencesStore#deletePortletPreferencesByUser(int)
+     */
+    public void deletePortletPreferencesByUser(int userId) throws Exception {
+        final Connection con = RDBMServices.getConnection();
+        
+        final String deleteCurrentPrefs = 
+            "DELETE FROM UP_PORTLET_ENTITY_PREFS " +
+            "WHERE USER_ID=?";
+        
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::deletePortletPreferencesByUser(userId=" + userId + ")");
+
+        try {
+            // Set autocommit false for the connection
+            RDBMServices.setAutoCommit(con, false);
+        
+            PreparedStatement deleteCurrentPrefsPstmt = null;
+            
+            try {
+                deleteCurrentPrefsPstmt = con.prepareStatement(deleteCurrentPrefs);
+                
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::deletePortletPreferencesByUser(): " + deleteCurrentPrefs);
+                deleteCurrentPrefsPstmt.setInt(1, userId);
+                deleteCurrentPrefsPstmt.execute();
+                
+                RDBMServices.commit(con);
+            }
+            catch (Exception e) {
+                // Roll back the transaction
+                RDBMServices.rollback(con);
+                throw e;
+            }
+            finally {
+                try { deleteCurrentPrefsPstmt.close(); } catch (Exception e) { }
+            }
+        }
+        finally {
+            RDBMServices.releaseConnection(con);
+        }
+    }
+    
+    /**
+     * @see org.jasig.portal.IPortletPreferencesStore#deletePortletPreferencesByInstance(int, int, String)
+     */
+    public void deletePortletPreferencesByInstance(final int userId, final int layoutId, final String chanDescId) throws Exception {
+        final Connection con = RDBMServices.getConnection();
+        
+        final String deleteCurrentPrefs = 
+            "DELETE FROM UP_PORTLET_ENTITY_PREFS " +
+            "WHERE USER_ID=? AND LAYOUT_ID=? AND CHAN_DESC_ID=?";
+        
+        LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+
+        try {
+            // Set autocommit false for the connection
+            RDBMServices.setAutoCommit(con, false);
+        
+            PreparedStatement deleteCurrentPrefsPstmt = null;
+            
+            try {
+                deleteCurrentPrefsPstmt = con.prepareStatement(deleteCurrentPrefs);
+                
+                LogService.log(LogService.DEBUG, "RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(): " + deleteCurrentPrefs);
+                deleteCurrentPrefsPstmt.setInt(1, userId);
+                deleteCurrentPrefsPstmt.setInt(2, layoutId);
+                deleteCurrentPrefsPstmt.setString(3, chanDescId);
+                deleteCurrentPrefsPstmt.execute();
+                
+                RDBMServices.commit(con);
+            }
+            catch (Exception e) {
+                // Roll back the transaction
+                RDBMServices.rollback(con);
+                throw e;
+            }
+            finally {
+                try { deleteCurrentPrefsPstmt.close(); } catch (Exception e) { }
+            }
+        }
+        finally {
+            RDBMServices.releaseConnection(con);
+        }
+    }    
 }

@@ -44,6 +44,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.pluto.om.common.Preference;
+import org.apache.pluto.om.common.PreferenceSet;
+import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
@@ -436,6 +439,34 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               break;
             }
           }
+          
+          try {
+              IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+              PreferenceSet preferences = portletPrefStore.getDefinitionPreferences(channelPublishId);
+              
+              for (Iterator prefItr = preferences.iterator(); prefItr.hasNext();) {
+                  Preference pref = (Preference)prefItr.next();
+                  
+                  String name = pref.getName();
+                  String value = "";
+                  String override;
+                  
+                  if (pref.isReadOnly()) {
+                      override = "N";
+                  }
+                  else {
+                      override = "Y";
+                  }
+                  
+                  //Since publish params only support single valued params just look for the first value.
+                  Iterator valuesItr = pref.getValues();
+                  if (valuesItr.hasNext())
+                      value = (String)valuesItr.next();
+                  
+                  channelDef.addParameter(CPortletAdapter.portletPreferenceNamePrefix + name, value, override);
+              }
+          }
+          catch (Exception e) { }
 
           if (localeAware) {
               // Read UP_CHANNEL_MDATA
@@ -641,17 +672,16 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               throw new RuntimeException("Invalid parameter node");
             }
 
-            final String portletPrefNamePrefix = "PORTLET.";
-            if (paramName.startsWith(portletPrefNamePrefix)) {
+            if (paramName.startsWith(CPortletAdapter.portletPreferenceNamePrefix)) {
                 // We have a portlet preference
-                String prefName = paramName.substring(portletPrefNamePrefix.length());
+                String prefName = paramName.substring(CPortletAdapter.portletPreferenceNamePrefix.length());
                 String prefValue = paramValue;
                 List prefValues = (List)preferences.get(prefName);
                 // Unfortunately, we can only support single-valued preferences
                 // at this level unless we change a lot of uPortal code :(
                 prefValues = new ArrayList(1);
                 prefValues.add(prefValue);
-                preferences.add(prefName, prefValues, paramOverride);
+                preferences.add(prefName, prefValues, !paramOverride);
             } else {
                 // We have a normal channel parameter
                 String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +

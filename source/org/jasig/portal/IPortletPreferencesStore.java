@@ -96,4 +96,22 @@ public interface IPortletPreferencesStore {
      * @throws Exception If any error occurs while getting the data.
      */
     public abstract PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception;
+    
+    /**
+     * Removes all portlet preferences stored for the specified user.
+     * 
+     * @param userId The id of the user to remove the preferences for.
+     * @throws Exception If any error occurs while removing the data.
+     */
+    public abstract void deletePortletPreferencesByUser(int userId) throws Exception;
+    
+    /**
+     * Removes portlet preferences for the specific user and instance of a portlet.
+     * 
+     * @param userId The id of the user to remove the preferences for.
+     * @param layoutId The layout fragment id to remove the preferences for.
+     * @param chanDescId The structure id to remove the preferences for.
+     * @throws Exception If any error occurs while removing the data.
+     */
+    public abstract void deletePortletPreferencesByInstance(final int userId, final int layoutId, final String chanDescId) throws Exception;
 }
