@@ -1629,9 +1629,28 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           } finally {
             rs.close();
           }
-          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-          stmt.executeUpdate(sQuery);
+
+          int realNextStructId = 0;
+
+          if (realUserId != userId) {
+            // But never make the existing value SMALLER, change it only to make it LARGER
+            // (so, get existing value)
+            sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            rs = stmt.executeQuery(sQuery);
+            try {
+              rs.next();
+              realNextStructId = rs.getInt(1);
+            } finally {
+              rs.close();
+            }
+          }
+
+          if (nextStructId > realNextStructId) {
+            sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            stmt.executeUpdate(sQuery);
+          }
 
           /* insert row(s) into up_ss_user_atts */
           sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
