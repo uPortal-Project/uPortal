@@ -4,10 +4,29 @@
 <xsl:param name="baseActionURL">Default</xsl:param>
 <xsl:param name="folderID">top</xsl:param>
 <xsl:param name="modified">false</xsl:param>
+<xsl:param name="profileName">default profile</xsl:param>
 <xsl:variable name="imageDir" select="'images/org/jasig/portal/channels/CLayoutManager'"/>
 
 <xsl:template match="/">
-  <p align="center">Arrange your channels and folders...</p>
+
+<!-- header table -->
+
+<form method="post">
+<xsl:attribute name="action"><xsl:value-of select="$baseActionURL"/></xsl:attribute>
+<input type="hidden" name="action" value="submitEditChoice"/>
+<table width="100%" border="0"><tr><td align="left">profile name: <xsl:value-of select="$profileName"/></td><td align="right">
+<input type="submit" name="submit" value="manage"/>
+<select name="manageTarget">
+<option selected="" value="layout">channels and folders</option>
+<option value="gpref">global preferences</option>
+</select>
+</td>
+</tr></table>
+</form>
+
+<!-- end of the header table -->
+	
+  <!--p align="center">Arrange your channels and folders...</p-->
   <p align="center">
     <xsl:choose>
       <xsl:when test="$folderID = 'top'">
@@ -106,7 +125,7 @@
     <td>
       <a href="{$baseActionURL}action=browse&amp;folderID={@ID}"><img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
       <xsl:value-of select="@name"/></a></td>
-    <td><a href="{$baseActionURL}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
+    <td><a href="{$baseActionURL}action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
   </tr>
 </xsl:template>
 
@@ -129,7 +148,7 @@
 
 	  </td>   
 	  <td><xsl:value-of select="@name"/></td>
-    <td><a href="{$baseActionURL}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
+    <td><a href="{$baseActionURL}action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
   </tr>
 </xsl:template>
 
