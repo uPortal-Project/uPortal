@@ -41,7 +41,7 @@ package  org.jasig.portal;
 import  javax.servlet.http.HttpServletRequest;
 import  javax.servlet.http.HttpSessionBindingEvent;
 import  javax.servlet.http.HttpSessionBindingListener;
-import  java.util.HashMap;
+import  java.util.Hashtable;
 import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.PersonManagerFactory;
@@ -52,6 +52,9 @@ import  org.jasig.portal.services.LogService;
  * Caches UserInstance objects
  */
 public class UserInstanceManager {
+
+    // a table to keep guestUserInstance objects
+    static Hashtable guestUserInstances=new Hashtable();
 
   /**
    * Returns the UserInstance object that is associated with the given request.
@@ -74,9 +77,13 @@ public class UserInstanceManager {
     }
     // Create either a UserInstance or a GuestUserInstance
     if (person.isGuest() && !person.getSecurityContext().isAuthenticated()) {
-      GuestUserInstance guestUserInstance = new GuestUserInstance(person);
-      guestUserInstance.registerSession(request);
-      userInstance = guestUserInstance;
+        GuestUserInstance guestUserInstance = (GuestUserInstance) guestUserInstances.get(new Integer(person.getID()));
+        if(guestUserInstance==null) {
+            guestUserInstance = new GuestUserInstance(person);
+            guestUserInstances.put(new Integer(person.getID()),guestUserInstance);
+        }
+        guestUserInstance.registerSession(request);
+        userInstance = guestUserInstance;
     } 
     else {
       userInstance = new UserInstance(person);
