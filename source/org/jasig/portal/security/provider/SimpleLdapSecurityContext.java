@@ -151,7 +151,9 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
           LogService.instance().log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID));
+        LogService.instance().log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
+        LogService.instance().log(LogService.ERROR, e);
+        throw new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
         ldapservices.releaseConnection(conn);
       }
