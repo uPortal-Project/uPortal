@@ -86,7 +86,7 @@ public class RDBMServices {
         getDatabaseServer(PORTAL_DB);
         getDatabaseServer(PERSON_DB);
 
-        //Legacy suppord for the public fields
+        //Legacy support for the public fields
         final IDatabaseServer dbs = getDatabaseServer();
         if(dbs != null) {
             joinQuery = dbs.getJoinQuery();
