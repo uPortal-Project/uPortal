@@ -330,7 +330,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
 
                     // set the response mime type
-                    res.setContentType(tsd.getMimeType());
+                    res.setContentType(tsd.getMimeType() + "; charset=UTF-8");
                     // get a serializer appropriate for the target media
                     BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
