@@ -39,7 +39,7 @@
 package  org.jasig.portal.security.provider;
 
 import  org.jasig.portal.security.*;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.GenericPortalBean;
 import  java.util.*;
@@ -66,7 +66,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public int getAuthType () {
     return  this.SIMPLESECURITYAUTHTYPE;
@@ -80,23 +80,23 @@ class SimpleSecurityContext extends ChainingSecurityContext
     this.isauth = false;
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null, md5_passwd = null;
-      int globalUID;
+
       try {
         String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
-          globalUID = Integer.parseInt(acct[0]);
-          first_name = acct[2];
-          last_name = acct[3];
-          md5_passwd = acct[1];
+
+          first_name = acct[1];
+          last_name = acct[2];
+          md5_passwd = acct[0];
           if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
-            Logger.log(Logger.ERROR, "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
+            LogService.log(LogService.ERROR, "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
             return;
           }
           String txthash = md5_passwd.substring(5);
           byte[] whole, salt = new byte[8], compare = new byte[16], dgx;
           whole = decode(txthash);
           if (whole.length != 24) {
-            Logger.log(Logger.INFO, "Invalid MD5 hash value");
+            LogService.log(LogService.INFO, "Invalid MD5 hash value");
             return;
           }
           System.arraycopy(whole, 0, salt, 0, 8);
@@ -110,24 +110,24 @@ class SimpleSecurityContext extends ChainingSecurityContext
             if (dgx[i] != compare[i])
               same = false;
           if (same) {
-            this.myPrincipal.globalUID = globalUID;
+//            this.myPrincipal.globalUID = globalUID;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+            LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
             this.isauth = true;
-          } 
-          else 
-            Logger.log(Logger.INFO, "MD5 Password Invalid");
-        } 
-        else 
-          Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
+          }
+          else
+            LogService.log(LogService.INFO, "MD5 Password Invalid");
+        }
+        else
+          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        Logger.log(Logger.ERROR, ep);
+        LogService.log(LogService.ERROR, ep);
         throw  (ep);
       }
-    } 
-    else 
-      Logger.log(Logger.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+    }
+    else
+      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;
@@ -157,7 +157,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
   /**
    * put your documentation comment here
    * @param c
-   * @return 
+   * @return
    */
   protected static int getValue (char c) {
     if (c >= 'A' && c <= 'Z')

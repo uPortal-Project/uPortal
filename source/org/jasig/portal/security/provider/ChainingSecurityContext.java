@@ -183,7 +183,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   // but I prefer member classes. -ADN
 
   protected class ChainingPrincipal implements IPrincipal {
-    protected int globalUID;
+    protected String globalUID;
     protected String UID;
     protected String FullName;
 
@@ -191,7 +191,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       return this.UID;
     }
 
-    public int getGlobalUID() {
+    public String getGlobalUID() {
       return this.globalUID;
     }
 

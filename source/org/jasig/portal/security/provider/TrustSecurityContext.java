@@ -39,7 +39,7 @@
 package  org.jasig.portal.security.provider;
 
 import  org.jasig.portal.security.*;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.GenericPortalBean;
 import  java.util.*;
@@ -68,7 +68,7 @@ class TrustSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public int getAuthType () {
     return  this.TRUSTSECURITYAUTHTYPE;
@@ -79,29 +79,29 @@ class TrustSecurityContext extends ChainingSecurityContext
    * @exception PortalSecurityException
    */
   public synchronized void authenticate () throws PortalSecurityException {
-    this.isauth = false;
-    if (this.myPrincipal.UID != null) {
+    this.isauth = true;
+/*    if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
         String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
-          first_name = acct[2];
-          last_name = acct[3];
+          first_name = acct[1];
+          last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
           Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
-        } 
-        else 
+        }
+        else
           Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
         throw  (ep);
       }
-    } 
-    else 
+    }
+    else
       Logger.log(Logger.ERROR, "Principal not initialized prior to authenticate");
-    // Ok...we are now ready to authenticate all of our subcontexts.
+    // Ok...we are now ready to authenticate all of our subcontexts. */
     super.authenticate();
     return;
   }

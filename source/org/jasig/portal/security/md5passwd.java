@@ -55,14 +55,13 @@ import java.sql.*;
  */
 public class md5passwd {
 
-  static private final String SELECTNEXTUSERIDSTMT = "SELECT MAX(USER_ID) + 1 FROM UP_PERSON_DIR";
   static private final String SELECTSTMT =
     "SELECT COUNT(*) FROM UP_PERSON_DIR WHERE USER_NAME = ?";
   static private final String UPDATESTMT =
     "UPDATE UP_PERSON_DIR SET ENCRPTD_PSWD = ? WHERE USER_NAME = ?";
   static private final String INSERTSTMT =
-    "INSERT INTO UP_PERSON_DIR (USER_ID, USER_NAME, ENCRPTD_PSWD) " +
-    "VALUES (?, ?, ?)";
+    "INSERT INTO UP_PERSON_DIR (USER_NAME, ENCRPTD_PSWD) " +
+    "VALUES (?, ?)";
 
   public md5passwd(String user, boolean create, boolean lock)
       throws IOException, NoSuchAlgorithmException, SQLException {
@@ -108,18 +107,11 @@ public class md5passwd {
     else
       fin = "*LCK*".getBytes();
 
-    // Get the next highest USER_ID in UP_PERSON_DIR
-    // Perhaps we could add a new sequence to UP_SEQUENCE instead...
-    ResultSet rs = stmt.executeQuery(SELECTNEXTUSERIDSTMT);
-    rs.next();
-    int userID = rs.getInt(1);
-
     // Commit it to the database
     if (cnt < 1) {
       stmt = conn.prepareStatement(INSERTSTMT);
-      stmt.setInt(1, userID);
-      stmt.setString(2, user);
-      stmt.setString(3, "(MD5)"+encode(fin));
+      stmt.setString(1, user);
+      stmt.setString(2, "(MD5)"+encode(fin));
       stmt.executeUpdate();
     }
     else {

@@ -39,7 +39,7 @@
 package  org.jasig.portal.security.provider;
 
 import  org.jasig.portal.security.*;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.GenericPortalBean;
 import  java.util.*;
@@ -76,7 +76,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public int getAuthType () {
     return  this.CACHESECURITYAUTHTYPE;
@@ -93,26 +93,26 @@ class CacheSecurityContext extends ChainingSecurityContext
       try {
         String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
-          first_name = acct[2];
-          last_name = acct[3];
+          first_name = acct[1];
+          last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           // Save our credentials so that the parent's authenticate()
           // method doesn't blow them away.
           this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
           System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
           this.isauth = true;
-        } 
-        else 
-          Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
+        }
+        else
+          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        Logger.log(Logger.ERROR, ep);
+        LogService.log(LogService.ERROR, ep);
         throw  (ep);
       }
-    } 
-    else 
-      Logger.log(Logger.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+    }
+    else
+      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;
@@ -127,8 +127,8 @@ class CacheSecurityContext extends ChainingSecurityContext
       NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
       oc.setCredentials(this.cachedcredentials);
       return  oc;
-    } 
-    else 
+    }
+    else
       return  null;
   }
 
@@ -141,12 +141,12 @@ class CacheSecurityContext extends ChainingSecurityContext
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getCredentials () {
       if (this.credentialstring != null)
-        return  new String(this.credentialstring); 
-      else 
+        return  new String(this.credentialstring);
+      else
         return  null;
     }
   }

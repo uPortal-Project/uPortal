@@ -36,7 +36,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.*;
-import org.jasig.portal.Logger;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.RdbmServices;
 import java.util.*;
 import java.sql.*;
@@ -77,7 +77,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
       PreparedStatement stmt = null;
       ResultSet rset = null;
       String first_name = null, last_name = null;
-      int globalUID;
+//      int globalUID;
 
       try {
         String query = "SELECT ID, FIRST_NAME, LAST_NAME FROM PORTAL_USERS WHERE " +
@@ -90,7 +90,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
 
         if (rset.next()) {
 
-          globalUID  = rset.getInt("ID");
+//          globalUID  = rset.getInt("ID");
           first_name = rset.getString("FIRST_NAME");
           last_name  = rset.getString("LAST_NAME");
 
@@ -109,26 +109,26 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
 
           // the above will throw an exception if authentication does not succeed
 
-          this.myPrincipal.globalUID = globalUID;
+//          this.myPrincipal.globalUID = globalUID;
           this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
 
         } else {
-          Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
         }
       } catch (SQLException e) {
-        Logger.log(Logger.ERROR, new PortalSecurityException ("error"));
+        LogService.log(LogService.ERROR, new PortalSecurityException ("error"));
       } catch (LoginException e) {
-        Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + ": invalid password");
-        Logger.log(Logger.DEBUG,"LoginException: " + e.getMessage());
+        LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + ": invalid password");
+        LogService.log(LogService.DEBUG,"LoginException: " + e.getMessage());
       } finally {
         try { rset.close(); } catch (Exception e) { }
         try { stmt.close(); } catch (Exception e) { }
         rdbmservices.releaseConnection(conn);
       }
     } else {
-      Logger.log (Logger.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      LogService.log (LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
 
     // authenticate all subcontexts.

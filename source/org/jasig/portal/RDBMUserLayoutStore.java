@@ -1529,16 +1529,15 @@ public class RDBMUserLayoutStore
     try {
       Statement stmt = con.createStatement();
       try {
-        String query = "SELECT USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE "
+        String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE "
             + "USER_NAME = '" + username + "'";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
-            acct[0] = rset.getInt("USER_ID") + "";
-            acct[1] = rset.getString("ENCRPTD_PSWD");
-            acct[2] = rset.getString("FIRST_NAME");
-            acct[3] = rset.getString("LAST_NAME");
+            acct[0] = rset.getString("ENCRPTD_PSWD");
+            acct[1] = rset.getString("FIRST_NAME");
+            acct[2] = rset.getString("LAST_NAME");
           }
         } finally {
           rset.close();
