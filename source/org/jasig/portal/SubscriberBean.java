@@ -47,6 +47,7 @@ import java.net.*;
 import com.objectspace.xml.*;
 import org.jasig.portal.layout.*;
 import org.jasig.portal.GenericPortalBean;
+import org.jasig.portal.security.IPerson;
 
 /**
  * Provides methods associated with subscribing to a channel.
@@ -83,7 +84,7 @@ public class SubscriberBean extends GenericPortalBean{
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement();
 
-        String sQuery = "SELECT CHAN_ID, TITLE, CHANNEL_XML FROM PORTAL_CHANNELS WHERE CHAN_ID=" + id ;
+        String sQuery = "SELECT CHAN_ID, TITLE, CHANNEL_XML FROM PORTAL_CHANNELS WHERE CHAN_ID=" + id;
         Logger.log (Logger.DEBUG, sQuery);
         debug(sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
@@ -123,14 +124,14 @@ public class SubscriberBean extends GenericPortalBean{
    */
    public org.jasig.portal.layout.IChannel getChannel(HttpServletRequest req)
    {
-    IXml channelXml = getChannelXml (req);
-    channel =(org.jasig.portal.layout.IChannel) channelXml.getRoot ();
+    IXml channelXml = getChannelXml(req);
+    channel = (org.jasig.portal.layout.IChannel)channelXml.getRoot();
 
-    List instanceIDs = new ArrayList ();
+    List instanceIDs = new ArrayList();
     HttpSession session = req.getSession (false);
-    ILayoutBean layoutBean = (ILayoutBean) session.getAttribute("layoutBean");
-    IXml layoutXml = layoutBean.getLayoutXml (req, layoutBean.getUserName(req));
-    ILayout layout = (ILayout) layoutXml.getRoot ();
+    ILayoutBean layoutBean = (ILayoutBean)session.getAttribute("layoutBean");
+    IXml layoutXml = layoutBean.getLayoutXml(req, layoutBean.getUserName(req));
+    ILayout layout = (ILayout)layoutXml.getRoot ();
     ITab[] tabs = layout.getTabs ();
 
     for (int iTab = 0; iTab < tabs.length; iTab++)
@@ -150,17 +151,18 @@ public class SubscriberBean extends GenericPortalBean{
       }
     }
 
-    Collections.sort (instanceIDs);
+    Collections.sort(instanceIDs);
     int iHighest = -1;
     if (instanceIDs.size() > 0) {
-       iHighest = ((Integer) instanceIDs.get (instanceIDs.size () - 1)).intValue ();
+       iHighest = ((Integer)instanceIDs.get (instanceIDs.size () - 1)).intValue ();
     }
     String sInstanceID = "c" + (iHighest + 1);
-    channel.setInstanceIDAttribute (sInstanceID);
+    channel.setInstanceIDAttribute(sInstanceID);
     channel.setMinimizedAttribute("false");
+    channel.setGlobalChannelIDAttribute(req.getParameter("chan_id"));
 
     // Remove from channel cache
-    layoutBean.removeChannelInstance (sInstanceID);
+    layoutBean.removeChannelInstance(sInstanceID);
 
     return channel;
    }
@@ -332,24 +334,75 @@ public class SubscriberBean extends GenericPortalBean{
   {
     try
     {
-    setRegistry();
-    if (registry==null) debug("registry is null!!");
-    Enumeration e = registry.keys();
+      AuthorizationBean authorizationBean = new AuthorizationBean();
 
-    while(e.hasMoreElements()) {
-      String cat = (String)e.nextElement();
-      Vector v = (Vector)registry.get(cat);
+      HttpSession session = req.getSession (false);
+      ILayoutBean layoutBean = (ILayoutBean) session.getAttribute("layoutBean");
+      String sUserName = layoutBean.getUserName(req);
+      IPerson person = layoutBean.getPerson (req);
 
-      out.println("<br><b>"+cat+"</b><br>");
-      Enumeration enum = v.elements();
-      while(enum.hasMoreElements()) {
-        String [] chan = new String[2];
-        chan = (String[])enum.nextElement();
-        out.println(chan[1]+"&nbsp;"+
-                    "<a href=\"personalizeLayout.jsp?action=addChannel&column=0&chan_id="+chan[0]+"\"><IMG SRC=\"images/add.gif\" WIDTH=\"20\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Add Channel\"></a>&nbsp;"+
-                    "<a href=\"previewChannel.jsp?chan_id="+chan[0]+"\"><IMG SRC=\"images/preview.gif\" WIDTH=\"16\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Preview Channel\"></a><br>");
+      setRegistry();
+
+      if (registry==null)
+        debug("registry is null!!");
+
+      Enumeration e = registry.keys();
+      int chanID = -1;
+      String channelList;
+      boolean canSubscribe;
+
+      // Go through each catagory
+      while(e.hasMoreElements())
+      {
+        // Do not display the catagory if the user cannot
+        //  subscribe to any channels under it
+        channelList = new String();
+        canSubscribe = false;
+
+        String cat = (String)e.nextElement();
+        Vector v = (Vector)registry.get(cat);
+
+        // Output the catagory name
+        channelList += "<br><b>" + cat + "</b><br>";
+
+        Enumeration enum = v.elements();
+
+        // Output each channel within the catagory
+        while(enum.hasMoreElements())
+        {
+          String [] chan = new String[2];
+
+          chan = (String[])enum.nextElement();
+
+          // Convert the channel ID to a integer
+          try
+          {
+            chanID = Integer.parseInt(chan[0]);
+          }
+          catch(Exception inf)
+          {
+            // Don't fail completely if the channel ID is not right!
+            chanID = -1;
+          }
+
+          // Only show the channel to the user if they are authorized to subscribe
+          if( authorizationBean.canUserSubscribe(person, chanID) )
+          {
+            canSubscribe = true;
+
+            channelList += chan[1] + "&nbsp;" +
+                           "<a href=\"personalizeLayout.jsp?action=addChannel&column=0&chan_id=" + chan[0] + "\">" +
+                           "<IMG SRC=\"images/add.gif\" WIDTH=\"20\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Add Channel\"></a>&nbsp;"+
+                           "<a href=\"previewChannel.jsp?chan_id=" + chan[0] + "\">" +
+                           "<IMG SRC=\"images/preview.gif\" WIDTH=\"16\" HEIGHT=\"13\" HSPACE=\"0\" BORDER=\"0\" ALT=\"Preview Channel\"></a><br>";
+          }
+        }
+
+        if(canSubscribe)
+        {
+          out.println(channelList);
+        }
       }
-    }
     }
     catch (Exception e)
     {
@@ -395,3 +448,4 @@ public class SubscriberBean extends GenericPortalBean{
   }
 
 }
+
