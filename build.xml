@@ -323,6 +323,10 @@
                        by your servlet container.
                        Version: 2.2, 2.3, or 2.4
                        URL: http://jakarta.apache.org/tomcat/
+  
+  spring.jar        Spring framework
+                      Version 1.1.1
+                      URL: http://www.springframework.org/
 
 -->
 
@@ -354,6 +358,7 @@
   <property name="commons-dbcp.jar" value="(set this in build.properties!)"/>
   <property name="commons-pool.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
+  <property name="spring.jar" value="(set this in build.properties!)"/>
 
 
 
@@ -400,6 +405,7 @@
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
+  	<pathelement location="${spring.jar}"/>
 
   </path>
 
@@ -555,6 +561,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
     <!-- This is Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
