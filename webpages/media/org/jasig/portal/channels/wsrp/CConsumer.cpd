@@ -62,7 +62,16 @@ Version $Revision$
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <example>http://www.uportal.biz/services/</example>
+        <example>http://localhost:8080/uPortal/services/</example>
+        <description>This is the base URL for accessing the WSRP services
+          of the remote portlet.  If the Service URL base is specified as
+          http://www.uportal.biz/services/, then the consumer will look for
+          services with the following complete URLs:\n\n
+          http://www.uportal.biz/services/WSRPServiceDescriptionService\n
+          http://www.uportal.biz/services/WSRPBaseService\n
+          http://www.uportal.biz/services/WSRPRegistrationService\n
+          http://www.uportal.biz/services/WSRPPortletManagementService\n
+        </description>
       </parameter>
 
       <parameter modify="publish-only">
