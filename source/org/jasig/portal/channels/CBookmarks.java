@@ -73,11 +73,7 @@ import java.net.URL;
  * @author Peter Kharchenko
  * @author Steven Toth
  * @author Bernie Durfee
-<<<<<<< CBookmarks.java
  * @version $Revision$
-=======
- * @version $Revision$
->>>>>>> 1.41.2.1
  */
 public class CBookmarks extends BaseChannel {
   // A DOM document where all the bookmark information will be contained
