@@ -43,34 +43,66 @@ import  java.util.*;
 
 /**
  * The SmartCache class is used to store objects in memory for
- * a specified amount of time.
- * @author Ken Weiner
+ * a specified amount of time.  The time should be specified in seconds.
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class SmartCache extends java.util.Hashtable {
-  protected int iSweepInterval = 3600000;       // default to 1 hour
+  protected int iExpirationTimeout = 3600000;       // default to 1 hour
 
   /**
-   * put your documentation comment here
-   * @param   int iSweepInterval
+   * Instantiate a new SmartCache.  Usually instances of SmartCache are 
+   * declared as static. When retrieving a value from SmartCache, it will
+   * be null if the value has expired.  It is up to the client to then
+   * retrieve the value and put it in the cache again.
+   * Example:
+   * <code>
+   * import org.jasig.portal.utils.SmartCache;
+   *
+   * public class CacheClient {
+   *   private static SmartCache cache = new SmartCache(3600); // This cache's values will expire in one hour
+   *   
+   *   public static void main (String[] args) {
+   *     // Try to get a value from the cache
+   *     String aKey = "exampleKey";
+   *     String aValue = (String)cache.get(aKey);
+   *
+   *     if (aValue == null) {
+   *       // If we are here, the value has either expired or not in the cache
+   *       // so we will get the value and stuff it in the cache
+   *       String freshValue = someMethodWhichReturnsAString();
+   *  
+   *       // Make sure it isn't null before putting it into the cache
+   *       if (freshValue != null) {
+   *         cache.put(aKey, freshValue);
+   *         aValue = freshValue;
+   *       }
+   *     }
+   *
+   *     System.out.println ("Got the value: " + aValue);     
+   *   }
+   * }
+   * </code>
+   * @param iExpirationTimeout specified in seconds
    */
-  public SmartCache (int iSweepInterval) {
+  public SmartCache (int iExpirationTimeout) {
     super();
-    this.iSweepInterval = iSweepInterval*1000;
+    this.iExpirationTimeout = iExpirationTimeout * 1000;
   }
 
   /**
-   * put your documentation comment here
+   * Instantiate SmartCache with a default expiration timeout of one hour.
    */
   public SmartCache () {
     super();
   }
 
   /**
-   * put your documentation comment here
-   * @param key
-   * @param value
-   * @return 
+   * Add a new value to the cache.  The value will expire in accordance with the 
+   * cache's expiration timeout value which was set when the cache was created.
+   * @param key the key, typically a String
+   * @param value the value
+   * @return the previous value of the specified key in this hashtable, or null if it did not have one.
    */
   public synchronized Object put (Object key, Object value) {
     ValueWrapper valueWrapper = new ValueWrapper(value);
@@ -78,10 +110,10 @@ public class SmartCache extends java.util.Hashtable {
   }
 
   /**
-   * put your documentation comment here
-   * @param key
-   * @param value
-   * @param lCacheInterval
+   * Add a new value to the cache
+   * @param key the key, typically a String
+   * @param value the value
+   * @param lCacheInterval an expiration timeout value which will override the default cache value just for this item
    * @return 
    */
   public synchronized Object put (Object key, Object value, long lCacheInterval) {
@@ -90,9 +122,9 @@ public class SmartCache extends java.util.Hashtable {
   }
 
   /**
-   * put your documentation comment here
-   * @param key
-   * @return 
+   * Get an object from the cache.
+   * @param key the key, typically a String
+   * @return the value to which the key is mapped in this cache; null if the key is not mapped to any value in this cache.
    */
   public synchronized Object get (Object key) {
     ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
@@ -109,9 +141,9 @@ public class SmartCache extends java.util.Hashtable {
   }
 
   /**
-   * Removes from the cache values which have expired
+   * Removes from the cache values which have expired.
    */
-  protected void sweepCache () {
+  public void sweepCache () {
     for (Enumeration enum = keys(); enum.hasMoreElements();) {
       Object key = enum.nextElement();
       ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
@@ -123,71 +155,38 @@ public class SmartCache extends java.util.Hashtable {
 
   private class ValueWrapper {
     private long lCreationTime = System.currentTimeMillis();
-    private long lCacheInterval = 3600000;
+    private long lCacheInterval = iExpirationTimeout;
     private Object oValue;
 
-    /**
-     * put your documentation comment here
-     * @param     Object oValue
-     */
     protected ValueWrapper (Object oValue) {
       this.oValue = oValue;
     }
 
-    /**
-     * put your documentation comment here
-     * @param     Object oValue
-     * @param     long lCacheInterval
-     */
     protected ValueWrapper (Object oValue, long lCacheInterval) {
       this.oValue = oValue;
-      this.lCacheInterval = lCacheInterval;
+      this.lCacheInterval = lCacheInterval * 1000;
     }
 
-    /**
-     * put your documentation comment here
-     * @return 
-     */
     protected Object getValue () {
       return  oValue;
     }
 
-    /**
-     * put your documentation comment here
-     * @param oValue
-     */
     protected void setValue (Object oValue) {
       this.oValue = oValue;
     }
 
-    /**
-     * put your documentation comment here
-     * @return 
-     */
     protected long getCreationTime () {
       return  lCreationTime;
     }
 
-    /**
-     * put your documentation comment here
-     * @param lCreationTime
-     */
     protected void setCreationTime (long lCreationTime) {
       this.lCreationTime = lCreationTime;
     }
 
-    /**
-     * put your documentation comment here
-     * @return 
-     */
     protected long getCacheInterval () {
       return  lCacheInterval;
     }
 
-    /**
-     * put your documentation comment here
-     * @param lCacheInterval
-     */
     protected void setCacheInterval (long lCacheInterval) {
       this.lCacheInterval = lCacheInterval;
     }
