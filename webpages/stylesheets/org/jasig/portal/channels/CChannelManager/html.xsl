@@ -263,7 +263,10 @@
               <xsl:with-param name="i" select="1"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]"><xsl:for-each select="ancestor::category"><a class="uportal-navigation-category-selected"><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
+          <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]">
+          <xsl:for-each select="ancestor::category">
+          <a class="uportal-navigation-category-selected"><xsl:attribute name="href">
+          <xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
                   <em>
                     <xsl:value-of select="@name"/>
                   </em></a>::</xsl:for-each>
@@ -1104,7 +1107,11 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="minimizable" value="true"/> </td>
+                  <input type="checkbox" name="minimizable" value="true">
+                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@minimizable='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input>
+                  </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1137,7 +1144,10 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="editable" value="true"/> </td>
+                  <input type="checkbox" name="editable" value="true">
+                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@editable='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input> </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1168,7 +1178,11 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="hasHelp" value="true"/> </td>
+                  <input type="checkbox" name="hasHelp" value="true">
+                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasHelp='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input>                   
+                   </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1199,7 +1213,12 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="hasAbout" value="true"/> </td>
+                  <input type="checkbox" name="hasAbout" value="true">
+                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasAbout='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input> 
+                  
+                   </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1230,7 +1249,12 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="printable" value="true"/> </td>
+                  <input type="checkbox" name="printable" value="true">
+                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@printable='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input> 
+                  
+                   </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1261,7 +1285,13 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="removable" value="true"/> </td>
+                  <input type="checkbox" name="removable" value="true">
+                  
+                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@removable='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input> 
+                  
+                   </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1292,7 +1322,11 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="detachable" value="true"/> </td>
+                  <input type="checkbox" name="detachable" value="true">
+                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@detachable='true'">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input> 
+                   </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1886,7 +1920,12 @@
                         <tr class="uportal-channel-text" valign="top">
 
                           <td nowrap="nowrap" align="center">
-                            <input type="checkbox" name="checkbox" value="checkbox"/> </td>
+                            <input type="checkbox" name="checkbox" value="checkbox">
+                            <xsl:if test="name = /manageChannels/selectRoles/params/step/userSettings/selectedRoles/selectedRole = name">
+<xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
+
+
+                             </td>
 
 
 
