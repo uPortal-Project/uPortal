@@ -108,7 +108,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	this.pcs=pcs;
 
         ChannelStaticData sd = new ChannelStaticData ();
-        sd.setChannelID (chanID);
+        sd.setChannelSubscribeId (chanID);
         sd.setTimeout (timeOut);
         sd.setParameters (params);
         // get person object from UsreLayoutManager

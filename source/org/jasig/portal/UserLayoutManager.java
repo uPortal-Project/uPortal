@@ -206,7 +206,7 @@ public class UserLayoutManager implements IUserLayoutManager {
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
             // If a channel specifies "me" as its root, set the root
-            // to the channel's instance Id
+            // to the channel's subscribe Id
             if (root.equals("me")) {
                 // get uPFile spec and search for "channel" clause
                 UPFileSpec upfs=new UPFileSpec(req);
@@ -292,12 +292,12 @@ public class UserLayoutManager implements IUserLayoutManager {
 
     /**
      * Returns a global channel Id given a channel instance Id
-     * @param channelInstanceId instance id of a channel
+     * @param channelSubscribeId subscribe id of a channel
      * @return channel global id
      */
-    public String getChannelGlobalId (String channelInstanceId) {
+    public String getChannelPublishId(String channelSubscribeId) {
         // Get the channel node from the user's layout
-        Node channelNode = getUserLayoutNode(channelInstanceId);
+        Node channelNode = getUserLayoutNode(channelSubscribeId);
         if (channelNode == null) {
             return  (null);
         }
@@ -350,7 +350,7 @@ public class UserLayoutManager implements IUserLayoutManager {
         return XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)uLayoutXML);
     }
 
-    public UserPreferences getUserPreferencesCopy () {
+    public UserPreferences getUserPreferencesCopy() {
         return  new UserPreferences(this.getUserPreferences());
     }
 
@@ -399,15 +399,15 @@ public class UserLayoutManager implements IUserLayoutManager {
             return  null;
     }
 
-    public boolean removeChannel(String channelId) throws PortalException {
+    public boolean removeChannel(String channelSubscribeId) throws PortalException {
         // warning .. the channel should also be removed from uLayoutXML
-        Element channel = uLayoutXML.getElementById(channelId);
+        Element channel = uLayoutXML.getElementById(channelSubscribeId);
         if (channel != null) {
             boolean rval=true;
             synchronized(layout_write_lock) {
                 if(!this.deleteNode(channel)) {
                     // unable to remove channel due to unremovable/immutable restrictionsn
-                    LogService.instance().log(LogService.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                    LogService.instance().log(LogService.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelSubscribeId+"\"");
                     rval=false;
                 } else {
                     layout_write_lock.setValue(true);
@@ -429,7 +429,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             }
             return rval;
         } else {
-            LogService.instance().log(LogService.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
+            LogService.instance().log(LogService.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelSubscribeId);
             return false;
         }
     }

@@ -64,8 +64,8 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   private boolean insideChannelElement = false;
   private Hashtable params;
   private String channelClassName;
-  private String channelID;
-  private String channelPublishID;
+  private String channelSubscribeId;
+  private String channelPublishId;
   private long timeOut;
     boolean ccaching;
 
@@ -137,8 +137,8 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
 
         // get class attribute
         channelClassName = atts.getValue("class");
-        channelID = atts.getValue("ID");
-        channelPublishID = atts.getValue("chanID");
+        channelSubscribeId = atts.getValue("ID");
+        channelPublishId = atts.getValue("chanID");
         timeOut = java.lang.Long.parseLong(atts.getValue("timeout"));
         params = new Hashtable();
       }
@@ -154,7 +154,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   {
     if (insideChannelElement) {
       if (qName.equals("channel")) {
-        cm.startChannelRendering(channelID, channelPublishID, channelClassName, timeOut,params,this.ccaching);
+        cm.startChannelRendering(channelSubscribeId, channelPublishId, channelClassName, timeOut,params,this.ccaching);
         insideChannelElement=false;
       }
     }

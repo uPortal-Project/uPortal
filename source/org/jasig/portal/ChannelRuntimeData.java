@@ -55,12 +55,12 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private boolean renderingAsRoot;
     private static final String fs = File.separator;
     private BrowserInfo binfo;
-    private String channelId;
+    private String channelSubscribeId;
 
   /**
    * default empty constructor
    */
-  public ChannelRuntimeData () {
+  public ChannelRuntimeData() {
     super();
     // set the default values for the parameters here
     baseActionURL = null;
@@ -70,11 +70,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * Create a new instance of ourself
    * Used by the CError channel
    */
-  public Object clone () {
+  public Object clone() {
     ChannelRuntimeData crd = new ChannelRuntimeData();
     crd.baseActionURL = baseActionURL;
     crd.binfo = binfo;
-    crd.channelId=channelId;
+    crd.channelSubscribeId=channelSubscribeId;
     crd.renderingAsRoot=renderingAsRoot;
     crd.putAll(this);
     return  crd;
@@ -86,7 +86,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      *
      * @param baURL a baseActionURL value.
      */
-    public void setBaseActionURL (String baURL) {
+    public void setBaseActionURL(String baURL) {
         baseActionURL = baURL;
     }
 
@@ -94,7 +94,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * Sets whether or not the channel is rendering as the root of the layout.
    * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
    */
-  public void setRenderingAsRoot (boolean rar) {
+  public void setRenderingAsRoot(boolean rar) {
     renderingAsRoot = rar;
   }
 
@@ -103,17 +103,17 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      *
      * @param bi a browser info associated with the current request
      */
-    public void setBrowserInfo (BrowserInfo bi) {
+    public void setBrowserInfo(BrowserInfo bi) {
     this.binfo = bi;
     }
 
     /**
-     * Setter method for channel (instance) Id.
+     * Setter method for channel subscribe Id.
      *
-     * @param chanId a <code>String</code> value, first character must be alphanumeric.
+     * @param chanSubscribeId a <code>String</code> value, first character must be alphanumeric.
      */
-    public void setChannelId(String chanId) {
-        this.channelId=chanId;
+    public void setChannelSubscribeId(String chanSubscribeId) {
+        this.channelSubscribeId=chanSubscribeId;
     }
 
     /**
@@ -121,7 +121,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      *
      * @return a <code>BrowserInfo</code> object ecapsulating various user-agent information.
      */
-    public BrowserInfo getBrowserInfo () {
+    public BrowserInfo getBrowserInfo() {
         return  binfo;
     }
 
@@ -130,7 +130,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      *
      * @param params a <code>Map</code> of parameter names to parameter values.
      */
-    public void setParameters (Map params) {
+    public void setParameters(Map params) {
         // copy a Map
         this.putAll(params);
     }
@@ -142,7 +142,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @param values an array of parameter values
      * @return an array of parameter values
      */
-    public String[] setParameterValues (String pName, String[] values) {
+    public String[] setParameterValues(String pName, String[] values) {
         return  (String[])super.put(pName, values);
     }
 
@@ -187,8 +187,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * @return URL to invoke the worker.
    *
    */
-    public String getWorkerActionURL (String worker) {
-        return UPFileSpec.WORKER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+worker+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+this.channelId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
+    public String getWorkerActionURL(String worker) {
+        return UPFileSpec.WORKER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+worker+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+this.channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
     }
 
   /**

@@ -121,7 +121,7 @@ public class ChannelServlet extends HttpServlet {
         channel = (org.jasig.portal.IChannel)Class.forName(className).newInstance();
         // construct a ChannelStaticData object
         ChannelStaticData sd = new ChannelStaticData();
-        sd.setChannelID("singlet");
+        sd.setChannelSubscribeId("singlet");
         sd.setTimeout(timeOut);
         // determine the IPerson object
         int guestUserId = 1;

@@ -93,7 +93,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public static final int RESOURCE_MISSING_EXCEPTION=4;
 
     protected Throwable channelException=null;
-    protected String str_channelID=null;
+    protected String str_channelSubscribeId=null;
     protected String str_message=null;
     protected IChannel the_channel=null;
     protected int errorID=-1;
@@ -108,17 +108,17 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public CError() {
     }
 
-    public CError(int errorCode, Throwable exception, String channelID,IChannel channelInstance) {
+    public CError(int errorCode, Throwable exception, String channelSubscribeId,IChannel channelInstance) {
         this();
-        str_channelID=channelID;
+        str_channelSubscribeId=channelSubscribeId;
         this.channelException=exception;
         this.the_channel=channelInstance;
         this.errorID=errorCode;
     }
 
-    public CError(int errorCode, String message,String channelID,IChannel channelInstance) {
+    public CError(int errorCode, String message,String channelSubscribeId,IChannel channelInstance) {
         this();
-        this.str_channelID=channelID;
+        this.str_channelSubscribeId=channelSubscribeId;
         this.str_message=message;
         this.the_channel=channelInstance;
         this.errorID=errorCode;
@@ -128,8 +128,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         this.str_message=m;
     }
 
-    private void resetCError(int errorCode, Exception exception, String channelID,IChannel channelInstance,String message) {
-        str_channelID=channelID;
+    private void resetCError(int errorCode, Exception exception, String channelSubscribeId,IChannel channelInstance,String message) {
+        str_channelSubscribeId=channelSubscribeId;
         this.channelException=exception;
         this.the_channel=channelInstance;
         this.errorID=errorCode;
@@ -147,9 +147,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
      * the users permission to use the channel has been removed (permanently or
      * temporarily).
      */
-    public void setStaticData (ChannelStaticData sd) {
+    public void setStaticData(ChannelStaticData sd) {
       this.str_message = sd.getParameter("CErrorMessage");
-      this.str_channelID = sd.getParameter("CErrorChanId");
+      this.str_channelSubscribeId = sd.getParameter("CErrorChanId");
       String value;
       if ((value = sd.getParameter("CErrorErrorId")) != null) {
         this.errorID = Integer.parseInt(value);
@@ -160,7 +160,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public void renderXML(ContentHandler out) {
         // runtime data processing needs to be done here, otherwise replaced
         // channel will get duplicated setRuntimeData() calls
-        if(str_channelID!=null) {
+        if(str_channelSubscribeId!=null) {
             String chFate=runtimeData.getParameter("action");
             if(chFate!=null) {
                 // a fate has been chosen
@@ -174,12 +174,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
-                        cm.addChannelInstance(this.str_channelID,this.the_channel);
+                        cm.addChannelInstance(this.str_channelSubscribeId,this.the_channel);
                         the_channel.renderXML(out);
                         return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the error channel
-                        resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
+                        resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
                     LogService.instance().log(LogService.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
@@ -189,8 +189,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear();
                     try {
-                        if((the_channel=cm.instantiateChannel(str_channelID))==null) {
-                            resetCError(this.GENERAL_ERROR,null,this.str_channelID,null,"Channel failed to reinstantiate!");
+                        if((the_channel=cm.instantiateChannel(str_channelSubscribeId))==null) {
+                            resetCError(this.GENERAL_ERROR,null,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
                         } else {
                             try {
                                 if(the_channel instanceof IPrivilegedChannel) {
@@ -201,13 +201,13 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                 return;
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
-                                resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a reload attempt.");
-                                cm.addChannelInstance(str_channelID,this);
+                                resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
+                                cm.addChannelInstance(str_channelSubscribeId,this);
                                 LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
                     } catch (Exception e) {
-                        resetCError(this.GENERAL_ERROR,e,this.str_channelID,null,"Channel failed to reinstantiate!");
+                        resetCError(this.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
                         LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
@@ -252,15 +252,15 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             errorEl.appendChild(messageEl);
         }
 
-        if(str_channelID!=null) {
+        if(str_channelSubscribeId!=null) {
             Element channelEl=doc.createElement("channel");
             Element idEl=doc.createElement("id");
-            idEl.appendChild(doc.createTextNode(str_channelID));
+            idEl.appendChild(doc.createTextNode(str_channelSubscribeId));
             channelEl.appendChild(idEl);
 
             // determine channel name
             if(portcs!=null) {
-                String chName=(portcs.getUserLayoutManager()).getNodeName(str_channelID);
+                String chName=(portcs.getUserLayoutManager()).getNodeName(str_channelSubscribeId);
                 if(chName!=null) {
                     Element nameEl=doc.createElement("name");
                     nameEl.appendChild(doc.createTextNode(chName));
@@ -336,7 +336,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // figure out if we allow for refresh/reload
         String allowRef="true";
         String allowRel="true";
-        if(str_channelID==null) {
+        if(str_channelSubscribeId==null) {
             allowRel=allowRef="false";
         } else {
             if(channelException!=null && (channelException instanceof PortalException)) {
@@ -406,7 +406,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
 
         sbKey.append("org.jasig.portal.channels.CError: errorId=").append(Integer.toString(errorID)).append(", channelID=");
-        sbKey.append(str_channelID).append(", message=").append(str_message).append(" strace=").append(toString(showStackTrace));
+        sbKey.append(str_channelSubscribeId).append(", message=").append(str_message).append(" strace=").append(toString(showStackTrace));
         sbKey.append(", mode=").append(ssTitle);
 
         // part of the key that specifies what kind of exception has been generated

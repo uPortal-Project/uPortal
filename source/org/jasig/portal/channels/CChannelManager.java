@@ -444,13 +444,13 @@ public class CChannelManager extends BaseChannel {
           channelManagerDoc = getChannelManagerDoc(modChanSettings);
         }
       } else if (action.equals("editChannelSettings")) {
-        String chanID = runtimeData.getParameter("channelID");
+        String str_channelPublishId = runtimeData.getParameter("channelID");
         // Set the channel definition
-        channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(chanID));
+        channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(str_channelPublishId));
 
         // Set the groups
-        int channelID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
-        org.jasig.portal.security.IPermission[] permissions = staticData.getAuthorizationPrincipal().getAllPermissions("UP_FRAMEWORK", "SUBSCRIBE", "CHAN_ID." + channelID);
+        int int_channelPublishId = Integer.parseInt(str_channelPublishId.startsWith("chan") ? str_channelPublishId.substring(4) : str_channelPublishId);
+        org.jasig.portal.security.IPermission[] permissions = staticData.getAuthorizationPrincipal().getAllPermissions("UP_FRAMEWORK", "SUBSCRIBE", "CHAN_ID." + int_channelPublishId);
         for (int i = 0; i < permissions.length; i++) {
           String principal = permissions[i].getPrincipal();
           String groupKey = principal.substring(principal.indexOf(".") + 1);
@@ -459,7 +459,7 @@ public class CChannelManager extends BaseChannel {
 
         // Set the categories
         Set categories = new TreeSet();
-        org.w3c.dom.NodeList nl = ChannelRegistryManager.getCategories(chanID);
+        org.w3c.dom.NodeList nl = ChannelRegistryManager.getCategories(str_channelPublishId);
         for (int i = 0; i < nl.getLength(); i++) {
           Element category = (Element)nl.item(i);
           categories.add(category.getAttribute("ID"));
@@ -469,10 +469,10 @@ public class CChannelManager extends BaseChannel {
         action = "reviewChannel";
         doAction();
       } else if (action.equals("removePublishedChannel")) {
-        String channelID = runtimeData.getParameter("channelID");
-        if (channelID != null) {
+        String channelPublishId = runtimeData.getParameter("channelID");
+        if (channelPublishId != null) {
           try {
-            ChannelRegistryManager.removeChannel(channelID);
+            ChannelRegistryManager.removeChannel(channelPublishId);
           } catch (Exception e) {
             throw new GeneralRenderingException(e.getMessage());
           }

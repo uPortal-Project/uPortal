@@ -409,16 +409,16 @@ final class TabColumnPrefsState extends BaseState
 
   /**
    * Moves a channel from one position in the layout to another.
-   * @param sourceChannelId the channel to move
+   * @param sourceChannelSubscribeId the channel to move
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
    * @throws Exception
    */
-  private final void moveChannel(String sourceChannelId, String method, String destinationElementId) throws Exception
+  private final void moveChannel(String sourceChannelSubscribeId, String method, String destinationElementId) throws Exception
   {
     Element layout = userLayout.getDocumentElement();
 
-    Element sourceChannel = userLayout.getElementById(sourceChannelId);
+    Element sourceChannel = userLayout.getElementById(sourceChannelSubscribeId);
     Element destinationElement = userLayout.getElementById(destinationElementId);
 
     // The destination element might be an empty tab or a column
@@ -457,7 +457,7 @@ final class TabColumnPrefsState extends BaseState
   {
     Element layout = userLayout.getDocumentElement();
     newChannel = (Element)(userLayout.importNode(newChannel, true));
-    String instanceId = ulStore.generateNewChannelInstanceId(staticData.getPerson());
+    String instanceId = ulStore.generateNewChannelSubscribeId(staticData.getPerson());
     newChannel.setAttribute("ID", instanceId);
     // The following line is Xerces-specific
     ((org.apache.xerces.dom.DocumentImpl)userLayout).putIdentifier(instanceId, newChannel);
@@ -491,15 +491,15 @@ final class TabColumnPrefsState extends BaseState
 
   /**
    * Adds a channel to the layout.
-   * @param selectedChannelId the channel to add
+   * @param selectedChannelSubscribeId the channel to add
    * @param position either <code>before</code> or <code>after</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
    * @throws Exception
    */
-  private final void addChannel(String selectedChannelId, String position, String destinationElementId) throws Exception
+  private final void addChannel(String selectedChannelSubscribeId, String position, String destinationElementId) throws Exception
   {
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    Element newChannel = channelRegistry.getElementById(selectedChannelId);
+    Element newChannel = channelRegistry.getElementById(selectedChannelSubscribeId);
     addChannel(newChannel, position, destinationElementId);
   }
 
@@ -584,13 +584,13 @@ final class TabColumnPrefsState extends BaseState
   /**
    * Finds any parameters in a channel that are determined to be overridable
    * by a user.
-   * @param selectedChannelId an identifier to find the channel within the channel registry
+   * @param selectedChannelSubscribeId an identifier to find the channel within the channel registry
    * @return a list of <parameter> elements whose override attribute is set to true
    * @throws org.jasig.portal.PortalException
    */
-  private final List getOverridableChannelParams(String selectedChannelId) throws PortalException {
+  private final List getOverridableChannelParams(String selectedChannelSubscribeId) throws PortalException {
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    Element channel = (Element)channelRegistry.getElementById(selectedChannelId);
+    Element channel = (Element)channelRegistry.getElementById(selectedChannelSubscribeId);
     List overridableParams = null;
 
     if (channel != null) {
@@ -604,7 +604,7 @@ final class TabColumnPrefsState extends BaseState
           overridableParams.add(param);
       }
     } else {
-      throw new PortalException("Channel " + selectedChannelId + " is missing from the channel registry");
+      throw new PortalException("Channel " + selectedChannelSubscribeId + " is missing from the channel registry");
     }
     return overridableParams;
   }
@@ -910,10 +910,10 @@ final class TabColumnPrefsState extends BaseState
           if (subAction != null && subAction.equals("modifyChannelParams"))
           {
             Element layoutChannel = userLayout.getElementById(elementID);
-            String channelId = "chan" + layoutChannel.getAttribute("chanID");
+            String channelPublishId = "chan" + layoutChannel.getAttribute("chanID");
             Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-            Element channel = (Element)channelRegistry.getElementById(channelId);
-            List overridableChanParams = getOverridableChannelParams(channelId);
+            Element channel = (Element)channelRegistry.getElementById(channelPublishId);
+            List overridableChanParams = getOverridableChannelParams(channelPublishId);
             context.internalState = new ParametersState(context, this, overridableChanParams, channel);
             context.internalState.setStaticData(staticData);
           }
@@ -956,9 +956,9 @@ final class TabColumnPrefsState extends BaseState
         {
           try
           {
-            String channelId = runtimeData.getParameter("elementID");
+            String channelSubscribeId = runtimeData.getParameter("elementID");
 
-            deleteElement(channelId);
+            deleteElement(channelSubscribeId);
           }
           catch (Exception e)
           {

@@ -75,20 +75,20 @@ public boolean canPublish() throws org.jasig.portal.AuthorizationException {
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.
  * @return boolean
- * @param chanID int - the Channel ID
+ * @param channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canRender(int chanID) throws org.jasig.portal.AuthorizationException {
-    return getAuthorizationService().canPrincipalRender(this, chanID);
+public boolean canRender(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+    return getAuthorizationService().canPrincipalRender(this, channelPublishId);
 }
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this channel.
  * @return boolean
- * @param chanID int - the Channel ID
+ * @param  channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canSubscribe(int chanID) throws org.jasig.portal.AuthorizationException {
-    return getAuthorizationService().canPrincipalSubscribe(this, chanID);
+public boolean canSubscribe(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+    return getAuthorizationService().canPrincipalSubscribe(this, channelPublishId);
 }
 /**
  * Compares two objects for equality. Returns a boolean that indicates

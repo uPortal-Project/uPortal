@@ -74,10 +74,10 @@ public class StructureAttributesIncorporationFilter extends SAX2FilterImpl
         // recognizing "channel"
         if (qName.equals("channel")) {
             AttributesImpl attsImpl=new AttributesImpl(atts);
-            String channelID = attsImpl.getValue("ID");
+            String channelSubscribeId = attsImpl.getValue("ID");
             for(Enumeration ca=fsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
-                attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
+                attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getChannelAttributeValue(channelSubscribeId,attrName));
                 //		LogService.instance().log(LogService.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);

@@ -70,7 +70,7 @@ public interface IUserLayoutManager {
      * @param channelInstanceId instance id of a channel
      * @return channel global id
      */
-    public String getChannelGlobalId (String channelInstanceId);
+    public String getChannelPublishId (String channelInstanceId);
 
     /**
      * Determine if the user agent associated with this session has been successfuly mapped to a profile
@@ -144,10 +144,10 @@ public interface IUserLayoutManager {
 
     /**
      * Removes a channel
-     * @param channelId channel instance Id
+     * @param channelSubscribeId channel instance Id
      * @return true if the remove operation was successful
      */
-    public boolean removeChannel (String channelId) throws PortalException;
+    public boolean removeChannel (String channelSubscribeId) throws PortalException;
 
     /**
      * Returns a layout write lock.

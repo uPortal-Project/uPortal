@@ -373,12 +373,12 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             return  (null);
         }
         // Get the global channel Id from the channel node
-        Node channelIdNode = channelNode.getAttributes().getNamedItem("chanID");
-        if (channelIdNode == null) {
+        Node channelPublishIdNode = channelNode.getAttributes().getNamedItem("chanID");
+        if (channelPublishIdNode == null) {
             return  (null);
         }
-        // Return the channel's global Id
-        return  (channelIdNode.getNodeValue());
+        // Return the channel's publish Id
+        return  (channelPublishIdNode.getNodeValue());
     }
 
     public boolean isUserAgentUnmapped (String sessionId) {
@@ -566,14 +566,14 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 
     /**
      * Guest users can not remove channels. 
-     * @param channelId channel id
+     * @param  channelSubscribeId channel subscribe id
      * @return false
      */
-    public boolean removeChannel (String channelId,String sessionId) throws PortalException {
+    public boolean removeChannel (String channelSubscribeId,String sessionId) throws PortalException {
         return false;
     }
 
-    public boolean removeChannel (String channelId) throws PortalException {
+    public boolean removeChannel (String channelSubscribeId) throws PortalException {
         throw new UnsupportedOperationException();
     }
 }

@@ -43,7 +43,7 @@ import org.jasig.portal.services.LogService;
 
 /**
  * User preferences for stylesheets performing theme transformation
- * @author Peter Kharchenko
+ * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</>a
  * @version $Revision$
  */
 
@@ -66,16 +66,16 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         this.defaultChannelAttributeValues=new ArrayList(ssup.defaultChannelAttributeValues);
     }
 
-    public String getChannelAttributeValue(String channelID,String attributeName) {
+    public String getChannelAttributeValue(String channelSubscribeId,String attributeName) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
         String value=null;
-        List l=(List) channelAttributeValues.get(channelID);
+        List l=(List) channelAttributeValues.get(channelSubscribeId);
         if(l==null) {
-	    //            LogService.instance().log(LogService.DEBUG,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelID+"\".");
+	    //            LogService.instance().log(LogService.DEBUG,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelSubscribeId+"\".");
 	    // return null;
 	    return (String) defaultChannelAttributeValues.get(attributeNumber.intValue());
         } else {
@@ -96,17 +96,17 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
 
     /**
      * Returns channel attribute value only if it has been assigned specifically.
-     * @channelID channel id
-     * @attributeName name of the attribute
+     * @param channelSubscribeId channel id
+     * @param attributeName name of the attribute
      * @return attribute value or null if the value is determined by the attribute default
      */
-    String getDefinedChannelAttributeValue(String channelID,String attributeName) {
+    String getDefinedChannelAttributeValue(String channelSubscribeId,String attributeName) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::hasDefinedChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
-        List l=(List) channelAttributeValues.get(channelID);
+        List l=(List) channelAttributeValues.get(channelSubscribeId);
         if(l==null) {
 	    return null;
 	} else {
@@ -118,15 +118,15 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
     }
 
     // this should be modified to throw exceptions
-    public void setChannelAttributeValue(String channelID,String attributeName,String attributeValue) {
+    public void setChannelAttributeValue(String channelSubscribeId,String attributeName,String attributeValue) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::setChannelAttribute() : Attempting to set a non-existing channel attribute \""+attributeName+"\".");
             return;
         }
-        List l=(List) channelAttributeValues.get(channelID);
+        List l=(List) channelAttributeValues.get(channelSubscribeId);
         if(l==null)
-            l=this.createChannel(channelID);
+            l=this.createChannel(channelSubscribeId);
         try {
             l.set(attributeNumber.intValue(),attributeValue);
         } catch (IndexOutOfBoundsException e) {
@@ -168,32 +168,32 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         return channelAttributeNumbers.keys();
     }
 
-    public void addChannel(String channelID) {
+    public void addChannel(String channelSubscribeId) {
         // check if the channel is there. In general it might be ok to use this functon to default
         // all of the channel's parameters
 
         ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
 
-        if(channelAttributeValues.put(channelID,l)!=null)
-            LogService.instance().log(LogService.DEBUG,"ThemeStylesheetUserPreferences::addChannel() : Readding an existing channel (channelID=\""+channelID+"\"). All values will be set to default.");
+        if(channelAttributeValues.put(channelSubscribeId,l)!=null)
+            LogService.instance().log(LogService.DEBUG,"ThemeStylesheetUserPreferences::addChannel() : Readding an existing channel (channelSubscribeId=\""+channelSubscribeId+"\"). All values will be set to default.");
     }
 
-    public void removeChannel(String channelID) {
-        if(channelAttributeValues.remove(channelID)==null)
-            LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::removeChannel() : Attempting to remove an non-existing channel (channelID=\""+channelID+"\").");
+    public void removeChannel(String channelSubscribeId) {
+        if(channelAttributeValues.remove(channelSubscribeId)==null)
+            LogService.instance().log(LogService.ERROR,"ThemeStylesheetUserPreferences::removeChannel() : Attempting to remove an non-existing channel (channelSubscribeId=\""+channelSubscribeId+"\").");
     }
 
     public Enumeration getChannels() {
         return channelAttributeValues.keys();
     }
 
-    public boolean hasChannel(String channelID) {
-        return channelAttributeValues.containsKey(channelID);
+    public boolean hasChannel(String channelSubscribeId) {
+        return channelAttributeValues.containsKey(channelSubscribeId);
     }
 
-    private ArrayList createChannel(String channelID) {
+    private ArrayList createChannel(String channelSubscribeId) {
         ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
-        channelAttributeValues.put(channelID,l);
+        channelAttributeValues.put(channelSubscribeId,l);
         return l;
     }
 

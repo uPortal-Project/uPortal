@@ -120,11 +120,11 @@ public class ChannelRegistryManager {
     NodeList nl = channelRegistry.getElementsByTagName("channel");
     for (int i = 0; i < nl.getLength(); i++) {
       Element channel = (Element)nl.item(i);
-      String chanID = channel.getAttribute("chanID");
-      chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
+      String channelPublishId = channel.getAttribute("chanID");
+      channelPublishId = channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId;
 
       // Take out channels which user doesn't have access to
-      if (!ap.canSubscribe(Integer.parseInt(chanID)))
+      if (!ap.canSubscribe(Integer.parseInt(channelPublishId)))
         channel.getParentNode().removeChild(channel);
     }
 
@@ -134,18 +134,18 @@ public class ChannelRegistryManager {
   /**
    * Looks in channel registry for a channel element matching the
    * given channel ID.
-   * @param the channel ID
-   * @return the channel element matching chanID
+   * @param channelPublishId the channel publish id
+   * @return the channel element matching specified channel publish id
    * @throws PortalException
    */
-  public static Element getChannel (String chanID) throws PortalException {
+  public static Element getChannel (String channelPublishId) throws PortalException {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
     Element channelE = null;
     try {
       // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
-      channelE = (Element)XPathAPI.selectSingleNode(channelRegistry, "(//channel[@ID = '" + chanID + "'])[1]");
+      channelE = (Element)XPathAPI.selectSingleNode(channelRegistry, "(//channel[@ID = '" + channelPublishId + "'])[1]");
     } catch (javax.xml.transform.TransformerException te) {
-      throw new GeneralRenderingException("Not able to find channel " + chanID + " within channel registry: " + te.getMessageAndLocation());
+      throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry: " + te.getMessageAndLocation());
     }
     return channelE;
   }
@@ -153,28 +153,28 @@ public class ChannelRegistryManager {
   /**
    * Looks in channel registry for a channel element matching the
    * given channel ID.
-   * @param the channel ID
+   * @param channelPublishId the channel publish ID
    * @return the channel element matching chanID
    * @throws org.jasig.portal.PortalException
    */
-  public static NodeList getCategories (String chanID) throws PortalException {
+  public static NodeList getCategories (String channelPublishId) throws PortalException {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
     NodeList categories = null;
     try {
       // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
-      categories = (NodeList)XPathAPI.selectNodeList(channelRegistry, "//category[channel/@ID = '" + chanID + "']");
+      categories = (NodeList)XPathAPI.selectNodeList(channelRegistry, "//category[channel/@ID = '" + channelPublishId + "']");
     } catch (javax.xml.transform.TransformerException te) {
-      throw new GeneralRenderingException("Not able to find channel " + chanID + " within channel registry: " + te.getMessageAndLocation());
+      throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry: " + te.getMessageAndLocation());
     }
     return categories;
   }
 
   /**
    * Publishes a channel.
-   * @param the channel XML fragment
-   * @param a list of categories that the channel belongs to
-   * @param a list of group keys that are permitted to subscribe to and view the channel
-   * @param the user ID of the channel publisher
+   * @param channel the channel XML fragment
+   * @param categoryIDs a list of categories that the channel belongs to
+   * @param groups a list of group keys that are permitted to subscribe to and view the channel
+   * @param publisher the user ID of the channel publisher
    * @throws java.lang.Exception
    */
   public static void publishChannel (Element channel, String[] categoryIDs, IEntityGroup[] groups, IPerson publisher) throws Exception {
@@ -184,10 +184,10 @@ public class ChannelRegistryManager {
     // Use current channel ID if modifying previously published channel, otherwise get a new ID
     boolean newChannel = true;
     int ID = 0;
-    String chanID = channel.getAttribute("ID");
-    if (chanID != null && chanID.trim().length() > 0) {
+    String channelPublishId = channel.getAttribute("ID");
+    if (channelPublishId != null && channelPublishId.trim().length() > 0) {
       newChannel = false;
-      ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
+      ID = Integer.parseInt(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
       LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
     }
     else {

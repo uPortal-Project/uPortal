@@ -56,17 +56,17 @@ public interface IAuthorizationPrincipal {
 /**
  * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
  * @return boolean
- * @param chanID int - the Channel ID
+ * @param channelPublishId int - the Channel publish Id
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canRender(int chanID) throws AuthorizationException;
+    boolean canRender(int channelPublishId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this channel.
  * @return boolean
- * @param chanID int - the Channel ID
+ * @param channelPublishId int - the Channel Id
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canSubscribe(int chanID) throws AuthorizationException;
+    boolean canSubscribe(int channelPublishId) throws AuthorizationException;
 /**
  * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>,
  * including inherited <code>Permissions</code>.

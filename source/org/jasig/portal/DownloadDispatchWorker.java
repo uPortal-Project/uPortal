@@ -97,7 +97,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 ChannelRuntimeData rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(new BrowserInfo(req));
-                rd.setChannelId(channelTarget);
+                rd.setChannelSubscribeId(channelTarget);
                 // just give a default baseActionURL
                 rd.setBaseActionURL(UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                 ch.setRuntimeData(rd);

@@ -93,7 +93,7 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param channelInstanceId instance id of a channel
      * @return channel global id
      */
-    public String getChannelGlobalId (String channelInstanceId) {
+    public String getChannelPublishId (String channelInstanceId) {
         return this.gulm.getChannelGlobalId(channelInstanceId,this.sessionId);
     }
 
@@ -196,10 +196,10 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
 
     /**
      * Removes a channel
-     * @param channelId channel instance Id
+     * @param  channelSubscribeId channel subscribe Id
      */
-    public boolean removeChannel (String channelId) throws PortalException {
-        return this.gulm.removeChannel(channelId,this.sessionId);
+    public boolean removeChannel (String channelSubscribeId) throws PortalException {
+        return this.gulm.removeChannel(channelSubscribeId,this.sessionId);
     }
 }
 

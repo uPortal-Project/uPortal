@@ -94,16 +94,16 @@ public class UserPreferences {
         for(int i=0;i<channelNodes.getLength();i++) {
             Element el=(Element) channelNodes.item(i);
             if(el!=null) {
-                String chID=el.getAttribute("ID");
-                if(!fsup.hasChannel(chID)) {
-                    fsup.addChannel(chID);
-                    //		    LogService.instance().log(LogService.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+chID);
+                String channelSubscribeId=el.getAttribute("ID");
+                if(!fsup.hasChannel(channelSubscribeId)) {
+                    fsup.addChannel(channelSubscribeId);
+                    //		    LogService.instance().log(LogService.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+channelSubscribeId);
                 }
-                if(!ssup.hasChannel(chID)) {
-                    ssup.addChannel(chID);
-                    //		    LogService.instance().log(LogService.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+chID);
+                if(!ssup.hasChannel(channelSubscribeId)) {
+                    ssup.addChannel(channelSubscribeId);
+                    //		    LogService.instance().log(LogService.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+channelSubscribeId);
                 }
-                channelSet.add(chID);
+                channelSet.add(channelSubscribeId);
             }
 
         }

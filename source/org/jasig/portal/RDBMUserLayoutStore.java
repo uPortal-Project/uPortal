@@ -683,7 +683,7 @@ public class RDBMUserLayoutStore
    * @parameter userId
    * @result
    */
-  public String generateNewChannelInstanceId (IPerson person) throws Exception {
+  public String generateNewChannelSubscribeId (IPerson person) throws Exception {
     return  getNextStructId(person, channelPrefix);
   }
   /**

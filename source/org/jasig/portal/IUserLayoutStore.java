@@ -61,7 +61,7 @@ public interface IUserLayoutStore {
      * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
      * @exception Exception if an error occurs
      */
-    public Document getUserLayout(IPerson Person, UserProfile profile) throws Exception;
+    public Document getUserLayout (IPerson Person, UserProfile profile) throws Exception;
 
     /**
      * Persist user layout document.
@@ -72,7 +72,7 @@ public interface IUserLayoutStore {
      * @param channelsAdded a boolean flag specifying if new channels have been added to the current user layout (for performance optimization purposes)
      * @exception Exception if an error occurs
      */
-    public void setUserLayout(IPerson Person, UserProfile  profile,Document layoutXML, boolean channelsAdded) throws Exception;
+    public void setUserLayout (IPerson Person, UserProfile  profile,Document layoutXML, boolean channelsAdded) throws Exception;
 
     // user profiles
     /** Obtain user profile associated with a particular browser
@@ -81,21 +81,21 @@ public interface IUserLayoutStore {
      * @param userAgent User-Agent header string
      * @return user profile or <code>null</code> if no user profiles are associated with the given user agent.
      */
-    public UserProfile getUserProfile(IPerson person, String userAgent) throws Exception;
+    public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception;
 
     /** update user profile
      *
      * @param person User
      * @param profile profile update
      */
-    public void updateUserProfile(IPerson person,UserProfile profile) throws Exception;
+    public void updateUserProfile (IPerson person,UserProfile profile) throws Exception;
 
     /** remove user profile from the database
      *
      * @param person User
      * @param profileId profile id
      */
-    public void deleteUserProfile(IPerson person,int profileId) throws Exception;
+    public void deleteUserProfile (IPerson person,int profileId) throws Exception;
 
     /**
      * Creates a new user profile in the database.
@@ -107,20 +107,20 @@ public interface IUserLayoutStore {
      * @return profile object with the profile id set to the newly generated
      *     id
      */
-    public UserProfile addUserProfile(IPerson person,UserProfile profile) throws Exception;
+    public UserProfile addUserProfile (IPerson person,UserProfile profile) throws Exception;
 
     /**  Obtains a user profile by profile id.    
      * @param person an <code>IPerson</code> object representing the user 
      * @param profileId profile id
      */
-    public UserProfile getUserProfileById(IPerson person,int profileId) throws Exception;
+    public UserProfile getUserProfileById (IPerson person,int profileId) throws Exception;
 
     /** retreive a list of profiles associated with a user
      *
      * @param person User
      * @return a <code>Hashtable</code> mapping user profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
-    public Hashtable getUserProfileList(IPerson person) throws Exception;
+    public Hashtable getUserProfileList (IPerson person) throws Exception;
 
     // syste profiles
     /** retreive a system profile associated with a given browser
@@ -128,37 +128,37 @@ public interface IUserLayoutStore {
      * @param userAgent User-Agent header string
      * @return profile object
      */
-    public UserProfile getSystemProfile(String userAgent) throws Exception;
+    public UserProfile getSystemProfile (String userAgent) throws Exception;
 
     /** update system profile
      *
      * @param profile profile object
      */
-    public void updateSystemProfile(UserProfile profile) throws Exception;
+    public void updateSystemProfile (UserProfile profile) throws Exception;
 
     /** remove system profile from the database
      *
      * @param profileId profile id
      */
-    public void deleteSystemProfile(int profileId) throws Exception;
+    public void deleteSystemProfile (int profileId) throws Exception;
 
     /** add a new system profile to the database. During this process, a new profile id will be assigned to the profile.
      *
      * @param profile profile object (profile id within will be overwritten)
      * @return profile with an newly assigned id
      */
-    public UserProfile addSystemProfile(UserProfile profile) throws Exception;
+    public UserProfile addSystemProfile (UserProfile profile) throws Exception;
 
     /** Obtain a system profile
      * @param profileId system profile id
      */
-    public UserProfile getSystemProfileById(int profileId) throws Exception;
+    public UserProfile getSystemProfileById (int profileId) throws Exception;
 
     /** obtain a list of system profiles
      *
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
-    public Hashtable getSystemProfileList() throws Exception;
+    public Hashtable getSystemProfileList () throws Exception;
 
     /** establish a browser - user profile mapping
      *
@@ -166,7 +166,7 @@ public interface IUserLayoutStore {
      * @param userAgent User-Agent header string
      * @param profileId profile id to which given user agent will be mapped
      */
-    public void setUserBrowserMapping(IPerson person,String userAgent,int profileId) throws Exception;
+    public void setUserBrowserMapping (IPerson person,String userAgent,int profileId) throws Exception;
 
     /** establish system profile browser mapping
      *
@@ -174,7 +174,7 @@ public interface IUserLayoutStore {
      * @param systemProfileId profile id of a profile to which given
      *     user-agent will be mapped
      */
-    public void setSystemBrowserMapping(String userAgent,int systemProfileId) throws Exception;
+    public void setSystemBrowserMapping (String userAgent,int systemProfileId) throws Exception;
 
 
     /** Retreive the entire UserPreferences object
@@ -183,14 +183,14 @@ public interface IUserLayoutStore {
      * @param profile profile
      * @return user preferences
      */
-    public UserPreferences getUserPreferences(IPerson person, UserProfile profile) throws Exception;
+    public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception;
 
     /** save user preferences
      *
      * @param person User
      * @param up user preferences object
      */
-    public void putUserPreferences(IPerson person, UserPreferences up) throws Exception;
+    public void putUserPreferences (IPerson person, UserPreferences up) throws Exception;
 
     /** Obtain structure stylesheet user preferences
      *
@@ -199,7 +199,7 @@ public interface IUserLayoutStore {
      * @param stylesheetName structure stylesheet name
      * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(IPerson person,int profileId,int stylesheetId) throws Exception;
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person,int profileId,int stylesheetId) throws Exception;
 
     /** Obtain theme stylesheet user preferences
      *
@@ -208,7 +208,7 @@ public interface IUserLayoutStore {
      * @param stylesheetName theme stylesheet name
      * @return theme stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(IPerson person,int profileId,int stylesheetId) throws Exception;
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person,int profileId,int stylesheetId) throws Exception;
 
     /** Save structure stylesheet user pferences
      *
@@ -216,7 +216,7 @@ public interface IUserLayoutStore {
      * @param profileId profile id
      * @param fsup structure stylesheet user preferences
      */
-    public void setStructureStylesheetUserPreferences(IPerson person,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
+    public void setStructureStylesheetUserPreferences (IPerson person,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
 
     /** Save theme stylesheet user preferences
      *
@@ -224,7 +224,7 @@ public interface IUserLayoutStore {
      * @param profileId profile id
      * @param ssup structure stylesheet user preferneces
      */
-    public void setThemeStylesheetUserPreferences(IPerson person,int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
+    public void setThemeStylesheetUserPreferences (IPerson person,int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
 
 
   /* ChannelRegistry */
@@ -235,7 +235,7 @@ public interface IUserLayoutStore {
    * @return a <code>String</code> value
    * @exception Exception if an error occurs
    */
-    public String generateNewChannelInstanceId(IPerson person) throws Exception;
+    public String generateNewChannelSubscribeId (IPerson person) throws Exception;
     
     /**
      * Generate a folder id for a folder being added to the user layout
@@ -244,7 +244,7 @@ public interface IUserLayoutStore {
      * @return a <code>String</code> value
      * @exception Exception if an error occurs
      */
-    public String generateNewFolderId(IPerson person) throws Exception;
+    public String generateNewFolderId (IPerson person) throws Exception;
 
   /**
    *  CoreStylesheetDescription
@@ -274,14 +274,14 @@ public interface IUserLayoutStore {
      * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
      * @exception Exception
      */
-    public Hashtable getStructureStylesheetList() throws Exception;
+    public Hashtable getStructureStylesheetList () throws Exception;
 
     /**
      * Obtain a list of theme stylesheet descriptions registered on the system
      * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
      * @exception Exception
      */
-    public Hashtable getThemeStylesheetList() throws Exception;
+    public Hashtable getThemeStylesheetList () throws Exception;
 
 
   /** Obtains a list of mime types available on the installation

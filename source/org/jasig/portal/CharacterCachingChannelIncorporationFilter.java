@@ -49,8 +49,15 @@ import java.util.Vector;
 
 import org.jasig.portal.serialize.CachingSerializer;
 
-public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
-{
+/**
+ * A filter that incorporates channel content into the main SAX stream.
+ * Unlike a regular {@link ChannelIncorporationFilter}, this class can
+ * feed cache character buffers to the {@link CachingSerializer}.
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version $Revision$
+ */
+public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     // keep track if we are "in" the <channel> element
     private boolean insideChannelElement = false;
     ChannelManager cm;
@@ -58,8 +65,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
     // information about the current channel
     private Hashtable params;
     private String channelClassName;
-    private String channelID;
-    private String channelPublishID;
+    private String channelSubscribeId;
+    private String channelPublishId;
     private long timeOut;
     private boolean ccaching;
     private CachingSerializer ser;
@@ -70,8 +77,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
     // constructors
 
     // downward chaining
-    public CharacterCachingChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm, boolean ccaching)
-    {
+    public CharacterCachingChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm, boolean ccaching)  {
         super(handler);
 
         if(handler instanceof CachingSerializer) {
@@ -109,7 +115,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
     /**
      * Obtain a vector of channels to be inserted into a current character cache.
      *
-     * @return a <code>Vector</code> of channelID(s) in an order in which they appear in the overall document.
+     * @return a <code>Vector</code> of cache entry blocks corresponding to channel 
+     * subscribe Id(s) in an order in which they appear in the overall document.
      */
     public Vector getChannelIdBlocks() {
         if(ccaching) {
@@ -156,8 +163,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
         }
     }
 
-    public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException
-    {
+    public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException  {
         if (!insideChannelElement) {
             // recognizing "channel"
             if (qName.equals ("channel")) {
@@ -165,8 +171,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
 
                 // get class attribute
                 channelClassName = atts.getValue("class");
-                channelID = atts.getValue("ID");
-                channelPublishID = atts.getValue("chanID");
+                channelSubscribeId = atts.getValue("ID");
+                channelPublishId = atts.getValue("chanID");
                 timeOut = java.lang.Long.parseLong (atts.getValue("timeout"));
                 params = new Hashtable(0);
                 if(ccaching) {
@@ -192,31 +198,30 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
         }
     }
 
-    public void endElement (String uri, String localName, String qName) throws SAXException
-    {
+    public void endElement (String uri, String localName, String qName) throws SAXException  {
         if (insideChannelElement) {
             if (qName.equals ("channel")) {
                 insideChannelElement = false;
                 if (this.getContentHandler() != null) {
                     if(ccaching) {
                         Vector chanEntry=new Vector(5);
-                        chanEntry.add(this.channelID);
+                        chanEntry.add(this.channelSubscribeId);
                         chanEntry.add(this.channelClassName);
                         chanEntry.add(new Long(timeOut));
                         chanEntry.add(this.params);
-                        chanEntry.add(this.channelPublishID);
+                        chanEntry.add(this.channelPublishId);
                         channelIdBlocks.add(chanEntry);
-                        Object o=cm.getChannelCharacters (channelID, this.channelPublishID, this.channelClassName,this.timeOut,this.params);
+                        Object o=cm.getChannelCharacters (channelSubscribeId, this.channelPublishId, this.channelClassName,this.timeOut,this.params);
                         if(o!=null) {
                             if(o instanceof String) {
-                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received a character result for channelId=\""+channelID+"\"");
+                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received a character result for channelSubscribeId=\""+channelSubscribeId+"\"");
                                 try {
                                     ser.printRawCharacters((String)o);
                                 } catch (IOException ioe) {
-                                    LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : exception thrown while trying to output character cache for channelId=\""+channelID+"\". Message: "+ioe.getMessage());
+                                    LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : exception thrown while trying to output character cache for channelSubscribeId=\""+channelSubscribeId+"\". Message: "+ioe.getMessage());
                                 }
                             } else if(o instanceof SAX2BufferImpl) {
-                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received an XSLT result for channelId=\""+channelID+"\"");
+                                LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : received an XSLT result for channelSubscribeId=\""+channelSubscribeId+"\"");
                                 // extract a character cache
 
                                 // start new channel cache
@@ -234,7 +239,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                                     if(ser.stopCaching()) {
                                         try {
                                             //                                            LogService.instance().log(LogService.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following channel character entry: \n"+ser.getCache());
-                                            cm.setChannelCharacterCache(channelID,ser.getCache());
+                                            cm.setChannelCharacterCache(channelSubscribeId,ser.getCache());
                                         } catch (UnsupportedEncodingException e) {
                                             LogService.instance().log(LogService.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to obtain character cache, invalid encoding specified ! "+e);
                                         } catch (IOException ioe) {
@@ -261,7 +266,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                             }
                         }
                     } else {
-                        cm.outputChannel (channelID, this.channelPublishID, this.getContentHandler (),this.channelClassName,this.timeOut,this.params);
+                        cm.outputChannel (channelSubscribeId, this.channelPublishId, this.getContentHandler (),this.channelClassName,this.timeOut,this.params);
                     }
                 }
             }

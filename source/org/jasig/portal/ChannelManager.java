@@ -144,10 +144,10 @@ public class ChannelManager {
      * This is designed to be used by the error channel only.
      */
 
-    public void addChannelInstance(String channelId,IChannel channelInstance) {
-        if(channelTable.get(channelId)!=null)
-            channelTable.remove(channelId);
-        channelTable.put(channelId,channelInstance);
+    public void addChannelInstance(String channelSubscribeId,IChannel channelInstance) {
+        if(channelTable.get(channelSubscribeId)!=null)
+            channelTable.remove(channelSubscribeId);
+        channelTable.put(channelSubscribeId,channelInstance);
     }
 
 
@@ -180,23 +180,23 @@ public class ChannelManager {
      * Return channel rendering in a character form. If the character form is not available, SAXBufferImpl is returned, and
      * later replaced with character representation.
      *
-     * @param chanId channel Id
+     * @param channelSubscribeId channel subscribe Id
      * @param className channel class name
      * @param timeOut channel timeout
      * @param params channel publish/subscribe params
      * @return a character buffer (<code>String</code>) or a SAX buffer (<code>SAXBufferImpl</code>)
      */
-    public Object getChannelCharacters(String chanId, String channelPublishId, String className, long timeOut, Hashtable params) {
+    public Object getChannelCharacters(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
 
-        if(rendererTable.get(chanId) == null) {
+        if(rendererTable.get(channelSubscribeId) == null) {
             if(className!=null && params!=null) {
-                this.startChannelRendering(chanId, channelPublishId, className, timeOut, params,true);
+                this.startChannelRendering(channelSubscribeId, channelPublishId, className, timeOut, params,true);
             } else {
                 LogService.instance().log(LogService.ERROR,"ChannelManager:g:etChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
             }
         }
-        if((cr = (ChannelRenderer) rendererTable.get(chanId)) != null) {
+        if((cr = (ChannelRenderer) rendererTable.get(channelSubscribeId)) != null) {
 
             SAX2BufferImpl dh=new SAX2BufferImpl();
             // in case there isn't a character cache
@@ -214,19 +214,19 @@ public class ChannelManager {
 
                 if(out==cr.RENDERING_TIMED_OUT) {
                     // rendering has timed out
-                    IChannel badChannel=(IChannel) channelTable.get(chanId);
+                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
                     channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,chanId,badChannel);
+                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,channelSubscribeId,badChannel);
                     // replace the channel object in ChannelRenderer (for cache recording purposes)
                     cr.setChannel(errorChannel);
                     // replace the channel object in the channel table
-                    channelTable.put(chanId,errorChannel);
+                    channelTable.put(channelSubscribeId,errorChannel);
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
-                        rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                        rd.setChannelSubscribeId(channelSubscribeId);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -248,19 +248,19 @@ public class ChannelManager {
                 if(channelException!=null) {
                     // see if the renderXML() has thrown a PortalException
                     // hand it over to the Error channel
-                    IChannel badChannel=(IChannel) channelTable.get(chanId);
+                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
                     channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,chanId,badChannel);
+                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,channelSubscribeId,badChannel);
                     // replace the channel object in ChannelRenderer (for cache recording purposes)
                     cr.setChannel(errorChannel);
                     // replace the channel object in the channel table
-                    channelTable.put(chanId,errorChannel);
+                    channelTable.put(channelSubscribeId,errorChannel);
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
-                        rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                        rd.setChannelSubscribeId(channelSubscribeId);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -288,7 +288,7 @@ public class ChannelManager {
             }
             return dh;
         } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for channelSubscribeId=\""+channelSubscribeId+"\" is absent from cache !!!");
         }
 
         return null;
@@ -338,18 +338,18 @@ public class ChannelManager {
 
 
     /**
-     * Instantiates a channel given just the chanId.
+     * Instantiates a channel given just the channel subscribe Id.
      * 
-     * @param chanId a channel instance Id in the userLayout
+     * @param channelSubscribeId a channel instance Id in the userLayout
      * @return an <code>IChannel</code> object
      */
-    public IChannel instantiateChannel(String chanId) {
-        if (channelTable.get(chanId) != null) {
+    public IChannel instantiateChannel(String channelSubscribeId) {
+        if (channelTable.get(channelSubscribeId) != null) {
             // reinstantiation
-            channelTable.remove(chanId);
+            channelTable.remove(channelSubscribeId);
         }
         // get channel information from the user layout manager
-        Element elChannel=(Element) ulm.getUserLayoutNode(chanId);
+        Element elChannel=(Element) ulm.getUserLayoutNode(channelSubscribeId);
         if(elChannel!=null) {
             String className=elChannel.getAttribute("class");
             String channelPublishId=elChannel.getAttribute("chanID");
@@ -362,7 +362,7 @@ public class ChannelManager {
                 params.put(param.getAttribute("name"),param.getAttribute("value"));
             }
             try {
-                return instantiateChannel(chanId,channelPublishId, className,timeOut,params);
+                return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,params);
             } catch (Exception ex) {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
@@ -372,7 +372,7 @@ public class ChannelManager {
     }
 
 
-    private IChannel instantiateChannel(String chanId, String channelPublishId, String className, long timeOut, Hashtable params) throws Exception {
+    private IChannel instantiateChannel(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params) throws Exception {
         IChannel ch=null;
 
         // check if the user has permissions to instantiate this channel
@@ -396,7 +396,7 @@ public class ChannelManager {
             // determine what kind of a channel it is.
             // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
             if(cobj instanceof IMultithreadedChannel) {
-                String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+chanId;
+                String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+channelSubscribeId;
                 if(cobj instanceof IMultithreadedCacheable) {
                     if(cobj instanceof IPrivileged) {
                         // both cacheable and privileged
@@ -422,13 +422,13 @@ public class ChannelManager {
 
             // construct a ChannelStaticData object
             ChannelStaticData sd = new ChannelStaticData();
-            sd.setChannelID(chanId);
+            sd.setChannelSubscribeId(channelSubscribeId);
             sd.setTimeout(timeOut);
             sd.setParameters(params);
             // Set the Id of the channel that exists in UP_CHANNELS
-            sd.setChannelGlobalID(ulm.getChannelGlobalId(chanId));
+            sd.setChannelPublishId(ulm.getChannelPublishId(channelSubscribeId));
             // Set the PermissionManager for this channel (no longer necessary)
-            // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelGlobalId(chanId)));
+            // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelSubscribeId(channelSubscribeId)));
 
             // get person object from UsreLayoutManager
             sd.setPerson(ulm.getPerson());
@@ -439,10 +439,10 @@ public class ChannelManager {
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
-            ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",chanId,null);
+            ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",channelSubscribeId,null);
         }
 
-        channelTable.put(chanId,ch);
+        channelTable.put(channelSubscribeId,ch);
 
         return ch;
     }
@@ -451,35 +451,35 @@ public class ChannelManager {
     /**
      * Output channel content.
      * Note that startChannelRendering had to be invoked on this channel prior to calling this function.
-     * @param chanId unique channel Id
+     * @param channelSubscribeId unique channel Id
      * @param dh document handler that will receive channel content
      */
-    public void outputChannel(String chanId, String channelPublishId, ContentHandler dh, String className, long timeOut, Hashtable params) {
+    public void outputChannel(String channelSubscribeId, String channelPublishId, ContentHandler dh, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
 
-        if (rendererTable.get(chanId) == null) {
-            this.startChannelRendering(chanId, channelPublishId, className, timeOut, params,false);
+        if (rendererTable.get(channelSubscribeId) == null) {
+            this.startChannelRendering(channelSubscribeId, channelPublishId, className, timeOut, params,false);
         }
-        if ((cr = (ChannelRenderer) rendererTable.get(chanId)) != null) {
-            rendererTable.remove(chanId);
+        if ((cr = (ChannelRenderer) rendererTable.get(channelSubscribeId)) != null) {
+            rendererTable.remove(channelSubscribeId);
             ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(dh);
             try {
                 int out = cr.outputRendering(custodian);
                 if(out==cr.RENDERING_TIMED_OUT) {
                     // rendering has timed out
-                    IChannel badChannel=(IChannel) channelTable.get(chanId);
+                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
                     channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,chanId,badChannel);
+                    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,channelSubscribeId,badChannel);
                     // replace the channel object in ChannelRenderer (for cache recording purposes)
                     cr.setChannel(errorChannel);
                     // replace the channel object in the channel table
-                    channelTable.put(chanId,errorChannel);
+                    channelTable.put(channelSubscribeId,errorChannel);
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
-                        rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                        rd.setChannelSubscribeId(channelSubscribeId);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -501,19 +501,19 @@ public class ChannelManager {
                 if(channelException!=null) {
                     // see if the renderXML() has thrown a PortalException
                     // hand it over to the Error channel
-                    IChannel badChannel=(IChannel) channelTable.get(chanId);
+                    IChannel badChannel=(IChannel) channelTable.get(channelSubscribeId);
                     channelTable.remove(badChannel);
-                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,chanId,badChannel);
+                    CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,channelSubscribeId,badChannel);
                     // replace the channel object in ChannelRenderer (for cache recording purposes)
                     cr.setChannel(errorChannel);
                     // replace the channel object in the channel table
-                    channelTable.put(chanId,errorChannel);
+                    channelTable.put(channelSubscribeId,errorChannel);
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
-                        rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                        rd.setChannelSubscribeId(channelSubscribeId);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -540,23 +540,23 @@ public class ChannelManager {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : post-renderXML() processing threw!"+t);
             }
         } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for chanId=\""+chanId+"\" is absent from cache !!!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : ChannelRenderer for channelSubscribeId=\""+channelSubscribeId+"\" is absent from cache !!!");
         }
     }
 
 
     /**
      * passes Layout-level event to a channel
-     * @param channel Id
+     * @param channelSubscribeId channel subscribe id
      * @param PortalEvent object
      */
-    public void passPortalEvent(String chanId, PortalEvent le) {
-        IChannel ch= (IChannel) channelTable.get(chanId);
+    public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
+        IChannel ch= (IChannel) channelTable.get(channelSubscribeId);
 
         if (ch != null) {
             ch.receiveEvent(le);
         } else {
-            LogService.instance().log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + chanId + "\")");
+            LogService.instance().log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
         }
     }
 
@@ -633,7 +633,7 @@ public class ChannelManager {
                 ChannelRuntimeData rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
-                rd.setChannelId(channelTarget);
+                rd.setChannelSubscribeId(channelTarget);
                 rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                 try {
                     isc.setRuntimeData(rd);
@@ -647,7 +647,7 @@ public class ChannelManager {
                     try {
                         ChannelRuntimeData erd = new ChannelRuntimeData();
                         erd.setBrowserInfo(binfo);
-                        erd.setChannelId(channelTarget);
+                        erd.setChannelSubscribeId(channelTarget);
                         erd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setPortalControlStructures(pcs);
                         errorChannel.setRuntimeData(erd);
@@ -666,14 +666,14 @@ public class ChannelManager {
     /**
      * Obtain an instance of a channel.
      *
-     * @param channelId a <code>String</code> value
+     * @param channelSubscribeId a <code>String</code> value
      * @return an <code>IChannel</code> object
      */
-    public IChannel getChannelInstance(String channelId) {
-        IChannel ch=(IChannel)channelTable.get(channelId);
+    public IChannel getChannelInstance(String channelSubscribeId) {
+        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch==null) {
             try {
-                ch=instantiateChannel(channelId);
+                ch=instantiateChannel(channelSubscribeId);
             } catch (Exception e) {
                 return null;
             }
@@ -682,11 +682,11 @@ public class ChannelManager {
     }
 
 
-    public void removeChannel(String channelId) {
-        IChannel ch=(IChannel)channelTable.get(channelId);
+    public void removeChannel(String channelSubscribeId) {
+        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
             try {
-                if(ulm.removeChannel(channelId)) {
+                if(ulm.removeChannel(channelSubscribeId)) {
                     // clean up channel cache
                     channelCacheTable.remove(ch);
                     ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
@@ -699,12 +699,12 @@ public class ChannelManager {
     }
 
     
-    public void setChannelCharacterCache(String chanId,String ccache) {
+    public void setChannelCharacterCache(String channelSubscribeId,String ccache) {
         ChannelRenderer cr;
-        if ((cr=(ChannelRenderer)rendererTable.get(chanId)) != null) {
+        if ((cr=(ChannelRenderer)rendererTable.get(channelSubscribeId)) != null) {
             cr.setCharacterCache(ccache);
         } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::setChannelCharacterCache() : channel with chanId=\""+chanId+"\" is not present in the renderer cache!");
+            LogService.instance().log(LogService.ERROR,"ChannelManager::setChannelCharacterCache() : channel with channelSubscribeId=\""+channelSubscribeId+"\" is not present in the renderer cache!");
         }
     }
 
@@ -750,36 +750,36 @@ public class ChannelManager {
      * This function retreives a particular channel from cache, passes parameters to the
      * channel and then creates a new ChannelRenderer object to render the channel in a
      * separate thread.
-     * @param chanId channel Id (unique)
+     * @param channelSubscribeId channel subscribe id
      * @param className name of the channel class
      * @param params a table of parameters
      */
-    public void startChannelRendering(String chanId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
+    public void startChannelRendering(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
     {
         // see if the channel is cached
         IChannel ch;
 
-        if ((ch = (IChannel) channelTable.get(chanId)) == null) {
+        if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
             try {
-                ch=instantiateChannel(chanId,channelPublishId,className,timeOut,params);
+                ch=instantiateChannel(channelSubscribeId,channelPublishId,className,timeOut,params);
             } catch (Exception e) {
-                CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,chanId,null);
-                channelTable.put(chanId,errorChannel);
+                CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelSubscribeId,null);
+                channelTable.put(channelSubscribeId,errorChannel);
                 ch=errorChannel;
             }
         }
 
         ChannelRuntimeData rd=null;
 
-        if(!chanId.equals(channelTarget)) {
+        if(!channelSubscribeId.equals(channelTarget)) {
             if((ch instanceof IPrivilegedChannel)) {
                 // send the control structures
                 try {
                     ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
                 } catch (Exception e) {
                     channelTable.remove(ch);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,chanId,ch);
-                    channelTable.put(chanId,errorChannel);
+                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelSubscribeId,ch);
+                    channelTable.put(channelSubscribeId,errorChannel);
                     ch=errorChannel;
                     // set portal control structures
                     try {
@@ -795,15 +795,15 @@ public class ChannelManager {
             }
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
-            rd.setChannelId(chanId);
-            rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+            rd.setChannelSubscribeId(channelSubscribeId);
+            rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
-                rd.setChannelId(chanId);
-                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                rd.setChannelSubscribeId(channelSubscribeId);
+                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
             }
         }
 
@@ -819,6 +819,6 @@ public class ChannelManager {
         }
         cr.setTimeout(timeOut);
         cr.startRendering();
-        rendererTable.put(chanId,cr);
+        rendererTable.put(channelSubscribeId,cr);
     }
 }

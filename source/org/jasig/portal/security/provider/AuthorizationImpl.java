@@ -125,26 +125,26 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
  * Answers if the principal has permission to RENDER this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelID int
+ * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelID)
+public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelPublishId)
 throws AuthorizationException
 {
-    return canPrincipalSubscribe(principal, channelID);
+    return canPrincipalSubscribe(principal, channelPublishId);
 }
 /**
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelID int
+ * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID)
+public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelPublishId)
 throws AuthorizationException
 {
     String owner = IPermission.PORTAL_FRAMEWORK;
-    String target = IPermission.CHANNEL_PREFIX + channelID;
+    String target = IPermission.CHANNEL_PREFIX + channelPublishId;
     return doesPrincipalHavePermission
       (principal, owner, IPermission.CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }

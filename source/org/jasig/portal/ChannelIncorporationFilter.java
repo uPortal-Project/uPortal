@@ -48,8 +48,15 @@ import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 
-public class ChannelIncorporationFilter extends SAX2FilterImpl
-{
+/**
+ * A filter that incorporates content rendered by the channels in to
+ * the main transformation stream.
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version $Revision$
+ */
+public class ChannelIncorporationFilter extends SAX2FilterImpl {
+
   // keep track if we are "in" the <channel> element
   private boolean insideChannelElement = false;
   ChannelManager cm;
@@ -57,8 +64,8 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl
   // information about the current channel
   private Hashtable params;
   private String channelClassName;
-  private String channelID;
-  private String channelPublishID;
+  private String channelSubscribeId;
+  private String channelPublishId;
   private long timeOut;
 
     // constructors
@@ -79,38 +86,36 @@ public class ChannelIncorporationFilter extends SAX2FilterImpl
         this.cm = chanm;
     }
 
-  public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException
-  {
-    if (!insideChannelElement) {
-      // recognizing "channel"
-      if (qName.equals ("channel")) {
-        insideChannelElement = true;
+    public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException {
+        if (!insideChannelElement) {
+            // recognizing "channel"
+            if (qName.equals ("channel")) {
+                insideChannelElement = true;
 
-        // get class attribute
-        channelClassName = atts.getValue ("class");
-        channelID = atts.getValue ("ID");
-        channelPublishID = atts.getValue ("chanID");
-        timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
-        params = new Hashtable ();
-      } else {
-        super.startElement (uri,localName,qName,atts);
-      }
-    } else if (qName.equals ("parameter")) {
-      params.put (atts.getValue ("name"), atts.getValue ("value"));
-    }
-  }
-
-  public void endElement (String uri, String localName, String qName) throws SAXException
-  {
-    if (insideChannelElement) {
-      if (qName.equals ("channel")) {
-        if (this.getContentHandler() != null) {
-            cm.outputChannel (channelID, this.channelPublishID, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
-            insideChannelElement = false;
+                // get class attribute
+                channelClassName = atts.getValue ("class");
+                channelSubscribeId = atts.getValue ("ID");
+                channelPublishId = atts.getValue ("chanID");
+                timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
+                params = new Hashtable ();
+            } else {
+                super.startElement (uri,localName,qName,atts);
+            }
+        } else if (qName.equals ("parameter")) {
+            params.put (atts.getValue ("name"), atts.getValue ("value"));
         }
-      }
-    } else { 
-        super.endElement (uri,localName,qName);
     }
-  }
+
+    public void endElement (String uri, String localName, String qName) throws SAXException {
+        if (insideChannelElement) {
+            if (qName.equals ("channel")) {
+                if (this.getContentHandler() != null) {
+                    cm.outputChannel (channelSubscribeId, this.channelPublishId, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
+                    insideChannelElement = false;
+                }
+            }
+        } else { 
+            super.endElement (uri,localName,qName);
+        }
+    }
 }

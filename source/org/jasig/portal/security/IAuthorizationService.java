@@ -75,19 +75,19 @@ public interface IAuthorizationService
  * Answers if the principal has permission to render this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelID int
+ * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelID)
+    public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelPublishId)
     throws AuthorizationException;
 /**
  * Answers if the principal has permission to subscribe to this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelID int
+ * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID)
+    public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelPublishId)
     throws AuthorizationException;
 /**
  * Answers if the owner has given the principal permission to perform the activity on

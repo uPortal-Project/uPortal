@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public final class ChannelStoreDefinition {
-  private int chanId = -1;
+  private int channelPublishId = -1;
   private String chanTitle = "";
   private String chanDesc = "";
   private String chanClass = "";
@@ -81,25 +81,25 @@ public final class ChannelStoreDefinition {
 
   public Date getchanApvlDt() { return chanApvlDt;}
 
-  public ChannelStoreDefinition(int chanId, String chanTitle) {
-    this.chanId = chanId;
+  public ChannelStoreDefinition(int channelPublishId, String chanTitle) {
+    this.channelPublishId = channelPublishId;
     this.chanTitle = chanTitle;
   }
 
-  public ChannelStoreDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
+  public ChannelStoreDefinition(int channelPublishId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
     java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
     String chanHasAbout, String chanName, String chanFName) {
-      this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
+      this(channelPublishId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
             RDBMServices.dbFlag(chanEditable), RDBMServices.dbFlag(chanHasHelp),
             RDBMServices.dbFlag(chanHasAbout),
             chanName, chanFName);
   }
 
-  public ChannelStoreDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
+  public ChannelStoreDefinition(int channelPublishId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
     java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
     boolean chanHasAbout, String chanName, String chanFName) {
 
-    this.chanId = chanId;
+    this.channelPublishId = channelPublishId;
     this.chanTitle = chanTitle;
     this.chanDesc = chanDesc;
     this.chanClass = chanClass;
@@ -132,7 +132,7 @@ public final class ChannelStoreDefinition {
     Element channel = doc.createElement("channel");
     ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(idTag, channel);
     channel.setAttribute("ID", idTag);
-    channel.setAttribute("chanID", chanId + "");
+    channel.setAttribute("chanID", channelPublishId + "");
     channel.setAttribute("timeout", chanTimeout + "");
     channel.setAttribute("name", chanName);
     channel.setAttribute("title", chanTitle);

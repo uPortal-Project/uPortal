@@ -21,10 +21,12 @@ public class ChannelStaticData extends Hashtable {
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
   private Context m_portalContext = null;
-  // This is the ID that globally identifies the channel
-  private String m_channelGlobalID = null;
+  // This is the ID that globally identifies the channel as 
+  // it's defined during the publish time.
+  private String m_channelPublishId = null;
   // This is the ID that locally identifies the channel in the user's layout
-  private String m_channelInstanceID = null;
+  // The id is determined at the subscribe time.
+  private String m_channelSubscribeId = null;
   // Cache the IPerson
   private IPerson m_person = null;
   // Cache the security context
@@ -37,7 +39,7 @@ public class ChannelStaticData extends Hashtable {
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
    * @return instance of the IAuthorizationPrincipal for the IPerson
    */
-  public IAuthorizationPrincipal getAuthorizationPrincipal () {
+  public IAuthorizationPrincipal getAuthorizationPrincipal() {
     String key = "" + getPerson().getID();
     Class type = org.jasig.portal.security.IPerson.class;
     IAuthorizationPrincipal ap = null;
@@ -53,20 +55,20 @@ public class ChannelStaticData extends Hashtable {
   }
 
     /**
-     * Determine channel global (publish) Id.
+     * Determine channel publish Id.
      *
-     * @return channel's Global Id (defined at publish-time)
+     * @return channel's publish Id (defined at publish-time)
      */
-    public String getChannelGlobalID () {
-        return  (m_channelGlobalID);
+    public String getChannelPublishId() {
+        return  (m_channelPublishId);
     }
 
   /**
-   * Gets the channel ID
-   * @return the channel's ID
+   * Gets the channel subscribe Id
+   * @return the channel's Id (defined at subscribe-time)
    */
-  public String getChannelID () {
-    return  (m_channelInstanceID);
+  public String getChannelSubscribeId() {
+    return  (m_channelSubscribeId);
   }
 
   /**
@@ -82,7 +84,7 @@ public class ChannelStaticData extends Hashtable {
    * @param key param name
    * @return param value
    */
-  public synchronized String getParameter (String key) {
+  public synchronized String getParameter(String key) {
     return  (String)super.get(key);
   }
 
@@ -90,34 +92,37 @@ public class ChannelStaticData extends Hashtable {
    * Provide information on the user the channel is serving
    * @return <code>IPerons</code> object.
    */
-  public IPerson getPerson () {
+  public IPerson getPerson() {
     return  (m_person);
   }
 
   /**
    * Maximum time the channel will be allowed to spend in the rendering cycle.
-   * @return timeout (in milliseconds) after which the channel thread will be killed. Ideally, channels should monitor for this timeout and abort internal execution if the rendering cycle takes too long. 
+   * @return timeout (in milliseconds) after which the channel thread will be killed. 
+   * Ideally, channels should monitor for this timeout and abort internal execution 
+   * if the rendering cycle takes too long. 
    */
-  public long getTimeout () {
+  public long getTimeout() {
     return  (m_timeout);
   }
 
 
   /**
-   * Setter method for channel global (publish-time) Id
-   * @param   String channelGlobalID
+   * Setter method for channel publish Id
+   * @param channelPublishId channel publish Id (defined at a publish-time)
    */
-    public void setChannelGlobalID (String channelGlobalID) {
-        m_channelGlobalID = channelGlobalID;
+    public void setChannelPublishId(String channelPublishId) {
+        m_channelPublishId = channelPublishId;
     }
 
     /**
-     * Sets the channel instance ID
-     * @param sChannelID the unique channelID
+     * Sets the channel subscribe Id
+     * @param channelSubscribeId the channel subscribe Id
      */
-    public void setChannelID (String sChID) {
-        m_channelInstanceID = sChID;
+    public void setChannelSubscribeId(String channelSubscribeId) {
+        m_channelSubscribeId = channelSubscribeId;
     }
+
     /**
      * Set channel JNDI context.
      *
@@ -133,7 +138,7 @@ public class ChannelStaticData extends Hashtable {
      * @param key param name
      * @param value param value
      */
-    public String setParameter (String key, String value) {
+    public String setParameter(String key, String value) {
         return  (String)super.put(key, value);
     }
 
@@ -150,7 +155,7 @@ public class ChannelStaticData extends Hashtable {
      * Setter method for the user being served by the channel
      * @param person an <code>IPerson<code> value.
      */
-    public void setPerson (IPerson person) {
+    public void setPerson(IPerson person) {
         m_person = person;
     }
 
@@ -158,7 +163,7 @@ public class ChannelStaticData extends Hashtable {
      * Setter method for channel timeout.
      * @param value
      */
-    public void setTimeout (long value) {
+    public void setTimeout(long value) {
         m_timeout = value;
     }
 }
