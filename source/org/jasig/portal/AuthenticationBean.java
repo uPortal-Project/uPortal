@@ -49,10 +49,15 @@ import org.jasig.portal.security.*;
 
 /**
  * @author Ken Weiner
+ * @modified by Vikrant Joshi: June 26  2001.
  */
+
+
 public class AuthenticationBean extends GenericPortalBean implements IAuthenticationBean
 {
   protected org.jasig.portal.security.IPerson m_Person = null;
+  protected String authenticationFailure = "";
+
 
   /**
    * Authenticate a user.
@@ -62,43 +67,52 @@ public class AuthenticationBean extends GenericPortalBean implements IAuthentica
    */
   public boolean authenticate (String sUserName, String sPassword)
   {
+      return authenticate (sUserName, sPassword, "root");
+  }
+
+  /**
+   * Authenticate a user.
+   * @param sUserName User name
+   * @param sPassword User password
+   * @param contextType  String to be passed to the InitialSecurityContext when initialising it 
+   * @return true if successful, otherwise false.
+   */
+  public boolean authenticate (String sUserName, String sPassword, String contextType)
+  {
       // don't bother if SessionManager says there's not enough resources
-      if(!SessionManager.allowLogins())
-	  return false;
+        if(!SessionManager.allowLogins()) {
+            return false;
+        }
 
+	SecurityContext ic =  new InitialSecurityContext(contextType);
+	Principal me;
+	OpaqueCredentials op;
 
-    SecurityContext ic;
-    Principal me;
-    OpaqueCredentials op;
+	me = ic.getPrincipalInstance();
+	op = ic.getOpaqueCredentialsInstance();
 
-    ic = new InitialSecurityContext("root");
-    me = ic.getPrincipalInstance();
-    op = ic.getOpaqueCredentialsInstance();
+	me.setUID(sUserName);
+	op.setCredentials(sPassword);
+	ic.authenticate();
+	boolean bAuthenticated = ic.isAuthenticated ();
 
-    me.setUID(sUserName);
-    op.setCredentials(sPassword);
-    ic.authenticate();
+	if(bAuthenticated) {
+	    AdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
 
-    boolean bAuthenticated = ic.isAuthenticated ();
+	    if (addInfo == null || !(addInfo instanceof PersonImpl)) {
+		m_Person = new PersonImpl ();
+		m_Person.setID(sUserName);
+		m_Person.setFullName(me.getFullName());
+		m_Person.setAttribute("globalUID", me.getGlobalUID());
+	    } else {
+		m_Person = (IPerson)addInfo;
+	    } // END IF (addInfo == null || ........ )
 
-    if(bAuthenticated)
-    {
-      AdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
+	} else {
+	    authenticationFailure = ic.getAuthenticationFailure();
+	} // ENF IF (bAuthenticated)
 
-      if (addInfo == null || !(addInfo instanceof PersonImpl))
-      {
-        m_Person = new PersonImpl ();
-        m_Person.setID(sUserName);
-        m_Person.setFullName(me.getFullName());
-        m_Person.setAttribute("globalUID", me.getGlobalUID());
-      }
-      else
-      {
-        m_Person = (IPerson)addInfo;
-      }
-    }
-
-    return (bAuthenticated);
+	return (bAuthenticated);
   }
 
   /**
@@ -112,4 +126,21 @@ public class AuthenticationBean extends GenericPortalBean implements IAuthentica
   {
     return m_Person;
   }
+
+    /**
+     * Returns the reason for AuthenticationFailure (such as "Incorrect UserName/Password"
+     * or "Authentication Service Unavailable").
+     */
+  public String getAuthenticationFailure() {
+	return authenticationFailure;
+  }  
 }
+
+
+
+
+
+
+
+
+
