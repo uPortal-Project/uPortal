@@ -204,7 +204,7 @@ throws AuthorizationException
          }
     }
     catch ( GroupsException ge )
-        { throw new AuthorizationException(ge.getMessage()); }
+        { throw new AuthorizationException(ge.getMessage(),ge); }
 
     return hasPermission;
 }
