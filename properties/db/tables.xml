@@ -125,27 +125,6 @@
   </table>  
 
   <table sinceMajor="2" sinceMinor="2">
-    <name>UP_RESTRICTIONS</name>
-    <desc>The restrictions</desc>
-     <columns>
-      <column> <name>RESTRICTION_TYPE</name>   <type>INTEGER</type>
-        <desc>RESTRICTION TYPE is an unique restriction identifier (type)</desc>
-        <key>PK</key>
-      </column>
-      <column> <name>RESTRICTION_NAME</name>   <type>VARCHAR</type> <param>128</param>
-        <desc>RESTRICTION NAME is a restriction name</desc>
-      </column>
-      <column> <name>CLASS_NAME</name>   <type>VARCHAR</type> <param>128</param>
-        <desc>CLASS NAME is a name of Java-class</desc>
-      </column>
-      <column> <name>ACTIVE</name>   <type>VARCHAR</type> <param>1</param>
-        <desc>ACTIVE is a boolean parameter intended for activation/disabling restrictions</desc>
-      </column>
-    </columns>
-    <primary-key>RESTRICTION_TYPE</primary-key>
-  </table>
-
-  <table sinceMajor="2" sinceMinor="2">
     <name>UP_LAYOUT_RESTRICTIONS</name>
     <desc>The layout restrictions</desc>
     <columns>
@@ -161,8 +140,8 @@
         <desc>NODE ID is an unique node identifier</desc>
         <key>FK</key>
       </column>
-      <column> <name>RESTRICTION_TYPE</name>   <type>INTEGER</type>
-        <desc>RESTRICTION TYPE is a restriction type</desc>
+      <column> <name>RESTRICTION_NAME</name>   <type>VARCHAR</type> <param>128</param>
+        <desc>RESTRICTION NAME is an unique restriction name</desc>
         <key>CK</key>
       </column>
       <column> <name>RESTRICTION_VALUE</name>   <type>VARCHAR</type> <param>128</param>
@@ -176,7 +155,7 @@
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>USER_ID</primary-key>
     <primary-key>NODE_ID</primary-key>
-    <primary-key>RESTRICTION_TYPE</primary-key>
+    <primary-key>RESTRICTION_NAME</primary-key>
     <primary-key>RESTRICTION_TREE_PATH</primary-key>
   </table>
 
@@ -192,8 +171,8 @@
         <desc>NODE ID is a foreign key</desc>
         <key>CK</key>
       </column>
-      <column> <name>RESTRICTION_TYPE</name>   <type>INTEGER</type>
-        <desc>RESTRICTION TYPE is a restriction type</desc>
+      <column> <name>RESTRICTION_NAME</name>   <type>VARCHAR</type> <param>128</param>
+        <desc>RESTRICTION NAME is an unique restriction name</desc>
         <key>CK</key>
       </column>
       <column> <name>RESTRICTION_VALUE</name>   <type>VARCHAR</type> <param>128</param>
@@ -206,7 +185,7 @@
     </columns>
     <primary-key>FRAGMENT_ID</primary-key>
     <primary-key>NODE_ID</primary-key>
-    <primary-key>RESTRICTION_TYPE</primary-key>
+    <primary-key>RESTRICTION_NAME</primary-key>
     <primary-key>RESTRICTION_TREE_PATH</primary-key>
   </table>
 

@@ -106,7 +106,7 @@
 								<value>1</value>
 							</column>
 							<column>
-								<name>RESTRICTION_TYPE</name>
+								<name>RESTRICTION_NAME</name>
 								<value>
 									<xsl:value-of select="@type"/>
 								</value>

@@ -15,48 +15,7 @@
       </row>
     </rows>
   </table>
-  <table sinceMajor="2" sinceMinor="2">
-    <name>UP_RESTRICTIONS</name>
-    <rows>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
-        <column><name>RESTRICTION_NAME</name><value>priority</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.PriorityRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>2</value></column>
-        <column><name>RESTRICTION_NAME</name><value>depth</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.DepthRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>4</value></column>
-        <column><name>RESTRICTION_NAME</name><value>group</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.GroupRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>32</value></column>
-        <column><name>RESTRICTION_NAME</name><value>hidden</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.HiddenRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
-        <column><name>RESTRICTION_NAME</name><value>immutable</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.ImmutableRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>RESTRICTION_TYPE</name><value>16</value></column>
-        <column><name>RESTRICTION_NAME</name><value>unremovable</value></column>
-        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.UnremovableRestriction</value></column>
-        <column><name>ACTIVE</name><value>Y</value></column>
-      </row>
-    </rows>
-  </table>
-
+  
   <table sinceMajor="2" sinceMinor="2">
     <name>UP_OWNER_FRAGMENT</name>
     <rows>
@@ -337,21 +296,21 @@
     <name>UP_FRAGMENT_RESTRICTIONS</name>
     <rows>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_NAME</name><value>priority</value></column>
         <column><name>RESTRICTION_VALUE</name><value>2003</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>FRAGMENT_ID</name><value>1</value></column>
         <column><name>NODE_ID</name><value>1002</value></column>
       </row>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>2</value></column>
+        <column><name>RESTRICTION_NAME</name><value>depth</value></column>
         <column><name>RESTRICTION_VALUE</name><value>1,2,3,4</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>children</value></column>
         <column><name>FRAGMENT_ID</name><value>1</value></column>
         <column><name>NODE_ID</name><value>1001</value></column>
       </row>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
+        <column><name>RESTRICTION_NAME</name><value>immutable</value></column>
         <column><name>RESTRICTION_VALUE</name><value>Y</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>FRAGMENT_ID</name><value>1</value></column>
@@ -364,7 +323,7 @@
     <name>UP_LAYOUT_RESTRICTIONS</name>
     <rows>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_NAME</name><value>priority</value></column>
         <column><name>RESTRICTION_VALUE</name><value>1500-4000</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>USER_ID</name><value>2</value></column>
@@ -372,7 +331,7 @@
         <column><name>NODE_ID</name><value>10</value></column>
       </row>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
+        <column><name>RESTRICTION_NAME</name><value>immutable</value></column>
         <column><name>RESTRICTION_VALUE</name><value>Y</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>USER_ID</name><value>2</value></column>
@@ -380,7 +339,7 @@
         <column><name>NODE_ID</name><value>17</value></column>
       </row>
       <row>
-        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_NAME</name><value>priority</value></column>
         <column><name>RESTRICTION_VALUE</name><value>1000-2000</value></column>
         <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
         <column><name>USER_ID</name><value>2</value></column>
