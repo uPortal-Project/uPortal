@@ -524,8 +524,9 @@ public class LayoutBean extends GenericPortalBean
               String sTab     = req.getParameter ("tab");
               String sColumn  = req.getParameter ("column");
               String sChannel = req.getParameter ("channel");
+              String sUserName = getUserName (req);
 
-              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel) && getUserName (req) != null && getUserName (req) != "guest")
+              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel) && sUserName != null && !sUserName.equals("guest"))
               {
                 if(sResize.equals("minimize"))
                 {
@@ -578,7 +579,7 @@ public class LayoutBean extends GenericPortalBean
               out.println ("            &nbsp;");
 
               //prevent the guest user from being presented with options that won't work
-              if (getUserName (req) != null && getUserName (req) != "guest")
+              if (sUserName != null && !sUserName.equals("guest"))
               {
                 // Channel control buttons
                 if (channels[iChan].getAttribute ("minimized").equals ("true"))
