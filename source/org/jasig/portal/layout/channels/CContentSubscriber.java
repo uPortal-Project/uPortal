@@ -45,6 +45,7 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.layout.IAggregatedLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -77,11 +78,13 @@ public class CContentSubscriber extends FragmentManager {
       private String itemId;
       private String name;
       private String categoryId;
+      private String channelState;
       
-      public ListItem ( String categoryId, String itemId, String name ) {
+      public ListItem ( String categoryId, String itemId, String name, String channelState ) {
       	this.categoryId = categoryId;
       	this.itemId = itemId; 		
       	this.name = name;
+      	this.channelState = channelState;
       }
       
       public String getItemId() {
@@ -96,14 +99,19 @@ public class CContentSubscriber extends FragmentManager {
       	return name;
       }
       
+	  public String getChannelState() {
+		return channelState;
+	  }
+      
       public boolean equals ( Object obj ) {
       	if ( obj == null || !(obj instanceof ListItem) )
       	  return false; 
       	  ListItem item = (ListItem) obj;	
       	  return ( categoryId.equals(item.getCategoryId()) 
       	           && itemId.equals(item.getItemId()) 
-      	           && name.equals(item.getName()) ); 	
-      }
+      	           && name.equals(item.getName()) 
+				   && channelState.equals(item.getChannelState()) ); 	
+      }		
       
     }
 
@@ -111,6 +119,13 @@ public class CContentSubscriber extends FragmentManager {
        super();
 	   expandedItems = new Vector();
 	   condensedItems = new Vector();
+    }
+
+
+    private void expandAscendents ( Node node ) {
+       if ( node == null || !(node instanceof Element) ) return;
+       ((Element)node).setAttribute("search-view","expanded");
+	   expandAscendents(node.getParentNode());
     }
 
 	protected void analyzeParameters( XSLT xslt ) throws PortalException {
@@ -122,7 +137,7 @@ public class CContentSubscriber extends FragmentManager {
 		    String channelId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_channelID"));
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
-		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
+		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channel-state"),"browse");
 			boolean all = false,
 			        expand = action.equals("expand"),
 			        condense = action.equals("condense");    
@@ -158,7 +173,7 @@ public class CContentSubscriber extends FragmentManager {
 					  itemName = CATEGORY;
 				  }	  	
 
-				  ListItem item = new ListItem(categoryId,itemId,itemName);
+				  ListItem item = new ListItem(categoryId,itemId,itemName,channelState.equals("search")?"search":"browse");
 			
 				  if ( expand ) {
 				    expandedItems.add(item);
@@ -175,9 +190,43 @@ public class CContentSubscriber extends FragmentManager {
 			 	//alm.loadUserLayout();	
 			 	refreshFragmentMap(); 
 			 	initRegistry();
+		} else if ( action.equals("search") ) {
+			String query = runtimeData.getParameter("search-query");
+			// Clear all the previous state
+			if ( query != null ) {
+				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
+				for ( int k = 0; k < nodeList.getLength(); k++ ) {
+				  Element node = (Element) nodeList.item(k);
+				  node.setAttribute("search-selected","false");
+				  node.setAttribute("search-view","condensed");
+				} 	
+			}
+			if ( CommonUtils.nvl(query).length() > 0 ) {
+			  String searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"));
+			  String searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"));
+			  String searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"));
+			  String[] xPathQueries = new String[3];
+			  if ( searchChannel.equals("true") )	
+			   xPathQueries[0] = "//channel[contains(@name,'"+query+"') or contains(@description,'"+query+"')]";
+			  if ( searchCategory.equals("true") )
+			   xPathQueries[1] = "//category[contains(@name,'"+query+"') or contains(@description,'"+query+"')]"; 
+			  if ( searchFragment.equals("true") )
+			   xPathQueries[2] = "//fragment[contains(name,'"+query+"') or contains(description,'"+query+"')]";
+			  for ( int i = 0; i < xPathQueries.length; i++) {  
+			   if ( xPathQueries[i] != null ) {	 	
+			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
+			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
+				 Element node = (Element) nodeList.item(k);
+				 node.setAttribute("search-selected","true");
+				 expandAscendents(node);
+			    } 
+			   } 
+			  } 
+			}		
 		}
 			 
 		Vector removedItems = new Vector(); 
+		String attrName = channelState.equals("search")?"search-view":"view";
 						 
 		if ( !all ) {   
 				
@@ -186,16 +235,18 @@ public class CContentSubscriber extends FragmentManager {
 			  for ( int i = 0; i < items.size(); i++ ) {	 
 			   for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
 			    ListItem item = (ListItem) iter.next();
-			    String xPathQuery = null;
-			    if ( CHANNEL.equals(item.getName()) )
-			     xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
-			    else 
-			     xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
-				Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
-				if ( elem != null ) 
-				 elem.setAttribute("view",(k==0)?"expanded":"condensed");
-				else
-				 removedItems.add(item);
+			    if ( channelState.equals(item.getChannelState())) {
+			     String xPathQuery = null;
+			     if ( CHANNEL.equals(item.getName()) )
+			      xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
+			     else 
+			      xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
+				 Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
+				 if ( elem != null ) 
+				  elem.setAttribute(attrName,(k==0)?"expanded":"condensed");
+				 else
+				  removedItems.add(item);
+			    }  
 			   } 
 			  }
 			    items.removeAll(removedItems);
@@ -207,26 +258,27 @@ public class CContentSubscriber extends FragmentManager {
 		        String tagName = (String) tagNames.get(i);	
 			    for ( Iterator iter = expandedItems.iterator(); iter.hasNext(); ) {
 			   	 ListItem item = (ListItem)iter.next();
-			  	 if ( tagName.equals(item.getName()) )
+			  	 if ( tagName.equals(item.getName()) && channelState.equals(item.getChannelState()) )
 			  	  removedItems.add(item);
 			    }		
 			      expandedItems.removeAll(removedItems);
 			    for ( Iterator iter = condensedItems.iterator(); iter.hasNext(); ) {
 				 ListItem item = (ListItem)iter.next();
-				 if ( tagName.equals(item.getName()) )
+				 if ( tagName.equals(item.getName()) && channelState.equals(item.getChannelState()) )
 				  removedItems.add(item);
 			    }	
 				  condensedItems.removeAll(removedItems);
 			    NodeList nodeList = registry.getElementsByTagName(tagName);
+			    String attrValue = (expand)?"expanded":"condensed";
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
-				 node.setAttribute("view",(expand)?"expanded":"condensed");
-			   } 
+				 node.setAttribute(attrName,attrValue);
+			    } 
 		      }
 		     
 		 }  
 		     
-		    
+		    // Passing all the HTTP params back to the stylesheet
 		     passAllParameters(xslt);
 		     
 	  } catch ( Exception e ) {
