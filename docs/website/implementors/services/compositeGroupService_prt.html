@@ -1,48 +1,42 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-  <HEAD>
-    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-    <!-- TO CHANGE: change the document title -->
-    <TITLE>
-      Composite Group Service
-    </TITLE>
-    <META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.1  (Linux)">
-    <META NAME="AUTHOR" CONTENT="Dan Ellentuck">
-    <META NAME="CREATED" CONTENT="20021210;14440000">
-    <META NAME="CHANGEDBY" CONTENT="Dan Ellentuck">
-    <META NAME="CHANGED" CONTENT="200310721;15440000">
-  </HEAD>
-  <BODY LANG="en-US" TEXT="#000000">
-
-<!-- start cut this section to put into jasig table cell format -->
-
-<!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< -->
-<!-- start cut this section to put into jasig table cell format -->
-      <div align="center">
-      <h2>Developers and Deployers Guide to the Composite Group Service</h2>
-      </div>
-      <br>
-      <h4>Contents</h4>
-      <blockquote><a href="#Introduction">Introduction</a><br>
-        <a href="#Whats_In_This_Document">What's In This Document?</a><br>
-        <a href="#What_Does_it_Contain">Goals and Rationale of the
-Composite Service</a><br>
-        <a href="#The_Service_Design">The Service Design</a><br>
-        <a href="#Groups_Keys_and_Service_Names">Groups, Keys and
-Service Names</a><br>
-        <a href="#Assembling_the_Composite">Assembling the Composite</a><br>
-        <a href="#Configuring_the_Composite">Configuring the Composite</a><br>
-        <a href="#Caching_of_Group_Members">Caching of Group Members</a><br>
-        <a href="#The_LDAP_Group_Store">The LDAP Group Store</a><br>
-        <a href="#The_Filesystem_Group_Store">The Filesystem Group Store</a><br>
-        <a href="#Next_Steps">Next Steps</a><br>
-      </blockquote>
-      <h4><a name="Introduction"></a>Introduction</h4>
-      <p>Early in the uPortal project, it became clear that some
-mechanism was needed for <i>grouping</i> portal users, chiefly for the
-purpose of authorization. &nbsp;The <code>org.jasig.portal.groups</code>
-package evolved in response. &nbsp;It defines an api for managing groups
-of portal <i>entities</i> such as IPersons and ChannelDefinitions.&nbsp;
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+<!-- TO CHANGE: change the document title -->
+  <title>Composite Group Service</title>
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.1  (Linux)">
+  <meta name="AUTHOR" content="Dan Ellentuck">
+  <meta name="CREATED" content="20021210;14440000">
+  <meta name="CHANGEDBY" content="Dan Ellentuck">
+  <meta name="CHANGED" content="200310721;15440000">
+</head>
+<body lang="en-US" text="#000000">
+<!-- start cut this section to put into jasig table cell format --><!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+<div align="center">
+<h2>Developers and Deployers Guide to the Composite Group Service</h2>
+</div>
+<br>
+<h4>Contents</h4>
+<blockquote><a href="#Introduction">Introduction</a><br>
+  <a href="#Whats_In_This_Document">What's In This Document?</a><br>
+  <a href="#What_Does_it_Contain">Goals and Rationale of the Composite
+Service</a><br>
+  <a href="#The_Service_Design">The Service Design</a><br>
+  <a href="#Groups_Keys_and_Service_Names">Groups, Keys and Service
+Names</a><br>
+  <a href="#Assembling_the_Composite">Assembling the Composite</a><br>
+  <a href="#Configuring_the_Composite">Configuring the Composite</a><br>
+  <a href="#Caching_of_Group_Members">Caching of Group Members</a><br>
+  <a href="#The_LDAP_Group_Store">The LDAP Group Store</a><br>
+  <a href="#The_Filesystem_Group_Store">The Filesystem Group Store</a><br>
+  <a href="#Next_Steps">Next Steps</a><br>
+</blockquote>
+<h4><a name="Introduction"></a>Introduction</h4>
+<p>Early in the uPortal project, it became clear that some mechanism
+was needed for <i>grouping</i> portal users, chiefly for the purpose of
+authorization. &nbsp;The <code>org.jasig.portal.groups</code> package
+evolved in response. &nbsp;It defines an api for managing groups of
+portal <i>entities</i> such as IPersons and ChannelDefinitions.&nbsp;
 The groups framework does not actually operate on IPersons or
 ChannelDefinitions; it manipulates stub objects whose keys and types
 point to the underlying entities.&nbsp; The stubs are implementations of <code>org.jasig.portal.groups.IEntity</code>,
@@ -52,17 +46,17 @@ groups it belongs to are implementations of <code>org.jasig.portal.groups.IEntit
 Groups are recursive (groups can contain other groups) and homogeneous
 (their <code>IEntities</code> have only one type of underlying entity.)
 &nbsp;</p>
-      <p>Prior to version 2.1, groups came from a group service with a
-single store.&nbsp; As of version 2.1, uPortal ships with a composite
-group service made up of multiple component services, each with its own
-group store.&nbsp; This document describes the composite design and the
-steps involved in configuring a composite group service. &nbsp;It is
+<p>Prior to version 2.1, groups came from a group service with a single
+store.&nbsp; As of version 2.1, uPortal ships with a composite group
+service made up of multiple component services, each with its own group
+store.&nbsp; This document describes the composite design and the steps
+involved in configuring a composite group service. &nbsp;It is
 principally aimed at implementors and developers, and to a lesser
 extent, at planners evaluating uPortal's support for native sources of
 group information.<br>
 &nbsp;</p>
-      <h4><a name="Whats_In_This_Document"></a>What's In This Document?</h4>
-      <p> The document is organized as follows:&nbsp; <a
+<h4><a name="Whats_In_This_Document"></a>What's In This Document?</h4>
+<p> This document is organized as follows:&nbsp; <a
  href="#Goals_and_Rationale_of_the_Composite">Goals and Rationale of
 the Composite Service</a> sets out the argument for a composite
 service.&nbsp; The next section (<a href="#The_Service_Design">The
@@ -76,27 +70,28 @@ or skip them entirely.&nbsp;  The next 5 sections are aimed at
 deployers. &nbsp;They describe the process of composite service assembly
 (<a href="#Assembling_the_Composite">Assembling the Composite</a>), the
 configuration file that controls the assembly process (<a
- href="#Configuring_the_Composite">Configuring the Composite</a>), 
-configuration issues involving caching (<a href="#Caching_of_Group_Members">Caching 
-of Group Members)</a> and
-the design of the LDAP and Filesystem group stores that ship with
-uPortal 2.2 (<a href="#The_LDAP_Group_Store">The LDAP Group Store</a> and <a
+ href="#Configuring_the_Composite">Configuring the Composite</a>),
+configuration issues involving caching (<a
+ href="#Caching_of_Group_Members">Caching of Group Members)</a> and the
+design of the LDAP and Filesystem group stores that ship with uPortal
+2.2 (<a href="#The_LDAP_Group_Store">The LDAP Group Store</a> and <a
  href="#The_Filesystem_Group_Store">The Filesystem Group Store</a>).&nbsp;
 The last section (<a href="#Next_Steps">Next Steps</a>) presents a very
 general outline for getting started with groups. &nbsp;&nbsp;</p>
-      <p>Unless otherwise noted, all referenced classes are in the <code>org.jasig.portal.groups</code>
+<p>Unless otherwise noted, all referenced classes are in the <code>org.jasig.portal.groups</code>
 package. &nbsp;I'm assuming some familiarity with the basic groups
 types, <code>IGroupMember</code>, <code>IEntity</code> and <code>IEntityGroup</code>,
-and with the service fa&ccedil;ade, <code>org.jasig.portal.services.GroupService</code>,
-which have changed little since uPortal 2.0.&nbsp; The best source for
-information about these types is javadoc for <code>org.jasig.portal.groups</code>.
+and with the service façade, <code>org.jasig.portal.services.GroupService</code>,
+which have changed little since uPortal 2.0.&nbsp; For more information
+on these types, see&nbsp;<a href="developersGuidetoGroups.html">The
+Developers Guide to Groups</a> or javadoc for <code>org.jasig.portal.groups</code>.
 &nbsp;The following terms are used interchangeably: IEntityGroup and
 group; IGroupMember and group member; composite group service and
 service.&nbsp; Depending on the context, entity may refer to an <code>IEntity</code>
 or to the underlying entity that is referred to by the <code>IEntity</code>.&nbsp;</p>
-      <h4><a name="Goals_and_Rationale_of_the_Composite"></a>Goals and
+<h4><a name="Goals_and_Rationale_of_the_Composite"></a>Goals and
 Rationale of the Composite Service</h4>
-      <p>Many institutions have group information that is not under the
+<p>Many institutions have group information that is not under the
 control of the portal, for example, in an LDAP server. &nbsp; In some
 organizations, this information is spread over a number of external
 sources. &nbsp; In order to use it, the portal must be able to combine
@@ -108,20 +103,20 @@ memberships, supplemented by memberships stored in the reference portal
 database, can be associated with <span style="font-style: italic;">Permissions</span>.&nbsp;
 In this way, portal authorization can be driven from LDAP and modified
 from within the portal. &nbsp; </p>
-      <p>The composite groups system is a framework for creating and
-managing group adaptors.&nbsp; Its job is to aggregate group information
-from a  variety  of sources and present it in a consistent format to
-clients who can remain  unaware of its origins.&nbsp; In fact, group
-service clients never interact  directly even with the composite group
-service.&nbsp; A client makes a request  to the service fa&ccedil;ade to
-obtain a group member, and the group member  acts as an entry point into
-the composite group system. &nbsp; Once the client has a reference to a
-new or pre-existing group member, it makes subsequent requests to the
-group member itself, and henceforth, the client can ignore  the service
-of origin of any group member it navigates to. &nbsp; </p>
-      <h4><a name="The_Service_Design"></a>The Service Design</h4>
-      <i>The Service Hierarchy.</i>&nbsp; The composite group service
-api is   divided  among 3 service types, <code>IComponentGroupService</code>,<code>ICompositeGroupService</code>
+<p>The composite groups system is a framework for creating and managing
+group adaptors.&nbsp; Its job is to aggregate group information from a
+variety of sources and present it in a consistent form to clients who
+can remain  unaware of its origins.&nbsp; In fact, a group service
+client never interacts  directly even with the composite group
+service.&nbsp; A client makes a request  to the service façade to obtain
+a group member, and the group member  acts as an entry point into the
+composite group system. &nbsp; Once the client has a reference to a new
+or pre-existing group member, it makes subsequent requests to the group
+member itself, and from then on it can ignore  the service of origin of
+any group member it navigates to. &nbsp; </p>
+<h4><a name="The_Service_Design"></a>The Service Design</h4>
+<i>The Service Hierarchy.</i>&nbsp; The composite group service api is
+divided among 3 service types, <code>IComponentGroupService</code>,<code>ICompositeGroupService</code>
 and <code>IIndividualGroupService</code>,    each of which defines
 responsibilities for a specific service role.&nbsp;    An <code>IComponentGroupService</code>
 is a composite <i>component</i>.&nbsp;    It is concerned with
@@ -132,13 +127,12 @@ delegating requests for group services.&nbsp; The <code>IIndividualGroupService<
 defines responsibilities for a specific group service that reads and
 possibly writes groups.&nbsp; It is the<i> leaf component</i> in the
 composite.&nbsp; Together, they form the following class hierarchy:
- <blockquote><code>IComponentGroupService</code><br>
-        <code> &nbsp; ICompositeGroupService extends
-IComponentGroupService</code><br>
-        <code> &nbsp;&nbsp;&nbsp; IIndividualGroupService extends
+<blockquote><code>IComponentGroupService</code><br>
+  <code> &nbsp; ICompositeGroupService extends IComponentGroupService</code><br>
+  <code> &nbsp;&nbsp;&nbsp; IIndividualGroupService extends
 ICompositeGroupService</code><br>
-        <code> </code></blockquote>
-      <p><i>IComponentGroupService.</i>&nbsp; An <code>IComponentGroupService</code>
+  <code> </code></blockquote>
+<p><i>IComponentGroupService.</i>&nbsp; An <code>IComponentGroupService</code>
 can get and set its name and, as a component in a composite, answer its
 component group services.&nbsp; A component service can either contain
 other component  services or be a leaf service and serve groups.&nbsp;
@@ -147,27 +141,27 @@ LDAP or  ERP-based  services would  be nested inside of other service
 components, services with  groups of ChannelDefinitions actually might,
 particularly those representing groups  of channels running  on remote
 portals.&nbsp; &nbsp; </p>
-      <blockquote><code>public interface <b>IComponentGroupService</b> {</code><br>
-        <code> &nbsp; public Map getComponentServices();</code><br>
-        <code> &nbsp; public Name getServiceName();</code><br>
-        <code> &nbsp; public boolean isLeafService();</code><br>
-        <code> &nbsp; public void setServiceName(Name newServiceName);</code><br>
-        <code> }</code> <br>
-      </blockquote>
-      <p> The reference implementation is a true composite only at
-service start-up,     when each <code>IComponentGroupService</code>
-performs a  recursive   retrieval    of its components.&nbsp; Once the
-elements of this  composite   have been retrieved,   the composite
-service keeps its components  in a one-dimensional   collection.
-&nbsp;Since it does not contain nested  group services, the  reference
-composite group service does not have a direct  implementation of <code>IComponentGroupService</code>
+<blockquote><code>public interface <b>IComponentGroupService</b> {</code><br>
+  <code> &nbsp; public Map getComponentServices();</code><br>
+  <code> &nbsp; public Name getServiceName();</code><br>
+  <code> &nbsp; public boolean isLeafService();</code><br>
+  <code> &nbsp; public void setServiceName(Name newServiceName);</code><br>
+  <code> }</code> <br>
+</blockquote>
+<p> The reference implementation is a true composite only at service
+start-up, when each <code>IComponentGroupService</code> performs a
+recursive retrieval    of its components.&nbsp; Once the elements of
+this composite   have been retrieved,   the composite service keeps its
+components in a one-dimensional   collection. &nbsp;Since it does not
+contain nested  group services, the  reference composite group service
+does not have a direct  implementation of <code>IComponentGroupService</code>
 but only implementations  of its  subtypes, <code>ICompositeGroupService</code>
 and <code>IIndividualGroupService</code>.    &nbsp;</p>
-      <p><i> ICompositeGroupService.</i>&nbsp; An <code>ICompositeGroupService</code>
+<p><i> ICompositeGroupService.</i>&nbsp; An <code>ICompositeGroupService</code>
 represents the entire composition.&nbsp; It is responsible for
 delegating requests to the appropriate component service(s) and for
 aggregating results.&nbsp;     Requests come to the composite from
-either the outside,   (the service fa&ccedil;ade),     or the inside, (a
+either the outside,   (the service façade),     or the inside, (a
 component service).&nbsp;&nbsp;   Some requests can be handled   by a
 single group service, for example, a  request to find a specific group <code>(findGroup()</code>,<code>newGroup()</code>,
 etc.)&nbsp; Other  requests  may span some or all of the component
@@ -175,46 +169,44 @@ services, for example, a request to  find groups that contain a
 particular group member   (<code>findContainingGroups()</code>)     or a
 request to find groups whose   names contain a particular String (<code>searchForGroups()</code>).
 &nbsp;</p>
-      <blockquote><code>public interface <b>ICompositeGroupService</b>
+<blockquote><code>public interface <b>ICompositeGroupService</b>
 extends IComponentGroupService </code><br>
-        <code> {</code><br>
-        <code> &nbsp; public Iterator findContainingGroups(IGroupMember
-gm) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IEntityGroup findGroup(String key) throws
+  <code> {</code><br>
+  <code> &nbsp; public Iterator findContainingGroups(IGroupMember gm) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IEntityGroup findGroup(String key) throws
 GroupsException;</code><br>
-        <code> &nbsp; public ILockableEntityGroup
-findGroupWithLock(String key,   String owner) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IEntity getEntity(String key, Class type) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IGroupMember getGroupMember(String key,
-Class type) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IGroupMember getGroupMember(EntityIdentifier</code><br>
-        <code> &nbsp;&nbsp;&nbsp; underlyingEntityIdentifier) throws
+  <code> &nbsp; public ILockableEntityGroup findGroupWithLock(String
+key, String owner) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IEntity getEntity(String key, Class type) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IGroupMember getGroupMember(String key, Class
+type) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IGroupMember getGroupMember(EntityIdentifier</code><br>
+  <code> &nbsp;&nbsp;&nbsp; underlyingEntityIdentifier) throws
 GroupsException;</code><br>
-        <code> &nbsp; public IEntityGroup newGroup(Class type, Name
+  <code> &nbsp; public IEntityGroup newGroup(Class type, Name
 serviceName) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public EntityIdentifier[] searchForEntities</code><br>
-        <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class type)</code><br>
-        <code> &nbsp;&nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public EntityIdentifier[] searchForEntities</code><br>
-        <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class type,
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public EntityIdentifier[] searchForEntities</code><br>
+  <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class type)</code><br>
+  <code> &nbsp;&nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public EntityIdentifier[] searchForEntities</code><br>
+  <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class type,
 IEntityGroup ancestor) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public EntityIdentifier[] searchForGroups</code><br>
-        <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class
-leaftype) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public EntityIdentifier[] searchForGroups</code><br>
-        <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class
-leaftype, IEntityGroup  ancestor)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> }</code> <br>
-        <code> </code></blockquote>
-      <p><i>IIndividualGroupService.</i>&nbsp; The third type,
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public EntityIdentifier[] searchForGroups</code><br>
+  <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class leaftype) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public EntityIdentifier[] searchForGroups</code><br>
+  <code> &nbsp;&nbsp;&nbsp; (String query, int method, Class leaftype,
+IEntityGroup ancestor)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> }</code> <br>
+  <code> </code></blockquote>
+<p><i>IIndividualGroupService.</i>&nbsp; The third type,
 IIndividualGroupService defines the methods that a specific or leaf
 group service uses to     read and write groups.&nbsp;
 IIndividualGroupService inherits<code> find()</code> methods from
@@ -226,99 +218,113 @@ and more specifically, if it     is possible to edit a particular group
 (<code>isEditable(IEntityGroup group)</code>).&nbsp;     An attempt to
 update a group that is not editable should throw a GroupsException.
 &nbsp;</p>
-      <blockquote><code>public interface <b>IIndividualGroupService</b>
+<blockquote><code>public interface <b>IIndividualGroupService</b>
 extends ICompositeGroupService </code><br>
-        <code> {</code><br>
-        <code> &nbsp; public void deleteGroup(IEntityGroup group) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IEntityGroup
-findGroup(CompositeEntityIdentifier ent)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public Iterator findMembers(IEntityGroup group) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public boolean isEditable();</code><br>
-        <code> &nbsp; public boolean isEditable(IEntityGroup group) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public IEntityGroup newGroup(Class type) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public void updateGroup(IEntityGroup group) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> &nbsp; public void updateGroupMembers(IEntityGroup group) </code><br>
-        <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
-        <code> }</code> <br>
-      </blockquote>
-      <p>The reference implementation, <code>ReferenceIndividualGroupService</code>,
+  <code> {</code><br>
+  <code> &nbsp; public void deleteGroup(IEntityGroup group) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IEntityGroup findGroup(CompositeEntityIdentifier
+ent)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public Iterator findMembers(IEntityGroup group) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public boolean isEditable();</code><br>
+  <code> &nbsp; public boolean isEditable(IEntityGroup group) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public IEntityGroup newGroup(Class type) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public void updateGroup(IEntityGroup group) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> &nbsp; public void updateGroupMembers(IEntityGroup group) </code><br>
+  <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+  <code> }</code> <br>
+</blockquote>
+<p>The reference implementation, <code>ReferenceIndividualGroupService</code>,
 delegates most requests to one of three sub-components, an <code>IEntityGroupStore</code>,
 an <code>IEntityStore</code> and an <code>IEntitySearcher</code>.
 &nbsp;It also may use the portal's Entity Locking and Entity Caching
 services. &nbsp;</p>
-      <h4><a name="Groups_Keys_and_Service_Names"></a>Groups, Keys and
+<h4><a name="Groups_Keys_and_Service_Names"></a>Groups, Keys and
 Service Names</h4>
-      <p><i>Component Services and Their Names.</i>&nbsp; Once it has
-been assembled,     the composite structure of the group service is
-reflected in the names  given   to services, which are instances of <code>javax.naming.Name</code>
-with a node  for each   nested service.&nbsp; A service named "columbia"
- contained by a service named  "remoteChannels" would be named
-"remoteChannels.columbia&#8221;.&nbsp; Since a component cannot be expected to
-know in advance which components     will contain  it, the
-fully-qualified service name of a given component   may  not be known
-until the composite is fully assembled.&nbsp; In the reference
-implementation, the service name is built up node by node as the
-composite is composed. &nbsp;</p>
-      <p><i>IEntityGroups and Their Service Names.</i>&nbsp; In a
-composite service,     the significance of service identifiers -- names
--- is that    they let us   find  the specific service that can answer a
-request.&nbsp; They also uniquely    identify individual service
-entries, in this case  groups,   whose keys may   not be unique across
-different services.&nbsp;  Thus, a client  wishing to  find a group
-called "English101" in a component  service named  "ldap" needs to ask
-the composite service for "ldap.English101"  rather than
-"sis.English101" or simply "English101".&nbsp; The ldap service  may
-know the group as "English101"    but the client must know it as
-"ldap.English101". &nbsp;</p>
-      <p> Conversely, for a service to support foreign entries, where an
-entry from   one service participates in some way in another service,
-the foreign   entry   must be able to answer its home service identifier
-so that it can   be retrieved,   if need arises, from its service of
-origin.&nbsp; This means   that for a group  to be a member of a group
-in another service,     the member   group must be able  to answer its
-home service name.&nbsp;&nbsp;     As of version   2.1, <code>IEntityGroup</code>
+<p><i>Component Services and Their Names.</i>&nbsp; Once it has been
+assembled, the composite structure of the group service is reflected in
+the names  given   to component services, which are instances of <code>javax.naming.Name</code>
+with a node  for each   nested service.&nbsp; Assuming a node separator
+of ".", a service named "columbia"  contained by a service named
+"remoteChannels" would be named "remoteChannels.columbia".&nbsp; Since a
+component cannot be expected to know in advance which components will
+contain  it, the fully-qualified service name of a given component may
+not be known until the composite is fully assembled.&nbsp; In the
+reference implementation, the service name is built up node by node as
+the composite is composed.&nbsp; <br>
+</p>
+<p><span style="font-style: italic;">Group Keys.</span>&nbsp; A group's
+composite service key is the concatenation of its fully-qualified
+service name and its key in the local service.&nbsp; The nodes of the
+service name, and the final node of the name and the local key, are
+separated by a <span style="font-style: italic;">node separator</span>.&nbsp;
+For example, a group with a local key of "English_Department" in a
+service named "ldap" with a node separator of "%" would have a key of
+"ldap%English_Department".&nbsp; <br>
+</p>
+<p><span style="font-style: italic;">Node Separators.</span>&nbsp; The
+default node separator is the period, or ".", but it can be any <code>String</code>
+not found within the nodes of a group key.&nbsp; For example, if local
+group keys include "Latin.101.Section01" and "chefs@columbia.edu", valid
+separators would include "$", "%", and "@@", but not "." or "@".&nbsp;
+For instructions on changing the node separator see <a
+ href="#Configuring_the_Composite">Configuring the Composite</a>.&nbsp; <br>
+</p>
+<p><span style="font-style: italic;">Groups and their Service Names.</span>&nbsp;
+The significance of the service name in a group key is that    it
+directs us to the specific service that can answer the request for the
+group and it further qualifies the local key, which may   not be unique
+across different services.&nbsp; Thus, a client  wishing to  find a
+group called "English_Department" in a component  service named  "ldap"
+needs to ask the composite service for "<span style="font-style: italic;">ldap</span>.English101"
+rather than "<span style="font-style: italic;">sis</span>.English101"
+or simply "English101".&nbsp; The ldap service  may know the group by
+its local key, but the client must know it by its fully-qualified,
+composite key. &nbsp;</p>
+<p> Conversely, for a service to support foreign entries, where an entry
+from one service participates in some way in another service, the
+foreign entry   must keep a reference to its home service so that it can
+be retrieved and then navigate <span style="font-style: italic;">its</span>
+service of origin.&nbsp; As of version   2.1, <code>IEntityGroup</code>
 inherits from <code>org.jasig.portal.IBasicEntity</code>, therefore a
 group can already  answer a key and a type, in the form of an <code>org.jasig.portal.EntityIdentifier</code>.&nbsp;
 In the reference implementation,  a group (an instance of <code>EntityGroupImpl</code>)
 answers a subclass of <code>EntityIdentifier</code>,&nbsp; <code>CompositeEntityIdentifier</code>,
 whose key contains the fully-qualified service name in addition to  the
-native service key. &nbsp;</p>
-      <p><i>Group Members and Their Keys.</i>&nbsp; From the point of
-view of the     composite group service, the key of a group is its key
-in the    home service     concatenated to its fully-qualified service
-name (e.g.,   &#8220;ldap&#8221; + &#8220;English101&#8221;     = &#8220;ldap.English101&#8221;).&nbsp; By
-contrast, the key   of an entity is simply its  native key, and all
-component group services   are obligated to know it  by that key.&nbsp;
-Thus, to get containing groups   for IPerson &#8220;kweiner&#8221;,  the client
-would ask the service fa&ccedil;ade for an IGroupMember for IPerson
-&#8220;kweiner&#8221;, not &#8220;ldap.kweiner&#8221; or &#8220;local.kweiner&#8221;,     and then ask the
-group member to get containing groups.&nbsp; The composite service would
-ask each   of its components to get containing groups for group member
-IPerson kweiner,   and each component service would be obligated to
-recognize membership information    for IPerson kweiner, rather than
-IPerson ldap.kweiner, IPerson local.kweiner, etc.&nbsp; This changes our
-previous specification for a composite group   service, but we decided
-to remove entity  key translation from the group service api because it
-seemed overly burdensome  and frequently unnecessary, though  it may
-still be required internally when  an ICompositeGroupService searches
-for entities. &nbsp; </p>
-      <h4><a name="Assembling_the_Composite"></a>Assembling the
-Composite</h4>
-      <p> In the reference implementation, the composite service is an
+local service key. &nbsp;</p>
+<p><i>Entity Group Members and Their Keys.</i>&nbsp; While a group key
+is qualified by a service name, an entity key is not, and we make the
+assumption that an entity group member (an <code>IEntity</code>) is
+known across the composite service by a single key.&nbsp; All component
+group services   are obligated to know the entity  by that key.&nbsp;
+Thus, to get containing groups   for IPerson “kweiner”,  the client
+would ask the service façade for an IGroupMember for IPerson "kweiner",
+not for "ldap.kweiner" or "local.kweiner",     and then ask the group
+member for its containing groups.&nbsp; The composite service would ask
+each of its components to get containing groups for group member IPerson
+kweiner,   and each component service would be obligated to retrieve
+membership information    for IPerson kweiner, rather than for IPerson
+ldap.kweiner, IPerson local.kweiner, etc.&nbsp; If the source of
+entities for a component group service stores entity keys in a
+different format, e.g., "kw1" rather than "kweiner", the group service
+must translate these keys from their native format to the format
+understood by the other component services.&nbsp; &nbsp;<br>
+</p>
+<h4><a name="Assembling_the_Composite"></a>Assembling the Composite</h4>
+<p> In the reference implementation, the composite service is an
 instance of <code>org.jasig.portal.groups.ReferenceCompositeGroupService</code>
 and is responsible for assembling the composite structure. &nbsp;Each
 leaf component is an instance of <code>ReferenceIndividualGroupService</code>
 and is customized with an <code>IEntityGroupStore</code>, an <code>IEntityStore</code>
 and an <code>IEntitySearcher</code>. &nbsp;A factory class for each of
 these types is specified in the configuration file. &nbsp;</p>
-      <p><i>The configuration file.</i>&nbsp; The composite
-configuration is stored     in xml format in <code>properties/groups/compositeGroupServices.xml</code>.&nbsp;
+<p><i>The configuration file.</i>&nbsp; The composite configuration is
+stored in xml format in <code>properties/groups/compositeGroupServices.xml</code>.&nbsp;
 The group service deployer edits this file to control the composition
 of the composite group service. &nbsp;The root element of this document
 is a service list whose <code>service</code> elements describe group
@@ -329,79 +335,79 @@ as a <code>GroupServiceConfiguration</code>, essentially a parser with
 a Map of <code>ComponentServiceDescriptors</code>.&nbsp; Each <code>ComponentServiceDescriptor</code>
 is itself a Map containing the elements and attributes of a single <code>service</code>
 element.&nbsp; These  elements are:</p>
-      <blockquote>
-        <table cellpadding="2" cellspacing="2" border="2" width="66%">
-          <tbody>
-            <tr>
-              <td valign="top" bgcolor="#ffffff">name<br>
-              </td>
-              <td valign="top" bgcolor="#ffffff">required<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top" bgcolor="#ffffff">service_factory<br>
-              </td>
-              <td valign="top" bgcolor="#ffffff">required<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">entity_store_factory<br>
-              </td>
-              <td valign="top">required for reference implementation<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">group_store_factory<br>
-              </td>
-              <td valign="top">required for reference implementation<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">entity_searcher_factory<br>
-              </td>
-              <td valign="top">required for reference implementation<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">internally_managed<br>
-              </td>
-              <td valign="top">optional, defaults to false<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">caching_enabled<br>
-              </td>
-              <td valign="top">optional, defaults to false<br>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </blockquote>
-      <br>
+<blockquote>
+  <table cellpadding="2" cellspacing="2" border="2" width="66%">
+    <tbody>
+      <tr>
+        <td valign="top" bgcolor="#ffffff">name<br>
+        </td>
+        <td valign="top" bgcolor="#ffffff">required<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" bgcolor="#ffffff">service_factory<br>
+        </td>
+        <td valign="top" bgcolor="#ffffff">required<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">entity_store_factory<br>
+        </td>
+        <td valign="top">required for reference implementation<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">group_store_factory<br>
+        </td>
+        <td valign="top">required for reference implementation<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">entity_searcher_factory<br>
+        </td>
+        <td valign="top">required for reference implementation<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">internally_managed<br>
+        </td>
+        <td valign="top">optional, defaults to false<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">caching_enabled<br>
+        </td>
+        <td valign="top">optional, defaults to false<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<br>
 Here is the service entry for the reference portal group service, which
 is named "local":
-      <blockquote><small>&lt;service&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+<blockquote><small>&lt;service&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_store_factory&gt;org.jasig.portal.groups.ReferenceEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-        <small> &nbsp; &nbsp;
+  <small> &nbsp; &nbsp;
 &lt;group_store_factory&gt;org.jasig.portal.groups.ReferenceEntityGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-        <small> &nbsp; &nbsp;
+  <small> &nbsp; &nbsp;
 &lt;entity_searcher_factory&gt;org.jasig.portal.groups.ReferenceEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;true&lt;/internally_managed&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;</small><br>
-        <small> &lt;/service&gt;</small> <br>
-      </blockquote>
-      <p><i> Creating the component services.</i>&nbsp; On service
-start-up, the    composite  service gets a <code>GroupServiceConfiguration</code>
-and asks    it for its service descriptors.&nbsp; The composite passes
-each description     to the appropriate service factory and gets back a
-new service  instance.    &nbsp;</p>
-      <p> If the component is an individual or <i>leaf</i> service, the
+  <small> &lt;/service&gt;</small> <br>
+</blockquote>
+<p><i> Creating the component services.</i>&nbsp; On service start-up,
+the composite  service gets a <code>GroupServiceConfiguration</code> and
+asks it for its service descriptors.&nbsp; The composite passes each
+description to the appropriate service factory and gets back a new
+service instance.    &nbsp;</p>
+<p> If the component is an individual or <i>leaf</i> service, the
 factory creates  an <code>IIndividualGroupService</code>, in the
 reference implementation,    a <code>ReferenceIndividualGroupService</code>.&nbsp;
 The service instance    uses the descriptor to customize itself, for
@@ -409,73 +415,73 @@ example, by getting its group    store from the group store factory
 designated in   the descriptor.&nbsp; When   the component has been
 initialized, the composite    service adds the new service   to its
 service Map. &nbsp;</p>
-      <p> If the service is not a leaf but a component service, the
-composite service   asks it for its component services, which starts a
-recursive retrieval   of   leaf services.&nbsp; The composite service
-completes the    naming of each  leaf  service by prepending the name of
-the top-level component    to the service name, and then adds each leaf
-component to its service  Map.   &nbsp;</p>
-      <p> At the end of the process, non-leaf components have been
-eliminated, and   the composite service may have multiple instances of
-the same <code>IIndividualGroupService</code> implementation, each
-customized by its own service descriptor. &nbsp; </p>
-      <h4><a name="Configuring_the_Composite"></a>Configuring the
-Composite</h4>
-      <p> The configuration described in <code>compositeGroupServices.xml</code>
+<p> If the service is not a leaf but a component service, the composite
+service asks it for <span style="font-style: italic;">its</span>
+component services, which starts a recursive retrieval   of   leaf
+services.&nbsp; The composite service completes the    naming of each
+leaf service by prepending the name of the top-level component    to the
+service name, and then adds each leaf component to its service Map.
+&nbsp;</p>
+<p> At the end of the process, non-leaf components have been eliminated,
+and the composite service may have multiple instances of the same <code>IIndividualGroupService</code>
+implementation, each customized by its own service descriptor. &nbsp; </p>
+<h4><a name="Configuring_the_Composite"></a>Configuring the Composite</h4>
+<p> The configuration described in <code>compositeGroupServices.xml</code>
 is made available to group service classes via the utility class <code>GroupServiceConfiguration</code>.&nbsp;
 This class exposes the <code>servicelist</code> attributes and <code>service</code>
 elements via: </p>
-      <blockquote><code>public Map getAttributes();<br>
+<blockquote><code>public Map getAttributes();<br>
 public List getServiceDescriptors()<br>
-        </code></blockquote>
-      <p> uPortal 2.2 ships with the following configuration:<br>
-      </p>
-      <blockquote><small>&lt;?xml version="1.0"?&gt;</small><br>
-        <small> &lt;!-- $Revision$ --&gt;</small><br>
-        <small> &lt;!--</small><br>
-        <small> This list of component group services is processed by
-the composite,   or  "root" service as it assembles itself.&nbsp; Each
-service element has   2 required  elements: name and
-service_factory.&nbsp; The values of all service  elements  are
-delivered to the service_factory.    &nbsp;</small><br>
-        <small> --&gt;</small><br>
-        <small> </small><br>
-        <small> &lt;servicelist defaultService="local"
-compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"&gt;</small><br>
-        <small> &nbsp; &lt;service&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  </code></blockquote>
+<p> uPortal 2.2 ships with the following configuration:<br>
+</p>
+<blockquote><small>&lt;?xml version="1.0"?&gt;</small><br>
+  <small> &lt;!-- $Revision$ --&gt;</small><br>
+  <small> &lt;!--</small><br>
+  <small> This list of component group services is processed by the
+composite, or  "root" service as it assembles itself.&nbsp; Each service
+element has   2 required  elements: name and service_factory.&nbsp; The
+values of all service  elements  are delivered to the service_factory.
+&nbsp;</small><br>
+  <small> --&gt;</small><br>
+  <small> </small><br>
+  <small> &lt;servicelist defaultService="local"
+compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
+nodeSeparator="."&gt;</small><br>
+  <small> &nbsp; &lt;service&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_store_factory&gt;org.jasig.portal.groups.ReferenceEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;group_store_factory&gt;org.jasig.portal.groups.ReferenceEntityGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_searcher_factory&gt;org.jasig.portal.groups.ReferenceEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;true&lt;/internally_managed&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;</small><br>
-        <small> &nbsp; &lt;/service&gt;</small><br>
-        <small> </small><br>
-        <small> &lt;!--</small><br>
-        <small> &nbsp; &lt;service&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;ldap&lt;/name&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp; &lt;/service&gt;</small><br>
+  <small> </small><br>
+  <small> &lt;!--</small><br>
+  <small> &nbsp; &lt;service&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;ldap&lt;/name&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_store_factory&gt;org.jasig.portal.groups.ldap.LDAPEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;group_store_factory&gt;org.jasig.portal.groups.ldap.LDAPGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_searcher_factory&gt;org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;</small><br>
-        <small> &nbsp; &lt;/service&gt;</small><br>
-        <small> --&gt;<br>
-        <br>
+  <small> &nbsp; &lt;/service&gt;</small><br>
+  <small> --&gt;<br>
+  <br>
 &lt;!-- <br>
 &nbsp; &lt;service groupsRoot="C:/temp/dan"&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;name&gt;filesystem&lt;/name&gt;<br>
@@ -491,21 +497,22 @@ compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;<br>
 &nbsp; &lt;/service&gt;<br>
-        </small><small> --&gt;</small><br>
-        <small> </small><br>
-        <small> &lt;/servicelist&gt;</small><br>
-      </blockquote>
-      <br>
-      <p>Note that the servicelist element has 2 attributes, <code>defaultService</code>
-and <code>compositeFactory</code>, and that 2 of the 3 <code>service</code>
+  </small><small> --&gt;</small><br>
+  <small> </small><br>
+  <small> &lt;/servicelist&gt;</small><br>
+</blockquote>
+<br>
+<p>Note that the servicelist element has 3 attributes, <code>defaultService</code>,&nbsp;<code>compositeFactory</code>
+and <code>nodeSeparator</code>, and that 2 of the 3 <code>service</code>
 entries are commented out. &nbsp;</p>
-      <p><i>Required servicelist Attributes.</i>&nbsp; The attributes <code>defaultService</code>
+<p><i>Required servicelist Attributes.</i>&nbsp; The attributes <code>defaultService</code>
 and <code>compositeFactory</code> are both required. &nbsp;</p>
-      <blockquote><small>&lt;servicelist defaultService="<b>local</b>" </small><br>
-        <small> &nbsp;compositeFactory="<b>org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory</b>"</small><code></code><br>
-        <code> </code></blockquote>
-      <p>The <code>defaultService</code> is the service that responds
-to requests for new group members when the request does not include a
+<blockquote><small>&lt;servicelist defaultService="<b>local</b>" </small><br>
+  <small> &nbsp;compositeFactory="<b>org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory</b>"</small><small><br>
+&nbsp;nodeSeparator="."</small>&gt;<br>
+  <code> </code></blockquote>
+<p>The <code>defaultService</code> is the service that responds to
+requests for new group members when the request does not include a
 service name, e.g., <code>GroupService.newGroup(Class type)</code>.&nbsp;
 The entity factory in the default service supplies those <code>IEntities</code>
 that are entry points into the composite group service (group members
@@ -516,88 +523,113 @@ change the <code>entity_store_factory</code> element in the default
 service.)&nbsp; The <code>compositeFactory</code> attribute designates
 the class that creates the composite service instance.&nbsp;  You would
 change its value if you  wanted to substitute your own composite service
-implementation (and still use the configuration file.) &nbsp;</p>
-      <p><i>Additional servicelist Attributes</i>.&nbsp; The <code>GroupServiceConfiguration</code>
+implementation (and still use the configuration file.)&nbsp; <br>
+</p>
+<p>The <code>nodeSeparator</code> attribute is optional and defaults to
+".".&nbsp; For a description of its use and why you might want to change
+it, see <a href="#Groups_Keys_and_Service_Names">Group Keys and Service
+Names</a>.&nbsp; Changing the nodeSeparator changes the format of the
+composite group key.&nbsp; If you have any pre-existing data in the
+portal database when you change the nodeSeparator, you must also change
+the format of any hard-coded composite group keys, replacing the old
+nodeSeparator with the new.&nbsp;  In the reference portal database,
+composite group keys are found in the following tables:<br>
+</p>
+<div style="margin-left: 40px;"><code>UP_PERMISSION.PRINCIPAL_KEY</code><br>
+<code>UP_GROUP_FRAGMENT.GROUP_KEY</code><br>
+<code>UP_GROUP_MEMBERSHIP.MEMBER_SERVICE</code><br>
+<code></code></div>
+<p>They are also found in the following properties files:</p>
+<p style="margin-left: 40px;"><code>portal.properties (distinguished
+and root groups)<br>
+chanpub/categories.properties<br>
+chanpub/groups.properties<br>
+</code></p>
+<p>Individual channels may also store composite group keys, so review
+your channels and their data stores.&nbsp; <i><br>
+</i></p>
+<p><i>Additional servicelist Attributes</i>.&nbsp; The <code>GroupServiceConfiguration</code>
 stores all servicelist attributes.&nbsp; If you wish to make additional
 composite service attributes available to one or more of your component
 services, you  can add them to the configuration document and retrieve
 them via:</p>
-      <blockquote><code>String myAttribute = (String) </code><br>
-        <code> &nbsp;
+<blockquote><code>String myAttribute = (String) </code><br>
+  <code> &nbsp;
 GroupServiceConfiguration.getAttributes().get("myAttribute");</code><br>
-        <code> </code></blockquote>
-      <br>
-      <p><i>The servicelist elements</i>.&nbsp; The elements of the <code>servicelist</code>
+  <code> </code></blockquote>
+<br>
+<p><i>The servicelist elements</i>.&nbsp; The elements of the <code>servicelist</code>
 describe<i> top-level</i> component services.&nbsp; The default
 configuration contains a single <code>service</code> element named
 "local".&nbsp; This is the default service whose group store is the
 reference portal database.&nbsp; The service elements"ldap" and
 "filesystem" are commented out.&nbsp; All 3 elements define leaf
 services.&nbsp; The service named "local" has the following entry: </p>
-      <blockquote><small>&lt;service&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+<blockquote><small>&lt;service&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_store_factory&gt;org.jasig.portal.groups.ReferenceEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;group_store_factory&gt;org.jasig.portal.groups.ReferenceEntityGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_searcher_factory&gt;org.jasig.portal.groups.ReferenceEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;true&lt;/internally_managed&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;</small><br>
-        <small> &lt;/service&gt;</small><code></code><br>
-        <code> </code></blockquote>
-      <p><i>Child Elements of the service element.</i>&nbsp; Within the <code>service</code>
+  <small> &lt;/service&gt;</small><code></code><br>
+  <code> </code></blockquote>
+<p><i>Child Elements of the service element.</i>&nbsp; Within the <code>service</code>
 element, the <code>name</code> and <code>service_factory</code> child
 elements are required.&nbsp; In addition,    the reference
 implementation of <code>IIndividualGroupService</code> requires all
 child elements except <code>internally_managed</code> and<code>
 caching_enabled</code> for a fully-functioning leaf service.&nbsp;  The
 elements are as follows:</p>
-      <p><i>service_factory</i> designates the class name of the factory
-that creates     the service implementation.&nbsp; You only need to
-change this value if   you  are substituting your own implementation for
-the reference     service implementation, <code>ReferenceIndividualGroupService</code>.
+<p><i>service_factory</i> designates the class name of the factory that
+creates the service implementation.&nbsp; You only need to change this
+value if   you  are substituting your own implementation for the
+reference service implementation, <code>ReferenceIndividualGroupService</code>.
 &nbsp;</p>
-      <p><i>name</i> of the service is significant if you need to use a
-group from   the service as a composite service entry point, since you
-find such   a group   using a key that contains both the native key and
-the service    name,  e.g., </p>
-      <blockquote><code>String nativeKey = "100";</code><br>
-        <code> String serviceName = "<b>local</b>";</code><br>
-        <code> String groupKey = serviceName + "." + nativeKey;</code><br>
-        <code> IGroupMember myGroup = GroupService.findGroup(groupKey);</code><br>
-      </blockquote>
-      <p><i>Warning:</i>&nbsp; do not change the service name of an
-already-deployed group service.&nbsp; The service name is part of the
-member key in  membership       entries for member groups (groups that
-are members of other  groups.)&nbsp;       If you change it, you must
-change the keys of all membership  entries  for    member groups
-originating in that service. &nbsp;</p>
-      <p><i>entity_store_factory</i> is the factory class name for the
-entity store,     the factory for <code>IEntities</code>.&nbsp; Since
-the keys of <code>IEntities</code> do not contain service names,    an
-entity store can be shared by multiple group services.&nbsp; You would
-change this   value only if you were substituting your own
-implementation of <code>IEntityStore</code> for the reference
-implementation. &nbsp;</p>
-      <p><i>group_store_factory</i> is the factory class name for the
-group store,     the adaptor that connects the group service with the
-native source   of groups    information.&nbsp; Although entity stores
-can be shared,  each   service will    almost certainly have its own
-group store.&nbsp; The "local"  group   store, <code>RDBMEntityGroupStore</code>,
+<p><i>name</i> of the service is significant if you need to use a group
+from the service as a composite service entry point, since you find such
+a group   using a key that contains both the native key and the service
+name, e.g., </p>
+<blockquote><code>String nativeGroupKey = "100";</code><br>
+  <code> String serviceName = "<b>local</b>";<br>
+String nodeSep =
+GroupServiceConfiguration.getConfiguration().getNodeSeparator();<br>
+  </code><code>String groupKey = serviceName + nodeSep +
+nativeKey;&nbsp; // "local.100"</code><br>
+  <code> IGroupMember myGroup = GroupService.findGroup(groupKey);</code><br>
+</blockquote>
+<p><i>Warning:</i>&nbsp; The service name is part of the member key in
+membership entries for member groups (groups that are members of other
+groups.)&nbsp; If you change the name of a service, you must change the
+keys of all membership  entries  for    member groups originating from
+that service. &nbsp;</p>
+<p><i>entity_store_factory</i> is the factory class name for the entity
+store, the factory for <code>IEntities</code>.&nbsp; Since the keys of <code>IEntities</code>
+do not contain service names,    an entity store can be shared by
+multiple group services.&nbsp; You would change this   value only if you
+were substituting your own implementation of <code>IEntityStore</code>
+for the reference implementation. &nbsp;</p>
+<p><i>group_store_factory</i> is the factory class name for the group
+store, the adaptor that connects the group service with the native
+source of groups    information.&nbsp; Although entity stores can be
+shared, each   service will    almost certainly have its own group
+store.&nbsp; The "local"  group   store, <code>RDBMEntityGroupStore</code>,
 refers to tables   in the reference portal database, contains sql
 statements and retrieves   group  information via jdbc.&nbsp; The "ldap"
 group store, <code>org.jasig.portal.groups.ldap.LDAPGroupStore</code>,
 refers to an LDAP database and submits LDAP queries over <code>ldap://</code>.&nbsp;
 The "filesystem" group store refers to filesystem files and directories
 and gets its group information via java.io.&nbsp; <br>
-      </p>
-      <p><i>entity_searcher_factory</i> is the factory class name for
-the entity    searcher implementation, a class   that  returns <code>EntityIdentifiers</code>
+</p>
+<p><i>entity_searcher_factory</i> is the factory class name for the
+entity searcher implementation, a class   that  returns <code>EntityIdentifiers</code>
 for potential group members.&nbsp; It is likely that each group service
 will have its own entity searcher implementation (although some
 implementations may be no-ops).&nbsp; The entity searcher for "local"
@@ -612,8 +644,8 @@ interactive updates to the groups system.&nbsp; Users need to be able to
 find the members they are looking for by searching by attributes like
 last name, rather than by browsing through large numbers of
 entries.&nbsp; <br>
-      </p>
-      <p><i>internally_managed</i> contains a boolean value, either <i>true</i>
+</p>
+<p><i>internally_managed</i> contains a boolean value, either <i>true</i>
 or <i>false</i>.&nbsp;     If a service is internally-managed,   it is
 under the  control of the portal     and presumed to be capable of
 writing as well as  reading groups.&nbsp; In   the reference
@@ -624,34 +656,32 @@ group will throw  a <code>GroupsException</code>.&nbsp; An alternate
 implementation of <code>IIndividualGroupService</code> could be more
 selective and decide     if updates are allowed on a group-by-group
 basis. &nbsp;</p>
-      <p><i>caching_enabled</i> has a boolean value, either <i>true</i>
-or <i>false</i>,  which     controls whether the component service uses
-the portal's entity  caching   service  to cache groups.&nbsp; The value
-for the "local" service  is set  to <i>true</i> to  eliminate excess
-database calls.&nbsp; It is set to <i>false</i> for  "ldap" and
-"filesystem" because both do their own caching. &nbsp;</p>
-      <i>Additional services</i>.&nbsp; Comment in the "ldap" service
-if you  want to hook up an ldap group service and the "filesystem"
-element if you want to use the filesystem group service (or create your
-own):
-      <blockquote> &nbsp;<small> &lt;service&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;<span
- style="font-weight: bold;">ldap</span>&lt;/name&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+<p><i>caching_enabled</i> has a boolean value, either <i>true</i> or <i>false</i>,
+which     controls whether the component service uses the portal's
+entity caching   service  to cache groups.&nbsp; The value for the
+"local" service  is set  to <i>true</i> to  eliminate excess database
+calls.&nbsp; It is set to <i>false</i> for  "ldap" and "filesystem"
+because both do their own caching. &nbsp;</p>
+<i>Additional services</i>.&nbsp; Comment in the "ldap" service if you
+want to hook up an ldap group service and the "filesystem" element if
+you want to use the filesystem group service (or create your own):
+<blockquote> &nbsp;<small> &lt;service&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;<span style="font-weight: bold;">ldap</span>&lt;/name&gt;</small><br>
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_store_factory&gt;org.jasig.portal.groups.ldap.LDAPEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;group_store_factory&gt;org.jasig.portal.groups.ldap.LDAPGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;entity_searcher_factory&gt;org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;</small><br>
-        <small> &nbsp;&nbsp;&nbsp;
+  <small> &nbsp;&nbsp;&nbsp;
 &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;</small><br>
-        <small> &nbsp; &lt;/service&gt;<br>
-        <br>
-        </small> &nbsp; <small>&lt;service groupsRoot=C:/groups&gt;<br>
+  <small> &nbsp; &lt;/service&gt;<br>
+  <br>
+  </small> &nbsp; <small>&lt;service groupsRoot=C:/groups&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;name&gt;<span style="font-weight: bold;">filesystem</span>&lt;/name&gt;<br>
 &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
@@ -665,8 +695,8 @@ own):
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;<br>
 &nbsp; &lt;/service&gt;<br>
-        </small> <br>
-      </blockquote>
+  </small> <br>
+</blockquote>
 Note that the value of <code>service_factory</code> is the  same   for
 all of the service elements.&nbsp; All of the services are instances of <code>ReferenceIndividualGroupService</code>,
 customized by their respective service configurations.&nbsp; In the
@@ -680,29 +710,27 @@ outside the transactional control of the portal and, at least in most
 environments, LDAP will   not be updatable from the portal either.&nbsp;
 In any event, neither <code>LDAPGroupStore</code> nor <code>FilesystemGroupStore</code>supports
 updates. &nbsp;
-
-     <h4><a name="Caching_of_Group_Members"></a>Caching of Group Members</h4>
-      <span style="font-style: italic;">Caching of Groups.</span>&nbsp;
-When caching is set <span style="font-style: italic;">on</span> for a
+<h4><a name="Caching_of_Group_Members"></a>Caching of Group Members</h4>
+<span style="font-style: italic;">Caching of Groups.</span>&nbsp; When
+caching is set <span style="font-style: italic;">on</span> for a
 component service (<code>caching_enabled=true)</code>, the composite
 group service uses the portal's Entity Caching Service to cache group
 members that come from the component service.&nbsp; On update, a cached
 group is either removed from the cache or replaced, and cached copies of
 the group on other servers are invalidated.&nbsp; This saves the
-component service from having to check if a requested group is
-up-to-date and is appropriate for a group service that is under the
-control of the portal (<code>internally_managed=true</code>), manages
-group updates, and is in a position to know when a group has
-changed.&nbsp; <br>
-      <br>
-An externally-managed group service (<code>internally_managed=false</code>),
-on the other hand, might benefit very little or not at all from group caching by the
-caching service.&nbsp; If the group source is dynamic, the service has
-to check for updates anyway, and if the source is static, the service
-doesn't have to check at all.&nbsp; Either way, a simple cache
-maintained by the service itself is probably more efficient (<code>caching_enabled=false</code>).&nbsp;<br>
-      <br style="font-style: italic;">
-      <span style="font-style: italic;">Membership Changes for Cached
+component service from having to check if a group is up-to-date each
+time it is requested and is appropriate for a group service that manages
+group updates and is therefore in a position to know when they
+happen.&nbsp; <br>
+<br>
+On the other hand, an externally-managed group service (<code>internally_managed=false</code>)
+might not benefit at all from group caching by the caching
+service.&nbsp; If the group source is dynamic, the service has to check
+for updates anyway, and if the source is static, the service doesn't
+have to check at all.&nbsp; Either way, a simple cache maintained by the
+service itself is probably more efficient (<code>caching_enabled=false</code>).&nbsp;<br>
+<br style="font-style: italic;">
+<span style="font-style: italic;">Membership Changes for Cached
 Entities.</span>&nbsp; Unless a service name is specified, the
 composite group service methods <code>getGroupMember()</code> and <code>getEntity()</code>
 delegate the creation of <code>IEntities</code> to the default component
@@ -713,33 +741,31 @@ optimization, but it can lead to a couple of apparent anomolies.&nbsp;
 If an <code>IEntity</code> is added or removed from an <span
  style="font-style: italic;">internally</span>-managed group, the <code>IEntity's</code>
 group memberships are updated in real time in the same portal JVM, and
-within a latency interval in caches on linked portal JVMs.&nbsp; But if
-the <code>IEntity</code> is added or removed from an <span
+within a configurable interval in caches on linked portal JVMs.&nbsp;
+But if the <code>IEntity</code> is added or removed from an <span
  style="font-style: italic;">externally</span>-managed group, the group
-service will be unable to detect the change directly, and cached copies
-of the <code>IEntity</code> will not be updated.&nbsp; If the group is
-then re-retrieved, it will have the update, while the cached entities
-will not.&nbsp; In the case of <code>IEntities</code> for <code>IPersons</code>
-(users), we remove the cache entry when the user's portal session is
-destroyed, but this still requires the user to log off and log on again
-to see the effect of a concurrent membership change in an external
-group source.&nbsp; <br>
-
-      <h4><small><a name="The_LDAP_Group_Store"></a></small>The LDAP
-Group Store</h4>
-      <p> The LDAP group store gets its entity memberships from LDAP and
-its group structure   from a configuration file, <code>properties/groups/LDAPGroupStoreConfig.xml</code>.&nbsp;
+service will not detect the change directly, and cached copies of the <code>IEntity</code>
+will not be updated.&nbsp; If the group is then re-retrieved, it will
+have the update, but the cached entities will not.&nbsp; In the case of <code>IEntities</code>
+for <code>IPersons</code> (users), we remove the cache entry when the
+user's portal session is destroyed, but this still requires the user to
+log off and log on again to see the effect of a concurrent membership
+change in an external group source.&nbsp; <br>
+<h4><small><a name="The_LDAP_Group_Store"></a></small>The LDAP Group
+Store</h4>
+<p> The LDAP group store gets its entity memberships from LDAP and its
+group structure   from a configuration file, <code>properties/groups/LDAPGroupStoreConfig.xml</code>.&nbsp;
 The configuration file also defines the location of the native group
 store.&nbsp; (The dtd for <code>LDAPGroupStoreConfig.xml</code> is <code>LDAPGroupStore.dtd</code>.)&nbsp;
 Understanding the configuration  file is crucial to understanding how
 the group store works. &nbsp;</p>
-      <p> <i>Configuration file elements.</i>&nbsp; The configuration
-file has   a  single <code>config</code> element that describes the LDAP
+<p> <i>Configuration file elements.</i>&nbsp; The configuration file
+has a  single <code>config</code> element that describes the LDAP
 connection and some number  of <code>group</code> elements that
 establish the groups      structure and ultimately, map LDAP queries to
 groups.&nbsp; The <code>config</code> element currently points to the
 Columbia University  public LDAP server: </p>
-      <blockquote><small>&lt;config&gt;<br>
+<blockquote><small>&lt;config&gt;<br>
 &nbsp;&nbsp;
 &nbsp;&lt;url&gt;ldap://ldap.columbia.edu:389/o=Columbia%20University,c=US&lt;/url&gt;<br>
 &nbsp;&nbsp; &nbsp;&lt;logonid&gt;&lt;/logonid&gt;<br>
@@ -749,9 +775,9 @@ Columbia University  public LDAP server: </p>
 &nbsp;&nbsp; &nbsp;&lt;usercontext&gt;&lt;/usercontext&gt;<br>
 &nbsp;&nbsp; &nbsp;&lt;refresh-minutes&gt;120&lt;/refresh-minutes&gt;<br>
 &lt;/config&gt;<br>
-        </small></blockquote>
-      <p><i>Group elements.</i>&nbsp; The <code>group</code> element
-contains the <code>IEntityGroup</code> attributes <code>key</code>,<code>name</code>
+  </small></blockquote>
+<p><i>Group elements.</i>&nbsp; The <code>group</code> element contains
+the <code>IEntityGroup</code> attributes <code>key</code>,<code>name</code>
 and <code>description</code>.&nbsp; Just as an <code>IEntityGroup</code>
 can contain groups and entities, a <code>group</code> element can
 contain other member <code>group</code> elements, and it can contain
@@ -761,113 +787,111 @@ element that defines an LDAP query that    returns entities.&nbsp; Or it
 may contain    a <code>union</code>, <code>intersection</code>, <code>difference</code>
 or <code>subtract</code> element, which, in turn,    contains&nbsp;<code>entity-sets</code>
 whose results are combined through    one of the following operations: </p>
-      <blockquote>
-        <table cellpadding="2" cellspacing="2" border="1" width="66%">
-          <tbody>
-            <tr>
-              <td valign="top">union<br>
-              </td>
-              <td valign="top">all entities from all contained
+<blockquote>
+  <table cellpadding="2" cellspacing="2" border="1" width="66%">
+    <tbody>
+      <tr>
+        <td valign="top">union<br>
+        </td>
+        <td valign="top">all entities from all contained entity-sets<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">intersection<br>
+        </td>
+        <td valign="top">all common entities from all contained
 entity-sets<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">intersection<br>
-              </td>
-              <td valign="top">all common entities from all contained
-entity-sets<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">difference<br>
-              </td>
-              <td valign="top">all entities that occur in only one
-contained entity-set<br>
-              </td>
-            </tr>
-            <tr>
-              <td valign="top">subtract<br>
-              </td>
-              <td valign="top">all entities in the first entity-set
-minus any   that occur in the rest<br>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </blockquote>
-      <br>
-      <p><i>The Group Samples.</i>&nbsp; The samples provide examples
-of each   of  these <code>entity-set</code> types.&nbsp; The
-configuration file ships    with  7 sample groups, described below.
-&nbsp;They form the following structure     (the group key is in
-parentheses):</p>
-      <blockquote><code> All LDAP Groups (all)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Vigdors(1)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Fracapanes and Ellentucks (2)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Union test (3)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Intersection test (4)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Difference test (5)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Subtract test (6)<br>
-        </code><br>
-        <code></code></blockquote>
-      <ul>
-        <li><i> All LDAP Groups (all)</i> contains groups "1" thru  "6"
-but contains no member entities.&nbsp; It does not (directly) pull
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">difference<br>
+        </td>
+        <td valign="top">all entities that occur in only one contained
+entity-set<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">subtract<br>
+        </td>
+        <td valign="top">all entities in the first entity-set minus any
+that occur in the rest<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<br>
+<p><i>The Group Samples.</i>&nbsp; The samples provide examples of each
+of these <code>entity-set</code> types.&nbsp; The configuration file
+ships with  7 sample groups, described below. &nbsp;They form the
+following structure     (the group key is in parentheses):</p>
+<blockquote><code> All LDAP Groups (all)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Vigdors(1)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Fracapanes and Ellentucks (2)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Union test (3)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Intersection test (4)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Difference test (5)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Subtract test (6)<br>
+  </code><br>
+  <code></code></blockquote>
+<ul>
+  <li><i> All LDAP Groups (all)</i> contains groups "1" thru  "6" but
+contains no member entities.&nbsp; It does not (directly) pull
 information from LDAP.<br>
-          <br>
-        </li>
-        <li><i> Vigdors (1)</i> contains an <code>entity-set</code> with
-a <code>filter</code> element whose String value is <code>cn=*vigdor</code>.&nbsp;
-The members of <i>Vigdors</i> are the entities returned by this query. <br>
-          <br>
-        </li>
-        <li><i>Fracapanes and Ellentucks (2)</i> contains an <code>entity-set</code>
+    <br>
+  </li>
+  <li><i> Vigdors (1)</i> contains an <code>entity-set</code> with a <code>filter</code>
+element whose String value is <code>cn=*vigdor</code>.&nbsp; The
+members of <i>Vigdors</i> are the entities returned by this query. <br>
+    <br>
+  </li>
+  <li><i>Fracapanes and Ellentucks (2)</i> contains an <code>entity-set</code>
 with a <code>union</code> element that <i>or's</i> the results of two <code>entity-set</code>
 elements, each of which has a <code>filter </code> element describing
 an LDAP query.<code>&nbsp;</code> The resulting<code> entity-set</code>
 contains those entities returned by LDAP from the query <code>cn=*fracapane</code>
 plus those entities returned by <code>cn=*ellentuck</code>.<br>
-          <br>
-        </li>
-        <li><i> Union test (3)</i> is similar to <i>Fracapanes and
-Ellentucks (2)</i> in that it contains an <code>entity-set</code> with a <code>union</code>
+    <br>
+  </li>
+  <li><i> Union test (3)</i> is similar to <i>Fracapanes and Ellentucks
+(2)</i> in that it contains an <code>entity-set</code> with a <code>union</code>
 element containing 2 <code>entity-sets</code> each of which has a <code>filter</code>
 element.&nbsp; The resulting <code>entity-set</code> contains the union
 of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
-          <br>
-        </li>
-        <li><i> Intersection test (4)</i> contains an <code>entity-set</code>
+    <br>
+  </li>
+  <li><i> Intersection test (4)</i> contains an <code>entity-set</code>
 with an <code>intersection</code> element that <i>and's</i> the results
 of two <code>entity-set</code> elements, each of which has a <code>filter</code>
 element.&nbsp; The resulting <code>entity-set</code> contains the
 intersection of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
-          <br>
-        </li>
-        <li><i> Difference test (5)</i> contains an <code>entity-set</code>
+    <br>
+  </li>
+  <li><i> Difference test (5)</i> contains an <code>entity-set</code>
 with a <code>difference</code> element that <i>exclusive-or's</i> the
 results of two <code>entity-set</code> elements, each of which has a <code>filter</code>
 element.&nbsp; The resulting <code>entity-set</code> contains the
 entities returned by one but not both of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
-          <br>
-        </li>
-        <li><i> Subtract test (6)</i> contains an <code>entity-set</code>
-with a <code>subtract</code> element that <i>subtracts</i> the results
-of one <code>entity-set</code> from another.&nbsp; Each <code>entity-set</code>
-has a <code>filter</code> element, and the resulting <code>entity-set</code>
-contains the entities returned by <code>cn=donald f*</code> but not by <code>cn=*frac*</code>.<br>
-        </li>
-      </ul>
-      <p><i>Limitations of the LDAP Group Store.</i>&nbsp; It is
-important to understand    what the <code>LDAPGroupStore</code> does and
-does not   do  and why it does    not support updates.&nbsp; The store
-queries LDAP  to discover  entities that   are group members, but it
-looks at its configuration    file  to discover groups   and their
-relationships.&nbsp; As a result, the   store  will discover an entity
-added to LDAP (provided it is returned  by  an <code>entity-set</code>
-defined in the configuration file.)&nbsp;   But it will not discover any
-group beyond   those defined in the configuration    file.&nbsp; The way
-to add a group to  the store is to add a <code>group</code> element to
-the configuration document.&nbsp; Likewise,   the way  to make a group a
+    <br>
+  </li>
+  <li><i> Subtract test (6)</i> contains an <code>entity-set</code> with
+a <code>subtract</code> element that <i>subtracts</i> the results of one <code>entity-set</code>
+from another.&nbsp; Each <code>entity-set</code> has a <code>filter</code>
+element, and the resulting <code>entity-set</code> contains the entities
+returned by <code>cn=donald f*</code> but not by <code>cn=*frac*</code>.<br>
+  </li>
+</ul>
+<p><i>Limitations of the LDAP Group Store.</i>&nbsp; It is important to
+understand what the <code>LDAPGroupStore</code> does and does not do and
+why it does    not support updates.&nbsp; The store queries LDAP to
+discover entities that   are group members, but it looks at its
+configuration file  to discover groups   and their relationships.&nbsp;
+As a result, the   store  will discover an entity added to LDAP
+(provided it is returned  by  an <code>entity-set</code> defined in the
+configuration file.)&nbsp;   But it will not discover any group beyond
+those defined in the configuration    file.&nbsp; The way to add a group
+to  the store is to add a <code>group</code> element to the
+configuration document.&nbsp; Likewise,   the way  to make a group a
 member of another group    in the store is to add   a <code>group</code>
 element to another <code>group</code> element in the configuration
 document.&nbsp; On the other hand, the  way to add an entity   to a
@@ -876,7 +900,7 @@ LDAP group store could   support updates to the group structure (adding
 or deleting member groups)   if it had the ability to update the
 configuration document.&nbsp; It could   support updates to entity
 memberships if it had the ability to update LDAP.&nbsp;    &nbsp;</p>
-      <p><i>Deploying the LDAP Group Store Locally.</i>&nbsp; The
+<p><i>Deploying the LDAP Group Store Locally.</i>&nbsp; The
 configuration file as delivered&nbsp;<code></code>points to the Columbia
 University public    LDAP server and defines a few not-terribly-useful
 groups.&nbsp; To implement    a local LDAP group service that uses the <code>LDAPGroupStore</code>,
@@ -886,17 +910,16 @@ and <code> filters</code> with queries that return meaningful   results.
 &nbsp;When you do this, give your groups   appropriate names    and make
 sure their keys  are unique.&nbsp;&nbsp; For   example, you might create
 a structure like:</p>
-      <blockquote><code> All LDAP Groups (all)</code><br>
-        <code> &nbsp;&nbsp;&nbsp; Faculty Groups (1)</code><br>
-        <code>&nbsp; &nbsp; &nbsp; &nbsp; Biology Department (3)<br>
+<blockquote><code> All LDAP Groups (all)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Faculty Groups (1)</code><br>
+  <code>&nbsp; &nbsp; &nbsp; &nbsp; Biology Department (3)<br>
 &nbsp; &nbsp; &nbsp; &nbsp; Chemistry Department (4)</code><code><br>
 &nbsp; &nbsp; Portal Staff (2)<br>
-        </code><code>&nbsp; &nbsp; &nbsp; &nbsp; Portal Administrators
-(5)<br>
+  </code><code>&nbsp; &nbsp; &nbsp; &nbsp; Portal Administrators (5)<br>
 &nbsp; &nbsp; &nbsp; &nbsp; Portal Developers (6)</code><code></code><br>
-      </blockquote>
-      <code></code>
-      <p>Now un-comment the "ldap" <code>service</code> element  in <code>compositeGroupServices.xml</code>
+</blockquote>
+<code></code>
+<p>Now un-comment the "ldap" <code>service</code> element  in <code>compositeGroupServices.xml</code>
 and start up the portal. &nbsp;In    the <i>Groups Manager</i> channel,
 try adding <i>All LDAP Groups </i>to    the root group <i>Everyone</i>.&nbsp;
 Be sure to <span style="font-style: italic;">Add Members</span> rather
@@ -907,114 +930,117 @@ see&nbsp;<a href="../groupsmanager.html">The Groups Manager Channel</a>.)
 &nbsp; The groups that you defined in your LDAP configuration file
 should now be available   for browsing in Groups Manager, although you
 won't be able to  update them. </p>
-      <p>Once you are comfortable with the process of defining groups
-in the configuration    file, you can begin the task of deriving a group
-structure from LDAP that includes    your portal population and models
-your organization.    &nbsp;</p>
-      <h4><a name="The_Filesystem_Group_Store"></a>The Filesystem Group
-Store</h4>
+<p>Once you are comfortable with the process of defining groups in the
+configuration file, you can begin the task of deriving a group structure
+from LDAP that includes    your portal population and models your
+organization. &nbsp;</p>
+<h4><a name="The_Filesystem_Group_Store"></a>The Filesystem Group Store</h4>
 The filesystem group store lets you create a group service from lists
-of user ids in filesystem files.&nbsp; The files and directories in the
-filesystem model the groups and their members in the group
-system.&nbsp; The filesystem adaptor is meant to get you up and running
-with groups quickly and to encourage experimentation.&nbsp; You can use
-it to bridge the gap between portal start-up and the time when your
-users are correctly affiliated in LDAP, and it can supplement other
-membership sources with quirky data that doesn't fit elsewhere.&nbsp; <br>
-      <br>
+of user ids in file system files.&nbsp; The files and directories in the
+filesystem model the groups and their members in the group system.&nbsp;
+The filesystem adaptor is meant to help get you up and running quickly
+and to encourage experimentation.&nbsp; You can use it to bridge the gap
+between portal start-up and the time when your users are correctly
+affiliated in LDAP, and it can supplement other membership sources with
+quirky data that doesn't fit anywhere else.&nbsp; <br>
+<br>
 The store class, <code>org.jasig.portal.groups.filesystem.FileSystemGroupStore</code>,
 implements <code>IEntityGroupStore</code>, <code>IEntityStore</code>
 and a no-op <code>IEntitySearcher</code>.  You can substitute a
 functional entity searcher by adding it to the group service element for
 this component in the configuration document, <code>compositeGroupServices.xml</code>.
-      <p>The directories and files look something like this: </p>
-      <p></p>
-      <code>--&nbsp;groups root (perhaps "/apps/portal/groups")<br></code>
-      <blockquote><code>&nbsp;|--&nbsp;org.jasig.portal.ChannelDefinition (directory)<br></code>
-        <blockquote><code>&nbsp;|--&nbsp;channel definition file1<br>
+<p>The directories and files look something like this: </p>
+<p></p>
+<code>--&nbsp;groups root (perhaps "/apps/portal/groups")<br>
+</code>
+<blockquote><code>&nbsp;|--&nbsp;org.jasig.portal.ChannelDefinition
+(directory)<br>
+  </code>
+  <blockquote><code>&nbsp;|--&nbsp;channel definition file1<br>
 &nbsp;|--&nbsp;channel definition file2<br>
 &nbsp;[ other channel definition files ]<br>
-          </code></blockquote>
-        <code>&nbsp;|--&nbsp;org.jasig.portal.security.IPerson
-(directory)<br></code>
-        <blockquote><code>&nbsp;|--&nbsp;person directory1<br>
-          </code>
-          <blockquote><code>&nbsp;|--&nbsp;person file1 <br>
+    </code></blockquote>
+  <code>&nbsp;|--&nbsp;org.jasig.portal.security.IPerson (directory)<br>
+  </code>
+  <blockquote><code>&nbsp;|--&nbsp;person directory1<br>
+    </code>
+    <blockquote><code>&nbsp;|--&nbsp;person file1 <br>
 &nbsp;|--&nbsp;person file2 <br>
 &nbsp;[ other person files ]<br>
-            </code> </blockquote>
-          <code>&nbsp;|--&nbsp;person directory2 <br>
-          </code></blockquote>
-        <code> etc.</code><br>
-      </blockquote>
-      <p> The groups <span style="font-style: italic;">root</span> is a
-file system directory declared in the group service   configuration
-document, as an attribute of the filesystem group   service element.
-This directory has sub-directories, each named for the   underlying
-entity type contained by groups in that sub-directory.  If a   service
-only contains groups of IPersons, the groups root would have 1
-sub-directory named org.jasig.portal.security.IPerson. </p>
-      <p> A directory named for a type may contain both sub-directories
-and files.   The sub-directories represent groups that can contain other
+      </code> </blockquote>
+    <code>&nbsp;|--&nbsp;person directory2 <br>
+    </code></blockquote>
+  <code> etc.</code><br>
+</blockquote>
+<p> The groups <span style="font-style: italic;">root</span> is a file
+system directory declared in the group service   configuration document,
+as an attribute of the filesystem group   service element. This
+directory has sub-directories, each named for the   underlying entity
+type contained by groups in that sub-directory.  If a   service only
+contains groups of IPersons, the groups root would have 1 sub-directory
+named org.jasig.portal.security.IPerson. </p>
+<p> A directory named for a type may contain both sub-directories and
+files. The sub-directories represent groups that can contain other
 groups. The   files represent groups that can contain entity as well as
 group members.   The files contain keys, one to a line, and look like
 this: </p>
-      <p></p>
-      <hr width="100%"><code> #&nbsp;this is a comment<br>
+<p></p>
+<hr width="100%"><code> #&nbsp;this is a comment<br>
 #&nbsp;another comment<br>
-      <br>
+<br>
 Moe&nbsp; this is ignored<br>
 Larry<br>
-group:org$jasig$portal$security$IPerson/someDirectory/someFile<br>
+group:org.jasig.portal.security.IPerson/someDirectory/someFile<br>
 Curly<br>
 &nbsp;# comment </code> <br>
-      <hr width="100%">
-      <p> Blank lines and lines starting with <code>FileSystemGroupStore.COMMENT</code>
+<hr width="100%">
+<p> Blank lines and lines starting with <code>FileSystemGroupStore.COMMENT</code>
 (here "<code>#</code>") are ignored.  The first token on a non-ignored
 line is assumed to be a group member key.  If the key starts with&nbsp; <code>FileSystemGroupStore.GROUP_PREFIX</code>
 (here <code>":group</code><code>"</code>), it is treated as a local
 group key.  Otherwise, it is assumed to be an entity key.  The rest of
 the tokens on the line are ignored. </p>
-      <p> The example above contains 3 entity keys, <code>Moe</code>, <code>Larry</code>,
-and <code>Curly</code>, and 1 group key, <code>org$jasig$portal$security$IPerson/someDirectory/someFile</code>.
+<p> The example above contains 3 entity keys, <code>Moe</code>, <code>Larry</code>,
+and <code>Curly</code>, and 1 group key, <code>org.jasig.portal.security.IPerson/someDirectory/someFile</code>.
 It represents a group with 3 entity members and 1 group member.  The
-local key of a group is its file path starting at the type name, with
-the <code>FileSystemGroupStore.SUBSTITUTE_PERIOD</code> character
-substituted for the real period character.<br>
-      </p>
-      <p>To demonstrate how this actually works, try the following
-short <a href="filesystemGroupService_tutorial.html">filesystem group service tutorial</a>
-(estimated time 15 minutes) on the base distribution. <br>
-      </p>
-      <p>Although they're easy to create, filesystem groups work like
-other groups: they can be associated with Permissions, they can become
-group members, you can browse and select (though not update) them in <span
+local key of a group is its file path starting at the type name.&nbsp;
+If the <span style="font-style: italic;">nodeSeparator </span>for the
+composite configuration is ".", the <code>FileSystemGroupStore.SUBSTITUTE_PERIOD</code>
+("$") is substituted for the real period character in a group key, so
+the group entry in this example would be <code>org$jasig$portal$security$IPerson/someDirectory/someFile</code>.<br>
+</p>
+<p>To demonstrate how this actually works, try the following short <a
+ href="filesystemGroupService_tutorial.html">filesystem group service
+tutorial</a> (estimated time 15 minutes) on the base distribution. <br>
+</p>
+<p>Although they're easy to create, filesystem groups work like other
+groups: they can be associated with Permissions, they can become group
+members, you can browse and select (though not update) them in <span
  style="font-style: italic;">Groups Manager</span>.&nbsp; However,
 since they are not <span style="font-style: italic;">internally-managed</span>,
 they cannot contain foreign memberships (groups from other services)
 and membership changes are not guaranteed to show up in real time.&nbsp;<br>
-      </p>
-      <p>Note also that the store class is not a singleton, so you can
-have multiple filesystem services pointing to different groups root
-directories. </p>
-      <p> </p>
-      <h4><a name="Next_Steps"></a>Next Steps</h4>
-      <p>The process of deploying a composite group service involves
-(at least)  the  following steps:</p>
-      <ul>
-        <li>analyze why you need group information</li>
-        <li>identify the necessary sources of group information</li>
-        <li>find or create adaptors for these sources</li>
-        <li>configure the composite service</li>
-      </ul>
-      <p>Most portals will at least use groups to manage authorization,
-so this   is a common starting point. &nbsp;Many institutions will rely
-on an  LDAP  service as the primary source of group information and
-supplement it  with  information from the portal database. &nbsp;Others
-may require  additional   information from human resources, student
-information or other  systems. &nbsp;uPortal currently ships with 3
-adaptors, 1 for LDAP (<code>org.jasig.portal.groups.ldap.LDAPGroupStore</code>), 
-1 for the filesystem service (<code>org.jasig.portal.groups.filesystem.FileSystemGroupStore</code>), 
+</p>
+<p>Note also that the store class is not a singleton, so you can have
+multiple filesystem services pointing to different "root" directories. </p>
+<p> </p>
+<h4><a name="Next_Steps"></a>Next Steps</h4>
+<p>The process of deploying a composite group service involves (at
+least) the  following steps:</p>
+<ul>
+  <li>analyze why you need group information</li>
+  <li>identify the necessary sources of group information</li>
+  <li>find or create adaptors for these sources</li>
+  <li>configure the composite service</li>
+</ul>
+<p>Most portals will at least use groups to manage authorization, so
+this is a common starting point. &nbsp;Many institutions will rely on an
+LDAP service as the primary source of group information and supplement
+it with  information from the portal database. &nbsp;Others may require
+additional information from human resources, student information or
+other systems. &nbsp;uPortal currently ships with 3 adaptors, 1 for LDAP
+(<code>org.jasig.portal.groups.ldap.LDAPGroupStore</code>), 1 for the
+filesystem service (<code>org.jasig.portal.groups.filesystem.FileSystemGroupStore</code>),
 and 1 for the reference portal database (<code>RDBMEntityGroupStore</code>).
 &nbsp;If you only intend to use these 3 sources, you do not have to
 write a custom group store. &nbsp;If you do need to draw groups from
@@ -1027,9 +1053,9 @@ reference implementations for reasons of efficiency, correctness   or to
 add new functions. &nbsp;Please contribute your code back to the project
 so that the entire uPortal community can benefit from your improvements.
 &nbsp;<br>
-      </p>
-      <p>The final step is to represent your composite group service in
-the configuration file. &nbsp;Describe each top-level service in a <code>service</code>
+</p>
+<p>The final step is to represent your composite group service in the
+configuration file. &nbsp;Describe each top-level service in a <code>service</code>
 element and designate the default service. &nbsp;Unless you have a
 specific reason   for changing it, keep the initial default value of
 "local". &nbsp;If a service supports updates, set <code>internally_managed</code>
@@ -1038,15 +1064,13 @@ for such a service in any custom   group store class. &nbsp;Caching of
 groups is a must in a  production system.   &nbsp;Either use the portal
 Entity Caching Service or implement your own  caching mechanism. &nbsp;
 &nbsp;</p>
-      <p>Please post your questions, comments, suggestions and ideas to
-the <a href="mailto:jasig-portal@unm.edu">JA-SIG Portal Discussion List</a>.
+<p>Please post your questions, comments, suggestions and ideas to the <a
+ href="mailto:jasig-portal@unm.edu">JA-SIG Portal Discussion List</a>.
 &nbsp;Good luck! </p>
-
-      <i>de revised: 9/12/2003</i><br>
-      <br>
+<i>de last revised: 10/22/2003</i><br>
+<br>
 <!-- end cut this section to put into jasig table cell format --> <br>
-<!-- end of main body table cell --> 
-<img height="4" width="692"               <br>
-      <!-- end cut this section to put into jasig table cell format -->
-  </BODY>
-</HTML>
+<!-- end of main body table cell --> <img height="4" width="692"><br>
+<!-- end cut this section to put into jasig table cell format -->
+</body>
+</html>
