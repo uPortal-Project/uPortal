@@ -117,8 +117,13 @@ public class SubscriberBean extends GenericPortalBean{
 
     Collections.sort (instanceIDs);
     int iHighest = ((Integer) instanceIDs.get (instanceIDs.size () - 1)).intValue ();
-    channel.setInstanceIDAttribute ("c" + (iHighest + 1));
+    String sInstanceID = "c" + (iHighest + 1);
+    channel.setInstanceIDAttribute (sInstanceID);
     channel.setMinimizedAttribute("false");
+    
+    // Remove from channel cache
+    layoutBean.removeChannelInstance (sInstanceID);
+    
     return channel;
    }
 

@@ -937,7 +937,7 @@ public class LayoutBean extends GenericPortalBean
             
       String sKey = getChannelID (channel);
       org.jasig.portal.IChannel ch = getChannelInstance (sKey);
-      
+
       if (ch == null)
       {
         // Load this channel's parameters into the channel config object
@@ -951,25 +951,18 @@ public class LayoutBean extends GenericPortalBean
             String sParamName = parameters[iParam].getAttribute ("name");
             String sParamValue = parameters[iParam].getAttribute ("value");
             chConfig.setParameter (sParamName, sParamValue);
-          }
-          
-          // For now, pass an additional parameter which contains the channel's ID
-          // These parameters should eventually be passed in a ChannelConfig object
+          }          
           chConfig.setChannelID (sKey);
         }
         
         // Get new instance of channel
-	
-	//peterk 1.18 change -start
-	// old code :
-	//        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
-	// new code : 
-	Object channelObject = Class.forName (sClass).newInstance ();
-	if(channelObject instanceof org.jasig.portal.IChannel) 
-	    ch=(org.jasig.portal.IChannel) channelObject;
-	else if(channelObject instanceof org.jasig.portal.IXMLChannel)
-	    ch=new XMLChannelWrapper((org.jasig.portal.IXMLChannel) channelObject);
-	//peterk 1.18 change -end
+	      Object channelObject = Class.forName (sClass).newInstance ();
+	      
+	      // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
+	      if (channelObject instanceof org.jasig.portal.IChannel) 
+	        ch = (org.jasig.portal.IChannel) channelObject;
+	      else if (channelObject instanceof org.jasig.portal.IXMLChannel)
+	        ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
      
         // Send the channel its parameters
         ch.init (chConfig);   
@@ -1011,6 +1004,23 @@ public class LayoutBean extends GenericPortalBean
       Logger.log (Logger.ERROR, e);
     }
     return null;
+  }    
+  
+  /**
+   * Removes a channel instance from  
+   * the member hashtable htChannelInstances.
+   * @param channel ID
+   */
+  public void removeChannelInstance (String sChannelID)
+  {    
+    try 
+    {
+      htChannelInstances.remove (sChannelID);
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
   }    
   
   /**

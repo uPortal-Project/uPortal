@@ -26,6 +26,7 @@ public interface ILayoutBean
   public void setActiveTab (HttpServletRequest req, int iTab);
   public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel);
   public org.jasig.portal.IChannel getChannelInstance (String sChannelID);
+  public void removeChannelInstance (String sChannelID);
   public String getChannelID (org.jasig.portal.layout.IChannel channel);
   public String getUserName (HttpServletRequest req);
   
