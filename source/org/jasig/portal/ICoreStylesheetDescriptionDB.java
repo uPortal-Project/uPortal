@@ -11,8 +11,10 @@ import java.util.Hashtable;
 public interface ICoreStylesheetDescriptionDB {
 
     // functions that allow one to browse available core stylesheets in various ways
+    // Hashtables map stylesheet/mime type names to their descriptions
     public Hashtable getStructureStylesheetList(String mimeType);
     public Hashtable getThemeStylesheetList(String structureStylesheetName);
+    public Hashtable getMimeTypeList();
 
     // functions that allow access to the entire CoreStylesheetDescription object.
     // These functions are used when working with the stylesheet, and not for browsing purposes.

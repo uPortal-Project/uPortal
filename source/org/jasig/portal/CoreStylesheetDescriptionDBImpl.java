@@ -61,6 +61,27 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     };
 
 
+    public Hashtable getMimeTypeList() {
+	Hashtable list=new Hashtable();
+	try {
+            con=rdbmService.getConnection();
+            Statement stmt=con.createStatement();
+	    
+            String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
+
+            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getMimeTypeList() : "+sQuery);
+            ResultSet rs=stmt.executeQuery(sQuery);
+            while(rs.next()) {
+                list.put(rs.getString("MIME_TYPE"),rs.getString("MIME_TYPE_DESCRIPTION"));
+            }
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+        return list;
+    }
+
     // functions that allow one to browse available core stylesheets in various ways
     public Hashtable getStructureStylesheetList(String mimeType) {
         Hashtable list=new Hashtable();
