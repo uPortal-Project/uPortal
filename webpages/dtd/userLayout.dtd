@@ -17,7 +17,6 @@
   editable (true|false) "true"
   hasHelp (true|false) "true"
   removable (true|false) "true"
-  minimizable (true|false) "true"
   class CDATA #REQUIRED>
 
 
