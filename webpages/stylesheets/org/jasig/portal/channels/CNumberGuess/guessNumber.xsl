@@ -1,18 +1,24 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-<!-- This stylesheet is meant to be used in uPortal 1.0 to render the
-     output of CNumberGuess.  You can experiment with changing the value
-     of the "targetPage" variable below.  It can be set to either
-     "layout.jsp" or "dispatch.jsp".  In uPortal 2.0, a "baseActionURL"
-     parameter should be used in place of "targetPage", "channelID",
-     and "channelTarget".
--->
-
 <xsl:param name="baseActionURL">default</xsl:param>
-<xsl:param name="channelID">default</xsl:param>
 
-<xsl:variable name="targetPage">layout.jsp</xsl:variable>
+<!--******************************************************************
+     A fix for dispatching an IXMLChannel in uPortal 1.0: This section 
+     of the stylesheet replaces the target jsp file with dispatch.jsp 
+     and then appends the two parameters that dispatch.jsp needs:  
+     'channelID' and 'method' name. When migrating to uPortal 2.0, this 
+     section of the stylesheet can be removed.-->
+
+<xsl:variable name="baseActionURL">
+  <xsl:choose>
+    <xsl:when test="not(starts-with($baseActionURL, 'dispatch.jsp'))">
+      <xsl:value-of select="concat('dispatch.jsp', '?', substring-after($baseActionURL, '?'), 'method=render&amp;channelID=', substring-before(substring-after($baseActionURL, 'channelTarget='), '&amp;'))"/>
+    </xsl:when>
+    <xsl:otherwise><xsl:value-of select="$baseActionURL"/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+<!--******************************************************************-->
 
 <xsl:template match="content">
   <xsl:choose>
@@ -33,11 +39,8 @@
   <xsl:value-of select="minNum"/> and 
   <xsl:value-of select="maxNum"/>.<br />
   What's your guess?
-    <form action="{$targetPage}">
+    <form action="{$baseActionURL}" method="post">
       <input type="text" name="guess" size="4"/>
-      <input type="hidden" name="channelID" value="{$channelID}"/>
-      <input type="hidden" name="channelTarget" value="{$channelID}"/>
-      <input type="hidden" name="method" value="render"/>
       <input type="submit" value="Submit"/>
     </form>
 </xsl:template>

@@ -216,7 +216,6 @@ public class CNumberGuess implements IXMLChannel
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
       processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));        
-      processor.setStylesheetParam("channelID", processor.createXString(staticData.getChannelID()));        
       processor.process (xmlSource, xslSource, xmlResult);
     }
     else 
