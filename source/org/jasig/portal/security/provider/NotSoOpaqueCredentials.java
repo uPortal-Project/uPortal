@@ -22,8 +22,8 @@ import org.jasig.portal.security.IOpaqueCredentials;
 public interface NotSoOpaqueCredentials extends IOpaqueCredentials {
 
   /**
-   * Returns the stored credentials as a string.
+   * Returns the stored credentials as a String.
+   * @return the strored credentials.
    */
-
   public String getCredentials();
 }
