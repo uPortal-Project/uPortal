@@ -46,13 +46,15 @@ import org.jasig.portal.services.GroupService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/** This command sets the id of the parent group (ie. the group to which child
- *  members will be added). Control is then passed to a selection view where
- *  the child group members will be selected for addition. When the selection
- *  has been completed by the user, the DoneWithSelection command will be
- *  invoked where the selected children group members are actually processed.
- *  Alternatively, the CancelSelection command is invoked to cancel the
- *  selection process and reset the mode and view control parameters.
+/** 
+ *  AddMembers is a command which sets the id of the parent group.
+ *  The parent group is the group to which child members will be added.
+ *  Control is then passed to a selection view where the child group members will
+ *  be selected for addition. When the selection has been completed by the user,
+ *  the DoneWithSelection command will be invoked where the selected children
+ *  group members are actually processed.  Alternatively, the CancelSelection
+ *  command is invoked to cancel the selection process and reset the mode and
+ *  view control parameters.
  * @author Don Fracapane
  * @version $Revision$
  */
