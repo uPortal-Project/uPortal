@@ -134,7 +134,7 @@ public class RDBMUserLayoutStore
                 try {
                   stmt.executeQuery(sql);
                   dbStrings = joinDbStrings[i];
-                  //supportsOuterJoins = true;
+                  supportsOuterJoins = true;
                   break;
                 } catch (SQLException sqle) {}
               }
