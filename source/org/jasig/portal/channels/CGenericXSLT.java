@@ -40,7 +40,7 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.ILocalConnectionContext;
+import org.jasig.portal.security.LocalConnectionContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
@@ -58,7 +58,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -114,7 +114,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private Map params;
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
-    private ILocalConnectionContext localConnContext;
+    private LocalConnectionContext localConnContext;
 
     public CState()
     {
@@ -162,7 +162,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     {
       try
       {
-        state.localConnContext = (ILocalConnectionContext) Class.forName(connContext).newInstance();
+        state.localConnContext = (LocalConnectionContext) Class.forName(connContext).newInstance();
         state.localConnContext.init(sd);
       }
       catch (Exception e)
@@ -258,7 +258,13 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         DTDResolver dtdResolver = new DTDResolver();
         docBuilder.setEntityResolver(dtdResolver);
 
-        URLConnection urlConnect = (ResourceLoader.getResourceAsURL(this.getClass(), state.xmlUri)).openConnection();
+        URL url;
+        if (state.localConnContext != null)
+          url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(state.xmlUri, state.runtimeData));
+        else
+          url = ResourceLoader.getResourceAsURL(this.getClass(), state.xmlUri);
+
+        URLConnection urlConnect = url.openConnection();
 
         if (state.localConnContext != null)
         {

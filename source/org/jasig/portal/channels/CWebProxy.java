@@ -48,7 +48,7 @@ import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.ILocalConnectionContext;
+import org.jasig.portal.security.LocalConnectionContext;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
@@ -106,7 +106,7 @@ import org.jasig.portal.security.ILocalConnectionContext;
  *  <li>"cw_person" - IPerson attributes to pass.
  *		    <i>A comma-separated list of IPerson attributes to
  *		    pass to the back end application.</i>
- *  <li>"upc_localConnContext" - The class name of the ILocalConnectionContext 
+ *  <li>"upc_localConnContext" - The class name of the LocalConnectionContext 
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
  *                  request for the URL.</i>
@@ -178,7 +178,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private ChannelRuntimeData runtimeData;
     private CookieCutter cookieCutter;
     private URLConnection connHolder;
-    private ILocalConnectionContext localConnContext;
+    private LocalConnectionContext localConnContext;
 
     public ChannelState ()
     {
@@ -247,12 +247,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     {
       try
       {
-        state.localConnContext = (ILocalConnectionContext) Class.forName(connContext).newInstance();
+        state.localConnContext = (LocalConnectionContext) Class.forName(connContext).newInstance();
         state.localConnContext.init(sd);
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.ERROR, "CWebProxy: Cannot initialize ILocalConnectionContext: " + e);
+        LogService.instance().log(LogService.ERROR, "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
       }
     }
 
@@ -660,7 +660,13 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
   
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
   {
-      URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
+      URL url;
+      if (state.localConnContext != null)
+        url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(uri, state.runtimeData));
+      else
+        url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
+
+      // get info from url for cookies
       String domain = url.getHost().trim();
       String path = url.getPath();
       if ( path.indexOf("/") != -1 )
