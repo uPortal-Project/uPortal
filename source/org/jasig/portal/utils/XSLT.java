@@ -271,7 +271,7 @@ public class XSLT {
         throw pe;
       }
     } catch (Exception e) {
-      throw new GeneralRenderingException(e.getMessage());
+      throw new PortalException(e);
     }
   }
 
@@ -295,7 +295,7 @@ public class XSLT {
         throw pe;
       }
     } catch (Exception e) {
-      throw new GeneralRenderingException(e.getMessage());
+      throw new PortalException(e);
     }
   }
 
