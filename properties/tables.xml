@@ -121,8 +121,6 @@
                     <param>30</param>
                 </column>
             </columns>
-            <primary-key>CHAN_ID</primary-key>
-            <primary-key>ROLE</primary-key>
         </table>
 
 	<table>
