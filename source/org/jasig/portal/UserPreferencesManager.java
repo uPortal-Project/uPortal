@@ -37,6 +37,12 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
     private static final Log log = LogFactory.getLog(UserPreferencesManager.class);
     
+    /**
+     * Default value for saveUserPreferencesAtLogout.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_SAVE_USER_PREFERENCES_AT_LOGOUT = false;
+    
     // user agent mapper for guessing the profile
     static PropsMatcher uaMatcher;
 
@@ -53,7 +59,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     IPerson m_person;
     IUserLayoutStore ulsdb = null;
 
-    private static final boolean saveUserPreferencesAtLogout = PropertiesManager.getPropertyAsBoolean(UserPreferencesManager.class.getName() + ".save_UserPreferences_at_logout");
+    private static final boolean saveUserPreferencesAtLogout = PropertiesManager.getPropertyAsBoolean(UserPreferencesManager.class.getName() + ".save_UserPreferences_at_logout", DEFAULT_SAVE_USER_PREFERENCES_AT_LOGOUT);
 
 
     /**
