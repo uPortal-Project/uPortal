@@ -54,11 +54,11 @@ Version $Revision$
     <xsl:param name="errorMessage" select="'no errorMessage passed'"/>
     <!-- <xsl:param name="errorMessage"> There are <xsl:value-of select="count(/layout/actions/fragments/fragment)"/> fragments in the current layout XML. </xsl:param> -->
     <xsl:param name="authenticated" select="'true'"/>
-    <xsl:param name="channelManager" select="'false'"/>
+    <xsl:param name="authorizedChannelPublisher" select="'false'"/>
+    <xsl:param name="authorizedFragmentPublisher" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
     <xsl:param name="currentFragmentID" select="'default_layout'"/>
-    <xsl:param name="fragmentAuthor" select="'true'"/>
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
     <xsl:param name="selectedID" select="/layout/@selectedID"/>
@@ -147,7 +147,7 @@ Version $Revision$
                                         <img src="{$mediaPathIcons}/sitemap.gif" width="24" height="24" alt="View Sitemap" title="View Sitemap" border="0"/>
                                     </a>
                                 </td>
-                                <xsl:if test="$channelManager='true'">
+                                <xsl:if test="$authorizedChannelPublisher='true'">
                                     <td>
                                         <a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">
                                             <img width="24" height="24" alt="Channel Manager" title="Channel Manager" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
@@ -1419,7 +1419,7 @@ Version $Revision$
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
-                        <xsl:if test="fragments and $fragmentAuthor='true'">
+                        <xsl:if test="$authorizedChannelPublisher='true'">
                             <!-- <br/> -->
                             <span> |<xsl:text>&#160;</xsl:text>
                             </span>
