@@ -1,5 +1,5 @@
 /**
- * Copyright (I)(B 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
  *
  */
 
-
 package org.jasig.portal.i18n;
 
 import java.util.Locale;
@@ -42,7 +41,6 @@ import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.utils.CommonUtils;
-
 
 
 /**
