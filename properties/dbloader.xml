@@ -4,8 +4,8 @@
 
   <!-- Set to false to disable execution of DROP, CREATE, and/or POPULATE TABLE SQL statements -->
 
-  <drop-tables>false</drop-tables>
-  <create-tables>false</create-tables>
+  <drop-tables>true</drop-tables>
+  <create-tables>true</create-tables>
   <populate-tables>true</populate-tables>
 
   <!-- Location of tables.xml file -->
