@@ -24,12 +24,22 @@ if (sAction != null)
 }
 %>
 
-<% UtilitiesBean.preventPageCaching (response); %>
+<%-- UtilitiesBean.preventPageCaching (response); --%>
 
 <html>
 <head>
 <title>Publish Channel</title>
 <link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+
+function subForm(form) {
+  form.submit();
+  }
+//-->
+</SCRIPT>
+
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>
@@ -40,7 +50,7 @@ if (sAction != null)
 
 <% 
 if ((sAction != null) && (sAction.equals("register"))) {
- 	if (publish.registerChannel()) {%>
+ 	if (publish.registerChannel(request)) {%>
 	<h2>Congratulations!</h2><br>
 	You have successfully published your channel. Once it has been approved, others will be able to
 	subscribe to it and view its content.
@@ -55,27 +65,32 @@ else { %>
 <%-- Finished and Cancel Changes buttons --%>
 <form>
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=add value="Finished" onClick="location='previewPublish.jsp?action=register'">
+  <input type=button name=add value="Finished" onClick="subForm(channel)">
   <input type=button name=cancel value="Cancel" onClick="location='publish.jsp'">
 </td></tr></table>
 <font size=4><b>Preview Channel for Registration</b></font>
 </form>
 
+<form method="POST" name="channel" action="previewPublish.jsp?action=register">
 <table border=0 cellpadding=3 cellspacing=3>
-This is a preview of the channel you are registering. If it is rendered correctly then click 'Finished'
+This is a preview of the channel you are registering. If it is rendered correctly then pick any appropriate categories and click 'Finished'
 button to register. Otherwise cancel or go back and make necessary corrections.
 <tr bgcolor=#ffffff>
 <td>
 <% publish.previewChannel(request, response, out); %>
 </td>
+<td valign="top">
+<b>Channel Categories</b><p>
+<% publish.writeChannelCats(request, response, out); %>
+</td>
 </tr>
 </table>
-
+</form>
 
 <%-- Finished and Cancel Changes buttons --%>
 <form>
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=add value="Finish" onClick="location='previewPublish.jsp?action=register'">
+  <input type=button name=add value="Finish" onClick="subForm(channel)">
   <input type=button name=cancel value="Cancel" onClick="location='publish.jsp'">
 </td></tr></table>
 </form>
