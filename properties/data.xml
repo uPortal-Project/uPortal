@@ -24,11 +24,11 @@
           <!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
           <layout>
             <folder ID="header01" priority="0" name="Header folder" type="header">
-              <channel ID="hchan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CHeader" name="header"/>
+              <channel ID="hchan00" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="false" class="org.jasig.portal.channels.CHeader" name="header"/>
+              <channel ID="hchan01" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
             </folder>
             <folder ID="t01" priority="1" name="Main">
               <folder ID="col01" priority="0" name="Column 1">
-                <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="false" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
                 <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
                   <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
@@ -100,6 +100,7 @@
           <layout>
             <folder ID="header01" priority="0" name="Header folder" type="header">
               <channel ID="hchan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CHeader" name="header"/>
+              <channel ID="hchan01" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
             </folder>
             <folder ID="t01" priority="1" name="Main">
               <folder ID="col01" priority="0" name="Column 1">
