@@ -26,7 +26,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   private RdbmServices rdbmService = new RdbmServices ();
   private Connection con = null;
   private File dtdFile = new File (getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator + "bookmarks.dtd");
-  private String sPathToBookmarksDtd = GenericPortalBean.getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator + File.separator;
+  private String sPathToBookmarksDtd = GenericPortalBean.getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator;
   
   public Vector getParameters()
   {
@@ -287,14 +287,14 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 
 	  IBookmarks bm = null;
   	
-	  try {
-		  //Logger.log (Logger.DEBUG, "Inside getBookmarkData, before call to getBookmarkXml");
+	  try 
+    {
 		  IXml xml = getBookmarkXml(req);
 		  bm = (IBookmarks) xml.getRoot ();
-		  //Logger.log (Logger.DEBUG, "after call to getBookmarkXml");
 	  }
-	  catch (Exception e) {
-	    e.printStackTrace ();
+	  catch (Exception e) 
+    {
+	    Logger.log (Logger.ERROR, e);
 	  }
   	
 	  return bm;
@@ -312,17 +312,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   private IXml getBookmarkXml (HttpServletRequest req)
   {
 	  IXml bookmarkXml = null;
-
-	  // getBookMarkXML from session
-	  //bookMarkXml = getBookmarkXmlFromSession(req);
-	  //if (!bookMarkXml.equals(null)) return bookMarkXml;
-
-	  //Logger.log (Logger.DEBUG, "before call to database");
-  	
-	  // if no bookmark XML in session, get bookmark XML from database
 	  bookmarkXml = getBookmarkXmlFromDatabase(req);
-	  //Logger.log (Logger.DEBUG, "after call to database");
-
 	  return bookmarkXml;
   }
   
@@ -481,9 +471,8 @@ parse bookmarkXml data and return
 		  out.println ("    <td>" + bookmarks[i].getAttribute ("comments") + "</td>");
 		  out.println ("  </tr>");
 	    }
-  	  
-	    out.println ("</table>");
-  	  
+        	  
+	    out.println ("</table>");	  
 	  }
 	  catch (Exception e)
 	  {
@@ -500,20 +489,22 @@ parse bookmarkXml data and return
 	  IXml bookmarkXml = getBookmarkXmlFromSession(req);
   	
 	  //Logger.log (Logger.DEBUG, "Inside saveBookMarkXML");
-	  try {
+	  try 
+    {
 		  ByteArrayOutputStream outputBookmarkXml = new ByteArrayOutputStream();
 		  bookmarkXml.saveDocument(outputBookmarkXml);
   		
 		  //Logger.log (Logger.DEBUG, "before saveBookMarkXmlToDatabase");
 		  if (bookmarkXml != null) 
 			  return saveBookMarkXmlToDatabase(req, outputBookmarkXml.toString());
-	}
-	catch (Exception e)
-	{	
-	  Logger.log (Logger.ERROR, "Problem in savBookMarkXml" + e);
-	}
-	return false;
-  }  
+    }
+    catch (Exception e)
+    {	
+      Logger.log (Logger.ERROR, e);
+    }
+    return false;
+  }
+  
   /**
 	* get ID associated with User
 	* attempt update of users bookmark xml
@@ -525,8 +516,8 @@ parse bookmarkXml data and return
 	  String id = null;
 	  // condsider creation of getUserID method
 	  String sUserName = getUserName(req).equals(null)?"guest":getUserName(req);
-	  //Logger.log (Logger.DEBUG, "before if try to save toDatabase");
-	  try
+
+    try
 	  {
 		  con = rdbmService.getConnection ();
 		  Statement stmt = con.createStatement();
@@ -565,7 +556,9 @@ parse bookmarkXml data and return
 		  debug(sUpdate);
   		
 		  int goodUpdate = stmt.executeUpdate (sUpdate);
-		  if (goodUpdate == 0) {
+      
+		  if (goodUpdate == 0) 
+      {
 			  sUpdate = "INSERT INTO PORTAL_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES('"+ id +"','" + bookmarkXml + "')";
 			  Logger.log (Logger.DEBUG, sUpdate);
 			  goodUpdate = stmt.executeUpdate (sUpdate);	
