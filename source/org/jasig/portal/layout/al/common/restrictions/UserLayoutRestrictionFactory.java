@@ -56,7 +56,7 @@ public class UserLayoutRestrictionFactory {
  }
  
  
- public static IUserLayoutRestriction createRestriction( String restrictionType ) throws PortalException {
+ private static IUserLayoutRestriction createRestriction( String restrictionType ) throws PortalException {
  	if ( !activeRestrictions.containsKey(restrictionType) )
  	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + restrictionType +"'" );	
  	return getRestriction(activeRestrictions.getProperty(restrictionType));
