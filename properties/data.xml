@@ -1068,37 +1068,37 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Guest layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Demo layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Admin layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_TITLE</name><value>Staff layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_TITLE</name><value>Faculty layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_TITLE</name><value>Student layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1000000</value></column>
       </row>
     </rows>
   </table>
@@ -1107,6 +1107,16 @@
     <name>UP_LAYOUT_STRUCT</name>
     <rows>
       <!-- Guest layout -->
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
 
       <!-- Header -->
       <row>
@@ -1299,6 +1309,17 @@
           </row>
 
       <!-- Demo Layout -->
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
+
       <!-- Header -->
       <row>
         <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -1550,6 +1571,17 @@
             <column><name>CHAN_ID</name><value>19</value></column>
           </row>
       <!-- Admin Layout -->
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
+
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -1939,6 +1971,18 @@
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
       </row>
+
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
+
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -2100,6 +2144,18 @@
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
       </row>
+
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
+
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -2249,6 +2305,18 @@
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
       </row>
+
+      <!-- layout root node -->
+      <row>
+        <column><name>STRUCT_ID</name><value>1000000</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+      </row>
+
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
