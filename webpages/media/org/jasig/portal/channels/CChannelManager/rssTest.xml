@@ -51,6 +51,20 @@
             <definition>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</definition>
           </channelType>
         </channelTypes>
+        <channel TypeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
       </step>
     </params>
   </selectChannelType>
@@ -63,6 +77,20 @@
           <setting>
           </setting>
         </settings>
+        <channel TypeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
       </step>
     </params>
   </selectGeneralSettings>
@@ -71,16 +99,20 @@
       <step>
         <ID>1</ID>
         <name>Custom Settings</name>
-        <userSettings>
-          <listedParameter>
-            <name>param1</name>
-            <value>value for param1</value>
-          </listedParameter>
-          <listedParameter>
-            <name>param2</name>
-            <value>value for param2</value>
-          </listedParameter>
-        </userSettings>
+        <channel TypeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" detachable="false" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" minimizable="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
       </step>
     </params>
   </customSettings>
@@ -90,18 +122,10 @@
     <params>
       <step>
         <ID>1</ID>
-        <name></name>
-        <description></description>
-
-        <parameter modify="publish-only">
-          <name>name</name>
-          <label>Name</label>
-          <type base="string" input="text" display="text">
-            <length>20</length>
-            <maxlength>100</maxlength>
-          </type>
-          <defaultValue>My Image Channel</defaultValue>
-        </parameter>
+        <name>
+        </name>
+        <description>
+        </description>
 
         <parameter modify="publish-only">
           <name>img-uri</name>
@@ -152,6 +176,13 @@
           </type>
           <defaultValue>http://www.mysite.com</defaultValue>
         </parameter>
+        <channel ID="chan1" chanID="1" class="org.jasig.portal.channels.CImage" detachable="true" editable="false" fname="" hasAbout="false" hasHelp="false" minimizable="true" name="Daily Business Cartoon" timeout="10000">
+          <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+          <parameter name="img-width" value="300"/>
+          <parameter name="img-height" value="300"/>
+          <parameter name="img-height" value="300"/>
+          <parameter name="img-link" value="http://www.tedgoff.com"/>
+        </channel>
       </step>
 
       <step>
