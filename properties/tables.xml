@@ -158,7 +158,7 @@
     <name>UP_USER_UA_MAP</name>
     <columns>
       <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
-      <column><name>USER_AGENT</name><type>VARCHAR</type><param>50</param></column>
+      <column><name>USER_AGENT</name><type>VARCHAR</type><param>100</param></column>
       <column><name>PROFILE_NAME</name><type>VARCHAR</type><param>30</param></column>
     </columns>
   </table>
