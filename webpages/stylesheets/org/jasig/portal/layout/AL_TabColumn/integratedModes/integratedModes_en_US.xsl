@@ -52,6 +52,7 @@ Version $Revision$
 	<xsl:param name="errorMessage" select="'no errorMessage passed'"/>
 	<xsl:param name="authenticated" select="'true'"/>
 	<xsl:param name="channelManager" select="'false'"/>
+	<xsl:param name="userName" select="'Guest'"/>
 	<!--These variables and parameters are used in fragment mode-->
 	<xsl:variable name="pushedFragmentFoundation">
 		<layout>
@@ -180,6 +181,11 @@ Version $Revision$
 									<a href="Logout" class="uportal-navigation-category">
 										<img src="{$mediaPathIcons}/logout.gif" width="24" height="24" alt="Logout" title="Logout" border="0"/>
 									</a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="10">
+									<p class="uportal-channel-strong">Welcome - <xsl:value-of select="$userName"/></p>
 								</td>
 							</tr>
 						</table>
