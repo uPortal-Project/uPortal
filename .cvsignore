@@ -1,5 +1,6 @@
 control_panel
-build.xml
+build
+dist
 localbuild.properties.in
 logs
 scripts
