@@ -53,6 +53,7 @@ import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.factories.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -62,6 +63,10 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import org.jasig.portal.utils.XMLEscaper;
+
 
 /**
  * This user preferences component is for use with layouts based
@@ -81,7 +86,8 @@ final class TabColumnPrefsState extends BaseState
   private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
   private static SmartCache channelRegistryCache = new SmartCache(60); // One minute
-  
+  private static Document SkinsInfoDocument = null;
+
   private String action = "none";
   private String activeTab = "none";
   private String elementID = "none";
@@ -108,7 +114,7 @@ final class TabColumnPrefsState extends BaseState
   {
     super();
     this.internalState = new DefaultState(this);
-    
+
     // initialize stylesheet set
     set = new StylesheetSet(sslLocation);
   }
@@ -171,7 +177,7 @@ final class TabColumnPrefsState extends BaseState
     else
       LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
   }
-  
+
   // Helper methods...
 
   private final Document getUserLayout() throws Exception
@@ -187,14 +193,14 @@ final class TabColumnPrefsState extends BaseState
 
     return userLayout;
   }
-  
+
   private final Document getChannelRegistry() throws java.sql.SQLException
   {
     Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
     if (channelRegistry == null)
     {
       // Channel registry has expired, so get it and cache it
-      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getChannelRegistryXML();   
+      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getChannelRegistryXML();
 
       if (channelRegistry != null)
       {
@@ -204,7 +210,7 @@ final class TabColumnPrefsState extends BaseState
     }
     return channelRegistry;
   }
-  
+
   private final String getActiveTab()
   {
     String activeTab = "none";
@@ -454,14 +460,14 @@ final class TabColumnPrefsState extends BaseState
   private final void addChannel(String selectedChannelId, String position, String destinationElementId) throws Exception
   {
     Element layout = userLayout.getDocumentElement();
-    
+
     Document channelRegistry = getChannelRegistry();
     Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
     String instanceId = ulStore.getNextStructChannelId(staticData.getPerson().getID());
     newChannel.setAttribute("ID", instanceId);
     // The following line is Xerces-specific
     ((org.apache.xerces.dom.DocumentImpl)userLayout).putIdentifier(instanceId, newChannel);
-    
+
     Element destinationElement = userLayout.getElementById(destinationElementId);
 
     // The destination element might be an empty tab or a column
@@ -485,10 +491,10 @@ final class TabColumnPrefsState extends BaseState
       Node siblingChannel = position.equals("before") ? destinationElement : null;
       UserLayoutManager.moveNode(newChannel, targetColumn, siblingChannel);
     }
-    
+
     saveLayout();
   }
-  
+
   /**
    * Removes a tab, column, or channel element from the layout
    * @param elementId the ID attribute of the element to remove
@@ -573,8 +579,8 @@ final class TabColumnPrefsState extends BaseState
   {
     // If the we are editing the current profile, return true, otherwise false
     return context.getUserLayoutManager().getCurrentProfile().equals(editedUserProfile);
-  }  
-  
+  }
+
   /**
    * A sub-state of TabColumnPrefsState for visualizing the user layout
    * in tab-column form.
@@ -872,7 +878,7 @@ final class TabColumnPrefsState extends BaseState
         processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
         processor.setStylesheetParam("activeTab", processor.createXString(activeTab));
         processor.setStylesheetParam("action", processor.createXString(action));
-        processor.setStylesheetParam("elementID", processor.createXString(elementID));     
+        processor.setStylesheetParam("elementID", processor.createXString(elementID));
         processor.setStylesheetParam("errorMessage", processor.createXString(errorMessage));
 
         StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
@@ -882,9 +888,9 @@ final class TabColumnPrefsState extends BaseState
         if (action.equals("newChannel"))
         {
           Node channelRegistry = getChannelRegistry().getDocumentElement();
-          userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));            
+          userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
         }
-        
+
         // Begin SAX chain
         UtilitiesBean.node2SAX(userLayout, saif);
 
@@ -934,25 +940,120 @@ final class TabColumnPrefsState extends BaseState
 
       public void renderXML (DocumentHandler out) throws PortalException
       {
-          String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
-          Document doc = new org.apache.xerces.dom.DocumentImpl();
+        String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+        if (SkinsInfoDocument == null)
+          getAvailableSkinsInfo ();
 
-          Hashtable params = new Hashtable(2);
-          params.put("baseActionURL", runtimeData.getBaseActionURL());
-          if(currentSkin!=null)
-              params.put("currentSkin", currentSkin);
+        XSLT xslt = new XSLT ();
+        xslt.setXML(SkinsInfoDocument);
+        xslt.setSSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        if(currentSkin!=null)
+          xslt.setStylesheetParameter("currentSkin", currentSkin);
 
-          String xslURI=set.getStylesheetURI("skinList",runtimeData.getBrowserInfo());
+        try
+        {
+          xslt.transform();
+        }
+        catch (Exception e)
+        {
+            throw new GeneralRenderingException(e.getMessage());
+        }
+    }
 
-          try {
-              XSLT.transform(doc, new URL(UtilitiesBean.fixURI(xslURI)), out, params);
-          } catch (Exception e) {
-              throw new GeneralRenderingException(e.getMessage());
-          }
+    void getAvailableSkinsInfo ()
+    {
+      Connection connection = null;
+      Element skin = null;
+      Element node = null;
+      SkinsInfoDocument = DocumentFactory.getNewDocument ();
+      Element root = SkinsInfoDocument.createElement("root");
 
+      try
+      {
+
+        connection = getConnection();
+
+        String query = "SELECT SKIN_NAME, SKIN_DESCRIPTION, THUMBNAIL_FILE_LOCATION, FOLDER_NAME FROM UP_SKINS";
+        // Get the result set
+        ResultSet rs = connection.createStatement().executeQuery(query);
+
+        while (rs != null && rs.next ())
+        {
+          //Start of an enrty
+          skin = SkinsInfoDocument.createElement("skin");
+          //make Skin-Name node
+          node = SkinsInfoDocument.createElement("Skin-Name");
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_NAME")));
+          skin.appendChild(node);
+          //make Skin-Description node
+          node = SkinsInfoDocument.createElement("Skin-Description");
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_DESCRIPTION")));
+          skin.appendChild(node);
+          //make Skin-Thumbnail-File node
+          node = SkinsInfoDocument.createElement("Skin-Thumbnail-File");
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("THUMBNAIL_FILE_LOCATION")));
+          skin.appendChild(node);
+          //make Skin-Folder-Name node
+          node = SkinsInfoDocument.createElement("Skin-Folder-Name");
+          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("FOLDER_NAME")));
+          skin.appendChild(node);
+          //append skin to root
+          root.appendChild(skin);
+          //end of entry
+        }
+
+        //append root to the document
+        SkinsInfoDocument.appendChild(root);
+
+        //System.out.println(UtilitiesBean.dom2PrettyString(SkinsInfoDocument));
       }
+      catch (Exception e)
+      {
+        LogService.instance().log(LogService.ERROR, e);
+        SkinsInfoDocument = null;
+      }
+      finally
+      {
+        // Release the database connection
+        if (connection != null)
+        {
+          releaseConnection(connection);
+        }
+      }
+    }
+
+    private Connection getConnection ()
+    {
+      try
+      {
+        RdbmServices rdbmServices = new RdbmServices();
+        return  (rdbmServices.getConnection());
+      }
+      catch (Exception e)
+      {
+        LogService.instance().log(LogService.ERROR, e);
+        return  (null);
+      }
+    }
+
+    private void releaseConnection (Connection connection)
+    {
+      try
+      {
+        RdbmServices rdbmServices = new RdbmServices();
+        rdbmServices.releaseConnection(connection);
+      }
+      catch (Exception e)
+      {
+        LogService.instance().log(LogService.ERROR, e);
+      }
+    }
+
   }
-  
+
+
   /**
    * A sub-state of TabColumnPrefsState for choosing a new channel (formerly subscribe)
    */
@@ -960,7 +1061,7 @@ final class TabColumnPrefsState extends BaseState
   {
     protected TabColumnPrefsState context;
     private String position = "none";
-    private String catID = "top";        
+    private String catID = "top";
 
     public NewChannelState(TabColumnPrefsState context) {
       this.context = context;
@@ -973,12 +1074,12 @@ final class TabColumnPrefsState extends BaseState
         if (action.equals("cancel")) {
           returnToDefaultState();
         } else {
-          // User clicked "?"  
+          // User clicked "?"
           if (runtimeData.getParameter("channelMoreInfo") != null) {
             // Implement channel preview here!
           } else if (runtimeData.getParameter("addChannel") != null) {
             // User clicked "Add"
-            String selectedChannel = runtimeData.getParameter("selectedChannel"); 
+            String selectedChannel = runtimeData.getParameter("selectedChannel");
             if (selectedChannel != null) {
               try {
                 addChannel(selectedChannel, position, elementID);
@@ -994,9 +1095,9 @@ final class TabColumnPrefsState extends BaseState
             if (passedPosition != null)
               position = passedPosition;
             if (passedElementID != null)
-              elementID = passedElementID;    
-            
-            // User clicked "Go"             
+              elementID = passedElementID;
+
+            // User clicked "Go"
             String selectedCategory = runtimeData.getParameter("selectedCategory");
             if (selectedCategory != null  && selectedCategory.trim().length() > 0)
               catID = selectedCategory;
@@ -1015,19 +1116,19 @@ final class TabColumnPrefsState extends BaseState
         LogService.instance().log(LogService.ERROR, sqle);
         errorMessage = errorMessageNewChannel;
       }
-      
+
       XSLT xslt = new XSLT();
       xslt.setXML(doc);
       xslt.setSSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      xslt.setStylesheetParameter("elementID", elementID);     
-      xslt.setStylesheetParameter("position", position);   
+      xslt.setStylesheetParameter("elementID", elementID);
+      xslt.setStylesheetParameter("position", position);
       xslt.setStylesheetParameter("catID", catID);
       xslt.setStylesheetParameter("errorMessage", errorMessage);
       xslt.transform();
     }
-      
+
     private void returnToDefaultState() throws PortalException {
       // Reset global variables
       elementID = "none";
@@ -1036,7 +1137,7 @@ final class TabColumnPrefsState extends BaseState
 
       BaseState defaultState = new DefaultState(context);
       defaultState.setStaticData(staticData);
-      context.setState(defaultState);                 
+      context.setState(defaultState);
     }
-  }  
+  }
 }
