@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 package org.jasig.portal;
@@ -75,8 +73,8 @@ import org.jasig.portal.utils.ResourceLoader;
  * @author George Lindholm
  * @version $Revision$
  */
-public class RDBMUserLayoutStore
-    implements IUserLayoutStore {
+public class RDBMUserLayoutStore implements IUserLayoutStore {
+
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
   static int DEBUG = 0;
   protected static final String channelPrefix = "n";
@@ -137,7 +135,6 @@ public class RDBMUserLayoutStore
       if (parameters == null) {
         parameters = new ArrayList(5);
       }
-
       parameters.add(new StructureParameter(name, value));
     }
 
@@ -147,12 +144,11 @@ public class RDBMUserLayoutStore
 
     public Element getStructureDocument(DocumentImpl doc) throws Exception {
       Element structure = null;
-
       if (isChannel()) {
         structure = crsdb.getChannelXML(chanId, doc, channelPrefix + structId);
         if (structure == null) {
           // Can't find channel
-          ChannelStoreDefinition cd = new ChannelStoreDefinition(chanId, "Missing channel");
+          ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
           structure = cd.getDocument(doc, channelPrefix + structId,
            "This channel no longer exists. You should remove it from your layout.",
            CError.CHANNEL_MISSING_EXCEPTION);
@@ -223,18 +219,8 @@ public class RDBMUserLayoutStore
         throw new Exception("Unknown database driver");
       }
     }
-
   }
-  /**
-   *
-   *   UserPreferences
-   *
-   */
-  /**
-   *
-   *   ChannelRegistry
-   *
-   */
+
   /**
    * Registers a NEW structure stylesheet with the database.
    * @param tsd Stylesheet description object
@@ -295,6 +281,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Registers a NEW theme stylesheet with the database.
    * @param tsd Stylesheet description object
@@ -350,11 +337,11 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Update the theme stylesheet description.
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @param stylesheetId
-   * @return
+   * @return true if update succeeded, otherwise false
    */
   public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
@@ -401,11 +388,11 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Update the structure stylesheet description
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @param stylesheetId
-   * @return
+   * @return true if update succeeded, otherwise false
    */
   public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
@@ -420,12 +407,15 @@ public class RDBMUserLayoutStore
       fssd.setStylesheetURI(stylesheetURI);
       fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+
       // populate parameter and attriute tables
       this.populateParameterTable(stylesheetDescriptionXML, fssd);
       this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
+
       // now write out the database record
       updateStructureStylesheetDescription(fssd);
+
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
       return  false;
@@ -434,7 +424,7 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Add a structure stylesheet description
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @return
@@ -452,14 +442,17 @@ public class RDBMUserLayoutStore
       fssd.setStylesheetURI(stylesheetURI);
       fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+
       // populate parameter and attriute tables
       this.populateParameterTable(stylesheetDescriptionXML, fssd);
       this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
+
       // now write out the database record
       // first the basic record
       //UserLayoutStoreFactory.getUserLayoutStoreImpl().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
       return  addStructureStylesheetDescription(fssd);
+
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
     }
@@ -467,7 +460,7 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Add theme stylesheet description
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @return
@@ -509,11 +502,13 @@ public class RDBMUserLayoutStore
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
       sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
       sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML, "deviceType"));
+
       // populate parameter and attriute tables
       this.populateParameterTable(stylesheetDescriptionXML, sssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
-      //            UserLayoutStoreFactory.getUserLayoutStoreImpl().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
+
       return  addThemeStylesheetDescription(sssd);
+
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
     }
@@ -521,10 +516,10 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Add a user profile
    * @param person
    * @param profile
-   * @return
+   * @return userProfile
    * @exception Exception
    */
   public UserProfile addUserProfile (IPerson person, UserProfile profile) throws Exception {
@@ -549,8 +544,9 @@ public class RDBMUserLayoutStore
     }
     return  profile;
   }
+
   /**
-   * put your documentation comment here
+   * Checks if a channel has been approved
    * @param approved Date
    * @return boolean Channel is approved
    */
@@ -559,9 +555,8 @@ public class RDBMUserLayoutStore
       return (approvedDate != null && rightNow.after(approvedDate));
    }
 
-
   /**
-   * put your documentation comment here
+   * Create a layout
    * @param doc
    * @param stmt
    * @param root
@@ -587,6 +582,7 @@ public class RDBMUserLayoutStore
         structId = ls.getNextId();
       }
   }
+
   /**
    * convert true/false into Y/N for database
    * @param value to check
@@ -595,6 +591,7 @@ public class RDBMUserLayoutStore
   protected static final boolean xmlBool (String value) {
       return (value != null && value.equals("true") ? true : false);
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -617,6 +614,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Dump a document tree structure on stdout
    * @param node
@@ -649,7 +647,6 @@ public class RDBMUserLayoutStore
     dumpDoc(node.getNextSibling(), indent);
   }
 
-
   /**
    *
    * CoreStyleSheet
@@ -679,6 +676,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Return the next available channel structure id for a user
    * @parameter userId
@@ -687,6 +685,7 @@ public class RDBMUserLayoutStore
   public String generateNewChannelSubscribeId (IPerson person) throws Exception {
     return  getNextStructId(person, channelPrefix);
   }
+
   /**
    * Return the next available folder structure id for a user
    * @param person
@@ -696,6 +695,7 @@ public class RDBMUserLayoutStore
   public String generateNewFolderId (IPerson person) throws Exception {
     return  getNextStructId(person, folderPrefix);
   }
+
   /**
    * Return the next available structure id for a user
    * @param person
@@ -728,9 +728,7 @@ public class RDBMUserLayoutStore
             stmt.executeUpdate(sUpdate);
             return  prefix + nextStructId;
           } catch (SQLException sqle) {
-            /**
-            * Assume a concurrent update. Try again after some random amount of milliseconds.
-            */
+            // Assume a concurrent update. Try again after some random amount of milliseconds.
             Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
           }
         }
@@ -742,6 +740,7 @@ public class RDBMUserLayoutStore
     }
     throw new SQLException("Unable to generate a new structure id for user " + userId);
   }
+
   /**
    * Return the Structure ID tag
    * @param  structId
@@ -755,6 +754,7 @@ public class RDBMUserLayoutStore
       return channelPrefix + structId;
     }
   }
+
   /**
    * Obtain structure stylesheet description object for a given structure stylesheet id
    * @para id id of the structure stylesheet
@@ -823,7 +823,6 @@ public class RDBMUserLayoutStore
           if (RDBMServices.supportsOuterJoins && !rs.next()) {
             break;
           }
-
         }
       } finally {
         rs.close();
@@ -834,6 +833,7 @@ public class RDBMUserLayoutStore
     }
     return  ssd;
   }
+
   /**
    * Obtain ID for known structure stylesheet name
    * @param ssName name of the structure stylesheet
@@ -862,6 +862,7 @@ public class RDBMUserLayoutStore
     }
     return null;
   }
+
   /**
    * Obtain a list of structure stylesheet descriptions that have stylesheets for a given
    * mime type.
@@ -895,37 +896,37 @@ public class RDBMUserLayoutStore
     return  list;
   }
 
-    /**
-     * Obtain a list of strcture stylesheet descriptions registered on the system
-     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
-     * @exception Exception
-     */
-    public Hashtable getStructureStylesheetList() throws Exception {
-        Connection con = RDBMServices.getConnection();
-        Hashtable list = new Hashtable();
-        try {
-            Statement stmt = con.createStatement();
-            try {
-                String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT";
-                    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheeList() : " + sQuery);
-                ResultSet rs = stmt.executeQuery(sQuery);
-                try {
-                    while (rs.next()) {
-                        StructureStylesheetDescription ssd = getStructureStylesheetDescription(rs.getInt("SS_ID"));
-                        if (ssd != null)
-                            list.put(new Integer(ssd.getId()), ssd);
-                    }
-                } finally {
-                    rs.close();
-                }
-            } finally {
-                stmt.close();
-            }
-        } finally {
-            RDBMServices.releaseConnection(con);
-        }
-        return  list;
-    }
+  /**
+   * Obtain a list of strcture stylesheet descriptions registered on the system
+   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
+   * @exception Exception
+   */
+  public Hashtable getStructureStylesheetList() throws Exception {
+      Connection con = RDBMServices.getConnection();
+      Hashtable list = new Hashtable();
+      try {
+          Statement stmt = con.createStatement();
+          try {
+              String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT";
+                  LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheeList() : " + sQuery);
+              ResultSet rs = stmt.executeQuery(sQuery);
+              try {
+                  while (rs.next()) {
+                      StructureStylesheetDescription ssd = getStructureStylesheetDescription(rs.getInt("SS_ID"));
+                      if (ssd != null)
+                          list.put(new Integer(ssd.getId()), ssd);
+                  }
+              } finally {
+                  rs.close();
+              }
+          } finally {
+              stmt.close();
+          }
+      } finally {
+          RDBMServices.releaseConnection(con);
+      }
+      return  list;
+  }
 
   /**
    * put your documentation comment here
@@ -1050,6 +1051,7 @@ public class RDBMUserLayoutStore
     }
     return  ssup;
   }
+
   /**
    * Obtain theme stylesheet description object for a given theme stylesheet id
    * @para id id of the theme stylesheet
@@ -1137,6 +1139,7 @@ public class RDBMUserLayoutStore
     }
     return  tsd;
   }
+
   /**
    * Obtain ID for known theme stylesheet name
    * @param ssName name of the theme stylesheet
@@ -1570,7 +1573,6 @@ public class RDBMUserLayoutStore
     return  null;
   }
 
-
   /**
    *   UserPreferences
    */
@@ -1612,6 +1614,7 @@ public class RDBMUserLayoutStore
     int realUserId = userId;
     ResultSet rs;
     Connection con = RDBMServices.getConnection();
+
     RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
     try {
@@ -1622,7 +1625,7 @@ public class RDBMUserLayoutStore
         long startTime = System.currentTimeMillis();
         int layoutId=profile.getLayoutId();
 
-        if (layoutId == 0) { // First time, grab the default layout for this user
+       if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
@@ -1754,11 +1757,9 @@ public class RDBMUserLayoutStore
           rs.close();
         }
 
-        /**
-        * We have to retrieve the channel defition after the layout structure
-        * since retrieving the channel data from the DB may interfere with the
-        * layout structure ResultSet (in other words, Oracle is a pain to program for)
-        */
+        // We have to retrieve the channel defition after the layout structure
+        // since retrieving the channel data from the DB may interfere with the
+        // layout structure ResultSet (in other words, Oracle is a pain to program for)
         if (chanIds.size() > 0) {
           RDBMServices.PreparedStatement pstmtChannel = crsdb.getChannelPstmt(con);
           try {
@@ -1815,6 +1816,7 @@ public class RDBMUserLayoutStore
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
           doc.appendChild(root);
+
           if (DEBUG > 1) {
             System.err.println("--> created document");
             dumpDoc(doc, "");
@@ -1829,6 +1831,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -1876,6 +1879,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -1924,6 +1928,7 @@ public class RDBMUserLayoutStore
     }
     return  pv;
   }
+
   /**
    * Remove (with cleanup) a structure stylesheet channel attribute
    * @param stylesheetId id of the structure stylesheet
@@ -1932,6 +1937,7 @@ public class RDBMUserLayoutStore
    */
   private void removeStructureChannelAttribute (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
     Statement stmt = con.createStatement();
+
     try {
       String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
           + "'";
@@ -1946,6 +1952,7 @@ public class RDBMUserLayoutStore
       stmt.close();
     }
   }
+
   /**
    * Remove (with cleanup) a structure stylesheet folder attribute
    * @param stylesheetId id of the structure stylesheet
@@ -1968,6 +1975,7 @@ public class RDBMUserLayoutStore
       stmt.close();
     }
   }
+
   /**
    * put your documentation comment here
    * @param stylesheetName
@@ -2010,6 +2018,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Remove (with cleanup) a structure stylesheet param
    * @param stylesheetId id of the structure stylesheet
@@ -2032,6 +2041,7 @@ public class RDBMUserLayoutStore
       stmt.close();
     }
   }
+
   /**
    * Remove (with cleanup) a theme stylesheet channel attribute
    * @param stylesheetId id of the theme stylesheet
@@ -2054,6 +2064,7 @@ public class RDBMUserLayoutStore
       stmt.close();
     }
   }
+
   /**
    * put your documentation comment here
    * @param stylesheetName
@@ -2091,6 +2102,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Remove (with cleanup) a theme stylesheet param
    * @param stylesheetId id of the theme stylesheet
@@ -2140,6 +2152,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param nodeup
@@ -2229,7 +2242,6 @@ public class RDBMUserLayoutStore
     }
     return  saveStructId;
   }
-
 
   /**
    * put your documentation comment here
@@ -2342,6 +2354,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2423,6 +2436,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2459,6 +2473,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Save the user layout
    * @param person
@@ -2469,15 +2484,14 @@ public class RDBMUserLayoutStore
   public void setUserLayout (IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
     int userId = person.getID();
     int layoutId=profile.getLayoutId();
-    int profileId=profile.getProfileId();
-    ResultSet rs;
-    Connection con = RDBMServices.getConnection();
+   int profileId=profile.getProfileId();
+   ResultSet rs;
+   Connection con = RDBMServices.getConnection();
     try {
       RDBMServices.setAutoCommit(con, false);                // Need an atomic update here
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
-
 
         boolean firstLayout = false;
         if (layoutId == 0) { // First personal layout for this user/profile
@@ -2563,6 +2577,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2603,6 +2618,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Updates an existing structure stylesheet description with a new one. Old stylesheet
    * description is found based on the Id provided in the parameter structure.
@@ -2740,6 +2756,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * Updates an existing structure stylesheet description with a new one. Old stylesheet
    * description is found based on the Id provided in the parameter structure.
@@ -2853,6 +2870,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2877,6 +2895,7 @@ public class RDBMUserLayoutStore
       RDBMServices.releaseConnection(con);
     }
   }
+
   /**
    * put your documentation comment here
    * @param userAgent
@@ -3022,9 +3041,10 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Put user preferences
    * @param person
    * @param up
+   * @throws Exception
    */
   public void putUserPreferences (IPerson person, UserPreferences up) throws Exception {
     // store profile
@@ -3034,5 +3054,5 @@ public class RDBMUserLayoutStore
     this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
   }
 
-
 }
+
