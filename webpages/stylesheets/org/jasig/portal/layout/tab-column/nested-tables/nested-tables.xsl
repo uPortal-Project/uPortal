@@ -333,7 +333,8 @@
       </tr>
       <tr class="uportal-background-content">
         <td class="uportal-channel-text" colspan="2">
-          <xsl:if test="@minimized != 'true'">
+		  <!-- Don't render any content for a minimized channel, render minimized portlets -->
+		  <xsl:if test="@minimized != 'true' or @isPortlet = 'true'">
             <xsl:copy-of select="."/>
           </xsl:if>
         </td>
@@ -376,7 +377,8 @@
         <img alt="focus" title="focus" src="{$mediaPath}/{$skin}/controls/focus.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
-    <xsl:if test="not(//focused)">
+	<!-- Allow the buttons for a focused portlet -->
+    <xsl:if test="not(//focused) or @isPortlet = 'true'">
       <xsl:choose>
         <xsl:when test="@minimized='true'">
           <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}">

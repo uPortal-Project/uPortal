@@ -50,6 +50,7 @@ import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.container.IPortletActionResponse;
 import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
@@ -301,13 +302,20 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     // We might want to consider a custom ABOUT mode here
                     break;
                     
-                // Detect portlet window state changes
-                case PortalEvent.DETACH_BUTTON_EVENT:
-                    // Maybe we want to consider a custom window state here or used MAXIMIZED
+                //Detect portlet window state changes
+                case PortalEvent.MINIMIZE_EVENT:
+                    cd.setNewWindowState(WindowState.MINIMIZED);
                     break;
                 
-                // Detect end of session or portlet removed from layout
-                
+                case PortalEvent.MAXIMIZE_EVENT:
+                    cd.setNewWindowState(WindowState.NORMAL);
+                    break;
+                    
+                case PortalEvent.DETACH_BUTTON_EVENT:
+                    cd.setNewWindowState(WindowState.MAXIMIZED);
+                    break;
+            
+                //Detect end of session or portlet removed from layout
                 case PortalEvent.UNSUBSCRIBE:
                     //User is removing this portlet from their layout, remove all
                     //the preferences they have stored for it.
@@ -381,7 +389,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         try {
             PortletContainerServices.prepare(uniqueContainerName);
             
-            if (cd.isPortletWindowInitialized()) {
+            if (cd.isPortletWindowInitialized() && !cd.hasProcessedAction()) {
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
 				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
                         cd.getPortletWindow().getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
@@ -398,19 +406,30 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(wrappedRequest);
                 PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
                 
-                // If portlet is rendering as root, change mode to maximized, otherwise minimized
                 PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
+ 
+                //If portlet is rendering as root, change mode to maximized, otherwise minimized
+                WindowState newWindowState = cd.getNewWindowState();
                 if (rd.isRenderingAsRoot()) {
-                    pap.changePortletWindowState(WindowState.MAXIMIZED);
-                } else {
+                    if (WindowState.MINIMIZED.equals(newWindowState)) {
+                        pap.changePortletWindowState(WindowState.MINIMIZED);
+                    }
+                    else {
+                        pap.changePortletWindowState(WindowState.MAXIMIZED);
+                    }
+                } else if (newWindowState != null) {
+                    pap.changePortletWindowState(newWindowState);
+                }
+                else {
                     pap.changePortletWindowState(WindowState.NORMAL);
                 }
+                cd.setNewWindowState(null);
                 
                 PortletMode newMode = cd.getNewPortletMode();
                 if (newMode != null) {
                     pap.changePortletMode(newMode);
-                    cd.setNewPortletMode(null);
                 }
+                cd.setNewPortletMode(null);
                 
                 // Process action if this is the targeted channel and the URL is an action URL
                 if (rd.isTargeted() && psm.isAction()) {
@@ -422,8 +441,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         portletContainer.processPortletAction(portletWindow, wrappedRequest, wrappedResponse);
                         InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
-                        
-                        //FIXME WindowState switches are NOT honored!
                     } catch (Exception e) {
                         throw new PortalException(e);
                     }
@@ -552,7 +569,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             markup = sw.toString();
             
             cd.setProcessedAction(false);
-            ((PortletWindowImpl)cd.getPortletWindow()).setInternalActionResponse(null);
+            ((PortletWindowImpl)cd.getPortletWindow()).setPortletActionResponse(null);
                         
         } catch (Throwable t) {
             // TODO: review this
@@ -732,7 +749,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         
         if (cd.hasProcessedAction()) {
-            InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
+            IPortletActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getPortletActionResponse();
             PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
             // Change modes
             if (actionResponse.getChangedPortletMode() != null) {

@@ -9,12 +9,12 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.om.window.PortletWindowCtrl;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.container.IPortletActionResponse;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 
@@ -30,7 +30,7 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     
     private ChannelRuntimeData runtimeData;
     private HttpServletRequest request;
-    private InternalActionResponse internalActionResponse;
+    private IPortletActionResponse portletActionResponse;
 
     // PortletWindow methods
     
@@ -71,12 +71,12 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
         return this.request;
     }
 
-    public InternalActionResponse getInternalActionResponse() {
-        return internalActionResponse;
+    public IPortletActionResponse getPortletActionResponse() {
+        return portletActionResponse;
     }
 
-    public void setInternalActionResponse(InternalActionResponse internalActionResponse) {
-        this.internalActionResponse = internalActionResponse;
+    public void setPortletActionResponse(IPortletActionResponse portletActionResponse) {
+        this.portletActionResponse = portletActionResponse;
     }
 
 }

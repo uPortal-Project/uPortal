@@ -8,6 +8,7 @@ package org.jasig.portal.channels.portlet;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 
 import org.apache.pluto.om.window.PortletWindow;
 
@@ -26,6 +27,7 @@ public class ChannelData {
     private PortletMode newPortletMode = null;
     private long lastRenderTime = Long.MIN_VALUE;
     private String expirationCache = null;
+    private WindowState newWindowState = null;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
@@ -34,6 +36,7 @@ public class ChannelData {
     public boolean hasReceivedEvent() { return this.receivedEvent; }
     public boolean isFocused() { return this.focused; }
     public PortletMode getNewPortletMode() { return this.newPortletMode; }
+    public WindowState getNewWindowState() { return this.newWindowState; }
     /**
      * @return Returns the lastRenderTime.
      */
@@ -54,6 +57,7 @@ public class ChannelData {
     public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
     public void setFocused(boolean focused) { this.focused = focused; }
     public void setNewPortletMode(PortletMode newPortletMode) { this.newPortletMode = newPortletMode; }
+    public void setNewWindowState(WindowState newWindowState) { this.newWindowState = newWindowState; }
     /**
      * @param lastRenderTime The lastRenderTime to set.
      */

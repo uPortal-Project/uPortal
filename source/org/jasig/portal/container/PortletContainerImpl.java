@@ -29,11 +29,21 @@ public class PortletContainerImpl extends org.apache.pluto.PortletContainerImpl 
                             HttpServletResponse servletResponse, 
                             InternalActionResponse _actionResponse) 
     throws IOException {
+
+        // If a redirect location is available, request a redirect.
+        if (location != null) {
+            servletResponse.sendRedirect(location);
+            return;
+        }
+
+        // Make the results of the portlet's processAction call available as a 
+        // request attribute so that they are available during the rendering process.
+        IPortletActionResponse par = new PortletActionResponseImpl(_actionResponse);
+        servletRequest.setAttribute(PortletActionResponseImpl.REQUEST_ATTRIBUTE_KEY, par);
         
-        // Rather than redirect, we shall capture the internal action response
-        // and make it available to the portlet adapter via the portlet window
-        ((PortletWindowImpl)portletWindow).setInternalActionResponse(_actionResponse);
-        
+        // Rather than redirect, we shall capture the portlet action response
+        // and make it available to the portlet adapter via the portlet window.
+        ((PortletWindowImpl)portletWindow).setPortletActionResponse(par);       
     }
 
 }

@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,12 +26,15 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
+import org.jasig.portal.container.IPortletActionResponse;
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -171,7 +175,54 @@ public class UserInstance implements HttpSessionBindingListener {
             uPreferencesManager.getUserLayoutManager().addLayoutEventListener(channelManager);
             p_rendering_lock=new Object();
         }
+
+        // Begin the rendering process
         renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager, p_rendering_lock);
+    }
+
+    /**
+     * Determines if this request is triggering a portlet's processAction method,
+     * and if so, starts the rendering cycle early which has the effect of
+     * feeding the portlet control structures and channel runtime data to the
+     * portlet adapter so that the portlet's process action
+     * method gets a chance to complete before we continue.
+     * This allows portlets to affect things like window states and be able to
+     * redirect to another web page as required by the portlet specification.
+     * @param req the http servlet request
+     * @param res the http servlet response
+     */
+    private void processPortletActionIfNecessary(HttpServletRequest req, HttpServletResponse res) {
+        boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
+        if (isPortletAction) {
+            this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
+            IPortletActionResponse par = (IPortletActionResponse)req.getAttribute(IPortletActionResponse.REQUEST_ATTRIBUTE_KEY);
+
+            final String TRUE = "true";
+            final String FALSE = "false";
+
+            UserPreferences up = uPreferencesManager.getUserPreferences();
+            StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
+            ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
+            String targetNodeId = channelManager.getChannelTarget();
+
+            if (par != null) {
+                WindowState changedWindowState = par.getChangedWindowState();
+                if (changedWindowState != null) {
+                    final String USER_LAYOUT_ROOT = "userLayoutRoot";
+                    final String MINIMIZED = "minimized";
+
+                    if (WindowState.NORMAL.equals(changedWindowState)) {
+                        ssup.putParameterValue(USER_LAYOUT_ROOT, IUserLayout.ROOT_NODE_NAME);
+                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, FALSE);
+                    } else if (WindowState.MAXIMIZED.equals(changedWindowState)) {
+                        ssup.putParameterValue(USER_LAYOUT_ROOT, targetNodeId);
+                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, FALSE);
+                    } else if (WindowState.MINIMIZED.equals(changedWindowState)) {
+                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, TRUE);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -257,6 +308,11 @@ public class UserInstance implements HttpSessionBindingListener {
                     } catch (PortalException pe) {
                         log.error("UserInstance.renderState(): processUserLayoutParameters() threw an exception - ", pe);
                     }
+                    
+                    // If this is a request to process a portlet action, do it now before the
+                    // rendering process so that the portlet can introduce changes to the window
+                    // state or even redirect the user to a new location.
+                    processPortletActionIfNecessary(req, res);
 
 
                     // determine uPElement (optimistic prediction) --end
@@ -859,6 +915,37 @@ public class UserInstance implements HttpSessionBindingListener {
 		  }	  
 		}
 		
+
+        //Propagate minimize/maximize events to the channels
+        String[] tcattrs = req.getParameterValues("uP_tcattr");
+        if (tcattrs != null) {
+            for (int i = 0; i < tcattrs.length; i++) {
+                String aName = tcattrs[i];
+                if ("minimized".equals(aName)) {
+                    String[] aNode = req.getParameterValues(aName + "_channelId");
+                    if (aNode != null && aNode.length > 0) {
+                        for (int j = 0; j < aNode.length; j++) {
+                            String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
+
+                            PortalEvent e = null;
+
+                            if ("true".equals(aValue)) {
+                                e = new PortalEvent(PortalEvent.MINIMIZE_EVENT);
+                            }
+                            else {
+                                e = new PortalEvent(PortalEvent.MAXIMIZE_EVENT);
+                            }
+
+                            channelManager.passPortalEvent(aNode[j], e);
+
+                            if (log.isDebugEnabled())
+                                log.debug("Sending window state event to '" + aName + "' of '" + aNode[j] + "' to '" + aValue + "'.");
+                        }
+                    }
+                }
+            }
+        }
+
 		// If we have created a new node we need to let the structure XSL know about it
 		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
 		// Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode

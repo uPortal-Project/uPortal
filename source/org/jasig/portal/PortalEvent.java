@@ -32,6 +32,8 @@ public class PortalEvent
   public static final int HELP_BUTTON_EVENT = 4;
   public static final int ABOUT_BUTTON_EVENT = 5;
   public static final int DETACH_BUTTON_EVENT = 6;
+  public static final int MINIMIZE_EVENT = 7;
+  public static final int MAXIMIZE_EVENT = 8;
 
   private static final String [] eventName =
   {
@@ -42,6 +44,8 @@ public class PortalEvent
       "helpButtonEvent",
       "aboutButtonEvent",
       "detachButtonEvent",
+      "minimizeEvent",
+      "maximizeEvent",
   };
 
   private int event;

@@ -12,16 +12,17 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.PropsMatcher;
 
 
@@ -280,6 +281,11 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             }
             if(root!=null) {
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
+                
+                //If going to focused make sure we aren't minimzed
+                if (!root.equals(IUserLayout.ROOT_NODE_NAME)) {
+                    complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(root, "minimized", "false");
+                }
             } else {
                 log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
             }

@@ -153,7 +153,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   /**
      * Returns an Id of a parent user layout node.
-     * The user layout root node always has ID="root"
+     * The user layout root node always has ID={@link IUserLayout#ROOT_NODE_NAME}
      *
      * @param nodeId a <code>String</code> value
      * @return a <code>String</code> value

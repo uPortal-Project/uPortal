@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,6 +80,17 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
   public boolean isSecure() { return chanIsSecure; }    
+  public boolean isPortlet() {
+      if (this.chanClass != null) {
+          final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter");
+          
+          if (this.chanClass.equals(portletClassName)) {
+              return true;
+          }
+      }
+      
+      return false;
+  }
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
   public String getLocale() { return chanLocale; }
   

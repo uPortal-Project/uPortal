@@ -233,6 +233,7 @@ public class ChannelRegistryManager {
     channelE.setAttribute("hasHelp", channelDef.hasHelp() ? "true" : "false");
     channelE.setAttribute("hasAbout", channelDef.hasAbout() ? "true" : "false");
     channelE.setAttribute("secure", channelDef.isSecure() ? "true" : "false");
+    channelE.setAttribute("isPortlet", channelDef.isPortlet() ? "true" : "false");
     
     // Add any parameters
     ChannelParameter[] parameters = channelDef.getParameters();

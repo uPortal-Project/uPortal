@@ -257,7 +257,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
 
     public void testDelete() throws Exception {
         String nodeId="s1";
-        String parentId="root";
+        String parentId= IUserLayout.ROOT_NODE_NAME;
         man.deleteNode(nodeId);
 
         boolean exception=false;

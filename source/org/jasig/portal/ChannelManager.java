@@ -33,6 +33,7 @@ import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.LayoutEvent;
@@ -713,8 +714,7 @@ public class ChannelManager implements LayoutEventListener {
      * actions/params to that channel
      * @param req the <code>HttpServletRequest</code>
      */
-    private void processRequestChannelParameters(HttpServletRequest req)
-    {
+    private void processRequestChannelParameters(HttpServletRequest req) {
         // clear the previous settings
         channelTarget = null;
         targetParams = new Hashtable();
@@ -784,73 +784,82 @@ public class ChannelManager implements LayoutEventListener {
                     }
                 }
             }
-            // check if the channel is an IPrivilegedChannel, and if it is,
-            // pass portal control structures and runtime data.
+
             IChannel chObj;
             if ((chObj=(IChannel)channelTable.get(channelTarget)) == null) {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
-                    log.error("ChannelManager::processRequestChannelParameters() : " +
-                            "unable to pass find/create an instance of a channel. " +
+                    log.error("unable to pass find/create an instance of a channel. " +
                             "Bogus Id ? ! (id=\""+channelTarget+"\").", e);
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
+            
+
+            // Check if the channel is an IPrivilegedChannel, and if it is,
+            // pass portal control structures and runtime data.
             if(chObj!=null && (chObj instanceof IPrivileged)) {
-                IPrivileged isc=(IPrivileged) chObj;
-
-                try {
-                    isc.setPortalControlStructures(pcs);
-                } catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
-                    isc=(IPrivileged) chObj;
-
-                    // set portal control structures
-                    try {
-                        isc.setPortalControlStructures(pcs);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        log.error("ChannelManager::outputChannels : Error channel threw ! ", e2);
-                    }
-
-                }
-
-                ChannelRuntimeData rd = new ChannelRuntimeData();
-                rd.setParameters(targetParams);
-                String qs = pcs.getHttpServletRequest().getQueryString();
-                if (qs != null && qs.indexOf("=") == -1)
-                  rd.setKeywords(qs);
-                rd.setBrowserInfo(binfo);
-                if (lm != null)  {
-                    rd.setLocales(lm.getLocales());
-                }
-                rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-				rd.setRemoteAddress(req.getRemoteAddr());
-                UPFileSpec up=new UPFileSpec(uPElement);
-                up.setTargetNodeId(channelTarget);
-                rd.setUPFile(up);
-
-                // Check if channel is rendering as the root element of the layout
-                String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
-                if (userLayoutRoot != null && !userLayoutRoot.equals("root")) {
-                    rd.setRenderingAsRoot(true);
-                }
-                
-                // Indicate that this channel is targeted
-                rd.setTargeted(true);
-
-                try {
-                    chObj.setRuntimeData(rd);
-                }
-                catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
-                }
+                chObj = feedPortalControlStructuresToChannel(chObj, pcs);
+                chObj = feedRuntimeDataToChannel(chObj, req);
             }
         }
+    }
+    
+    private IChannel feedPortalControlStructuresToChannel(IChannel chObj, PortalControlStructures pcs) {
+        IPrivileged prvChanObj=(IPrivileged)chObj;
+        try {
+            prvChanObj.setPortalControlStructures(pcs);
+        } catch (Exception e) {
+            chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
+            prvChanObj=(IPrivileged)chObj;
+
+            // set portal control structures
+            try {
+                prvChanObj.setPortalControlStructures(pcs);
+            } catch (Exception e2) {
+                // things are looking bad for our hero
+                StringWriter sw=new StringWriter();
+                e2.printStackTrace(new PrintWriter(sw));
+                sw.flush();
+                log.error("Error channel threw ! ", e2);
+            }
+        }
+        return chObj;
+    }
+    
+    private IChannel feedRuntimeDataToChannel(IChannel chObj, HttpServletRequest req) {
+        try {
+            ChannelRuntimeData rd = new ChannelRuntimeData();
+            rd.setParameters(targetParams);
+            String qs = pcs.getHttpServletRequest().getQueryString();
+            if (qs != null && qs.indexOf("=") == -1)
+              rd.setKeywords(qs);
+            rd.setBrowserInfo(binfo);
+            if (lm != null)  {
+                rd.setLocales(lm.getLocales());
+            }
+            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
+            rd.setRemoteAddress(req.getRemoteAddr());
+            UPFileSpec up=new UPFileSpec(uPElement);
+            up.setTargetNodeId(channelTarget);
+            rd.setUPFile(up);
+    
+            // Check if channel is rendering as the root element of the layout
+            String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+            if (userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
+                rd.setRenderingAsRoot(true);
+            }
+            
+            // Indicate that this channel is targeted
+            rd.setTargeted(true);
+            
+            // Finally, feed runtime data to channel
+            chObj.setRuntimeData(rd);
+        } catch (Exception e) {
+            chObj = replaceWithErrorChannel(channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
+        }
+        return chObj;
     }
 
     /**
@@ -1077,7 +1086,7 @@ public class ChannelManager implements LayoutEventListener {
 
         // Check if channel is rendering as the root element of the layout
         String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
-        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root")) {
+        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
             rd.setRenderingAsRoot(true);
         }
 
@@ -1168,6 +1177,10 @@ public class ChannelManager implements LayoutEventListener {
         return ChannelManager.useAnchors;
     }
 
+    public String getChannelTarget() {
+        return channelTarget;
+    }
+    
     // LayoutEventListener interface implementation
     public void channelAdded(LayoutEvent ev) {}
     public void channelUpdated(LayoutEvent ev) {}

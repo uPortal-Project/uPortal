@@ -17,6 +17,11 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public interface IUserLayout {
+    /**
+     * The name to use for the root node of the layout. This should be used with
+     * regard to rendering position within the layout tree.
+     */
+    public static final String ROOT_NODE_NAME = "root";
 
     /**
      * Writes user layout content (with appropriate markings) into

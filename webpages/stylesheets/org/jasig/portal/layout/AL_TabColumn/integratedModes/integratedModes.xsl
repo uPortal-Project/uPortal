@@ -320,8 +320,8 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                             <td width="100%">
-                                <!-- Don't render any content for a minimized channel -->
-                                <xsl:if test="@minimized != 'true'">
+								<!-- Don't render any content for a minimized channel, render minimized portlets -->
+								<xsl:if test="@minimized != 'true' or @isPortlet = 'true'">
                                     <xsl:copy-of select="."/>
                                 </xsl:if>
                             </td>
@@ -2300,6 +2300,16 @@ Version $Revision$
             <xsl:when test="not($userLayoutRoot='root')">
                 <!-- <xsl:call-template name="focusedControls"/> -->
                 <xsl:call-template name="channel.action.root"/>
+				<xsl:if test="@isPortlet = 'true'">
+					<xsl:choose>
+						<xsl:when test="@minimized='true'">
+							<xsl:call-template name="channel.action.maximize"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="channel.action.minimize"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:if>
                 <xsl:if test="not(@hasHelp='false')">
                     <xsl:call-template name="channel.action.help"/>
                 </xsl:if>

@@ -169,6 +169,12 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      */
     public void setIsSecure(boolean  v);
 
+    /**
+     * Get the channel type for portlet / not portlet
+     * @return the channel type for portlet / not portlet
+     */
+    public boolean isPortlet();    
+    
     // channel parameter methods
 
     /**

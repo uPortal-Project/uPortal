@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -200,6 +201,23 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */    
     public void setIsSecure(boolean secure){
         this.isSecure = secure;
+    }
+    
+    
+    /**
+     * Get the channel type for portlet / not portlet
+     * @return the channel type for portlet / not portlet
+     */
+    public boolean isPortlet() {
+        if (this.className != null) {
+            final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter");
+            
+            if (this.className.equals(portletClassName)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**

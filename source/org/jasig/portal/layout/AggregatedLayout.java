@@ -440,6 +440,7 @@ public class AggregatedLayout implements IAggregatedLayout {
               attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
               attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
               attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
+              attributes.addAttribute("","isPortlet","isPortlet","CDATA",CommonUtils.boolToStr(channelDescription.isPortlet()));
 			  attributes.addAttribute("","priority","priority","CDATA",node.getPriority()+"");
 
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
@@ -537,7 +538,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 
     /**
      * Returns an Id of a parent user layout node.
-     * The user layout root node always has ID="root"
+     * The user layout root node always has ID={@link IUserLayout#ROOT_NODE_NAME}
      *
      * @param nodeId a <code>String</code> value
      * @return a <code>String</code> value

@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IPrivilegedChannel;
@@ -25,12 +27,11 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -58,8 +59,7 @@ class GPreferencesState extends BaseState {
     // these state variables are kept for the use by the internalStates
 
     // just a way to refer to the layout element since it doesn't have an ID attribute
-    private static final String layoutID = "root";
-    private String folderID = layoutID;
+    private String folderID = IUserLayout.ROOT_NODE_NAME;
     private boolean modified = false;             // becomes true after user makes changes to layout
 
 
@@ -90,7 +90,7 @@ class GPreferencesState extends BaseState {
     protected void setFolderID(String id) {
         this.folderID = id;
         if (folderID == null)
-            folderID = layoutID;
+            folderID = IUserLayout.ROOT_NODE_NAME;
     }
 
     /**
@@ -100,13 +100,13 @@ class GPreferencesState extends BaseState {
      */
     protected String getFolderID() {
         if (folderID == null)
-            folderID = layoutID;
+            folderID = IUserLayout.ROOT_NODE_NAME;
         return  this.folderID;
     }
 
 
     protected String getLayoutRootID() {
-        return  layoutID;
+        return  IUserLayout.ROOT_NODE_NAME;
     }
 
   public GPreferencesState() {

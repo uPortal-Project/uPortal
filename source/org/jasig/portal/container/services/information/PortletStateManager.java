@@ -27,6 +27,7 @@ import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
+import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.utils.CommonUtils;
 
 
@@ -60,7 +61,7 @@ public class PortletStateManager {
 	
 	private static final String ENC_SEP = "~~%%~~";
 	private static final String MINIMIZED = "minimized";
-	private static final String ROOT = "root";
+    private static final String ROOT = IUserLayout.ROOT_NODE_NAME;
 	
 	private Map params = new HashMap();
 
