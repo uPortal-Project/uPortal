@@ -11,9 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.jasig.portal.RDBMServices;
 
