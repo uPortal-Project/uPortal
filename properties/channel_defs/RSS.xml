@@ -58,7 +58,7 @@
 		</step>
 		<step>
 			<ID>2</ID>
-			<name>How many healines do you want displayed?</name>
+			<name>How many headlines do you want displayed?</name>
 			<description>user sets limit on number of displayed headlines</description>
 			<parameter modify="subscribe-only">
 				<name>hlNum</name>
