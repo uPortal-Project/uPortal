@@ -1,0 +1,589 @@
+/**
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+package org.jasig.portal.layout;
+
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.utils.SAX2FilterImpl;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+
+/**
+ * Wraps {@link IUserLayoutManager} interface to provide ability to
+ * incorporate infrastructural channels into a user layout that are
+ * not part of their layout structure.  Infrastructural channels are
+ * those that are an integral part of the uPortal framework and cannot
+ * be actively subscribed to by a user.
+ *
+ * @author <a href="mailto:kstacks@sct.com">Keith Stacks</a>
+ * @version 1.0
+ */
+public class InfrastructureUserLayoutManagerWrapper implements IUserLayoutManager {
+
+    // channel subscription prefix  <'c'hannel><'inf'rastructure>
+    public final static String SUBSCRIBE_PREFIX = "cinf";
+    IUserLayoutManager man=null;
+    // contains fname --> subscribe id mappings
+    private Map mFnameMap = Collections.synchronizedMap(new HashMap());
+    // stores channel defs by subscribe id
+    private Map mChanMap = Collections.synchronizedMap(new HashMap());
+    
+    // current root/focused subscribe id
+    private String mFocusedId = "";
+    // subscription id counter for generating subscribe ids
+    private int mSubId = 0;
+    
+    private String cacheKey=null;
+
+    public InfrastructureUserLayoutManagerWrapper(IUserLayoutManager manager) throws PortalException {
+        this.man=manager;
+        if(man==null) {
+            throw new PortalException("Cannot wrap a null IUserLayoutManager !");
+        }
+    }
+
+    public void getUserLayout(ContentHandler ch) throws PortalException {
+        man.getUserLayout(new InfrastructureUserLayoutSAXFilter(ch));
+    }
+
+
+    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
+        setFocusedId(nodeId);
+        man.getUserLayout(nodeId,new InfrastructureUserLayoutSAXFilter(ch));
+    }
+
+
+    public void setLayoutStore(IUserLayoutStore ls) {
+        man.setLayoutStore(ls);
+    }
+
+
+    public void loadUserLayout() throws PortalException {
+        man.loadUserLayout();
+    }
+
+    public void saveUserLayout() throws PortalException {
+        man.saveUserLayout();
+    }
+
+    public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
+        // check to see if it's in the layout first, if not then
+        // build it..
+        IUserLayoutNodeDescription ulnd = null;
+
+        // assume that not finding it in the implementation
+        // means that it may be an infrastructure node.
+        try {
+            ulnd = man.getNode(nodeId);
+        } catch( PortalException pe ) {
+            // not found in layout...
+            LogService.log(LogService.DEBUG,
+                           "Node '" + nodeId + "' is not in layout, " +
+                           "checking for an infrastructure node...");
+        }
+
+        if ( null == ulnd ) {
+            // if the requested node hasn't been returned yet, it's likely
+            // it's an infrastructure node that isn't actually part of the
+            // layout
+            ulnd = getInfrastructureNode( nodeId );
+        }
+        
+        return ulnd;
+    }
+
+    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node,
+                                              String parentId,
+                                              String nextSiblingId)
+        throws PortalException {
+
+        IUserLayoutNodeDescription newNode = man.addNode(node,parentId,nextSiblingId);
+        // add to map if necessary
+        if ( null != newNode && newNode instanceof IUserLayoutChannelDescription ) {
+            IUserLayoutChannelDescription chan = (IUserLayoutChannelDescription) newNode;
+            mFnameMap.put(chan.getFunctionalName(),chan.getId());
+        }
+        
+        return newNode;
+    }
+
+    public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
+        return man.moveNode(nodeId, parentId, nextSiblingId);
+    }
+
+    public boolean deleteNode(String nodeId) throws PortalException {
+        
+        boolean success = man.deleteNode(nodeId);
+        // remove from map if necessary
+        if ( success && mFnameMap.containsValue(nodeId) ) {
+            String fname = getFname(nodeId);
+            if ( null != fname )
+                mFnameMap.remove(fname);
+            else
+                throw new PortalException("Failed to delete node '" + nodeId +
+                                          "' functional name not found in map.");
+        }
+        
+        return success;
+    }
+
+    public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
+        // incase fname is ever able to change at runtime...
+        boolean success = man.updateNode(node);
+
+        if ( success && node instanceof UserLayoutChannelDescription ) {
+            UserLayoutChannelDescription chan = (UserLayoutChannelDescription)node;
+            // see if a key exists for the id       
+            String fname = getFname(chan.getId());
+            if ( null != fname && !fname.equals(chan.getFunctionalName()) ) {
+                mFnameMap.remove(fname);
+                mFnameMap.put(chan.getFunctionalName(),chan.getId());
+            }
+        }
+        
+        return success;
+    }
+
+
+    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+        return man.canAddNode(node, parentId, nextSiblingId);
+    }
+
+    public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
+        return man.canMoveNode(nodeId, parentId, nextSiblingId);
+    }
+
+    public boolean canDeleteNode(String nodeId) throws PortalException {
+        return man.canDeleteNode(nodeId);
+    }
+
+    public boolean canUpdateNode(IUserLayoutNodeDescription node) throws PortalException {
+        return man.canUpdateNode(node);
+    }
+
+    public void markAddTargets(IUserLayoutNodeDescription node) {
+        man.markAddTargets(node);
+    }
+
+    public void markMoveTargets(String nodeId) throws PortalException {
+        man.markMoveTargets(nodeId);
+    }
+
+    public String getParentId(String nodeId) throws PortalException {
+        return man.getParentId(nodeId);
+    }
+
+    public List getChildIds(String nodeId) throws PortalException {
+        return man.getChildIds(nodeId);
+    }
+
+    public String getNextSiblingId(String nodeId) throws PortalException {
+        return man.getNextSiblingId(nodeId);
+    }
+
+    public String getPreviousSiblingId(String nodeId) throws PortalException {
+        return man.getPreviousSiblingId(nodeId);
+    }
+
+
+    public String getCacheKey() throws PortalException {
+        cacheKey=man.getCacheKey();
+        return cacheKey;
+    }
+
+     // temp methods, to be removed (getDOM() might actually stay)
+     // This method should be removed whenever it becomes possible
+    public void setUserLayoutDOM(DocumentImpl doc) {}
+
+    // This method should be removed whenever it becomes possible
+    public Document getUserLayoutDOM() throws PortalException {
+        return man.getUserLayoutDOM();
+    }
+
+    public int getLayoutId() {
+        return man.getLayoutId();
+    }
+
+    public String getRootFolderId(){
+        return man.getRootFolderId();
+    }
+
+    public IUserLayoutNodeDescription createNodeDescription( int nodeType )
+        throws PortalException
+    {
+        return man.createNodeDescription(nodeType);
+    }
+    
+    public boolean addLayoutEventListener(LayoutEventListener l){
+        return man.addLayoutEventListener(l);
+    }
+    public boolean removeLayoutEventListener(LayoutEventListener l){
+        return man.removeLayoutEventListener(l);
+    }
+
+
+    /**
+     * Given a subscribe Id, return its functional name.
+     *
+     * @param subId  the subscribe id to lookup
+     * @return the subscribe id's functional name
+     **/
+    public String getFname( String subId )
+    {
+        // reverse lookup of subId --> fname
+        if ( !mFnameMap.containsValue(subId) )
+            return null;
+        
+        Iterator it = mFnameMap.keySet().iterator();
+        while( it.hasNext() )
+        {
+            String key = (String)it.next();
+            if ( ((String)mFnameMap.get(key)).equals(subId) )
+                return key;
+        }
+
+        return null;
+    }
+
+    
+    /**
+     * Given an functional name, return its subscribe id.
+     *
+     * @param fname  the functional name to lookup
+     * @return the fname's subscribe id.
+     **/
+    public String getSubscribeId(String fname)
+    {
+        String subId = "";
+        Object o = mFnameMap.get(fname);
+        if ( o == null )
+        {
+            subId = getNextSubscribeId();
+            mFnameMap.put(fname,subId);
+        }
+        else
+        {
+            subId = (String)o;
+        }
+
+        return subId;
+    }
+
+
+    /**
+     * Get the current focused layout subscribe id.
+     **/
+    public String getFocusedId()
+    {            
+        return mFocusedId;
+    }
+
+    /**
+     * Set the current focused layout subscribe id.
+     *
+     * @param subscribeId  Id to be set as focused.
+     **/
+    public void setFocusedId(String subscribeId)
+    {
+        mFocusedId = subscribeId;
+    }
+    
+
+    /**
+     * Return an IUserLayoutNodeDescription by way of nodeId
+     *
+     * @param nodeId  the node (subscribe) id to get the channel for.
+     * @return a <code>IUserLayoutNodeDescription</code>
+     **/
+    private IUserLayoutNodeDescription getInfrastructureNode(String nodeId)
+        throws PortalException
+    {        
+        // get fname from subscribe id
+        String fname = getFname(nodeId);
+        if ( null == fname || fname.equals("") )
+            throw new PortalException( "Could not find an infrastructure node " +
+                                       "for id: " + nodeId );
+
+        IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();        
+        try
+        {
+            // check cache first            
+            ChannelDefinition chanDef = (ChannelDefinition)mChanMap.get(nodeId);
+
+            if ( null == chanDef )
+            {
+                chanDef = ChannelRegistryStoreFactory.
+                    getChannelRegistryStoreImpl().getChannelDefinition(fname);
+                mChanMap.put(nodeId,chanDef);
+            }
+            
+            ulnd.setId(nodeId);
+            ulnd.setName(chanDef.getName());
+            ulnd.setUnremovable(true);
+            ulnd.setImmutable(true);
+            ulnd.setHidden(false);
+            ulnd.setTitle(chanDef.getTitle());
+            ulnd.setDescription(chanDef.getDescription());
+            ulnd.setClassName(chanDef.getJavaClass());
+            ulnd.setChannelPublishId("" + chanDef.getId());
+            ulnd.setChannelTypeId("" + chanDef.getTypeId());
+            ulnd.setFunctionalName(chanDef.getFName());
+            ulnd.setTimeout(chanDef.getTimeout());
+            ulnd.setEditable(chanDef.isEditable());
+            ulnd.setHasHelp(chanDef.hasHelp());
+            ulnd.setHasAbout(chanDef.hasAbout());
+            
+            ChannelParameter[] parms = chanDef.getParameters();
+            for ( int i=0; i<parms.length; i++ )
+            {
+                ChannelParameter parm = (ChannelParameter)parms[i];
+                ulnd.setParameterValue(parm.getName(),parm.getValue());
+                ulnd.setParameterOverride(parm.getName(),parm.getOverride());
+            }
+
+        }
+        catch( Exception e )
+        {
+            throw new PortalException( "Failed to obtain channel definition " +
+                                       "using fname: " + fname );
+        }
+                            
+        return ulnd;
+    }
+
+    
+    /**
+     * Return the next sequential subscription id.
+     *
+     * @return a subscribe id
+     **/
+    private synchronized String getNextSubscribeId()
+    {
+        mSubId ++;
+        return SUBSCRIBE_PREFIX + mSubId;
+    }
+
+
+    /**
+     * Appends the supplied value to the existing cache key.
+     *
+     * @param value  the value to append.
+     **/
+     
+    private void updateCacheKey(String value)
+        throws PortalException
+    {
+        if ( null != value )
+            cacheKey = getCacheKey() + value;
+        else
+            cacheKey = getCacheKey();
+    }
+
+    
+    /**
+     * This filter incorporates infrastructure channels into a layout.
+     * This provides the ability for channel definitions to reside in a
+     * layout w/out the owner having to actually have them persisted.
+     */    
+    class InfrastructureUserLayoutSAXFilter extends SAX2FilterImpl {
+
+        // Infrastructure folder's subscribe id <'f'older><'inf'rastructure><id>
+        private static final String INFRASTRUCTURE_FOLDER_ID="finf1";
+        private static final String LAYOUT="layout";
+        private static final String LAYOUT_FRAGMENT="layout_fragment";
+        private static final String FOLDER="folder";
+        private static final String CHANNEL="channel";
+        private static final String PARAMETER="parameter";
+        
+        public InfrastructureUserLayoutSAXFilter(ContentHandler handler) {
+            super(handler);
+        }
+
+        public InfrastructureUserLayoutSAXFilter(XMLReader parent) {
+            super(parent);
+        }
+        
+        public void startElement(String uri, String localName, String qName,
+                                 Attributes atts)
+            throws SAXException {
+            
+            // check for root node (layout_fragment for detached
+            // nodes), as that's where the infrastructure
+            // folder/channel(s) need to be added.
+            if ( qName.equals(LAYOUT) || qName.equals(LAYOUT_FRAGMENT))
+            {
+                // pass root event up the chain
+                super.startElement(uri,localName,qName,atts);
+                // create folder off of root layout to act as
+                // container for infrastructure channels
+                AttributesImpl folderAtts = new AttributesImpl();
+                folderAtts.addAttribute("","ID","ID","ID",INFRASTRUCTURE_FOLDER_ID);            
+                folderAtts.addAttribute("","type","type","CDATA","regular" );
+                folderAtts.addAttribute("","hidden","hidden","CDATA","true");
+                folderAtts.addAttribute("","unremovable","unremovable","CDATA","true");
+                folderAtts.addAttribute("","immutable","immutable","CDATA","true");
+                folderAtts.addAttribute("","name","name","CDATA","Infrastructure Folder");            
+                startElement("",FOLDER,FOLDER,folderAtts);
+                return;
+            }
+            else if ( qName.equals(FOLDER) )
+            {
+                String id = atts.getValue("ID");
+                if ( null != id && id.equals(INFRASTRUCTURE_FOLDER_ID) )
+                {
+                    // pass event up the chain so it's added
+                    // as a child of the root
+                    super.startElement(uri,localName,qName,atts);
+
+                    // add a channel to the infrastructure folder
+                    // implementation
+                    String subscribeId = "";
+                    try
+                    {
+                        subscribeId = getFocusedId();
+                        if ( null != subscribeId && !subscribeId.equals(""))
+                        {
+                            ChannelDefinition chanDef = (ChannelDefinition)
+                                mChanMap.get(subscribeId);
+
+                            if ( null == chanDef ){
+                                String fname = getFname(subscribeId);                                
+                                chanDef = ChannelRegistryStoreFactory.
+                                    getChannelRegistryStoreImpl().getChannelDefinition(fname);
+                                mChanMap.put(subscribeId,chanDef);
+                                updateCacheKey(subscribeId);
+                            }
+                            
+                            AttributesImpl channelAttrs = new AttributesImpl();                        
+                            channelAttrs.addAttribute("","ID","ID","ID",subscribeId);
+                            channelAttrs.addAttribute("","typeID","typeID","CDATA",
+                                                      "" + chanDef.getTypeId());
+                            channelAttrs.addAttribute("","hidden","hidden","CDATA","false");
+                            channelAttrs.addAttribute("","editable","editable","CDATA",
+                                                      CommonUtils.boolToStr(chanDef.isEditable()));
+                            channelAttrs.addAttribute("","unremovable","unremovable","CDATA","true");
+                            channelAttrs.addAttribute("","name","name","CDATA",chanDef.getName());
+                            channelAttrs.addAttribute("","description","description","CDATA",
+                                                      chanDef.getDescription());
+                            channelAttrs.addAttribute("","title","title","CDATA",chanDef.getTitle());
+                            channelAttrs.addAttribute("","class","class","CDATA",chanDef.getJavaClass());
+                            channelAttrs.addAttribute("","chanID","chanID","CDATA",
+                                                      "" + chanDef.getId());
+                            channelAttrs.addAttribute("","fname","fname","CDATA",chanDef.getFName());
+                            channelAttrs.addAttribute("","timeout","timeout","CDATA",
+                                                      "" + chanDef.getTimeout());
+                            channelAttrs.addAttribute("","hasHelp","hasHelp","CDATA",
+                                                      CommonUtils.boolToStr(chanDef.hasHelp()));
+                            channelAttrs.addAttribute("","hasAbout","hasAbout","CDATA",
+                                                      CommonUtils.boolToStr(chanDef.hasAbout()));
+                                
+                            startElement("",CHANNEL,CHANNEL,channelAttrs);
+
+                            // now add channel parameters
+                            ChannelParameter[] chanParms = chanDef.getParameters();
+                            for( int i=0; i<chanParms.length; i++ )
+                            {
+                                AttributesImpl parmAttrs = new AttributesImpl();                        
+                                ChannelParameter parm = (ChannelParameter)chanParms[i];
+                                parmAttrs.addAttribute("","name","name","CDATA",parm.getName());
+                                parmAttrs.addAttribute("","value","value","CDATA",parm.getValue());
+
+                                startElement("",PARAMETER,PARAMETER,parmAttrs);
+                                endElement("",PARAMETER,PARAMETER);
+                            }
+                                
+                            endElement("",CHANNEL,CHANNEL);
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                        LogService.log(LogService.ERROR,
+                                       "Could not obtain channel definition " +
+                                       "from database for subscribe id: " +
+                                       subscribeId + " - error is: " + e.getMessage() );
+                    }
+                    
+                    // now pass folder up the chain so it's closed
+                    // out
+                    super.endElement(uri,localName,qName);
+                    return;
+                }
+                else
+                {
+                    AttributesImpl attsImpl = new AttributesImpl(atts);
+                    super.startElement(uri,localName,qName,attsImpl);                
+                }
+            }
+            else if ( qName.equals(CHANNEL) )
+            {
+                // make sure all channel subscribe/fname pairs
+                // are put into the map
+                String id = atts.getValue("ID");
+                String fname = atts.getValue("fname");
+                mFnameMap.put(fname,id);
+                super.startElement(uri,localName,qName,atts);
+            }
+            else
+            {
+                AttributesImpl attsImpl = new AttributesImpl(atts);
+                super.startElement(uri,localName,qName,attsImpl);            
+            }            
+        }
+    }
+    
+}
+
