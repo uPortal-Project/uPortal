@@ -102,17 +102,6 @@ public class CBookmarks implements IChannel
     set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
   }
 
-  // report static channel properties to the portal
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-
-    // leave most properties at their default values, except a couple.
-    csb.setName ("myWeb Bookmarks");
-    csb.setEditable (true);
-    return csb;
-  }
-
   // report runtime channel properties to the portal
   public ChannelRuntimeProperties getRuntimeProperties ()
   {

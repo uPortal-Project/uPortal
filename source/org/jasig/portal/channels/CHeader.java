@@ -63,13 +63,6 @@ public class CHeader extends BaseChannel
         set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
     }
 
-    public ChannelSubscriptionProperties getSubscriptionProperties ()
-    {
-        ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-        csb.setName ("HeaderChannel");
-        return csb;
-    }
-
     public void renderXML (DocumentHandler out)
     {
         String userName = (String) runtimeData.getSessionAttribute ("userName");

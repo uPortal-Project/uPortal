@@ -71,19 +71,6 @@ public class CApplet implements IChannel
     this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
   }
 
-  /** Returns static channel properties to the portal
-   * @return handle to subscription properties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-
-    // Properties which are not specifically set here will assume default
-    // values as determined by ChannelSubscriptionProperties
-    csb.setName ("Applet Channel");
-    return csb;
-  }
-
   /** Returns channel runtime properties
    * @return handle to runtime properties
    */

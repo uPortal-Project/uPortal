@@ -89,19 +89,6 @@ public class CNumberGuess implements IChannel
     this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
   }
 
-  /** Returns static channel properties to the portal
-   * @return handle to subscription properties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-
-    // Properties which are not specifically set here will assume default
-    // values as determined by ChannelSubscriptionProperties
-    csb.setName ("Number Guessing Game");
-    return csb;
-  }
-
   /** Returns channel runtime properties
    * @return handle to runtime properties
    */
@@ -142,7 +129,7 @@ public class CNumberGuess implements IChannel
     {
       iMinNum = 0;
       iMaxNum = 100;
-      
+
       LogService logger = getLogger();
       logger.log(logger.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
@@ -231,19 +218,19 @@ public class CNumberGuess implements IChannel
   {
     return new Double ((max - min) * Math.random () + min).intValue ();
   }
-  
+
   private LogService getLogger()
   {
     try
     {
       Hashtable environment = new Hashtable(1);
-      
+
       // Set up the path
       environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
       Context ctx = new InitialContext(environment);
-      
+
       LogService logger = (LogService)ctx.lookup("/services/logger");
-      
+
       return(logger);
     }
     catch(Exception e)

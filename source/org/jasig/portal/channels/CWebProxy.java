@@ -201,15 +201,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
     return new ChannelRuntimeProperties ();
   }
 
-  // Set some channel properties.
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setDefaultDetachWidth ("550");
-    csb.setDefaultDetachHeight ("450");
-    return csb;
-  }
-
   public void renderXML (DocumentHandler out) throws PortalException
   {
     String xml;

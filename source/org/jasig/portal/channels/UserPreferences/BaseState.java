@@ -79,7 +79,6 @@ class BaseState implements IPrivilegedChannel {
     public void receiveEvent (LayoutEvent ev){}
 
     // these two functions are never really called
-    public ChannelSubscriptionProperties getSubscriptionProperties () { return new ChannelSubscriptionProperties(); }
     public ChannelRuntimeProperties getRuntimeProperties () { return new ChannelRuntimeProperties(); }
 
     public void setState(IPrivilegedChannel state) {

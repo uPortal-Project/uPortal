@@ -39,7 +39,6 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.ChannelSubscriptionProperties;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.LayoutEvent;
 import org.jasig.portal.PortalException;
@@ -94,19 +93,6 @@ public class CSnoop implements IPrivilegedChannel
   public void setPortalControlStructures(PortalControlStructures pcs)
   {
     this.pcs = pcs;
-  }
-
-  /**
-   * Returns static channel properties to the portal.
-   * Properties which are not specifically set here will assume default
-   * values as determined by ChannelSubscriptionProperties
-   * @return handle to subscription properties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setName ("Server Snoop");
-    return csb;
   }
 
   /**

@@ -154,12 +154,6 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     return new ChannelRuntimeProperties ();
   }
 
-  // Set some channel properties -- going away
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    return new ChannelSubscriptionProperties ();
-  }
-
   public void renderXML(DocumentHandler out) throws PortalException
   {
     String xml;

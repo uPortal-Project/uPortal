@@ -24,12 +24,6 @@ public class BaseChannel implements IChannel
         channelName="BaseChannel";
     }
 
-    public ChannelSubscriptionProperties getSubscriptionProperties () {
-            ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-            csb.setName (this.channelName);
-            return csb;
-    }
-
     public ChannelRuntimeProperties getRuntimeProperties ()
     {
         return new ChannelRuntimeProperties ();

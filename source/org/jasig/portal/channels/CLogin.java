@@ -68,13 +68,6 @@ public class CLogin implements IPrivilegedChannel
   {
   }
 
-  public ChannelSubscriptionProperties getSubscriptionProperties()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties();
-    csb.setName(this.channelName);
-    return csb;
-  }
-
   public void setPortalControlStructures(PortalControlStructures pcs)
   {
     HttpSession session = pcs.getHttpSession();

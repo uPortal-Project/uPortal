@@ -77,13 +77,6 @@ public interface IChannel
   // following section allows channel to pass parameter/settings information to the portal
 
   /**
-   * Acquires ChannelSubscriptionProperties from the channel.
-   * This function should be called at the Publishing/Subscription time.
-   * @see ChannelSubscriptionProperties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ();
-
-  /**
    * Acquires ChannelRuntimeProperites from the channel.
    * This function may be called by the portal framework throughout the session.
    * @see ChannelRuntimeProperties

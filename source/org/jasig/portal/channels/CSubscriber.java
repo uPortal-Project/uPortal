@@ -102,17 +102,6 @@ public class CSubscriber implements IPrivilegedChannel
         ulm=pcs.getUserLayoutManager();
     }
 
-
-  /** Returns static channel properties to the portal
-   * @return handle to subscription properties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setName ("Subscriber");
-    return csb;
-  }
-
   /** Returns channel runtime properties
    * @return handle to runtime properties
    */

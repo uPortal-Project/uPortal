@@ -54,7 +54,7 @@ import java.util.*;
 public class CPublisher implements IPrivilegedChannel
 {
   private boolean DEBUG = false;
-   
+
   private ChannelStaticData staticData = null;
   private ChannelRuntimeData runtimeData = null;
   private StylesheetSet set = null;
@@ -110,16 +110,6 @@ public class CPublisher implements IPrivilegedChannel
         v.addElement("ssl");
         return v;
     }
-
-  /** Returns static channel properties to the portal
-   * @return handle to publish properties
-   */
-  public ChannelSubscriptionProperties getSubscriptionProperties ()
-  {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setName ("Publisher");
-    return csb;
-  }
 
   /** Returns channel runtime properties
    * @return handle to runtime properties
@@ -218,7 +208,7 @@ public class CPublisher implements IPrivilegedChannel
         case PUBLISH:
           xmlSource = new XSLTInputSource (channelDecl);
           break;
-        case CATS: 
+        case CATS:
             xmlSource = new XSLTInputSource(chanReg.getCategoryXML(null));
             break;
         default:
@@ -269,9 +259,9 @@ public class CPublisher implements IPrivilegedChannel
     Enumeration e = runtimeData.getParameterNames();
 
     if(!currentStep.equals("end")) {
-        
+
         int i = Integer.parseInt(currentStep);
-        
+
         if(i < numSteps){
             currentStep = Integer.toString(i+1);
         }
@@ -282,7 +272,7 @@ public class CPublisher implements IPrivilegedChannel
        // else if(i == numSteps + 1) {
        //     mode = ROLES;
        //     currentStep = Integer.toString(i+1);
-       // }   
+       // }
         else {
             publishChannel();
             currentStep = "end";

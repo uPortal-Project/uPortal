@@ -98,20 +98,6 @@ public class CUserPreferences implements IPrivilegedChannel
 
     }
 
-
-    /** Returns static channel properties to the portal
-     * @return handle to subscription properties
-     */
-    public ChannelSubscriptionProperties getSubscriptionProperties ()
-    {
-        ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-
-        // Properties which are not specifically set here will assume default
-        // values as determined by ChannelSubscriptionProperties
-        csb.setName ("User Preferences");
-        return csb;
-    }
-
     /** Returns channel runtime properties
      * @return handle to runtime properties
      */
