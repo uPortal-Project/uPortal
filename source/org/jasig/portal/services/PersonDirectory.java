@@ -362,7 +362,7 @@ public class PersonDirectory {
           }
         } catch (SQLException sqle) {
           ; // Don't let error in a field prevent processing of others.
-          //(debugging)System.out.println("Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
+          LogService.log(LogService.DEBUG,"Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
         }
       }
 
@@ -370,7 +370,7 @@ public class PersonDirectory {
       ; // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      //(debugging) System.out.println("Error "+e);
+      LogService.log(LogService.DEBUG,"Error "+e);
     }
     if (rs!=null) try {rs.close();} catch (Exception e) {;}
     if (stmt!=null) try {stmt.close();} catch (Exception e) {;}
