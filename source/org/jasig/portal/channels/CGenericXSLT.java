@@ -35,46 +35,44 @@
 
 package org.jasig.portal.channels;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.xml.sax.DocumentHandler;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import org.jasig.portal.*;
-import org.apache.xalan.xslt.*;
-import org.apache.xerces.parsers.DOMParser;
-import org.w3c.dom.*;
-
-import java.net.*;
+import org.jasig.portal.utils.XSLT;
 
 /**
  * A channel which transforms XML for rendering in the portal.
- * Two parameters must be supplied:
+ * Two channel parameters must be supplied:
  *
  *  1) a URI representing the source XML document
  *  2) a URI representing the corresponding .ssl (stylesheet list) file
  *
  * This channel can be used for all XML formats including RSS.
- * @author Steve Toth
- * @author Ken Weiner
+ * Any parameters passed to this channel via HttpRequest will get
+ * passed in turn to the XSLT stylesheet.
+ * @author Steve Toth, stoth@interactivebusiness.com
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class CGenericXSLT implements org.jasig.portal.IChannel
 {
-  protected String sXML;
-  protected String sSSL;
+  protected String xmlUri;
+  protected String sslUri;
   protected StylesheetSet stylesheetSet;
   protected ChannelRuntimeData runtimeData;
+  protected String media;
 
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
-  
+
   public CGenericXSLT ()
   {
   }
@@ -84,10 +82,10 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   {
     try
     {
-      this.sXML = UtilitiesBean.fixURI (sd.getParameter ("xml"));
-      this.sSSL = UtilitiesBean.fixURI (sd.getParameter ("ssl"));
-      
-      stylesheetSet = new StylesheetSet (sSSL);
+      this.xmlUri = UtilitiesBean.fixURI (sd.getParameter ("xml"));
+      this.sslUri = UtilitiesBean.fixURI (sd.getParameter ("ssl"));
+
+      stylesheetSet = new StylesheetSet (sslUri);
       stylesheetSet.setMediaProps (sMediaProps);
     }
     catch (Exception e)
@@ -99,6 +97,12 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     runtimeData = rd;
+
+    // The media will soon be passed to the channel I think.
+    // This code can then be replaced with runtimeData.getMedia()
+    MediaManager mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    media = mm.getMedia(runtimeData.getHttpRequest());
   }
 
   public void receiveEvent (LayoutEvent ev)
@@ -120,39 +124,36 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     csb.setDefaultDetachHeight ("450");
     return csb;
   }
-    
- public void renderXML (DocumentHandler out) throws PortalException     {
-   if (stylesheetSet != null) {
-       XSLTInputSource stylesheet = stylesheetSet.getStylesheet (runtimeData.getHttpRequest ());
-       
-       if (stylesheet != null) {
-	   try {
-	       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-	       
-	       processor.setStylesheetParam ("baseActionURL",processor.createXString (runtimeData.getBaseActionURL ()));
-	       for(Enumeration pen=runtimeData.keys(); pen.hasMoreElements() ;) {
-		   String key=(String) pen.nextElement();
-		   processor.setStylesheetParam (key,processor.createXString ((String)runtimeData.get(key)));
-	       }
-	       try {
-		   processor.process (new XSLTInputSource (sXML), stylesheet, new XSLTResultTarget (out));
-	       } catch (org.xml.sax.SAXException se) {
-		   throw new GeneralRenderingException("XSLT processing error");
-	       }
-	   } catch (org.xml.sax.SAXException se) {
-	       throw new GeneralRenderingException("unable to instantiate an XSLT processor");
-	   }
 
-       } else throw new GeneralRenderingException("unable to find a stylesheet for this platform");
-   }
-   
+  public void renderXML (DocumentHandler out) throws PortalException
+  {
+    String xml;
 
-
-      /*    }
+    try
+    {
+      xml = UtilitiesBean.getContentsAsString(xmlUri);
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, "Problem transforming " + sXML);
-      Logger.log (Logger.ERROR, e);
-      }*/
- }
+      throw new ResourceMissingException (xmlUri, "", e.getMessage());
+    }
+
+    Hashtable ssParams = new Hashtable();
+    ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
+
+    for (Enumeration pen = runtimeData.keys(); pen.hasMoreElements() ;)
+    {
+      String key = (String)pen.nextElement();
+      ssParams.put(key, (String)runtimeData.get(key));
+    }
+
+    try
+    {
+      XSLT.transform(out, media, xml, sslUri, ssParams);
+    }
+    catch (Exception e)
+    {
+      throw new GeneralRenderingException(e.getMessage());
+    }
+  }
 }
