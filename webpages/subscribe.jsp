@@ -42,7 +42,11 @@
 <%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
-<jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
+<%
+  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
+  org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+%> 
+
 <jsp:useBean id="subscribe" class="org.jasig.portal.SubscriberBean" scope="request" />
 
 <%

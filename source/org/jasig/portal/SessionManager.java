@@ -1,4 +1,10 @@
 /**
+ * $Author$
+ * $Date$
+ * $Id$
+ * $Name$
+ * $Revision$
+ *
  * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +37,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @author: Zed A Shaw
  * Modified by: Vikrant Joshi (April 4, 2001)
  *
  */
@@ -41,26 +46,126 @@ package org.jasig.portal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
+import java.io.*;
 
 
 /**
- * This class acts as a common location for session management (implemented as a singleton).  It 
- * is used to prevent more than one login for each user to reduce the amount of memory used during
- * operation, and to prevent Denial Of Service (DOS) attacks.
+ * The SessionManager is responsible for handling all the aspects of a user's session
+ * including (but not limited to):  Allowing or denying logins; eliminating stale or
+ * orphaned sessions; detecting memory starvation and trying to recover; maintaining
+ * statistics on sessions;
+ *
+ * It is used like a static singleton, where you simply call one of the methods 
+ * directly on the class.  It is auto configured, and uses the 
+ * properties/session.properties file to configure itself.  If that file is missing,
+ * it defaults to the safest set of options (and tells you it is missing).
+ * 
+ * All log messages it reports begin with the word "SessionManager:" so you can
+ * track what it is doing.
+ *
+ * @author $Author$ (with additional changes by Vikrant Joshi). 
  */
 public class SessionManager {
 
-    private static HttpSessionContext sessionContext = null;
     private static Hashtable sessionTypes = new Hashtable();     // this tracks the sessionType/userName to sessionID mapping
     private static Hashtable sessionToUser = new Hashtable();   // this tracks the active sessionIDs in the system
-    private static Hashtable sessionWrapTable = new Hashtable();   // this maps the active sessionIDs to the corresponding SessionWrappers. The purpose of this table is purely for efficient search of SessionWrapper objects.
+    private static Hashtable sessionWrapTable = new Hashtable();   // this maps the active sessionIDs to the corresponding SessionWrappers.
+    private static boolean initialized = false;
+    private static Properties sessionProps = new Properties();
+    private static boolean starvation_denies_login = true;   // default to not allowing logins when memory low
+    private static int starvation_limit = 1;  // we default to 1MB
+
+
+    /**
+     * This method does configuration based on the session.properties file.  If the properties file isn't there, it will default
+     * to a safe configuration.  This method can be safely called many times, and it will only initialize on the first one.
+     * We use an init method (and call at the beginning of all methods in SessionManager) because the base directory is only 
+     * set in the GenericPortalBean during runtime.  This means we can't use a static initialize block since that will get run
+     * before the GenericPortalBean knows the base directory.  Also, we can't rely on the system calling init since there are
+     * many different access points to the system.
+     *
+     * @author $Author$
+     */
+    private static void init() {
+
+	File sessionPropsFile = new File (GenericPortalBean.getPortalBaseDir () + "properties" + File.separator + "session.properties");
+
+	if(!initialized) {
+	    try {
+
+		sessionProps.load (new FileInputStream (sessionPropsFile));
+
+		// setup our starvation_denis_login state
+		if("no".equals(sessionProps.getProperty("session.login.starvation_denies_login")) ) {
+		    // don't block users if memory runs out
+		    Logger.log(Logger.INFO, "SessionManager: starvation of memory will ALLOW (NOT DENY) users access.");
+		    starvation_denies_login = false;
+		} else {
+		    Logger.log(Logger.INFO, "SessionManager: starvation of memory will DENY users access.");
+		    starvation_denies_login = true;
+		} 
+
+		String starvationLimit = sessionProps.getProperty("session.login.starvation_limit");
+
+		if(starvationLimit != null) {
+		    try {
+			starvation_limit = Integer.parseInt(starvationLimit);
+			Logger.log(Logger.INFO, "SessionManager:  starvation limit set to " + starvationLimit);
+		    } catch (NumberFormatException e) {
+			Logger.log(Logger.ERROR, "SessionManager: could not parse the session.login.starvation_limit: '" + starvationLimit + "'");
+		    }
+		}
+
+
+		// if an exception is thrown, this won't get set, and the file will be checked for again.
+		// TODO:  not sure if this is desireable or not
+		initialized = true;
+	    } catch (IOException e) {
+		// just default to a safe state if nothing works
+		Logger.log(Logger.ERROR, "SessionManager: could not open " + sessionPropsFile + ". DEFAULTING TO SAFE STATE AND CONTINUING.");
+	    }
+	}
+
+    }
+
+
+
+    /**
+     * Used to get different configuration properties that control how the SessionManager works.
+     * As a security precaution, you must re-edit the session.properties config file and then 
+     * re-start the web server to get the SessionManager to reload.
+     *
+     * @author $Author$
+     */
+    public static String getConfiguration(String configName) {
+	init();
+	
+	return sessionProps.getProperty(configName);
+    }
+
+
+    /**
+     * Lists the available properties that the SessionManager has configured. 
+     *
+     * @author $Author$
+     */
+    public Enumeration getConfigurationNames() {
+	init();
+	    
+
+	return sessionProps.propertyNames();
+    }
 
 
     /** Tells the SessionManager that the specified userName is logged in and using the session with sessionID.  
      * You also need to specify the sessionType to prevent different parts of the application from stepping on
      * eachother.
+     *
+     * @author $Author$
      */
     public static void login(String userName, HttpSession session, String sessionType) {
+	init();
+
 	synchronized (sessionWrapTable) {	
 	    Hashtable userToSession = (Hashtable)sessionTypes.get(sessionType);
 
@@ -77,8 +182,13 @@ public class SessionManager {
 	   	 SessionWrapper deadSessWrap = (SessionWrapper)sessionWrapTable.get(deadSessId);
 
 	  	 // looks like this user is already logged in, kill their old session
-
-	  	 deadSessWrap.session.invalidate();
+		 // but only if configured to NOT allow_multiple
+		 if("no".equals(sessionProps.getProperty("session.login.allow_multiple"))) {
+		     Logger.log(Logger.INFO, "SessionManager: Invalidating previous session for user : " + userName +  ".");
+		     deadSessWrap.session.invalidate();
+		 } else {
+		     Logger.log(Logger.WARN, "SessionManager: Allowing previous session for user " + userName + " to continue (this is a memory leak)!");
+		 }
 
 	  	 // clear them from our list
 
@@ -101,10 +211,14 @@ public class SessionManager {
     /** Tells the SessionManager that the specified userName has logged out and should be cleaned from
      * the list of active sessions.  You must specify the sessionType when removing a user this way
      * since it is possible for more than one session to have the same user name.
+     *
+     * @author $Author$
      */
     public static void logout(String userName,String sessionType)
     {
-	synchronized (sessionWrapTable) {	
+	init ();
+
+	synchronized (sessionWrapTable) {
             Hashtable userToSession = (Hashtable)sessionTypes.get(sessionType);
 	
             // check to see if that sessionType exists already
@@ -121,7 +235,9 @@ public class SessionManager {
 	        userToSession.remove(userName);
 	        sessionToUser.remove(sessInfo.Id);
 	        sessionWrapTable.remove(sessInfo.Id);
-	   }
+	    }
+
+	    Logger.log(Logger.INFO, "SessionManager:  logged out user " + userName);
 	}
     }
 
@@ -129,8 +245,12 @@ public class SessionManager {
     /** Tells the SessionManager that the specified sessionID is being/has been invalidated. 
      * You must also give a session type so that the SessionManager can find the userName
      * associated with this session and get rid of it.
+     *
+     * @author $Author$
      */
     public static void logout(HttpSession session, String sessionType) {
+	init();
+
 	synchronized (sessionWrapTable) {	
 	    String sessionID = session.getId();
 
@@ -150,6 +270,8 @@ public class SessionManager {
 	    sessionToUser.remove(sessionID);
 	    sessionWrapTable.remove(sessionID);
 	    userToSession.remove(userName);
+
+	    Logger.log(Logger.INFO, "SessionManager:  logged out user " + sessionID);
 	}
     }
 	
@@ -157,8 +279,12 @@ public class SessionManager {
     /** This method lists the names of the sessionTypes that are currently being tracked.
      * You use this method to gather statistics on the different sessions managed by the
      * SessionManager.
+     *
+     * @author $Author$
      */
     public static Enumeration getSessionTypes() {
+	init();
+
 	return sessionTypes.keys();
     }
 
@@ -166,6 +292,8 @@ public class SessionManager {
      *  If a sessionType is given that does not exist, then it returns a -1.
      */
     public static long getSessionCount(String sessionType) {
+	init();
+
 	Hashtable userToSession = (Hashtable)sessionTypes.get(sessionType);
 	if(userToSession == null) 
 	    return -1;   // bad session type, return negative
@@ -175,8 +303,12 @@ public class SessionManager {
 
     /** Returns the list of all the currently active users that have the given session type. 
      *  It returns null if the given sessionType doesn't exist.
+     *
+     * @author $Author$
      */
     public static Enumeration getUserNames(String sessionType) {
+	init();
+
 	Hashtable userToSession = (Hashtable)sessionTypes.get(sessionType);
 
 	if(userToSession == null)
@@ -186,8 +318,15 @@ public class SessionManager {
     }
 
 
-    /** Get the list of session IDs that are currently active. */
+    /** 
+     *  Get the list of session IDs that are currently active. 
+     *
+     * @author $Author$
+     */
     public static Enumeration getSessionIDs(String sessionType) {
+	init();
+
+
 	Hashtable userToSession = (Hashtable)sessionTypes.get(sessionType);
 	if(userToSession == null) {
 	    return null;  // bad sesion, return null
@@ -195,11 +334,76 @@ public class SessionManager {
 	return userToSession.elements();
     }
 
-    /** Gets the Creation time of a session */
+    /** 
+     * Gets the Creation time of a session 
+     *
+     * @author $Author$
+     */
     public static Date getCreationTime(String sessionId) {
-           SessionWrapper sessInfo = (SessionWrapper)sessionWrapTable.get(sessionId);
-	   if (sessInfo == null) return null;    // this session is not in our table
-	   return sessInfo.creationTime;
+	init();
+
+	SessionWrapper sessInfo = (SessionWrapper)sessionWrapTable.get(sessionId);
+	if (sessInfo == null) return null;    // this session is not in our table
+	return sessInfo.creationTime;
     }
 
+
+    /**
+     * This is used by other systems to figure out if they should allow more users onto the system.
+     * It is currently configured by the session.properties file, but it might be possible later to
+     * allow an admin control panel to set/unset this (wow, that would be a bit unsecure).
+     *
+     * @author $Author$
+     */
+    public static boolean allowLogins() {
+
+	if(starvation_denies_login) {
+	    // we ARE denying logins when memory gets too low
+	    long starvationDelta = memoryStarvationDelta();
+	    
+	    if(starvationDelta < 0) {
+		// Captain! We're out 'o memory!
+		// try to recover by forcing the GC to go
+		Runtime.getRuntime().gc();
+
+		starvationDelta = memoryStarvationDelta();
+
+		if(starvationDelta < 0) {
+		    // still out of memory, return false
+		    Logger.log(Logger.ERROR, "SessionManager: memory starvation reached at " + 
+			       Runtime.getRuntime().freeMemory() + "memory free");
+		    return false;
+		} else {
+		    // yeah! we got more memory.  Thanks GC!
+		    return true;
+		}
+	    } else {
+		// good to go, let them login
+		return true;
+	    }
+
+	} else {
+	    return true;
+	}
+    }
+
+
+    /**
+     * Simple method which does the actual test of memory. It doesn't try to do any recovery 
+     * and is only called by the allowLogins method.
+     *
+     * @author $Author$
+     */
+    protected static long memoryStarvationDelta() {
+	    
+	long freeMem = Runtime.getRuntime().freeMemory();
+	// get just the MB
+	freeMem = freeMem / 1024;
+
+	return (freeMem - (starvation_limit * 1024));
+	
+    }
+    
+
 }
+

@@ -144,26 +144,38 @@ public class CAuthorization implements org.jasig.portal.IChannel
     HttpSession session = req.getSession (false);
     String sUserName = (String) session.getAttribute ("userName");
 
-    if (sUserName != null && sUserName.equals ("guest"))
-      doDisplayFailedLogonMsg (req, res, out);
+    if(!SessionManager.allowLogins()) {
+	// show a message indicating that users cannot login right now
+	out.print("<font color=\"red\">");
+	out.print ("Too Many Users!<br>");
+	out.print ("We are sorry, but there are currently too many users on the system.<br>");
+	out.print ("Please try again later.");
+	out.print ("</font>");
+    } else {
+	// go through the normal authentication process
 
-    out.println ("<p>");
-    out.println ("<form action=\"authentication.jsp\" method=post>");
-    out.println ("<table align=center border=0 width=100%>");
-    out.println ("  <tr>");
-    out.println ("    <td>User Name: </td>");
-    out.println ("    <td><input name=userName type=text size=15 value=\"\"></td>");
-    out.println ("  </tr>");
-    out.println ("  <tr>");
-    out.println ("    <td>Password: </td>");
-    out.println ("    <td><input name=password type=password size=15 value=\"\"></td>");
-    out.println ("  </tr>");
-    out.println ("</table>");
-
-    out.println ("<center>");
-    out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
-    out.println ("</center>");
-    out.println ("</form>");
+	if (sUserName != null && sUserName.equals ("guest"))
+	    doDisplayFailedLogonMsg (req, res, out);
+	
+	
+	out.println ("<p>");
+	out.println ("<form action=\"authentication.jsp\" method=post>");
+	out.println ("<table align=center border=0 width=100%>");
+	out.println ("  <tr>");
+	out.println ("    <td>User Name: </td>");
+	out.println ("    <td><input name=userName type=text size=15 value=\"\"></td>");
+	out.println ("  </tr>");
+	out.println ("  <tr>");
+	out.println ("    <td>Password: </td>");
+	out.println ("    <td><input name=password type=password size=15 value=\"\"></td>");
+	out.println ("  </tr>");
+	out.println ("</table>");
+	
+	out.println ("<center>");
+	out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
+	out.println ("</center>");
+	out.println ("</form>");
+    }
   }
 
   /**

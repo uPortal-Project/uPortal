@@ -1,4 +1,4 @@
-<%@ page import="org.jasig.portal.layout.*" %><%@ page import="org.jasig.portal.UtilitiesBean" %><jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" /><jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" /><%
+<%@ page import="org.jasig.portal.layout.*" %><%@ page import="org.jasig.portal.UtilitiesBean" %><jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" /><% org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session); %> 
 org.jasig.portal.IChannel ch = dispatchBean.getChannel (request);
 if (ch == null) {
   return;

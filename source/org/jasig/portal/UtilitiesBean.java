@@ -47,6 +47,10 @@ import java.text.*;
  */
 public class UtilitiesBean extends GenericPortalBean
 {
+    /** The default allowed character for removeSpecialChars */
+    public static final String DEFAULT_ALLOWED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_ ";
+    
+
   /**
    * Prevents an html page from being cached by the browser
    * @param the servlet response object
@@ -192,40 +196,52 @@ public class UtilitiesBean extends GenericPortalBean
   }
 
   /**
-   * Removes any XML unfriendly characters from a string
+   * Removes any characters that are not in the allowed set.  This set is currently defined
+   * (in this version of the method) as (using regular expression syntax) [A-Za-z0-9_ ].  
+   * Notice that last character is a space a AND the list given is using regular expression syntax, so
+   * this means that the [] characters are NOT actually allowed, they are regex symbols.  Basically, this says
+   * all letters, numbers, underscore, and spaces.
+   *
+   * This is a different approach than removing what is undesirable, as what is determined to be "undesirable"
+   * may change in the future, but the set of characters that are "desirable" is smaller and easier to maintain
+   * over time.
    */
   public static String removeSpecialChars(String source)
   {
-    StringBuffer sb = new StringBuffer ();
+      removeSpecialChars(source, DEFAULT_ALLOWED);
+  }
+
+
+  /**
+   * Removes any characters that are not in the allowed set. 
+   * This version of the function does not use the default list in DEFAULT_ALLOWED, but rather lets you
+   * define what is allowed or not, thus acting as a generic input cleaning method.  It will remove all characters
+   * but what is in the allowed string.
+   *
+   * This is a different approach than removing what is undesirable, as what is determined to be "undesirable"
+   * may change in the future, but the set of characters that are "desirable" is smaller and easier to maintain
+   * over time.
+   *
+   * @param source -- the string to clean.
+   * @param allowed -- a string with all the allowed chars in it
+   */
+  public static String removeSpecialChars(String source, String allowed)
+  {
+      
+    StringBuffer sb = new StringBuffer (source);
     char ch;
 
-    for (int i = 0 ; i < source.length() ; i++)
+    for (int i = 0 ;i < sb.length(); i++)
     {
-      ch = source.charAt (i);
-
-      if (!SpecialChar (ch))
-        sb.append (ch);
+	ch = sb.charAt(i);
+	if(allowed.indexOf(ch) == -1) {
+	    // looks like we have a rogue character (a -1 means it isn't in allowed)
+	    sb.deleteCharAt(i);
+	}
     }
 
-    return sb.toString ();
+    return sb.toString();
   }
 
-  private static boolean SpecialChar (char ch)
-  {
-    switch( ch )
-    {
-      case '<':
-        return true;
-      case '>':
-        return true;
-      case '"':
-        return true;
-      case '\'':
-        return true;
-      case '&':
-        return true;
-    }
-    return false;
-  }
 
 }

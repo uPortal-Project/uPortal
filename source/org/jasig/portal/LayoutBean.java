@@ -1,3 +1,45 @@
+/**
+ * $Author$
+ * $Date$
+ * $Id$
+ * $Name$
+ * $Revision$
+ *
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+
 package org.jasig.portal;
 
 import javax.servlet.*;
@@ -10,7 +52,7 @@ import java.text.*;
 import java.sql.*;
 import java.net.*;
 import java.lang.Byte;
-
+import org.jasig.portal.*;
 import com.objectspace.xml.*;
 
 import org.jasig.portal.layout.*;
@@ -19,20 +61,26 @@ import org.jasig.portal.AuthorizationBean;
 import org.jasig.portal.security.IRole;
 import org.jasig.portal.security.IPerson;
 
+
 /**
  * Provides methods associated with displaying and modifying
  * a user's layout.  This includes changing the colors, size and
  * positions of tabs, columns, and channels.
+ *
  * @author Ken Weiner
  * @version $Revision$
  */
 public class LayoutBean extends GenericPortalBean
-                        implements ILayoutBean
+                        implements ILayoutBean, HttpSessionBindingListener
 {
-  private static boolean bPropsLoaded = false;
-  private static String sPathToLayoutDtd = null;
-  private static final String sLayoutDtd = "layout.dtd";
-  private Hashtable htChannelInstances = new Hashtable ();
+    private static boolean bPropsLoaded = false;
+    private static String sPathToLayoutDtd = null;
+    private static final String sLayoutDtd = "layout.dtd";
+    private Hashtable htChannelInstances = new Hashtable ();
+    private boolean readOnly = false; // used to indicate that this layoutBean is immutable
+    private LayoutXmlCache layoutCache = null;
+    private static boolean bSingleGuestLayout = true;
+    private ChannelCache channelCache = new ChannelCache();
 
   /**
    * Default constructor
@@ -43,11 +91,22 @@ public class LayoutBean extends GenericPortalBean
     {
       if (!bPropsLoaded)
       {
-        File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
-        Properties layoutProps = new Properties ();
-        layoutProps.load (new FileInputStream (layoutPropsFile));
-        sPathToLayoutDtd = layoutProps.getProperty ("pathToLayoutDtd");
-        bPropsLoaded = true;
+	  // load the layout properties
+	  File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
+	  Properties layoutProps = new Properties ();
+	  layoutProps.load (new FileInputStream (layoutPropsFile));
+	  sPathToLayoutDtd = layoutProps.getProperty ("pathToLayoutDtd");
+	  
+	  // configure whether we are enforcing a single guest layout
+	  if( "no".equals(SessionManager.getConfiguration("session.login.single_guest_layout")) ) {
+	      bSingleGuestLayout = false; 
+	      Logger.log(Logger.DEBUG, "LayoutBean: guests get their own LayoutBean (DANGEROUS!)");
+	  } else {
+	      Logger.log(Logger.DEBUG, "LayoutBean: guests all share a sinlge LayoutBean");
+	      bSingleGuestLayout = true;
+	  }
+
+	  bPropsLoaded = true;
       }
     }
     catch (Exception e)
@@ -171,169 +230,51 @@ public class LayoutBean extends GenericPortalBean
    */
   public IXml getLayoutXml (HttpServletRequest req, String sUserName)
   {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-    IXml layoutXml = null;
-
-    try
-    {
-      HttpSession session = req.getSession (false);
-      layoutXml = (IXml) session.getAttribute ("layoutXml");
-
-      if (layoutXml != null)
-        return layoutXml;
-
-      if (sUserName == null)
-        sUserName = "guest";
-
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
-      Logger.log (Logger.DEBUG, sQuery);
-      ResultSet rs = stmt.executeQuery (sQuery);
-
-      if (rs.next ())
-      {
-        String sLayoutXml = rs.getString ("LAYOUT_XML");
-
-        // If user has no layout xml, get it from the default user
-        if (sLayoutXml == null || sLayoutXml.length () <= 0)
-        {
-          sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
-          Logger.log (Logger.DEBUG, sQuery);
-          rs = stmt.executeQuery (sQuery);
-
-          if (rs.next ())
-          {
-            sLayoutXml = rs.getString ("LAYOUT_XML");
-          }
-        }
-
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument(xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute("layoutXml", layoutXml);
+      // setup the layoutCache if it isn't done already
+      if(layoutCache == null) {
+	  layoutCache = new LayoutXmlCache(sUserName);
       }
-      stmt.close ();
 
-      return layoutXml;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
+      // TODO:  find out if we can get rid of the HttpServletRequest parameter since it isn't used anymore
 
-    return null;
+      return layoutCache.getLayoutXml( sPathToLayoutDtd,  sLayoutDtd);
   }
+
+
+
+    /**
+     * Returns the default layout for the site.  This is used
+     * by different configuration portions of the system, where
+     * the user can ask to have their layout reset to the default.
+     * @author Zed A. Shaw <zed.shaw@ubc.ca>
+     */
+    public IXml getDefaultLayoutXml(HttpServletRequest req) {
+	// since we are getting the layout for the user "default"
+	// and we don't want to replace the current user's layout,
+	// we just make a local copy of the cache
+
+	LayoutXmlCache cache = new LayoutXmlCache("default");
+
+	// this may be wrong though, since I'm not exactly sure
+	// how this function is supposed to work.  Does it replace
+	// the user's current layout with the default, or does it simply
+	// return a default layout for something else to use.
+
+	return layoutCache.getLayoutXml( sPathToLayoutDtd,  sLayoutDtd);
+    }
+
 
   public void setLayoutXml (String sUserName, IXml layoutXml)
   {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-
-    try
-    {
-      if (sUserName == null)
-        sUserName = "guest";
-
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      StringWriter sw = new StringWriter ();
-      layoutXml.saveDocument(sw);
-      String sLayoutXml = sw.toString();
-
-      // Remove path to layout dtd before saving
-      int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
-      int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
-      sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
-
-      try
-      {
-        String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-        int iUpdated = stmt.executeUpdate (sUpdate);
-        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-        stmt.close ();
+      // setup the layoutCache if it isn't already
+      if(layoutCache == null) {
+	  layoutCache = new LayoutXmlCache(sUserName);
       }
-      catch (SQLException e)
-      {
-        // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
-        PreparedStatement pstmt = con.prepareStatement("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
-        pstmt.clearParameters ();
-        pstmt.setCharacterStream (1, new StringReader (sLayoutXml), sLayoutXml.length ());
-        pstmt.setString (2, sUserName);
-        int iUpdated = pstmt.executeUpdate ();
-        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-        pstmt.close ();
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
+
+      layoutCache.setLayoutXml( sPathToLayoutDtd,  sLayoutDtd, layoutXml);
   }
 
-  /**
-   * Retrieves a handle to the default layout xml.
-   * @param the servlet request object
-   * @param user name
-   * @return handle to the layout xml
-   */
-  public IXml getDefaultLayoutXml (HttpServletRequest req)
-  {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-    IXml layoutXml = null;
 
-    try
-    {
-      HttpSession session = req.getSession (false);
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
-      Logger.log (Logger.DEBUG, sQuery);
-
-      ResultSet rs = stmt.executeQuery (sQuery);
-
-      if (rs.next ())
-      {
-        String sLayoutXml = rs.getString ("LAYOUT_XML");
-
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
-      }
-      stmt.close ();
-
-    return layoutXml;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
-    return null;
-  }
 
   /**
    * Retrieves the active tab
@@ -395,6 +336,7 @@ public class LayoutBean extends GenericPortalBean
       Logger.log (Logger.ERROR, e);
     }
   }
+
 
   /**
    * Displays tabs
@@ -469,6 +411,8 @@ public class LayoutBean extends GenericPortalBean
     }
   }
 
+
+
   /**
    * Displays channels
    * @param the servlet request object
@@ -507,13 +451,13 @@ public class LayoutBean extends GenericPortalBean
             String sGlobalChannelID = getGlobalChannelID(channels[iChan]);
 
             // Remove the channel from the user's layout if there is a channelID and the user fails authorization
-            if(sGlobalChannelID != null && !authorizationBean.canUserRender(getPerson(req), Integer.parseInt(sGlobalChannelID)))
+            if(!readOnly && sGlobalChannelID != null && !authorizationBean.canUserRender(getPerson(req), Integer.parseInt(sGlobalChannelID)))
             {
               // Remove the channel from the user's layout
               columns[iCol].removeChannel(channels[iChan]);
 
               // Save the user's layout
-              setLayoutXml(getUserName(req), (IXml)session.getAttribute("layoutXml"));
+              setLayoutXml(getUserName(req), getLayoutXml(req, getUserName (req)));
             }
             else
             {
@@ -524,9 +468,8 @@ public class LayoutBean extends GenericPortalBean
               String sTab     = req.getParameter ("tab");
               String sColumn  = req.getParameter ("column");
               String sChannel = req.getParameter ("channel");
-              String sUserName = getUserName (req);
 
-              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel) && sUserName != null && !sUserName.equals("guest"))
+              if (sResize != null && !readOnly && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel))
               {
                 if(sResize.equals("minimize"))
                 {
@@ -542,8 +485,8 @@ public class LayoutBean extends GenericPortalBean
                 {
                   columns[iCol].removeChannel(channels[iChan]);
 
-                  // Save the user's layout
-                  setLayoutXml(getUserName(req), (IXml)session.getAttribute("layoutXml"));
+                  // Save the user's layout (readOnly is tested for in parent if statement)
+                  setLayoutXml(getUserName(req), getLayoutXml(req, getUserName (req)));
 
                   continue;
                 }
@@ -578,33 +521,25 @@ public class LayoutBean extends GenericPortalBean
               out.println ("          <td nowrap valign=\"middle\" align=right>");
               out.println ("            &nbsp;");
 
-              //prevent the guest user from being presented with options that won't work
-              if (sUserName != null && !sUserName.equals("guest"))
-              {
-                // Channel control buttons
-                if (channels[iChan].getAttribute ("minimized").equals ("true"))
-                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
-                else
-                if(ch.isMinimizable ())
-                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
-
-                if (ch.isDetachable ())
-                  out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
-
-                if (ch.isRemovable ())
-                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
-
-                if (ch.isEditable ())
-                  out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
-
-                if (ch.hasHelp ())
-                  out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
-              }
+              // Channel control buttons
+              if (channels[iChan].getAttribute ("minimized").equals ("true"))
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
               else
-              {
-                if (ch.hasHelp ())
-                  out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
-              }
+              if(ch.isMinimizable ())
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
+
+              if (ch.isDetachable ())
+                out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
+
+              if (ch.isRemovable ())
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
+
+              if (ch.isEditable ())
+                out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+
+              if (ch.hasHelp ())
+                out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+
               out.println ("            &nbsp;");
               out.println ("          </td>");
               out.println ("        </tr>");
@@ -666,8 +601,7 @@ public class LayoutBean extends GenericPortalBean
    */
   public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
-    try
-    {
+    try {
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
 
@@ -1008,59 +942,7 @@ public class LayoutBean extends GenericPortalBean
    */
   public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel)
   {
-    try
-    {
-      String sClass = channel.getAttribute ("class");
-
-      String sKey = getChannelID (channel);
-      org.jasig.portal.IChannel ch = getChannelInstance (sKey);
-
-      if (ch == null)
-      {
-        // Load this channel's parameters into the channel config object
-        ChannelConfig chConfig = new ChannelConfig ();
-        org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
-
-        if (parameters != null)
-        {
-          for (int iParam = 0; iParam < parameters.length; iParam++)
-          {
-            String sParamName = parameters[iParam].getAttribute ("name");
-            String sParamValue = parameters[iParam].getAttribute ("value");
-            chConfig.setParameter (sParamName, sParamValue);
-          }
-
-          chConfig.setChannelID (sKey);
-        }
-
-        // Get new instance of channel
-        Object channelObject = Class.forName (sClass).newInstance ();
-
-        // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
-        if (channelObject instanceof org.jasig.portal.IChannel)
-        {
-          ch = (org.jasig.portal.IChannel) channelObject;
-        }
-        else
-        if(channelObject instanceof org.jasig.portal.IXMLChannel)
-        {
-          ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
-        }
-
-        // Send the channel its parameters
-        ch.init (chConfig);
-
-        // Store an instance of this channel for later use
-        htChannelInstances.put (sKey, ch);
-      }
-
-      return ch;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
+      return channelCache.getChannel(channel);
   }
 
   /**
@@ -1071,28 +953,7 @@ public class LayoutBean extends GenericPortalBean
    */
   public org.jasig.portal.IChannel getChannelInstance(String sChannelID)
   {
-    org.jasig.portal.IChannel ch = null;
-
-    try
-    {
-      if (htChannelInstances != null)
-      {
-        // Uncomment this line to enable channel instance caching
-        //  Caching channels may cause memory problems
-        ch = (org.jasig.portal.IChannel) htChannelInstances.get (sChannelID);
-      }
-      else
-      {
-        Logger.log (Logger.ERROR, "Cannot use channel ID to lookup a channel instance.  Channel instances have not yet been created.");
-      }
-
-      return ch;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
+      return channelCache.getChannel(sChannelID);
   }
 
   /**
@@ -1119,20 +980,7 @@ public class LayoutBean extends GenericPortalBean
    */
   public String getChannelID (org.jasig.portal.layout.IChannel channel)
   {
-    try
-    {
-      String sChannelInstanceID = channel.getInstanceIDAttribute ();
-
-      if (sChannelInstanceID == null)
-        throw new Exception ("Channel instance ID not found in layout xml.");
-
-      return sChannelInstanceID;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
+      return channelCache.getChannelID(channel);
   }
 
   /**
@@ -1222,12 +1070,7 @@ public class LayoutBean extends GenericPortalBean
       ILayout layout = (ILayout) layoutXml.getRoot ();
 
       ITab tabToRename = layout.getTabAt (iTab);
-
-      /**
-       * Use the removeSpecialChars here to prevent the user from entering
-       * any characters that would destroy their personal layout.
-       */
-      tabToRename.setNameAttribute (UtilitiesBean.removeSpecialChars(sTabName));
+      tabToRename.setNameAttribute (sTabName);
     }
     catch (Exception e)
     {
@@ -1660,6 +1503,113 @@ public class LayoutBean extends GenericPortalBean
       return(false);
     }
   }
+
+
+    /**
+     * This is the method that JSP pages should use to get at the specific
+     * layoutBean for a user.
+     * @author Zed A. Shaw (zed.shaw@ubc.ca)
+     */
+    public static ILayoutBean findLayoutInstance(ServletContext application, HttpSession session) {
+        String username = (String)session.getAttribute("userName");
+        org.jasig.portal.ILayoutBean layoutBean = null;
+
+	// we do the check for the single_guest_layout configuration by seeing if it is NOT "no"
+	// so that we'll default to "yes" and have a safer configuration.  Just in case the user doesn't do things right.
+        if( (username == null || username.equals("guest")) && bSingleGuestLayout)
+	   {
+
+            // it's a guest user, and we are using a single_guest_layout, so give them the default layoutBean
+            layoutBean = (org.jasig.portal.ILayoutBean)application.getAttribute("layoutBean");
+            if(layoutBean == null) {
+                // use a regular LayoutBean so we can access the setReadOnly method
+                LayoutBean layout = new org.jasig.portal.LayoutBean();
+                layout.setReadOnly(true); // guests cannot make changes
+                // then cast it to our interface to restrict people from changing it
+                layoutBean = (ILayoutBean)layout;
+
+                application.setAttribute("layoutBean",layoutBean);
+            }
+        } else {
+            // this is a user, they have their own layoutBean
+            layoutBean = (org.jasig.portal.ILayoutBean)session.getAttribute("layoutBean");
+            if(layoutBean == null) {
+                layoutBean = new org.jasig.portal.LayoutBean();
+                session.setAttribute("layoutBean",layoutBean);
+            }
+        }
+        // the layoutBean should now either be a user bean, or the default for guests
+        return layoutBean;
+    }
+
+
+
+    /**
+     * Helps manage the removal of portal sessions from the SessionManager's listings.
+     */
+    public void valueBound(HttpSessionBindingEvent event) {
+        HttpSession session =  event.getSession();
+        String userName = (String)session.getAttribute("userName");
+
+	// don't do anything if there is no user name
+	if(userName == null) {
+	    return;
+	}
+
+        String sessionID = session.getId();
+        String sessionType = "PORTAL";
+
+        // tell the session manager that the user is logging in
+        SessionManager.login(userName, session, sessionType);
+    }
+
+
+    /**
+     * Helps manage the removal of portal sessions from the SessionManager's listings.
+     */
+    public void valueUnbound(HttpSessionBindingEvent event) {
+        HttpSession session =  event.getSession();
+
+        // now just tell the SessionManager we have logged out
+        SessionManager.logout(session, "PORTAL");
+
+    }
+
+
+    /**
+     * Sets whether this layouBean is readOnly or not.  This is done by the findLayoutInstance
+     * method when the user is a guest.  It is meant to prevent guest users from making changes
+     * to the layout for all guests (since they all share one layout).
+     *
+     * It does two additional things:  It turns off constrained caching of 
+     * channels and dynamic loading of the layoutXml document.  This is done
+     * to avoid performance hits for the guest users.
+     *
+     * This is private for right now, to prevent accidentally making this readwrite.
+     */
+
+    private void setReadOnly(boolean state) {
+        readOnly = state;
+	// turn off the constrained caching so that they are loaded faster
+	channelCache.setConstrainedCaching(false);
+	
+	// create a LayoutXmlCache right away for the guest user
+	layoutCache = new LayoutXmlCache("guest");
+
+	// make sure the layoutXmlCache is not claimable too
+	layoutCache.setClaimable(false);
+    }
+
+
+    /**
+     * Returns the current read only state of this layout.  Not really used
+     * by anyone internally.
+     *
+     * @author $Author$
+     */
+    private boolean getReadOnly() {
+        return readOnly;
+    }
 }
 
 

@@ -62,6 +62,11 @@ public class AuthenticationBean extends GenericPortalBean implements IAuthentica
    */
   public boolean authenticate (String sUserName, String sPassword)
   {
+      // don't bother if SessionManager says there's not enough resources
+      if(!SessionManager.allowLogins())
+	  return false;
+
+
     SecurityContext ic;
     Principal me;
     OpaqueCredentials op;
