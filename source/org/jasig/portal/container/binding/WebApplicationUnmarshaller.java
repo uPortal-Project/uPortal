@@ -386,7 +386,7 @@ public class WebApplicationUnmarshaller {
     } 
     
     private ErrorPageImpl[] getErrorPages(Element e) {  
-        NodeList errorPageNL = e.getElementsByTagName("taglib");
+        NodeList errorPageNL = e.getElementsByTagName("error-page");
         ErrorPageImpl[] errorPages = new ErrorPageImpl[errorPageNL.getLength()];
         for (int i = 0; i < errorPageNL.getLength(); i++) {
             Element errorPageE = (Element)errorPageNL.item(i);
