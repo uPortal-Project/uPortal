@@ -53,12 +53,15 @@ import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -66,6 +69,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -103,7 +107,7 @@ final class TabColumnPrefsState extends BaseState
   protected ChannelRuntimeData runtimeData;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl";
 
-    private IUserLayoutManager ulm;
+  private IUserLayoutManager ulm;
 
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
@@ -634,6 +638,8 @@ final class TabColumnPrefsState extends BaseState
    */
   protected class DefaultState extends BaseState
   {
+    private static final boolean printXMLToLog = false;
+    
     protected TabColumnPrefsState context;
 
     public DefaultState(TabColumnPrefsState context)
@@ -991,9 +997,21 @@ final class TabColumnPrefsState extends BaseState
           sstr.setParameter("elementID", elementID != null ? elementID : "none");
           sstr.setParameter("errorMessage", errorMessage);
 
-          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();          
           StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(th, ssup);
 
+          // Put a duplicating filter before th
+          StringWriter sw = null;
+          OutputFormat outputFormat = null;         
+          if (printXMLToLog) {
+            sw = new StringWriter();
+            outputFormat = new OutputFormat();
+            outputFormat.setIndenting(true);
+            XMLSerializer debugSerializer = new XMLSerializer(sw, outputFormat);
+            SAX2DuplicatingFilterImpl dupFilter = new SAX2DuplicatingFilterImpl(th, debugSerializer);
+            dupFilter.setParent(saif);          
+          }
+          
           // Incorporate channel registry document into userLayout if user is in the subscribe process
           if (action.equals("newChannel")) {
             Node channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson()).getDocumentElement();
@@ -1012,6 +1030,11 @@ final class TabColumnPrefsState extends BaseState
               //          emptytr.transform(new DOMSource(), new SAXResult(saif));
               ulm.getUserLayout((ContentHandler)saif);
           }
+          
+          // Debug piece to print out the recorded pre-structure transformation XML
+          if (printXMLToLog) {
+            LogService.instance().log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
+          }          
 
         } else {
           LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
