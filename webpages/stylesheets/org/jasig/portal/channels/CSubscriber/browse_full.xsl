@@ -4,6 +4,7 @@
 <xsl:param name="baseActionURL">Default</xsl:param>
 <xsl:param name="categoryID">top</xsl:param>
 <xsl:param name="modified">false</xsl:param>
+<xsl:param name="alert">javascript:alert('Channel preview not yet implemented')</xsl:param>
 <xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CSubscriber'"/>
 
 <xsl:template match="/">
@@ -96,7 +97,7 @@
   <tr>
     <td align="right"><input type="checkbox" name="sub" value="{@ID}"/></td>
 	  <td><xsl:value-of select="@name"/></td>
-    <td><a href="{$baseActionURL}"><img src="{$imageDir}/preview.gif" border="0" /></a></td>
+    <td><a href="{$alert}"><img src="{$imageDir}/preview.gif" border="0" /></a></td>
   </tr>
 </xsl:template>
 
