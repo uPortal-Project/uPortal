@@ -44,7 +44,10 @@ Version $Revision$
     <!--actions: 'defaultView', 'properties', 'publish', 'new' -->
     <!--~-->
     <xsl:param name="uPcFM_action" select="'defaultView'"/>
+    <xsl:param name="uPcFM_selectedID" select="''"/>
+    <!-- Param removed under assumption of non-use
     <xsl:param name="selectedID" select="'noSelectedID'"/>
+     Param removed under assumption of non-use -->
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CFragmentManager'"/>
     <!--~-->
     <!--root template-->
@@ -63,7 +66,7 @@ Version $Revision$
                         <tr>
                             <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
                                 <img src="{$mediaPath}/new.gif" width="16" height="16" alt=""/>
-                                <a href="{$baseActionURL}?uPcFM_action=new&amp;uPcFM_selectedID=noSelectedID">
+                                <a href="{$baseActionURL}?uPcFM_action=new&amp;uPcFM_selectedID=">
                                     <span class="uportal-channel-table-header">Create new fragment</span>
                                 </a>
                             </td>
@@ -300,7 +303,7 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
-                                                <input type="radio" name="frag_prop_type" value="pulled">
+                                                <input type="radio" name="fragment_type" value="pulled">
                                                     <xsl:if test="//fragment[ID=$uPcFM_selectedID]/type='pulled'">
                                                         <xsl:attribute name="checked">checked</xsl:attribute>
                                                     </xsl:if>
@@ -316,7 +319,7 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
-                                                <input type="radio" name="frag_prop_type" value="pushed">
+                                                <input type="radio" name="fragment_type" value="pushed">
                                                     <xsl:if test="//fragment[ID=$uPcFM_selectedID]/type='pushed'">
                                                         <xsl:attribute name="checked">checked</xsl:attribute>
                                                     </xsl:if>
@@ -467,7 +470,7 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
-                                                <input type="radio" name="frag_prop_type" value="pulled" checked="checked"/>
+                                                <input type="radio" name="fragment_type" value="pulled" checked="checked"/>
                                                 <span class="uportal-channel-subtitle-reversed">Pulled fragment</span>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
@@ -479,7 +482,7 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
-                                                <input type="radio" name="frag_prop_type" value="pushed"/>
+                                                <input type="radio" name="fragment_type" value="pushed"/>
                                                 <span class="uportal-channel-subtitle-reversed">Pushed fragment</span>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
@@ -502,7 +505,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
-                                                <input name="frag_prop_name" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/>
+                                                <input name="fragment_name" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
@@ -546,7 +549,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- A Description of the Fragment will go here -->
-                                                <textarea name="frag_prop_desc" cols="30" rows="4" wrap="on" class="uportal-input-text"/>
+                                                <textarea name="fragment_desc" cols="30" rows="4" wrap="on" class="uportal-input-text"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
@@ -563,7 +566,7 @@ Version $Revision$
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                                             </td>
                                             <td nowrap="nowrap">
-                                                <input name="frag_prop_foundation" type="checkbox" value="create_Tab_Column" checked="checked"/>
+                                                <input name="fragment_foundation" type="checkbox" value="true" checked="checked"/>
                                                 <span class="uportal-channel-subtitle-reversed">Create a starting tab and column (recommended)</span>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
