@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All Nrights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All Nrights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
