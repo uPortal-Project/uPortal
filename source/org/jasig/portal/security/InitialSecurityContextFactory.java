@@ -45,12 +45,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * This concrete class is responsible for returning a security context that
- * contains all of the subcontexts and associated interfaces. A typical
- * sequence would be:
+ * This class provides a static "factory" method that returns a security context
+ * retrieved based on the information provided in security.properties,
+ * including all relevant subcontexts.  A typical sequence would be:
  *
  * <pre>
- * SecurityContext sec = new InitialSecurityContext("root");
+ * SecurityContext sec = InitialSecurityContextFactory.getInitialContext("root");
  * Principal princ = sec.getPrincipalInstance();
  * OpaqueCredentials pwd = sec.getOpaqueCredentialsInstance();
  * princ.setUID("user");
@@ -63,20 +63,20 @@ import java.io.IOException;
  * </pre>
  *
  * @author Andrew Newman, newman@yale.edu
+ * @author Susan Bramhall (susan.bramhall@yale.edu)
+ * @author Shawn Bayern (shawn.bayern@yale.edu)
  * @version $Revision$
  */
 
-public class InitialSecurityContext implements ISecurityContext {
+public class InitialSecurityContextFactory {
 
-  private ISecurityContext ictx;
-  private Hashtable subcontext;
-
-  public InitialSecurityContext(String ctx) throws PortalSecurityException
-    {
+  public static ISecurityContext getInitialContext(String ctx)
+      throws PortalSecurityException {
     Properties pr;
     Enumeration ctxnames;
     String factoryname;
     ISecurityContextFactory factory;
+    ISecurityContext ictx;
 
     // Initial contexts must have names that are not compound
 
@@ -87,7 +87,9 @@ public class InitialSecurityContext implements ISecurityContext {
       }
 
     // Find our properties file and open it
-    java.io.InputStream secprops = this.getClass().getResourceAsStream("/properties/security.properties");
+    java.io.InputStream secprops =
+      InitialSecurityContextFactory.class.
+       getResourceAsStream("/properties/security.properties");
     pr = new Properties();
     try {
       pr.load(secprops);
@@ -147,60 +149,8 @@ public class InitialSecurityContext implements ISecurityContext {
         }
       }
     }
-  }
 
-  // Wrapper methods so we can legitimately claim to implement the
-  // SecurityContext interface.
-
-  public int getAuthType() {
-    return (ictx == null ? 0 : ictx.getAuthType());
-  }
-
-  public IPrincipal getPrincipalInstance() {
-    return (ictx == null ? null: ictx.getPrincipalInstance());
-  }
-
-  public IOpaqueCredentials getOpaqueCredentialsInstance() {
-    return (ictx == null ? null : ictx.getOpaqueCredentialsInstance());
-  }
-
-  public void authenticate() throws PortalSecurityException {
-    if (ictx != null)
-      ictx.authenticate();
-    return;
-  }
-
-  public IPrincipal getPrincipal() {
-    return (ictx == null ? null : ictx.getPrincipal());
-  }
-
-  public IOpaqueCredentials getOpaqueCredentials() {
-    return (ictx == null ? null : ictx.getOpaqueCredentials());
-  }
-
-  public IAdditionalDescriptor getAdditionalDescriptor() {
-    return (ictx == null ? null : ictx.getAdditionalDescriptor());
-  }
-
-  public boolean isAuthenticated() {
-    return (ictx == null ? false : ictx.isAuthenticated());
-  }
-
-  public ISecurityContext getSubContext(String ctx)
-    throws PortalSecurityException
-    {
-    return (ictx == null ? null : ictx.getSubContext(ctx));
-  }
-
-  public Enumeration getSubContexts() {
-    return (ictx == null ? null : ictx.getSubContexts());
-  }
-
-  public void addSubContext(String name, ISecurityContext ctx)
-    throws PortalSecurityException {
-    if (ictx != null)
-      ictx.addSubContext(name, ctx);
-    return;
+    return ictx;
   }
 
 }

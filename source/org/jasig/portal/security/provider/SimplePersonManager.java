@@ -46,7 +46,7 @@ import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.security.IPersonManager;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.security.InitialSecurityContext;
+import  org.jasig.portal.security.InitialSecurityContextFactory;
 
 
 /**
@@ -70,7 +70,8 @@ public class SimplePersonManager
     person = new PersonImpl();
     try {
       // Add the initial security context to the person
-      person.setSecurityContext(new InitialSecurityContext("root"));
+      person.setSecurityContext(
+        InitialSecurityContextFactory.getInitialContext("root"));
     } catch (Exception e) {
       // Log the exception
       LogService.log(LogService.ERROR, e);
