@@ -600,13 +600,13 @@ public class TabColumnPrefsState extends BaseState
   /**
    * Finds any parameters in a channel that are determined to be overridable
    * by a user.
-   * @param selectedChannelSubscribeId an identifier to find the channel within the channel registry
+   * @param channelPublishId an identifier to find the selected channel within the channel registry
    * @return a list of <parameter> elements whose override attribute is set to true
    * @throws org.jasig.portal.PortalException
    */
-  private final List getOverridableChannelParams(String selectedChannelSubscribeId) throws PortalException {
+  private final List getOverridableChannelParams(String channelPublishId) throws PortalException {
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    Element channel = (Element)channelRegistry.getElementById(selectedChannelSubscribeId);
+    Element channel = (Element)channelRegistry.getElementById(channelPublishId.startsWith("chan") ? channelPublishId : "chan" + channelPublishId);
     List overridableParams = null;
 
     if (channel != null) {
@@ -620,7 +620,7 @@ public class TabColumnPrefsState extends BaseState
           overridableParams.add(param);
       }
     } else {
-      throw new PortalException("Channel " + selectedChannelSubscribeId + " is missing from the channel registry");
+      throw new PortalException("Channel " + channelPublishId + " is missing from the channel registry");
     }
     return overridableParams;
   }
@@ -925,11 +925,11 @@ public class TabColumnPrefsState extends BaseState
           String subAction = runtimeData.getParameter("subAction");
           if (subAction != null && subAction.equals("modifyChannelParams"))
           {
-            UserLayoutChannelDescription layoutChannel=(UserLayoutChannelDescription) ulm.getNode(elementID);
-            String channelPublishId=layoutChannel.getId();            
+            UserLayoutChannelDescription layoutChannel=(UserLayoutChannelDescription)ulm.getNode(elementID);
+            String channelPublishId=layoutChannel.getChannelPublishId();            
             
             Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-            Element channel = (Element)channelRegistry.getElementById(channelPublishId);
+            Element channel = (Element)channelRegistry.getElementById("chan" + channelPublishId);
             List overridableChanParams = getOverridableChannelParams(channelPublishId);
             context.internalState = new ParametersState(context, this, overridableChanParams, channel);
             context.internalState.setStaticData(staticData);
@@ -1140,51 +1140,7 @@ public class TabColumnPrefsState extends BaseState
           if (runtimeData.getParameter("channelMoreInfo") != null) {
             // Implement channel preview here!
             String selectedChannel = runtimeData.getParameter("selectedChannel");
-            /*
-            if (selectedChannel != null) {
-              Element channelE = ChannelRegistryManager.getChannel(selectedChannel);
-              String javaClass = channelE.getAttribute("class");
-              org.jasig.portal.IChannel channel = null;
-              try {
-                System.out.println("Instantiating class: " + javaClass);
-                channel = (org.jasig.portal.IChannel)Class.forName(javaClass).newInstance();
-              } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, "Not able to instantiate channel: " + javaClass);
-                e.printStackTrace();
-              }
-              NodeIterator ni = null;
-              try {
-                ni = XPathAPI.selectNodeIterator(channelE, "parameter");
-              } catch (javax.xml.transform.TransformerException te) {
-                te.printStackTrace();
-              }
-              ChannelStaticData sdata = new ChannelStaticData();
-              for (Node n = ni.nextNode(); n != null; n = ni.nextNode()) {
-                Element parameter = (Element)n;
-                System.out.println(parameter.getAttribute("name") + "=" + parameter.getAttribute("value"));
-                sdata.setParameter(parameter.getAttribute("name"), parameter.getAttribute("value"));
-              }
-              channel.setStaticData(sdata);
-              ChannelRuntimeData rdata = new ChannelRuntimeData();
-              rdata.setBaseActionURL(rd.getBaseActionURL());
-              rdata.setRenderingAsRoot(true);
-              rdata.setBrowserInfo(rd.getBrowserInfo());
-              channel.setRuntimeData(rdata);
-
-              java.io.StringWriter sw = new java.io.StringWriter();
-              org.apache.xml.serialize.OutputFormat outputFormat = new org.apache.xml.serialize.OutputFormat();
-              outputFormat.setIndenting(true);
-              org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(sw, outputFormat);
-
-              try {
-                channel.renderXML(ser.asContentHandler());
-              } catch (java.io.IOException ioe) {
-                 ioe.printStackTrace();
-              }
-              System.out.println("Channel output:");
-              System.out.println(sw.toString());
-
-            }*/
+            // Do more...
           } else if (runtimeData.getParameter("addChannel") != null) {
             // User clicked "Add"
             String selectedChannel = runtimeData.getParameter("selectedChannel");
@@ -1324,12 +1280,7 @@ public class TabColumnPrefsState extends BaseState
           context.addChannel(registryChannel, position, destinationElementId);
         }
         else if (previousState instanceof DefaultState) {
-            updateParams((UserLayoutChannelDescription)ulm.getNode(elementID));
-            /*
-          Element layoutChannel = userLayout.getElementById(elementID);
-          processParams(layoutChannel);
-          context.saveLayout(false);
-            */
+          updateParams((UserLayoutChannelDescription)ulm.getNode(elementID));
         }
 
       } catch (Exception e) {
@@ -1338,17 +1289,17 @@ public class TabColumnPrefsState extends BaseState
       }
     }
 
-      private void updateParams(UserLayoutChannelDescription cd) throws PortalException {
-          // Process params
-          Iterator iter = overridableChanParams.iterator();
-          while (iter.hasNext()) {
-              Element parameterE = (Element)iter.next();
-              String paramName = parameterE.getAttribute("name");
-              String paramValue = runtimeData.getParameter(paramName);
-              cd.setParameterValue(paramName,paramValue);
-          }
-          ulm.updateNode(cd);
-      }     
+    private void updateParams(UserLayoutChannelDescription cd) throws PortalException {
+      // Process params
+      Iterator iter = overridableChanParams.iterator();
+      while (iter.hasNext()) {
+        Element parameterE = (Element)iter.next();
+        String paramName = parameterE.getAttribute("name");
+        String paramValue = runtimeData.getParameter(paramName);
+        cd.setParameterValue(paramName, paramValue);
+      }
+      ulm.updateNode(cd);
+    }
 
     private void processParams(Element channel) {
       // Process params
