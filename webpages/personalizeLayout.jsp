@@ -75,6 +75,7 @@ if (sAction != null)
 <html>
 <head>
 <title>Personalize Layout</title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 <script language="JavaScript">
 <!-- hide
 function getActionAndSubmit(theForm, buttonValue)
@@ -90,7 +91,8 @@ function getActionAndSubmit(theForm, buttonValue)
 </script>
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Personalize Layout"); %>

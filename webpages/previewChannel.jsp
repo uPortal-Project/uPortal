@@ -29,10 +29,11 @@ if (sAction != null)
 <html>
 <head>
 <title>Preview Channel</title>
-
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Preview Channel"); %>

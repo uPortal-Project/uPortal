@@ -16,6 +16,7 @@ org.jasig.portal.IChannel ch = layoutBean.getChannelInstance (channel);
 <html>
 <head>
 <title><%= ch.getName () %></title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 </head>
 
 <body bgcolor=ffffff>

@@ -10,6 +10,7 @@
 <html>
 <head>
 <title>Portal Framework</title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 <script language="JavaScript">
 <!--hide
 
@@ -22,14 +23,15 @@ function openWin(url, title, width, height)
 </script>
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <!-- Header -->
 <table border=0 cellpadding=0 cellspacing=1 width=100%>
   <tr>
     <td width=100><img src="images/MyIBS.gif" width=100 height=50 border=0></td>
-    <td width=300><font face="Arial,Helvetica,sans-serif" size=2 color=blue>Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!</font><br>
-        <font face="Arial,Helvetica,sans-serif" size=1 color=#444444><%= UtilitiesBean.getDate () %></font></td>
+    <td width=300><font size=2 color=blue>Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!</font><br>
+        <font size=1 color=#444444><%= UtilitiesBean.getDate () %></font></td>
     <td align=right><%= sUserName == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></td>
   </tr>
 </table>

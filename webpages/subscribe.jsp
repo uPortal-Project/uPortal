@@ -31,7 +31,8 @@ else {
 
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Personalize Content"); %>

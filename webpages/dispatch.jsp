@@ -2,6 +2,7 @@
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
+<jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
 <% org.jasig.portal.IChannel ch = dispatchBean.getChannel (request); %>
 <% UtilitiesBean.preventPageCaching (response); %>
@@ -9,9 +10,11 @@
 <html>
 <head>
 <title>Dispatch</title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 </head>
 
-<body bgcolor=ffffff>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%
 String sMethodName = request.getParameter ("method");

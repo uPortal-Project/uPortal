@@ -17,10 +17,12 @@ if (sAction != null && sAction.equals ("saveColors"))
 <html>
 <head>
 <title>Personalize Colors</title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 <META HTTP-EQUIV="expires" CONTENT="Tue, 20 Aug 1996 14:25:27 GMT">
 </head>
 
-<% layoutBean.writeBodyTag (request, response, out); %>
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Personalize Colors"); %>
