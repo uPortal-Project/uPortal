@@ -216,8 +216,8 @@ public class CGroupsManager
             }
             catch (PortalException pe){
                Utility.logMessage("ERROR", pe.toString(), pe);
-               if (pe.getRecordedException()!=null){
-                Utility.logMessage("ERROR", pe.getRecordedException().toString(), pe.getRecordedException());
+               if (pe.getCause()!=null){
+                Utility.logMessage("ERROR", pe.getCause().toString(), pe.getCause());
                }
             }
             catch (Exception e) {
