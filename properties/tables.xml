@@ -540,6 +540,9 @@
       <column> <name>CHAN_FNAME</name>       <type>VARCHAR</type>   <param>255</param>
         <desc>Channel functional name.  It is used to find a channel in a user's layout via JNDI.  It is an optional channel attribute.</desc>
       </column>
+      <column> <name>CHAN_SECURE</name>       <type>VARCHAR</type>   <param>1</param>
+        <desc>Is the channel secure, meaning is it to be rendered using a secure protocol (i.e. https)? Supported values are 'Y' and 'N'.</desc>
+      </column>      
     </columns>
     <primary-key>CHAN_ID</primary-key>
   </table>
