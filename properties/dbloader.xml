@@ -12,7 +12,7 @@
   <tables-uri>/properties/tables.xml</tables-uri>
 
   <!-- Location of tables.xsl stylesheet -->
-  <tables-xsl-uri>DbLoader/tables.xsl</tables-xsl-uri>
+  <tables-xsl-uri>dbloader/tables.xsl</tables-xsl-uri>
 
   <!-- Location of data.xml file -->
   <data-uri>/properties/data.xml</data-uri>
@@ -136,6 +136,15 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <!-- map more types here -->
   </db-type-mapping>
 
+  <db-type-mapping>
+    <db-name>PostgreSQL</db-name>
+    <db-version>7.2.1</db-version>
+    <driver-name>PostgreSQL Native Driver</driver-name>
+    <driver-version>PostgreSQL 7.2.1 JDBC2</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+  </db-type-mapping>    
+  
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
     <db-version>7.2</db-version>
