@@ -57,7 +57,7 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
     public GuestUserLayoutManagerWrapper() {
         sessionId=null;
         gulm=null;
-    } 
+    }
 
     /**
      * Creates a new <code>GuestUserLayoutManagerWrapper</code> instance.
@@ -109,8 +109,8 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
-        this.gulm.setNewUserLayoutAndUserPreferences(newLayout,newPreferences,this.sessionId);
+    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
+        this.gulm.setNewUserLayoutAndUserPreferences(newLayout,newPreferences,this.sessionId, channelsAdded);
     }
 
 
@@ -121,7 +121,7 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
     public Document getUserLayoutCopy () {
         return this.gulm.getUserLayoutCopy(this.sessionId);
     }
-    
+
     /**
      * Returns a copy of the user preferences
      * @return a copy of the <code>UserPreferences</code> object
@@ -192,10 +192,10 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      */
     public String getNodeName (String nodeId) {
         return this.gulm.getNodeName(nodeId,this.sessionId);
-    }    
+    }
 
     /**
-     * Removes a channel 
+     * Removes a channel
      * @param channelId channel instance Id
      */
     public boolean removeChannel (String channelId) throws PortalException {

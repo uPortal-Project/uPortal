@@ -262,7 +262,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
         if (newPreferences != null) {
             // Should obtain implementation in a different way!!
             IUserPreferencesStore updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
@@ -274,7 +274,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 uLayoutXML = newLayout;
                 layout_write_lock.setValue(true);
                 try {
-                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
+                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, channelsAdded);
                 } catch (Exception e) {
                     LogService.instance().log(LogService.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
@@ -361,7 +361,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
+                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, false);
                         /* end of patch */
                     } catch (Exception e) {
                         LogService.instance().log(LogService.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);

@@ -51,7 +51,7 @@ import org.jasig.portal.security.IPerson;
 public interface IUserLayoutStore {
   /* UserLayout  */
   public Document getUserLayout(IPerson Person,int profileId) throws Exception;
-  public void setUserLayout(IPerson Person,int profileId,Document layoutXML) throws Exception;
+  public void setUserLayout(IPerson Person,int profileId,Document layoutXML, boolean channelsAdded) throws Exception;
 
   /* UserPreferences */
   public int getUserBrowserMapping(IPerson Person,String userAgent) throws Exception;

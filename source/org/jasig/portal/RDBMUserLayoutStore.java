@@ -1141,7 +1141,7 @@ public class RDBMUserLayoutStore
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout (IPerson person, int profileId, Document layoutXML) throws Exception {
+  public void setUserLayout (IPerson person, int profileId, Document layoutXML, boolean channelsAdded) throws Exception {
     int userId = person.getID();
     int layoutId = 0;
     Connection con = rdbmService.getConnection();
@@ -1192,6 +1192,15 @@ public class RDBMUserLayoutStore
             sSql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=" + firstStructId + " WHERE " + selectString;
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
             stmt.executeUpdate(sSql);
+
+            // Update the last time the user saw the list of available channels
+            if (channelsAdded) {
+              sSql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + tsStart + "'" +
+                new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
+                " WHERE USER_ID=" + userId;
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+              stmt.executeUpdate(sSql);
+            }
 
             if (firstLayout) {
 

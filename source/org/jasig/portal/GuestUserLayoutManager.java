@@ -354,7 +354,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences,String sessionId) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences,String sessionId, boolean channelsAdded) throws PortalException {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::setCurrentUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
@@ -370,7 +370,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // one lock for all - not very efficient, but ok for the Guest layout - it should rarely change
                 layout_write_lock.setValue(true);
                 try {
-                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout);
+                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout, channelsAdded);
                 } catch (Exception e) {
                     LogService.instance().log(LogService.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
@@ -557,7 +557,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(), state.uLayoutXML);
+                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(), state.uLayoutXML, false);
                         /* end of patch */
                     } catch (Exception e) {
                         LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::removeChannle() : database operation resulted in an exception "+e);

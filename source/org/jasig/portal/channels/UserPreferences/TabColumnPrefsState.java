@@ -248,7 +248,7 @@ final class TabColumnPrefsState extends BaseState
     else
       throw new Exception("Attempt to rename immutable tab " + tabId + "has failed");
 
-    saveLayout();
+    saveLayout(false);
   }
 
   private final void moveTab(String sourceTabId, String method, String destinationTabId) throws Exception
@@ -259,7 +259,7 @@ final class TabColumnPrefsState extends BaseState
     Node siblingTab = method.equals("insertBefore") ? destinationTab : null;
     UserLayoutManager.moveNode(sourceTab, layout, siblingTab);
 
-    saveLayout();
+    saveLayout(false);
   }
 
   /**
@@ -277,7 +277,7 @@ final class TabColumnPrefsState extends BaseState
     Element siblingTab = method.equals("insertBefore") ? destinationTab : null;
     UserLayoutManager.moveNode(newTab, parent, siblingTab);
 
-    saveLayout();
+    saveLayout(false);
   }
 
   /**
@@ -305,7 +305,7 @@ final class TabColumnPrefsState extends BaseState
     Node siblingFolder = method.equals("insertBefore") ? destinationFolder : null;
     UserLayoutManager.moveNode(newColumn, parent, siblingFolder);
 
-    saveLayout();
+    saveLayout(false);
   }
 
   private final void changeColumnWidths(HashMap columnWidths) throws Exception
@@ -403,7 +403,7 @@ final class TabColumnPrefsState extends BaseState
     Node siblingColumn = method.equals("insertBefore") ? destinationColumn : null;
     UserLayoutManager.moveNode(sourceColumn, targetTab, siblingColumn);
 
-    saveLayout();
+    saveLayout(false);
   }
 
   /**
@@ -442,7 +442,7 @@ final class TabColumnPrefsState extends BaseState
       UserLayoutManager.moveNode(sourceChannel, targetColumn, siblingChannel);
     }
 
-    saveLayout();
+    saveLayout(false);
   }
 
   /**
@@ -487,7 +487,7 @@ final class TabColumnPrefsState extends BaseState
       UserLayoutManager.moveNode(newChannel, targetColumn, siblingChannel);
     }
 
-    saveLayout();
+    saveLayout(true);
   }
 
   /**
@@ -501,7 +501,7 @@ final class TabColumnPrefsState extends BaseState
     // I remember some other people mentioning this problem
     boolean deleteSuccessful = UserLayoutManager.deleteNode(element);
     if (deleteSuccessful)
-      saveLayout();
+      saveLayout(false);
     else
       throw new Exception("Element " + elementId + " cannot be removed because it is either unremovable or it or one of its parent elements is immutable.");
   }
@@ -519,7 +519,7 @@ final class TabColumnPrefsState extends BaseState
       element.setAttribute("unremovable", "false");
       element.setAttribute("immutable", "false");
     }
-    saveLayout();
+    saveLayout(false);
   }
   /**
    * A folder is a tab if its parent element is the layout element
@@ -568,19 +568,19 @@ final class TabColumnPrefsState extends BaseState
     return folder;
   }
 
-  private void saveLayout () throws PortalException
+  private void saveLayout (boolean channelsAdded) throws PortalException
   {
     // Persist user layout
     // Needs to check if we're modifying the current layout!
     IUserLayoutManager ulm = context.getUserLayoutManager();
-    ulm.setNewUserLayoutAndUserPreferences(userLayout, null);
+    ulm.setNewUserLayoutAndUserPreferences(userLayout, null, channelsAdded);
   }
 
   private void saveUserPreferences () throws PortalException
   {
     IUserLayoutManager ulm = context.getUserLayoutManager();
     if (modifyingCurrentProfile())
-      ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
+      ulm.setNewUserLayoutAndUserPreferences(null, userPrefs, false);
     else
       upStore.putUserPreferences(staticData.getPerson(), userPrefs);
   }

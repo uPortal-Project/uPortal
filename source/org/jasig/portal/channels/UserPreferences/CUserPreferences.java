@@ -266,7 +266,7 @@ public class CUserPreferences implements IPrivilegedChannel {
     // and the database (remember, as the user interacts with this
     // channel, changes are only made to a copy of the userLayoutXML
     // until this method is called)
-    ulm.setNewUserLayoutAndUserPreferences(userLayoutXML, up);
+    ulm.setNewUserLayoutAndUserPreferences(userLayoutXML, up, false);
   }
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {

@@ -82,7 +82,7 @@ public interface IUserLayoutManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException;
+    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException;
 
 
     /**
@@ -90,7 +90,7 @@ public interface IUserLayoutManager {
      * @return a copy of the user layout <code>Document</code>
      */
     public Document getUserLayoutCopy ();
-    
+
     /**
      * Returns a copy of the user preferences
      * @return a copy of the <code>UserPreferences</code> object
@@ -141,9 +141,9 @@ public interface IUserLayoutManager {
      * @return node's name value
      */
     public String getNodeName (String nodeId);
-    
+
     /**
-     * Removes a channel 
+     * Removes a channel
      * @param channelId channel instance Id
      * @return true if the remove operation was successful
      */

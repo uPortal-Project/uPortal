@@ -765,12 +765,12 @@ class GPreferencesState extends BaseState {
       // changes in userLayoutXML are always related back to the UserLayoutManager.
       // (unless profile-specific layouts will be introduced)
       if (context.getUserLayoutManager().getCurrentProfile() == context.getProfile()) {
-        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences());
+        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences(), false);
       }
       else {
         // do a database save on the preferences
         context.getUserPreferencesStore().putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
-        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null);
+        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null, false);
       }
     }
 
