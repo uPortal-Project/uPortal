@@ -4,15 +4,18 @@
   <xsl:param name="baseActionURL">render.uP</xsl:param>
 
   <xsl:param name="action">defaultView</xsl:param>
+<!--   <xsl:param name="action">channelDef</xsl:param>
+-->
   <xsl:param name="stepID">1</xsl:param>
 
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="filterByID">
     <xsl:value-of select="//filterByID[1]"/>
   </xsl:variable>
-  <!--xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CPublisher</xsl:variable-->
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
-  <xsl:template match="/">
+<!--  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
+-->  
+<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
+<xsl:template match="/">
     <html>
       <head>
         <title>Untitled Document</title>
@@ -972,16 +975,18 @@
     </table>
 
     <br/>
-    
-   <xsl:apply-templates select="//channelDef"/>
-  </xsl:template>
+
+
+<xsl:apply-templates select="manageChannels/channelDef[1]" mode="dynamicSettings"/>
+
+
+
+</xsl:template>
 
 
 
 <!--John's Templates-->
-	<xsl:template match="channelDef">
-
-lkj;laksjfdoijf;oajf;oajwfeojaoijfew
+	<xsl:template match="channelDef" mode="dynamicSettings">
 
 
 
@@ -1402,6 +1407,8 @@ lkj;laksjfdoijf;oajf;oajwfeojaoijfew
 <!--End John's Templates-->
 
 </xsl:stylesheet>
+
+
 
 <!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
 <metaInformation>
