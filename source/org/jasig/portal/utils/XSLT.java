@@ -377,7 +377,7 @@ public class XSLT
    * @throws java.io.IOException
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static void transform(Document xmlDoc, URL xslUri, StringWriter out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  public static void transform (Document xmlDoc, URL xslUri, StringWriter out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
   {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
@@ -416,8 +416,12 @@ public class XSLT
         Object o = stylesheetParams.get(key);
 
         if (o instanceof String)
-        {
           processor.setStylesheetParam(key, processor.createXString((String)o));
+        else if (o.getClass().getName().equals("[Ljava.lang.String;"))
+        {
+          // This situation occurs for some requests from cell phones
+          String[] sa = (String[])o;
+          processor.setStylesheetParam(key, processor.createXString(sa[0]));
         }
         else if (o instanceof Boolean)
           processor.setStylesheetParam(key, processor.createXBoolean(((Boolean)o).booleanValue()));
@@ -427,8 +431,8 @@ public class XSLT
     }
   }
 
-    public static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
-    {
+  public static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
+  {
     // First, check the cache...
     StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
 
