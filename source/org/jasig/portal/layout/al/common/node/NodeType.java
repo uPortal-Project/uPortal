@@ -9,6 +9,7 @@ package org.jasig.portal.layout.al.common.node;
  * Node type constant class
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
 public class NodeType {
 	
@@ -17,13 +18,23 @@ public class NodeType {
     public final static NodeType CHANNEL=new NodeType("channel");
     public final static NodeType FOLDER=new NodeType("folder");
     
-    public NodeType(String name) {
+    protected NodeType(String name) {
         this.name=name;
     }
+    
     /**
      * @return Returns the name.
      */
     public String getName() {
         return name;
     }
+    
+    public String toString() {
+      	return name;
+    }
+      
+    public boolean equals ( Object obj ) {
+      	return ( (obj instanceof NodeType) && obj.toString().equals(name) );
+    }
+    
 }

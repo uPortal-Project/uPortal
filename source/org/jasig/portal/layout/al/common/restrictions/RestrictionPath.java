@@ -24,22 +24,22 @@ public class RestrictionPath {
 	  // The children restriction path, could be setup to all children 
   public final static RestrictionPath CHILDREN_RESTRICTION_PATH = new RestrictionPath("children");		
 	
-  private String path;	
+  private final String path;	
 	
-  public RestrictionPath() {
-	 super();
+  protected RestrictionPath() {
+	this(LOCAL_RESTRICTION_PATH);
   }	
 
-  public RestrictionPath( String path ) {
+  protected RestrictionPath( String path ) {
     this.path = path;
   }
 
-  public String getPath() {
-  	return path;
+  protected RestrictionPath( RestrictionPath rpath ) {
+    this(rpath.toString());
   }
   
-  public void setPath( String path ) {
-  	this.path = path;
+  public String getPath() {
+  	return path;
   }
   
   public String toString() {
