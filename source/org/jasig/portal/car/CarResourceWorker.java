@@ -78,19 +78,16 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     public final static String RCS_ID = "@(#) $Header$";
 
     /**
-       Create a CarResourceWorker.
+     * Create a CarResourceWorker.
      */
     public CarResourceWorker()
     {
     }
     
     /** 
-     Provides web access to channel resources stored in the channel archive
-     files. housing the channel if the channel was installed in the uPortal
-     using a CAR. 
-
-     @author <a href="mailto:mboyd@campuspipeline.com">Mark Boyd</a>
-    */
+     * Provides web access to channel resources stored in the channel archive files.
+     * Housing the channel if the channel was installed in the uPortal using a CAR. 
+     */
     public void processWorkerDispatch(PortalControlStructures pcs)
         throws PortalException
     {
@@ -103,7 +100,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
 
         if ( in == null )
         {
-            res.setStatus( res.SC_NOT_FOUND );
+            res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             return;
         }
         setContentType( res, resourceName );
@@ -169,7 +166,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     {
         // check if the resource name has been passed via the
         // query string parm 'car_rsrc'
-        String resourceName = req.getParameter( resources.CAR_RESOURCE_PARM );
+        String resourceName = req.getParameter( CarResources.CAR_RESOURCE_PARM );
 
         if ( resourceName == null )
         {
