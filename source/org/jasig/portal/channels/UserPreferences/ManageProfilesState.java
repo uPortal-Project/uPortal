@@ -63,13 +63,17 @@ class ManageProfilesState extends BaseState {
         super(context);
     }
 
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException{
+    protected Hashtable getUserProfileList() throws PortalException { 
         if(userProfileList==null)
             userProfileList=this.getUserPreferencesDB().getUserProfileList(context.getUserLayoutManager().getPerson().getID());
-        if(systemProfileList==null)
-            systemProfileList=this.getUserPreferencesDB().getSystemProfileList();
+	return userProfileList;
     }
 
+    protected Hashtable getSystemProfileList() throws PortalException {
+        if(systemProfileList==null)
+            systemProfileList=this.getUserPreferencesDB().getSystemProfileList();
+	return systemProfileList;
+    }
 
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
         this.runtimeData=rd;
@@ -85,6 +89,8 @@ class ManageProfilesState extends BaseState {
                 }
                 // initialize internal edit state
                 CEditProfile epstate=new CEditProfile(this);
+		// clear cached profile list tables
+		userProfileList=systemProfileList=null;
                 epstate.setRuntimeData(rd);
                 internalState=epstate;
 
@@ -120,19 +126,12 @@ class ManageProfilesState extends BaseState {
         if(internalState!=null) {
             internalState.renderXML(out);
         } else {
-            if((userProfileList==null)||(systemProfileList==null)) {
-                if(userProfileList==null)
-                    userProfileList=this.getUserPreferencesDB().getUserProfileList(context.getUserLayoutManager().getPerson().getID());
-                if(systemProfileList==null)
-                    systemProfileList=this.getUserPreferencesDB().getSystemProfileList();
-            }
-
             Document doc = new org.apache.xerces.dom.DocumentImpl();
             Element edEl=doc.createElement("profiles");
             doc.appendChild(edEl);
             // fill out user-defined profiles
             Element uEl=doc.createElement("user");
-            for(Enumeration upe=userProfileList.elements(); upe.hasMoreElements(); ) {
+            for(Enumeration upe=this.getUserProfileList().elements(); upe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) upe.nextElement();
                 Element pEl=doc.createElement("profile");
                 pEl.setAttribute("id",Integer.toString(p.getProfileId()));
@@ -145,7 +144,7 @@ class ManageProfilesState extends BaseState {
             edEl.appendChild(uEl);
             // fill out system-defined profiles
             Element sEl=doc.createElement("system");
-            for(Enumeration spe=systemProfileList.elements(); spe.hasMoreElements(); ) {
+            for(Enumeration spe=this.getSystemProfileList().elements(); spe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) spe.nextElement();
                 Element pEl=doc.createElement("profile");
                 pEl.setAttribute("id",Integer.toString(p.getProfileId()));
@@ -191,12 +190,14 @@ class ManageProfilesState extends BaseState {
         }
     }
 
+    /*
+     * This state corresponds to an "edit profile" screen.
+     */
     protected class CEditProfile extends BaseState {
         ChannelRuntimeData runtimeData;
         protected ManageProfilesState context;
-        // profile currently being edited
         protected String currentMimeType;
-        protected UserProfile profile;
+        protected UserProfile profile;         // profile currently being edited
         protected boolean modified=false;
 
         public CEditProfile(ManageProfilesState context) {
@@ -246,6 +247,11 @@ class ManageProfilesState extends BaseState {
                         context.setState(null);
                     } else if(submit.equals("Save")) {
                         // save edit profile
+			if(profile.isSystemProfile())
+			    // only administrative users should be able to do this
+			    context.getUserPreferencesDB().setSystemProfile(profile);
+			else 
+			    context.getUserPreferencesDB().setUserProfile(context.getPerson().getID(),profile);
 
                         context.setState(null);
                     }
@@ -257,9 +263,12 @@ class ManageProfilesState extends BaseState {
                 } else if(action.equals("setMimeType")) {
                     String newType=runtimeData.getParameter("mimeType");
                     if(newType!=null) currentMimeType=newType;
-
                 } else if(action.equals("setStructureStylesheet")) {
+		    String sName=runtimeData.getParameter("structureStylesheet");
+		    if(sName!=null) profile.setStructureStylesheetName(sName);
                 } else if(action.equals("setThemeStylesheet")) {
+		    String sName=runtimeData.getParameter("themeStylesheet");
+		    if(sName!=null) profile.setThemeStylesheetName(sName);
                 }
             }
         }

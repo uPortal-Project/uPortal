@@ -65,9 +65,11 @@ class GPreferencesState extends BaseState {
     private Document userLayoutXML = null;
 
 
+
     ThemeStylesheetDescription tsd=null;
     StructureStylesheetDescription ssd=null;
     ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+    IUserLayoutDB uldb=null;
 
     // these state variables are kept for the use by the internalStates
     private static final String layoutID = "top"; // just a way to refer to the layout element since it doesn't have an ID attribute
@@ -103,23 +105,25 @@ class GPreferencesState extends BaseState {
     }
 
     public Document getUserLayoutXML() {
-        // should be getting this from the database
         if(userLayoutXML==null) {
-            userLayoutXML=context.getUserLayoutManager().getUserLayoutCopy();
+	    // get the layout from the database
+	    userLayoutXML=this.getUserLayoutDB().getUserLayout(context.getUserLayoutManager().getPerson().getID(),context.getCurrentUserPreferences().getProfile().getProfileId());
         }
         return userLayoutXML;
     }
 
     public UserLayoutManager getUserLayoutManager() { return context.getUserLayoutManager() ; }
 
-    public UserPreferences getUserPreferences() throws ResourceMissingException {
+    public IUserPreferencesDB getUserPreferencesDB() throws ResourceMissingException { 
         if(updb==null) updb=new UserPreferencesDBImpl();
         if(updb==null) throw new ResourceMissingException("","User preference database","Unable to obtain the list of user profiles, since the user preference database is currently down");
+	return updb;
+    }
 
+    public UserPreferences getUserPreferences() throws ResourceMissingException {
         if(up==null) {
-
             // load UserPreferences from the DB
-            up=updb.getUserPreferences(context.getUserLayoutManager().getPerson().getID(),this.getProfile());
+            up=this.getUserPreferencesDB().getUserPreferences(context.getUserLayoutManager().getPerson().getID(),this.getProfile());
             up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
         }
         return up;
@@ -128,6 +132,12 @@ class GPreferencesState extends BaseState {
     public ICoreStylesheetDescriptionDB getCoreStylesheetDescriptionDB() {
         if(csddb==null) csddb= new CoreStylesheetDescriptionDBImpl();
         return csddb;
+    }
+
+
+    public IUserLayoutDB getUserLayoutDB() {
+        if(uldb==null) uldb= new UserLayoutDBImpl();
+        return uldb;
     }
 
     public ThemeStylesheetDescription getThemeStylesheetDescription() {
@@ -654,12 +664,12 @@ class GPreferencesState extends BaseState {
             // changes in userLayoutXML are always related back to the UserLayoutManager.
             // (unless profile-specific layouts will be introduced)
             if(context.getUserLayoutManager().getCurrentProfile()==context.getProfile()) {
-                //		Logger.log(Logger.DEBUG,"CUserPreferences.GBrowseState::prepareSaveChanges() : changing current profile preferences.");
                 context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),context.getUserPreferences());
             } else {
                 // do a database save on the preferences
-                //		Logger.log(Logger.DEBUG,"CUserPreferences.GBrowseState::prepareSaveChanges() : changing preferences for another profile.");
+		context.getUserPreferencesDB().putUserPreferences(context.getUserLayoutManager().getPerson().getID(),context.getUserPreferences());
                 context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),null);
+
             }
         }
 
