@@ -140,7 +140,7 @@
               <folder ID="col05" priority="0" name="Column 1">
 		<channel ID="chan12" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
 		  <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
-		  <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+		  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
 		  <parameter value="on" name="cw_tidy"/>
 		  <parameter value="all" name="cw_passThrough"/>
 		  <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
@@ -151,7 +151,7 @@
               <folder ID="col06" priority="0" name="Column 2">
 		<channel ID="chan13" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
 		  <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
-		  <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+		  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
 		  <parameter value="on" name="cw_tidy"/>
 		  <parameter value="all" name="cw_passThrough"/>
 		  <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
@@ -332,14 +332,14 @@
         <column><name>PUB_ID</name><value>0</value></column>
         <column><name>APPROVED</name><value>0</value></column>
         <column><name>CHANNEL_XML</name><value><![CDATA[
-	  <channel ID="chan10" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
+	        <channel ID="chan10" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
             <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
-              <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
-              <parameter value="on" name="cw_tidy"/>
-              <parameter value="all" name="cw_passThrough"/>
-              <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
-              <parameter value="http://www.mun.ca/cc/portal/cw/num_info.html" name="cw_info"/>
-              <parameter value="http://www.mun.ca/cc/portal/cw/num_edit.html" name="cw_edit"/>
+            <parameter value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+            <parameter value="on" name="cw_tidy"/>
+            <parameter value="all" name="cw_passThrough"/>
+            <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
+            <parameter value="http://www.mun.ca/cc/portal/cw/num_info.html" name="cw_info"/>
+            <parameter value="http://www.mun.ca/cc/portal/cw/num_edit.html" name="cw_edit"/>
           </channel>
           ]]></value></column>
       </row>
