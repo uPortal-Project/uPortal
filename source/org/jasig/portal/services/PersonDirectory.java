@@ -297,8 +297,12 @@ public class PersonDirectory {
     java.util.Enumeration en = attribs.keys();
       while (en.hasMoreElements()) {
         String key = (String) en.nextElement();
-        String value = (String) attribs.get(key);
-        m_Person.setAttribute(key,value);
+        String value=null;
+        Object tvalue = attribs.get(key);
+        if (tvalue instanceof String)
+            value = (String) tvalue;
+        if (value!=null)
+            m_Person.setAttribute(key,value);
       }
   }
 
