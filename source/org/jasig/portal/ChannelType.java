@@ -53,18 +53,10 @@ public class ChannelType {
   /**
    * Constructs a channel type.
    * @param id the channel type ID
-   * @param javaClass the fully-qualifed java class name of the channel
-   * @param name the name of the channel type
-   * @param descr the description of the channel type
-   * @param cpdUri the path to the channel publishing document, an XML file ending in .cpd
    * @throws java.lang.Exception
    */
-  public ChannelType(int id, String javaClass, String name, String descr, String cpdUri) {
+  public ChannelType(int id) {
     this.id = id;
-    this.javaClass = javaClass;
-    this.name = name;
-    this.descr = descr;
-    this.cpdUri = cpdUri;
   }
 
   // Getter methods
@@ -75,7 +67,6 @@ public class ChannelType {
   public String getCpdUri() { return cpdUri; }
 
   // Setter methods
-  public void setId(int id) { this.id = id; }
   public void setJavaClass(String javaClass) { this.javaClass = javaClass; }
   public void setName(String name) { this.name = name; }
   public void setDescription(String descr) { this.descr = descr; }
