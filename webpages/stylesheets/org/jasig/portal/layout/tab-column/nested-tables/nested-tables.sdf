@@ -12,6 +12,10 @@
   <UPManagerClass>org.jasig.portal.channels.UserPreferences.GPreferencesState</UPManagerClass> 
  
   <parameters>
+  	<parameter name="skin">
+  		<defaultvalue>java</defaultvalue>
+  		<description>Design skin name</description>
+  	</parameter>
   </parameters>                                        
 
   <channelattributes>
