@@ -41,7 +41,7 @@
   <xsl:template match="layout">
     <html>
       <head>
-        <title>uPortal 2.1.2</title>
+        <title>uPortal 2.1.2+</title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
