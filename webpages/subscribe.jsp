@@ -31,8 +31,7 @@ else {
 
 </head>
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
+<% layoutBean.writeBodyTag (request, response, out); %>
 
 <%-- Header --%>
 <% session.setAttribute ("headerTitle", "Personalize Content"); %>
@@ -47,16 +46,8 @@ Click on a channel to preview.
 </form>
 
 <%
- try {
- ResultSet rs = subscribe.getChannels(request);
- while(rs.next()) {
- %>
- <a href="previewChannel.jsp?chan_id=<%=rs.getString("ID")%>"><%=rs.getString("TITLE")%></a><br>
- <%
- }
- subscribe.close();
- %>
-
+subscribe.getChannels(request, response, out);
+%>
 
 <%-- Finished and Cancel Changes buttons --%>
 <form>
@@ -65,17 +56,8 @@ Click on a channel to preview.
 </td></tr></table>
 </form>
 
-<%
- }
-  catch (Exception e) {
-    out.println("Subscriber:ERROR!");
-    out.print(e.getMessage());
-	 e.printStackTrace(System.err);
- } 
- }
-%>
-
 <jsp:include page="footer.jsp" flush="true" />
 
 </body>
 </html>
+<% } %>
