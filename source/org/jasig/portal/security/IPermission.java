@@ -1,5 +1,3 @@
-package org.jasig.portal.security;
-
 /**
  * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -35,9 +33,10 @@ package org.jasig.portal.security;
  *
  */
 
+package org.jasig.portal.security;
+
 import java.util.Date;
 import org.jasig.portal.AuthorizationException;
-
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
@@ -45,11 +44,31 @@ import org.jasig.portal.AuthorizationException;
  * @version $Revision$
  */
 public interface IPermission {
-
-  /**
+  /*
+    Activity names for Permisisons whose targets are Channels.
+  */
+  public String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
+  public String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  /*
+    Permisison types.  At present only 2, but that could change.
+  */
+  public String PERMISSION_TYPE_GRANT = "GRANT";
+  public String PERMISSION_TYPE_DENY = "DENY";
+  /*
+    A String representing the uPortal framework, used, for example, for
+    Permission.owner when the framework grants a Permission.
+  */
+  public String PORTAL_FRAMEWORK = "UP_FRAMEWORK";
+  /*
+    A String which, when concatentated with a channel id, represents a portal
+    channel.  Used, for example, for Permission.target when the portal framework
+    grants a Permission to perform some activity on a channel.
+  */
+  public String CHANNEL_PREFIX = "CHAN_ID.";    /**
    * Gets the activity associated with this <code>IPermission</code>.
    * @return String
    */
+
   public String getActivity ();
 
   /**

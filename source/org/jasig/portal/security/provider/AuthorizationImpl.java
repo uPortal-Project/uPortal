@@ -58,11 +58,8 @@ public class AuthorizationImpl implements IAuthorizationService {
     protected SmartCache groupMembersCache = new SmartCache(300);
     protected SmartCache permissionsCache = new SmartCache(300);
     protected Object permissionsCacheLock = new Object();
-    protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
-    protected String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
-    protected String PERIOD_STRING = ".";
-    protected String PORTAL_FRAMEWORK = "UP_FRAMEWORK";
 
+    protected String PERIOD_STRING = ".";
     private static AuthorizationImpl singleton;
   /**
    *
@@ -121,7 +118,8 @@ private void addToPermissionsCache(IPermission[] permissions, IAuthorizationPrin
  */
 public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws AuthorizationException
 {
-    return doesPrincipalHavePermission(principal, PORTAL_FRAMEWORK, CHANNEL_PUBLISHER_ACTIVITY, null);
+    return doesPrincipalHavePermission
+      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
 }
 /**
  * Answers if the principal has permission to RENDER this Channel.
@@ -145,9 +143,10 @@ throws AuthorizationException
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID)
 throws AuthorizationException
 {
-    String owner = PORTAL_FRAMEWORK;
-    String target = "CHAN_ID." + channelID;
-    return doesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, target);
+    String owner = IPermission.PORTAL_FRAMEWORK;
+    String target = IPermission.CHANNEL_PREFIX + channelID;
+    return doesPrincipalHavePermission
+      (principal, owner, IPermission.CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }
 /**
  * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
@@ -541,7 +540,7 @@ throws AuthorizationException
                 ( owner.equals(perms[i].getOwner()) ) 		&&
                 ( activity.equals(perms[i].getActivity()) )	&&
                 ( (target == null) || target.equals(perms[i].getTarget()) ) &&
-                ( ! perms[i].getType().equals("DENY") )
+                ( ! perms[i].getType().equals(IPermission.PERMISSION_TYPE_DENY) )
             );
         }
     }
