@@ -71,12 +71,12 @@ public class PortletStateManager {
 	
 	
     // The portlet control parameter names
-	static public final String ACTION = "uP_portlet_action";
-	static public final String MODE = "mode";
-	static public final String MULTI = "multi_";
-	static public final String PREV_MODE = "pmode";
-	static public final String PREV_STATE = "pstate";
-	static public final String STATE = "state";
+    public static final String ACTION = "uP_portlet_action";
+    public static final String MODE = "mode";
+    public static final String MULTI = "multi_";
+    public static final String PREV_MODE = "pmode";
+    public static String PREV_STATE = "pstate";
+    public static final String STATE = "state";
 	
 	public static final String UP_ROOT = "uP_root";
 	public static final String UP_TCATTR = "uP_tcattr";
@@ -237,20 +237,17 @@ public class PortletStateManager {
 	
 	
 	private static String encodeQueryString ( String text ) {
-		String result = CommonUtils.replaceText(text, "&","_and_");
-		result = CommonUtils.replaceText(result, "=","_eq_");
-		if ( UPFileSpec.PORTAL_URL_SEPARATOR.equals(".") )
-		 result = CommonUtils.replaceText(result, "\\.","__");
-		else
-		 result = CommonUtils.replaceText(result, UPFileSpec.PORTAL_URL_SEPARATOR,"__"); 
+		String result = CommonUtils.replaceText(text, "&", "_and_");
+		result = CommonUtils.replaceText(result, "=", "_eq_");
+		result = CommonUtils.replaceText(result, UPFileSpec.PORTAL_URL_SEPARATOR, "__"); 
 		return result;
 	}
 
 
 	private static String decodeQueryString ( String text ) {
-		String result = CommonUtils.replaceText(text, "_and_","&");
-		result = CommonUtils.replaceText(result, "_eq_","=");
-		result = CommonUtils.replaceText(result, "__",UPFileSpec.PORTAL_URL_SEPARATOR);
+		String result = CommonUtils.replaceText(text, "_and_", "&");
+		result = CommonUtils.replaceText(result, "_eq_", "=");
+		result = CommonUtils.replaceText(result, "__", UPFileSpec.PORTAL_URL_SEPARATOR);
 		return result;
 	}		
 	
