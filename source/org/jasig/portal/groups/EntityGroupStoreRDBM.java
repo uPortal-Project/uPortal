@@ -135,24 +135,24 @@ public IEntityGroup find(String groupID) throws GroupsException
     java.sql.Connection conn = null;
     try
     {
-	    conn = RdbmServices.getConnection();
+            conn = RdbmServices.getConnection();
             String sql = getFindGroupSql();
-	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
-	    try
-	    {
-		    ps.setString(1, groupID);
+            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, groupID);
                     LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.find(): " + ps);
-		    java.sql.ResultSet rs = ps.executeQuery();
-		    try
-		    {
-			    while (rs.next())
-			        { ug = instanceFromResultSet(rs); }
-		    }
-		    finally
-		        { rs.close(); }
-	    }
-	    finally
-	        { ps.close(); }
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                                { ug = instanceFromResultSet(rs); }
+                    }
+                    finally
+                        { rs.close(); }
+            }
+            finally
+                { ps.close(); }
     }
     catch (Exception e)
     {
@@ -169,36 +169,39 @@ public IEntityGroup find(String groupID) throws GroupsException
  * @return java.util.Iterator
  * @param String memberKey
  */
-private java.util.Iterator findContainingGroups(String memberKey, int type) throws GroupsException
+private java.util.Iterator findContainingGroups(String memberKey, int type, boolean isGroup)
+throws GroupsException
 {
     java.sql.Connection conn = null;
     Collection groups = new ArrayList();
     IEntityGroup eg = null;
+    String groupOrEntity = isGroup ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
 
     try
     {
-	    conn = RdbmServices.getConnection();
+            conn = RdbmServices.getConnection();
             String sql = getFindContainingGroupsSql();
-	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
-	    try
-	    {
-		    ps.setString(1, memberKey);
-		    ps.setInt(2, type);
+            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, memberKey);
+                    ps.setInt(2, type);
+                    ps.setString(3, groupOrEntity);
                     LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findContainingGroups(): " + ps);
-		    java.sql.ResultSet rs = ps.executeQuery();
-		    try
-		    {
-			    while (rs.next())
-			    {
-				    eg = instanceFromResultSet(rs);
-				    groups.add(eg);
-			    }
-		    }
-		    finally
-		        { rs.close(); }
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                            {
+                                    eg = instanceFromResultSet(rs);
+                                    groups.add(eg);
+                            }
+                    }
+                    finally
+                        { rs.close(); }
         }
-	    finally
-	        { ps.close(); }
+            finally
+                { ps.close(); }
     }
     catch (Exception e)
     {
@@ -220,7 +223,8 @@ public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsExc
 {
     String memberKey = gm.getKey();
     Integer type = EntityTypes.getEntityTypeID(gm.getEntityType());
-    return findContainingGroups(memberKey, type.intValue());
+    boolean isGroup = gm.isGroup();
+    return findContainingGroups(memberKey, type.intValue(), isGroup);
 }
 /**
  * Find the groups with this creatorID.
@@ -235,25 +239,25 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
 
     try
     {
-	    conn = RdbmServices.getConnection();
+            conn = RdbmServices.getConnection();
             String sql = getFindGroupsByCreatorSql();
-	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
         try
         {
-	        ps.setString(1, creatorID);
+                ps.setString(1, creatorID);
                 LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findGroupsByCreator(): " + ps);
-	        ResultSet rs = ps.executeQuery();
-	        try
-	        {
-		        while (rs.next())
-		        {
-			        eg = instanceFromResultSet(rs);
-			        groups.add(eg);
-		        }
-	        }
-	        finally
-	            { rs.close(); }
-		}
+                ResultSet rs = ps.executeQuery();
+                try
+                {
+                        while (rs.next())
+                        {
+                                eg = instanceFromResultSet(rs);
+                                groups.add(eg);
+                        }
+                }
+                finally
+                    { rs.close(); }
+                }
         finally
             { ps.close(); }
     }
@@ -281,27 +285,27 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
 
     try
     {
-	    conn = RdbmServices.getConnection();
+            conn = RdbmServices.getConnection();
             String sql = getFindMemberGroupsSql();
-	    RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
-	    try
-	    {
-		    ps.setString(1, group.getKey());
+            RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, group.getKey());
                     LogService.log (LogService.DEBUG, "EntityGroupStoreRDBM.findMemberGroups(): " + ps);
-		    java.sql.ResultSet rs = ps.executeQuery();
-		    try
-		    {
-			    while (rs.next())
-			    {
-				    eg = instanceFromResultSet(rs);
-				    groups.add(eg);
-			    }
-			}
-		    finally
-		        { rs.close(); }
-	    }
-	    finally
-	        { ps.close(); }
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                            {
+                                    eg = instanceFromResultSet(rs);
+                                    groups.add(eg);
+                            }
+                        }
+                    finally
+                        { rs.close(); }
+            }
+            finally
+                { ps.close(); }
     }
     catch (Exception sqle)
         {
@@ -321,18 +325,18 @@ private static java.lang.String getAllGroupColumns()
 
     if ( allGroupColumns == null )
     {
-	    StringBuffer buff = new StringBuffer(100);
-	    buff.append(GROUP_ID_COLUMN);
-	    buff.append(", ");
-	    buff.append(GROUP_CREATOR_COLUMN);
-	    buff.append(", ");
-	    buff.append(GROUP_TYPE_COLUMN);
-	    buff.append(", ");
-	    buff.append(GROUP_NAME_COLUMN);
-	    buff.append(", ");
-	    buff.append(GROUP_DESCRIPTION_COLUMN);
+            StringBuffer buff = new StringBuffer(100);
+            buff.append(GROUP_ID_COLUMN);
+            buff.append(", ");
+            buff.append(GROUP_CREATOR_COLUMN);
+            buff.append(", ");
+            buff.append(GROUP_TYPE_COLUMN);
+            buff.append(", ");
+            buff.append(GROUP_NAME_COLUMN);
+            buff.append(", ");
+            buff.append(GROUP_DESCRIPTION_COLUMN);
 
-	    allGroupColumns = buff.toString();
+            allGroupColumns = buff.toString();
     }
     return allGroupColumns;
 }
@@ -344,19 +348,19 @@ private static java.lang.String getAllGroupColumnsWithTableAlias()
 
     if ( allGroupColumnsWithTableAlias == null )
     {
-	    StringBuffer buff = new StringBuffer(100);
-	    buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
-	    buff.append(", ");
-	    buff.append(prependGroupTableAlias(GROUP_CREATOR_COLUMN));
-	    buff.append(", ");
-	    buff.append(prependGroupTableAlias(GROUP_TYPE_COLUMN));
-	    buff.append(", ");
-	    buff.append(prependGroupTableAlias(GROUP_NAME_COLUMN));
-	    buff.append(", ");
-	    buff.append(prependGroupTableAlias(GROUP_DESCRIPTION_COLUMN));
+            StringBuffer buff = new StringBuffer(100);
+            buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
+            buff.append(", ");
+            buff.append(prependGroupTableAlias(GROUP_CREATOR_COLUMN));
+            buff.append(", ");
+            buff.append(prependGroupTableAlias(GROUP_TYPE_COLUMN));
+            buff.append(", ");
+            buff.append(prependGroupTableAlias(GROUP_NAME_COLUMN));
+            buff.append(", ");
+            buff.append(prependGroupTableAlias(GROUP_DESCRIPTION_COLUMN));
 
-	    allGroupColumnsWithTableAlias = buff.toString();
-	}
+            allGroupColumnsWithTableAlias = buff.toString();
+        }
     return allGroupColumnsWithTableAlias;
 }
 /**
@@ -366,15 +370,15 @@ private static java.lang.String getAllMemberColumns()
 {
     if ( allMemberColumns == null )
     {
-	    StringBuffer buff = new StringBuffer(100);
+            StringBuffer buff = new StringBuffer(100);
 
-	    buff.append(MEMBER_GROUP_ID_COLUMN);
-	    buff.append(", ");
-	    buff.append(MEMBER_MEMBER_KEY_COLUMN);
-	    buff.append(", ");
-	    buff.append(MEMBER_IS_GROUP_COLUMN);
+            buff.append(MEMBER_GROUP_ID_COLUMN);
+            buff.append(", ");
+            buff.append(MEMBER_MEMBER_KEY_COLUMN);
+            buff.append(", ");
+            buff.append(MEMBER_IS_GROUP_COLUMN);
 
-	    allMemberColumns = buff.toString();
+            allMemberColumns = buff.toString();
     }
     return allMemberColumns;
 }
@@ -451,27 +455,30 @@ private static java.lang.String getFindContainingGroupsSql()
 {
     if ( findContainingGroupsSql == null)
     {
-	    StringBuffer buff = new StringBuffer(500);
-	    buff.append("SELECT ");
-	    buff.append(getAllGroupColumnsWithTableAlias());
-	    buff.append(" FROM ");
-	    buff.append(GROUP_TABLE + " " + GROUP_TABLE_ALIAS);
-	    buff.append(", ");
-	    buff.append(MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS);
-	    buff.append(" WHERE ");
-	    buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
-	    buff.append(" = ");
-	    buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
-	    buff.append(" AND ");
-	    buff.append(prependMemberTableAlias(MEMBER_MEMBER_KEY_COLUMN));
-	    buff.append(" = ? AND ");
-	    buff.append(prependGroupTableAlias(GROUP_TYPE_COLUMN));
-	    buff.append(" = ? ");
+        StringBuffer buff = new StringBuffer(500);
+        buff.append("SELECT ");
+        buff.append(getAllGroupColumnsWithTableAlias());
+        buff.append(" FROM ");
+        buff.append(GROUP_TABLE + " " + GROUP_TABLE_ALIAS);
+        buff.append(", ");
+        buff.append(MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS);
+        buff.append(" WHERE ");
+        buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
+        buff.append(" = ");
+        buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
+        buff.append(" AND ");
+        buff.append(prependMemberTableAlias(MEMBER_MEMBER_KEY_COLUMN));
+        buff.append(" = ? AND ");
+        buff.append(prependGroupTableAlias(GROUP_TYPE_COLUMN));
+        buff.append(" = ? AND ");
+        buff.append(prependMemberTableAlias(MEMBER_IS_GROUP_COLUMN));
+        buff.append(" = ? ");
 
-	    findContainingGroupsSql = buff.toString();
+       findContainingGroupsSql = buff.toString();
     }
     return findContainingGroupsSql;
 }
+
 /**
  * @return java.lang.String
  */
@@ -479,16 +486,16 @@ private static java.lang.String getFindGroupsByCreatorSql()
 {
     if ( findGroupsByCreatorSql == null )
     {
-	    StringBuffer buff = new StringBuffer(200);
-	    buff.append("SELECT ");
-	    buff.append(getAllGroupColumns());
-	    buff.append(" FROM ");
-	    buff.append(GROUP_TABLE);
-	    buff.append(" WHERE ");
-	    buff.append(GROUP_CREATOR_COLUMN);
-	    buff.append(" = ? ");
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("SELECT ");
+            buff.append(getAllGroupColumns());
+            buff.append(" FROM ");
+            buff.append(GROUP_TABLE);
+            buff.append(" WHERE ");
+            buff.append(GROUP_CREATOR_COLUMN);
+            buff.append(" = ? ");
 
-	    findGroupsByCreatorSql = buff.toString();
+            findGroupsByCreatorSql = buff.toString();
     }
     return findGroupsByCreatorSql;
 }
@@ -500,16 +507,16 @@ private static java.lang.String getFindGroupSql()
 
     if ( findGroupSql == null )
     {
-	    StringBuffer buff = new StringBuffer(200);
-	    buff.append("SELECT ");
-	    buff.append(getAllGroupColumns());
-	    buff.append(" FROM ");
-	    buff.append(GROUP_TABLE);
-	    buff.append(" WHERE ");
-	    buff.append(GROUP_ID_COLUMN);
-	    buff.append(" = ? ");
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("SELECT ");
+            buff.append(getAllGroupColumns());
+            buff.append(" FROM ");
+            buff.append(GROUP_TABLE);
+            buff.append(" WHERE ");
+            buff.append(GROUP_ID_COLUMN);
+            buff.append(" = ? ");
 
-	    findGroupSql = buff.toString();
+            findGroupSql = buff.toString();
     }
     return findGroupSql;
 }
@@ -520,13 +527,13 @@ private static java.lang.String getFindMemberGroupSql()
 {
     if ( findMemberGroupSql == null )
     {
-	    StringBuffer buff = new StringBuffer(getFindMemberGroupsSql());
-	    buff.append("AND ");
-	    buff.append(GROUP_TABLE_ALIAS);
-	    buff.append(".");
-	    buff.append(GROUP_NAME_COLUMN);
-	    buff.append(" = ?");
-	    findMemberGroupSql = buff.toString();
+            StringBuffer buff = new StringBuffer(getFindMemberGroupsSql());
+            buff.append("AND ");
+            buff.append(GROUP_TABLE_ALIAS);
+            buff.append(".");
+            buff.append(GROUP_NAME_COLUMN);
+            buff.append(" = ?");
+            findMemberGroupSql = buff.toString();
     }
     return findMemberGroupSql;
 }
@@ -537,27 +544,27 @@ private static java.lang.String getFindMemberGroupsSql()
 {
     if (findMemberGroupsSql == null)
     {
-	    StringBuffer buff = new StringBuffer(500);
-	    buff.append("SELECT ");
-	    buff.append(getAllGroupColumnsWithTableAlias());
-	    buff.append(" FROM ");
-	    buff.append(GROUP_TABLE + " " + GROUP_TABLE_ALIAS);
-	    buff.append(", ");
-	    buff.append(MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS);
-	    buff.append(" WHERE ");
-	    buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
-	    buff.append(" = ");
-	    buff.append(prependMemberTableAlias(MEMBER_MEMBER_KEY_COLUMN));
-	    buff.append(" AND ");
-	    buff.append(prependMemberTableAlias(MEMBER_IS_GROUP_COLUMN));
-	    buff.append(" = '");
-	    buff.append(MEMBER_IS_GROUP);
-	    buff.append("' AND ");
-	    buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
-	    buff.append(" = ? ");
+            StringBuffer buff = new StringBuffer(500);
+            buff.append("SELECT ");
+            buff.append(getAllGroupColumnsWithTableAlias());
+            buff.append(" FROM ");
+            buff.append(GROUP_TABLE + " " + GROUP_TABLE_ALIAS);
+            buff.append(", ");
+            buff.append(MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS);
+            buff.append(" WHERE ");
+            buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
+            buff.append(" = ");
+            buff.append(prependMemberTableAlias(MEMBER_MEMBER_KEY_COLUMN));
+            buff.append(" AND ");
+            buff.append(prependMemberTableAlias(MEMBER_IS_GROUP_COLUMN));
+            buff.append(" = '");
+            buff.append(MEMBER_IS_GROUP);
+            buff.append("' AND ");
+            buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
+            buff.append(" = ? ");
 
-	    findMemberGroupsSql = buff.toString();
-	}
+            findMemberGroupsSql = buff.toString();
+        }
 
     return findMemberGroupsSql;
 }
@@ -568,14 +575,14 @@ private static java.lang.String getInsertGroupSql()
 {
     if ( insertGroupSql == null )
     {
-	    StringBuffer buff = new StringBuffer(200);
-	    buff.append("INSERT INTO ");
-	    buff.append(GROUP_TABLE);
-	    buff.append(" (");
-	    buff.append(getAllGroupColumns());
-	    buff.append(") VALUES (?, ?, ?, ?, ?)");
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("INSERT INTO ");
+            buff.append(GROUP_TABLE);
+            buff.append(" (");
+            buff.append(getAllGroupColumns());
+            buff.append(") VALUES (?, ?, ?, ?, ?)");
 
-	    insertGroupSql = buff.toString();
+            insertGroupSql = buff.toString();
     }
     return insertGroupSql;
 }
@@ -586,14 +593,14 @@ private static java.lang.String getInsertMemberSql()
 {
     if ( insertMemberSql == null )
     {
-	    StringBuffer buff = new StringBuffer(200);
-	    buff.append("INSERT INTO ");
-	    buff.append(MEMBER_TABLE);
-	    buff.append(" (");
-	    buff.append(getAllMemberColumns());
-	    buff.append(") VALUES (?, ?, ? )");
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("INSERT INTO ");
+            buff.append(MEMBER_TABLE);
+            buff.append(" (");
+            buff.append(getAllMemberColumns());
+            buff.append(") VALUES (?, ?, ? )");
 
-	    insertMemberSql = buff.toString();
+            insertMemberSql = buff.toString();
     }
     return insertMemberSql;
 }
@@ -612,22 +619,22 @@ private static java.lang.String getUpdateGroupSql()
 {
     if ( updateGroupSql == null )
     {
-	    StringBuffer buff = new StringBuffer(200);
-	    buff.append("UPDATE ");
-	    buff.append(GROUP_TABLE);
-	    buff.append(" SET ");
-	    buff.append(GROUP_CREATOR_COLUMN);
-	    buff.append(" = ?, ");
-	    buff.append(GROUP_TYPE_COLUMN);
-	    buff.append(" = ?, ");
-	    buff.append(GROUP_NAME_COLUMN);
-	    buff.append(" = ?, ");
-	    buff.append(GROUP_DESCRIPTION_COLUMN);
-	    buff.append(" = ? WHERE ");
-	    buff.append(GROUP_ID_COLUMN);
-	    buff.append(" = ? ");
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("UPDATE ");
+            buff.append(GROUP_TABLE);
+            buff.append(" SET ");
+            buff.append(GROUP_CREATOR_COLUMN);
+            buff.append(" = ?, ");
+            buff.append(GROUP_TYPE_COLUMN);
+            buff.append(" = ?, ");
+            buff.append(GROUP_NAME_COLUMN);
+            buff.append(" = ?, ");
+            buff.append(GROUP_DESCRIPTION_COLUMN);
+            buff.append(" = ? WHERE ");
+            buff.append(GROUP_ID_COLUMN);
+            buff.append(" = ? ");
 
-	    updateGroupSql = buff.toString();
+            updateGroupSql = buff.toString();
     }
     return updateGroupSql;
 }
@@ -720,21 +727,21 @@ private void primAdd(IEntityGroup group) throws SQLException, GroupsException
         java.sql.PreparedStatement ps = conn.prepareStatement(getInsertGroupSql());
         try
         {
-	        Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
-	        ps.setString(1, group.getKey());
-	        ps.setString(2, group.getCreatorID());
-	        ps.setInt   (3, typeID.intValue());
-	        ps.setString(4, group.getName());
-	        ps.setString(5, group.getDescription());
+                Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+                ps.setString(1, group.getKey());
+                ps.setString(2, group.getCreatorID());
+                ps.setInt   (3, typeID.intValue());
+                ps.setString(4, group.getName());
+                ps.setString(5, group.getDescription());
 
-	        int rc = ps.executeUpdate();
+                int rc = ps.executeUpdate();
 
-	        if ( rc != 1 )
-	        {
-		        String errString = "Problem adding " + group;
-		        LogService.log (LogService.ERROR, errString);
-		        throw new GroupsException(errString);
-		  }
+                if ( rc != 1 )
+                {
+                        String errString = "Problem adding " + group;
+                        LogService.log (LogService.ERROR, errString);
+                        throw new GroupsException(errString);
+                  }
         }
         finally
             { ps.close(); }
@@ -770,9 +777,9 @@ private void primDelete(IEntityGroup group) throws SQLException
         setAutoCommit(conn, false);
         try
         {
-	        stmnt.executeUpdate(deleteMembershipSql);
-	        stmnt.executeUpdate(deleteGroupSql);
-	    }
+                stmnt.executeUpdate(deleteMembershipSql);
+                stmnt.executeUpdate(deleteGroupSql);
+            }
         finally
             { stmnt.close(); }
         commit(conn);
