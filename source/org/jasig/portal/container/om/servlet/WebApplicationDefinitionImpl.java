@@ -72,8 +72,19 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
     private ListenerListImpl listeners;
     private ServletDefinitionList servletDefinitions;
     private ServletMappingListImpl servletMappings;
+    private SessionConfigImpl sessionConfig;
+    private MimeMappingListImpl mimeMappings;
+    private WelcomeFileListImpl welcomeFiles;
+    private ErrorPageListImpl errorPages;
     private TagLibListImpl tagLibs;
+    private ResourceEnvRefListImpl resourceEnvRefs;
+    private ResourceRefListImpl resourceRefs;
+    private SecurityConstraintImpl[] securityConstraints;
+    private LoginConfigImpl loginConfig;
     private SecurityRoleSet securityRoles;
+    private EnvEntryImpl[] envEntries;
+    private EjbRefImpl[] ejbRefs;
+    private EjbLocalRefImpl[] ejbLocalRefs;
     private String contextPath;        
     
     public WebApplicationDefinitionImpl() {
@@ -199,6 +210,38 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.servletMappings = servletMappings;
     }
     
+    public SessionConfigImpl getSessionConfig() {
+        return this.sessionConfig;
+    }
+    
+    public void setSessionConfig(SessionConfigImpl sessionConfig) {
+        this.sessionConfig = sessionConfig;
+    }
+    
+    public MimeMappingListImpl getMimeMappings() {
+        return this.mimeMappings;
+    }
+    
+    public void setMimeMappings(MimeMappingListImpl mimeMappings) {
+        this.mimeMappings = mimeMappings;
+    }
+    
+    public WelcomeFileListImpl getWelcomeFiles() {
+        return this.welcomeFiles;
+    }
+    
+    public void setWelcomeFiles(WelcomeFileListImpl welcomeFiles) {
+        this.welcomeFiles = welcomeFiles;
+    }
+    
+    public ErrorPageListImpl getErrorPages() {
+        return this.errorPages;
+    }
+    
+    public void setErrorPages(ErrorPageListImpl errorPages) {
+        this.errorPages = errorPages;
+    }
+    
     public TagLibListImpl getTagLibs() {
         return this.tagLibs;
     }
@@ -207,6 +250,38 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.tagLibs = tagLibs;
     }
     
+    public ResourceEnvRefListImpl getResourceEnvRefs() {
+        return this.resourceEnvRefs;
+    }
+    
+    public void setResourceEnvRefs(ResourceEnvRefListImpl resourceEnvRefs) {
+        this.resourceEnvRefs = resourceEnvRefs;
+    }
+    
+    public ResourceRefListImpl getResourceRefs() {
+        return this.resourceRefs;
+    }
+    
+    public void setResourceRefs(ResourceRefListImpl resourceRefs) {
+        this.resourceRefs = resourceRefs;
+    }   
+     
+    public SecurityConstraintImpl[] getSecurityConstraints() {
+        return this.securityConstraints;
+    }
+    
+    public void setSecurityConstraints(SecurityConstraintImpl[] securityConstraints) {
+        this.securityConstraints = securityConstraints;
+    } 
+    
+    public LoginConfigImpl getLoginConfig() {
+        return loginConfig;
+    }
+
+    public void setLoginConfig(LoginConfigImpl loginConfig) {
+        this.loginConfig = loginConfig;
+    }    
+     
     public SecurityRoleSet getSecurityRoles() {
         return this.securityRoles;
     }
@@ -218,5 +293,29 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
     public void setContextRoot(String contextPath) {
         this.contextPath = contextPath;
     }
+    
+    public EnvEntryImpl[] getEnvEntries() {
+        return this.envEntries;
+    }
+    
+    public void setEnvEntries(EnvEntryImpl[] envEntries) {
+        this.envEntries = envEntries;
+    } 
+    
+    public EjbRefImpl[] getEjbRefs() {
+        return this.ejbRefs;
+    }
+    
+    public void setEjbRefs(EjbRefImpl[] ejbRefs) {
+        this.ejbRefs = ejbRefs;
+    } 
+
+    public EjbLocalRefImpl[] getEjbLocalRefs() {
+        return this.ejbLocalRefs;
+    }
+    
+    public void setEjbLocalRefs(EjbLocalRefImpl[] ejbLocalRefs) {
+        this.ejbLocalRefs = ejbLocalRefs;
+    } 
 
 }
