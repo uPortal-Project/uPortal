@@ -42,7 +42,7 @@ package org.jasig.portal;
  */
 public class ChannelCategory {
 
-  int id;
+  String id;
   String name;
   String descr;
   int creatorId;
@@ -50,12 +50,12 @@ public class ChannelCategory {
   /**
    * Constructs a ChannelCategory
    */
-  public ChannelCategory(int id) {
+  public ChannelCategory(String id) {
     this.id = id;
   }
 
   // Getter methods
-  public int getId() { return id; }
+  public String getId() { return id; }
   public String getName() { return name; }
   public String getDescription() { return descr; }
   public int getCreatorId() { return creatorId; }

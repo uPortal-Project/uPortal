@@ -165,7 +165,7 @@ public interface IChannelRegistryStore {
    * @return channelCategory the channel category
    * @throws java.lang.Exception
    */
-  public ChannelCategory getChannelCategory(int channelCategoryId) throws Exception;
+  public ChannelCategory getChannelCategory(String channelCategoryId) throws Exception;
 
   /**
    * Gets top level channel category

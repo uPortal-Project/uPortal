@@ -468,12 +468,13 @@ public class ChannelRegistryManager {
     for (int i = 0; i < categoryIDs.length; i++) {
       categoryIDs[i] = categoryIDs[i].startsWith("cat") ? categoryIDs[i].substring(3) : categoryIDs[i];
 
+      /*
 // de 11/21/02:
       String catKey = GroupService.parseLocalKey(categoryIDs[i]);
       int iCatID = Integer.parseInt(catKey);
 //    int iCatID = Integer.parseInt(categoryIDs[i]);
-
-
+  */
+      String iCatID = categoryIDs[i];
       ChannelCategory category = crs.getChannelCategory(iCatID);
       crs.addChannelToCategory(channelDef, category);
     }
