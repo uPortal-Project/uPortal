@@ -1,0 +1,455 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE article PUBLIC "-//Norman Walsh//DTD DocBk XML V3.1.7//EN"
+  "http://nwalsh.com/docbook/xml/3.1.7/docbookx.dtd">
+
+  <!--
+   Author:   Bill Brooks
+   Filename: uPortal-FAQ.xml
+   Creation: Tue Aug 8 12:00:06 PDT 2000
+   Revision: $Revision$ 
+   Language: XML 1.0 (DocBook XML DTD v3.1.7)
+   Purpose: Frequently Asked Questions about JA-SIG uPortal
+   $Id$
+   -->
+
+<article status="draft" class="techreport">
+  <artheader>
+    <author>
+      <firstname>Bill</firstname>
+      <surname>Brooks</surname>
+      <affiliation>
+     <orgname>California Polytechnic State University</orgname>
+          <orgdiv>Application &#38; Information Management</orgdiv>
+      </affiliation>
+    </author>
+
+     <date>September 21, 2000</date>
+
+     <title>Frequently Asked Questions about JA-SIG's uPortal</title>
+  <!--
+     <revhistory>
+        <revision>
+           <revnumber>0.1</revnumber>
+           <date>September 21, 2000</date>
+           <revremark>Baselined</revremark>
+        </revision>
+     </revhistory>
+   -->
+  </artheader>
+
+  <sect1>
+    <title>FAQ Administration</title>
+
+    <qandaset>
+       <qandaentry>
+          <question>
+             <para>What is this document??</para>
+          </question>
+          <answer>
+             <para>This Freqently Asked Questions (FAQ) list will
+             attempt to answer some of the most common questions
+             relating to uPortal.  Although this FAQ contains some
+             technical information, it is best used as an introduction
+             to uPortal and not a comprehensive reference document.
+             See the references section, below, for a comprehensive
+             list of uPortal resources.</para>
+          </answer>
+       </qandaentry>
+       <qandaentry>
+          <question>
+             <para>Who maintains this FAQ?</para>
+          </question>
+          <answer>
+             <para>This FAQ is maintained by Bill Brooks
+             &#60;wbrooks@calpoly.edu&#62; with help from other active
+             participants in the uPortal development effort. Questions
+             (and answers), comments, corrections and contributions
+             are highly encouraged!</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>How can I contribute to this FAQ?</para>
+          </question>
+          <answer>
+             <para>You can send your contributions, suggestions for
+             improvement, etc to Bill via e-mail. We're discouraging
+             people from modifying the FAQ directly.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Where can this FAQ be found on the World-Wide Web?</para>
+          </question>
+          <answer>
+             <para>This FAQ will eventually be posted on the JA-SIG
+             website, located at <ulink
+             url="http://www.ja-sig.org/">http://www.ja-sig.org/</ulink>
+             The latest version can always be found in the docs/
+             directory of the uPortal CVS repository. See the JA-SIG
+             web site for details. </para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+  <sect1>
+    <title>Deploying The uPortal Framework</title>
+
+    <qandaset>
+       <qandaentry>
+          <question>
+             <para>What kind of java expertise is necessary to
+             implement uPortal?</para>
+          </question>
+          <answer>
+             <para>Foo.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Will uPortal run on all platforms?</para>
+          </question>
+          <answer>
+             <para>Bar.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>What differentiates uPortal from other portal solutions?</para>
+          </question>
+          <answer>
+             <para>Baz.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Does uPortal support single-sign on?</para>
+          </question>
+          <answer>
+             <para>Baz.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Does uPortal support LDAP authentication?</para>
+          </question>
+          <answer>
+             <para>Baz.</para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+  <sect1>
+    <title>Developing content for uPortal</title>
+
+    <qandaset>
+       <qandaentry>
+          <question>
+             <para>What kind of expertise is necessary to
+             develop content and/or applications for use with uPortal?</para>
+          </question>
+          <answer>
+             <para>Foo.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>My university has a large number of legacy
+             applications that we want to provide access to from the
+             portal. How can I accomplish this?</para>
+          </question>
+          <answer>
+             <para>Bar.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para></para>
+          </question>
+          <answer>
+             <para>Baz.</para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+  <sect1>
+    <title>Colophon</title>
+
+    <qandaset>
+       <qandaentry>
+          <question>
+             <para>How was this FAQ produced?</para>
+          </question>
+          <answer>
+
+             <para>The FAQ document was primarily written with GNU
+             EMACS, version 20.3.1, on a no-name 100 Mhz Pentium PC
+             clone running RedHat Linux 6.2.</para>
+
+             <para>The source code is an XML document using tags
+             defined in <ulink
+             url="http://www.docbook.org/xml/index.html">The DocBook
+             XML DTD.</ulink> DocBook is an open, public,
+             <foreignphrase>de jure</foreignphrase> industry-standard
+             DTD for software documentation created and promulgated by
+             OASIS, <ulink url="http://www.oasis-open.org/">The
+             Organization for the Advancement of Structured
+             Information Standards</ulink>. Using DocBook allows us to
+             be platform and application independant, as well as
+             facilitate the distribution of the FAQ in multiple
+             formats, most notably <ulink
+             url="http://partners.adobe.com/asn/developer/technotes.html#acrobat-pdf">PDF</ulink>
+             and <ulink
+             url="http://www.w3.org/MarkUp/">HTML</ulink>.</para>
+
+             <para>In order to produce web pages, we use The Apache
+             Group's <ulink
+             url="http://xml.apache.org/xalan/index.html">Xalan-J</ulink>
+             Java-based XSLT processor in concert with Norm Walsh's
+             <ulink
+             url="http://www.nwalsh.com/docbook/xsl/index.html">
+             DocBook XSL stylesheets</ulink> to transform the XML
+             source into HTML. In JA-SIG, we drink the
+             Kool-Aid!</para>
+
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Why can't you just use Microsoft Word
+             <filename>.doc</filename> files?</para>
+          </question>
+          <answer>
+
+             <para>Three reasons: Microsoft .doc files are not
+             portable, the file format is proprietary, and the format
+             changes often and in highly undocumented and incompatible
+             ways.</para>
+
+             <para>Microsoft Word .doc files are inherently
+             non-portable because they are only designed to be read
+             and modified by Microsoft Word or other programs in the
+             Microsoft Office Suite. Since Word is not available for
+             all the platforms supported by uPortal, we choose not to
+             use it so as to not hinder the use and deployment of
+             uPortal on platforms which do not have a version of MS
+             Word available for them. A sizeable portion of the
+             members of JA-SIG use platforms that do not have a
+             version of Word available for them as their primary
+             computing platform, for both development and
+             deployment.</para>
+
+             <para>The Word file format is proprietary to Microsoft
+             and certain aspects of it are patented, which would
+             prevent JA-SIG developers from developing and
+             distributing tools that use it free of charge. Microsoft
+             does make libraries for reading and writing .doc files
+             available to third parties, but those libraries are only
+             available for Microsoft operating systems and compilers
+             and thus are inherently non-portable. </para>
+
+             <para>The .doc file format changes rapidly, sometimes
+             with every new version of Microsoft Office and/or
+             Word. Some versions aren't even completely portable
+             across different versions of MS Word and to non-Windows
+             operating systems with a version of MS Word
+             available. Steering clear of .doc files completely allows
+             us to avoid dictating which specific version of MS Word
+             readers of our documents must use. </para>
+
+          </answer>
+       </qandaentry>
+
+
+       <qandaentry>
+          <question>
+             <para>What's so great about DocBook?</para>
+          </question>
+          <answer>
+
+             <para>There are at least three great reasons for us to
+             use DocBook: The document files are portable, the files
+             interoperate with tools from multiple vendors and the
+             process for changing the set of defined tags is open and
+             well-publicized.</para>
+
+             <para>DocBook files are portable because they are simply
+             normal text files with tags marking up the data or prose.
+             Any operating system that supports the ISO standards for
+             text, including Unicode, can successfully host a DocBook
+             file.</para>
+
+             <para>DocBook files can be created, displayed and
+             modified by any tool that can process XML. In addition to
+             the myriad of commercial tools available on the market
+             for processing XML, there are several free and/or
+             open-source tools available for use with XML
+             documents. An important thing to keep in mind is that
+             these tools interoperate, that is, you can use one tool
+             to create a DocBook file, use a tool from a completely
+             different source to process it and use yet another to
+             display it, with no loss of fidelity due to
+             translation. </para>
+
+             <para>The DocBook tag set changes with time, but the
+             changes are publicized by OASIS so that users and vendors
+             can prepare for them.  The rules for making such changes
+             are well-publicized and specific. For example, minor
+             releases of the DocBook can add to the markup model, but
+             not change it in a backward-incompatible way. Major
+             releases can introduce backwardly-incompatible changes,
+             but those changes must be announced in the previous
+             release, which must pre-date the new version by at least
+             one year. Finally, OASIS makes every version of the
+             DocBook Document Type Definition available for free on
+             the World-Wide Web.</para>
+
+             <para>One of the primary benefits of using DocBook is
+             common to any strctured markup language: separation of
+             semantics and presentation, which facilitates software
+             translation of the document into multiple formats. For
+             uPortal, we're currently using HTML for the web and PDF
+             for both on-line viewing and support for high-quality
+             printing. We generate both formats from exactly the same
+             set of DocBook source files, and if we choose to support
+             another format in the future, say,
+             <filename>.rtf</filename> or some format that hasn't yet
+             been invented, we can do so without changing the original
+             source documents. </para>
+
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>But wait...I can't find the PDF version of the FAQ!</para>
+          </question>
+          <answer>
+             <para>You're probably looking in a directory structure
+             produced by a direct checkout from the CVS
+             repository. Since PDF files can get large, we only
+             produce them when we issue a release of uPortal. The
+             latest source XML files, however, are always available
+             from the repository. If you'd like to look at PDF
+             versions of the uPortal docs in their development state,
+             you have to build the .pdf file from source using the
+             tools described in the README file in the docs/
+             directory.</para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+   <sect1>
+     <title>Appendix</title>
+
+     <bibliography>
+       <title>References</title>
+
+       <bibliodiv>
+          <title>Books</title>
+
+          <biblioentry>
+            <abbrev>Bradley2000</abbrev>
+               <author>
+                  <firstname>Neil</firstname>
+                  <surname>Bradley</surname>
+               </author>
+            <copyright>
+               <year>2000</year>
+               <holder>Neil Bradley</holder>
+            </copyright>
+            <isbn>0-201-67487-4</isbn>
+            <title>The XSL Companion</title>
+            <publisher>
+               <publishername>Addison-Wesley Publishing Company</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
+            <abbrev>Kay2000</abbrev>
+               <author>
+                  <firstname>Michael</firstname>
+                  <surname>Kay</surname>
+               </author>
+            <copyright>
+               <year>2000</year>
+              <holder>Wrox Press</holder>
+            </copyright>
+            <isbn>1-861003-12-9</isbn>
+            <title>XSLT Programmer's Reference</title>
+            <publisher>
+               <publishername>Wrox Press</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
+            <abbrev>McLaughlin2000</abbrev>
+               <author>
+                  <firstname>Brett</firstname>
+                  <surname>McLaughlin</surname>
+               </author>
+            <copyright>
+               <year>2000</year>
+              <holder>O'Reilly &#38; Associates</holder>
+            </copyright>
+            <isbn>0-596-00016-2</isbn>
+            <title>Java and XML</title>
+            <publisher>
+               <publishername>O'Reilly &#38; Associates</publishername>
+            </publisher>
+          </biblioentry>
+
+       </bibliodiv>
+
+       <bibliodiv>
+          <title>Articles</title>
+
+          <biblioentry>
+          <abbrev>Bosak1999</abbrev>
+             <authorgroup> 
+                <author>
+                   <firstname>Jon</firstname>
+                   <surname>Bosak</surname>
+                </author>
+                 <author>
+                   <firstname>Tim</firstname>
+                   <surname>Bray</surname>
+                </author>
+             </authorgroup>
+             <title>XML and the Second-Generation Web</title>
+             <biblioset relation="journal">
+                <title>Scientific American</title>
+                <pagenums>16-25</pagenums>
+             </biblioset>
+             <date>May 1999</date>
+          </biblioentry>
+
+       </bibliodiv>
+
+     </bibliography>
+     <para>There is no spoon.</para>
+  </sect1>
+
+</article>
