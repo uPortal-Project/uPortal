@@ -180,12 +180,12 @@ public class Test {
 
      person.setID(2);
 
-     IUserLayoutStore layoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+     IUserLayoutStore layoutStore =  UserLayoutStoreFactory.getUserLayoutStoreImpl();
      Document layoutDOM = layoutStore.getUserLayout(person,layoutStore.getUserProfileById(person,1));
      System.out.println( "The string representation of the DOM is : \n" + layoutDOM );
 
      //Instantiate UserLayoutManager implementation
-     AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, 1 /*layoutId*/, layoutStore );
+     AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, 1 /*layoutId*/, (IAggregatedUserLayoutStore)layoutStore );
      System.out.println("Setting DOM layout to the UserLayout manager....");
      layoutManager.setUserLayoutDOM(layoutDOM);
      System.out.println("The DOM layout is set.");

@@ -31,7 +31,7 @@ import org.apache.xerces.dom.DocumentImpl;
 
 public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
-  private IUserLayoutStore layoutStore;
+  private IAggregatedUserLayoutStore layoutStore;
   private Hashtable layout;
   private int layoutId;
   private String rootNodeId = UserLayoutNodeDescription.ROOT_FOLDER_ID;
@@ -55,7 +55,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     layout = new Hashtable();
   }
 
-  public AggregatedUserLayoutImpl( IPerson person, int layoutId, IUserLayoutStore layoutStore ) {
+  public AggregatedUserLayoutImpl( IPerson person, int layoutId, IAggregatedUserLayoutStore layoutStore ) {
     this ( person, layoutId );
     this.layoutStore = layoutStore;
   }
@@ -391,7 +391,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     }
 
     public void setLayoutStore(IUserLayoutStore layoutStore ) {
-      this.layoutStore = layoutStore;
+      this.layoutStore = (IAggregatedUserLayoutStore) layoutStore;
     }
 
     public void loadUserLayout() throws PortalException {}
