@@ -62,7 +62,7 @@ public class StylesheetUserPreferences {
     public void setStylesheetId(int n) { id=n; }
 
     public String getParameterValue(String parameterName) {
-        return (String) parameters.get(parameterName);
+        return (parameterName!=null)?(String)parameters.get(parameterName):null;
     }
 
     public void putParameterValue(String parameterName,String parameterValue) {
@@ -83,6 +83,8 @@ public class StylesheetUserPreferences {
     public void setParameterValues(Hashtable parameters) {
       if ( parameters != null )  
         this.parameters=parameters;
+      else
+        this.parameters.clear();
     }
 
     public String getCacheKey() {
