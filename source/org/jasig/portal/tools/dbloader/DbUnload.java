@@ -34,7 +34,6 @@
  */
 
 package org.jasig.portal.tools.dbloader;
-
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 
@@ -46,18 +45,19 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import org.jasig.portal.utils.XMLEscaper;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-
 /**
  * Title:        DbUnload
  * Description:  Dump database table(s) into a xml format
  * @author George Lindholm
  * @version $Revision$
  */
+
 public class DbUnload {
   static void dumpTable(PrintWriter xmlOut, Statement stmt, String tableName) throws Exception {
     String sql = "SELECT * FROM " + tableName;
@@ -81,7 +81,6 @@ public class DbUnload {
         columnType[i] = rsmd.getColumnType(i+1);
         columnName[i] = rsmd.getColumnName(i+1);
       }
-
       while(rs.next()) {
         xmlOut.println("      <row>");
         for (int i = 0; i < rsmd.getColumnCount(); i++) {
@@ -90,6 +89,7 @@ public class DbUnload {
             columnType[i] == java.sql.Types.LONGVARCHAR||
             columnType[i] == java.sql.Types.CHAR) {
             value = rs.getString(i+1);
+            value = XMLEscaper.escape(value);
             if (value != null && value.startsWith("<?xml ")) {
               value = "<![CDATA[\n" + value + "\n]]>";
             }
@@ -105,9 +105,9 @@ public class DbUnload {
             throw new Exception("Unrecognized column type " + columnType[i] + " for column " + (i + 1) +
             " in table " + tableName);
           }
-          if (!rs.wasNull()) {
-            xmlOut.println("        <column><name>" + columnName[i] + "</name><value>" + value + "</value></column>");
-          }
+          if (rs.wasNull()) xmlOut.println("        <column><name>" + columnName[i] + "</name></column>");
+          else
+          xmlOut.println("        <column><name>" + columnName[i] + "</name><value>" + value + "</value></column>");
         }
         xmlOut.println("      </row>");
       }
