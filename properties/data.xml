@@ -459,7 +459,7 @@
         <column><name>CHAN_ID</name><value>1</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -469,7 +469,7 @@
         <column><name>CHAN_ID</name><value>2</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -485,7 +485,7 @@
         <column><name>CHAN_ID</name><value>5</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -501,7 +501,7 @@
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -517,7 +517,7 @@
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -635,7 +635,7 @@
         <column><name>CHAN_ID</name><value>11</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -651,7 +651,7 @@
         <column><name>CHAN_ID</name><value>12</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -667,7 +667,7 @@
         <column><name>CHAN_ID</name><value>13</value></column>
         <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -699,7 +699,7 @@
         <column><name>CHAN_ID</name><value>15</value></column>
        <column><name>CHAN_PARM_NM</name><value>ssl</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer.ssl</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1288,6 +1288,7 @@
         <column><name>NAME</name><value>User Preferences</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>21</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>18</value></column>
+        <column><name>HIDDEN</name><value>Y</value></column>
       </row>
           <!-- Subscribe -->
           <row>
@@ -1660,7 +1661,7 @@
         <column><name>NODE_ID</name><value>s5</value></column>
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
-        <column><name>PARAM_VAL</name><value>70%</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
@@ -1670,7 +1671,7 @@
         <column><name>NODE_ID</name><value>s7</value></column>
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
-        <column><name>PARAM_VAL</name><value>30%</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
@@ -1764,7 +1765,7 @@
         <column><name>MIME_TYPE</name><value>text/html</value></column>
         <column><name>DEVICE_TYPE</name><value>workstation</value></column>
         <column><name>SERIALIZER_NAME</name><value></value></column>
-        <column><name>UP_MODULE_CLASS</name><value></value></column>
+        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
       </row>
     </rows>
   </table>
