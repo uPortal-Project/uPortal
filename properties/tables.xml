@@ -306,6 +306,24 @@
   </table>
 
   <table>
+    <name>UP_GROUP_PRIORITY_RANGE</name>
+    <desc>Holds priority range assignment for user groups</desc>
+    <columns>
+      <column><name>GROUP_KEY</name><type>VARCHAR</type><param>64</param>
+        <desc>Group key</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>MIN_PRIORITY</name> <type>INTEGER</type>
+        <desc>Min priority value</desc>
+      </column>
+      <column> <name>MAX_PRIORITY</name> <type>INTEGER</type>
+        <desc>Max priority value</desc>
+      </column>
+    </columns>
+    <primary-key>GROUP_KEY</primary-key>
+  </table>
+
+  <table>
     <name>UP_USER</name>
     <desc>Entries that uniquely identify a portal session for a particular user</desc>
     <columns>
