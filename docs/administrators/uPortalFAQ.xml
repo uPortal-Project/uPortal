@@ -26,7 +26,10 @@
 
      <date>September 21, 2000</date>
 
-     <title>Frequently Asked Questions about uPortal</title>
+     <title>Frequently Asked Questions about
+        <productname>uPortal</productname>
+     </title>
+
   <!--
      <revhistory>
         <revision>
@@ -39,22 +42,24 @@
   </articleinfo>
 
   <sect1>
-    <title>FAQ Administration</title>
+    <title><acronym>FAQ</acronym> Administration</title>
 
     <qandaset>
        <qandaentry>
           <question>
-             <para>What is this document??</para>
+             <para>What is this document?</para>
           </question>
           <answer>
-             <para>This Freqently Asked Questions (FAQ) list will
-             attempt to answer some of the most common questions
-             relating to <productname>uPortal</productname>.  Although
-             this FAQ contains some technical information, it is best
-             used as an introduction to uPortal and not a
+             <para>This Frequently Asked Questions
+             (<acronym>FAQ</acronym>) list will attempt to answer some
+             of the most common questions relating to
+             <productname>uPortal</productname>.  Although this
+             <acronym>FAQ</acronym> contains some technical
+             information, it is best used as an introduction to
+             <productname>uPortal</productname> and not a
              comprehensive reference document.  See the references
-             section, below, for a comprehensive list of uPortal
-             resources.</para>
+             section, below, for a comprehensive list of
+             <productname>uPortal</productname> resources.</para>
           </answer>
        </qandaentry>
        <qandaentry>
@@ -62,11 +67,12 @@
              <para>Who maintains this FAQ?</para>
           </question>
           <answer>
-             <para>This FAQ is maintained by Bill Brooks
-             &#60;wbrooks@calpoly.edu&#62; with help from other active
-             participants in the uPortal development effort. Questions
-             (and answers), comments, corrections and contributions
-             are highly encouraged!</para>
+             <para>This <acronym>FAQ</acronym> is maintained by Bill
+             Brooks &#60;wbrooks@calpoly.edu&#62; with help from other
+             active participants in the
+             <productname>uPortal</productname> development
+             effort. Questions (and answers), comments, corrections
+             and contributions are highly encouraged!</para>
           </answer>
        </qandaentry>
 
@@ -78,23 +84,25 @@
              <para>You can send your contributions, suggestions for
              improvement, etc to Bill via e-mail (see above) and he'll
              incorporate them. We're discouraging people from
-             modifying the FAQ directly, because we want the document
-             to have a single "voice".</para>
+             modifying the <acronym>FAQ</acronym> directly, because we
+             want the document to have a single "voice".</para>
           </answer>
        </qandaentry>
 
        <qandaentry>
           <question>
-             <para>Where can this FAQ be found on the World-Wide Web?</para>
+             <para>Where can this <acronym>FAQ</acronym> be found on
+             the World-Wide Web?</para>
           </question>
           <answer>
-             <para>It isn't available now, but this FAQ will
-             eventually be posted on the JA-SIG website, located at
-             <ulink
+             <para>It isn't available now, but this
+             <acronym>FAQ</acronym> will eventually be posted on the
+             JA-SIG website, located at <ulink
              url="http://www.ja-sig.org/">http://www.ja-sig.org/</ulink>
              The latest version can always be found in the docs/
-             directory of the uPortal CVS repository. See the JA-SIG
-             web site for details. </para>
+             directory of the <productname>uPortal</productname>
+             <acronym>CVS</acronym> repository. See the JA-SIG web
+             site for details. </para>
           </answer>
        </qandaentry>
 
@@ -115,31 +123,41 @@
           </question>
           <answer>
              <para>In general, over and above basic familiarity with
-             the Java Language, the standard JDK tools, and a
+             the standard Java Development Kit (JDK) tools, and a
              fundamental understanding of distributed and
              client/server computing, you'll need to be familiar with
              several of the <ulink
              url="http://www.javasoft.com/j2ee/overview.html">J2EE</ulink>
              technologies for enterprise applications. At a
-             <emphasis>minimum</emphasis>, you'll have to be conversant
-             with:
+             <emphasis>minimum</emphasis>, you'll have to be
+             conversant with:
              <itemizedlist mark="bullet">
                 <listitem>
-                   <para>XML</para>
+                   <para>XML. XML and XSLT are used extensively in the
+                   <productname>uPortal</productname> framework to
+                   ensure the platform independance of data and to
+                   separate that data from it's presentation. To
+                   deploy <productname>uPortal</productname>, you may
+                   have to edit XML files, so you'll have to be aware
+                   of how to write a valid XML file. </para>
                 </listitem>
                 <listitem>
-                   <para>Servlets</para>
-                </listitem>
-                <listitem>
-                   <para>JSP</para>
-                </listitem>
-                <listitem>
-                   <para>JDBC</para>
+                   <para>Servlets. You'll have to be familiar with
+                   issues associated with server-side java
+                   applications, mostly because you have to deploy the
+                   framework for use in the application server you're
+                   using on your campus. If you have experience
+                   configuring and deploying servlets, you'll know
+                   enough to deploy
+                   <productname>uPortal</productname>. </para>
                 </listitem>
              </itemizedlist>
              In addition, if you want to use a directory service for
              authentication and/or authorization of users to the
-             portal, you'll have to be familiar with JNDI. 
+             portal, and you want to use the reference implementation
+             that the <productname>uPortal</productname> framework
+             provides for that purpose, you'll have to be familiar
+             with <acronym>JNDI</acronym>.
              </para>
           </answer>
        </qandaentry>
@@ -161,12 +179,17 @@
 
        <qandaentry>
           <question>
-             <para>What differentiates uPortal from other portal solutions?</para>
+             <para>What differentiates
+             <productname>uPortal</productname> from other portal
+             solutions?</para>
           </question>
           <answer>
-             <para>uPortal is focused on the requirements of higher
-             education, whereas other products are mostly focused on
-             the requirements of large corporations. uPortal is free
+             <para><productname>uPortal</productname> is focused on
+             the requirements of higher education, whereas other
+             products are mostly focused on the requirements of large
+             corporations, even if the resulting product is marketed
+             to higher education
+             institutions. <productname>uPortal</productname> is free
              to Universities, most commercial portal "solutions" cost
              upwards of $50,000 per year for a typical campus'
              license.</para>
@@ -175,7 +198,8 @@
 
        <qandaentry>
           <question>
-             <para>Does uPortal support single-sign on?</para>
+             <para>Does <productname>uPortal</productname> support
+             single-sign on?</para>
           </question>
           <answer>
              <para>Yes. The <productname>uPortal</productname>
@@ -198,7 +222,10 @@
              and hence what is available now may not be useful for
              your campus. But there are a few Universities now who are
              using uPortal in conjunction with an LDAP server to
-             authenticate users. </para>
+             authenticate users. There is a reference implementation
+             available now for uPortal which handles authentication of
+             users to the portal from information stored in an LDAP
+             server.</para>
           </answer>
 
        </qandaentry>
@@ -248,37 +275,60 @@
     <qandaset>
        <qandaentry>
           <question>
-             <para>What kind of expertise is necessary to
-             develop content and/or applications for use with uPortal?</para>
+             <para>What kind of expertise is necessary to develop
+             content and/or applications for use with
+             <productname>uPortal</productname>?
+             </para>
           </question>
           <answer>
              <para>For simple content provision, you only have to be
              familiar with how to produce an XML document. One of the
-             defined kinds of channels for use with uPortal is an RSS
-             (Rich Site Summary) channel, which is the same format
-             that Netscape uses for their Internet portal. If you
-             create an <ulink
+             defined kinds of channels for use with
+             <productname>uPortal</productname> is an
+             <acronym>RSS</acronym> (Rich Site Summary) channel, which
+             is the same format that Netscape uses for their Internet
+             portal. If you create an <ulink
              url="http://my.netscape.com/publish/">XML document which
-             adheres to this standard</ulink>, the uPortal framework
-             will handle formatting and presenting the output for
-             you.</para>
+             adheres to this standard</ulink>, the
+             <productname>uPortal</productname> framework will handle
+             formatting and presenting the output for you.</para>
  
-             <para>To develop applications that can operate with the
-             portal, you have to be a reasonably experienced software
-             developer and Java programmer who is familiar with the
-             J2EE APIs (see the question above on uPortal deployment,
-             above). </para>
+             <para>To develop complete applications that can operate
+             with the portal, you have to be a reasonably experienced
+             software developer and Java programmer who is familiar
+             with the J2EE APIs (see the question above on
+             <productname>uPortal</productname> deployment, above).
+             </para>
           </answer>
        </qandaentry>
-
        <qandaentry>
           <question>
              <para>My university has a large number of legacy
              applications that we want to provide access to from the
-             portal. How can I accomplish this?</para>
+             portal. Can I do this?</para>
           </question>
           <answer>
-             <para>Bar.</para>
+             <para>It depends upon the application. Did you write the
+             application (and have the source code) or did
+             you purchase a binary package from a vendor? 
+             </para>
+
+             <para>If you have the source code, its fairly easy to
+             provide an interface to the application that operates
+             within the portal. You would simply have to write a
+             channel that operates in the portal and feeds data to
+             your application, captures the resulting output and
+             displays it to the user inside the portal.</para>
+
+             <para>If you purchased an application from a vendor,
+             things are a bit more complicated, but the approach is
+             the same. You'd have to write an adaptor that would wrap
+             the output of the legacy application in XML so that it
+             can be displayed inside the portal. When you have this,
+             you can then write a channel for use with the portal that
+             interacts with your adaptor and actually facilitates the
+             translation of the XML so that the portal can display
+             it. </para>
           </answer>
        </qandaentry>
 
