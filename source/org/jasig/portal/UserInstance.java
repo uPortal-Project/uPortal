@@ -43,6 +43,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -224,6 +225,10 @@ public class UserInstance implements HttpSessionBindingListener {
                 //
 
                 try {
+                    // Disable page caching
+                    res.setHeader("pragma", "no-cache");
+                    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+                    res.setDateHeader("Expires", 0);
 
                     // call layout manager to process all user-preferences-related request parameters
                     // this will update UserPreference object contained by UserPreferencesManager, so that
@@ -582,7 +587,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     throw new PortalException(e);
                 }
             }
-        }
+        }        
     }
 
     /**
@@ -710,8 +715,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         if(UserInstance.workerProperties==null) {
                             // load worker properties
                             try {
-                                UserInstance.workerProperties=new Properties();
-                                UserInstance.workerProperties.load(UserInstance.class.getResourceAsStream(WORKER_PROPERTIES_FILE_NAME));
+                                UserInstance.workerProperties=ResourceLoader.getResourceAsProperties(UserInstance.class, WORKER_PROPERTIES_FILE_NAME);
                             } catch (IOException ioe) {
                                 LogService.instance().log(LogService.ERROR, "UserInstance::processWorkerDispatch() : Unable to load worker.properties file. "+ioe);
                             }

@@ -169,11 +169,8 @@ public class PortalSessionManager extends HttpServlet {
      * @exception IOException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // Disable page caching
-        res.setHeader("pragma", "no-cache");
-        res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+        // Send the uPortal version in a header
         res.setHeader("uPortal-version", "uPortal_2-0+");
-        res.setDateHeader("Expires", 0);
 
         HttpSession session = req.getSession();
         if (session != null) {
