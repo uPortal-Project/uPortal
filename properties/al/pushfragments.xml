@@ -106,6 +106,10 @@
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="test-portlet-2" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
+			<folder name="column3" immutable="Y" unremovable="Y" hidden="N">
+                <channel fname="rss-portlet" immutable="Y" unremovable="Y" hidden="N"/>
+                <channel fname="google-portlet" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
 		</folder>
 	</fragment>	
 
