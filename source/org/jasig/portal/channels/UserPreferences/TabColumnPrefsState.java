@@ -40,6 +40,7 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.UserLayoutManager;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.Logger;
@@ -54,6 +55,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.DocumentHandler;
 import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Enumeration;
 import java.net.URL;
 
 /**
@@ -68,6 +71,7 @@ class TabColumnPrefsState extends BaseState
   protected ChannelRuntimeData runtimeData;
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl");
   private Document userLayout;
+  private UserPreferences userPrefs;
   private IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
@@ -78,8 +82,12 @@ class TabColumnPrefsState extends BaseState
   private static final String errorMessageMoveTab = "Problem trying to move the active tab";
   private static final String errorMessageAddTab = "Problem trying to add a new tab";
   private static final String errorMessageDeleteTab = "Problem trying to delete tab";
+  private static final String errorMessageChangeColumnWidths = "Problem changing column widths";
   private static final String errorMessageMoveColumn = "Problem trying to move column";
+  private static final String errorMessageNewColumn = "Problem trying to add a new column";
   private static final String errorMessageDeleteColumn = "Problem trying to delete column";
+  private static final String errorMessageMoveChannel = "Problem trying to move channel";
+  private static final String errorMessageDeleteChannel = "Problem trying to delete channel";
 
   public TabColumnPrefsState(CUserPreferences context)
   {
@@ -101,6 +109,7 @@ class TabColumnPrefsState extends BaseState
     try
     {
       userLayout = getUserLayout();
+      userPrefs = context.getCurrentUserPreferences();
     }
     catch (Exception e)
     {
@@ -118,7 +127,7 @@ class TabColumnPrefsState extends BaseState
 
   // Helper methods...
 
-  private Document getUserLayout() throws Exception
+  private final Document getUserLayout() throws Exception
   {
     // Get the profile currently being used
     UserLayoutManager ulm = context.getUserLayoutManager();
@@ -139,7 +148,7 @@ class TabColumnPrefsState extends BaseState
     return userLayout;
   }
 
-  private String getActiveTab()
+  private final String getActiveTab()
   {
     String activeTab = "none";
 
@@ -147,9 +156,7 @@ class TabColumnPrefsState extends BaseState
     {
       // Get the profile associated with the layout currently being modified
       UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-      userPrefsFromStore = new GPreferencesState(context).getUserPreferences();
       activeTab = userPrefsFromStore.getStructureStylesheetUserPreferences().getParameterValue("activeTab");
-      System.out.println("activeTabFromDB="+activeTab);
     }
     catch (Exception e)
     {
@@ -159,62 +166,93 @@ class TabColumnPrefsState extends BaseState
     return activeTab;
   }
 
-  private void setActiveTab(String activeTab) throws Exception
+  private final void setActiveTab(String activeTab) throws Exception
   {
-    UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-    StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
+    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
+    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
+    StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     ssup.putParameterValue("activeTab", activeTab);
 
-    // Persist user preferences
+    // Persist structure stylesheet user preferences
     int userId = staticData.getPerson().getID();
     int profileId = context.getCurrentUserPreferences().getProfile().getProfileId();
     upStore.setStructureStylesheetUserPreferences(userId, profileId, ssup);
   }
 
-  private void renameTab(String tabId, String tabName) throws Exception
+  private final void renameTab(String tabId, String tabName) throws Exception
   {
     Element tab = userLayout.getElementById(tabId);
     tab.setAttribute("name", tabName);
     saveLayout();
   }
 
-  private void moveTab(String tabFromId, String method, String tabToId) throws Exception
+  private final void moveTab(String sourceTabId, String method, String destinationTabId) throws Exception
   {
-    Element tabFrom = userLayout.getElementById(tabFromId);
-    Element tabTo = userLayout.getElementById(tabToId);
+    Element sourceTab = userLayout.getElementById(sourceTabId);
+    Element destinationTab = userLayout.getElementById(destinationTabId);
     Element layout = userLayout.getDocumentElement();
-    layout.removeChild(tabFrom);
-
-    if (method.equals("insertBefore"))
-      layout.insertBefore(tabFrom, tabTo);
-    else // method = "appendAfter"
-      layout.appendChild(tabFrom);
+    Node siblingTab = method.equals("insertBefore") ? destinationTab : null;
+    context.getUserLayoutManager().moveNode(sourceTab, layout, siblingTab);
 
     saveLayout();
   }
 
-  private void addTab(String tabName, String method, String tabToId) throws Exception
+  private final void addFolder(String folderName, String method, String destinationFolderId) throws Exception
   {
-    Element layout = userLayout.getDocumentElement();
-    Document doc = layout.getOwnerDocument();
-    Element newTab = doc.createElement("folder");
-    newTab.setAttribute("name", tabName);
-    newTab.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
-    newTab.setAttribute("type", "regular");
-    newTab.setAttribute("hidden", "false");
-    newTab.setAttribute("unremovable", "false");
-    newTab.setAttribute("immutable", "false");
-    Node tabTo = userLayout.getElementById(tabToId);
-
-    if (method.equals("insertBefore"))
-      layout.insertBefore(newTab, tabTo);
-    else // method = "appendAfter"
-      layout.appendChild(newTab);
+    Element newFolder = createFolder(folderName);
+    Node destinationFolder = userLayout.getElementById(destinationFolderId);
+    Node parent = destinationFolder.getParentNode();
+    Node siblingFolder = method.equals("insertBefore") ? destinationFolder : null;
+    context.getUserLayoutManager().moveNode(newFolder, parent, siblingFolder);
 
     saveLayout();
   }
 
-  private void moveColumn(String sourceId, String method, String destinationId) throws Exception
+  private final void changeColumnWidths(HashMap columnWidths) throws Exception
+  {
+    StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+    java.util.Set sColWidths = columnWidths.keySet();
+    java.util.Iterator iterator = sColWidths.iterator();
+    while(iterator.hasNext())
+    {
+      String folderId = (String)iterator.next();
+      String newWidth = (String)columnWidths.get(folderId);
+
+      // Only accept widths that are either percentages or integers (fixed widths)
+      boolean widthIsValid = true;
+      try
+      {
+        Integer.parseInt(newWidth.endsWith("%") ? newWidth.substring(0, newWidth.indexOf("%")) : newWidth);
+      }
+      catch (java.lang.NumberFormatException nfe)
+      {
+        widthIsValid = false;
+      }
+
+      if (widthIsValid)
+        ssup.setFolderAttributeValue(folderId, "width", newWidth);
+      else
+        Logger.log(Logger.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+
+    }
+
+    // Persist structure stylesheet user preferences
+    int userId = staticData.getPerson().getID();
+    int profileId = context.getCurrentUserPreferences().getProfile().getProfileId();
+    upStore.setStructureStylesheetUserPreferences(userId, profileId, ssup);
+  }
+
+  /**
+   * Moves a column from one position in the layout to another.  Before the move is performed,
+   * a check is done to see whether the source and/or destination elements are tabs.  If either
+   * is a tab, a new column is inserted between it and the channels that it contains before the
+   * move is carried out.
+   * @param sourceId the column to move (may actually be a tab)
+   * @param method either <code>insertBefore</code> or <code>appendAfter</code>
+   * @param destinationId the column to insert the new column before or append after (may actually be a tab)
+   * @throws Exception
+   */
+  private final void moveColumn(String sourceId, String method, String destinationId) throws Exception
   {
     Element layout = userLayout.getDocumentElement();
     Document doc = layout.getOwnerDocument();
@@ -224,55 +262,35 @@ class TabColumnPrefsState extends BaseState
     Element sourceColumn = source;
     Element destinationColumn = destination;
 
-    // Check if source is a tab (its parent is the layout element)
-    boolean sourceIsATab = source.getParentNode().getNodeName().equals("layout");
-
     // If source is a tab, create a column, move the tab's children channels to this column,
     // and use this new column as the source
-    if (sourceIsATab)
+    if (isTab(source))
     {
-      sourceColumn = doc.createElement("folder");
-      sourceColumn.setAttribute("name", "");
-      sourceColumn.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
-      sourceColumn.setAttribute("type", "regular");
-      sourceColumn.setAttribute("hidden", "false");
-      sourceColumn.setAttribute("unremovable", "false");
-      sourceColumn.setAttribute("immutable", "false");
-
+      sourceColumn = createFolder("");
       NodeList channels = source.getElementsByTagName("channel");
       int numChannels = channels.getLength();
       for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
       {
         Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
         boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, sourceColumn, null);
-        // Need to deal with case when move isn't successful!!!
+        // Not done yet: Need to deal with case when move isn't successful!!!
       }
 
       source.appendChild(sourceColumn);
     }
 
-    // Check if destination is a tab (its parent is the layout element)
-    boolean destinationIsATab = destination.getParentNode().getNodeName().equals("layout");
-
     // If destination is a tab, create a column, move the tab's children channels to this column,
     // and use this new column as the destination
-    if (destinationIsATab)
+    if (isTab(destination))
     {
-      destinationColumn = doc.createElement("folder");
-      destinationColumn.setAttribute("name", "");
-      destinationColumn.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
-      destinationColumn.setAttribute("type", "regular");
-      destinationColumn.setAttribute("hidden", "false");
-      destinationColumn.setAttribute("unremovable", "false");
-      destinationColumn.setAttribute("immutable", "false");
-
+      destinationColumn = createFolder("");
       NodeList channels = destination.getElementsByTagName("channel");
       int numChannels = channels.getLength();
       for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
       {
         Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
         boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, destinationColumn, null);
-        // Need to deal with case when move isn't successful!!!
+        // Not done yet: Need to deal with case when move isn't successful!!!
       }
 
       destination.appendChild(destinationColumn);
@@ -283,23 +301,76 @@ class TabColumnPrefsState extends BaseState
     Node siblingColumn = method.equals("insertBefore") ? destinationColumn : null;
     context.getUserLayoutManager().moveNode(sourceColumn, targetTab, siblingColumn);
 
-    // Delete the source column from its tab
-    //sourceColumn.getParentNode().removeChild(sourceColumn);
+    saveLayout();
+  }
 
-    // And insert before the destination column or at the end
-    //if (method.equals("insertBefore"))
-    //  destinationColumn.getParentNode().insertBefore(sourceColumn, destinationColumn);
-    //else // method equals "appendAfter"
-    //  destinationColumn.getParentNode().appendChild(sourceColumn);
+  /**
+   * Moves a channel from one position in the layout to another.
+   * @param sourceChannelId the channel to move
+   * @param method either <code>insertBefore</code> or <code>appendAfter</code>
+   * @param destinationChannelId the ID of the channel to insert the new channel before or append after
+   * @throws Exception
+   */
+  private final void moveChannel(String sourceChannelId, String method, String destinationChannelId) throws Exception
+  {
+    Element layout = userLayout.getDocumentElement();
+
+    Element sourceChannel = userLayout.getElementById(sourceChannelId);
+    Element destinationChannel = userLayout.getElementById(destinationChannelId);
+
+    // Move the source channel before the destination channel or at the end
+    Node targetColumn = destinationChannel.getParentNode();
+    Node siblingChannel = method.equals("insertBefore") ? destinationChannel : null;
+    context.getUserLayoutManager().moveNode(sourceChannel, targetColumn, siblingChannel);
 
     saveLayout();
   }
 
-  private void deleteElement(String elementId) throws Exception
+  /**
+   * Removes a tab, column, or channel element from the layout
+   * @param elementId the ID attribute of the element to remove
+   */
+  private final void deleteElement(String elementId) throws Exception
   {
     Element element = userLayout.getElementById(elementId);
-    element.getParentNode().removeChild(element);
-    saveLayout();
+    // for some reason I am getting a null here for any newly added element
+    // I remember some other people mentioning this problem
+    boolean deleteSuccessful = context.getUserLayoutManager().deleteNode(element);
+    if (deleteSuccessful)
+      saveLayout();
+    else
+      throw new Exception("Element " + elementId + " cannot be removed because it is either unremovable or it or one of its parent elements is immutable.");
+  }
+
+  /**
+   * A folder is a tab if its parent element is the layout element
+   * @param folder the folder in question
+   * @return <code>true</code> if the folder is a tab, otherwise <code>false</code>
+   */
+  private final boolean isTab (Element folder)
+  {
+    return folder.getParentNode().getNodeName().equals("layout");
+  }
+
+  /**
+   * Creates a folder element with default attributes.  This method can be used
+   * to create a tab or a column.  For tabs, pass the tab name.  For column,
+   * pass an empty String since column names aren't meaningful
+   * @param name the tab name for tabs and an empty string for columns
+   * @return the newly created tab or column
+   */
+  private final Element createFolder (String name) throws Exception
+  {
+    Element layout = userLayout.getDocumentElement();
+    Document doc = layout.getOwnerDocument();
+    Element column = doc.createElement("folder");
+    column.setAttribute("name", name);
+    column.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
+    column.setAttribute("type", "regular");
+    column.setAttribute("hidden", "false");
+    column.setAttribute("unremovable", "false");
+    column.setAttribute("immutable", "false");
+    return column;
   }
 
   private void saveLayout () throws PortalException
@@ -361,9 +432,6 @@ class TabColumnPrefsState extends BaseState
           String tabId = runtimeData.getParameter("elementID");
           String tabName = runtimeData.getParameter("tabName");
 
-          System.out.println(tabId);
-          System.out.println(tabName);
-
           try
           {
             renameTab(tabId, tabName);
@@ -379,14 +447,14 @@ class TabColumnPrefsState extends BaseState
         else if (action.equals("moveTab"))
         {
           String methodAndID = runtimeData.getParameter("method_ID");
-          String tabFromId = runtimeData.getParameter("elementID");
+          String sourceTabId = runtimeData.getParameter("elementID");
           int indexOf_ = methodAndID.indexOf("_");
           String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-          String tabToId = methodAndID.substring(indexOf_ + 1);
+          String destinationTabId = methodAndID.substring(indexOf_ + 1);
 
           try
           {
-            moveTab(tabFromId, method, tabToId);
+            moveTab(sourceTabId, method, destinationTabId);
           }
           catch (Exception e)
           {
@@ -402,11 +470,11 @@ class TabColumnPrefsState extends BaseState
           String methodAndID = runtimeData.getParameter("method_ID");
           int indexOf_ = methodAndID.indexOf("_");
           String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-          String tabToId = methodAndID.substring(indexOf_ + 1);
+          String destinationTabId = methodAndID.substring(indexOf_ + 1);
 
           try
           {
-            addTab(tabName, method, tabToId);
+            addFolder(tabName, method, destinationTabId);
           }
           catch (Exception e)
           {
@@ -434,6 +502,35 @@ class TabColumnPrefsState extends BaseState
         // Select column
         else if (action.equals("selectColumn"))
           elementID = runtimeData.getParameter("elementID");
+        // Change column width(s)
+        else if (action.equals("columnWidth"))
+        {
+          HashMap columnWidths = new HashMap();
+          Enumeration eParams = runtimeData.getParameterNames();
+          while (eParams.hasMoreElements())
+          {
+            String param = (String)eParams.nextElement();
+            String prefix = "columnWidth_";
+
+            if (param.startsWith(prefix))
+            {
+              String folderId = param.substring(prefix.length());
+              String newWidth = runtimeData.getParameter(prefix + folderId);
+              columnWidths.put(folderId, newWidth);
+            }
+          }
+
+          try
+          {
+            changeColumnWidths(columnWidths);
+          }
+          catch (Exception e)
+          {
+            Logger.log(Logger.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageChangeColumnWidths;
+          }
+        }
         // Move column
         else if (action.equals("moveColumn"))
         {
@@ -458,6 +555,32 @@ class TabColumnPrefsState extends BaseState
             errorMessage = errorMessageMoveColumn;
           }
         }
+        // New column
+        else if (action.equals("newColumn"))
+        {
+          String columnName = "";
+          String method = runtimeData.getParameter("method");
+          elementID = runtimeData.getParameter("elementID");
+          String destinationColumnId = elementID;
+
+          try
+          {
+            addFolder(columnName, method, destinationColumnId);
+          }
+          catch (Exception e)
+          {
+            Logger.log(Logger.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageNewColumn;
+          }
+        }
+        // Add column
+        else if (action.equals("addColumn"))
+        {
+          // Currently not implemented...
+          // We need to assign widths to columns.
+          // The action addColumn isn't in the stylesheet yet.
+        }
         // Delete column
         else if (action.equals("deleteColumn"))
         {
@@ -479,6 +602,46 @@ class TabColumnPrefsState extends BaseState
         {
           elementID = runtimeData.getParameter("elementID");
         }
+        // Move channel
+        else if (action.equals("moveChannel"))
+        {
+          String activeTabParam = runtimeData.getParameter("activeTab");
+          if (activeTabParam != null)
+            activeTab = activeTabParam;
+        }
+        // Move channel here
+        else if (action.equals("moveChannelHere"))
+        {
+          String method = runtimeData.getParameter("method");
+          String destinationId = runtimeData.getParameter("elementID");
+
+          try
+          {
+            moveChannel(elementID, method, destinationId);
+          }
+          catch (Exception e)
+          {
+            Logger.log(Logger.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageMoveChannel;
+          }
+        }
+        // Delete channel
+        else if (action.equals("deleteChannel"))
+        {
+          String channelId = runtimeData.getParameter("elementID");
+
+          try
+          {
+            deleteElement(channelId);
+          }
+          catch (Exception e)
+          {
+            Logger.log(Logger.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageDeleteChannel;
+          }
+        }
        }
       else
         action = "none";
@@ -487,18 +650,29 @@ class TabColumnPrefsState extends BaseState
 
     public void renderXML (DocumentHandler out) throws PortalException
     {
-      Hashtable ssParams = new Hashtable(5);
-      ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-      ssParams.put("activeTab", activeTab);
-      ssParams.put("action", action);
-      ssParams.put("elementID", elementID);
-      ssParams.put("errorMessage", errorMessage);
-      String media = runtimeData.getMedia();
-
       try
       {
-        //System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
-        XSLT.transform(userLayout, new URL(sslLocation), out, ssParams, media);
+        // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
+        // Currently this code assumes the use of Xalan as does much of the framework
+        org.apache.xalan.xslt.XSLTProcessor processor = org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor();
+        String xslUri = new org.jasig.portal.StylesheetSet(sslLocation).getStylesheetURI(runtimeData.getMedia());
+        org.apache.xalan.xslt.StylesheetRoot ssRoot = XSLT.getStylesheetRoot(xslUri);
+        processor.setStylesheet(ssRoot);
+        processor.setDocumentHandler(out);
+        processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
+        processor.setStylesheetParam("activeTab", processor.createXString(activeTab));
+        processor.setStylesheetParam("action", processor.createXString(action));
+        processor.setStylesheetParam("elementID", processor.createXString(elementID));
+        processor.setStylesheetParam("errorMessage", processor.createXString(errorMessage));
+
+        StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+        StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, ssup);
+
+        // Begin SAX chain
+        UtilitiesBean.node2SAX(userLayout, saif);
+
+        //if (action.equals("deleteColumn"))
+        //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
       }
       catch (Exception e)
       {
