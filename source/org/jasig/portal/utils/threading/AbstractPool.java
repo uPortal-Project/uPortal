@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class AbstractPool implements ThreadPool {
     
-    private static final Log log = LogFactory.getLog(AbstractPool.class);
+    private final Log log = LogFactory.getLog(getClass());
     
 	    protected int priority;
 	    protected boolean isDestroyed = false;
