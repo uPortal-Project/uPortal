@@ -1,95 +1,474 @@
-<!-- Ant v1.2 build file -->
+<!-- 
+     This is the build.xml for uPortal 2 which can be used in
+     conjunction with Ant (http://jakarta.apache.org/ant/) to
+     build, deploy, and distribute the uPortal project. Type
+     "ant -projecthelp" to see a list of ant targets.  This
+     build file is based on a sample build.xml distriuted with
+     Jakarta's Tomcat 4.
+     
+     Notes: 
+     
+     You shouldn't need to modify this file.  Instead, modify
+     build.properties which contains configurable paths to jar
+     files and other resources.
+     
+     "ant db" will load your database, but you must first 
+     set up the JDBC properties in rdbm.properties and possibly
+     PersonDirs.xml, both of which are in the properties directory.
+     
+     Author: Ken Weiner, kweiner@interactivebusiness.com
+     Version $Revision$
+-->
 
-<project name="portal" default="all" basedir=".">
-
-<property file="localbuild.properties"/>
-
-<!-- The directory that contains this file -->
-<property name="classsrc" value="./source"/>
-<property name="htmlsrc" value="./webpages"/>
-<property name="props" value="properties/"/>
-<property name="scripts" value="./scripts"/>
-
-
-<target name="all" depends="classes,javadoc,sql"/>
-<!-- these targets will be used once a directory structure is decided on -->
-<!-- <target name="all" depends="classes,html,support,javadoc,sql"/> -->
-
-<target name="classes" if="htmldest">
-  <echo message="Building directories under ${htmldest}"/>
-  <mkdir dir="${htmldest}"/>
-  <mkdir dir="${htmldest}/WEB-INF"/>
-  <mkdir dir="${htmldest}/WEB-INF/sessions"/>
-  <mkdir dir="${htmldest}/WEB-INF/classes"/>
-  <echo message="Compiling classes to ${htmldest}/WEB-INF/classes"/>
-   <javac srcdir="${classsrc}"
-          destdir="${htmldest}/WEB-INF/classes"
-          classpath="${classpath}"          
-          excludes="**/*.bak"
-          debug="on" 
-    />
-</target>
-
-<!-- this target will be re-activated once we start building to a different directory -->
-<target name="html" if="htmldest">
-  <echo message="Copying JSPs and other files to ${htmldest}"/>
-  <mkdir dir="${htmldest}" />
-  <copy todir="${htmldest}" >
-    <fileset dir="${htmlsrc}">
-       <exclude name="**/*.sql" /> 
-    </fileset>
-  </copy>
-</target>
-
-<!-- this target will be re-activated once we start building to a different directory -->
-<!-- this target is for copying properties and stylesheets -->
-<target name="support" if="upbasedir">
-  <echo message="Copying properties and stylesheets to ${upbasedir}"/>
-  <mkdir dir="${upbasedir}" />
-  <copy todir="${upbasedir}" >
-    <fileset dir=".">
-       <include name="${props}" /> 
-       <include name="${htmlsrc}/stylesheets/" />
-       <exclude name="**/*.sql" /> 
-    </fileset>
-    <fileset dir="${htmlsrc}"> 
-       <include name="dtd/" />
-    </fileset>
-  </copy>
-</target>
-
-<target name="javadoc" if="docdest">
-  <echo message="Generating javadocs into ${docdest}"/>
-  <mkdir dir="${docdest}"/>
-  <javadoc sourcepath="${classsrc}"
-           packagenames="org.jasig.portal,org.jasig.portal.channels,org.jasig.portal.utils,org.jasig.portal.security"
-           destdir="${docdest}"
-           author="true"
-           version="true"
-  />
-</target>
-
-<target name="sql" if="dbdriver">
-    <echo message="Running database scripts on ${dburl}"/>
-    <sql
-        classpath="${classpath}"
-        driver="${dbdriver}"
-        url="${dburl}"
-        userid="${dblogin}"
-        password="${dbpass}"
-        onerror="continue">
-        <transaction  src="${scripts}/dropTables.script" />
-        <transaction  src="${scripts}/createTables-${dbtype}.script" />
-        <transaction  src="${scripts}/populateTables.script" />
-    </sql>
-</target>
-	
-<!-- CAREFUL HERE! We could easily delete things that we shouldn't -->
-<target name="clean">
-  <echo message="Doing a clean on ${jspdest}"/>
-  <delete dir="${jspdest}"/>
-</target>
-
-     </project>
+<!-- A "project" describes a set of targets that may be requested
+     when Ant is executed.  The "default" attribute defines the
+     target which is executed if no specific target is requested,
+     and the "basedir" attribute defines the current working directory
+     from which Ant executes the requested task.  This is normally
+     set to the current working directory.
+-->
 
 
+<project name="uPortal" default="compile" basedir=".">
+
+
+<!-- ===================== Property Definitions =========================== -->
+
+<!--
+
+  Each of the following properties are used in the build script.
+  Values for these properties are set by the first place they are
+  defined, from the following list:
+  * Definitions on the "ant" command line (ant -Ddeploy.home=xyz compile)
+  * Definitions from a "build.properties" file in the top level
+    source directory
+  * Definitions from a "build.properties" file in the developer's
+    home directory
+  * Default definitions in this build.xml file
+
+  You will note below that property values can be composed based on the
+  contents of previously defined properties.  This is a powerful technique
+  that helps you minimize the number of changes required when your development
+  environment is modified.  Note that property composition is allowed within
+  "build.properties" files as well as in the "build.xml" script.
+
+-->
+
+  <!-- Load user property definition overrides -->
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+
+<!-- ==================== File and Directory Names ======================== -->
+
+<!--
+
+  These properties generally define file and directory names (or paths) that
+  affect where the build process stores its outputs.
+
+  app.name             Base name of this application, used to
+                       construct filenames and directories.
+                       Defaults to "myapp".
+
+  app.version          Version identifier for this application.
+
+  build.home           The directory into which the "prepare" and
+                       "compile" targets will generate their output.
+                       Defaults to "build".
+
+  deploy.home          The name of the directory into which the
+                       deployment hierarchy will be created, and into
+                       which the build directory will be copied.
+                       Usually "{your_servlet_container_home}/webapps/{app.name}".
+
+  dist.home            The name of the base directory in which
+                       distribution files are created.
+                       Defaults to "dist".
+
+-->
+
+  <property name="app.name"      value="uPortal"/>
+  <property name="app.version"   value="2.0"/>
+  <property name="build.home"    value="build"/>
+  <property name="deploy.home"   value="(set this in build.properties!)"/>
+  <property name="dist.home"     value="dist"/>
+
+
+
+<!--  ==================== Compilation Control Options ==================== -->
+
+<!--
+
+  These properties control option settings on the Javac compiler when it
+  is invoked using the <javac> task.
+
+  compile.debug        Should compilation include the debug option?
+
+  compile.deprecation  Should compilation include the deprecation option?
+
+  compile.optimize     Should compilation include the optimize option?
+
+-->
+
+  <property name="compile.debug"       value="true"/>
+  <property name="compile.deprecation" value="false"/>
+  <property name="compile.optimize"    value="true"/>
+
+
+
+<!-- ==================== External Dependencies =========================== -->
+
+
+<!--
+
+  Use property values to define the locations of external JAR files on which
+  your application will depend.  In general, these values will be used for
+  two purposes:
+  * Inclusion on the classpath that is passed to the Javac compiler
+  * Being copied into the "/WEB-INF/lib" directory during execution
+    of the "deploy" target.
+
+  Because we will automatically include all of the Java classes that Tomcat 4
+  exposes to web applications, we will not need to explicitly list any of those
+  dependencies.  You only need to worry about external dependencies for JAR
+  files that you are going to include inside your "/WEB-INF/lib" directory.
+  
+  This version of uPortal requires the following jars:
+  
+  xalan.jar            Xalan is an XSLT processor for transforming XML documents
+                       into HTML, text, or other XML document types. 
+                       Version: 2.2 D11
+                       URL: http://xml.apache.org/xalan-j/
+                       
+  xerces.jar           Xerces2 is the next generation of high performance, 
+                       fully compliant XML parsers in the Apache Xerces family.   
+                       Be sure to use the version of Xerces that comes with 
+                       the Xalan you are using.
+                       Version: (depends on Xalan version) 
+                       URL: http://xml.apache.org/xerces2-j/
+                       
+  bsf.jar              Bean scripting framework (BSF) used by the CWebProxy channel.
+                       Be sure to use the version of BSF that comes with 
+                       the Xalan you are using.
+                       Version: (depends on Xalan version) 
+                       URL: http://oss.software.ibm.com/developerworks/projects/bsf/
+                       
+  tidy.jar             Turns HTML into well formed XHTML.
+                       Used by the CWebProxy channel.
+                       Version: 04aug2000r6
+                       URL: http://lempinen.net/sami/jtidy/
+                       
+  tyrex.jar            An in-memory JNDI implementation.
+                       Version: 0.9.7.0
+                       URL: http://tyrex.exolab.org/
+  
+  mail.jar             JavaMail, a set of abstract classes that model a mail system.
+                       The CIMAPMail channel uses this API.
+                       Version: 1.1.3
+                       URL: http://java.sun.com/products/javamail/
+  
+  activation.jar       JavaBeans Activation Framework.  This library is required
+                       by JavaMail.
+                       Version: 1.0.1
+                       URL: http://java.sun.com/products/javabeans/glasgow/jaf.html
+  
+  log4j.jar            Logging package used by uPortal.
+                       Version: 1.1.3
+                       URL: http://jakarta.apache.org/log4j/
+  
+  jaas.jar             The Java Authentication and Authorization Service (JAAS) 
+                       is a Java package that enables services to authenticate 
+                       and enforce access controls upon users.
+                       Version: 1.0
+                       URL: http://java.sun.com/products/jaas/
+  
+  cos.jar              Servlet support classes including file upload package 
+                       MultipartRequest and MultipartParser. Used by CIMAPMail
+                       for uploading attachments.
+                       Version: 19Jun2001
+                       URL: http://www.servlets.com/cos/
+                       
+  servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
+                       by your servlet container.
+                       Version: 2.2 or 2.3
+                       URL: http://jakarta.apache.org/tomcat/                   
+  
+  jdbcDriver.jar       This should contain the JDBC driver for whatever relational
+                       database you plan to use.  For development, HypersonicSQL is
+                       a nice choice.  For production, you probably want something
+                       more robust like Oracle or PostgreSQL.
+                       Version: (depends on your database)
+                       URL: (depends on your database)
+  
+-->
+
+  <property name="xalan.jar" value="(set this in build.properties!)"/>
+  <property name="xerces.jar" value="(set this in build.properties!)"/>
+  <property name="bsf.jar" value="(set this in build.properties!)"/>
+  <property name="tidy.jar" value="(set this in build.properties!)"/>
+  <property name="tyrex.jar" value="(set this in build.properties!)"/>
+  <property name="mail.jar" value="(set this in build.properties!)"/>
+  <property name="activation.jar" value="(set this in build.properties!)"/>
+  <property name="log4j.jar" value="(set this in build.properties!)"/>
+  <property name="jaas.jar" value="(set this in build.properties!)"/>
+  <property name="cos.jar" value="(set this in build.properties!)"/>
+  <property name="servlet.jar" value="(set this in build.properties!)"/>
+  <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
+
+
+<!-- ==================== Compilation Classpath =========================== -->
+
+<!--
+
+  Rather than relying on the CLASSPATH environment variable, Ant includes
+  features that makes it easy to dynamically construct the classpath you
+  need for each compilation.  The example below constructs the compile
+  classpath to include the servlet.jar file, as well as the other components
+  that Tomcat makes available to web applications automatically, plus anything
+  that you explicitly added.
+
+-->
+
+  <path id="compile.classpath">
+
+    <!-- Include all JAR files that will be included in /WEB-INF/lib -->
+    <pathelement location="${xalan.jar}"/>
+    <pathelement location="${xerces.jar}"/>
+    <pathelement location="${bsf.jar}"/>
+    <pathelement location="${tidy.jar}"/>
+    <pathelement location="${tyrex.jar}"/>
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+    <pathelement location="${jaas.jar}"/>
+    <pathelement location="${cos.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${jdbcDriver.jar}"/>
+
+  </path>
+
+
+
+<!-- ==================== All Target ====================================== -->
+
+<!--
+
+  The "all" target is a shortcut for running the "clean" target followed
+  by the "compile" target, to force a complete recompile.
+
+-->
+
+  <target name="all" depends="clean,compile"
+   description="Clean build and dist, then compile"/>
+
+
+
+<!-- ==================== Clean Target ==================================== -->
+
+<!--
+
+  The "clean" target deletes any previous "build" and "dist" directory,
+  so that you can be ensured the application can be built from scratch.
+
+-->
+
+  <target name="clean" 
+   description="Delete old build and dist directories">
+    <delete dir="${build.home}"/>
+    <delete dir="${dist.home}"/>
+  </target>
+
+
+
+<!-- ==================== Compile Target ================================== -->
+
+<!--
+
+  The "compile" target transforms source files (from your "src" directory)
+  into object files in the appropriate location in the build directory.
+  This example assumes that you will be including your classes in an
+  unpacked directory hierarchy under "/WEB-INF/classes".
+
+-->
+
+  <target name="compile" depends="prepare" 
+   description="Compile Java sources">
+
+    <!-- Compile Java classes as necessary -->
+    <mkdir    dir="${build.home}/WEB-INF/classes"/>
+    <javac srcdir="source"
+          destdir="${build.home}/WEB-INF/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+    <!-- Copy associated resource files -->
+    <copy  todir="${build.home}/WEB-INF/classes/properties">
+      <fileset dir="properties" includes="**/*"/>
+    </copy>
+    
+    <!-- Copy serializer resources -->
+    <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
+      <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
+    </copy>
+    
+    <!-- Copy all stylesheets and stylesheet list files -->
+    <copy  todir="${build.home}/WEB-INF/classes">
+      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl"/>
+    </copy>
+
+    <!-- Copy everything in media except for files that are accessible from the web -->    
+    <copy  todir="${build.home}/WEB-INF/classes">
+      <fileset dir="webpages/media" excludes="CVS,**/*.gif,**/*.jpg,**/*.css"/>
+    </copy>        
+
+  </target>
+
+
+
+<!-- ==================== Deploy Target =================================== -->
+
+<!--
+
+  The "deploy" target copies the contents of the build directory into a
+  location required by our servlet container, and picks up any external
+  dependencies along the way.  AFter restarting the servlet container, you
+  can now test your web application.
+
+-->
+
+  <target name="deploy" depends="compile"
+   description="Deploy application to servlet container">
+
+    <!-- Copy the contents of the build directory -->
+    <mkdir     dir="${deploy.home}"/>
+    <copy    todir="${deploy.home}">
+      <fileset dir="${build.home}"/>
+    </copy>
+
+    <!-- Copy external dependencies as required -->
+    <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${mail.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
+
+  </target>
+
+
+
+<!-- ==================== Dist Target ===================================== -->
+
+
+<!--
+
+  The "dist" target creates a binary distribution of your application
+  in a directory structure ready to be archived in a tar.gz or zip file.
+  Note that this target depends on two others:
+  * "deploy" so that the entire web application (including external
+    dependencies) will have been assembled
+  * "javadoc" so that the application Javadocs will have been created
+
+-->
+
+  <target name="dist" depends="deploy,javadoc"
+   description="Create binary distribution">
+
+    <!-- Copy documentation subdirectory -->
+    <copy    todir="${dist.home}/docs">
+      <fileset dir="docs"/>
+    </copy>
+
+    <!-- Create application JAR file -->
+    <jar jarfile="${dist.home}/${app.name}.war"
+         basedir="${deploy.home}"/>
+
+    <!-- Copy additional files to ${dist.home} as necessary -->
+
+  </target>
+
+
+
+<!-- ==================== Javadoc Target ================================== -->
+
+<!--
+
+  The "javadoc" target creates Javadoc API documentation for the Java
+  classes included in your application.  Normally, this is only required
+  when preparing a distribution release, but is available as a separate
+  target in case the developer wants to create Javadocs independently.
+
+-->
+
+  <target name="javadoc" depends="compile"
+   description="Create Javadoc API documentation">
+
+    <mkdir dir="${dist.home}/docs/api"/>
+    <javadoc sourcepath="source"
+           classpathref="compile.classpath"
+                destdir="${dist.home}/docs/api"
+           packagenames="org.jasig.portal.*"/>
+
+  </target>
+
+
+
+<!-- ==================== Prepare Target ================================== -->
+
+<!--
+
+  The "prepare" target is used to create the "build" destination directory,
+  and copy the static contents of your web application to it.  If you need
+  to copy static files from external dependencies, you can customize the
+  contents of this task.
+
+  Normally, this task is executed indirectly when needed.
+
+-->
+
+  <target name="prepare">
+
+    <!-- Create build directory and copy static content -->
+    <mkdir  dir="${build.home}"/>
+    <copy todir="${build.home}">
+      <fileset dir="webpages"/>
+    </copy>
+
+    <!-- Copy static files from external dependencies as needed -->
+
+  </target>
+
+
+
+<!-- ==================== DbLoader Target ================================= -->
+
+<!--
+
+  The "db" target runs uPortal's DbLoader program to load the database.
+  WARNING: THIS WILL ERASE EXISTING uPORTAL TABLES!!!
+-->
+
+
+  <target name="db" depends="compile">
+    <echo message="Invoking DbLoader"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbLoader">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+    </java>
+  </target>
+
+</project>
