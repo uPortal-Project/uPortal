@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.ILayout;
 
 /**
  * An interface defining an objective representation of a 
@@ -20,5 +20,5 @@ public interface ILayoutCommand {
      * @param manager
      * @return
      */
-    public boolean execute(ILayoutManager manager) throws PortalException;
+    public boolean execute(ILayout manager) throws PortalException;
 }

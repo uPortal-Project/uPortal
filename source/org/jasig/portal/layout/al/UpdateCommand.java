@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutManager;
+import org.jasig.portal.layout.al.common.ILayout;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
@@ -34,9 +34,9 @@ public class UpdateCommand extends AbstractCommand {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.common.ILayoutManager)
+     * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.common.ILayout)
      */
-    public boolean execute(ILayoutManager manager) throws PortalException {
+    public boolean execute(ILayout manager) throws PortalException {
         return manager.updateNode(this.getNodeId(),nodeDescription);
     }
     /**
