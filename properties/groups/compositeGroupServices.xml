@@ -44,4 +44,17 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
+<!-- UNcomment to configure the person attributes group store.  Update PAGSGroupStoreConfig.xml -->
+<!--
+ <service>
+   <name>pags</name>
+   <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+   <entity_store_factory>org.jasig.portal.groups.pags.PersonAttributesEntityStoreFactory</entity_store_factory>
+   <group_store_factory>org.jasig.portal.groups.pags.PersonAttributesGroupStoreFactory</group_store_factory>
+   <entity_searcher_factory>org.jasig.portal.groups.pags.PersonAttributesEntitySearcherFactory</entity_searcher_factory>
+   <internally_managed>false</internally_managed>
+   <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
 </servicelist>
