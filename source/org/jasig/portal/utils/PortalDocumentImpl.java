@@ -326,7 +326,9 @@ public class PortalDocumentImpl implements IPortalDocument {
         // that was invalid.
         if (deep) {
             //newNode.copyCache(this);
-            newNode.setIdentifiers((Hashtable)identifiers.clone());
+            final Hashtable hash = new Hashtable(1024);
+            hash.putAll(identifiers);
+            newNode.setIdentifiers(hash);
         }
         return newNode;
     }
