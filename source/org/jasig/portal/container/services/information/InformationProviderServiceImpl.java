@@ -52,9 +52,9 @@ import org.jasig.portal.container.services.PortletContainerService;
  */
 public class InformationProviderServiceImpl implements PortletContainerService, InformationProviderService {
     
-    private ServletConfig servletConfig = null;
-    private Properties properties = null;
-	private static StaticInformationProviderImpl staticInfoProvider = null;
+    private ServletConfig servletConfig;
+    private Properties properties;
+	private static StaticInformationProviderImpl staticInfoProvider;
     
     private static final String dynamicInformationProviderRequestParameterName = "org.apache.pluto.services.information.DynamicInformationProvider";
 
@@ -63,8 +63,10 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     public void init(ServletConfig servletConfig, Properties properties) throws Exception {
         this.servletConfig = servletConfig;
         this.properties = properties;
-		staticInfoProvider = new StaticInformationProviderImpl();
-        staticInfoProvider.init(servletConfig, properties);
+        if ( staticInfoProvider == null ) {
+		 staticInfoProvider = new StaticInformationProviderImpl();
+         staticInfoProvider.init(servletConfig, properties);
+        } 
     }
     
     public void destroy() throws Exception {
