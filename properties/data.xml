@@ -48,7 +48,7 @@
   </table>
 
   <table>
-    <name>UP_SHADOW</name>
+    <name>UP_PERSON_DIR</name>
       <rows>
         <row>
           <column><name>USER_ID</name><value>2</value></column>

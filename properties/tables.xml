@@ -15,7 +15,7 @@
   </table>
 
   <table>
-    <name>UP_SHADOW</name>
+    <name>UP_PERSON_DIR</name>
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>	                   </column>
       <column> <name>ENCRPTD_PSWD</name>	  <type>VARCHAR</type>	 <param>64</param> </column>
