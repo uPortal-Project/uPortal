@@ -474,7 +474,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        }
 
 
-      ALNode resultNode = addUserLayoutNode ( userId, layoutId, node, psAddNode, psAddRestriction, null, null );
+      ALNode resultNode = addUserLayoutNode ( userId, layoutId, node, psAddNode, psAddRestriction, null, null, stmt );
 
       if ( psAddNode != null ) psAddNode.close();
       if ( psAddRestriction != null ) psAddRestriction.close();
@@ -506,7 +506,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @exception PortalException if an error occurs
      */
     private ALNode addUserLayoutNode ( int userId, int layoutId, ALNode node, PreparedStatement psAddNode, PreparedStatement psAddRestriction,
-                                               PreparedStatement psAddChannel, PreparedStatement psAddChannelParam ) throws PortalException {
+                                               PreparedStatement psAddChannel, PreparedStatement psAddChannelParam, Statement stmt ) throws PortalException {
 
       IALNodeDescription nodeDesc = node.getNodeDescription();
 
@@ -676,9 +676,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          PreparedStatement psRestr = null;
 
 
-         if ( fragmentId > 0 ) {
+         if ( fragmentId > 0 && layoutId == 0 ) {  	
+         	
+           stmt.executeQuery("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId+" AND NODE_ID="+nodeId);	
 
-          /*Enumeration restrictions = restrHash.elements();
+           Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
@@ -693,9 +695,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
              //execute update restrictions
              psAddRestriction.executeUpdate();
 
-           } // end for*/
+           }
 
-         } else {
+         } else if ( fragmentId == 0 ) {
 
             Enumeration restrictions = restrHash.elements();
             for ( ;restrictions.hasMoreElements(); ) {
@@ -1425,27 +1427,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       psDeleteLayoutRestriction.setInt(2,layoutId);
       psDeleteLayoutRestriction.executeUpdate();
 
-       // Deleting restrictions for "pseudo" fragment nodes that exist in the user layout
-      //PreparedStatement psDeleteFragmentRestriction = con.prepareStatement("DELETE FROM up_fragment_restrictions WHERE fragment_id=? AND node_id=?");
-
-      // Update prepared statements
-      //PreparedStatement  psUpdateFragmentNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
-      PreparedStatement  psUpdateFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
-      PreparedStatement  psUpdateLayoutNode = con.prepareStatement(LAYOUT_UPDATE_SQL);
-      PreparedStatement  psUpdateLayoutRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
-      PreparedStatement  psUpdateChannelParam = con.prepareStatement(CHANNEL_PARAM_UPDATE_SQL);
-      PreparedStatement  psUpdateChannel = con.prepareStatement(CHANNEL_UPDATE_SQL);
 
       // Add prepared statements
-      PreparedStatement  psAddFragmentNode = con.prepareStatement(FRAGMENT_ADD_SQL);
       PreparedStatement  psAddFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
       PreparedStatement  psAddLayoutNode = con.prepareStatement(LAYOUT_ADD_SQL);
       PreparedStatement  psAddLayoutRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
       PreparedStatement  psAddChannelParam = con.prepareStatement(CHANNEL_PARAM_ADD_SQL);
       PreparedStatement  psAddChannel = con.prepareStatement(CHANNEL_ADD_SQL);
 
-      PreparedStatement psLayout = con.prepareStatement("SELECT NODE_ID FROM UP_LAYOUT_STRUCT_AGGR WHERE NODE_ID=? AND USER_ID=? AND LAYOUT_ID=?");
-      //PreparedStatement psFragment = con.prepareStatement("SELECT node_id FROM up_layout_struct_aggr WHERE node_id=? AND fragment_id=?");
+      PreparedStatement psLayout = con.prepareStatement("SELECT NODE_ID FROM UP_LAYOUT_STRUCT_AGGR WHERE NODE_ID=? AND USER_ID=? AND LAYOUT_ID=?");   
+      
 
        // The loop for all the nodes from the layout
        for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
@@ -1459,43 +1450,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentId = CommonUtils.parseInt(node.getFragmentId());
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
-
-
-         if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
-           /*ps = psFragment;
-           ps.setInt(1,nodeId);
-           ps.setInt(2,fragmentId);
-           rs = ps.executeQuery();
-           if ( rs.next() )
-               updateUserLayoutNode(userId,layoutId,node,psUpdateFragmentNode,psUpdateFragmentRestriction,psUpdateChannel,psUpdateChannelParam);
-           else
-               addUserLayoutNode(userId,layoutId,node,psAddFragmentNode,psAddFragmentRestriction,psAddChannel,psAddChannelParam);
-           rs.close();*/
-         } else {
-             // Setting psLayout parameters
-             psLayout.setInt(1,nodeId);
-             psLayout.setInt(2,userId);
-             psLayout.setInt(3,layoutId);
-             rs = psLayout.executeQuery();
-             if ( rs.next() )
-               updateUserLayoutNode(userId,layoutId,node,psUpdateLayoutNode,(fragmentNodeId>0)?psUpdateFragmentRestriction:psUpdateLayoutRestriction,psUpdateChannel,psUpdateChannelParam);
-             else {
-
-              // Deleting "pseudo" fragment node restrictions
-              /*if ( fragmentNodeId > 0 && fragmentId > 0 ) {
-               psDeleteFragmentRestriction.setInt(1,fragmentId);
-               psDeleteFragmentRestriction.setInt(2,fragmentNodeId);
-               psDeleteFragmentRestriction.executeUpdate();
-              }
-              /*else {
-                  // Deleting restrictions for the node
-                  psDeleteLayoutRestriction.setInt(1,userId);
-                  psDeleteLayoutRestriction.setInt(2,layoutId);
-                  psDeleteLayoutRestriction.setInt(3,nodeId);
-                  psDeleteLayoutRestriction.executeUpdate();
-                }*/
-
-               boolean channelParamsExist = false;
+         if ( fragmentNodeId > 0 || fragmentId < 0 ) {
+         
+           boolean channelParamsExist = false;
 
                if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
                 int publishId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelPublishId());
@@ -1509,15 +1466,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                }
 
                if ( channelParamsExist )
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,null,null);
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,null,null,stmt);
                else
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,psAddChannel,psAddChannelParam);
-            }
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,psAddChannel,psAddChannelParam,stmt);
 
              rs.close();
-           }
-         } // End if
-        } // End for
+         }   
+ 
+        } // End if
+       } // End for
 
 
       if ( stmt != null ) stmt.close();
@@ -1528,25 +1485,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       //if ( psFragment != null ) psFragment.close();
       if ( psLayout != null ) psLayout.close();
 
-      //if ( psUpdateFragmentNode != null ) psUpdateFragmentNode.close();
-      //if ( psUpdateFragmentRestriction != null ) psUpdateFragmentRestriction.close();
-      if ( psUpdateLayoutNode != null ) psUpdateLayoutNode.close();
-      if ( psUpdateLayoutRestriction != null ) psUpdateLayoutRestriction.close();
-
       if ( psDeleteLayout != null ) psDeleteLayout.close();
       if ( psDeleteLayoutRestriction != null ) psDeleteLayoutRestriction.close();
 
-      //if ( psAddFragmentNode != null ) psAddFragmentNode.close();
-      //if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
-      //if ( psDeleteFragmentRestriction != null ) psDeleteFragmentRestriction.close();
+   
       if ( psAddLayoutNode != null ) psAddLayoutNode.close();
       if ( psAddLayoutRestriction != null ) psAddLayoutRestriction.close();
-
-      if ( psUpdateChannel != null ) psUpdateChannel.close();
-      if ( psUpdateChannelParam != null ) psUpdateChannelParam.close();
-
-      // Close the connection
-      con.close();
 
 
     } catch (Exception e) {
@@ -1557,6 +1501,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
+      } finally {
+		RDBMServices.releaseConnection(con); 
       }
  }
 
@@ -1686,7 +1632,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
          if (  CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 )
-           addUserLayoutNode(userId,0,node,psAddFragmentNode,psAddFragmentRestriction,null,null);
+           addUserLayoutNode(userId,0,node,psAddFragmentNode,psAddFragmentRestriction,null,null,stmt);
 
        } // End if
       } // End for

@@ -172,7 +172,7 @@ public class CContentSubscriber extends FragmentManager {
 			
 		} else if ( action.equals("init") ) {
 			 	//if ( alm.isFragmentLoaded() )
-			 	alm.loadUserLayout();	
+			 	//alm.loadUserLayout();	
 			 	refreshFragmentMap(); 
 			 	initRegistry();
 		}

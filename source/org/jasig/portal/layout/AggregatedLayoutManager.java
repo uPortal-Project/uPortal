@@ -138,14 +138,23 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if the error occurs.
      */
     public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+    	    IALNodeDescription nodeDesc = null;
             switch ( nodeType ) {
               case IUserLayoutNodeDescription.FOLDER:
-                return new ALFolderDescription();
+                nodeDesc = new ALFolderDescription();
+                break;
               case IUserLayoutNodeDescription.CHANNEL:
-                return new ALChannelDescription();
-              default:
-                return null;
+                nodeDesc = new ALChannelDescription();
+                break;
             }
+              // Adding the user priority restriction
+              if ( nodeDesc != null ) {
+               int[] priorityRange = UserPriorityManager.getPriorityRange(person);	  	
+			   PriorityRestriction restriction = new PriorityRestriction(); 
+			   restriction.setRestriction(priorityRange[0],priorityRange[1]);
+               nodeDesc.addRestriction(restriction);
+              } 
+            return nodeDesc;  	
     }
 
     /**
@@ -1163,7 +1172,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 ALFolder rootFolder = ALFolder.createRootFolder();
 			
 			 // Creating the fragment root node
-		     ALFolderDescription nodeDesc = new ALFolderDescription();
+		     ALFolderDescription nodeDesc = (ALFolderDescription) createNodeDescription(IUserLayoutNodeDescription.FOLDER);
 		     
 		     // Setting the root fragment ID = 1
 		     nodeDesc.setId("1");
@@ -1206,6 +1215,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 return newFragmentId;
 			 
 		  } catch ( Exception e ) {
+		  	e.printStackTrace();
 			throw new PortalException(e.getMessage());
 		  }
 	}

@@ -40,6 +40,8 @@ package org.jasig.portal.layout;
 
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
@@ -62,11 +64,20 @@ import org.jasig.portal.services.GroupService;
 public class UserPriorityManager {
 	
  private static IUserLayoutStore layoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+ private static Map ranges = new HashMap();
+ private static final int MAX_SIZE = 5000;
  
- public static int DEFAULT_MAX_PRIORITY = 1000;
- public static int DEFAULT_MIN_PRIORITY = 0;
+ public static final int DEFAULT_MAX_PRIORITY = 1000;
+ public static final int DEFAULT_MIN_PRIORITY = 0;
+ 
+ 
 	
  public static int[] getPriorityRange ( IPerson person ) throws PortalException {
+ 	if ( ranges.size() >= MAX_SIZE ) ranges.clear();
+ 	Object storedRange = ranges.get(new Integer(person.getID()));
+ 	if ( storedRange != null )
+ 	  return (int[]) storedRange;
+ 	
  	if ( !(layoutStore instanceof IAggregatedUserLayoutStore) )
  	  throw new PortalException ( "The layout store must have type IAggregatedUserLayoutStore!");
 	IAggregatedUserLayoutStore store = (IAggregatedUserLayoutStore) layoutStore;  
@@ -87,6 +98,7 @@ public class UserPriorityManager {
       }
     }
  	
+ 	ranges.put(new Integer(person.getID()),result);
  	return result;	
  }
 

@@ -62,7 +62,6 @@ public class PriorityRestriction extends UserLayoutRestriction {
            super(LOCAL_RESTRICTION);
          }
 
-
          /**
            * Returns the maximum value of the given restriction
            * @return a maxPriority
