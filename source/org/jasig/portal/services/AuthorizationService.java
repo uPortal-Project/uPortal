@@ -1,13 +1,13 @@
 package org.jasig.portal.services;
 
-import  java.util.Vector;
-import  java.io.File;
-import  java.io.FileInputStream;
-import  java.io.IOException;
-import  java.util.Properties;
-import  org.jasig.portal.PortalSessionManager;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.AuthorizationException;
+import java.util.Vector;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.security.*;
+import org.jasig.portal.AuthorizationException;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -46,7 +46,7 @@ public class AuthorizationService
 /**
  *
  */
-public AuthorizationService () throws AuthorizationException
+private AuthorizationService () throws AuthorizationException
 {
     // From our factory get an actual authorization instance
     m_authorization = m_Factory.getAuthorization();
