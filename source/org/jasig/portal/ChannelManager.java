@@ -542,6 +542,12 @@ public class ChannelManager implements LayoutEventListener {
     private IChannel replaceWithErrorChannel(String channelSubscribeId,int errorCode, Throwable t, String message,boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
+        
+        log.warn("Replacing channel [" + oldInstance
+                + "], which had subscribeId [" + channelSubscribeId 
+                + "] with error channel because of error code " 
+                + errorCode + " message: " + message + " and throwable [" + t +"]");
+        
         channelTable.remove(channelSubscribeId);
         rendererTable.remove(channelSubscribeId);
 
