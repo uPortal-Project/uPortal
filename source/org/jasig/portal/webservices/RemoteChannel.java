@@ -123,9 +123,9 @@ public class RemoteChannel implements IRemoteChannel {
 
     // Set the user name and password
     HashMap principals = new HashMap(1);
-    principals.put("username", username);
+    principals.put("root", username);
     HashMap credentials = new HashMap(1);
-    credentials.put("password", password);
+    credentials.put("root", password);
 
     // Attempt to authenticate using the incoming request
     authenticationService.authenticate(principals, credentials, person);
