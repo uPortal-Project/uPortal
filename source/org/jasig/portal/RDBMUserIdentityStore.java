@@ -372,7 +372,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_profile */
 
-        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
+        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION "+
                 "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
