@@ -49,7 +49,6 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.MediaManager;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.services.LogService;
@@ -114,11 +113,11 @@ public class CHeader extends BaseChannel
     headerEl.appendChild(fullNameEl);
     // Create <timestamp-long> element under <header>
     Element timeStampLongEl = doc.createElement("timestamp-long");
-    timeStampLongEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("EEEE, MMM d, yyyy 'at' hh:mm a")));
+    timeStampLongEl.appendChild(doc.createTextNode(getDate("EEEE, MMM d, yyyy 'at' hh:mm a")));
     headerEl.appendChild(timeStampLongEl);
     // Create <timestamp-short> element under <header>
     Element timeStampShortEl = doc.createElement("timestamp-short");
-    timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
+    timeStampShortEl.appendChild(doc.createTextNode(getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
     if (!staticData.getPerson().isGuest()) {
@@ -202,6 +201,25 @@ public class CHeader extends BaseChannel
       // Deny the user publish access if anything went wrong
       return  (false);
     }
+  }
+
+  /**
+   * Gets the current date/time with specified format
+   * @param format the format string
+   * @return a formatted date and time string
+   */
+  public static String getDate(String format) {
+    try {
+      // Format the current time.
+      java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format);
+      java.util.Date currentTime = new java.util.Date();
+      return formatter.format(currentTime);
+    }
+    catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+    }
+
+    return "&nbsp;";
   }
 
   /**
