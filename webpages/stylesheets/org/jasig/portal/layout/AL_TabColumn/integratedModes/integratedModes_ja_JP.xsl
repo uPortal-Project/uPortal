@@ -57,7 +57,7 @@ Version $Revision$
 	<xsl:variable name="pushedFragmentFoundation">
 		<layout>
 			<folder ID="userLayoutRootNode" type="regular" hidden="false" unremovable="false" immutable="false" name="root">
-				<folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="ï¿½??ï¿½?ã‚’å…¥åŠ›ï¿½?ï¿½ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" width="100%"/>
+				<folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="å??å‰?ã‚’å…¥åŠ›ã?—ã?¦ã??ã? ã?•ã?„" width="100%"/>
 			</folder>
 		</layout>
 	</xsl:variable>
@@ -150,7 +150,7 @@ Version $Revision$
 								<xsl:if test="$channelManager='true'">
 									<td>
 										<a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">
-											<img width="24" height="24" alt="ï¿½?ãƒ£ï¿½?ãƒ«ç®¡ï¿½?ï¿½" title="ï¿½?ãƒ£ï¿½?ãƒ«ç®¡ï¿½?ï¿½" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
+											<img width="24" height="24" alt="ãƒ?ãƒ£ãƒ?ãƒ«ç®¡ç?†" title="ãƒ?ãƒ£ãƒ?ãƒ«ç®¡ç?†" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
 										</a>
 									</td>
 								</xsl:if>
@@ -166,12 +166,12 @@ Version $Revision$
 										<xsl:when test="$mode='preferences'">
 											<td>
 												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-													<img width="24" height="24" alt="ãƒ—ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚’ï¿½?ï¿½è¡¨ç¤º" title="ãƒ—ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚’ï¿½?ï¿½è¡¨ç¤º" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
+													<img width="24" height="24" alt="ãƒ—ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚’é?žè¡¨ç¤º" title="ãƒ—ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚’é?žè¡¨ç¤º" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
 												</a>
 											</td>
 											<td>
 												<a href="{$baseActionURL}?uP_sparam=uP_save&amp;uP_save=all">
-													<img width="24" height="24" alt="å¤‰æ›´ã‚’ï¿½?å­˜" title="å¤‰æ›´ã‚’ï¿½?å­˜" src="{$mediaPathIcons}/save.gif" border="0"/>
+													<img width="24" height="24" alt="å¤‰æ›´ã‚’ä¿?å­˜" title="å¤‰æ›´ã‚’ä¿?å­˜" src="{$mediaPathIcons}/save.gif" border="0"/>
 												</a>
 											</td>
 										</xsl:when>
@@ -228,7 +228,7 @@ Version $Revision$
 						</td>
 						<td nowrap="nowrap" class="uportal-background-selected">
 							<span class="uportal-channel-title">
-								<a name="{@ID}"><xsl:value-of select="@name"/></a>
+								<xsl:value-of select="@name"/>
 								<xsl:text/>(selected)</span>
 						</td>
 						<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -265,7 +265,7 @@ Version $Revision$
 						</td>
 						<td nowrap="nowrap" class="uportal-background-semidark">
 							<span class="uportal-channel-title">
-								<a name="{@ID}"><xsl:value-of select="@name"/></a>
+								<xsl:value-of select="@name"/>
 							</span>
 						</td>
 						<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborder.gif); background-repeat:repeat-y;">
@@ -371,7 +371,7 @@ Version $Revision$
 		<xsl:choose>
 			<xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
 				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-					<img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" title="ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" border="0"/>
+					<img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="ãƒ?ãƒ£ãƒ?ãƒ«ã?®ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" title="ãƒ?ãƒ£ãƒ?ãƒ«ã?®ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" border="0"/>
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
@@ -384,7 +384,7 @@ Version $Revision$
 		<a href="#">
 			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="Change language for this channel" title="Change language for this channel" border="0"/>
 		</a> -->
-		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to reï¿½?ãƒ£ï¿½?ãƒ«ã‚’ç§»å‹•?')">
+		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to reãƒ?ãƒ£ãƒ?ãƒ«ã‚’ç§»å‹•?')">
 			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="Delete this channel" title="Delete this channel" border="0"/>
 		</a>
 	</xsl:template>
@@ -399,7 +399,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="not(@hasAbout='false')">
 			<a href="{$baseActionURL}?uP_about_target={@ID}">
-				<img alt="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" title="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
+				<img alt="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" title="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
 		<xsl:if test="not(@editable='false')">
@@ -409,7 +409,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="@printable='true'">
 			<a href="{$baseActionURL}?uP_print_target={@ID}">
-				<img alt="ï¿½?ï¿½åˆ·" title="ï¿½?ï¿½åˆ·" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
+				<img alt="å?°åˆ·" title="å?°åˆ·" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
 	</xsl:template>
@@ -421,7 +421,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="not(@hasAbout='false')">
 			<a href="{$baseActionURL}?uP_about_target={@ID}">
-				<img alt="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" title="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
+				<img alt="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" title="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
 		<xsl:if test="not(@editable='false')">
@@ -431,7 +431,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="@printable='true'">
 			<a href="{$baseActionURL}?uP_print_target={@ID}">
-				<img alt="ï¿½?ï¿½åˆ·" title="ï¿½?ï¿½åˆ·" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
+				<img alt="å?°åˆ·" title="å?°åˆ·" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
 		<a href="{$baseActionURL}?uP_root={@ID}">
@@ -439,13 +439,13 @@ Version $Revision$
 		</a>
 		<xsl:choose>
 			<xsl:when test="@minimized='true'">
-				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}">
+				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
 					<img alt="æœ€å¤§åŒ–" title="æœ€å¤§åŒ–" src="{$mediaPathIcons}/contentmaximize.gif" width="26" height="23" border="0"/>
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
-				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}">
-					<img alt="æœ€ï¿½?åŒ–" title="æœ€ï¿½?åŒ–" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
+				<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true">
+					<img alt="æœ€å°?åŒ–" title="æœ€å°?åŒ–" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
 				</a>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -453,7 +453,7 @@ Version $Revision$
 			<img alt="å€‹åˆ¥è¡¨ç¤º" title="å€‹åˆ¥è¡¨ç¤º" src="{$mediaPathIcons}/contentdetach.gif" width="26" height="23" border="0"/>
 		</a>
 		<xsl:if test="not(@unremovable='true')">
-			<a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to reï¿½?ãƒ£ï¿½?ãƒ«ã‚’ç§»å‹•?')">
+			<a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to reãƒ?ãƒ£ãƒ?ãƒ«ã‚’ç§»å‹•?')">
 				<img alt="å‰Šé™¤" title="å‰Šé™¤" src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
@@ -466,7 +466,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="not(@hasAbout='false')">
 			<a href="{$baseActionURL}?uP_about_target={@ID}">
-				<img alt="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" title="ï¿½?ï¿½ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
+				<img alt="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" title="ã?“ã?®ãƒ?ãƒ£ãƒ?ãƒ«ã?«ã?¤ã?„ã?¦" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
 			</a>
 		</xsl:if>
 		<xsl:if test="not(@editable='false')">
@@ -476,7 +476,7 @@ Version $Revision$
 		</xsl:if>
 		<xsl:if test="@printable='true'">
 			<a href="{$baseActionURL}?uP_print_target={@ID}">
-				<img alt="ï¿½?ï¿½åˆ·" title="ï¿½?ï¿½åˆ·" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
+				<img alt="å?°åˆ·" title="å?°åˆ·" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
 			</a>
 		</xsl:if>
 	</xsl:template>
@@ -858,7 +858,7 @@ Version $Revision$
 														<input type="hidden" name="mode" value="{$mode}"/>
 														<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 														<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-														<input name="renameTab" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="æ–°ï¿½?ã‚¿ãƒ–ï¿½?ï¿½ï¿½??ï¿½?ã‚’ï¿½?ä¿¡" title="æ–°ï¿½?ã‚¿ãƒ–ï¿½?ï¿½ï¿½??ï¿½?ã‚’ï¿½?ä¿¡"/>
+														<input name="renameTab" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="æ–°è¦?ã‚¿ãƒ–ã?®å??å‰?ã‚’é€?ä¿¡" title="æ–°è¦?ã‚¿ãƒ–ã?®å??å‰?ã‚’é€?ä¿¡"/>
 													</xsl:when>
 													<xsl:otherwise>
 														<span class="uportal-navigation-category-selected">
@@ -872,7 +872,7 @@ Version $Revision$
 												</a>
 												<!-- Language Preferences Removed until Later version of uPortal
 												<a href="#">
-													<img alt="ï¿½?ï¿½ï¿½?ï¿½ã‚¿ãƒ–ï¿½?ï¿½è¨€èªžã‚’å¤‰æ›´" title="ï¿½?ï¿½ï¿½?ï¿½ã‚¿ãƒ–ï¿½?ï¿½è¨€èªžã‚’å¤‰æ›´" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
+													<img alt="ã?“ã?®ã‚¿ãƒ–ã?®è¨€èªžã‚’å¤‰æ›´" title="ã?“ã?®ã‚¿ãƒ–ã?®è¨€èªžã‚’å¤‰æ›´" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
 												</a> -->
 												<xsl:if test="@unremovable='false'">
 													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
@@ -1092,7 +1092,7 @@ Version $Revision$
 									</span>
 									<img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
 									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-										<img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="ã‚¿ãƒ–ï¿½?ï¿½ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" title="ã‚¿ãƒ–ï¿½?ï¿½ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" border="0"/>
+										<img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="ã‚¿ãƒ–ã?®ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" title="ã‚¿ãƒ–ã?®ç§»å‹•ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«" border="0"/>
 									</a>
 								</td>
 							</tr>
@@ -1216,7 +1216,7 @@ Version $Revision$
 							</td>
 							<td valign="middle" width="100%">
 								<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-									<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ç›®æ¨™ï¿½?ï¿½å ´æ‰€ã‚’ï¿½?ï¿½æŠžï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ç›®æ¨™ï¿½?ï¿½å ´æ‰€ã‚’ï¿½?ï¿½æŠžï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
+									<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ç›®æ¨™ã?®å ´æ‰€ã‚’é?¸æŠžã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ç›®æ¨™ã?®å ´æ‰€ã‚’é?¸æŠžã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 								</a>
 							</td>
 							<td>
@@ -1252,7 +1252,7 @@ Version $Revision$
 			<xsl:when test="$type='column'">
 				<td valign="top">
 					<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-						<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ã‚«ãƒ©ãƒ ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ç§»å‹•ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ã‚«ãƒ©ãƒ ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ç§»å‹•ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
+						<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ã‚«ãƒ©ãƒ ã‚’ã?“ã?“ã?¸ç§»å‹•ã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ã‚«ãƒ©ãƒ ã‚’ã?“ã?“ã?¸ç§»å‹•ã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
 					</a>
 				</td>
 			</xsl:when>
@@ -1261,7 +1261,7 @@ Version $Revision$
 					<tr>
 						<td align="center">
 							<a href="{$baseActionURL}?uP_move_target={$moveID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-								<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ç§»å‹•ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½ï¿½?ãƒ£ï¿½?ãƒ«ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ç§»å‹•ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
+								<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ãƒ?ãƒ£ãƒ?ãƒ«ã‚’ã?“ã?“ã?¸ç§»å‹•ã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨ãƒ?ãƒ£ãƒ?ãƒ«ã‚’ã?“ã?“ã?¸ç§»å‹•ã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
 							</a>
 						</td>
 					</tr>
@@ -1280,7 +1280,7 @@ Version $Revision$
 						</td>
 						<td valign="middle">
 							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-								<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ã‚¿ãƒ–ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ã‚¿ãƒ–ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
+								<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ã‚¿ãƒ–ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ã‚¿ãƒ–ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 							</a>
 						</td>
 						<td>
@@ -1320,7 +1320,7 @@ Version $Revision$
 					<tr>
 						<td valign="top">
 							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-								<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ã‚«ãƒ©ãƒ ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ã‚«ãƒ©ãƒ ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
+								<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ã‚«ãƒ©ãƒ ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ã‚«ãƒ©ãƒ ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
 							</a>
 						</td>
 					</tr>
@@ -1334,7 +1334,7 @@ Version $Revision$
 				<tr>
 					<td align="center">
 						<a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">
-							<img alt="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ï¿½?ãƒ£ï¿½?ãƒ«ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" title="ã‚¯ãƒªãƒƒã‚¯ï¿½?ï¿½ã‚‹ï¿½?ï¿½æ–°ï¿½?ï¿½?ãƒ£ï¿½?ãƒ«ã‚’ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½è¿½åŠ ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
+							<img alt="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ãƒ?ãƒ£ãƒ?ãƒ«ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" title="ã‚¯ãƒªãƒƒã‚¯ã?™ã‚‹ã?¨æ–°è¦?ãƒ?ãƒ£ãƒ?ãƒ«ã‚’ã?“ã?“ã?«è¿½åŠ ã?§ã??ã?¾ã?™" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
 						</a>
 					</td>
 				</tr>
@@ -1565,7 +1565,7 @@ Version $Revision$
 						<!--  Profiles action temporarily removed
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
-						<a href="javascript:alert('[ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«] æ©Ÿèƒ½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½åˆ©ç”¨ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½ã‚“')">ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«</a>
+						<a href="javascript:alert('[ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«] æ©Ÿèƒ½ã?¯ã?¾ã? åˆ©ç”¨ã?§ã??ã?¾ã?›ã‚“')">ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«</a>
 						-->
 						<xsl:if test="alternateLayouts">
 							<span>Â |<xsl:text/></span>Manage:Â <select name="select" class="uportal-input-text uportal-background-content">
@@ -1576,8 +1576,8 @@ Version $Revision$
 									</option>
 								</xsl:for-each></select>
 							<!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ä¿®æ­£" title="ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ä¿®æ­£"/>
-							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’å‡ºç‰ˆ] æ©Ÿèƒ½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½åˆ©ç”¨ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½ã‚“')">ã‚¿ãƒ–ã‚’ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆï¿½?ï¿½ã‚³ãƒ”ãƒ¼</a> --><span>Â |<xsl:text/></span>
-							<a href="javascript:alert('[æ–°ï¿½?ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆ] æ©Ÿèƒ½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½åˆ©ç”¨ï¿½?ï¿½ï¿½??ï¿½?ï¿½ï¿½?ï¿½ã‚“')">æ–°ï¿½?ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆ</a>
+							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’å‡ºç‰ˆ] æ©Ÿèƒ½ã?¯ã?¾ã? åˆ©ç”¨ã?§ã??ã?¾ã?›ã‚“')">ã‚¿ãƒ–ã‚’ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆã?«ã‚³ãƒ”ãƒ¼</a> --><span>Â |<xsl:text/></span>
+							<a href="javascript:alert('[æ–°è¦?ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆ] æ©Ÿèƒ½ã?¯ã?¾ã? åˆ©ç”¨ã?§ã??ã?¾ã?›ã‚“')">æ–°è¦?ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆ</a>
 						</xsl:if>
 					</span>
 				</td>
