@@ -65,7 +65,7 @@ public interface IChannelRegistryStore {
    * @param role
    * @return
    */
-  public Document getRegistryXML (String catID, String role);
+  public Document getChannelRegistryXML () throws java.sql.SQLException;
 
 
 
@@ -77,12 +77,12 @@ public interface IChannelRegistryStore {
 
 
 
-  /**
-   * put your documentation comment here
-   * @param role
-   * @return
+  /** 
+   * Returns a string of XML which describes the channel types.
+   * @return channelTypes, the list of publishable channel types
+   * @throws java.lang.Exception
    */
-  public Document getTypesXML (String role);
+  public Document getChannelTypesXML () throws Exception;
 
 
 
