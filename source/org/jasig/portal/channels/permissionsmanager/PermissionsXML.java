@@ -46,7 +46,6 @@ public class PermissionsXML {
                 Document rDoc = org.jasig.portal.utils.DocumentFactory.getNewDocument();
                 session.XML = rDoc;
                 session.owners = new IPermissible[0];
-                IAuthorizationPrincipal[] principals;
                 try {
                     Element root = rDoc.createElement("CPermissionsManager");
                     rDoc.appendChild(root);
@@ -214,7 +213,6 @@ public class PermissionsXML {
         for (int l = 0; l < nl.getLength(); l++) {
             Element o = (Element)nl.item(l);
             if (o.getAttribute("selected") != null && o.getAttribute("selected").equals("true")) {
-                int count = 0;
                 NodeList cl = o.getElementsByTagName(tagname);
                 if (cl.getLength() == 1) {
                     ((Element)cl.item(0)).setAttribute("selected", "true");
