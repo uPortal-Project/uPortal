@@ -59,6 +59,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
   private HttpServletResponse response;
   private String baseActionURL;
   private static final String fs = File.separator;
+    private BrowserInfo binfo;
 
   public ChannelRuntimeData ()
   {
@@ -79,6 +80,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
     crd.request = request;
     crd.response = response;
     crd.baseActionURL = baseActionURL;
+    crd.binfo=binfo;
     crd.putAll(this);
     return crd;
   }
@@ -89,6 +91,14 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
   {
     baseActionURL = baURL;
   }
+
+    public void setBrowserInfo(BrowserInfo bi) {
+	this.binfo=bi;
+    }
+
+    public BrowserInfo getBrowserInfo() {
+	return binfo; 
+    }
 
   public void setHttpRequest (HttpServletRequest req)
   {

@@ -72,6 +72,7 @@ public class ChannelManager {
 
     private String channelTarget;
     private Hashtable targetParams;
+    private BrowserInfo binfo;
 
     public static String channelAddressingPathElement="channel";
 
@@ -90,6 +91,7 @@ public class ChannelManager {
         pcs.setHttpServletRequest(req);
         pcs.setHttpServletResponse(res);
         pcs.setChannelManager(this);
+	this.binfo=new BrowserInfo(request);
     }
 
     public void setUserLayoutManager(UserLayoutManager m) {
@@ -101,6 +103,7 @@ public class ChannelManager {
         this.res = response;
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
+	this.binfo=new BrowserInfo(request);
         rendererTable.clear ();
         processRequestChannelParameters (request);
     }
@@ -176,6 +179,7 @@ public class ChannelManager {
 			ChannelRuntimeData rd = new ChannelRuntimeData ();
 			rd.setParameters(targetParams);
 			rd.setHttpRequest (req);
+			rd.setBrowserInfo(binfo);
 			/*			String reqURI = req.getRequestURI ();
 			reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
 			rd.setBaseActionURL (reqURI + "?channelTarget=" + channelTarget + "&");*/
@@ -192,6 +196,7 @@ public class ChannelManager {
 			    try {
 				ChannelRuntimeData erd = new ChannelRuntimeData ();
 				erd.setHttpRequest (req);
+				erd.setBrowserInfo(binfo);
 				erd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/channelTarget.uP");
 				errorChannel.setPortalControlStructures(pcs);
 				errorChannel.setRuntimeData (erd);
@@ -299,11 +304,13 @@ public class ChannelManager {
             }
             rd = new ChannelRuntimeData ();
             rd.setHttpRequest (req);
+	    rd.setBrowserInfo(binfo);
 	    rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData ();
                 rd.setParameters(targetParams);
+		rd.setBrowserInfo(binfo);
                 rd.setHttpRequest (req);
 		rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
             }
@@ -339,6 +346,7 @@ public class ChannelManager {
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
+			rd.setBrowserInfo(binfo);
                         rd.setHttpRequest (req);
 			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
                         errorChannel.setRuntimeData (rd);
@@ -369,6 +377,7 @@ public class ChannelManager {
                     // demand output
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
+			rd.setBrowserInfo(binfo);
                         rd.setHttpRequest (req);
 			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
                         errorChannel.setRuntimeData (rd);
