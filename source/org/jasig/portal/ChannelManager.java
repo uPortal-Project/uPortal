@@ -261,8 +261,15 @@ public class ChannelManager implements LayoutEventListener {
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
-        for(Enumeration e=channelTable.elements();e.hasMoreElements();) {
-            ((IChannel)e.nextElement()).receiveEvent(ev);
+        for(Enumeration enum=channelTable.elements();enum.hasMoreElements();) {
+            IChannel ch = (IChannel)enum.nextElement();
+            if (ch != null) {
+                try {
+                    ch.receiveEvent(ev);
+                } catch (Exception e) {
+                    LogService.log(LogService.ERROR, e);
+                }
+            }
         }
 
         // we dont' really need to clean anything here,
@@ -636,7 +643,11 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch= (IChannel) channelTable.get(channelSubscribeId);
 
         if (ch != null) {
-            ch.receiveEvent(le);
+            try {
+                ch.receiveEvent(le);
+            } catch (Exception e) {
+                LogService.log(LogService.ERROR, e);
+            }
         } else {
             LogService.log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
         }
@@ -785,7 +796,11 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
             channelCacheTable.remove(ch);
-            ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
+            try {
+                ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
+            } catch (Exception e) {
+                LogService.log(LogService.ERROR, e);
+            }
             channelTable.remove(ch);
             LogService.log(LogService.DEBUG,"ChannelManager::removeChannel(): removed channel with subscribe id="+channelSubscribeId);
         }
