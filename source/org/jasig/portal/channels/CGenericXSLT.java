@@ -36,8 +36,9 @@
 package org.jasig.portal.channels;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -256,6 +257,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       String xml;
       Document xmlDoc;
+      HttpURLConnection urlConnect = null;
+	  InputStream inputStream = null;
 
       try
       {
@@ -271,7 +274,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         else
           url = ResourceLoader.getResourceAsURL(this.getClass(), state.xmlUri);
 
-        URLConnection urlConnect = url.openConnection();
+         urlConnect =(HttpURLConnection) url.openConnection();
 
         if (state.localConnContext != null)
         {
@@ -284,8 +287,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
             LogService.log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
           }
         }
-
-        xmlDoc = docBuilder.parse(urlConnect.getInputStream());
+        inputStream = urlConnect.getInputStream();
+        xmlDoc = docBuilder.parse(inputStream);
       }
       catch (IOException ioe)
       {
@@ -294,7 +297,16 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       catch (Exception e)
       {
         throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
-      }
+      } finally {
+		try {
+					if (inputStream != null)
+						inputStream.close();
+				} catch (IOException ioe) {
+					throw new PortalException(
+							"CGenericXSLT:renderXML():: could not close InputStream");
+				}
+				urlConnect.disconnect();
+			}
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
       state.runtimeData.put("isRenderingAsRoot", String.valueOf(state.runtimeData.isRenderingAsRoot()));
