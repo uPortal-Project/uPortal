@@ -446,8 +446,11 @@ public class ChannelRegistryManager {
 
     // Add channel
     setChannelXML(channel, channelDef);
+    Date now = new Date();
     channelDef.setPublisherId(publisher.getID());
-    channelDef.setApproverId(-1);
+    channelDef.setPublishDate(now);
+    channelDef.setApproverId(publisher.getID());
+    channelDef.setApprovalDate(now);
     crs.saveChannelDefinition(channelDef);
 
     // Delete existing category memberships for this channel
@@ -467,13 +470,6 @@ public class ChannelRegistryManager {
     // For each category ID, add channel to category
     for (int i = 0; i < categoryIDs.length; i++) {
       categoryIDs[i] = categoryIDs[i].startsWith("cat") ? categoryIDs[i].substring(3) : categoryIDs[i];
-
-      /*
-// de 11/21/02:
-      String catKey = GroupService.parseLocalKey(categoryIDs[i]);
-      int iCatID = Integer.parseInt(catKey);
-//    int iCatID = Integer.parseInt(categoryIDs[i]);
-  */
       String iCatID = categoryIDs[i];
       ChannelCategory category = crs.getChannelCategory(iCatID);
       crs.addChannelToCategory(channelDef, category);
@@ -498,9 +494,6 @@ public class ChannelRegistryManager {
       upm.removePermissions(oldPermissions);
     }
     upm.addPermissions(permissions);
-
-    // Approve channel - this can be removed when there is a mechanism to approve channels
-    crs.approveChannelDefinition(channelDef, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
 
