@@ -436,7 +436,7 @@ For testing without DB
           Link      = rs.getString(4);
           VLink     = rs.getString(5);
           ALink     = rs.getString(6);
-          ColorSquares = ColorSquares + "<tr><td><input type="radio" name="colors" onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&BGColor=" + bgcolor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</td><td bgcolor=\"" + bgcolor + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + TextColor + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + Link + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + VLink + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td><td bgcolor=\"" + ALink + "\"><img src=\"images/dot_clear.gif\" vspace="12"/></td></tr>";
+          ColorSquares = ColorSquares + "<tr><td><input type=\"radio\" name=\"colors\" onClick=\"javascript:window.location='personalizeColors.jsp?ColorScheme=" + fColorScheme + "&BGColor=" + bgcolor + "&TextColor=" + TextColor + "&ActiveTabColor=" + Link + "&TabColor=" + VLink + "&ChannelColor=" + ALink + "';\">" + "</td><td bgcolor=\"" + bgcolor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + TextColor + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + Link + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + VLink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td><td bgcolor=\"" + ALink + "\"><img src=\"images/dot_clear.gif\" vspace=\"12\"/></td></tr>";
        }
        statement.close();
        rdbmService.releaseConnection(connection);
