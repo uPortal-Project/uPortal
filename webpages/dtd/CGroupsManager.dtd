@@ -1,7 +1,7 @@
 <!ENTITY % DC_DTD SYSTEM "http://dublincore.org/documents/2001/04/11/dcmes-xml/dcmes-xml-dtd.dtd">
 %DC_DTD;
 
-<!ELEMENT CGroupsManager (principal,group*,entityType+)>
+<!ELEMENT CGroupsManager (principal,entityTypes,group*)>
 
 <!ELEMENT principal (permission*)>
 
@@ -40,6 +40,8 @@
    name CDATA #REQUIRED
    value CDATA #REQUIRED
 >
+
+<!ELEMENT entityTypes (entityType*)>
 
 <!ELEMENT entityType EMPTY>
 <!ATTLIST entityType
