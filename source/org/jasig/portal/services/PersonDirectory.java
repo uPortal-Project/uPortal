@@ -36,6 +36,7 @@
 package org.jasig.portal.services;
 
 import org.jasig.portal.security.*;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.ResourceLoader;
 import java.util.Hashtable;
@@ -50,6 +51,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.directory.InitialDirContext;
@@ -61,6 +63,8 @@ import javax.naming.directory.SearchResult;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.sql.DataSource;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -159,6 +163,7 @@ public class PersonDirectory {
       for (int i=0;i<list.getLength();i++) { // foreach PersonDirInfo
         Element dirinfo = (Element) list.item(i);
         PersonDirInfo pdi = new PersonDirInfo(); // Java object holding parameters
+        pdi.type = dirinfo.getAttribute("type");
         for (Node param = dirinfo.getFirstChild();
              param!=null; // foreach tag under the <PersonDirInfo>
              param=param.getNextSibling()) {
@@ -171,6 +176,8 @@ public class PersonDirectory {
           // each tagname corresponds to an object data field
           if (tagname.equals("url")) {
             pdi.url=value;
+          } else if (tagname.equals("res-ref-name")) {
+            pdi.ResRefName=value;
           } else if (tagname.equals("logonid")) {
             pdi.logonid=value;
           } else if (tagname.equals("driver")) {
@@ -272,9 +279,15 @@ public class PersonDirectory {
       PersonDirInfo pdi = (PersonDirInfo) sources.elementAt(i);
       if (pdi.disabled)
         continue;
-      if (pdi.url.startsWith("ldap:"))
+      // new format of personDirs.xml is type attribute to distinguish
+      // DataSource from ldap source
+      if (pdi.type==null || pdi.type.length()==0) {
+        if (pdi.url.startsWith("ldap:")) processLdapDir(username, pdi,attribs);
+        if (pdi.url.startsWith("jdbc:")) processJdbcDir(username, pdi,attribs);
+      }
+      else if (pdi.type.equals("ldap"))
         processLdapDir(username, pdi,attribs);
-      if (pdi.url.startsWith("jdbc:"))
+      else if (pdi.type.equals("DataSource"))
         processJdbcDir(username, pdi,attribs);
     }
     return attribs;
@@ -368,25 +381,34 @@ public class PersonDirectory {
     Connection conn = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    try {
-      // Register the driver class if it has not already been registered
-      // Not agressively synchronized, duplicate registrations are OK.
-      if (pdi.driver!=null && pdi.driver.length()>0) {
-        if (drivers.get(pdi.driver)==null) {
-          try {
-            Driver driver = (Driver) Class.forName(pdi.driver).newInstance();
-            DriverManager.registerDriver(driver);
-            drivers.put(pdi.driver,driver);
-          } catch (Exception driverproblem) {
-            pdi.disabled=true;
-            pdi.logged=true;
-            LogService.instance().log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
-            return;
+   try {
+
+      // Get a connection with from container
+      if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
+          RDBMServices rdbmServices = new RDBMServices();
+          conn = rdbmServices.getConnection(pdi.ResRefName);
+        }
+
+      // if no resource reference found use URL to get jdbc connection
+      if (conn == null) {
+        // Register the driver class if it has not already been registered
+        // Not agressively synchronized, duplicate registrations are OK.
+        if (pdi.driver!=null && pdi.driver.length()>0) {
+          if (drivers.get(pdi.driver)==null) {
+            try {
+              Driver driver = (Driver) Class.forName(pdi.driver).newInstance();
+              DriverManager.registerDriver(driver);
+              drivers.put(pdi.driver,driver);
+            } catch (Exception driverproblem) {
+              pdi.disabled=true;
+              pdi.logged=true;
+              LogService.instance().log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
+              return;
+            }
           }
         }
-      }
-      // Get a connection with URL, userid, password
       conn = DriverManager.getConnection(pdi.url,pdi.logonid,pdi.logonpassword);
+      }
 
       // Execute query substituting Username for parameter
       stmt = conn.prepareStatement(pdi.uidquery);
@@ -406,7 +428,7 @@ public class PersonDirectory {
           }
         } catch (SQLException sqle) {
           ; // Don't let error in a field prevent processing of others.
-          LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
+          LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
         }
       }
 
@@ -414,7 +436,7 @@ public class PersonDirectory {
       ; // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Error "+e);
+      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error "+e);
     }
     if (rs!=null) try {rs.close();} catch (Exception e) {;}
     if (stmt!=null) try {stmt.close();} catch (Exception e) {;}
@@ -422,7 +444,9 @@ public class PersonDirectory {
   }
 
   private class PersonDirInfo {
+    String type; // protocol, server, and initial connection parameters
     String url; // protocol, server, and initial connection parameters
+    String ResRefName; // Resource Reference name for a J2EE style DataSource
     String driver; // JDBC java class to register
     String logonid; // database userid or LDAP user DN (if needed)
     String logonpassword; // password
