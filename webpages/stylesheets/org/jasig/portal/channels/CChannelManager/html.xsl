@@ -1293,12 +1293,27 @@
                   </table>
                 </td>
               </tr>
+              
+              <!-- Edit control -->
+              <xsl:choose>
+              <xsl:when test="not(/manageChannels/channelDef) or /manageChannels/channelDef/controls/control[@type='edit']/@override='yes'">
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
                   <input type="checkbox" name="editable" value="true">
-                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@editable='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input> </td>
+                  <xsl:choose>
+                    <xsl:when test="/manageChannels/selectControls/params/step/channel/@editable">
+                      <xsl:if test="/manageChannels/selectControls/params/step/channel/@editable='true'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:if test="/manageChannels/channelDef/controls/control[@type='edit']/@include='yes'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>                      
+                    </xsl:otherwise>
+                  </xsl:choose>
+                  </input> 
+                </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
@@ -1316,8 +1331,26 @@
                 </td>
                 <td>when selected, passes edit events</td>
               </tr>
+              
+              </xsl:when>
+              <xsl:otherwise>
+              <tr><td colspan="7">
+                Not configurable: 
+                <xsl:choose>
+                  <xsl:when test="/channelDef/controls/control[@type='edit']/@include='yes'">
+                    <input type="hidden" name="editable" value="true"/>
+                    edit control included
+                  </xsl:when>
+                  <xsl:otherwise>edit control not included</xsl:otherwise>
+                </xsl:choose>
+              </td></tr>  
+              </xsl:otherwise>
+              </xsl:choose>
+              
+              
+              <!-- separator line -->
               <tr>
-                <td colspan="7">
+                <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -1327,11 +1360,25 @@
                   </table>
                 </td>
               </tr>
+              
+              <!-- Help control -->
+              <xsl:choose>
+              <xsl:when test="not(/manageChannels/channelDef) or /manageChannels/channelDef/controls/control[@type='help']/@override='yes'">
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
                   <input type="checkbox" name="hasHelp" value="true">
-                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasHelp='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="/manageChannels/selectControls/params/step/channel/@hasHelp">
+                      <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasHelp='true'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:if test="/manageChannels/channelDef/controls/control[@type='help']/@include='yes'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>                      
+                    </xsl:otherwise>
+                  </xsl:choose>
                   </input>
                    </td>
                 <td>
@@ -1350,7 +1397,25 @@
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
                 <td>when selected, passes help events</td>
-              </tr>
+              </tr>             
+              
+              </xsl:when>
+              <xsl:otherwise>
+              <tr><td colspan="7">
+                Not configurable: 
+                <xsl:choose>
+                  <xsl:when test="/channelDef/controls/control[@type='help']/@include='yes'">
+                    <input type="hidden" name="hasHelp" value="true"/>
+                    help control included
+                  </xsl:when>
+                  <xsl:otherwise>help control not included</xsl:otherwise>
+                </xsl:choose>
+              </td></tr>  
+              </xsl:otherwise>
+              </xsl:choose>
+              
+              
+              <!-- separator line -->
               <tr>
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -1362,11 +1427,25 @@
                   </table>
                 </td>
               </tr>
+                                          
+              <!-- About control -->
+              <xsl:choose>
+              <xsl:when test="not(/manageChannels/channelDef) or /manageChannels/channelDef/controls/control[@type='about']/@override='yes'">
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
                   <input type="checkbox" name="hasAbout" value="true">
-                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasAbout='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="/manageChannels/selectControls/params/step/channel/@hasAbout">
+                      <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasAbout='true'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:if test="/manageChannels/channelDef/controls/control[@type='about']/@include='yes'">
+                        <xsl:attribute name="checked">checked</xsl:attribute>
+                      </xsl:if>                      
+                    </xsl:otherwise>
+                  </xsl:choose>
                   </input>
 
                    </td>
@@ -1387,17 +1466,24 @@
                 </td>
                 <td>when selected, passes about events</td>
               </tr>
-              <tr>
-                <td align="center" valign="top" colspan="7">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
+              
+              </xsl:when>
+              <xsl:otherwise>
+              <tr><td colspan="7">
+                Not configurable: 
+                <xsl:choose>
+                  <xsl:when test="/channelDef/controls/control[@type='about']/@include='yes'">
+                    <input type="hidden" name="hasAbout" value="true"/>
+                    about control included
+                  </xsl:when>
+                  <xsl:otherwise>about control not included</xsl:otherwise>
+                </xsl:choose>
+              </td></tr>  
+              </xsl:otherwise>
+              </xsl:choose>                          
+                            
+              <!-- Printable control -->
+              <!--
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
                   <input type="checkbox" name="printable" value="true">
@@ -1423,6 +1509,8 @@
                 </td>
                 <td>when selected, passes print events</td>
               </tr>
+              -->
+              
             </table>
           </td>
         </tr>
@@ -2305,17 +2393,11 @@
 </xsl:otherwise>
 </xsl:choose>
 
-
-
       <tr class="uportal-channel-text">
 
         <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
-
-
         <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-
-
 
         <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">Channel Controls</a></strong></td>
 
@@ -2328,30 +2410,34 @@
         <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">
 
         <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@editable='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Editable<br/>        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@hasHelp='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Has Help<br/>        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@hasAbout='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Has About<br/>        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@printable='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Printable<br/>
+          <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+        </xsl:choose>         
+        Editable<br/>
+                
+        <xsl:choose>
+          <xsl:when test="//reviewChannel//channel[@hasHelp='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+        </xsl:choose>        
+        Has Help<br/>
+                
+        <xsl:choose>
+          <xsl:when test="//reviewChannel//channel[@hasAbout='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+        </xsl:choose>
+        Has About<br/>        
+        
+        <!--
+        <xsl:choose>
+          <xsl:when test="//reviewChannel//channel[@printable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+        </xsl:choose>
+        Printable<br/>
+        -->
 
+        </a>
 
-
-
-</a>
-
-
-</td>
+        </td>
 
       </tr>
 
