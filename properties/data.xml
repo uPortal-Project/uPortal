@@ -1472,6 +1472,15 @@
     <name>UP_USER_PROFILES</name>
     <rows>
       <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+        <column><name>THEME_SS_ID</name><value>1</value></column>
+      </row>
+      <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
