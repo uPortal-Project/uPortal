@@ -55,7 +55,7 @@ public class RemoteChannelServiceLocator extends Service implements RemoteChanne
   private static final String serviceName = "RemoteChannel";
   private static final String xmlConfiguration =
     "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" xmlns:java=\"" + WSDDConstants.WSDD_JAVA + "\">" +
-    "  <handler type=\"java:org.jasig.portal.webservices.SimpleSessionHandler\" name=\"SessionHandler\"/>" +
+    "  <handler type=\"java:org.apache.axis.handlers.SimpleSessionHandler\" name=\"SessionHandler\"/>" +
     "  <service name=\"" + serviceName + "\">" +
     "    <requestFlow><handler type=\"SessionHandler\"/></requestFlow>" +
     "    <responseFlow><handler type=\"SessionHandler\"/></responseFlow>" +
