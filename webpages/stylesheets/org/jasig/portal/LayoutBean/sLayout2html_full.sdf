@@ -4,6 +4,8 @@
 <name>Nested tables</name>
 <description>Renders tabs and columns as nested tables</description>
 <parentstylesheet>Tab and Column layout</parentstylesheet>
+<mimetype>text/html</mimetype>
+<serializer>HTML</serializer>
 
 <parameters>
 	<parameter name="activeTab">

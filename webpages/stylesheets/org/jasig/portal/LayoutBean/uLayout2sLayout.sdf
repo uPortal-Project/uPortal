@@ -4,9 +4,6 @@
 <name>Tab and Column layout</name>
 <description>Presents the layout in terms of tabs and columns.</description>
 
-<media>netscape</media>
-<media>explorer</media>
-
 <parameters>
 </parameters>
 
