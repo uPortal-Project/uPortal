@@ -43,8 +43,8 @@ package org.jasig.portal;
  *  <li> helpButtonEvent - occurs when a help button on the channel frame has been hit </li>
  *  <li> detachButtonEvent - occurs when a detach button on the channel frame has been hit </li>
  *  <li> aboutButtonEvent - occurs when an about button on the channel frame has been hit </li>
- *  <li> minimizeButtonEvent - occurs when a minimize button on the channel frame has been hit </li>
  * </ul>
+ * @author Peter Kharchenko
  * @version $Revision$
  */
 public class PortalEvent
@@ -61,8 +61,6 @@ public class PortalEvent
   public static final int HELP_BUTTON_EVENT = 6;
   public static final int DETACH_BUTTON_EVENT = 7;
   public static final int ABOUT_BUTTON_EVENT = 8;
-  public static final int MINIMIZE_BUTTON_EVENT = 9;
-
 
   private static final String [] eventName =
   {
@@ -75,7 +73,6 @@ public class PortalEvent
       "helpButtonEvent",
       "detachButtonEvent",
       "aboutButtonEvent",
-      "minimizeButtonEvent"
   };
 
   private int event;
