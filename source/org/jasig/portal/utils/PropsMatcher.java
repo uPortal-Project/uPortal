@@ -69,8 +69,8 @@ public class PropsMatcher {
                 ids.addElement(temp[1]);
             } catch (MalformedPatternException mpe) {
                 // omit entry, give warning*
-                System.out.println("invalid pattern: "+temp[0]);
-                System.out.println(mpe.getMessage());
+                System.out.println("PropsMatcher::PropsMatcher() : invalid pattern: "+temp[0]);
+                System.out.println("PropsMatcher::PropsMatcher() : "+mpe.getMessage());
             }
             
 
