@@ -37,20 +37,17 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.security.IPerson;
 import org.xml.sax.DocumentHandler;
 import java.io.File;
-
-///Transform specific...
-// Won't be needed if we move the Xalan code outside the channel
-import org.apache.xalan.xslt.*;
-import java.io.StringReader;
+import javax.servlet.http.HttpSession;
 
 /** <p>Allows a user to logon to the portal.  Logon info is posted to
  *  <code>authenticate.jsp</code></p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CLogin implements IChannel
+public class CLogin implements ISpecialChannel
 {
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
@@ -58,16 +55,22 @@ public class CLogin implements IChannel
   private String media;
   private static final String fs = File.separator;
   private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
-
-  public CLogin()
-  {
-  }
+  private boolean bFirstTime = true;
+  private boolean bAuthenticated = false;
 
   public ChannelSubscriptionProperties getSubscriptionProperties()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties();
     csb.setName(this.channelName);
     return csb;
+  }
+
+  public void setPortalControlStructures(PortalControlStructures pcs)
+  {
+    HttpSession session = pcs.getHttpSession();
+    IPerson person = (IPerson)session.getAttribute("up_person");
+    if (person != null)
+      bAuthenticated = true;
   }
 
   public ChannelRuntimeProperties getRuntimeProperties()
@@ -98,8 +101,13 @@ public class CLogin implements IChannel
   public void renderXML (DocumentHandler out) throws Exception
   {
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
-    sb.append ("<xml/>\n");
+    sb.append("<login-status>\n");
+    if (!bFirstTime && !bAuthenticated)
+       sb.append("  <failure/>\n");
+    sb.append("</login-status>\n");
 
-    XSLT.transform(out, media, sb.toString(), sslLocation, "login");
+    bFirstTime = false;
+
+    XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
   }
 }
