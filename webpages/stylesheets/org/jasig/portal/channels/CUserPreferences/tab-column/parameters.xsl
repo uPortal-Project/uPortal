@@ -6,13 +6,14 @@
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <xsl:variable name="mediaPath">C:\portal\webpages\media\org\jasig\portal\channels\CUserPreferences\tab-column</xsl:variable>
+  <xsl:variable name="defaultLength">10</xsl:variable>
+  <xsl:variable name="defaultMaxLength">20</xsl:variable>
+  <xsl:variable name="defaultTextCols">40</xsl:variable>
+  <xsl:variable name="defaultTextRows">10</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
 
-<xsl:template match="/">
-
-  <html><head>
-  <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
-  </head><body>
+  <xsl:template match="/">
+    
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -41,9 +42,9 @@
                 </td>
               </tr>
 
-<xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
+              <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
 
-</table>
+            </table>
           </td>
         </tr>
         <tr>
@@ -54,15 +55,11 @@
         </tr>
       </table>
     </form>
-    </body></html>
 
-</xsl:template>
+  </xsl:template>
 
   
   <xsl:template match="parameter">
-
-
-
 
       <xsl:choose>
         <xsl:when test="type/@display != 'hidden'">
@@ -109,13 +106,12 @@
         </xsl:otherwise>
       </xsl:choose>
 
-
-
-
   </xsl:template>
+  
   <!-- displays checkbox for publisher to allow subscribe time modification-->
   <xsl:template name="subscribe">
   </xsl:template>
+  
   <!-- display all the input fields with a base type of 'single-choice'-->
   <xsl:template name="single-choice">
     <xsl:choose>
@@ -215,6 +211,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
   <!-- display all the input fields with a base type of 'multi-choice'-->
   <xsl:template name="multi-choice">
     <xsl:choose>
@@ -293,6 +290,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
   <!-- display all the input fields with a base type of 'text'-->
   <xsl:template name="text">
     <!-- since length and maxlength are not required test existence and use defaults if needed -->
@@ -315,9 +313,6 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-
-
-
           <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
             <xsl:choose>
               <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
@@ -389,6 +384,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
   <xsl:template match="label">
     <span class="uportal-label">
       <xsl:value-of select="."/>:</span>
@@ -412,5 +408,5 @@
       <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
+  
 </xsl:stylesheet>
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
