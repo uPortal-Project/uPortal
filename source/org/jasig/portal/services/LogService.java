@@ -124,25 +124,30 @@ public final class LogService {
   }
 
 
+  /**
+   * Log the given throwable at the given priority.
+   * @param pLogLevel - logging level
+   * @param ex - throwable to be logged
+   */
   public final static void log (Priority pLogLevel, Throwable ex) {
       initialize();
       if (pLogLevel == null){
-          log.fatal(ex);
+          log.fatal(ex, ex);
       } else if (pLogLevel.equals(SEVERE)){
-          log.fatal(ex);
+          log.fatal(ex, ex);
       } else if (pLogLevel.equals(ERROR)){
-          log.error(ex);
+          log.error(ex, ex);
       } else if (pLogLevel.equals(WARN)){
-          log.warn(ex);
+          log.warn(ex, ex);
       } else if (pLogLevel.equals(INFO)){
-          log.info(ex);
+          log.info(ex, ex);
       } else if (pLogLevel.equals(DEBUG)){
-          log.debug(ex);
+          log.debug(ex, ex);
       } else if (pLogLevel.equals(NONE)){
-          log.debug(ex);
+          log.debug(ex, ex);
       } else {
           // should never get here
-          log.fatal(ex);
+          log.fatal("Unrecognized logging level " + pLogLevel, ex);
       }
   }
 

@@ -558,7 +558,8 @@ public class PersonDirectory {
       try {
         person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
       } catch (Exception e) {
-        log.error( e);
+        log.error("Exception setting ID for our " +
+                "restricted person for uid [" + uid + "]", e);
       }
       instance().getUserDirectoryInformation(uid, person);
     }
