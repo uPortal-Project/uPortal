@@ -84,7 +84,7 @@ public class CUserPreferences
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   protected UserLayoutManager getUserLayoutManager () {
     return  ulm;
@@ -92,7 +92,7 @@ public class CUserPreferences
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   protected UserPreferences getCurrentUserPreferences () {
     return  up;
@@ -100,7 +100,7 @@ public class CUserPreferences
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   protected ChannelRuntimeData getRuntimeData () {
     return  runtimeData;
@@ -108,7 +108,7 @@ public class CUserPreferences
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   protected StylesheetSet getStylesheetSet () {
     return  set;
@@ -177,23 +177,23 @@ public class CUserPreferences
         //if(!profile.equals(currentProfileName)) {
         // need a new manage preferences state
         //			}
-        } 
+        }
         else {
           // reset to the manage profiles state
           manageProfiles.setRuntimeData(rd);
           this.internalState = manageProfiles;
         }
-      } 
+      }
       else if (action.equals("managePreferences")) {
         UserProfile profile = null;
         if (profileId != null) {
           // find the profile mapping
           updb = RdbmServices.getUserPreferencesStoreImpl();
           if (systemProfile)
-            profile = updb.getSystemProfileById(profileId.intValue()); 
-          else 
+            profile = updb.getSystemProfileById(profileId.intValue());
+          else
             profile = updb.getUserProfileById(ulm.getPerson().getID(), profileId.intValue());
-        } 
+        }
         else {
           profile = up.getProfile();
         }
@@ -205,7 +205,7 @@ public class CUserPreferences
       internalState.setRuntimeData(rd);
   }
 
-  /** 
+  /**
    * Output channel content to the portal
    * @param out a sax document handler
    */
@@ -223,6 +223,13 @@ public class CUserPreferences
     // channel, changes are only made to a copy of the userLayoutXML
     // until this method is called)
     ulm.setNewUserLayoutAndUserPreferences(userLayoutXML, up);
+  }
+
+  protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
+      IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
+      up = upStore.getUserPreferences(getUserLayoutManager().getPerson().getID(), profile);
+      up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson().getID(), getCurrentUserPreferences().getProfile().getProfileId()));
+      return up;
   }
 }
 
