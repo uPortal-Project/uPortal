@@ -33,32 +33,20 @@
  *
  */
 
-
-
 package org.jasig.portal.layout.utils;
 
-import org.jasig.portal.tools.RegisterStylesheet;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.utils.CommonUtils;
-
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  * The aggregated layout migration utility
- * <p>
- * Company: Instructional Media &amp; Magic
- *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
-
-
-
 public class ALMigrationUtil {
 
   private static final int ADD = 1;
@@ -110,7 +98,6 @@ public class ALMigrationUtil {
 
   }
 
-
   public void updateUserProfile ( int stylesheetId ) {
    try {
       System.out.println("Updating the system profile...");
@@ -143,7 +130,6 @@ public class ALMigrationUtil {
         }
       return -1;
   }
-
 
   public static void main(String[] args) {
 
