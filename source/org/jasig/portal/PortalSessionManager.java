@@ -176,7 +176,7 @@ public class PortalSessionManager extends HttpServlet {
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
-        res.setHeader("uPortal-version", "uPortal_rel-2-2");
+        res.setHeader("uPortal-version", "uPortal_rel-2-2-0+");
 		if (fatalError) {
 			try {
                 res.sendRedirect("error/fatal.htm");
