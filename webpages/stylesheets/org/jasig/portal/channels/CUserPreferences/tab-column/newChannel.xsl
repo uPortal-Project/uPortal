@@ -241,15 +241,17 @@ $Revision$
                             </td>
                             <!--End Channel Listing -->
                           </tr>
+                          <!-- Put this back when implementing "channel preview"
                           <tr valign="top">
                             <td>
                               <strong>3.</strong>
                             </td>
                             <td>Get more informaton about the selected channel:<input type="submit" name="channelMoreInfo" value="?" class="uportal-button"/> [optional]</td>
                           </tr>
+                          -->
                           <tr valign="top">
                             <td>
-                              <strong>4.</strong>
+                              <strong>3.</strong>
                             </td>
                             <td>Add the selected channel:<input type="submit" name="addChannel" value="Add" class="uportal-button"/></td>
                           </tr>
