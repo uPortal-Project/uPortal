@@ -112,7 +112,6 @@ public class DBImpl
     Connection con = rdbmService.getConnection();
     String sQuery = "";
     try {
-      Statement stmt = con.createStatement();
       StringWriter outString = new StringWriter();
       org.apache.xml.serialize.OutputFormat format = new org.apache.xml.serialize.OutputFormat();
       format.setOmitXMLDeclaration(false);
@@ -120,10 +119,24 @@ public class DBImpl
       org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
       xsl.serialize(layoutXML);
       String str_userLayoutXML = outString.toString();
-      // for now, the profileName parameter gets ignored. Need to restructure UP_USERS table to sepearate layouts, so they can be profile-specific
-      sQuery = "UPDATE UP_USERS SET USER_LAYOUT_XML='" + str_userLayoutXML + "' WHERE ID=" + userId;
-      Logger.log(Logger.DEBUG, "DBImpl::setUserLayout(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
+      try {
+        // for now, the profileName parameter gets ignored. Need to restructure UP_USERS table to sepearate layouts, so they can be profile-specific
+        Statement stmt = con.createStatement();
+        sQuery = "UPDATE UP_USERS SET USER_LAYOUT_XML='" + str_userLayoutXML + "' WHERE ID=" + userId;
+        Logger.log(Logger.DEBUG, "DBImpl::setUserLayout(): " + sQuery);
+        stmt.executeUpdate(sQuery);
+        stmt.close();
+      } catch (SQLException e) {
+        // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
+        sQuery = "UPDATE UP_USERS SET USER_LAYOUT_XML=? WHERE ID='" + userId + "'";
+        Logger.log (Logger.DEBUG, "DBImpl::setUserLayout(): " +sQuery);
+        PreparedStatement pstmt = con.prepareStatement (sQuery);
+        pstmt.clearParameters ();
+        pstmt.setCharacterStream (1, new StringReader (str_userLayoutXML), str_userLayoutXML.length ());
+        int iUpdated = pstmt.executeUpdate ();
+        pstmt.close ();
+      }
+
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -146,7 +159,7 @@ public class DBImpl
       ResultSet rs = stmt.executeQuery(sQuery);
       if (rs.next()) {
         profileId = rs.getInt("PROFILE_ID");
-      } 
+      }
       else {
         return  0;
       }
@@ -169,24 +182,24 @@ public class DBImpl
     try {
       // Set autocommit false for the connection
       setAutoCommit(con, false);
-      
+
       // remove the old mapping and add the new one
       Statement stmt = con.createStatement();
       String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID='" + userId + "' AND USER_AGENT='" + userAgent + "'";
       Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
       stmt.executeUpdate(sQuery);
-      sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "'," + 
+      sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "'," +
           profileId + ")";
       Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
       stmt.executeUpdate(sQuery);
-      
+
       // Commit the transaction
       commit(con);
     } catch (Exception e) {
-    
+
       // Roll back the transaction
       rollback(con);
-      
+
       throw  e;
     } finally {
       rdbmService.releaseConnection(con);
@@ -197,7 +210,7 @@ public class DBImpl
    * put your documentation comment here
    * @param userId
    * @param profileId
-   * @return 
+   * @return
    * @exception Exception
    */
   public UserProfile getUserProfileById (int userId, int profileId) throws Exception {
@@ -211,9 +224,9 @@ public class DBImpl
       Logger.log(Logger.DEBUG, "DBImpl::getUserProfileId(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       if (rs.next()) {
-        upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"), 
+        upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"),
             rs.getString("DESCRIPTION"));
-      } 
+      }
       else {
         return  null;
       }
@@ -226,7 +239,7 @@ public class DBImpl
   /**
    * put your documentation comment here
    * @param userId
-   * @return 
+   * @return
    * @exception Exception
    */
   public Hashtable getUserProfileList (int userId) throws Exception {
@@ -240,7 +253,7 @@ public class DBImpl
       Logger.log(Logger.DEBUG, "DBImpl::getUserProfileList(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       while (rs.next()) {
-        UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"), 
+        UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("STRUCTURE_SS_NAME"),
             rs.getString("THEME_SS_NAME"), rs.getString("DESCRIPTION"));
         pv.put(upl.getProfileName(), upl);
       }
@@ -271,7 +284,7 @@ public class DBImpl
             + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
         Logger.log(Logger.DEBUG, "DBImpl::setUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      } 
+      }
       else {
         sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
@@ -289,7 +302,7 @@ public class DBImpl
    * @param userId
    * @param profileId
    * @param stylesheetName
-   * @return 
+   * @return
    * @exception Exception
    */
   public Document getStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
@@ -323,7 +336,7 @@ public class DBImpl
    * @param userId
    * @param profileId
    * @param stylesheetName
-   * @return 
+   * @return
    * @exception Exception
    */
   public Document getThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
@@ -380,9 +393,9 @@ public class DBImpl
             + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
         Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      } 
+      }
       else {
-        sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" + 
+        sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" +
             userId + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
         Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
         stmt.executeQuery(sQuery);
@@ -421,7 +434,7 @@ public class DBImpl
             + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
         Logger.log(Logger.DEBUG, "DBImpl::setThemeStylesheetUserPreferences() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      } 
+      }
       else {
         sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" + userId
             + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
@@ -458,7 +471,7 @@ public class DBImpl
    * put your documentation comment here
    * @param userId
    * @param profile
-   * @return 
+   * @return
    * @exception Exception
    */
   public UserProfile addUserProfile (int userId, UserProfile profile) throws Exception {
@@ -513,24 +526,24 @@ public class DBImpl
     Connection con = rdbmService.getConnection();
     try {
       stmt = con.createStatement();
-      
+
       // Set autocommit false for the connection
       setAutoCommit(con, false);
-      
+
       for (int i = 0; i < catID.length; i++) {
         String sInsert = "INSERT INTO UP_CHAN_CLASS (CLASS_ID, CHAN_ID) ";
         sInsert += "VALUES (" + catID[i] + "," + id + ")";
         Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
       }
-      
+
       // Commit the transaction
       commit(con);
     } catch (Exception e) {
-    
+
       // Roll back the transaction
       rollback(con);
-      
+
       throw  e;
     } finally {
       try {
@@ -575,7 +588,7 @@ public class DBImpl
   /**
    * put your documentation comment here
    * @param chanDoc
-   * @return 
+   * @return
    */
   private String serializeDOM (Document chanDoc) {
     StringWriter stringOut = null;
@@ -598,7 +611,7 @@ public class DBImpl
    * @param root
    * @param catID
    * @param role
-   * @return 
+   * @return
    * @exception Exception
    */
   public Element getRegistryXML (org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception {
@@ -787,7 +800,7 @@ public class DBImpl
   /**
    * put your documentation comment here
    * @param stylesheetName
-   * @return 
+   * @return
    * @exception Exception
    */
   public String[] getStructureStylesheetDescription (String stylesheetName) throws Exception {
@@ -812,7 +825,7 @@ public class DBImpl
   /**
    * put your documentation comment here
    * @param stylesheetName
-   * @return 
+   * @return
    * @exception Exception
    */
   public String[] getThemeStylesheetDescription (String stylesheetName) throws Exception {
@@ -886,7 +899,7 @@ public class DBImpl
    * @param xmlStylesheetDescriptionText
    * @exception Exception
    */
-  public void addStructureStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, 
+  public void addStructureStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI,
       String xmlStylesheetDescriptionText) throws Exception {
     String sQuery = "INSERT INTO UP_STRUCT_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
         + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
@@ -912,7 +925,7 @@ public class DBImpl
    * @param enum
    * @exception Exception
    */
-  public void addThemeStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, 
+  public void addThemeStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI,
       String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception {
     String sQuery = "INSERT INTO UP_THEME_SS (STYLESHEET_NAME,STYLESHEET_URI,STYLESHEET_DESCRIPTION_URI,STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
         + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
@@ -920,21 +933,21 @@ public class DBImpl
     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
     RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
-    
+
     // Set autocommit false for the connection
     setAutoCommit(con, false);
-      
+
     try {
       Statement stmt = con.createStatement();
       stmt.executeUpdate(sQuery);
       while (enum.hasMoreElements()) {
         String ssName = (String)enum.nextElement();
-        sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('" + xmlStylesheetName + "','" + 
+        sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('" + xmlStylesheetName + "','" +
             ssName + "','" + mimeType + "');";
         Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
       }
-      
+
       // Commit the transaction
       commit(con);
     } catch (Exception e) {
@@ -963,7 +976,7 @@ public class DBImpl
       String inputXML;
       if (statem.next()) {
         inputXML = statem.getString("BOOKMARK_XML");
-      } 
+      }
       else {
         sQuery = "SELECT UP_USERS.USER_NAME, UPC_BOOKMARKS.BOOKMARK_XML FROM UPC_BOOKMARKS, UP_USERS WHERE UP_USERS.USER_NAME = 'system' AND UP_USERS.ID = UPC_BOOKMARKS.PORTAL_USER_ID";
         Logger.log(Logger.DEBUG, "DBImpl::getBookmarkXML(): " + sQuery);
@@ -996,7 +1009,7 @@ public class DBImpl
       XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
       xsl.serialize(doc);
       Statement statem = con.createStatement();
-      String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = " + 
+      String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = " +
           userId;
       Logger.log(Logger.DEBUG, "DBImpl::saveBookmarkXML(): " + sQuery);
       statem.executeUpdate(sQuery);
@@ -1014,14 +1027,14 @@ public class DBImpl
     RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
-      String query = "SELECT * FROM UP_USER_ROLES WHERE ID=" + userId + "') AND " + "UPPER(ROLE)=UPPER('" + role + 
+      String query = "SELECT * FROM UP_USER_ROLES WHERE ID=" + userId + "') AND " + "UPPER(ROLE)=UPPER('" + role +
           "')";
       Logger.log(Logger.DEBUG, "DBImpl::isUserInRole(): " + query);
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
@@ -1032,7 +1045,7 @@ public class DBImpl
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception Exception
    */
   public Vector getAllRoles () throws Exception {
@@ -1061,7 +1074,7 @@ public class DBImpl
    * put your documentation comment here
    * @param channelID
    * @param roles
-   * @return 
+   * @return
    * @exception Exception
    */
   public int setChannelRoles (int channelID, Vector roles) throws Exception {
@@ -1070,21 +1083,21 @@ public class DBImpl
     try {
       // Set autocommit false for the connection
       setAutoCommit(con, false);
-      
+
       Statement stmt = con.createStatement();
       // Count the number of records inserted
       int recordsInserted = 0;
       for (int i = 0; i < roles.size(); i++) {
-        String sInsert = "INSERT INTO UP_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','" + roles.elementAt(i) + 
+        String sInsert = "INSERT INTO UP_CHAN_ROLES (CHAN_ID, ROLE) VALUES ('" + channelID + "','" + roles.elementAt(i) +
             "')";
         Logger.log(Logger.DEBUG, "DBImpl::setChannelRoles(): " + sInsert);
         recordsInserted += stmt.executeUpdate(sInsert);
       }
       stmt.close();
-      
+
       // Commit the transaction
       commit(con);
-      
+
       return  (recordsInserted);
     } catch (Exception e) {
       // Roll back the transaction
@@ -1151,7 +1164,7 @@ public class DBImpl
     try {
       // Set autocommit false for the connection
       setAutoCommit(con, false);
-      
+
       Statement stmt = con.createStatement();
       int insertCount = 0;
       for (int i = 0; i < roles.size(); i++) {
@@ -1162,7 +1175,7 @@ public class DBImpl
           Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
         }
       }
-      
+
       // Commit the transaction
       commit(con);
     } catch (Exception e) {
@@ -1186,7 +1199,7 @@ public class DBImpl
     try {
       // Set autocommit false for the connection
       setAutoCommit(con, false);
-      
+
       Statement stmt = con.createStatement();
       int deleteCount = 0;
       for (int i = 0; i < roles.size(); i++) {
@@ -1197,7 +1210,7 @@ public class DBImpl
           Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
         }
       }
-      
+
       // Commit the transaction
       commit(con);
     } catch (Exception e) {
@@ -1245,7 +1258,7 @@ public class DBImpl
     }
     return  acct;
   }
-  
+
   private void setAutoCommit(Connection connection, boolean autocommit)
   {
     try
@@ -1260,7 +1273,7 @@ public class DBImpl
       Logger.log(Logger.ERROR, e);
     }
   }
-  
+
   private void commit(Connection connection)
   {
     try
@@ -1275,7 +1288,7 @@ public class DBImpl
       Logger.log(Logger.ERROR, e);
     }
   }
-  
+
   private void rollback(Connection connection)
   {
     try
@@ -1288,7 +1301,7 @@ public class DBImpl
     catch(Exception e)
     {
       Logger.log(Logger.ERROR, e);
-    } 
+    }
   }
 }
 
