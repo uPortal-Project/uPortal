@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,17 +42,14 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import java.util.Enumeration;
-
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.jasig.portal.services.LogService;
 
 public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
 {

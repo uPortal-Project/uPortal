@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,28 +36,27 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import java.net.URL;
-import java.net.MalformedURLException;
-
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 /**
  * A tool for managing a collection of stylesheets.

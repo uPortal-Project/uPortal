@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,29 +37,22 @@
 package  org.jasig.portal;
 
 
-import java.io.*;
-import java.util.*;
-import java.lang.SecurityManager;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.security.AccessController;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.utils.threading.UnboundedThreadPool;
-import org.xml.sax.*;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import  org.jasig.portal.serialize.*;
-import javax.xml.transform.sax.TransformerHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.TransformerHandler;
+
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.threading.UnboundedThreadPool;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,14 +38,14 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.http.HttpServletRequest;
-import  javax.servlet.http.HttpSessionBindingEvent;
-import  javax.servlet.http.HttpSessionBindingListener;
-import  java.util.Hashtable;
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManagerFactory;
-import  org.jasig.portal.services.LogService;
+import java.util.Hashtable;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 
 
