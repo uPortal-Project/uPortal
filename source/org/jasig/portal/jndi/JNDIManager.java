@@ -104,15 +104,11 @@ public class JNDIManager {
       }
       // Get the portal wide context
       Context context = getContext();
-      
       // Get the users subcontext
       Context usersContext = (Context)context.lookup("users");
-      
       // Create a subcontext for this specific useer
       Context thisUsersContext = (Context)usersContext.createSubcontext(person.getID() + "");
-      
       Context thisUsersChannelIDs = (Context)thisUsersContext.createSubcontext("channel-ids");
-      
       // Get the list of channels in the user's layout
       NodeList channelNodes = userLayout.getElementsByTagName("channel");
       Node fname = null;
@@ -134,14 +130,11 @@ public class JNDIManager {
           String subContextName = new String();
           while (e.hasMoreElements()) {
             subContextName = (String)e.nextElement();
-            
-            if(e.hasMoreElements())
-            {
+            if (e.hasMoreElements()) {
               // Bind a new sub context if the current name component is not the leaf
               nextContext = nextContext.createSubcontext(subContextName);
-            }
-            else
-            {
+            } 
+            else {
               //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
               nextContext.bind(subContextName, instanceid.getNodeValue());
             }
