@@ -15,7 +15,9 @@
         </xsl:when>
         <xsl:otherwise>
           <a href="{$baseActionURL}?uP_root=root">Home</a> |
-          <a href="{$baseActionURL}?uP_root={publish-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Publish</a> |
+          <xsl:if test="publish-chanid">
+            <a href="{$baseActionURL}?uP_root={publish-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Publish</a> |
+          </xsl:if>
           <a href="{$baseActionURL}?uP_root={subscribe-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Subscribe</a> |
           <a href="{$baseActionURL}?uP_root={preferences-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">User Preferences</a>
         </xsl:otherwise>        
