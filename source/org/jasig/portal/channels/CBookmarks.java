@@ -140,7 +140,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       String sUrl = bookmark.getAttribute("url");
       String sComments = bookmark.getAttribute("comments");
         
-      out.println ("<form action=\"dispatch.jsp?method=edit\">");
+      out.println ("<form action=\"dispatch.jsp\">");
       out.println ("<table>");
       out.println ("  <tr>");
       out.println ("    <th>Name</th>");
@@ -154,6 +154,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       out.println ("  </tr>");
       out.println ("</table>");
       out.println ("<input type=hidden name=bookmark value=\""+ i + "\">");
+      out.println ("<input type=hidden name=method value=\"edit\">");
       out.println ("<input type=hidden name=action value=\"save\">");
       out.println ("<input type=submit name=submit value=\"Save\">");
       out.println ("</form>");
@@ -194,7 +195,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
       IBookmarks bm = (IBookmarks) xml.getRoot ();
         
-      out.println ("<form action=\"dispatch.jsp?method=edit\">");
+      out.println ("<form action=\"dispatch.jsp\">");
       out.println ("<table>");
       out.println ("  <tr>");
       out.println ("    <th>Name</th>");
@@ -207,6 +208,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       out.println ("    <td><input type=text name=comments value=\"\" size=40></td>");
       out.println ("  </tr>");
       out.println ("</table>");
+      out.println ("<input type=hidden name=method value=\"edit\">");
       out.println ("<input type=hidden name=action value=\"save\">");
       out.println ("<input type=submit name=submit value=\"Save\">");
       out.println ("</form>");        
