@@ -35,6 +35,9 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.services.LogService;
+
 /**
  * A user profile associates a user layout with a structure and theme stylesheet.
  * @author Peter Kharchenko
@@ -49,7 +52,7 @@ public class UserProfile {
     protected int struct_ss_id;
     protected int theme_ss_id;
     protected boolean system=false;
-    protected String locale;
+    protected LocaleManager localeManager;
 
     public UserProfile() {};
     public UserProfile(int id, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
@@ -68,7 +71,6 @@ public class UserProfile {
     public int getStructureStylesheetId() { return struct_ss_id; }
     public int getThemeStylesheetId() { return theme_ss_id; }
     public boolean isSystemProfile(){return system; }
-    public String getLocale() { return locale; }
 
     public void setProfileId(int id) { this.id=id; }
     public void setProfileName(String name) { pName=name; }
@@ -77,7 +79,6 @@ public class UserProfile {
     public void setStructureStylesheetId(int ss_id) { struct_ss_id=ss_id; }
     public void setThemeStylesheetId(int ss_id) { theme_ss_id=ss_id; }
     public void setSystemProfile(boolean s) { system=s; }
-    public void setLocale(String l) {locale=l; }
     
     public boolean equals(Object o) {
       boolean retValue = false;
@@ -86,5 +87,11 @@ public class UserProfile {
         retValue = this.id == profile.id && this.system == profile.system;
       }
       return retValue;
+    }
+
+    // uPortal i18n
+    public void setLocaleManager(LocaleManager lm) { localeManager = lm; }
+    public LocaleManager getLocaleManager() {
+	return localeManager;
     }
 }
