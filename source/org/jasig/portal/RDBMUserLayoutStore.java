@@ -500,7 +500,8 @@ public class RDBMUserLayoutStore
     } else {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
-    sql += " UC.CHAN_ID=?";
+    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT <= " + tsStart + "'" +
+      new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
 
     return new MyPreparedStatement(con, sql);
   }
@@ -873,9 +874,9 @@ public class RDBMUserLayoutStore
           if (!isChannel()) {        // Folder
             structure.setAttribute(sp.name, sp.value);
           } else {                    // Channel
-            NodeList parameters = structure.getElementsByTagName("parameter");
-            for (int j = 0; j < parameters.getLength(); j++) {
-              Element parmElement = (Element)parameters.item(j);
+            NodeList nodeListParameters = structure.getElementsByTagName("parameter");
+            for (int j = 0; j < nodeListParameters.getLength(); j++) {
+              Element parmElement = (Element)nodeListParameters.item(j);
               NamedNodeMap nm = parmElement.getAttributes();
 
               String nodeName = nm.getNamedItem("name").getNodeValue();
