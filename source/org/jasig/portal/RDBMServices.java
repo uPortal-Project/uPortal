@@ -236,7 +236,7 @@ public class RDBMServices {
         releaseConnection(con);
       }
     } catch (Exception e) {
-      log.error( e);
+      log.error("Exception in static initialization of RDBMServices", e);
     }
   }
 
@@ -296,9 +296,9 @@ public class RDBMServices {
         log.error( "The database '" + dbName + "' could not be found.");
       }
     } catch (javax.naming.NamingException ne) {
-      log.error( ne);
+      log.error("Exception looking up database [" + dbName + "] in JDNI", ne);
     } catch (SQLException sqle) {
-      log.error( sqle);
+      log.error("Exception getting and configuring connection to [" + dbName + "]", sqle);
     }
     return conn;
   }
@@ -337,7 +337,7 @@ public class RDBMServices {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
           log.warn("Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
-          log.info( SQLe);
+          log.info("Exception getting and configuring connection.", SQLe);
           prevErrorMsg = errMsg;
         }
       }
@@ -354,7 +354,7 @@ public class RDBMServices {
       if (con != null)
         con.close();
     } catch (Exception e) {
-      log.error( e);
+      log.error("Exception releasing connection", e);
     }
   }
 
@@ -367,7 +367,7 @@ public class RDBMServices {
       if (ps != null) 
         ps.close(); 
     } catch (Exception e) { 
-      log.error( e); 
+      log.error("Exception closing prepared statement [" + ps +"]", e); 
     } 
   } 
     
@@ -380,7 +380,7 @@ public class RDBMServices {
       if (ps != null) 
         ps.close(); 
     } catch (Exception e) { 
-      log.error( e); 
+      log.error("Exception closing PreparedStatement [" + ps + "]", e); 
     } 
   } 
     
@@ -393,7 +393,7 @@ public class RDBMServices {
       if (rs != null) 
         rs.close(); 
     } catch (Exception e) { 
-      log.error( e); 
+      log.error("Exception closing result set [" + rs + "]", e); 
     } 
   } 
     
@@ -406,7 +406,7 @@ public class RDBMServices {
       if (st != null) 
         st.close(); 
     } catch (Exception e) { 
-      log.error( e); 
+      log.error("Exception closing statement [" + st + "]", e); 
     } 
   } 
     
