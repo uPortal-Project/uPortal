@@ -43,14 +43,13 @@ import java.util.*;
  * <p>Title: UserLayoutFolder </p>
  * <p>Description: </p>
  * <p>Company: Instructional Media & Magic</p>
- * @author Michael Ivanov
+ * @author Michael Ivanov mailto:mvi@immagic.com
  * @version 1.1
  */
 
 
 public class ALFolder extends ALNode {
 
-    //protected List childNodes = Collections.synchronizedList(new LinkedList());
     protected String firstChildNodeId;
 
 
@@ -58,7 +57,7 @@ public class ALFolder extends ALNode {
         super();
     }
 
-    public ALFolder ( IALNodeDescription nd ) {
+    public ALFolder ( IALFolderDescription nd ) {
         super (nd);
     }
 
@@ -80,6 +79,10 @@ public class ALFolder extends ALNode {
     }
 
 
+    /**
+     * Gets the node type
+     * @return a node type
+     */
     public String getNodeType() {
         return "folder";
     }
@@ -96,25 +99,5 @@ public class ALFolder extends ALNode {
         lostFolder.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
         return lostFolder;
     }
-
-
-    /*public void setChildNodes ( List childNodes ) {
-      this.childNodes = childNodes;
-      }
-
-
-      public List getChildNodes() {
-      return childNodes;
-      }
-
-
-      public void addChildNode ( String nodeId ) {
-      childNodes.add ( nodeId );
-      }
-
-      public void deleteChildNode ( String nodeId ) {
-      childNodes.remove( nodeId );
-      }
-    */
 
 }

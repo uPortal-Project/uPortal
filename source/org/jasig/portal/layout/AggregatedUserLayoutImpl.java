@@ -47,7 +47,6 @@ import java.util.*;
 
 
 
-
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.xml.sax.ContentHandler;
@@ -62,6 +61,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.jasig.portal.*;
 import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.utils.CommonUtils;
+
 
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
@@ -360,7 +360,15 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      */
   private boolean checkAddRestrictions( IALNodeDescription nodeDesc, String parentId, String nextSiblingId ) throws PortalException {
     String newNodeId = nodeDesc.getId();
-    ALNode newNode = (newNodeId!=null)?getLayoutNode(newNodeId):new ALNode(nodeDesc);
+    ALNode newNode = null;
+    if ( newNodeId == null ) {
+      if ( nodeDesc instanceof IALChannelDescription )
+        newNode = new ALChannel((IALChannelDescription)nodeDesc);
+      else
+        newNode = new ALFolder((IALFolderDescription)nodeDesc);
+    } else
+        newNode = getLayoutNode(newNodeId);
+
     ALNode parentNode = getLayoutNode(parentId);
 
     if ( !FOLDER.equals(parentNode.getNodeType()) )
@@ -685,8 +693,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
       if ( priority < prevPriority && priority > nextPriority ) return true;
 
-      int maxPossibleLowValue = CommonUtils.max(range[0],nextPriority+1);
-      int minPossibleHighValue = CommonUtils.min(range[1],prevPriority-1);
+      int maxPossibleLowValue = Math.max(range[0],nextPriority+1);
+      int minPossibleHighValue = Math.min(range[1],prevPriority-1);
 
       if ( minPossibleHighValue >= maxPossibleLowValue ) {
            if ( !justCheck ) node.setPriority(minPossibleHighValue);
@@ -712,7 +720,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       }
 
       int[] curRange = (nextId.equals(nextNodeId))?nextRange:getPriorityRestriction(curNode).getRange();
-      if ( (value = CommonUtils.min(curRange[1],tmpPriority-1)) < tmpPriority ) {
+      if ( (value = Math.min(curRange[1],tmpPriority-1)) < tmpPriority ) {
         if ( !justCheck ) priorities.add(new Integer(value));
         tmpPriority = value;
       } else
@@ -1168,9 +1176,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         channelDesc.setTitle(node.getAttribute("title"));
 
           // Adding to the layout
-          layoutNode = new ALNode(channelDesc);
+          layoutNode = new ALChannel(channelDesc);
       } else {
-          layoutNode = new ALFolder(nodeDesc);
+          layoutNode = new ALFolder((IALFolderDescription)nodeDesc);
         }
           // Setting priority value
           layoutNode.setPriority(CommonUtils.parseInt(node.getAttribute("priority"),0));
@@ -1213,7 +1221,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     public void setUserLayoutDOM( Document domLayout ) throws PortalException {
       layout.clear();
       Element rootNode = (Element) domLayout.getDocumentElement().getFirstChild();
-      ALFolder rootFolder = new ALFolder(ALNode.createUserLayoutNodeDescription(rootNode));
+      ALFolder rootFolder = new ALFolder((IALFolderDescription)ALNode.createUserLayoutNodeDescription(rootNode));
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
       layout.put(ROOT_FOLDER_ID,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();

@@ -1600,7 +1600,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 nodeDesc = folderDesc;
               } else {
                  //if ( node == null )
-                 node = new ALNode();
+                 node = new ALChannel();
                  ALChannelDescription channelDesc = new ALChannelDescription();
                  channelDesc.setChannelPublishId(rs.getString(6));
                  nodeDesc = channelDesc;
@@ -1757,9 +1757,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                  int newPriority = priority;
                  if ( range[0] > priority )
-                     newPriority = CommonUtils.max(range[0],priority);
+                     newPriority = Math.max(range[0],priority);
                  else if ( range[1] < priority )
-                     newPriority = CommonUtils.min(range[1],priority);
+                     newPriority = Math.min(range[1],priority);
 
                  // Changing the node priority if it's been changed
                  if ( newPriority != priority )

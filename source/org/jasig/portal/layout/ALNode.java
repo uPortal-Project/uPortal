@@ -55,7 +55,7 @@ import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
  * @version 1.2
  */
 
-public class ALNode {
+public abstract class ALNode {
 
      protected String parentNodeId;
      protected String nextNodeId;
@@ -81,10 +81,11 @@ public class ALNode {
         return nodeDescription.getFragmentNodeId();
      }
 
-
-     public String getNodeType() {
-       return "channel";
-     }
+     /**
+     * Gets the node type
+     * @return a node type
+     */
+     public abstract String getNodeType();
 
      public void setNodeDescription ( IALNodeDescription nd ) {
        nodeDescription = nd;
@@ -184,14 +185,14 @@ public class ALNode {
         } else {
             throw new PortalException("Given XML element is neither folder nor channel");
         }
-    }    
+    }
 
     public static ALNode createALNode(IUserLayoutNodeDescription nodeDescription) throws PortalException {
         if(nodeDescription instanceof IUserLayoutFolderDescription) {
             // should be a folder
             return new ALFolder(new ALFolderDescription((IUserLayoutFolderDescription)nodeDescription));
-        } else if(nodeDescription instanceof IUserLayoutFolderDescription) {
-            return new ALNode(new ALChannelDescription((IUserLayoutChannelDescription)nodeDescription));
+        } else if(nodeDescription instanceof IUserLayoutChannelDescription) {
+            return new ALChannel(new ALChannelDescription((IUserLayoutChannelDescription)nodeDescription));
         } else {
             throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
         }
