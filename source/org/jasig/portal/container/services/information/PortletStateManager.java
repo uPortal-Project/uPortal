@@ -120,10 +120,8 @@ public class PortletStateManager {
 	  isAction = nextAction = false;
 	  request = windowOfAction.getHttpServletRequest();
 	  runtimeData = windowOfAction.getChannelRuntimeData();
-	  if ( windowOfAction != null && runtimeData != null && request != null ) {
-		runtimeData.setParameters(getURLDecodedParameters(request));
+	  if ( windowOfAction != null && runtimeData != null && request != null )
 		analyzeRequestInformation();
-	  } 	
 	}
 	
 	public static synchronized Hashtable getURLDecodedParameters ( HttpServletRequest request ) {
