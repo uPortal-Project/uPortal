@@ -75,29 +75,13 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Start");
       Document xmlDoc = getXmlDoc(sessionData);
       // Due to the networked relationship of groups, the next method has to return a list of elements.
-      String elemUid = getCommandIds(runtimeData);
+      String elemUid = getCommandArg(runtimeData);
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Uid of expanded element = "
             + elemUid);
       Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, elemUid);
       String rootOwner;
       if (expandedElem != null) {
-         //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
-         boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
-               == 0);
-         boolean hasEntitiesXML = !(expandedElem.getElementsByTagName(ENTITY_TAGNAME).getLength()
-               == 0);
-         boolean hasMembers = (expandedElem.getAttribute("hasMembers").equals("true"));
-         Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
-               + hasMembers);
-
-         if (hasMembers) {
-            expandedElem.setAttribute("expanded", "true");
-            Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
-            IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(expandedElem.getAttribute("key"));
-            GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, true, expandedElem,
-                  xmlDoc);
-            //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
-         }
+        GroupsManagerXML.expandGroupElementXML(expandedElem,xmlDoc);
       }
    }
 }
