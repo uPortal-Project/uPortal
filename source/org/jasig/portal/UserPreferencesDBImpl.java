@@ -155,7 +155,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 		Document upXML=parser.getDocument();
 		this.populateUserParameterPreferences(upXML,fsup);
 		this.populateUserParameterChannelAttributes(upXML,fsup);
-		this.populateUserParameterCategoryAttributes(upXML,fsup);
+		this.populateUserParameterFolderAttributes(upXML,fsup);
 	    } else {
 		Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userName=\""+userName+"\" and stylesheetName=\""+stylesheetName+"\".");
 	    }
@@ -231,7 +231,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 	Element spEl = doc.createElement("stylesheetuserpreferences");
 	spEl.appendChild(constructParametersElement(fsup,doc));
 	spEl.appendChild(constructChannelAttributesElement(fsup,doc));
-	spEl.appendChild(constructCategoryAttributesElement(fsup,doc));
+	spEl.appendChild(constructFolderAttributesElement(fsup,doc));
 	doc.appendChild(spEl);
 
 	// update the database
@@ -382,8 +382,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 	}
     }
 
-    private void populateUserParameterCategoryAttributes(Document upXML,StructureStylesheetUserPreferences up) {
-	NodeList attributesNodes=upXML.getElementsByTagName("categoryattributes");
+    private void populateUserParameterFolderAttributes(Document upXML,StructureStylesheetUserPreferences up) {
+	NodeList attributesNodes=upXML.getElementsByTagName("folderattributes");
 	// just get the first matching node. Since this XML is portal generated, we trust it.
 	Element attributesNode=(Element) attributesNodes.item(0);
 	if(attributesNode!=null) {
@@ -392,12 +392,12 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 		// process a particular attribute
 		Element attributeElement=(Element) attributeElements.item(i);
 		String attributeName=attributeElement.getAttribute("name");
-		up.addCategoryAttribute(attributeName,null);
-		NodeList categoryElements=attributeElement.getElementsByTagName("category");
-		for(int j=categoryElements.getLength()-1;j>=0;j--) {
-		    Element categoryElement=(Element) categoryElements.item(j);
-		    up.setCategoryAttributeValue(categoryElement.getAttribute("categoryid"),attributeName,categoryElement.getAttribute("value"));
-		    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterCategoryAttributes() : adding category attribute attributeName=\""+attributeName+"\" categoryID=\""+categoryElement.getAttribute("categoryid")+"\" attributeValue=\""+categoryElement.getAttribute("value")+"\".");
+		up.addFolderAttribute(attributeName,null);
+		NodeList folderElements=attributeElement.getElementsByTagName("folder");
+		for(int j=folderElements.getLength()-1;j>=0;j--) {
+		    Element folderElement=(Element) folderElements.item(j);
+		    up.setFolderAttributeValue(folderElement.getAttribute("folderid"),attributeName,folderElement.getAttribute("value"));
+		    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterFolderAttributes() : adding folder attribute attributeName=\""+attributeName+"\" folderID=\""+folderElement.getAttribute("folderid")+"\" attributeValue=\""+folderElement.getAttribute("value")+"\".");
 		}
 	    }
 	}
@@ -435,19 +435,19 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 	return attributesEl;
     }
 
-    private Element constructCategoryAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
-	Element attributesEl = doc.createElement("categoryattributes");
-	List l=up.getCategoryAttributeNames();
+    private Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
+	Element attributesEl = doc.createElement("folderattributes");
+	List l=up.getFolderAttributeNames();
 	for(int i=0;i<l.size();i++) {
 	    String attributeName=(String) l.get(i);
 	    Element attributeEl=doc.createElement("attribute");
 	    attributeEl.setAttribute("name",attributeName);
 	    for(Enumeration e=up.getCategories();e.hasMoreElements();) {
-	        String categoryID=(String) e.nextElement();
-		Element categoryEl=doc.createElement("category");
-		categoryEl.setAttribute("categoryid",categoryID);
-		categoryEl.setAttribute("value",up.getCategoryAttributeValue(categoryID,attributeName));
-		attributeEl.appendChild(categoryEl);
+	        String folderID=(String) e.nextElement();
+		Element folderEl=doc.createElement("folder");
+		folderEl.setAttribute("folderid",folderID);
+		folderEl.setAttribute("value",up.getFolderAttributeValue(folderID,attributeName));
+		attributeEl.appendChild(folderEl);
 	    }
 	    attributesEl.appendChild(attributeEl);
 	}

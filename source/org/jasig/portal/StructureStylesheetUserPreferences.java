@@ -12,124 +12,124 @@ import java.util.*;
 // I take it first stylesheet preferences will remain to be more complex then 
 // preferences of the second stylesheet
 public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPreferences {
-    protected ArrayList categoryAttributeNames;
-    protected Hashtable categoryAttributeValues;
+    protected ArrayList folderAttributeNames;
+    protected Hashtable folderAttributeValues;
 
     public StructureStylesheetUserPreferences() {
 	super();
-	categoryAttributeNames=new ArrayList();
-	categoryAttributeValues=new Hashtable();
+	folderAttributeNames=new ArrayList();
+	folderAttributeValues=new Hashtable();
     }
 
     public StructureStylesheetUserPreferences( StructureStylesheetUserPreferences fsup) {
 	super(fsup);
-	this.categoryAttributeNames=new ArrayList(fsup.categoryAttributeNames);
-	this.categoryAttributeValues=new Hashtable(fsup.categoryAttributeValues);
+	this.folderAttributeNames=new ArrayList(fsup.folderAttributeNames);
+	this.folderAttributeValues=new Hashtable(fsup.folderAttributeValues);
     }
 
-    public String getCategoryAttributeValue(String categoryID,String attributeName) {
-	int attributeNumber=categoryAttributeNames.indexOf(attributeName);
+    public String getFolderAttributeValue(String folderID,String attributeName) {
+	int attributeNumber=folderAttributeNames.indexOf(attributeName);
 	if(attributeNumber==-1) {
-	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getCategoryAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
 	    return null;
 	}
-        List l=(List) categoryAttributeValues.get(categoryID);
+        List l=(List) folderAttributeValues.get(folderID);
 	if(l==null) { 
-	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getCategoryAttributeValue() : Attempting to obtain an attribute for a non-existing category \""+categoryID+"\".");
+	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
 	    return null;
 	} else return (String) l.get(attributeNumber);
     }
 
     // this should be modified to throw exceptions
-    public void setCategoryAttributeValue(String categoryID,String attributeName,String attributeValue) {
-	int attributeNumber=categoryAttributeNames.indexOf(attributeName);
+    public void setFolderAttributeValue(String folderID,String attributeName,String attributeValue) {
+	int attributeNumber=folderAttributeNames.indexOf(attributeName);
 	if(attributeNumber==-1) {
-	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::setCategoryAttributeValue() : Attempting to set a non-existing category attribute \""+attributeName+"\".");
+	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::setFolderAttributeValue() : Attempting to set a non-existing folder attribute \""+attributeName+"\".");
 	    return;
 	}
-        List l=(List) categoryAttributeValues.get(categoryID);
+        List l=(List) folderAttributeValues.get(folderID);
 	if(l==null)
-	    l=this.createCategory(categoryID);
+	    l=this.createFolder(folderID);
 	l.set(attributeNumber,attributeValue); 
     }
 
-    public void addCategoryAttribute(String attributeName, String defaultValue) {
-	if(categoryAttributeNames.indexOf(attributeName)!=-1) {
-	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::addCategoryAttribute() : Attempting to re-add an existing category attribute \""+attributeName+"\".");
+    public void addFolderAttribute(String attributeName, String defaultValue) {
+	if(folderAttributeNames.indexOf(attributeName)!=-1) {
+	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::addFolderAttribute() : Attempting to re-add an existing folder attribute \""+attributeName+"\".");
 	} else {
-	    categoryAttributeNames.add(attributeName);
-	    for (Enumeration e = categoryAttributeValues.elements() ; e.hasMoreElements() ;) 
+	    folderAttributeNames.add(attributeName);
+	    for (Enumeration e = folderAttributeValues.elements() ; e.hasMoreElements() ;) 
 		((List) e.nextElement()).add(defaultValue);
 	}
     }
 
-    public void removeCategoryAttribute(String attributeName) {
+    public void removeFolderAttribute(String attributeName) {
 	int attributeNumber;
-	if((attributeNumber=categoryAttributeNames.indexOf(attributeName))==-1) {
-	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::removeCategoryAttribute() : Attempting to remove a non-existing category attribute \""+attributeName+"\".");
+	if((attributeNumber=folderAttributeNames.indexOf(attributeName))==-1) {
+	    Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::removeFolderAttribute() : Attempting to remove a non-existing folder attribute \""+attributeName+"\".");
 	} else {
-	    categoryAttributeNames.remove(attributeNumber);
-	    for (Enumeration e = categoryAttributeValues.elements() ; e.hasMoreElements() ;) 
+	    folderAttributeNames.remove(attributeNumber);
+	    for (Enumeration e = folderAttributeValues.elements() ; e.hasMoreElements() ;) 
 		((List) e.nextElement()).remove(attributeNumber);
 	}
     }
 
-    public List getCategoryAttributeNames() {
-	return categoryAttributeNames;
+    public List getFolderAttributeNames() {
+	return folderAttributeNames;
     }
     
-    public void addCategory(String categoryID) {
-	// check if the category is there. In general it might be ok to use this functon to default
-	// all of the category's parameters
+    public void addFolder(String folderID) {
+	// check if the folder is there. In general it might be ok to use this functon to default
+	// all of the folder's parameters
 	
 	// prepare a null-filled ArrayList
-	ArrayList l=new ArrayList(categoryAttributeNames.size());
-	for(int i=categoryAttributeNames.size();i>0;i--) 
+	ArrayList l=new ArrayList(folderAttributeNames.size());
+	for(int i=folderAttributeNames.size();i>0;i--) 
 	    l.add(null);
 	
-	if(categoryAttributeValues.put(categoryID,l)!=null) 
-	    Logger.log(Logger.DEBUG,"Readding an existing category (categoryID=\""+categoryID+"\"). All values will be set to default.");
+	if(folderAttributeValues.put(folderID,l)!=null) 
+	    Logger.log(Logger.DEBUG,"Readding an existing folder (folderID=\""+folderID+"\"). All values will be set to default.");
     }
     
-    public void removeCategory(String categoryID) {
-	if(categoryAttributeValues.remove(categoryID)==null) 
-	    Logger.log(Logger.ERROR,"Attempting to remove an non-existing category (categoryID=\""+categoryID+"\").");
+    public void removeFolder(String folderID) {
+	if(folderAttributeValues.remove(folderID)==null) 
+	    Logger.log(Logger.ERROR,"Attempting to remove an non-existing folder (folderID=\""+folderID+"\").");
     }
 
 
     public void synchronizeWithDescription(StructureStylesheetDescription sd) {
 	super.synchronizeWithDescription(sd);
-	// check if all of the category attributes in the preferences occur in the description
-	for(int i=categoryAttributeNames.size()-1; i>=0 ; i--) {
-	    String pname=(String) categoryAttributeNames.get(i);
+	// check if all of the folder attributes in the preferences occur in the description
+	for(int i=folderAttributeNames.size()-1; i>=0 ; i--) {
+	    String pname=(String) folderAttributeNames.get(i);
 	    if(!sd.containsAttribute(pname)) {
-		this.removeCategoryAttribute(pname);
+		this.removeFolderAttribute(pname);
 	    }
 	}
     }
     
     public void completeWithDescriptionInformation(StructureStylesheetDescription sd) {
 	super.completeWithDescriptionInformation(sd);
-	for (Enumeration e = sd.getCategoryAttributeNames() ; e.hasMoreElements() ;) {
+	for (Enumeration e = sd.getFolderAttributeNames() ; e.hasMoreElements() ;) {
 	    String pname=(String) e.nextElement();
-	    if(!categoryAttributeNames.contains(pname)) {
-		this.addCategoryAttribute(pname,sd.getCategoryAttributeDefaultValue(pname));
-		Logger.log(Logger.DEBUG,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : adding category attribute "+pname);
+	    if(!folderAttributeNames.contains(pname)) {
+		this.addFolderAttribute(pname,sd.getFolderAttributeDefaultValue(pname));
+		Logger.log(Logger.DEBUG,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : adding folder attribute "+pname);
 	    } else {
-		// go over every category to make sure that the default attribute values are set
-		int attributeNumber=categoryAttributeNames.indexOf(pname);
-		for (Enumeration ce = categoryAttributeValues.elements() ; ce.hasMoreElements() ;) {
+		// go over every folder to make sure that the default attribute values are set
+		int attributeNumber=folderAttributeNames.indexOf(pname);
+		for (Enumeration ce = folderAttributeValues.elements() ; ce.hasMoreElements() ;) {
 		    if(attributeNumber==-1) {
-			Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : attempting to set a non-existing category attribute \""+pname+"\".");
+			Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : attempting to set a non-existing folder attribute \""+pname+"\".");
 			return;
 		    }
 		    // the following can be used only if the loop is changed to iteratve over .keys() 
-		    //		    String categoryID=(String) ce.nextElement();
-		    //		    List l=(List) categoryAttributeValues.get(categoryID);
+		    //		    String folderID=(String) ce.nextElement();
+		    //		    List l=(List) folderAttributeValues.get(folderID);
 		    List l=(List) ce.nextElement();
 		    if(l.get(attributeNumber)==null) {
-			l.set(attributeNumber,sd.getCategoryAttributeDefaultValue(pname)); 
-			//			Logger.log(Logger.DEBUG,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : setting attribute "+pname+" of category "+categoryID+" to default");
+			l.set(attributeNumber,sd.getFolderAttributeDefaultValue(pname)); 
+			//			Logger.log(Logger.DEBUG,"StructureStylesheetUserPreferences::completeWithDescriptionInformation() : setting attribute "+pname+" of folder "+folderID+" to default");
 		    }
 		}
 	    }
@@ -140,23 +140,23 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
 
     public Enumeration getCategories() {
-	return categoryAttributeValues.keys();
+	return folderAttributeValues.keys();
     }
 
-    public boolean hasCategory(String categoryID) {
-	return categoryAttributeValues.containsKey(categoryID);
+    public boolean hasFolder(String folderID) {
+	return folderAttributeValues.containsKey(folderID);
     }
 
-    private ArrayList createCategory(String categoryID) {
-	ArrayList l=new ArrayList(categoryAttributeNames.size());
-	for(int i=categoryAttributeNames.size();i>0;i--) 
+    private ArrayList createFolder(String folderID) {
+	ArrayList l=new ArrayList(folderAttributeNames.size());
+	for(int i=folderAttributeNames.size();i>0;i--) 
 	    l.add(null);
-	categoryAttributeValues.put(categoryID,l);
+	folderAttributeValues.put(folderID,l);
 	return l;
     }
 
-    private ArrayList copyCategoryAttributeNames() {
-	return categoryAttributeNames;
+    private ArrayList copyFolderAttributeNames() {
+	return folderAttributeNames;
     }
 
     

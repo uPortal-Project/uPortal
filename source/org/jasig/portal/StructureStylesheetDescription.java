@@ -11,36 +11,36 @@ import java.util.Vector;
  */
 
 public class StructureStylesheetDescription extends CoreXSLTStylesheetDescription {
-    Hashtable categoryAttributeTable;
+    Hashtable folderAttributeTable;
     protected Vector mediaList;
 
     public StructureStylesheetDescription() {
 	super();
-	categoryAttributeTable=new Hashtable();
+	folderAttributeTable=new Hashtable();
     }
 
-    public Enumeration getCategoryAttributeNames() {
-	return categoryAttributeTable.keys();
+    public Enumeration getFolderAttributeNames() {
+	return folderAttributeTable.keys();
     }
-    public String getCategoryAttributeWordDescription(String attributeName) {
-	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) categoryAttributeTable.get(attributeName);
+    public String getFolderAttributeWordDescription(String attributeName) {
+	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) folderAttributeTable.get(attributeName);
 	if(pair!=null) return pair.wordDescription;
 	else return null;
     }
-    public String getCategoryAttributeDefaultValue(String attributeName) {
-	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) categoryAttributeTable.get(attributeName);
+    public String getFolderAttributeDefaultValue(String attributeName) {
+	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) folderAttributeTable.get(attributeName);
 	if(pair!=null) return pair.defaultValue;
 	else return null;
     }
 
     public boolean containsAttribute(String attributeName) {
-	return categoryAttributeTable.containsKey(attributeName);
+	return folderAttributeTable.containsKey(attributeName);
     }
 
-    public void addCategoryAttribute(String name, String defaultValue, String wordDescription) {
+    public void addFolderAttribute(String name, String defaultValue, String wordDescription) {
 	DescriptionDefaultValuePair pair=new DescriptionDefaultValuePair();
 	pair.defaultValue=defaultValue; pair.wordDescription=wordDescription;
-	categoryAttributeTable.put(name,pair);
+	folderAttributeTable.put(name,pair);
     }
 
     public Vector getStylesheetMediaList() { return mediaList; }

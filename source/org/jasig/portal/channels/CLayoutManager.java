@@ -260,21 +260,24 @@ public class CLayoutManager implements ISpecialChannel
     String destinationID = runtimeData.getParameter ("destination");
     Node destination = null;
     
-    if (destinationID != null)
-    {
-      if (destinationID.equals (this.layoutID))
-        destination = userLayoutXML.getDocumentElement (); // the layout element
-      else
-        destination = userLayoutXML.getElementById (destinationID);
+    if (destinationID == null) {
+	Logger.log(Logger.ERROR,"CLayoutManager::prepareMove() : received a null destinationID !");
+    } else {
+	if (destinationID.equals (this.layoutID))
+	    destination = userLayoutXML.getDocumentElement (); // the layout element
+	else
+	    destination = userLayoutXML.getElementById (destinationID);
+
+	if(destination==null) {
+	    Logger.log(Logger.ERROR,"CLayoutManager::prepareMove() : destinationID=\""+destinationID+"\" results in an empty node !"); 
+	} else {
+	    for (int i = 0; i < moveIDs.length; i++) {
+		Node relocating = userLayoutXML.getElementById (moveIDs[i]);
+		destination.insertBefore (relocating, null); // adds to end of children nodes
+	    }
+	    modified = true;
+	}
     }
-    
-    for (int i = 0; i < moveIDs.length; i++)
-    {
-      Node relocating = userLayoutXML.getElementById (moveIDs[i]);
-      destination.insertBefore (relocating, null); // adds to end of children nodes
-    }
-    
-    modified = true;
   }
   
   private void prepareReorder ()

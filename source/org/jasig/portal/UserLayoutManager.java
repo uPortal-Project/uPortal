@@ -218,17 +218,17 @@ public class UserLayoutManager extends GenericPortalBean {
 	}
 	
 	// make a list of categories in the XML Layout
-	NodeList categoryNodes=uLayoutXML.getElementsByTagName("category");
-	HashSet categorySet=new HashSet();
-	for(int i=0;i<categoryNodes.getLength();i++) {
-	    Element el=(Element) categoryNodes.item(i);
+	NodeList folderNodes=uLayoutXML.getElementsByTagName("folder");
+	HashSet folderSet=new HashSet();
+	for(int i=0;i<folderNodes.getLength();i++) {
+	    Element el=(Element) folderNodes.item(i);
 	    if(el!=null) {
 		String caID=el.getAttribute("ID");
-		if(!fsup.hasCategory(caID)) {
-		    fsup.addCategory(caID);
-		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a category="+caID);
+		if(!fsup.hasFolder(caID)) {
+		    fsup.addFolder(caID);
+		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
 		}
-		categorySet.add(caID);
+		folderSet.add(caID);
 	    }
 	}
 	
@@ -243,9 +243,9 @@ public class UserLayoutManager extends GenericPortalBean {
 
 	for(Enumeration e=fsup.getCategories();e.hasMoreElements();) {
 	    String caID=(String)e.nextElement();
-	    if(!categorySet.contains(caID)) {
-		fsup.removeCategory(caID);
-		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent category="+caID);
+	    if(!folderSet.contains(caID)) {
+		fsup.removeFolder(caID);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
 	    }
 	}
 
@@ -325,15 +325,15 @@ public class UserLayoutManager extends GenericPortalBean {
 	argumentedUserLayoutXML= UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
 
 	
-	// deal with category attributes first
-	NodeList categoryElements=argumentedUserLayoutXML.getElementsByTagName("category");
-	if(categoryElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of category elements obtained!");
-	List cl=complete_fsup.getCategoryAttributeNames();
+	// deal with folder attributes first
+	NodeList folderElements=argumentedUserLayoutXML.getElementsByTagName("folder");
+	if(folderElements==null) Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
+	List cl=complete_fsup.getFolderAttributeNames();
 	for(int j=0;j<cl.size();j++) {
-	    for(int i=categoryElements.getLength()-1;i>=0;i--) {
-		Element categoryElement=(Element) categoryElements.item(i);
-		categoryElement.setAttribute((String) cl.get(j),complete_fsup.getCategoryAttributeValue(categoryElement.getAttribute("ID"),(String) cl.get(j)));
-		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getCategoryAttributeValue(categoryElement.getAttribute("ID"),(String) cl.get(j))+" for a category "+categoryElement.getAttribute("ID"));
+	    for(int i=folderElements.getLength()-1;i>=0;i--) {
+		Element folderElement=(Element) folderElements.item(i);
+		folderElement.setAttribute((String) cl.get(j),complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j)));
+		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
 	    }
 	}
 	// channel attributes

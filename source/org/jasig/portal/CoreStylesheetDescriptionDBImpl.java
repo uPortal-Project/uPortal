@@ -130,7 +130,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 		
 		// populate parameter and attriute tables
 		this.populateParameterTable(stylesheetDescriptionXML,fssd);
-		this.populateCategoryAttributeTable(stylesheetDescriptionXML,fssd);
+		this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
 		this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
 		fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
 
@@ -326,7 +326,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 	    
 	    // populate parameter and attriute tables
 	    this.populateParameterTable(stylesheetDescriptionXML,fssd);
-	    this.populateCategoryAttributeTable(stylesheetDescriptionXML,fssd);
+	    this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
 	    this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
 	    fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
 
@@ -503,16 +503,16 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 	}
     }
 
-    private void populateCategoryAttributeTable(Document descr,StructureStylesheetDescription cxsd) {NodeList parametersNodes=descr.getElementsByTagName("parameters");
-	NodeList categoryattributesNodes=descr.getElementsByTagName("categoryattributes");
-	Node categoryattributesNode=null;
-	for(int i=categoryattributesNodes.getLength()-1;i>=0;i--) {
-	    categoryattributesNode=categoryattributesNodes.item(i);
-	    if(categoryattributesNode.getParentNode().getLocalName().equals("stylesheetdescription")) break;
-	    else categoryattributesNode=null;
+    private void populateFolderAttributeTable(Document descr,StructureStylesheetDescription cxsd) {NodeList parametersNodes=descr.getElementsByTagName("parameters");
+	NodeList folderattributesNodes=descr.getElementsByTagName("folderattributes");
+	Node folderattributesNode=null;
+	for(int i=folderattributesNodes.getLength()-1;i>=0;i--) {
+	    folderattributesNode=folderattributesNodes.item(i);
+	    if(folderattributesNode.getParentNode().getLocalName().equals("stylesheetdescription")) break;
+	    else folderattributesNode=null;
 	}
-	if(categoryattributesNode!=null) {
-	    NodeList children=categoryattributesNode.getChildNodes();
+	if(folderattributesNode!=null) {
+	    NodeList children=folderattributesNode.getChildNodes();
 	    for(int i=children.getLength()-1;i>=0;i--) {
 		Node child=children.item(i);
 		if(child.getNodeType()==Node.ELEMENT_NODE && child.getLocalName().equals("attribute")) {
@@ -531,8 +531,8 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 			    }
 			}
 		    }
-		    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::populateCategoryAttributeTable() : adding a stylesheet category attribute : (\""+name+"\",\""+defaultvalue+"\",\""+description+"\")");
-		    cxsd.addCategoryAttribute(name,defaultvalue,description);
+		    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""+name+"\",\""+defaultvalue+"\",\""+description+"\")");
+		    cxsd.addFolderAttribute(name,defaultvalue,description);
 		} 
 	    }
 	}

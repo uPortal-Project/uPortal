@@ -175,7 +175,7 @@ public class LayoutBean extends GenericPortalBean
 
       // set up the channelManager
       if (channelManager == null)
-        channelManager = new ChannelManager (req, res);
+        channelManager = new ChannelManager (req, res,uLayoutManager);
       else
         channelManager.setReqNRes (req, res);
 
