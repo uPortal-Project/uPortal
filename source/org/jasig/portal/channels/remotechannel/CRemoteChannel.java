@@ -75,6 +75,7 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
   protected String baseUrl = null;
   protected String xslUriForKey = null;
   protected boolean receivedEvent = false;
+  protected boolean focused = false;
 
   /**
    * Provides initialization opportunity for this channel.  The static
@@ -149,24 +150,18 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
    * @throws org.jasig.portal.PortalException
    */  
   public void renderXML(ContentHandler out) throws PortalException {
-    // Set up arguments to renderChannel()
-    BrowserInfo bi = runtimeData.getBrowserInfo();
-    Map headers = bi.getHeaders();
-    Cookie[] cookies = bi.getCookies();
-    Map params = runtimeData.getParameters();
-    String baseActionURL = baseUrl + runtimeData.getBaseActionURL();
 
     // Obtain the channel content
     Element channelE = null;
     try {
-      channelE = rc.renderChannel(instanceId, headers, cookies, params, baseActionURL);
+      channelE = rc.renderChannel(instanceId, runtimeData);
     } catch (RemoteException re) {
       throw new PortalException(re);
     }
 
     XSLT xslt = new XSLT(this);
     xslt.setXML(channelE);
-    xslt.setXSL(SSL_LOCATION, bi);
+    xslt.setXSL(SSL_LOCATION, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
   }
@@ -264,14 +259,21 @@ public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheab
   }
 
   /**
-   * Return <code>true</code> when we have not just received an event
-   * and no runtime parameters are sent to the channel, 
-   * otherwise <code>false</code>.  In other words, cache the content
-   * in all cases except for when a user clicks either a channel button
-   * or a link or form button within the channel.
+   * Return <code>true</code> when we have not just received an event,
+   * no runtime parameters are sent to the channel, and the focus hasn't switched.
+   * Otherwise, return <code>false</code>.  In other words, cache the content
+   * in all cases <i>except</i> for when a user clicks a channel button,
+   * a link or form button within the channel, or the "focus" or "unfocus" button.
    */
   public boolean isCacheValid(Object validity) {
-    boolean cacheValid = !receivedEvent && runtimeData.size() == 0;
+    // Determine if the channel focus has changed
+    boolean previouslyFocused = focused;
+    focused = runtimeData.isRenderingAsRoot();
+    boolean focusHasSwitched = focused != previouslyFocused;
+    
+    // Dirty cache only when we receive an event, one or more request params, or a change in focus
+    boolean cacheValid = !receivedEvent && runtimeData.size() == 0 && !focusHasSwitched;
+    
     receivedEvent = false;
     return cacheValid;
   }
