@@ -234,7 +234,7 @@ public class ChannelManager implements LayoutEventListener {
         this.finishedRenderingCycle();
 
         // send SESSION_DONE event to all the channels
-        PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
+        PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;
         for(Enumeration enum=channelTable.elements();enum.hasMoreElements();) {
             IChannel ch = (IChannel)enum.nextElement();
             if (ch != null) {
@@ -891,7 +891,7 @@ public class ChannelManager implements LayoutEventListener {
         if(ch!=null) {
             channelCacheTable.remove(ch);
             try {
-                ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
+                ch.receiveEvent(PortalEvent.UNSUBSCRIBE_EVENT);
             } catch (Exception e) {
                 log.error( e);
             }
