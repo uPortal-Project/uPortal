@@ -845,7 +845,7 @@ public class RDBMUserLayoutStore
     try {
       Statement stmt = con.createStatement();
       try {
-        String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=NULL ORDER BY CAT_TITLE";
+        String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
