@@ -99,8 +99,10 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     this.isauth = false;
     LdapServices ldapservices = new LdapServices();
     String creds = new String(this.myOpaqueCredentials.credentialstring);
-    if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring
-        != null && !creds.trim().equals("")) {
+    if (this.myPrincipal.UID != null &&
+        !this.myPrincipal.UID.trim().equals("") &&
+        this.myOpaqueCredentials.credentialstring != null &&
+        !creds.trim().equals("")) {
       DirContext conn = null;
       NamingEnumeration results = null;
       String baseDN = null;
@@ -108,18 +110,25 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       String passwd = null;
       String first_name = null;
       String last_name = null;
+      
       user.append(ldapservices.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      LogService.log(LogService.DEBUG, "Looking for " + user.toString());
+      LogService.log(LogService.DEBUG,
+                     "SimpleLdapSecurityContext: Looking for " +
+                     user.toString());
       conn = ldapservices.getConnection();
+      
       // set up search controls
       SearchControls searchCtls = new SearchControls();
       searchCtls.setReturningAttributes(attributes);
       searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
       // do lookup
       try {
         results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
+          if (!results.hasMore())
+            LogService.log(LogService.ERROR, "SimpleLdapSecurityContext: Results empty for user: " + this.myPrincipal.UID);
           Vector entries = new Vector();
           while (results != null && results.hasMore()) {
             SearchResult entry = (SearchResult)results.next();
@@ -137,30 +146,41 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             searchCtls = new SearchControls();
             searchCtls.setReturningAttributes(new String[0]);
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
-            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
+            
+            String attrSearch = "(" + ldapservices.getUidAttribute() + "=*)";
+            LogService.log(LogService.DEBUG,
+                           "SimpleLdapSecurityContext: Looking in " +
+                           dnBuffer.toString() + " for " + attrSearch);
+            conn.search(dnBuffer.toString(), attrSearch, searchCtls);
+
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+            LogService.log(LogService.DEBUG,
+                           "SimpleLdapSecurityContext: User " +
+                           this.myPrincipal.UID + " (" +
+                           this.myPrincipal.FullName + ") is authenticated");
 
             // Since LDAP is case-insensitive with respect to uid, force
             // user name to lower case for use by the portal
             this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
-
           } // while (results != null && results.hasMore())
         }
         else {
-          LogService.log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.ERROR,
+                         "SimpleLdapSecurityContext: No such user: " +
+                         this.myPrincipal.UID);
         }
       } catch (Exception e) {
-        LogService.log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
-        LogService.log(LogService.ERROR, e);
-        throw new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID);
+        LogService.log(LogService.ERROR,
+                       "SimpleLdapSecurityContext: LDAP Error with user: " +
+                       this.myPrincipal.UID + "; " + e);
+        throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
         ldapservices.releaseConnection(conn);
       }
     }
     else {
-      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      LogService.log(LogService.ERROR, "SimpleLdapSecurityContext: Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
@@ -204,6 +224,3 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     return  true;
   }
 }
-
-
-
