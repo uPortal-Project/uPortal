@@ -95,7 +95,8 @@ public class HttpProxyServlet extends HttpServlet {
 	    return;
 	}
 
-    InputStream is;
+	InputStream is = null;
+    ServletOutputStream out = null;
     
     try {
         URL url = new URL(target);
@@ -104,19 +105,25 @@ public class HttpProxyServlet extends HttpServlet {
         response.setContentType(uc.getContentType());
         
         is = uc.getInputStream();
-    } catch (MalformedURLException e) {
-		response.setStatus(404);
-		return;
-    } catch (IOException e) {
-		response.setStatus(404);
-		return;
-    }
-	ServletOutputStream out = response.getOutputStream();
+    
+	    out = response.getOutputStream();
 
 	byte[] buf = new byte[4096];
 	int bytesRead;
 	while ((bytesRead = is.read(buf)) != -1) {
 	    out.write(buf, 0, bytesRead);
 	}
+    } catch (MalformedURLException e) {
+		response.setStatus(404);
+		
+    } catch (IOException e) {
+		response.setStatus(404);
+		
+    } finally {
+        if(is != null)
+        is.close();
+        if(out != null)
+        out.close();
+    }
     }
 }
