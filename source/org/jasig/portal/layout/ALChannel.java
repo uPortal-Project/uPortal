@@ -44,14 +44,11 @@ import java.util.*;
  * <p>Description: </p>
  * <p>Company: Instructional Media & Magic</p>
  * @author Michael Ivanov mailto:mvi@immagic.com
- * @version 1.0
+ * @version 1.1
  */
 
 
 public class ALChannel extends ALNode {
-
-    protected String firstChildNodeId;
-
 
     public ALChannel() {
         super();
