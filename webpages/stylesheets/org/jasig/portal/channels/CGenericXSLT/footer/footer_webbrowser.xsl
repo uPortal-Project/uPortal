@@ -5,7 +5,7 @@
     <table width="100%" border="0" cellspacing="5" cellpadding="5">
       <tr>
         <td align="right" class="uportal-label">
-          <a href="http://www.udel.edu/uPortal">Powered by uPortal 2.3.5</a>
+          <a href="http://www.udel.edu/uPortal">Powered by uPortal 2.3.5+</a>
         </td>
       </tr>
     </table>
