@@ -144,7 +144,19 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <type><generic>TIMESTAMP</generic><local>DATE</local></type>
     <!-- map more types here -->
   </db-type-mapping>  
-  
+
+    <db-type-mapping>
+    <db-name>Oracle</db-name>
+    <!-- Line breaks have to be here -->
+    <db-version>Oracle8i Enterprise Edition Release 8.1.7.2.0 - Production
+With the Partitioning option
+JServer Release 8.1.7.2.0 - Production</db-version>
+    <driver-name>Oracle JDBC driver</driver-name>
+    <driver-version>9.2.0.3.0</driver-version>
+    <type><generic>TIMESTAMP</generic><local>DATE</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
     <db-version>7.2.1</db-version>
