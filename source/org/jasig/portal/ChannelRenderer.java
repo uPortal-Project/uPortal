@@ -36,6 +36,8 @@
 package org.jasig.portal;
 
 import org.xml.sax.*;
+import org.jasig.portal.utils.*;
+
 
 /**
  * This class renders channel content into a SAXBuffer.
@@ -45,23 +47,29 @@ import org.xml.sax.*;
  */
 public class ChannelRenderer
 {
+    public static final boolean POOL_THREADS=true;
+
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
     public static final int RENDERING_TIMED_OUT=2;
 
 
-  protected IChannel channel;
+    protected IChannel channel;
     protected ChannelRuntimeData rd;
-  protected SAXBufferImpl buffer;
+    protected SAXBufferImpl buffer;
+    
+    protected boolean rendering;
+    protected boolean donerendering;
+    
+    protected Thread workerThread;
+    protected ThreadPoolReceipt workerReceipt;
 
-  protected boolean rendering;
-  protected boolean donerendering;
+    protected Worker worker;
+    
+    protected long startTime;
+    protected long timeOut = java.lang.Long.MAX_VALUE;
 
-  protected Thread workerThread;
-  protected Worker worker;
-
-  protected long startTime;
-  protected long timeOut = java.lang.Long.MAX_VALUE;
+    protected static ThreadPool tp=null;
 
   /**
    * Default constructor.
@@ -72,6 +80,12 @@ public class ChannelRenderer
     this.channel=chan;
     this.rd=runtimeData;
     rendering = false;
+    if(tp==null && POOL_THREADS) {
+	ResourceLimits rl=new ResourceLimits();
+	rl.setOptimalSize(100); // should be on the order of concurrent users
+	// note the lack of an upper limit
+	tp=new ThreadPool("renderers",rl);
+    }
   }
 
   /**
@@ -94,8 +108,17 @@ public class ChannelRenderer
     // start the rendering thread
     buffer = new SAXBufferImpl ();
     worker = new Worker (channel,rd,buffer);
-    workerThread = new Thread (this.worker);
-    workerThread.start ();
+    if(POOL_THREADS) {
+	// use thread pooling
+	try {
+	    workerReceipt=tp.execute(worker);
+	} catch (InterruptedException ie) {
+	    Logger.log(Logger.ERROR,"ChannelRenderer::startRendering() : interupted while waiting for a rendering thread!");
+	}
+    } else {
+	workerThread = new Thread (this.worker);
+	workerThread.start ();
+    }
     rendering = true;
     startTime = System.currentTimeMillis ();
   }
@@ -116,23 +139,53 @@ public class ChannelRenderer
     if (!rendering)
       this.startRendering ();
 
+    boolean abandoned=false;
     try
     {
       long wait = timeOut - System.currentTimeMillis () + startTime;
 
-      if (wait > 0)
-        workerThread.join (wait);
+      if(POOL_THREADS) {
+	  synchronized(workerReceipt) {
+	      if(wait>0 && !workerReceipt.isJobdone())
+		  workerReceipt.wait(wait);
+	  }
+      } else {
+	  if (wait > 0)
+	      workerThread.join (wait);
+      }
     }
     catch (InterruptedException e)
     {
       Logger.log (Logger.DEBUG, "ChannelRenderer::outputRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
     }
 
-    // kill the working thread
-    // yes, this is terribly crude and unsafe, but I don't see an alternative
-    workerThread.stop ();
+    // by this point, if the job is not done, we have to kill it.
+    // peterk: would be nice to put it on a "death raw" instead of
+    // stop()ing it instantly. (sorry for the analogy). That way
+    // we could try poking it with interrupt() a few times, give it
+    // a low priority and see if it can come back up. stop() can 
+    // leave the system in an unstable state :(
+    if(POOL_THREADS) {
+	synchronized(workerReceipt) {
+	    if(!workerReceipt.isJobdone()) {
+		workerReceipt.killJob();
+		abandoned=true;
+		Logger.log(Logger.DEBUG,"ChannelRenderer::outputRendering() : killed.");
+	    } else {
+		abandoned=!workerReceipt.isJobsuccessful();
+	    }
+	}
+    } else {
+	if(!worker.done()) {
+	    // kill the working thread
+	    // yes, this is terribly crude and unsafe, but I don't see an alternative
+	    workerThread.stop ();
+	    abandoned=true;
+	}
+    }
 
-    if (worker.done ())
+    
+    if (!abandoned && worker.done ()) 
     {
       if (worker.successful ())
       {
@@ -167,9 +220,13 @@ public class ChannelRenderer
    */
     protected void finalize () throws Throwable
     {
-        if (workerThread.isAlive ())
-            workerThread.stop ();
-
+	if(POOL_THREADS) {
+	    if(workerReceipt!=null && !workerReceipt.isJobdone())
+		workerReceipt.killJob();
+	} else {
+	    if (workerThread.isAlive ())
+		workerThread.stop ();
+	}
         super.finalize ();
     }
 

@@ -82,9 +82,9 @@ public class ThreadPool extends ThreadGroup {
         // try growing workers if the stack is empty
 	if(idleWorkers.empty()) addWorker();
         // block on waiting for the next available worker
-	ThreadPoolWorker worker = (ThreadPoolWorker) idleWorkers.pop();
+	//	ThreadPoolWorker worker = (ThreadPoolWorker) idleWorkers.pop();
 	// start the process and return a receipt
-	return(worker.process(target));
+	return(((ThreadPoolWorker)idleWorkers.pop()).process(target));
     }
 
     /**

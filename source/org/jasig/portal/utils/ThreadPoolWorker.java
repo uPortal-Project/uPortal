@@ -77,9 +77,9 @@ public class ThreadPoolWorker extends Thread {
         // construct a receipt
         if(currentReceipt!=null)
           Logger.log(Logger.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
-        currentReceipt=new ThreadPoolReceipt(this);
+        ThreadPoolReceipt returnReceipt=currentReceipt=new ThreadPoolReceipt(this);
 	taskQueue.enqueue(target);
-        return currentReceipt;
+        return returnReceipt;
     }
 
     private void runWork() throws RuntimeException {
