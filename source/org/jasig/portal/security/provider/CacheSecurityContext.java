@@ -42,7 +42,6 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.UserLayoutStoreFactory;
 import java.security.MessageDigest;
 
 
@@ -91,7 +90,7 @@ class CacheSecurityContext extends ChainingSecurityContext
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null;
       try {
-        String acct[] = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = AccountStoreFactory.getAccountStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[1];
           last_name = acct[2];
