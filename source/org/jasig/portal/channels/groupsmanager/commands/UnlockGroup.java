@@ -59,6 +59,7 @@ public class UnlockGroup extends GroupsManagerCommand{
       String key = sessionData.lockedGroup.getLock().getEntityKey();
       Utility.logMessage("DEBUG", "UnlockGroup::execute(): Locked group key = " + key);
       sessionData.lockedGroup.getLock().release();
+      sessionData.lockedGroup = null;
       String parentID = getParentId(sessionData.staticData);
 
       // Parent was locked so no other thread or process could have changed it, but

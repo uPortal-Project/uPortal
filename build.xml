@@ -87,8 +87,8 @@
 
 -->
 
-  <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.name"      value="(set this in build.properties!)"/>
+  <property name="app.version"   value="(set this in build.properties!)"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -733,7 +733,7 @@ Example:
   <target name="deluser" >
     <echo message="Invoking DeleteUser"/>
     <property name="user" value=" "/>   
-    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser">
+    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>

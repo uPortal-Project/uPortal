@@ -41,7 +41,7 @@
   <xsl:template match="layout">
     <html>
       <head>
-        <title>uPortal 2.1</title>
+        <title>uPortal 2.1.1</title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
@@ -52,9 +52,9 @@
         </xsl:if>
         <xsl:apply-templates select="content"/>
         <table width="100%" border="0" cellpadding="1" cellspacing="0">
-          <tr>
+          <tr><td>
             <xsl:apply-templates select="footer"/>
-          </tr>
+          </td></tr>
         </table>
       </body>
     </html>

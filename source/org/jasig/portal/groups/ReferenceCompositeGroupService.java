@@ -131,7 +131,8 @@ protected IIndividualGroupService getDefaultService()
  * Returns an <code>IEntity</code> representing a portal entity.  This does
  * not guarantee that the entity actually exists.
  */
-public IEntity getEntity(String key, Class type) throws GroupsException {
+public IEntity getEntity(String key, Class type) throws GroupsException 
+{
     return getDefaultService().getEntity(key, type);
 }
 /**
@@ -340,5 +341,46 @@ throws GroupsException
  */
 protected void setComponentServices(java.util.Map newComponentServices) {
     componentServices = newComponentServices;
+}
+
+ /**
+ *
+ */
+protected void cacheAdd(IGroupMember gm) throws GroupsException
+{
+    try 
+        { EntityCachingService.instance().add(gm); }
+	catch (CachingException ce)
+	    { throw new GroupsException("Problem adding group member " + gm.getKey() + " to cache: " + ce.getMessage() ); }
+}
+
+ /**
+ *
+ */
+protected void cacheRemove(IGroupMember gm) throws GroupsException
+{
+    try 
+        { EntityCachingService.instance().remove(gm.getEntityIdentifier()); }
+	catch (CachingException ce)
+	    { throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache: " + ce.getMessage() ); }
+}
+
+ /**
+ *
+ */
+protected void cacheUpdate(IGroupMember gm) throws GroupsException
+{
+    try 
+        { EntityCachingService.instance().update(gm); }
+	catch (CachingException ce)
+	    { throw new GroupsException("Problem updating group member " + gm.getKey() + " in cache: " + ce.getMessage() ); }
+}
+
+/**
+ * Returns a cached <code>IEntity</code> or null if it has not been cached.
+ */
+protected IEntity getEntityFromCache(String key) throws CachingException
+{
+    return (IEntity) EntityCachingService.instance().get(org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE, key);
 }
 }

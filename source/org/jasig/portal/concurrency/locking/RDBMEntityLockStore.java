@@ -444,7 +444,7 @@ throws LockingException, SQLException
 
     StringBuffer buff = new StringBuffer(100);
     buff.append("DELETE FROM " + LOCK_TABLE + " WHERE " + EXPIRATION_TIME_COLUMN + LT);
-    buff.append(sqlQuote(ts));
+    buff.append(printTimestamp(ts));
     if ( entityType != null )
     {
         Integer typeID = EntityTypes.getEntityTypeID(entityType);
@@ -608,7 +608,7 @@ throws LockingException
     if ( expiration != null )
     {
         Timestamp ts = new Timestamp(expiration.getTime());
-        sqlQuery.append(" AND " + EXPIRATION_TIME_COLUMN + EQ + sqlQuote(ts));
+        sqlQuery.append(" AND " + EXPIRATION_TIME_COLUMN + EQ + printTimestamp(ts));
     }
 
     if ( lockOwner != null )
@@ -637,7 +637,7 @@ throws LockingException
 {
     StringBuffer sqlQuery = new StringBuffer(getSelectSql());
 
-    sqlQuery.append(" WHERE " + EXPIRATION_TIME_COLUMN + GT + sqlQuote(ts));
+    sqlQuery.append(" WHERE " + EXPIRATION_TIME_COLUMN + GT + printTimestamp(ts));
 
     if ( entityType != null )
     {
@@ -710,5 +710,22 @@ throws LockingException
         { throw new LockingException("Problem updating " + lock + ": " + sqle.getMessage()); }
     finally
         { RDBMServices.releaseConnection(conn); }
+}
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+    long tsMillis = ts.getTime();
+    long tsNanos = ts.getNanos() / 1000000;
+    return (tsMillis + tsNanos);
+}
+
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String printTimestamp(Timestamp ts)
+{
+    return RDBMServices.sqlTimeStamp(getTimestampMillis(ts));
 }
 }

@@ -56,11 +56,15 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public String uid;
    public IPerson user;
    public long startRD;
-   public ILockableEntityGroup lockedGroup;
+   public ILockableEntityGroup lockedGroup = null;
    public String highlightedGroupID;
    public int currentPage = 1;
-   public String rootViewGroupID = "0";
+   public String rootViewGroupID;
+   public String defaultRootViewGroupID = "0";
    public String mode = BROWSE_MODE; //"browse", "edit" or "select"
+   public String returnToMode;
    public String feedback; // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
+   public boolean isAdminUser;
+   public IPermissible permissible;
 }

@@ -393,6 +393,7 @@ public class MediaManager {
           attVec.addElement(temp);
         }
       }
+		input.close();
     }
 
     /**

@@ -93,6 +93,7 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
  * ReferenceInvalidatingEntityCache constructor comment.
  */
 public ReferenceInvalidatingEntityCache(Class type, int maxSize, int maxUnusedTime, int sweepInterval )
+throws CachingException
 {
     super(type, maxSize, maxUnusedTime, sweepInterval);
 }
@@ -147,6 +148,7 @@ public IBasicEntity get(String key) {
  * @return org.jasig.portal.concurrency.caching.RDBMCachedEntityInvalidationStore
  */
 private static synchronized RDBMCachedEntityInvalidationStore getInvalidationStore()
+throws CachingException
 {
     if ( invalidationStore == null )
         { invalidationStore = new RDBMCachedEntityInvalidationStore(); }

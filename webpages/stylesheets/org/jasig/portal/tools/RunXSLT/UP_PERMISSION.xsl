@@ -78,7 +78,7 @@ Version $Revision$
 							<name>PRINCIPAL_KEY</name>
 							<value>
 							<xsl:variable name="oldKey" select="substring-after(./value,'.')"/>
-							<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.xml'))//row[column[name='USER_ID' and value=$oldKey]]"/>
+							<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.XML'))//row[column[name='USER_ID' and value=$oldKey]]"/>
 							<xsl:value-of select="$userRow/column[name='USER_NAME']/value"/>
 							</value>
 						</column>

@@ -107,6 +107,7 @@ public class CChannelManager extends BaseChannel {
     protected IPerson person;
     protected IServant categoryServant;
     protected IServant groupServant;
+    protected String errorMsg;
 
     // Called after publishing so that you won't see any previous settings
     // on the next publish attempt
@@ -115,6 +116,7 @@ public class CChannelManager extends BaseChannel {
         modChanSettings = new ModifyChannelSettings();
         categoryServant = null;
         groupServant = null;
+        errorMsg = null;
     }
 
     /**
@@ -195,6 +197,9 @@ public class CChannelManager extends BaseChannel {
                 break;
             case CHANNEL_REVIEW_STATE:
                 action = "reviewChannel";
+                if (errorMsg != null)
+                  xslt.setStylesheetParameter("errorMsg", errorMsg);
+                errorMsg = null;
                 break;
             case MODIFY_CHANNEL_STATE:
                 action = "selectModifyChannel";
@@ -493,12 +498,25 @@ public class CChannelManager extends BaseChannel {
                 // collect select channel categories
                 String[] catIDs;
                 IGroupMember[] ctgs = (IGroupMember[])getCategoryServant().getResults();
+                // If no categories were selected, return to review screen.
+                if (ctgs.length == 0) {
+                  action = "reviewChannel";
+                  errorMsg = "NO_CATEGORIES";
+                  doAction();
+                  return;
+                }
                 catIDs = new String[ctgs.length];
                 for (int c = 0; c < ctgs.length; c++) {
                     catIDs[c] = ctgs[c].getKey();
                 }
                 // collect groups and/or people that can subscribe
                 IGroupMember[] groupMembers = (IGroupMember[])getGroupServant().getResults();
+                if (groupMembers.length == 0) {
+                  action = "reviewChannel";
+                  errorMsg = "NO_GROUP_MEMBERS";
+                  doAction();
+                  return;
+                }
                 try {
                     Element channelE = channelDef.toXML();
                     ChannelRegistryManager.publishChannel(channelE, catIDs, groupMembers, person);

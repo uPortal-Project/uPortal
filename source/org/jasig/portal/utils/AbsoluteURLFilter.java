@@ -89,6 +89,16 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
   }
 
   /**
+   * Sets the base URL.
+   * @param url the new base URL 
+   */
+  protected void setBaseUrl(String url)
+  {
+    if (url != null)
+      this.baseUrl = url;
+  }
+
+  /**
    * A helper method for derivitive classes to easily fix an attribute
    * that has a relative URL value
    * @param elementName the element name containing an attribute of name attName

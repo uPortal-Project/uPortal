@@ -58,7 +58,7 @@ public abstract class GroupMemberImpl implements IGroupMember
     // Our home service.
     protected IGroupService groupService;
 
-/* 
+/*
  * The Set of keys to groups that contain this <code>IGroupMember</code>.
  * the groups themselves are cached by the service.
  */
@@ -87,7 +87,7 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
  * @return void
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
-public void addGroup(IEntityGroup eg)
+public synchronized void addGroup(IEntityGroup eg)
 {
     getGroupKeys().add(eg.getEntityIdentifier().getKey());
 }
@@ -145,11 +145,11 @@ public java.util.Iterator getAllMembers() throws GroupsException
  * @return java.lang.String
  */
 protected String getCacheKey() {
-	return getEntityIdentifier().getKey();
+    return getEntityIdentifier().getKey();
 //  return getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
- * Returns the composite group service.  
+ * Returns the composite group service.
  */
 protected ICompositeGroupService getCompositeGroupService() throws GroupsException
 {
@@ -157,18 +157,28 @@ protected ICompositeGroupService getCompositeGroupService() throws GroupsExcepti
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
+ * Synchronize the collection of keys with adds and removes.
  * @return java.util.Iterator
  */
 public java.util.Iterator getContainingGroups() throws GroupsException
 {
-    if ( ! areGroupKeysInitialized() )
-        { initializeGroupKeys(); }
-    Collection groupsColl = new ArrayList(getGroupKeys().size());
-    for ( Iterator i = getGroupKeys().iterator(); i.hasNext(); )
+    Iterator i;
+    Collection groupsColl;
+
+    synchronized ( this )
+    {
+        if ( ! areGroupKeysInitialized() )
+            { initializeGroupKeys(); }
+        groupsColl = new ArrayList(getGroupKeys().size());
+        i = getGroupKeys().iterator();
+    }  // end synchronized
+
+    while ( i.hasNext() )
     {
         String groupKey = (String) i.next();
         groupsColl.add(getCompositeGroupService().findGroup(groupKey));
-    } 
+    }
+
     return groupsColl.iterator();
 }
 /**
@@ -291,6 +301,7 @@ private void initializeContainingGroupKeys() throws GroupsException
  */
 private void initializeGroupKeys() throws GroupsException
 {
+    this.groupKeys = null;
     initializeContainingGroupKeys();
     setGroupKeysInitialized(true);
 }
@@ -301,8 +312,8 @@ private void initializeGroupKeys() throws GroupsException
  */
 public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
 
-	if ( gm.isEntity() )
-	    return false;
+    if ( gm.isEntity() )
+        return false;
     if ( this.isMemberOf(gm) )
         return true;
 
@@ -344,8 +355,8 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException
 {
-	if ( gm.isEntity() )
-	    { return false; }
+    if ( gm.isEntity() )
+        { return false; }
     if ( ! areGroupKeysInitialized() )
         { initializeGroupKeys(); }
 
@@ -374,14 +385,14 @@ protected java.util.Set primGetAllContainingGroups(Set s) throws GroupsException
  * @return void
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
-public void removeGroup(IEntityGroup eg)
+public synchronized void removeGroup(IEntityGroup eg)
 {
     getGroupKeys().remove(eg.getEntityIdentifier().getKey());
 }
 /**
  * @param newGroupsInitialized boolean
  */
-private void setGroupKeysInitialized(boolean newGroupKeysInitialized) {
+protected void setGroupKeysInitialized(boolean newGroupKeysInitialized) {
     groupKeysInitialized = newGroupKeysInitialized;
 }
 }

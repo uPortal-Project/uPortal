@@ -139,19 +139,11 @@ protected void expire()
     setExpirationTime(new Date(0));
 }
 /**
- * Remove the lock from the store.
  * @throws Throwable
  */
 protected void finalize() throws Throwable
 {
-    try
-    {
-        release();
-    }
-    finally
-    {
-        super.finalize();
-    }
+    super.finalize();
 }
 /**
  * @return java.lang.String

@@ -555,6 +555,7 @@ public class StylesheetSet extends SAX2FilterImpl {
           attVec.addElement(temp);
         }
       }
+		input.close();
     }
 
     /**

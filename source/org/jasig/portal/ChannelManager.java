@@ -746,6 +746,12 @@ public class ChannelManager implements LayoutEventListener {
                 up.setTargetNodeId(channelTarget);
                 rd.setUPFile(up);
 
+                // Check if channel is rendering as the root element of the layout
+                String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+                if (userLayoutRoot != null && !userLayoutRoot.equals("root")) {
+                    rd.setRenderingAsRoot(true);
+                }
+
                 try {
                     chObj.setRuntimeData(rd);
                 }

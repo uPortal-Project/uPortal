@@ -111,10 +111,23 @@ public class DeleteGroup extends GroupsManagerCommand {
             parentNode = deletedNode.getParentNode();
             String nodeKey = ((Element)parentNode).getAttribute("key");
             if (parentEntGrp == null || !parentEntGrp.getKey().equals(nodeKey)) {
-               parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
-               hasMbrs = String.valueOf(parentEntGrp.hasMembers());
+               if (!Utility.areEqual(nodeKey, "")){
+                  parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
+                  hasMbrs = String.valueOf(parentEntGrp.hasMembers());
+                  parentNode.removeChild(deletedNode);
+               }
+               else{
+                  //Search elements have a null "key"
+                  parentNode.removeChild(deletedNode);
+                  NodeList nl = parentNode.getChildNodes();
+                  if (nl.getLength() > 0){
+                     hasMbrs = "true";
+                  }
+                  else{
+                     hasMbrs = "false";
+                  }
+               }
             }
-            parentNode.removeChild(deletedNode);
             ((Element)parentNode).setAttribute("hasMembers", hasMbrs);
          }
 

@@ -73,16 +73,22 @@ public class CancelSelection extends GroupsManagerCommand {
       clearSelected(sessionData);
       String parentId = getParentId(staticData);
       if (parentId != null) {
-         // came from the edit screen, so go back
-         sessionData.mode = EDIT_MODE;
+         // go back to stored mode
+         sessionData.mode = sessionData.returnToMode;
          sessionData.highlightedGroupID = parentId;
-         sessionData.rootViewGroupID="0";
+         sessionData.rootViewGroupID=null;
          // Parent is locked so no other thread or process could have changed it, but
          // child members could have changed.
          Element parentElem = GroupsManagerXML.getElementById(model, parentId);
          GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       }
       else {
+        // @todo refactor into separate servant finish command
+        if (sessionData.lockedGroup!=null){
+          try{
+            sessionData.lockedGroup.getLock().release();
+          }catch(Exception e){} 
+        }
          staticData.setParameter("groupManagerFinished", "true");
       }
    }
