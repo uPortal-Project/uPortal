@@ -23,7 +23,7 @@ import org.jasig.portal.utils.CommonUtils;
 public abstract class BooleanRestriction extends ALRestriction {
 
 
-         boolean boolValue1 = false, boolValue2 = false;
+         private boolean boolValue1 = false, boolValue2 = false;
 
          public BooleanRestriction(String nodePath) {
            super(nodePath);
