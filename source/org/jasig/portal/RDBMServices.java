@@ -240,29 +240,28 @@ public class RDBMServices {
    */
   protected static void loadProps () throws Exception {
   	InputStream inStream = null;
-  try {
-      if (!bPropsLoaded) {
-        inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
-        Properties jdbcProps = new Properties();
-        jdbcProps.load(inStream);
-        sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
-        sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
-        sJdbcUser = jdbcProps.getProperty("jdbcUser");
-        jdbcDriverProps.put("user", sJdbcUser);
-        jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
-        jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
-        bPropsLoaded = true;
-        }
+      try {
+          if (!bPropsLoaded) {
+              inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
+              Properties jdbcProps = new Properties();
+              jdbcProps.load(inStream);
+              sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
+              sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
+              sJdbcUser = jdbcProps.getProperty("jdbcUser");
+              jdbcDriverProps.put("user", sJdbcUser);
+              jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
+              jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
+              bPropsLoaded = true;
+          }
+      } catch (Exception e) {
+          // let caller handle situation where no proerties file is found.
+          // When getting datasource from jndi properties file is optional
+          // and would be used as a fallback only
+          throw new RuntimeException(e.getMessage());
+      } finally {
+          if(inStream != null)
+              inStream.close();        	
       }
-      catch (Exception e){
-        // let caller handle situation where no proerties file is found.
-        // When getting datasource from jndi properties file is optional
-        // and would be used as a dallback only
-        throw new RuntimeException(e);
-        } finally {
-        	if(inStream != null)
-        		inStream.close();        	
-        }
   }
 
   /**
