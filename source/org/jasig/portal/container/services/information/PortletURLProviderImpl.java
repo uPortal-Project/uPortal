@@ -56,12 +56,12 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private PortletWindow portletWindow;
     private boolean secure;
     private boolean clearParameters;
-    private PortletURLManager urlManager;
+    private PortletStateManager urlManager;
 
     public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
-        urlManager = new PortletURLManager(portletWindow);
+        urlManager = new PortletStateManager(portletWindow);
     }
     
     // PortletURLProvider methods

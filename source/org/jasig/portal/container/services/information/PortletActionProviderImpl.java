@@ -61,13 +61,13 @@ public class PortletActionProviderImpl implements PortletActionProvider {
     // PortletActionProvider methods
     public void changePortletMode(PortletMode mode) {	
 		if ( mode != null ) {
-			PortletURLManager.setMode(portletWindow,mode);
+			PortletStateManager.setMode(portletWindow,mode);
 		}  
     }
 
     public void changePortletWindowState(WindowState state) {
 		if ( state != null ) {	
-		  PortletURLManager.setState(portletWindow,state);
+		  PortletStateManager.setState(portletWindow,state);
 	    }  
     }
 

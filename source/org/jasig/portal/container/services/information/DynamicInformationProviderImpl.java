@@ -86,8 +86,8 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
 
-	public PortletURLManager getPortletURLManager(PortletWindow portletWindow) {
-		return new PortletURLManager(portletWindow);
+	public PortletStateManager getPortletURLManager(PortletWindow portletWindow) {
+		return new PortletStateManager(portletWindow);
 	}
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
@@ -103,19 +103,19 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletMode getPortletMode(PortletWindow portletWindow) {
-        return PortletURLManager.getMode(portletWindow);
+        return PortletStateManager.getMode(portletWindow);
     }
 
     public PortletMode getPreviousPortletMode(PortletWindow portletWindow) {
-        return PortletURLManager.getPrevMode(portletWindow);
+        return PortletStateManager.getPrevMode(portletWindow);
     }
 
     public WindowState getWindowState(PortletWindow portletWindow) {
-        return PortletURLManager.getState(portletWindow);
+        return PortletStateManager.getState(portletWindow);
     }
 
     public WindowState getPreviousWindowState(PortletWindow portletWindow) {
-        return PortletURLManager.getPrevState(portletWindow);
+        return PortletStateManager.getPrevState(portletWindow);
     }
 
     public boolean isPortletModeAllowed(PortletMode mode) {
