@@ -510,9 +510,16 @@ public class RDBMUserLayoutStore
     }
   }
 
-     /**
-      * Get a channel from the cache or the store
-      */
+  /**
+   * See if the channel is already in the cache
+   */
+  protected boolean channelCached(int chanId) {
+    return channelCache.containsKey(new Integer(chanId));
+  }
+
+  /**
+   * Get a channel from the cache or the store
+   */
   protected ChannelDefinition getChannel(int chanId, boolean cacheChannel, MyPreparedStatement pstmtChannel, MyPreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     Integer chanID = new Integer(chanId);
     boolean inCache = true;
@@ -616,17 +623,16 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
-        Element root, int structId) throws java.sql.SQLException, Exception {
+        Element root, int structId, MyPreparedStatement pstmtUserInRole) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
           System.err.println("CreateLayout(" + structId + ")");
         }
-        Element structure;
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
-        structure = ls.getStructureDocument(doc);
+        Element structure = ls.getStructureDocument(doc, pstmtUserInRole);
         root.appendChild(structure);
         if (!ls.isChannel()) {          // Folder
-          createLayout(layoutStructure, doc,  structure, ls.getChildId());
+          createLayout(layoutStructure, doc,  structure, ls.getChildId(), pstmtUserInRole);
         }
         structId = ls.getNextId();
       }
@@ -660,16 +666,13 @@ public class RDBMUserLayoutStore
       LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::channelInUserRole(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
-        if (!rs.next()) {
-          return  false;
-        }
+        return  rs.next();
       } finally {
         rs.close();
       }
     } finally {
       stmt.close();
     }
-    return  true;
   }
 
   /**
@@ -679,7 +682,7 @@ public class RDBMUserLayoutStore
    * @return a DOM object representing the user layout
    * @throws Exception
    */
-   class LayoutStructure {
+   protected final class LayoutStructure {
     private class StructureParameter {
       String name;
       String value;
@@ -733,11 +736,33 @@ public class RDBMUserLayoutStore
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc) throws Exception {
-      Element structure;
+    public Element getStructureDocument(DocumentImpl doc, MyPreparedStatement pstmtUserInRole) throws Exception {
+      Element structure = null;
 
       if (isChannel()) {
-        structure = getChannel(chanId, doc, channelPrefix + structId);
+        pstmtUserInRole.clearParameters();
+        pstmtUserInRole.setInt(1, chanId);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureDocument(): " + pstmtUserInRole);
+        ResultSet rs = pstmtUserInRole.executeQuery();
+        try {
+          if (rs.next()) {
+            structure = getChannel(chanId, doc, channelPrefix + structId);
+          } else {
+            // No access
+            LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
+            + chanId + " (ignored)");
+            structure = getChannel(chanId, doc, channelPrefix + structId);
+          }
+        } catch (SQLException sqle) {
+          // database error
+          LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureDocument(): " + sqle);
+          // Show message
+        } finally {
+          rs.close();
+        }
+        if (structure == null) {
+          // Can't find channel
+        }
       } else {
         structure = doc.createElement("folder");
         doc.putIdentifier(folderPrefix + structId, structure);
@@ -831,56 +856,70 @@ public class RDBMUserLayoutStore
                   if (DEBUG > 1) {
                     System.err.println("Read layout structrure " + structId);
                   }
-                  LinkedList lis;
-                  MyPreparedStatement pstmtChannel = getChannelPstmt(con);
-                  try {
-                    MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+                  ArrayList chanIds = new ArrayList();
+                  readLayout: while (true) {
+                    int chanId = rs.getInt(4);
+                    ls = new LayoutStructure(structId,rs.getInt(2), rs.getInt(3), chanId, rs.getString(7),rs.getString(8),rs.getString(9));
+                    layoutStructure.put(new Integer(structId), ls);
+                    lastStructId = structId;
+                    if (!ls.isChannel()) {
+                      ls.addFolderData(rs.getString(5), rs.getString(6));
+                    } else {
+                      chanIds.add(new Integer(chanId)); // For later
+                    }
+                    if (supportsOuterJoins) {
+                      do {
+                        String name = rs.getString(10);
+                        String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
+                        if (name != null) { // may not be there because of the join
+                          ls.addParameter(name, value);
+                        }
+                        if (!rs.next()) {
+                          break readLayout;
+                        }
+                        structId = rs.getInt(1);
+                      } while (structId == lastStructId);
+                    } else { // Do second SELECT later on for structure parameters
+                      if (ls.isChannel()) {
+                        structParms.append(sepChar + ls.chanId);
+                        sepChar = ",";
+                      }
+                      if (rs.next()) {
+                        structId = rs.getInt(1);
+                      } else {
+                        break readLayout;
+                      }
+                    }
+                  }
+                  rs.close();
+
+                  /**
+                   * We have to retrieve the channel defition after the layout structure
+                   * since retrieving the channel data from the DB may interfere with the
+                   * layout structure ResultSet (in other words Oracle is a pain to work with)
+                   */
+                  if (chanIds.size() > 0) {
+                    MyPreparedStatement pstmtChannel = getChannelPstmt(con);
                     try {
-                      readLayout: while (true) {
-                        int chanId = rs.getInt(4);
-                        ls = new LayoutStructure(structId,rs.getInt(2), rs.getInt(3), chanId, rs.getString(7),rs.getString(8),rs.getString(9));
-                        layoutStructure.put(new Integer(structId), ls);
-                        lastStructId = structId;
-                        if (!ls.isChannel()) {
-                          ls.addFolderData(rs.getString(5), rs.getString(6));
-                        } else {
-                          // Pre-prime the channel pump
+                      MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+                      try {
+                        // Pre-prime the channel pump
+                        for (int i = 0; i < chanIds.size(); i++) {
+                          int chanId = ((Integer) chanIds.get(i)).intValue();
                           getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
                           if (DEBUG > 1) {
                             System.err.println("Precached " + chanId);
                           }
                         }
-                        if (supportsOuterJoins) {
-                          do {
-                            String name = rs.getString(10);
-                            if (!rs.wasNull()) { // may not be there because of the join
-                              ls.addParameter(name, rs.getString(11));
-                            }
-                            if (!rs.next()) {
-                              break readLayout;
-                            }
-                            structId = rs.getInt(1);
-                          } while (structId == lastStructId);
-                        } else { // Do second SELECT later on for structure parameters
-                          if (ls.isChannel()) {
-                            structParms.append(sepChar + ls.chanId);
-                            sepChar = ",";
-                          }
-                          if (rs.next()) {
-                            structId = rs.getInt(1);
-                          } else {
-                            break readLayout;
-                          }
+                      } finally {
+                        if (pstmtChannelParm != null) {
+                          pstmtChannelParm.close();
                         }
                       }
-                      rs.close();
                     } finally {
-                      if (pstmtChannelParm != null) {
-                        pstmtChannelParm.close();
-                      }
+                      pstmtChannel.close();
                     }
-                  } finally {
-                    pstmtChannel.close();
+                    chanIds.clear();
                   }
                 }
 
@@ -913,7 +952,13 @@ public class RDBMUserLayoutStore
             } finally {
               stmt.close();
             }
-            createLayout(layoutStructure, doc, root, firstStructId);
+            sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
+              "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=? AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+            MyPreparedStatement pstmtUserInRole = new MyPreparedStatement(con, sQuery);
+            try {
+              createLayout(layoutStructure, doc, root, firstStructId, pstmtUserInRole);
+            } finally {
+            }
           }
         } finally {
           rs.close();
