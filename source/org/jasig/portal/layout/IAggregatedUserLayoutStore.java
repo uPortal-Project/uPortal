@@ -127,6 +127,14 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
     public ILayoutFragment getFragment (IPerson person, String fragmentId) throws Exception;
+    
+	/**
+		 * Deletes the fragment that has been loaded as a layout.
+		 * @param person an <code>IPerson</code> object specifying the user
+		 * @param fragmentId a fragment ID
+		 * @exception PortalException if an error occurs
+		 */
+	public void deleteFragment (IPerson person, String fragmentId) throws Exception;
 
      /**
      * Returns the fragment IDs/names which the user is an owner of

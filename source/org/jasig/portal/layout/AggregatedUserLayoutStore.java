@@ -1636,6 +1636,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		ps.setString(5,layout.getDescription());
 		ps.setString(6,(layout.isPushedFragment())?"Y":"N");
      	ps.executeUpdate();
+     	ps.close();
       } else {
 		 	 
 		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
@@ -1646,7 +1647,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		 ps.setInt(4,userId);
 		 ps.setInt(5,CommonUtils.parseInt(fragmentId));
 		 ps.executeUpdate();
-		 
+		 ps.close();
         }  
 
       // Clear the previous data related to the user layout
@@ -1691,7 +1692,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
 
       // Close the connection
-      con.close();
+      if ( con != null ) con.close();
 
 
     } catch (Exception e) {
@@ -1706,6 +1707,67 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  }
 
 
+
+    /**
+	 * Deletes the layout fragment
+	 * @param person an <code>IPerson</code> object specifying the user
+	 * @param fragmentId a fragment ID
+	 * @exception PortalException if an error occurs
+	 */
+   public void deleteFragment (IPerson person, String fragmentId) throws Exception {
+   	
+	   int userId = person.getID();
+	   Connection con = RDBMServices.getConnection();
+  
+	   RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+
+	  try {
+
+		Statement stmt = con.createStatement();
+		boolean isOwner = false;
+		boolean isNewFragment = false;
+		// Check if the user was an owner
+		ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+		if ( rs.next() ) {
+		 if ( rs.getInt(1) == userId )
+			isOwner = true;
+		} 
+	     if ( rs != null ) rs.close();
+		 
+		 if ( !isOwner )
+			throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+		
+		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);	
+			
+		stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);	
+	 
+		String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
+		PreparedStatement ps = con.prepareStatement(sqlUpdate);
+		ps.setInt(1,userId);
+		ps.setInt(2,CommonUtils.parseInt(fragmentId));
+		ps.executeUpdate();
+		ps.close();
+		
+		if ( stmt != null ) stmt.close();
+
+	    // Commit all the changes
+		RDBMServices.commit(con);
+
+        // Close the connection
+	    if ( con != null ) con.close();
+
+
+	  } catch (Exception e) {
+				e.printStackTrace();
+				String errorMessage = e.getMessage();
+				try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
+				   LogService.log(LogService.ERROR, sqle.toString() );
+				   errorMessage += ":" + sqle.getMessage();
+				}
+				 throw new PortalException(errorMessage);
+			  }	
+   	
+   }
 
 
     /**

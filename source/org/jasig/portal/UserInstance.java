@@ -708,9 +708,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
-       // Sending the theme stylesheets parameters based on the user security context
-       UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
+        // Sending the theme stylesheets parameters based on the user security context
+        UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
+		StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
         if ( person.getSecurityContext().isAuthenticated() ) {
           themePrefs.putParameterValue("authenticated","true");
           String userName = person.getFullName();
@@ -785,12 +786,11 @@ public class UserInstance implements HttpSessionBindingListener {
             }*/
              // Adding a new node
              String nodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
-         
-             // If we have a tab we need to focus it
-             if ( nodeId != null && ulm.getDepth(nodeId) == 1 ) {
-			   themePrefs.putParameterValue("focusedTabID",nodeId);
-			   themePrefs.putParameterValue("selectedID",nodeId);
-             }  
+            
+             // If we have created a new tab we need to focus it
+             if ( nodeId != null && ulm.getDepth(nodeId) == 1 )
+			   structPrefs.putParameterValue("focusedTabID",nodeId);
+			 
           }
          }
             newNodeDescription = null;
@@ -847,11 +847,12 @@ public class UserInstance implements HttpSessionBindingListener {
 			   String defaultValue = IAggregatedUserLayoutManager.NEW_FRAGMENT;
 		       fragmentId = alm.createFragment(CommonUtils.envl(fragmentName,defaultValue),CommonUtils.envl(fragmentDesc,"The fragment"));
 			} else if ( param.equals("edit") && fragmentId != null ) {
-		     if ( CommonUtils.parseInt(fragmentId) > 0 ) 
-		       alm.loadFragment(fragmentId);
-		     else 
-			   alm.loadUserLayout();
-		    }   
+		         if ( CommonUtils.parseInt(fragmentId) > 0 ) alm.loadFragment(fragmentId); else alm.loadUserLayout();
+		    } else if ( param.equals("save") ) {
+			     alm.saveFragment();
+			} else if ( param.equals("delete") ) {
+			     alm.deleteFragment();
+			}     
 		   themePrefs.putParameterValue("currentFragmentID",CommonUtils.nvl(fragmentId)); 
 		  }	  
 		}

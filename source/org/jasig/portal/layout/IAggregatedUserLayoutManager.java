@@ -78,6 +78,12 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      */
     public void saveFragment() throws PortalException;
 
+	/**
+		 * Deletes the current fragment if the layout is a fragment
+		 * @exception PortalException if an error occurs
+		 */
+	public void deleteFragment() throws PortalException;
+	
      /**
      * Loads the fragment as an user layout given by fragmentId
      * @param fragmentId a fragment ID

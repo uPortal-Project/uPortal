@@ -552,9 +552,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public int getDepth(String nodeId) throws PortalException {
-    int depth = 0;
-    for ( String parentId = nodeId; parentId != null; parentId = getLayoutNode(parentId).getParentNodeId(), depth++ );
-    return depth;
+	 int depth = 0;
+	 for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ );
+	 return depth;
   }
 
 
@@ -1151,6 +1151,22 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         throw new PortalException(e.getMessage());
       }
     }
+    
+	/**
+		 * Deletes the current fragment if the layout is a fragment
+		 * @exception PortalException if an error occurs
+		 */
+	public void deleteFragment() throws PortalException {
+		try {
+		  if ( isLayoutFragment() ) {
+			layoutStore.deleteFragment(person,fragmentId);
+		  }
+		    loadUserLayout();
+			updateCacheKey();
+	    } catch ( Exception e ) {
+			throw new PortalException(e.getMessage());
+		  }		
+	}
 
     private boolean isLayoutFragment() {
       return ( fragmentId != null );

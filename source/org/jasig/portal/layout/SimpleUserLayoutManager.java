@@ -278,7 +278,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 			 */
   public int getDepth(String nodeId) throws PortalException {
 	int depth = 0;
-	for ( String parentId = nodeId; parentId != null; parentId = getParentId(parentId), depth++ );
+	for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ );
 	return depth;
   }
 
