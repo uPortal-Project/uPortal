@@ -46,6 +46,11 @@ import  org.apache.xerces.dom.DocumentImpl;
  * @version $Revision$
  */
 
+ /**
+  * Sequence numbers have the form of {Table Name}_SEQ and, at the moment, they must
+  * have been created by hand before uPortal is started. See UP_SEQUENCE in properties/data.xml
+  * for the tables that expect sequence counters, and the expected starting value.
+  */
 public class DBImplOracle extends DBImpl implements IDBImpl {
 
   protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
@@ -122,6 +127,74 @@ public class DBImplOracle extends DBImpl implements IDBImpl {
     }
 
     createLayout(con, doc, stmt, root, userId, profileId, layoutId, nextStructId);
+  }
+
+  /* DBCounter */
+
+  /*
+   * get&increment method.
+   */
+    public int getIncrementIntegerId(String tableName) throws Exception {
+      int id;
+      Connection con=rdbmService.getConnection();
+      try {
+        Statement stmt = con.createStatement ();
+        try {
+          String sQuery = "SELECT " + tableName + "_SEQ.NEXTVAL FROM DUAL";
+          Logger.log (Logger.DEBUG, "DBImplOracle::getIncrementInteger(): " + sQuery);
+          ResultSet rs = stmt.executeQuery (sQuery);
+          try {
+            rs.next();    // If this doesn't work then the database is munged up
+            id = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+        } finally {
+          stmt.close();
+        }
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+      return id;
+    }
+
+    public void createCounter(String tableName) throws Exception {
+      createCounter(tableName, 1);
+    }
+
+    protected void createCounter(String tableName, int startAt) throws Exception {
+      Connection con=rdbmService.getConnection();
+      try {
+        Statement stmt = con.createStatement ();
+        try {
+            String sInsert = "CREATE SEQUENCE " + tableName + "_SEQ INCREMENT BY 1 START WITH " + startAt + " NOMAXVALUE NOCYCLE";
+            Logger.log (Logger.DEBUG, "DBImplOracle::createCounter(): " + sInsert);
+            stmt.executeUpdate (sInsert);
+        } finally {
+          stmt.close();
+        }
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+    }
+
+  public synchronized void setCounter(String tableName,int value) throws Exception
+  {
+      Connection con=rdbmService.getConnection();
+      try {
+          Statement stmt = con.createStatement ();
+          try {
+            /* This is dangerous */
+            String sUpdate = "DROP SEQUENCE " + tableName + "_SEQ";
+            Logger.log (Logger.DEBUG, "DBImplOracle::setCounter(): " + sUpdate);
+            stmt.executeUpdate (sUpdate);
+            createCounter(tableName, value);
+          } finally {
+            stmt.close();
+          }
+      } finally {
+          rdbmService.releaseConnection (con);
+      }
   }
 
 }
