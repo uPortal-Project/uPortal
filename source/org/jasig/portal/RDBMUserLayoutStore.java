@@ -68,6 +68,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.utils.ResourceLoader;
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -358,7 +359,7 @@ public class RDBMUserLayoutStore
   public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
@@ -409,7 +410,7 @@ public class RDBMUserLayoutStore
   public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
@@ -442,7 +443,7 @@ public class RDBMUserLayoutStore
     // need to read in the description file to obtain information such as name, word description and media list
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
@@ -475,7 +476,7 @@ public class RDBMUserLayoutStore
     // need to read iN the description file to obtain information such as name, word description and mime type list
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
           + this.getName(stylesheetDescriptionXML));
