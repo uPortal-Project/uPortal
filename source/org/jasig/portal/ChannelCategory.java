@@ -65,22 +65,7 @@ public class ChannelCategory {
   }
 
   // Getter methods
-  public String getId() { return categoryGroup.getKey(); }
+  public int getId() { return Integer.parseInt(categoryGroup.getKey()); }
   public String getName() { return categoryGroup.getName(); }
   public String getDescription() { return categoryGroup.getDescription(); }
-
-  public void addChannelDefinition(ChannelDefinition channelDef) throws PortalException {
-    String key = String.valueOf(channelDef.getPublishId());
-    IEntity channelDefEntity = GroupService.getEntity(key, ChannelDefinition.class);
-    categoryGroup.addMember(channelDefEntity);
-    categoryGroup.updateMembers();
-  }
-
-  public void removeChannelDefinition(ChannelDefinition channelDef) throws PortalException {
-    String key = String.valueOf(channelDef.getPublishId());
-    IEntity channelDefEntity = GroupService.getEntity(key, ChannelDefinition.class);
-    categoryGroup.removeMember(channelDefEntity);
-    categoryGroup.updateMembers();
-  }
-
 }
