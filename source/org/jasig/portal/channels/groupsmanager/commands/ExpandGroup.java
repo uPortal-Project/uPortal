@@ -89,18 +89,13 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
          Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
                + hasMembers);
 
-         /** @todo xmlCache: */
          if (hasMembers) {
             expandedElem.setAttribute("expanded", "true");
-            //if (!(hasGroupsXML || hasPersonsXML)) {
             Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
-            //rootOwner = Utility.asString((DocumentImpl) expandElem.getOwnerDocument());
-            //Utility.logMessage("DEBUG", "ExpandGroup::execute(): testing new printElement expanded element owner = " + rootOwner);
             IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(expandedElem.getAttribute("key"));
             GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, true, expandedElem,
                   xmlDoc);
             //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
-            //}
          }
       }
    }
