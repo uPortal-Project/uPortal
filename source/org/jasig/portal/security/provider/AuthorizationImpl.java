@@ -162,9 +162,10 @@ throws AuthorizationException
     return primDoesPrincipalHavePermission(principal, owner, activity, target);
 }
 /**
- * Answers if the owner has given the principal permission to perform the activity on
- * the target.  Params <code>owner</code> and <code>activity</code> must be non-null.
- * If <code>target</code> is null, then target is not checked.
+ * Answers if the owner has given the principal (or any of its parents) permission
+ * to perform the activity on the target.  Params <code>owner</code> and
+ * <code>activity</code> must be non-null.  If <code>target</code> is null, then
+ * target is not checked.
  *
  * @return boolean
  * @param principal IAuthorizationPrincipal
@@ -181,21 +182,29 @@ public boolean doesPrincipalHavePermission(
     String target)
 throws AuthorizationException
 {
-    boolean hasPermission = primDoesPrincipalHavePermission(principal, owner, activity, target);
-    if ( ! hasPermission )
+    IPermission[] perms = primGetPermissionsForPrincipal(principal, owner, activity, target);
+
+    // We found one.  Check if it's good.
+    if ( perms.length == 1 )
+        { return permissionIsGranted(perms[0]); }
+
+    // Should never be.
+    if ( perms.length > 1 )
+        { throw new AuthorizationException("Duplicate permissions for: " + perms[0]); }
+
+    // No permissions for this principal.  Check inherited permissions.
+    boolean hasPermission = false;
+    try
     {
-        try
+        Iterator i = getGroupsForPrincipal(principal);
+        while ( i.hasNext() && ! hasPermission )
         {
-            Iterator i = getGroupsForPrincipal(principal);
-            while ( i.hasNext() && ! hasPermission )
-            {
-                IAuthorizationPrincipal prn = getPrincipalForGroup( (IEntityGroup) i.next() );
-                hasPermission = primDoesPrincipalHavePermission(prn, owner, activity, target);
-            }
-        }
-        catch ( GroupsException ge )
-            { throw new AuthorizationException(ge.getMessage()); }
+            IAuthorizationPrincipal prn = getPrincipalForGroup( (IEntityGroup) i.next() );
+            hasPermission = primDoesPrincipalHavePermission(prn, owner, activity, target);
+         }
     }
+    catch ( GroupsException ge )
+        { throw new AuthorizationException(ge.getMessage()); }
 
     return hasPermission;
 }
@@ -540,13 +549,27 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
     return new UpdatingPermissionManagerImpl(owner, this);
 }
 /**
+ * Checks that the permission is explicitly granted and not expired.
+ * @return boolean
+ * @param permission org.jasig.portal.security.IPermission
+ */
+private boolean permissionIsGranted(IPermission p)
+{
+    Date now = new Date();
+    return
+        (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) &&
+        (p.getEffective() == null || p.getEffective().after(now)) &&
+        (p.getExpires() == null || p.getExpires().after(now));
+}
+/**
+ * Answers if this specific principal (as opposed to its parents) has the permission.
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
  * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
+ * be retrieved or was invalid.
  */
 private boolean primDoesPrincipalHavePermission(
     IAuthorizationPrincipal principal,
@@ -555,23 +578,15 @@ private boolean primDoesPrincipalHavePermission(
     String target)
 throws AuthorizationException
 {
-    boolean hasPermission = false;
-    IPermission[] perms = primGetPermissionsForPrincipal(principal);
+    IPermission[] perms = primGetPermissionsForPrincipal(principal, owner, activity, target);
 
-    if ( perms.length > 0 )
-    {
-        for ( int i=0; i<perms.length && ! hasPermission; i++ )
-        {
+    if ( perms.length == 0 )
+        { return false; }
 
-            hasPermission = (
-                ( owner.equals(perms[i].getOwner()) ) 		&&
-                ( activity.equals(perms[i].getActivity()) )	&&
-                ( (target == null) || target.equals(perms[i].getTarget()) ) &&
-                ( ! perms[i].getType().equals(IPermission.PERMISSION_TYPE_DENY) )
-            );
-        }
-    }
-    return hasPermission;
+    if ( perms.length == 1 )
+        { return permissionIsGranted(perms[0]); }
+    else
+        { throw new AuthorizationException("Duplicate permissions for: " + perms[0]); }
 }
 /**
  * @return IPermission[]
