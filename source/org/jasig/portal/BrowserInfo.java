@@ -31,46 +31,74 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
+package  org.jasig.portal;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import  javax.servlet.*;
+import  javax.servlet.http.*;
+import  java.util.Hashtable;
+import  java.util.Enumeration;
+
 
 /*
  * This class contains basic information about the browser.
  * It stores all of the headers and cookies
  */
 public class BrowserInfo {
-    protected Cookie[] cookies;
-    protected Hashtable headers;
+  protected Cookie[] cookies;
+  protected Hashtable headers;
 
-    public BrowserInfo(HttpServletRequest req) {
-        headers=new Hashtable();
-        for(Enumeration e=req.getHeaderNames(); e.hasMoreElements();) {
-            String hName=(String) e.nextElement();
-            headers.put(hName,req.getHeader(hName));
-        }
-        cookies=req.getCookies();
+  /**
+   * put your documentation comment here
+   * @param   HttpServletRequest req
+   */
+  public BrowserInfo (HttpServletRequest req) {
+    headers = new Hashtable();
+    for (Enumeration e = req.getHeaderNames(); e.hasMoreElements();) {
+      String hName = (String)e.nextElement();
+      // Request header names are case insensitive, so BrowserInfo must be too!!
+      headers.put(hName.toLowerCase(), req.getHeader(hName));
     }
+    cookies = req.getCookies();
+  }
 
-    public Cookie[] getCookies() {
-        return cookies;
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Cookie[] getCookies () {
+    return  cookies;
+  }
 
-    public String getHeader(String hName) {
-        return (String) headers.get(hName);
-    }
+  /**
+   * put your documentation comment here
+   * @param hName
+   * @return 
+   */
+  public String getHeader (String hName) {
+    return  (String)headers.get(hName.toLowerCase());
+  }
 
-    public Enumeration getHeaderNames() {
-        return headers.keys();
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Enumeration getHeaderNames () {
+    return  headers.keys();
+  }
 
-    public String getUserAgent() {
-        return (String) headers.get("User-Agent");
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getUserAgent () {
+    return  (String)headers.get("user-agent");
+  }
 }
+
+
+
