@@ -192,7 +192,7 @@ public class CarResources {
        
         if ( ! carDir.exists() )
         {
-            LogService.log( LogService.ERROR,
+            LogService.log( LogService.INFO,
                                        "Channel Archives can not be " +
                                        " loaded. CAR directory '" +
                                        carDirRealPath + "' does not exist." );

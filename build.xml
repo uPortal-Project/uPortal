@@ -1253,4 +1253,32 @@
       <arg value="${portletApp}"/>
     </java>
   </target>  
+
+  <!-- ==================== DbConvert21 Target ================================= -->
+
+<!--
+
+  The "DbConvert21" target runs uPortal's DbConvert21 program to convert
+  uPortal 2.1 database to 2.2+
+
+  The DbConvert21 tool will add the top level folder to an existing stored layout allowing the
+  layout to be used correctly in the 2.2, 2.3 portal
+
+  ant dbconvert21
+-->
+
+
+  <target name="dbconvert21" depends="compile"
+   description="converts database from 2.1 to 2.2 / 2.3">
+    <echo message="Invoking DbConvert21"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbConvert21">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+    </java>
+  </target>
+
+
+
 </project>

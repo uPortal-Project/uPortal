@@ -36,6 +36,7 @@
 package org.jasig.portal.channels;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
@@ -256,6 +257,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       String xml;
       Document xmlDoc;
+      InputStream inputStream = null;
 
       try
       {
@@ -284,8 +286,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
             LogService.log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
           }
         }
-
-        xmlDoc = docBuilder.parse(urlConnect.getInputStream());
+        inputStream = urlConnect.getInputStream();
+        xmlDoc = docBuilder.parse(inputStream);
       }
       catch (IOException ioe)
       {
@@ -294,6 +296,13 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       catch (Exception e)
       {
         throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
+      } finally {
+        try {
+          if (inputStream != null)
+            inputStream.close();
+        } catch (IOException ioe) {
+          throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream");
+        }
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());

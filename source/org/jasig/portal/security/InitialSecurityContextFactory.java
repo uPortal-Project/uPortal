@@ -81,7 +81,7 @@ public class InitialSecurityContextFactory {
       PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
       LogService.log(LogService.ERROR,ep);
       throw(ep);
-      }
+    }
 
     // Find our properties file and open it
     java.io.InputStream secprops =
@@ -89,14 +89,22 @@ public class InitialSecurityContextFactory {
        getResourceAsStream("/properties/security.properties");
     pr = new Properties();
     try {
-      pr.load(secprops);
-		secprops.close();
+      pr.load(secprops);      
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());
       LogService.log(LogService.ERROR,ep);
       throw(ep);
-    }
+    } finally {
+            try {
+                if (secprops != null) 
+                    secprops.close();
+            } catch (IOException ioe) {
+                LogService.log(LogService.ERROR,
+                        "InitialSecurityContextFactory:getInitialContext::unable to close InputStream "
+                                + ioe);
+            }
+        }
 
     // Look for our security context factory and instantiate an instance
     // of it or die trying.
@@ -139,11 +147,12 @@ public class InitialSecurityContextFactory {
           ictx.addSubContext(secname, sfactory.getSecurityContext());
         }
         catch (Exception e) {
-          PortalSecurityException ep =
-              new PortalSecurityException("(Subcontext)Failed to instantiate " +
-                sfactoryname);
-          LogService.log(LogService.ERROR,ep);
-          throw(ep);
+          String errorMsg = "(Subcontext) Failed to instantiate " + sfactoryname;
+          PortalSecurityException ep = new PortalSecurityException(errorMsg);
+          ep.setRecordedException(e);
+          LogService.log(LogService.ERROR, errorMsg);
+          LogService.log(LogService.ERROR, e);
+          throw ep;
         }
       }
     }

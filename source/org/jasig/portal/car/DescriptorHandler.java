@@ -358,6 +358,18 @@ class DescriptorHandler
                             " in " + jarFile.getName() +
                             ". Details: " + sxe );
         }
+        finally 
+        {
+			try 
+			{
+				if(is != null)
+			    is.close();
+			} 
+			catch (IOException ioe) {
+				LogService.log(LogService.ERROR,
+						"::Unable to close inputStream " + ioe);
+			}
+		}
     }
 
     /////// ErrorHandler interface methods

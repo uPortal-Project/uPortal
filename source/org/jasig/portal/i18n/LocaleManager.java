@@ -83,8 +83,8 @@ public class LocaleManager  {
      */
     public LocaleManager(IPerson person) {
         this.person = person;
-        if (localeAware) {
-            jvmLocale = Locale.getDefault();
+        jvmLocale = Locale.getDefault();
+		if (localeAware) {
             portalLocales = loadPortalLocales();
             try {
                 userLocales = LocaleStoreFactory.getLocaleStoreImpl().getUserLocales(person);
@@ -107,7 +107,7 @@ public class LocaleManager  {
     }
 
     // Getters
-    public boolean isLocaleAware() { return localeAware; }
+    public static boolean isLocaleAware() { return localeAware; }
     public static Locale getJvmLocale() { return jvmLocale; }
     public static Locale[] getPortalLocales() { return portalLocales; }
     public Locale[] getBrowserLocales() { return browserLocales; }
@@ -159,7 +159,7 @@ public class LocaleManager  {
     private void addToLocaleList(List localeList, Locale[] locales) {
         if (locales != null) {
             for (int i = 0; i < locales.length; i++) {
-                if (!localeList.contains(locales[i]))
+                if (locales[i] != null && !localeList.contains(locales[i]))
                   localeList.add(locales[i]);
             }
         }

@@ -77,7 +77,8 @@ public class MediaManager {
    *
    */
   public static final String NULL_USER_AGENT="null";
-    
+  public static final String UNKNOWN = "unknown";
+
   /**
    * Constructs a MediaManager
    */
@@ -185,8 +186,8 @@ public class MediaManager {
     }
     if (mediaProps != null) {
         String ua=req.getHeader("User-Agent");
-        if(ua==null || ua.equals("")) { 
-            ua=NULL_USER_AGENT; 
+        if(ua==null || ua.equals("")) {
+            ua=NULL_USER_AGENT;
         }
       return  mediaProps.getValue(ua);
     }
@@ -230,7 +231,14 @@ public class MediaManager {
    * @return mime type string
    */
   public String getReturnMimeType (HttpServletRequest req) {
-    return  this.getReturnMimeType(this.getMedia(req));
+    String mimeType = this.getReturnMimeType(this.getMedia(req));
+    if (UNKNOWN.equals(mimeType)) {
+      String accepts = req.getHeader("accept");
+      if (accepts != null && accepts.indexOf("text/html") != -1) {
+        mimeType = "text/html";
+      }
+    }
+    return mimeType;
   }
 
   /**
@@ -366,8 +374,8 @@ public class MediaManager {
     }
     if (mediaProps != null) {
         String ua=req.getHeader("User-Agent");
-        if(ua==null || ua.equals("")) { 
-            ua=NULL_USER_AGENT; 
+        if(ua==null || ua.equals("")) {
+            ua=NULL_USER_AGENT;
         }
         return  getSerializer(mediaProps.getValue(ua), out);
     }
@@ -440,7 +448,7 @@ public class MediaManager {
           return  temp[1];
         }
       }
-      return  "unknown";
+      return  UNKNOWN;
     }
 
 

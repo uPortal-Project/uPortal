@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * CommonUtils class contains base useful utilities
@@ -50,6 +51,16 @@ import java.util.StringTokenizer;
  * @version $Revision$
  */
 public class CommonUtils {
+	
+	/**
+     * Sets "no cache" directives to the given response
+     * @param res <code>HttpServletResponse</code> response
+     */
+	public static void setNoCache( HttpServletResponse res ) {
+	    res.setHeader("Pragma","no-cache");
+	    res.setHeader("Cache-Control","no-cache");
+	    res.setDateHeader("Expires",0);
+	}
 
     /**
      * Replaces "sourceString" with "replaceString" if sourceString equals null
@@ -103,15 +114,20 @@ public class CommonUtils {
      * @return new text
      */
     public static String replaceText(String text, String replacedString, String newString) {
-            int lastIndex =- newString.length();
-            int replacedStringLength = replacedString.length();
-            int newStringLength = newString.length();
-            while ((lastIndex = text.indexOf(replacedString,
-                lastIndex + newStringLength)) != -1) {
-                    text = text.substring(0, lastIndex) + newString +
-                        text.substring(lastIndex + replacedStringLength);
+        int i=text.indexOf(replacedString);
+        if(i>=0){
+            StringBuffer buffer = new StringBuffer(text.length());
+            int from=0;
+            int rl = replacedString.length(); 
+            while(i>=0){
+                buffer.append(text.substring(from,i)).append(newString);
+                from=i+rl;
+                i=text.indexOf(replacedString,from);
             }
-            return text;
+            buffer.append(text.substring(from));
+            return buffer.toString();
+        }
+        return text;
     }
 
     public static void replaceSubstVariables(Hashtable original, Hashtable subst) {

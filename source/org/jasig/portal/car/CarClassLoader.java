@@ -36,6 +36,7 @@
 
 package org.jasig.portal.car;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.AccessController;
@@ -43,6 +44,8 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.SecureClassLoader;
 import java.util.StringTokenizer;
+
+import org.jasig.portal.services.LogService;
 
 /**
  * Loads classes and resources from installed CARs via the CarResources class.
@@ -93,12 +96,13 @@ public class CarClassLoader
                 {
                     byte[] buf = null;
                     String pkgName = getPackageName(name);
+                    InputStream in = null;
                     try
                     {
                         String file = name.replace( '.', '/' ) + ".class";
                         CarResources crs = CarResources.getInstance();
                         int size = (int) crs.getResourceSize( file );
-                        InputStream in = crs.getResourceAsStream( file );
+                        in = crs.getResourceAsStream( file );
                             
                         if ( in == null || size == -1 )
                             throw new Exception( "Car resource " +
@@ -122,7 +126,15 @@ public class CarClassLoader
                     {
                         throw new ClassNotFoundException( name,
                                                           e );
-                    }
+                    } finally {
+					try {
+						in.close();
+					} catch (IOException ioe) {
+						LogService.log(LogService.ERROR,
+								"CarClassLoader::findClass() Could not close inputStream "
+										+ ioe);
+					}
+				}
 
                     // package must be defined prior to defined
                     // the class.

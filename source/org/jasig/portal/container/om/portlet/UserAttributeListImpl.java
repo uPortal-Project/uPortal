@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,40 +33,36 @@
  *
  */
 
-package org.jasig.portal.layout.channels.locales;
+package org.jasig.portal.container.om.portlet;
 
-import java.util.Locale;
-
-import org.jasig.portal.Constants;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.utils.XSLT;
-import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
- * Changes the locale preferences for the current session.
- * Any changes made via this channel will not be persisted
- * between sessions.
- * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
+ * Implementation of Apache Pluto object model.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CSessionLocalesSelector extends BaseChannel {
-    
-    protected final String sslUri = "sessionLocales.ssl";
-    
-    public void renderXML(ContentHandler out) throws PortalException {
-            Locale[] locales = runtimeData.getLocales();
-            Document doc = LocaleManager.xmlValueOf(locales, locales[0]);
-            XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
-            xslt.setXML(doc);
-            xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
-            xslt.setTarget(out);
-            xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-            xslt.setStylesheetParameter("localesParam", Constants.LOCALES_PARAM);
-            xslt.transform();
+public class UserAttributeListImpl implements Serializable {
+
+    private Map userAttributes = null;
+
+    public UserAttributeListImpl() {
+        userAttributes = new HashMap();
+    }
+
+    public Iterator iterator() {
+        return userAttributes.values().iterator();
+    }
+
+    public UserAttributeImpl get(String name) {
+        return (UserAttributeImpl)userAttributes.get(name);
+    }
+        
+    public void add(UserAttributeImpl userAttributeImpl) {
+        userAttributes.put(userAttributeImpl.getName(), userAttributeImpl);
     }
 
 }

@@ -38,6 +38,7 @@ package org.jasig.portal.channels.webproxy;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -182,6 +183,19 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   Map stateTable;
   // to prepend to the system-wide cache key
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
+  static PrintWriter devNull;
+
+  static
+  {
+    try
+    {
+      devNull = getErrout();
+    }
+    catch (FileNotFoundException fnfe)
+    {
+      /* Ignore */
+    }
+  }
 
   // All state variables stored here
   private class ChannelState
@@ -421,7 +435,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
           }
        }
 
-       if ( state.buttonxmlUri != null )  // shouldn't happen here, but...
+       if ( state.buttonxmlUri != null )
            state.fullxmlUri = state.buttonxmlUri;
        else
        {
@@ -664,6 +678,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       MediaManager mm = new MediaManager();
       String media = mm.getMedia(state.runtimeData.getBrowserInfo());
       String mimeType = mm.getReturnMimeType(media);
+      if (MediaManager.UNKNOWN.equals(mimeType)) {
+        String accept = state.runtimeData.getBrowserInfo().getHeader("accept");
+        if (accept != null && accept.indexOf("text/html") != -1) {
+          mimeType = "text/html";
+        }
+      }
 
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
@@ -745,24 +765,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
     }
 
-    PrintWriter pw;
-
-    if ( System.getProperty("os.name").indexOf("Windows") != -1 )
-    {
-      pw = new PrintWriter(new FileOutputStream("nul"));
-      tidy.setErrout(pw);
-    }
-    else
-    {
-      pw = new PrintWriter(new FileOutputStream("/dev/null"));
-      tidy.setErrout(pw);
-    }
+    tidy.setErrout(devNull);
 
     ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
     BufferedOutputStream out = new BufferedOutputStream (stream);
 
     tidy.parse (urlConnect.getInputStream(), out);
-    pw.close();
     String tidiedXml = stream.toString();
     stream.close();
     out.close();
@@ -979,6 +987,14 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     //LogService.log(LogService.DEBUG,"CWebProxy:generateKey("
     //		+ uid + ") : cachekey=\"" + sbKey.toString() + "\"");
     return k;
+  }
+
+  static PrintWriter getErrout() throws FileNotFoundException 
+  {
+    if (System.getProperty("os.name").indexOf("Windows") != -1) 
+      return new PrintWriter(new FileOutputStream("nul"));
+    else 
+      return new PrintWriter(new FileOutputStream("/dev/null"));
   }
 
   public boolean isCacheValid(Object validity,String uid)
