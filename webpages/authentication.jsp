@@ -69,9 +69,6 @@ if(bAuthorized)
   // Get the Person object and put it in the session
   IPerson person = auth.getPerson ();
   session.setAttribute ("up_person", person);
-  
-  // Bind the user into the JNDI context
-  JNDIManager.initializeUserContext(session);
 }
 
 response.sendRedirect("index.jsp");
