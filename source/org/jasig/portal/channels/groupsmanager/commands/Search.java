@@ -120,7 +120,9 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
             criteria = "query::method::type::ancestor"
          */
          Document model = sessionData.model;
-         Element searchElem = GroupsManagerXML.createElement("Search [" + query + "]", model, false);
+         // put srch in description
+         //Element searchElem = GroupsManagerXML.createElement("Search [" + query + "]", model, false);
+         Element searchElem = GroupsManagerXML.createElement(GROUP_TAGNAME, model, false);
          searchElem.setAttribute("id", "srch:"+GroupsManagerXML.getNextUid());
          //searchElem.setAttribute("key", "");
          searchElem.setAttribute("expanded", String.valueOf(results.length > 0));
@@ -133,7 +135,7 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
             EntityIdentifier entID = results[sub];
             IGroupMember resultGroup = (IGroupMember)GroupsManagerXML.retrieveGroup(entID.getKey());
             Element result = GroupsManagerXML.getGroupMemberXml(resultGroup, false, null, model);
-            model.appendChild(searchElem);
+            searchElem.appendChild(result);
          }
          sessionData.highlightedGroupID = searchElem.getAttribute("id");
          if((sessionData.lockedGroup!=null) && (!sessionData.lockedGroup.getEntityIdentifier().getKey().equals(sessionData.highlightedGroupID)) && (!sessionData.mode.equals("select"))){
