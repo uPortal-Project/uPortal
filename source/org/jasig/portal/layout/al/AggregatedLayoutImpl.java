@@ -60,6 +60,21 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         return currentLayout.addNode(node,IALFolder.LOST_FOLDER_ID,null);	
     }
     
+    private INodeId getCentralModificationNextId( INodeId nextId ) {
+    	// TODO
+    	return null;
+    }
+    
+    private boolean correctNextIdInLayoutCommands( INodeId oldNextId, INodeId newNextId ) {
+    	// TODO
+    	return false;
+    }
+    
+    private INodeId getLayoutNodeId( IFragmentLocalNodeId localNodeId ) {
+    	// TODO
+    	return null;
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayout#addNodes(org.jasig.portal.layout.al.common.node.ILayoutNode, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
      */
@@ -67,14 +82,16 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         // the operation can only be performed if the central modification on the fragment of the
         // parent node is allowed
         if(isCentralModification(parentId)) {
+        	
+        	INodeId correctNextId = getCentralModificationNextId(nextId); 
+        	
             IALNode parentNode = (IALNode) getNode(parentId);
             IFragment fragment=fragmentRegistry.getFragment(parentNode.getFragmentId());
-            IFragmentLocalNodeId localNextNodeId=null;
-            if(nextId!=null) {
-                IALNode nextNode=(IALNode)getNode(nextId);
-                localNextNodeId=nextNode.getFragmentNodeId();
-            }
-            fragment.addNode(node,parentNode.getFragmentNodeId(),localNextNodeId);
+          
+            IFragmentLocalNodeId localNextNodeId = (correctNextId!=null) ? ((IALNode)getNode(correctNextId)).getFragmentNodeId() : null;
+            IFragmentLocalNodeId localNodeId = (IFragmentLocalNodeId)fragment.addNode(node,parentNode.getFragmentNodeId(),localNextNodeId).getId();
+            correctNextIdInLayoutCommands(nextId,getLayoutNodeId(localNodeId));
+            // TODO reassemble the layout
             return currentLayout.addNode(node,parentId,nextId);
         }
         return null;
