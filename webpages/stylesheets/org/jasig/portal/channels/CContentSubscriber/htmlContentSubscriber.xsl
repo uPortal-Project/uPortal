@@ -1512,11 +1512,8 @@ Version $Revision$
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
-            <xsl:variable name="indentWidth">
-              <xsl:value-of select="count(ancestor::*)*10"/>
-            </xsl:variable>
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
