@@ -2,22 +2,25 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <!--<xsl:param name="action">defaultView</xsl:param>-->
+  <xsl:param name="action">channelDef</xsl:param>
 
-  <xsl:param name="action">defaultView</xsl:param>
-<!--   <xsl:param name="action">channelDef</xsl:param>
--->
   <xsl:param name="stepID">1</xsl:param>
 
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
+
+  <xsl:variable name="defaultLength">10</xsl:variable>
+  <xsl:variable name="defaultMaxLength">20</xsl:variable>
+  <xsl:variable name="defaultTextCols">40</xsl:variable>
+  <xsl:variable name="defaultTextRows">10</xsl:variable>
+
   <xsl:variable name="filterByID">
     <xsl:value-of select="//filterByID[1]"/>
   </xsl:variable>
-<!--  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
--->  
 
-<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
-
-<xsl:template match="/">
+  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
+  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
+  <xsl:template match="/">
     <html>
       <head>
         <title>Untitled Document</title>
@@ -86,80 +89,7 @@
 
 
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-
-      <tr>
-
-        <td>
-
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">Publish a new channel:</td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td colspan="2">
-
-                <xsl:call-template name="workflow"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-
-                <a href="#">
-                </a>
-
-                <hr/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
-              </td>
-
-
-
-              <td class="uportal-channel-text" width="100%">
-                <a href="#ChannelName">Cancel and return</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-
-    <br/>
+    <xsl:call-template name="workflow"/>
     <!-- form begin -->
 
 
@@ -331,6 +261,7 @@
             </xsl:call-template>
           </td>
           <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]">
+
               <xsl:for-each select="ancestor::category">
                 <a class="uportal-navigation-category-selected">
                   <xsl:attribute name="href">
@@ -506,16 +437,91 @@
   </xsl:template>
 
 
+
+
+
+
   <xsl:template name="workflow">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <!--added-->
+    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 
       <tr>
 
-        <td class="uportal-channel-table-header" nowrap="nowrap">Workflow:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/> </td>
+        <td>
 
-        <xsl:apply-templates select="manageChannels/*"/>
+          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
+
+            <tr class="uportal-channel-strong" valign="top">
+
+              <td colspan="2">Publish a new channel:</td>
+            </tr>
+
+
+
+            <tr class="uportal-channel-strong" valign="top">
+
+              <td colspan="2">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+              </td>
+            </tr>
+
+
+
+            <tr valign="top">
+
+              <td colspan="2">
+                <!--end added-->
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+                  <tr>
+
+                    <td class="uportal-channel-table-header" nowrap="nowrap">Workflow:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/> </td>
+
+                    <xsl:apply-templates select="manageChannels/*"/>
+                  </tr>
+                </table>
+                <!--added-->
+              </td>
+            </tr>
+
+
+
+            <tr class="uportal-channel-text" valign="top">
+
+              <td colspan="2">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+              </td>
+            </tr>
+            <!--<tr class="uportal-channel-text" valign="top">
+
+              <td colspan="2">
+
+                <a href="#">
+                </a>
+
+                <hr/>
+              </td>
+            </tr>-->
+            <!--<tr valign="top">
+
+              <td>
+                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+              </td>
+
+
+
+              <td class="uportal-channel-text" width="100%">
+                <a href="#ChannelName">Cancel and return</a>
+              </td>
+            </tr>-->
+          </table>
+        </td>
       </tr>
     </table>
+
+    <br/>
+    <!--end added-->
   </xsl:template>
 
 
@@ -525,20 +531,20 @@
 
       <xsl:for-each select="preceding::step/name">
 
-      <xsl:if test="position() != 1">
-        <td width="{round(100 div count(//step/name))}%">
+        <xsl:if test="position() != 1">
+          <td width="{round(100 div count(//step/name))}%">
 
-          <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%">
 
-            <tr>
+              <tr>
 
-              <td class="uportal-background-shadow">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-</xsl:if>
+                <td class="uportal-background-shadow">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </xsl:if>
 
         <td>
 
@@ -662,85 +668,9 @@
 
 
 
-
-
   <xsl:template name="selectGeneralSettings">
 
-   <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-
-      <tr>
-
-        <td>
-
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">Publish a new channel:</td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td colspan="2">
-
-                <xsl:call-template name="workflow"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-
-                <a href="#">
-                </a>
-
-                <hr/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
-              </td>
-
-
-
-              <td class="uportal-channel-text" width="100%">
-                <a href="#ChannelName">Cancel and return</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-
-    <br/>
-
+    <xsl:call-template name="workflow"/>
 
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -806,7 +736,8 @@
 
 
 
-              <td></td>
+              <td>
+              </td>
 
 
 
@@ -840,22 +771,24 @@
 
 
 
-            
-
-<tr>
-
-              <td align="center" valign="top"><input type="checkbox" name="checkbox632" value="checkbox" /> </td>
 
 
+            <tr>
 
-              <td></td>
+              <td align="center" valign="top">
+                <input type="checkbox" name="checkbox632" value="checkbox"/> </td>
 
 
 
-              <td><span class="uportal-label">Channel Timeout:</span> <br />
+              <td>
+              </td>
 
-               <input type="text" name="textfield3" size="6" class="uportal-input-text" /> milliseconds (1000 = 1 second)</td>
 
+
+              <td>
+                <span class="uportal-label">Channel Timeout:</span> <br/>
+
+               <input type="text" name="textfield3" size="6" class="uportal-input-text"/> milliseconds (1000 = 1 second)</td>
             </tr>
 
 
@@ -868,24 +801,13 @@
 
                   <tr>
 
-                    <td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td>
-
+                    <td>
+                      <img alt="interface image" src="transparent.gif" width="1" height="1"/>
+                    </td>
                   </tr>
-
                 </table>
-
               </td>
-
             </tr>
-
-            
-
-
-            
-
-
-
-            
           </table>
         </td>
       </tr>
@@ -901,94 +823,15 @@
     </table>
   </xsl:template>
 
-<xsl:template name="beginChannelDef">
+  <xsl:template name="beginChannelDef">
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-
-      <tr>
-
-        <td>
-
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">Publish a new channel:</td>
-            </tr>
+    <xsl:call-template name="workflow"/>
 
 
-
-            <tr class="uportal-channel-strong" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td colspan="2">
-
-                <xsl:call-template name="workflow"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-              </td>
-            </tr>
-
-
-
-            <tr class="uportal-channel-text" valign="top">
-
-              <td colspan="2">
-
-                <a href="#">
-                </a>
-
-                <hr/>
-              </td>
-            </tr>
-
-
-
-            <tr valign="top">
-
-              <td>
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
-              </td>
-
-
-
-              <td class="uportal-channel-text" width="100%">
-                <a href="#ChannelName">Cancel and return</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-
-    <br/>
-
-
-<xsl:apply-templates select="manageChannels/channelDef[1]" mode="dynamicSettings"/>
-
-
-
-</xsl:template>
-
-
-
-<!--John's Templates-->
-	<xsl:template match="channelDef" mode="dynamicSettings">
+    <xsl:apply-templates select="manageChannels/channelDef[1]" mode="dynamicSettings"/>
+  </xsl:template>
+  <!--John's Templates-->
+  <xsl:template match="channelDef" mode="dynamicSettings">
 
 
 
@@ -1000,7 +843,11 @@
       <tr class="uportal-channel-text">
 
         <td>
-          <strong><xsl:value-of select="params/step/name"/>:</strong> <xsl:value-of select="params/step/description"/></td>
+          <strong>
+            <xsl:value-of select="params/step/name"/>:</strong>
+          <img alt="interface image" src="transparent.gif" width="8" height="8"/>
+          <xsl:value-of select="params/step/description"/>
+        </td>
       </tr>
 
 
@@ -1045,23 +892,22 @@
                 </table>
               </td>
             </tr>
+            <!--            <tr>
+
+              <td class="uportal-text-small" align="center" valign="top">
+                <input type="checkbox" name="checkbox6" value="checkbox"/> </td>
 
 
 
-            <tr>
-
-              <td class="uportal-text-small" align="center" valign="top"><input type="checkbox" name="checkbox6" value="checkbox" /> </td>
-
-
-
-              <td class="uportal-text-small"></td>
+              <td class="uportal-text-small">
+              </td>
 
 
 
-              <td class="uportal-text-small"><span class="uportal-label">RSS URL:</span> <span class="uportal-text-small">[example - http://www.stockcharts.com/rss/stockcharts.rss]</span> <br />
+              <td class="uportal-text-small">
+                <span class="uportal-label">RSS URL:</span> <span class="uportal-text-small">[example - http://www.stockcharts.com/rss/stockcharts.rss]</span> <br/>
 
-               <input type="text" name="textfield2" size="80" maxlength="100" class="uportal-input-text" /> </td>
-
+               <input type="text" name="textfield2" size="80" maxlength="100" class="uportal-input-text"/> </td>
             </tr>
 
 
@@ -1074,48 +920,41 @@
 
                   <tr>
 
-                    <td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td>
-
+                    <td>
+                      <img alt="interface image" src="transparent.gif" width="1" height="1"/>
+                    </td>
                   </tr>
-
                 </table>
-
               </td>
-
             </tr>
 
 
 
             <tr>
 
-              <td align="center" valign="top"><input type="checkbox" name="checkbox62" value="checkbox" /> </td>
+              <td align="center" valign="top">
+                <input type="checkbox" name="checkbox62" value="checkbox"/> </td>
 
 
 
-              <td></td>
+              <td>
+              </td>
 
 
 
-              <td><span class="uportal-label">RSS Version:<br />
+              <td>
+                <span class="uportal-label">RSS Version:<br/>
 
                <select name="select3" class="uportal-input-text">
 
                 <option selected="selected">
 
-                  0.9x
-
-                </option>
+                  0.9x</option>
 
 
 
-                <option>
-
-                  1.0x
-
-                </option>
-
-              </select></span> </td>
-
+                    <option>1.0x</option></select>
+                </span> </td>
             </tr>
 
 
@@ -1128,24 +967,15 @@
 
                   <tr>
 
-                    <td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td>
-
+                    <td>
+                      <img alt="interface image" src="transparent.gif" width="1" height="1"/>
+                    </td>
                   </tr>
-
                 </table>
-
               </td>
+            </tr>-->
 
-            </tr>
-
-            
-
-
-            
-
-
-
-            
+            <xsl:apply-templates select="params/step[ID=$stepID]"/>
           </table>
         </td>
       </tr>
@@ -1159,260 +989,272 @@
       </tr>
       <!-- form end -->
     </table>
+  </xsl:template>
+  <!-- The current step info-->
+  <xsl:template match="step">
+
+    <xsl:apply-templates select="parameter"/>
+  </xsl:template>
+  <!-- Display the parameters that are NOT subscribe-only-->
+  <xsl:template match="parameter">
+    <xsl:if test="@modify != 'subscribe-only'">
+      <tr>
+        <xsl:choose>
+          <xsl:when test="type/@input='text'">
+            <xsl:call-template name="text"/>
+          </xsl:when>
+          <xsl:when test="type/@input='single-choice'">
+            <xsl:call-template name="single-choice"/>
+          </xsl:when>
+          <xsl:when test="type/@input='multi-choice'">
+            <xsl:call-template name="multi-choice"/>
+          </xsl:when>
+        </xsl:choose>
+      </tr>
+    </xsl:if>
+  </xsl:template>
+  <!-- displays checkbox for publisher to allow subscribe time modification-->
+  <xsl:template name="subscribe">
+    <td align="center" valign="top">
+      <!-- <xsl:value-of select="@modify"/>  just for debug -->
+      <xsl:choose>
+        <xsl:when test="@modify!='publish-only'">
+          <input type="checkbox" name="{name}_sub">
+            <xsl:if test="@modify='subscribe'">
+              <xsl:attribute name="checked">checked</xsl:attribute>
+            </xsl:if>
+          </input>
+        </xsl:when>
+        <xsl:otherwise>
+          <img alt="interface image" src="transparent.gif" width="8" height="8"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </td>
+    <td/>
+  </xsl:template>
+  <!-- display all the input fields with a base type of 'single-choice'-->
+  <xsl:template name="single-choice">
+    <xsl:choose>
+      <xsl:when test="type/@display='drop-down'">
+        <xsl:call-template name="subscribe"/>
+
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <select name="{name}" class="uportal-input-text">
+            <xsl:for-each select="type/restriction/value">
+              <option value="{.}">
+                <xsl:if test="@default='true'">
+                  <xsl:attribute name="selected">selected</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="@display">
+                    <xsl:value-of select="@display"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </option>
+            </xsl:for-each>
+          </select>
+        </td>
+      </xsl:when>
+      <xsl:when test="type/@display='radio'">
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <xsl:for-each select="type/restriction/value">
+            <input type="radio" name="{name}" value="{.}" class="uportal-input-text">
+              <xsl:if test="@default='true'">
+                <xsl:attribute name="checked">checked</xsl:attribute>
+              </xsl:if>
+            </input>
+            <xsl:choose>
+              <xsl:when test="@display">
+                <xsl:value-of select="@display"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </td>
+      </xsl:when>
+      <xsl:otherwise>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <select name="{name}" class="uportal-input-text">
+            <xsl:for-each select="type/restriction/value">
+              <xsl:call-template name="subscribe"/>
+              <option value="{.}">
+                <xsl:if test="@default='true'">
+                  <xsl:attribute name="selected">selected</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="@display">
+                    <xsl:value-of select="@display"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </option>
+            </xsl:for-each>
+          </select>
+        </td>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- display all the input fields with a base type of 'multi-choice'-->
+  <xsl:template name="multi-choice">
+    <xsl:choose>
+      <xsl:when test="type/@display='select-list'">
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
+            <xsl:for-each select="type/restriction/value">
+              <option value="{.}">
+                <xsl:if test="@default='true'">
+                  <xsl:attribute name="selected">selected</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="@display">
+                    <xsl:value-of select="@display"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </option>
+            </xsl:for-each>
+          </select>
+        </td>
+      </xsl:when>
+      <xsl:when test="type/@display='checkbox'">
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <xsl:for-each select="type/restriction/value">
+            <input type="checkbox" name="{name}" value="{.}">
+              <xsl:if test="@default='true'">
+                <xsl:attribute name="checked">checked</xsl:attribute>
+              </xsl:if>
+            </input>
+            <xsl:choose>
+              <xsl:when test="@display">
+                <xsl:value-of select="@display"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </td>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
+            <xsl:for-each select="type/restriction/value">
+              <option value="{.}">
+                <xsl:if test="@default='true'">
+                  <xsl:attribute name="selected">selected</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="@display">
+                    <xsl:value-of select="@display"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </option>
+            </xsl:for-each>
+          </select>
+        </td>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- display all the input fields with a base type of 'text'-->
+  <xsl:template name="text">
+    <!-- since length and maxlength are not required test existence and use defaults if needed -->
+    <xsl:variable name="length">
+      <xsl:choose>
+        <xsl:when test="type/length"> <xsl:value-of select="type/length"/> </xsl:when>
+        <xsl:otherwise> <xsl:value-of select="$defaultLength"/> </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="maxlength">
+      <xsl:choose>
+        <xsl:when test="type/maxlength"> <xsl:value-of select="type/maxlength"/> </xsl:when>
+        <xsl:otherwise> <xsl:value-of select="$defaultMaxLength"/> </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="type/@display='text'">
+        <xsl:call-template name="subscribe"/>
 
 
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
 
 
+          <input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text"/>
+        </td>
+      </xsl:when>
+      <xsl:when test="type/@display='textarea'">
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <textarea rows="{$defaultTextRows}" cols="{$defaultTextCols}" class="uportal-input-text">
+            <xsl:value-of select="defaultValue"/>
+          </textarea>
+        </td>
+      </xsl:when>
+      <xsl:when test="type/@display='hidden'">
+        <input type="hidden" name="{name}" value="{defaultValue}"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="subscribe"/>
+        <td class="uportal-text-small">
+          <xsl:apply-templates select="label"/>
+          <xsl:apply-templates select="example"/>
+          <br/>
+          <input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text"/>
+        </td>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!--End John's Templates-->
 
+  <xsl:template match="label">
+    <span class="uportal-label">
+      <xsl:value-of select="."/>:</span>
+  </xsl:template>
 
-
-
-
-
-
-
-
-
-
-
-	<xsl:apply-templates select="params/step[ID=$stepID]"/>
-
-	</xsl:template>
-	
-	<!-- The current step info-->
-	<xsl:template match="step">
-		<p align="left">
-			<xsl:value-of select="name"/>
-		</p>
-		<table align="center" border="1" cellpadding="5" cellspacing="0">
-			<tr>
-				<td>Label</td>
-				<td>Data</td>
-				<td>Subscribe?</td>
-				<xsl:apply-templates select="parameter"/>
-			</tr>
-		</table>
-	</xsl:template>
-	<!-- Display the parameters that are NOT subscribe-only-->
-	<xsl:template match="parameter">
-		<xsl:if test="@modify != 'subscribe-only'">
-			<tr>
-				<xsl:choose>
-					<xsl:when test="type/@input='text'">
-						<xsl:call-template name="text"/>
-					</xsl:when>
-					<xsl:when test="type/@input='single-choice'">
-						<xsl:call-template name="single-choice"/>
-					</xsl:when>
-					<xsl:when test="type/@input='multi-choice'">
-						<xsl:call-template name="multi-choice"/>
-					</xsl:when>
-				</xsl:choose>
-			</tr>
-		</xsl:if>
-	</xsl:template>
-	
-	<!-- displays checkbox for publisher to allow subscribe time modification-->
-	<xsl:template name="subscribe">
-		<td>
-			<!-- <xsl:value-of select="@modify"/>  just for debug -->
-			<xsl:choose>
-				<xsl:when test="@modify!='publish-only'">
-					<input type="checkbox" name="{name}_sub">
-		                <xsl:if test="@modify='subscribe'">
-		                    <xsl:attribute name="checked">checked</xsl:attribute>
-		                </xsl:if>
-					</input>
-				</xsl:when>
-				<xsl:otherwise>
-				    <xsl:text>&#160;</xsl:text>
-				</xsl:otherwise>
-			</xsl:choose>
-		</td>
-	</xsl:template>
-	
-	<!-- display all the input fields with a base type of 'single-choice'-->
-	<xsl:template name="single-choice">
-		<xsl:choose>
-			<xsl:when test="type/@display='drop-down'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<select name="{name}">
-						<xsl:for-each select="type/restriction/value">
-							<option value="{.}">
-								<xsl:if test="@default='true'">
-									<xsl:attribute name="selected">selected</xsl:attribute>
-								</xsl:if>
-								<xsl:choose>
-								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-								</xsl:choose>
-							</option>
-						</xsl:for-each>
-					</select>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:when test="type/@display='radio'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<xsl:for-each select="type/restriction/value">
-						<input type="radio" name="{name}" value="{.}">
-							<xsl:if test="@default='true'">
-								<xsl:attribute name="checked">checked</xsl:attribute>
-							</xsl:if>
-						</input>
-						<xsl:choose>
-						  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-						  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-						</xsl:choose>
-					</xsl:for-each>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<select name="{name}">
-						<xsl:for-each select="type/restriction/value">
-							<option value="{.}">
-								<xsl:if test="@default='true'">
-									<xsl:attribute name="selected">selected</xsl:attribute>
-								</xsl:if>
-								<xsl:choose>
-								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-								</xsl:choose>
-							</option>
-						</xsl:for-each>
-					</select>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	
-	<!-- display all the input fields with a base type of 'multi-choice'-->
-	<xsl:template name="multi-choice">
-		<xsl:choose>
-			<xsl:when test="type/@display='select-list'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<select name="{name}" size="6" multiple="multiple">
-						<xsl:for-each select="type/restriction/value">
-							<option value="{.}">
-								<xsl:if test="@default='true'">
-									<xsl:attribute name="selected">selected</xsl:attribute>
-								</xsl:if>
-								<xsl:choose>
-								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-								</xsl:choose>
-							</option>
-						</xsl:for-each>
-					</select>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:when test="type/@display='checkbox'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<xsl:for-each select="type/restriction/value">
-						<input type="checkbox" name="{name}" value="{.}">
-							<xsl:if test="@default='true'">
-								<xsl:attribute name="checked">checked</xsl:attribute>
-							</xsl:if>
-						</input>
-						<xsl:choose>
-						  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-						  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-						</xsl:choose>
-					</xsl:for-each>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<select name="{name}" size="6" multiple="multiple">
-						<xsl:for-each select="type/restriction/value">
-							<option value="{.}">
-								<xsl:if test="@default='true'">
-									<xsl:attribute name="selected">selected</xsl:attribute>
-								</xsl:if>
-								<xsl:choose>
-								  <xsl:when test="@display"><xsl:value-of select="@display"/></xsl:when>
-								  <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-								</xsl:choose>
-							</option>
-						</xsl:for-each>
-					</select>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	
-	<!-- display all the input fields with a base type of 'text'-->
-	<xsl:template name="text">
-		<!-- since length and maxlength are not required test existence and use defaults if needed -->
-		<xsl:variable name="length">
-			<xsl:choose>
-				<xsl:when test="type/length"> <xsl:value-of select="type/length"/> </xsl:when>
-				<xsl:otherwise> <xsl:value-of select="$defaultLength"/> </xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:variable name="maxlength">
-			<xsl:choose>
-				<xsl:when test="type/maxlength"> <xsl:value-of select="type/maxlength"/> </xsl:when>
-				<xsl:otherwise> <xsl:value-of select="$defaultMaxLength"/> </xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:choose>
-			<xsl:when test="type/@display='text'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}"/>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:when test="type/@display='textarea'">
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<textarea rows="{$defaultTextRows}" cols="{$defaultTextCols}">
-						<xsl:value-of select="defaultValue"/>
-					</textarea>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:when>
-			<xsl:when test="type/@display='hidden'">
-				<input type="hidden" name="{name}" value="{defaultValue}"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<td>
-					<xsl:value-of select="label"/>:</td>
-				<td>
-					<input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}"/>
-				</td>
-				<xsl:call-template name="subscribe"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-<!--End John's Templates-->
-
-</xsl:stylesheet>
-
-
-
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
+  <xsl:template match="example">
+    <img alt="interface image" src="transparent.gif" width="8" height="8"/>
+    <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
+  </xsl:template>
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
 <metaInformation>
 <scenarios ><scenario default="no" name="emptyDocument" userelativepaths="no" url="file://c:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CPublisher\empty.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="channelRegistry" userelativepaths="no" url="file://c:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CPublisher\channelRegistry.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="yes" name="newchannel" userelativepaths="no" url="file://C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CGenericXSLT\RSS\rssTest.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="no" />
 </metaInformation>
