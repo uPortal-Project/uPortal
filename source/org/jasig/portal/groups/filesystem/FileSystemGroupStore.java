@@ -864,23 +864,58 @@ throws GroupsException
 public boolean contains(IEntityGroup group, IGroupMember member) 
 throws GroupsException 
 {
-    Collection ids = Collections.EMPTY_LIST;
+    boolean contains = false;
     File f = getFile(group);
     if ( f.exists() )
     {
-        try 
-        {
-            ids = ( member.isEntity() )
-              ? getEntityIdsFromFile(f)
-              : getGroupIdsFromFile(f);
-        }
-        catch (Exception ex)
-        {
-            throw new GroupsException("Error retrieving ids from file: " 
-              + ex.getMessage());
-        }
+        contains = ( f.isDirectory() )
+          ? directoryContains(f, member)
+          : fileContains(f, member);
+    }
+    return contains;
+}
+/**
+ * Answers if <code>file</code> contains <code>member</code>.  
+ * @return boolean
+ * @param directory java.io.File
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+private boolean fileContains(File file, IGroupMember member)
+throws GroupsException
+{
+    Collection ids=null;
+    try 
+    {
+        ids = ( member.isEntity() )
+          ? getEntityIdsFromFile(file)
+          : getGroupIdsFromFile(file);
+    }
+    catch (Exception ex)
+    {
+        throw new GroupsException("Error retrieving ids from file: " 
+          + ex.getMessage());
     }
     return ids.contains(member.getKey());
+}
+
+/**
+ * Answers if <code>directory</code> contains <code>member</code>.  A 
+ * directory can only contain (other) groups.  
+ * @return boolean
+ * @param directory java.io.File
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+private boolean directoryContains(File directory, IGroupMember member)
+{
+    boolean found=false;
+    if ( member.isGroup() )
+    {
+        File memberFile = getFile((IEntityGroup)member);
+        File[] files = directory.listFiles();
+        for (int i=0; i<files.length & ! found; i++)
+            { found = files[i].equals(memberFile); }
+    }
+    return found;
 }
 /**
  * Answers if <code>group</code> contains a member group named 
