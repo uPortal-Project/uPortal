@@ -417,7 +417,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
       updateThemeStylesheetDescription(sssd);
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception updating theme stylesheet description=" +
+            "[" + stylesheetDescriptionURI + "] stylesheetUri=["+ stylesheetURI + 
+            "] stylesheetId=["+ stylesheetId + "]", e);
       return  false;
     }
     return  true;
@@ -451,7 +453,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       updateStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception updating structure stylesheet description " +
+            "stylesheetDescriptionUri=[" + stylesheetDescriptionURI + "]" +
+                    " stylesheetUri=[" + stylesheetURI + 
+                    "] stylesheetId=" + stylesheetId , e);
       return  false;
     }
     return  true;
@@ -487,7 +492,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Error adding stylesheet: " +
+            "description Uri=[" + stylesheetDescriptionURI + "] " +
+                    "stylesheetUri=[" + stylesheetURI + "]", e);
     }
     return  null;
   }
@@ -540,7 +547,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addThemeStylesheetDescription(sssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception adding theme stylesheet description " + 
+              "description uri=[" + stylesheetDescriptionURI + "] " +
+              "stylesheet uri=[" + stylesheetURI + "]", e);
     }
     return  null;
   }

@@ -736,7 +736,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception determining publish rights for " + this.person, e);
         }
         
         String[] values;

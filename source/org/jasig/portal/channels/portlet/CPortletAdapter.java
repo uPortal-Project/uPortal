@@ -550,8 +550,12 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             ((PortletWindowImpl)cd.getPortletWindow()).setInternalActionResponse(null);
                         
         } catch (Throwable t) {
-            t.printStackTrace();
-            log.error( t);
+            // TODO: review this
+            // t.printStackTrace();
+            // since the stack trace will be logged, this printStackTrace()
+            // was overkill? -andrew.petro@yale.edu
+            
+            log.error(t, t);
             throw new PortalException(t.getMessage());
         } finally {
             PortletContainerServices.release();
