@@ -44,6 +44,7 @@ import java.util.Map;
 import javax.portlet.PortletMode;
 
 import org.apache.pluto.om.common.ObjectID;
+import org.apache.pluto.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.PortalContextProvider;
 import org.apache.pluto.services.information.StaticInformationProvider;
@@ -54,6 +55,7 @@ import org.jasig.portal.container.om.common.ParameterSetImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeSetImpl;
+import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.servlet.ServletDefinitionImpl;
 import org.jasig.portal.container.om.servlet.WebApplicationDefinitionImpl;
@@ -90,12 +92,34 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
     private void initPortletDefinitions() {
         // We should initialize by going though the base web modules directory,
         // which is "webapps" in Tomcat and look through all subdirectories
-        // for portlet.xml files.  Then we need to parse the portlet.xml files
-        // and register each PortletApplication and PortletDefinition 
+        // for web.xml and portlet.xml files.  Then we need to parse these files
+        // and register each WebApplicationDefinition, ServletDefinition, 
+        // PortletApplicationDefinition and PortletDefinition 
         // by their GUID into a static HashMap. What a pain!
         
         // For now we will just hard-code some PortletDefinitions
-        try {
+        try {            
+            // Comes out of the portlet context's web.xml file
+            WebApplicationDefinitionImpl webApplicationDefinition = new WebApplicationDefinitionImpl();
+            webApplicationDefinition.setId("testsuite");
+            webApplicationDefinition.addDisplayName("testsuite", Locale.getDefault());
+            webApplicationDefinition.addDescription("Automated generated Application Wrapper", Locale.getDefault());
+            webApplicationDefinition.setContextRoot("/testsuite");
+
+            ServletDefinitionImpl servletDefinition1 = new ServletDefinitionImpl("TestPortlet1", "org.apache.pluto.core.PortletServlet");
+            servletDefinition1.setWebApplicationDefinition(webApplicationDefinition);
+            servletDefinition1.setServletMapping("TestPortlet1", "/TestPortlet1/*");
+
+            ServletDefinitionImpl servletDefinition2 = new ServletDefinitionImpl("TestPortlet2", "org.apache.pluto.core.PortletServlet");
+            servletDefinition2.setWebApplicationDefinition(webApplicationDefinition);
+            servletDefinition2.setServletMapping("TestPortlet2", "/TestPortlet2/*");
+
+            PortletApplicationDefinitionImpl portletApplicationDefinition = new PortletApplicationDefinitionImpl();
+            portletApplicationDefinition.setId("testsuite"); // ???
+            portletApplicationDefinition.setVersion("1.0");
+            portletApplicationDefinition.setWebApplicationDefinition(webApplicationDefinition);
+
+            // Add 1st portlet definition
             PortletDefinitionImpl portletDefinition1 = null;
             String portletDefinitionId1 = "testsuite.TestPortlet1";
             
@@ -138,23 +162,16 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             contentTypes.add(contentType);
             portletDefinition1.setContentTypes(contentTypes);
     
-            // Comes out of the portlet's web.xml file
-            ServletDefinitionImpl servletDefinition = new ServletDefinitionImpl("TestPortlet1", "org.apache.pluto.core.PortletServlet");
-            WebApplicationDefinitionImpl webApplicationDefinition = new WebApplicationDefinitionImpl();
-            webApplicationDefinition.setId("testsuite");
-            webApplicationDefinition.addDisplayName("testsuite", Locale.getDefault());
-            webApplicationDefinition.addDescription("Automated generated Application Wrapper", Locale.getDefault());
-            webApplicationDefinition.setContextRoot("/testsuite");
-            servletDefinition.setWebApplicationDefinition(webApplicationDefinition);
-            servletDefinition.setServletMapping("TestPortlet1", "/TestPortlet1/*");
-            portletDefinition1.setServletDefinition(servletDefinition);
-    
-            DisplayNameSetImpl displayNames = new DisplayNameSetImpl();
-            displayNames.add("Test Portlet #1", Locale.getDefault());
-            portletDefinition1.setDisplayNames(displayNames);
+            portletDefinition1.setServletDefinition(servletDefinition1);
+            
+            portletDefinition1.setPortletApplicationDefinition(portletApplicationDefinition);
+                
+            DisplayNameSetImpl displayNames1 = new DisplayNameSetImpl();
+            displayNames1.add("Test Portlet #1", Locale.getDefault());
+            portletDefinition1.setDisplayNames(displayNames1);
                 
             portletDefinition1.setExpirationCache("-1");
-            
+                       
             portletDefinitions.put(portletDefinitionId1, portletDefinition1);
 
             // Add 2nd portlet definition
@@ -200,17 +217,10 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             contentTypes2.add(contentType2);
             portletDefinition2.setContentTypes(contentTypes2);
     
-            // Comes out of the portlet's web.xml file
-            ServletDefinitionImpl servletDefinition2 = new ServletDefinitionImpl("TestPortlet2", "org.apache.pluto.core.PortletServlet");
-            WebApplicationDefinitionImpl webApplicationDefinition2 = new WebApplicationDefinitionImpl();
-            webApplicationDefinition2.setId("testsuite");
-            webApplicationDefinition2.addDisplayName("testsuite", Locale.getDefault());
-            webApplicationDefinition2.addDescription("Automated generated Application Wrapper", Locale.getDefault());
-            webApplicationDefinition2.setContextRoot("/testsuite");
-            servletDefinition2.setWebApplicationDefinition(webApplicationDefinition2);
-            servletDefinition2.setServletMapping("TestPortlet2", "/TestPortlet2/*");
             portletDefinition2.setServletDefinition(servletDefinition2);
     
+            portletDefinition2.setPortletApplicationDefinition(portletApplicationDefinition);
+
             DisplayNameSetImpl displayNames2 = new DisplayNameSetImpl();
             displayNames2.add("Test Portlet #2", Locale.getDefault());
             portletDefinition2.setDisplayNames(displayNames2);
