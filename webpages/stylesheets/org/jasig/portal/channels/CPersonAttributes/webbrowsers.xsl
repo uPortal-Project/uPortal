@@ -46,8 +46,8 @@
           </xsl:if>
         </td>
         <xsl:choose>
-        <xsl:when test="name='jpegPhoto'">
-            <td><img src="{$downloadWorkerURL}?attribute={.}" /></td>
+        <xsl:when test="../name='jpegPhoto'">
+            <td><img src="{$downloadWorkerURL}?attribute={../name}" /></td>
         </xsl:when>
         <xsl:otherwise>
             <td><xsl:value-of select="."/></td>
