@@ -98,11 +98,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse {
     private static final Log log = LogFactory.getLog(CPortletAdapter.class);
-    
-    private static final String LAST_RENDER_TIME_KEY = "org.jasig.portal.channels.portlet.CPortletAdapter.LAST_RENDER_TIME";
-    private static final String CACHE_TIMEOUT_KEY = "org.jasig.portal.channels.portlet.CPortletAdapter.CACHE_TIMEOUT";
-
-    
+        
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
@@ -423,9 +419,11 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         PrintWriter pw = new PrintWriter(sw);
                         HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                         //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
-                        portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+                        portletContainer.processPortletAction(portletWindow, wrappedRequest, wrappedResponse);
                         InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
+                        
+                        //FIXME WindowState switches are NOT honored!
                     } catch (Exception e) {
                         throw new PortalException(e);
                     }
@@ -542,7 +540,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 PortletDefinition pd = pe.getPortletDefinition();
                                 
                 try {
-                    sd.put(CACHE_TIMEOUT_KEY, new Long(exprCacheTimeStr[0]));
+                    Integer.parseInt(exprCacheTimeStr[0]); //Check for valid number
+                    cd.setExpirationCache(exprCacheTimeStr[0]);
                 }
                 catch (NumberFormatException nfe) {
                     log.error("The specified RenderResponse.EXPIRATION_CACHE value of (" + exprCacheTimeStr + ") is not a number.", nfe);
@@ -568,7 +567,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         }
         
         //Keep track of the last time the portlet was successfully rendered
-        sd.put(LAST_RENDER_TIME_KEY, new Long(System.currentTimeMillis()));
+        cd.setLastRenderTime(System.currentTimeMillis());
         
         return markup;
     }
@@ -630,22 +629,20 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         PortletDefinition pd = pe.getPortletDefinition();
         
         //Expiration based caching support for the portlet.
+        String portletSetExprCacheTime = cd.getExpirationCache();
         String exprCacheTimeStr = pd.getExpirationCache();
-        Long exprCacheTimeObj = (Long)staticData.get(CACHE_TIMEOUT_KEY);
-        Long lastRenderTimeObj = (Long)staticData.get(LAST_RENDER_TIME_KEY);
-
         try {
-            if (exprCacheTimeObj == null)
-                exprCacheTimeObj = new Long(exprCacheTimeStr);
+            if (portletSetExprCacheTime != null)
+                exprCacheTimeStr = portletSetExprCacheTime;
             
-            long exprCacheTime = exprCacheTimeObj.longValue();
-            
+            int exprCacheTime = Integer.parseInt(exprCacheTimeStr);
+
             if (exprCacheTime == 0) {
                 return false;
             }
-            else if (exprCacheTime > 0 && lastRenderTimeObj != null) {
-                long lastRenderTime = lastRenderTimeObj.longValue();
-                
+            else if (exprCacheTime > 0) {
+                long lastRenderTime = cd.getLastRenderTime();
+
                 if ((lastRenderTime + (exprCacheTime * 1000)) < System.currentTimeMillis())
                     return false;
             }

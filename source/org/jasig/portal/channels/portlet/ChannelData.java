@@ -24,6 +24,8 @@ public class ChannelData {
     private boolean receivedEvent = false;
     private boolean focused = false;
     private PortletMode newPortletMode = null;
+    private long lastRenderTime = Long.MIN_VALUE;
+    private String expirationCache = null;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
@@ -32,6 +34,18 @@ public class ChannelData {
     public boolean hasReceivedEvent() { return this.receivedEvent; }
     public boolean isFocused() { return this.focused; }
     public PortletMode getNewPortletMode() { return this.newPortletMode; }
+    /**
+     * @return Returns the lastRenderTime.
+     */
+    public long getLastRenderTime() {
+        return this.lastRenderTime;
+    }
+    /**
+     * @return Returns the expirationCache.
+     */
+    public String getExpirationCache() {
+        return this.expirationCache;
+    }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
@@ -40,5 +54,17 @@ public class ChannelData {
     public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
     public void setFocused(boolean focused) { this.focused = focused; }
     public void setNewPortletMode(PortletMode newPortletMode) { this.newPortletMode = newPortletMode; }
+    /**
+     * @param lastRenderTime The lastRenderTime to set.
+     */
+    public void setLastRenderTime(long lastRenderTime) {
+        this.lastRenderTime = lastRenderTime;
+    }
+    /**
+     * @param expirationCache The expirationCache to set.
+     */
+    public void setExpirationCache(String expirationCache) {
+        this.expirationCache = expirationCache;
+    }
 }
 

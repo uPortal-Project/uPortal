@@ -4,9 +4,9 @@
 */
 package org.jasig.portal.container.services.property;
 
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -19,44 +19,72 @@ import org.apache.pluto.services.property.PropertyManagerService;
 
 
 /**
+ * The {@link PropertyManagerServiceImpl} is used to pass properties to the
+ * portlet so it can read them via it's {@link javax.portlet.PortletRequest#getProperty(java.lang.String)}
+ * methods and so properties set by the portlet via it's {@link javax.portlet.PortletResponse#setProperty(java.lang.String, java.lang.String)}
+ * methods can be read by uPortal.
+ * 
+ * Currently all properties set by the portlet are saved into a {@link WeakHashMap}
+ * using the {@link org.apache.pluto.om.window.PortletWindow} as the key. This
+ * should ensure that the old properties aren't stored beyond the life of the
+ * user's session.
+ * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
 public class PropertyManagerServiceImpl implements PropertyManagerService {
-    private final Map propertyMapping = new Hashtable();
+    private final Map propertyMapping = new WeakHashMap();
     
     /**
+     * Stores the properties in a {@link WeakHashMap} that is keyed off the
+     * {@link PortletWindow} so the properties are removed when the user's
+     * session with the portlet is done.
+     * 
      * @see org.apache.pluto.services.property.PropertyManagerService#setResponseProperties(org.apache.pluto.om.window.PortletWindow, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.util.Map)
      */
-    public void setResponseProperties(PortletWindow window, HttpServletRequest request,
-                                      HttpServletResponse response, Map properties) {
-        propertyMapping.put(window.getId(), properties);
+    public void setResponseProperties(final PortletWindow window, final HttpServletRequest request,
+                                      final HttpServletResponse response, final Map properties) {
+        synchronized (propertyMapping) {
+            propertyMapping.put(window, properties);
+        }
     }
 
+
     /**
+     * Gets the properties that have been set by the portlet. This will pass
+     * any properties that the portlet has set in the response back into the
+     * portlet's request.
+     * 
+     * This code also provides a uPortal extension that provides the current
+     * cache expiration time for the portlet via the {@link RenderResponse#EXPIRATION_CACHE}
+     * constant.
+     * 
      * @see org.apache.pluto.services.property.PropertyManagerService#getRequestProperties(org.apache.pluto.om.window.PortletWindow, javax.servlet.http.HttpServletRequest)
      */
-    public Map getRequestProperties(PortletWindow window, HttpServletRequest request) {
-        Map properties = new Properties();
-        Map savedProps = (Map)propertyMapping.get(window.getId());
+    public Map getRequestProperties(final PortletWindow window, final HttpServletRequest request) {
+        final Map properties = new Properties();
+        Map savedProps = null;
         
+        synchronized (propertyMapping) {
+            savedProps = (Map)propertyMapping.get(window);
+        }
         
-        //uPortal extension: Provide the expiration cache time value        
-        String[] exprTime = null;
+        //Copy all the properties into a new map to return.
         if (savedProps != null)
-            exprTime = (String[])savedProps.get(RenderResponse.EXPIRATION_CACHE);
+            properties.putAll(savedProps);
         
+        
+        //Make sure the EXPIRATION_CACHE property is set to whatever the current
+        //cache timeout for the portlet is. This is not a required property
+        final String[] exprTime = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
         if (exprTime == null) {
-            PortletEntity pe = window.getPortletEntity();
-            PortletDefinition pd = pe.getPortletDefinition();
+            final PortletEntity pe = window.getPortletEntity();
+            final PortletDefinition pd = pe.getPortletDefinition();
             
             //Values MUST be String[]
-            exprTime = new String[] {pd.getExpirationCache()};
-        } 
-        properties.put(RenderResponse.EXPIRATION_CACHE, exprTime);
-        //End uPortal extension
+            properties.put(RenderResponse.EXPIRATION_CACHE, new String[] {pd.getExpirationCache()});
+        }
                         
         return properties;
     }
-
 }
