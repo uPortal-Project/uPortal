@@ -57,7 +57,7 @@ Version $Revision$
     <xsl:param name="channelManager" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
-    <xsl:param name="currentFragmentID" select="'default_#layout'"/>
+    <xsl:param name="currentFragmentID" select="'default_layout'"/>
     <xsl:param name="fragmentAuthor" select="'true'"/>
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
