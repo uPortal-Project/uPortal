@@ -66,7 +66,7 @@ public class ShowProperties extends GroupsManagerCommand {
         throw new RuntimeException("Unable to instatiate class:  type "+e.getAttribute("type")+" unknown");
       }
       String[] names = EntityPropertyRegistry.getPropertyNames(ei);
-      System.out.println("Found "+names.length+" properties");
+      //System.out.println("Found "+names.length+" properties");
       for(int i=0; i<names.length;i++){
           Element prop = sessionData.model.createElement("property");
           prop.setAttribute("name",names[i]);
