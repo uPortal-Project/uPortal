@@ -70,7 +70,7 @@ function xml(nodelist){
 	<xsl:template match="roles">
                 <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
 		</p>
-		<p align="center">Pick what roles will be able to subscribe to your channel.		
+		<p align="center">Choose roles which will restrict access to this channel (optional).
 		<form action="{$baseActionURL}" method="post">
 			<input type="hidden" name="action" value="publishRoles"/>
 			<table align="center" border="1" cellspacing="0" cellpadding="5">
