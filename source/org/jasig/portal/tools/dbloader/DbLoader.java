@@ -589,9 +589,9 @@ public class DbLoader
       dataTypeCode = Types.REF; // 2006
     
     else if (genericDataTypeName.equalsIgnoreCase("DATALINK"))
-        dataTypeCode = Types.DATALINK; // 70
+        dataTypeCode = 70; // Use Types.DATALINK when JDK 1.3 support is no longer needed
     else if (genericDataTypeName.equalsIgnoreCase("BOOLEAN"))
-        dataTypeCode = Types.BOOLEAN; // 16
+        dataTypeCode = 16; // Use Types.BOOLEAN when JDK 1.3 support is no longer needed
 
     return dataTypeCode;
   }
