@@ -58,7 +58,7 @@ import com.oreilly.servlet.multipart.ParamPart;
 public class RequestParamWrapper extends HttpServletRequestWrapper {
     protected Hashtable parameters;
     protected boolean request_verified;
-    private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.RequestParamWrapper.file_upload_max_size");
+    private static int sizeLimit = -1;
 
     /**
      * Creates a new <code>RequestParamWrapper</code> instance.
@@ -67,7 +67,9 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      * @param request_verified a <code>boolean</code> flag that determines if the request params should be accessable.
      */
     public RequestParamWrapper(HttpServletRequest source, boolean request_verified) {
-        super(source);
+        super(source);        
+        setFileUploadMaxSize();
+                
         // leech all of the information from the source request
         this.request_verified = request_verified;
 
@@ -198,6 +200,18 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      */
     public Object[] getObjectParameterValues(String name) {
         return (Object[])this.parameters.get(name);
+    }
+    
+    private void setFileUploadMaxSize() {
+        // Obtain file upload max size
+        // This property was renamed in uPortal 2.3, so we'll check the old name if it is missing
+        if (sizeLimit < 0) {
+            try {
+                sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.RequestParamWrapper.file_upload_max_size");
+            } catch (Exception e) {
+                sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
+            }
+        }
     }
 
 }
