@@ -2,8 +2,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="skin" select="'java'"/>
+  <xsl:param name="skin" select="'imm'"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
+  <!--<xsl:variable name="mediaPath">file:///C|\LaJolla\uPortal\webpages\media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>-->
+
   <!-- This template is supposed to render a fragment of the layout. For example, during
        a detach mode, only the <channel> element that's detached is passed along to the structure
        transformation.
@@ -110,7 +112,7 @@
                       <xsl:value-of select="@name"/>
                     </a>
                   </td>
-                  <td class="uportal-background-content">
+                  <td width="11" class="uportal-background-content">
                     <img alt="interface image" src="{$mediaPath}/{$skin}/before_active_tab.gif" width="11" height="28"/>
                   </td>
                 </xsl:when>
@@ -143,7 +145,7 @@
                       <xsl:value-of select="@name"/>
                     </a>
                   </td>
-                  <td class="uportal-background-med">
+                  <td width="11" class="uportal-background-light">
                     <img alt="interface image" src="{$mediaPath}/{$skin}/after_inactive_tab.gif" width="11" height="28"/>
                   </td>
                 </xsl:when>
@@ -154,7 +156,7 @@
                       <xsl:value-of select="@name"/>
                     </a>
                   </td>
-                  <td class="uportal-background-med">
+                  <td width="11" class="uportal-background-light">
                     <img alt="interface image" src="{$mediaPath}/{$skin}/after_active_tab.gif" width="11" height="28"/>
                   </td>
                 </xsl:when>
@@ -172,7 +174,7 @@
           <tr>
             <xsl:call-template name="controlRow"/>
           </tr>
-          <tr>
+          <tr class="uportal-background-content">
             <xsl:call-template name="contentRow"/>
           </tr>
           <tr>
@@ -204,17 +206,18 @@
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
+          </td>
+          <td>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="21" height="20"/>
           </td>
           <td>
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
-          <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
-          </td>
         </xsl:when>
         <xsl:when test="position()=last()">
           <td width="{@width}">
+
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
           <td>
@@ -226,13 +229,13 @@
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
-          </td>
-          <td>
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="21" height="20"/>
+          </td>
+          <td>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
         </xsl:when>
       </xsl:choose>
@@ -260,13 +263,15 @@
             <xsl:apply-templates select="channel"/>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
-          <td class="uportal-background-dark">
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-          </td>
+          <td style="background-image:url({$mediaPath}/{$skin}/v_rule.gif); background-repeat:repeat-y;" >
+
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="21" height="1"/></td>
+
+
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
           </td>
         </xsl:when>
         <xsl:when test="position()=last()">
@@ -379,8 +384,7 @@
     </xsl:for-each>
   </xsl:template>
 </xsl:stylesheet>
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios/>
-</metaInformation>
--->
+
+
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
