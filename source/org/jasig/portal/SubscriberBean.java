@@ -84,7 +84,36 @@ public class SubscriberBean extends GenericPortalBean{
    public org.jasig.portal.layout.IChannel getChannel(HttpServletRequest req)
    {
     IXml channelXml = getChannelXml (req);
-    org.jasig.portal.layout.IChannel channel = (org.jasig.portal.layout.IChannel) channelXml.getRoot ();
+    org.jasig.portal.layout.IChannel channel =(org.jasig.portal.layout.IChannel) channelXml.getRoot ();
+
+    List instanceIDs = new ArrayList ();
+    HttpSession session = req.getSession (false);
+    ILayoutBean layoutBean = (ILayoutBean) session.getAttribute("layoutBean");
+    IXml layoutXml = layoutBean.getLayoutXml (req, layoutBean.getUserName(req));
+    ILayout layout = (ILayout) layoutXml.getRoot ();
+    ITab[] tabs = layout.getTabs ();
+
+    for (int iTab = 0; iTab < tabs.length; iTab++)
+    {
+      IColumn[] columns = tabs[iTab].getColumns ();
+
+      for (int iCol = 0; iCol < columns.length; iCol++)
+      {
+        org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
+
+        for (int iChan = 0; iChan < channels.length; iChan++)
+        {
+          String sInstanceID = channels[iChan].getInstanceIDAttribute ();
+          Integer id = new Integer (sInstanceID.substring (1));
+          instanceIDs.add (id);
+        }
+      }
+    }
+
+    Collections.sort (instanceIDs);
+    int iHighest = ((Integer) instanceIDs.get (instanceIDs.size () - 1)).intValue ();
+    channel.setInstanceIDAttribute ("c" + (iHighest + 1));
+    channel.setMinimizedAttribute("false");
     return channel;
    }
 
