@@ -1213,7 +1213,12 @@ public class LayoutBean extends GenericPortalBean
       ILayout layout = (ILayout) layoutXml.getRoot ();
 
       ITab tabToRename = layout.getTabAt (iTab);
-      tabToRename.setNameAttribute (sTabName);
+
+      /**
+       * Use the removeSpecialChars here to prevent the user from entering
+       * any characters that would destroy their personal layout.
+       */
+      tabToRename.setNameAttribute (UtilitiesBean.removeSpecialChars(sTabName));
     }
     catch (Exception e)
     {
