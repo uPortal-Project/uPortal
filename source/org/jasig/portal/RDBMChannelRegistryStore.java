@@ -337,8 +337,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
-   * @return channelDefinition, a definition of the channel or <code>null</code>
-   *   if no matching channel definition can be found
+   * @return channelDefinition, a definition of the channel
    * @throws java.sql.SQLException
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
@@ -430,40 +429,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     LogService.instance().log(LogService.DEBUG,
       "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
 
-    return channelDef;
-  }
-
-  /**
-   * Get a channel definition.  If there is more than one channel definition
-   * with the given functional name, then the first one will be returned.
-   * @param channelFunctionalName a channel functional name
-   * @return channelDefinition, a definition of the channel or <code>null</code>
-   *   if no matching channel definition can be found
-   * @throws java.sql.SQLException
-   */
-  public ChannelDefinition getChannelDefinition(String channelFunctionalName) throws SQLException {
-    ChannelDefinition channelDef = null;
-    Connection con = RDBMServices.getConnection();
-
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_FNAME='" + channelFunctionalName + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          if (rs.next()) {
-            channelDef = getChannelDefinition(rs.getInt("CHAN_ID"));
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
     return channelDef;
   }
 
@@ -568,7 +533,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + delete);
         int recordsDeleted = stmt.executeUpdate(delete);
 
-        ChannelDefinition.ChannelParameter[] parameters = channelDef.getParameters();
+        ChannelParameter[] parameters = channelDef.getParameters();
 
         if (parameters != null) {
           for (int i = 0; i < parameters.length; i++) {
