@@ -2875,6 +2875,14 @@
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CApplet/CApplet.cpd</value></column>
       </row>
 
+      <row>
+        <column><name>TYPE_ID</name><value>7</value></column>
+        <column><name>TYPE_NAME</name><value>Portlet</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.portlet.CPortletAdapter</value></column>
+        <column><name>TYPE_DESCR</name><value>Adapter for JSR-168 Portlets</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/portlet/CPortletAdapter.cpd</value></column>
+      </row>
+      
     </rows>
   </table>
 
