@@ -460,26 +460,6 @@
       </rows>
    </table>
 
-
-   <table>
-    <name>UP_FRAGMENT_PARAM</name>
-    <rows>
-      <!-- An example of fragment parameters -->
-      <row>
-        <column><name>FRAGMENT_ID</name><value>1</value></column>
-        <column><name>NODE_ID</name><value>1001</value></column>
-        <column><name>PARAM_NAME</name><value>param1</value></column>
-        <column><name>PARAM_VALUE</name><value>value1</value></column>
-      </row>
-      <row>
-        <column><name>FRAGMENT_ID</name><value>1</value></column>
-        <column><name>NODE_ID</name><value>1003</value></column>
-        <column><name>PARAM_NAME</name><value>param3</value></column>
-        <column><name>PARAM_VALUE</name><value>value3</value></column>
-      </row>
-    </rows>
-  </table>
-
   <table>
     <name>UP_GROUP_FRAGMENT</name>
     <rows>
