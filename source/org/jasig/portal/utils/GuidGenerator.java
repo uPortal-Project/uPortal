@@ -52,7 +52,7 @@ public class GuidGenerator {
      * @see Guid#setClockSeq
      */
     private final static short CLOCKMOD = 16384;
-    
+
     /**
      * NANOS is the conversion from millisecond timer to 100 nanoseconds per RFC.
      *
@@ -73,14 +73,14 @@ public class GuidGenerator {
      * @see Guid#set
      */
     private static long nanoCounter = 0;
-  
+
     /**
      * clockSeq holds the static clock sequence string used in fourth element of Guid per RFC.
      *
      * @see Guid#setClockSeq
      */
     private static String clockSeq;
-    
+
     /**
      * lastMilliTime holds the static last millisecond time requested in order to provide determination
      * if nanoCounter needs to be adjusted.
@@ -92,7 +92,7 @@ public class GuidGenerator {
      * @see Guid#set
      */
     private static long lastMilliTime;
-    
+
     // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     //
     // class instance vars
@@ -106,7 +106,7 @@ public class GuidGenerator {
      * @see Guid#toString
      */
     private String macbase;
-    
+
     /**
      * timebase holds the instance string denoting elements one thru four of Guid per RFC
      *
@@ -127,7 +127,7 @@ public class GuidGenerator {
     /**
      * GuidGenerator() - default constructor
      */
-    public GuidGenerator() throws IllegalArgumentException, java.net.UnknownHostException {
+    public GuidGenerator() throws Exception {
 
         InetAddress ip = InetAddress.getByName(InetAddress.getLocalHost().getHostName());
         byte[] bytes = ip.getAddress();
@@ -138,7 +138,9 @@ public class GuidGenerator {
         if ( actualSize < 12 ) {
             byte[] tailBytes = new byte[12-actualSize];
             random.nextBytes(tailBytes);
-            buffer.append(new String(tailBytes));
+            sun.io.ByteToCharConverter converter = sun.io.ByteToCharConverter.getConverter ( "ASCII" );
+            char[] tailChars = converter.convertAll(tailBytes);
+            buffer.append(tailChars);
         }
         initGuid ( buffer.toString() );
     }
@@ -153,7 +155,7 @@ public class GuidGenerator {
     public GuidGenerator(String newMAC) throws IllegalArgumentException {
         initGuid(newMAC);
     }
-    
+
     // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     //
     // private routines to protect class static vars
@@ -179,28 +181,28 @@ public class GuidGenerator {
       set();
     }
 
-    synchronized static long getNano() { 
-        nanoBump(); 
-        return nanoCounter; 
+    synchronized static long getNano() {
+        nanoBump();
+        return nanoCounter;
     }
-    
+
     /**
      * nanoBump increments nanoCounter
      */
     synchronized static void nanoBump() { nanoCounter++; }
-    
+
     /**
      * nanoReset zeroes nanoCounter
      */
     synchronized static void nanoReset() { nanoCounter = 0; }
-    
+
     /**
      * getLastTime accesses lastMilliTime for return
      *
      * @return the current value of lastMilliTime
      */
     synchronized static long getLastTime () { return lastMilliTime; }
-    
+
     /**
      * setLastTime sets the new value of lastMilliTime
      *
@@ -209,21 +211,21 @@ public class GuidGenerator {
      * @param lastTime the value to which to set lastMilliTime
      */
     synchronized static void setLastTime (long lastTime) { lastMilliTime = lastTime; }
-    
+
     /**
      * getMilliTime accesses the system clock
      *
      * @return the last system time converted to 100 nanosecond intervals
      */
     synchronized static long getMilliTime () { return System.currentTimeMillis()*NANOS; }
-    
+
     /**
      * getClockSeq returns the RFC clock sequence string
      *
      * @return clockSeq value
      */
     synchronized static String getClockSeq() { return clockSeq; }
-  
+
     /**
      * setClockSeq sets the RFC clock sequence string
      *
@@ -261,7 +263,7 @@ public class GuidGenerator {
         tlen = tempclockseq.length();
         clockSeq = tempclockseq.substring(Math.max(tlen-4, 0),tlen);
     }
-    
+
     // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     //
     // public access and process methods
@@ -276,7 +278,7 @@ public class GuidGenerator {
         set();
         return toString();
     }
-    
+
     /**
      * toString returns the current values as a single string per RFC
      *
@@ -285,7 +287,7 @@ public class GuidGenerator {
     public String toString() {
         return timebase+"-"+macbase;
     }
-    
+
     /**
      * set is where all the work is done
      */
@@ -344,7 +346,7 @@ public class GuidGenerator {
         // reset lastMilliTime to be original millitime upon entry to this function
         setLastTime(millitime-nanomod);
     }
-    
+
     /**
      * main is the unit testing interface that creates a new Guid instance and prints result of getNewGuid to System.out
      *
