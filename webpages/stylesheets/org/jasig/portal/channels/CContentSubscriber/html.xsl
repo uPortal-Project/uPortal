@@ -1383,7 +1383,7 @@ Version $Revision$
                                             <tr align="left" class="uportal-channel-text">
                                                 <td valign="top">
                                                     <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
-                                                        <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
+                                                        <img src="{$mediaPath}/channel_subscribe.gif" width="16" height="16" border="0" alt="" title=""/>
                                                     </a>
                                                 </td>
                                                 <td width="100%" valign="bottom">
@@ -1629,7 +1629,7 @@ Version $Revision$
                                                         <tr align="left" valign="top" class="uportal-channel-text">
                                                             <td valign="top">
                                                                 <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
-                                                                    <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
+                                                                    <img src="{$mediaPath}/channel_subscribe.gif" width="16" height="16" border="0" alt="" title=""/>
                                                                 </a>
                                                             </td>
                                                             <td width="100%" valign="bottom">
