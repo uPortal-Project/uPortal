@@ -76,10 +76,10 @@ public class RDBMPropertyStore
         String[] rn = new String[0];
         ArrayList ar = new ArrayList();
         Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
+        RDBMPreparedStatement ps = null;
         try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectPropertyNames);
+            ps = new RDBMPreparedStatement(conn, selectPropertyNames);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());
@@ -102,10 +102,10 @@ public class RDBMPropertyStore
     public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
         Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
+        RDBMPreparedStatement ps = null;
         try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectProperty);
+            ps = new RDBMPreparedStatement(conn, selectProperty);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());
@@ -129,10 +129,10 @@ public class RDBMPropertyStore
     public void storeProperty(EntityIdentifier entityID, String name, String value) {
         this.unStoreProperty(entityID, name);
         Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
+        RDBMPreparedStatement ps = null;
         try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, insertProperty);
+            ps = new RDBMPreparedStatement(conn, insertProperty);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());
@@ -153,10 +153,10 @@ public class RDBMPropertyStore
 
     public void unStoreProperty(EntityIdentifier entityID, String name) {
         Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
+        RDBMPreparedStatement ps = null;
         try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, deleteProperty);
+            ps = new RDBMPreparedStatement(conn, deleteProperty);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());

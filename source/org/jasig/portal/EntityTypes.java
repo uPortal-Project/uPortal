@@ -130,13 +130,13 @@ public synchronized void deleteEntityType(Class type) throws SQLException
 private void deleteEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getDeleteEntityTypeSql());
+            ps = new RDBMPreparedStatement(conn, getDeleteEntityTypeSql());
 
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
@@ -349,13 +349,13 @@ private void initializeCaches()
 private void insertEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getInsertEntityTypeSql());
+            ps = new RDBMPreparedStatement(conn, getInsertEntityTypeSql());
 
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
@@ -441,13 +441,13 @@ public synchronized void updateEntityType(Class type, String newDescription) thr
 private void updateEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getUpdateEntityTypeSql());
+            ps = new RDBMPreparedStatement(conn, getUpdateEntityTypeSql());
 
             ps.setString(1, et.getDescriptiveName());
             ps.setInt(2, et.getTypeId().intValue());

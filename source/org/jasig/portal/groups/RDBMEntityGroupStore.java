@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.RDBMPreparedStatement;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
@@ -208,7 +209,7 @@ throws GroupsException
     {
             conn = RDBMServices.getConnection();
             String sql = getFindContainingGroupsForEntitySql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, memberKey);
@@ -260,7 +261,7 @@ throws GroupsException
     {
             conn = RDBMServices.getConnection();
             String sql = getFindContainingGroupsForGroupSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, serviceName);
@@ -358,7 +359,7 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
     {
             conn = RDBMServices.getConnection();
             String sql = getFindGroupsByCreatorSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
         try
         {
                 ps.setString(1, creatorID);
@@ -413,7 +414,7 @@ public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
     {
         conn = RDBMServices.getConnection();
         String sql = getFindMemberGroupKeysSql();
-        RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+        RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
         try
         {
             ps.setString(1, group.getLocalKey());
@@ -461,7 +462,7 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
     {
         conn = RDBMServices.getConnection();
         String sql = getFindMemberGroupsSql();
-        RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+        RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
         try
         {
             ps.setString(1, localKey);
@@ -1038,8 +1039,8 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
 {
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getInsertGroupSql());
+        RDBMPreparedStatement ps =
+            new RDBMPreparedStatement(conn, getInsertGroupSql());
        try
         {
             Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
@@ -1131,7 +1132,7 @@ private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsExc
     {
             conn = RDBMServices.getConnection();
             String sql = getFindGroupSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, groupID);
@@ -1171,8 +1172,8 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
 {
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getUpdateGroupSql());
+        RDBMPreparedStatement ps =
+            new RDBMPreparedStatement(conn, getUpdateGroupSql());
 
         try
         {
@@ -1234,8 +1235,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
 
             if ( ! deletedGroups.isEmpty() )
             {
-                RDBMServices.PreparedStatement psDeleteMemberGroup =
-                    new RDBMServices.PreparedStatement(conn, getDeleteMemberGroupSql());
+                RDBMPreparedStatement psDeleteMemberGroup =
+                    new RDBMPreparedStatement(conn, getDeleteMemberGroupSql());
 
                 try
                 {
@@ -1264,8 +1265,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
 
             if ( ! deletedEntities.isEmpty() )
             {
-                RDBMServices.PreparedStatement psDeleteMemberEntity =
-                    new RDBMServices.PreparedStatement(conn, getDeleteMemberEntitySql());
+                RDBMPreparedStatement psDeleteMemberEntity =
+                    new RDBMPreparedStatement(conn, getDeleteMemberEntitySql());
 
                 try
                 {
@@ -1294,8 +1295,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
 
         if ( egi.hasAdds() )
         {
-            RDBMServices.PreparedStatement psAdd =
-                new RDBMServices.PreparedStatement(conn, getInsertMemberSql());
+            RDBMPreparedStatement psAdd =
+                new RDBMPreparedStatement(conn, getInsertMemberSql());
 
             try
             {
@@ -1353,7 +1354,7 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     int type = EntityTypes.getEntityTypeID(leaftype).intValue();
     //System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
 
@@ -1361,19 +1362,19 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             conn = RDBMServices.getConnection();
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroups);
+                ps = new RDBMPreparedStatement(conn,this.searchGroups);
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMPreparedStatement(conn,this.searchGroupsPartial);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMPreparedStatement(conn,this.searchGroupsPartial);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMPreparedStatement(conn,this.searchGroupsPartial);
                 break;
               default:
                 throw new GroupsException("Unknown search type");

@@ -32,7 +32,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 package org.jasig.portal.groups.local.searchers;
 
 import org.jasig.portal.EntityIdentifier;
@@ -58,13 +58,13 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
   private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (FIRST_NAME like ? or LAST_NAME like ?)";
   private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (FIRST_NAME = ? or LAST_NAME = ?)";
   private Class personDef;
-  
+
   public RDBMPersonSearcher() {
     try{
       personDef = Class.forName("org.jasig.portal.security.IPerson");
     }
     catch(Exception e){
-      LogService.instance().log(LogService.ERROR,e); 
+      LogService.instance().log(LogService.ERROR,e);
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -72,32 +72,32 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
-    RDBMServices.PreparedStatement ups = null;
-    RDBMServices.PreparedStatement uis = null;
+    RDBMPreparedStatement ps = null;
+    RDBMPreparedStatement ups = null;
+    RDBMPreparedStatement uis = null;
 
         try {
             conn = RDBMServices.getConnection();
-            uis = new RDBMServices.PreparedStatement(conn,this.user_is_search);
+            uis = new RDBMPreparedStatement(conn,this.user_is_search);
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.person_is_search);
+                ps = new RDBMPreparedStatement(conn,this.person_is_search);
                 ups = uis;
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMPreparedStatement(conn,this.person_partial_search);
+                ups = new RDBMPreparedStatement(conn,this.user_partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMPreparedStatement(conn,this.person_partial_search);
+                ups = new RDBMPreparedStatement(conn,this.user_partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMPreparedStatement(conn,this.person_partial_search);
+                ups = new RDBMPreparedStatement(conn,this.user_partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");
@@ -116,7 +116,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
                 ar.add(new EntityIdentifier(urs.getString(1),personDef));
               }
             }
-            
+
             ups.clearParameters();
             ups.setString(1,query);
             ResultSet uprs = ups.executeQuery();
