@@ -375,7 +375,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
        String person = state.runtimeData.getParameter("cw_person");
        if (person != null)
-          person = state.person;
+          state.person = person;
 
        String tidy = state.runtimeData.getParameter("cw_tidy");
        if (tidy != null)
