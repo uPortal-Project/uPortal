@@ -38,7 +38,8 @@
 
 package  org.jasig.portal.utils;
 
-import  java.util.*;
+import  java.util.HashMap;
+import  java.util.Iterator;
 
 
 /**
@@ -47,8 +48,8 @@ import  java.util.*;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class SmartCache extends java.util.Hashtable {
-  protected int iExpirationTimeout = 3600000;       // default to 1 hour
+public class SmartCache extends HashMap {
+  protected int iExpirationTimeout = 3600000;                   // default to 1 hour
 
   /**
    * Instantiate a new SmartCache.  Usually instances of SmartCache are 
@@ -87,7 +88,7 @@ public class SmartCache extends java.util.Hashtable {
    */
   public SmartCache (int iExpirationTimeout) {
     super();
-    this.iExpirationTimeout = iExpirationTimeout * 1000;
+    this.iExpirationTimeout = iExpirationTimeout*1000;
   }
 
   /**
@@ -143,9 +144,9 @@ public class SmartCache extends java.util.Hashtable {
   /**
    * Removes from the cache values which have expired.
    */
-  public void sweepCache () {
-    for (Enumeration enum = keys(); enum.hasMoreElements();) {
-      Object key = enum.nextElement();
+  protected void sweepCache () {
+    for (Iterator keyIterator = keySet().iterator(); keyIterator.hasNext();) {
+      Object key = keyIterator.next();
       ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
       if (valueWrapper.getCreationTime() + valueWrapper.getCacheInterval() < System.currentTimeMillis()) {
         remove(key);
@@ -164,7 +165,7 @@ public class SmartCache extends java.util.Hashtable {
 
     protected ValueWrapper (Object oValue, long lCacheInterval) {
       this.oValue = oValue;
-      this.lCacheInterval = lCacheInterval * 1000;
+      this.lCacheInterval = lCacheInterval*1000;
     }
 
     protected Object getValue () {
