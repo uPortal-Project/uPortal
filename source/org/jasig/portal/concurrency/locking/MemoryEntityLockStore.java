@@ -289,10 +289,15 @@ private void primAdd(IEntityLock lock, Date expiration) throws LockingException
     long now = System.currentTimeMillis();
     long willExpire = expiration.getTime();
     long cacheIntervalSecs = (willExpire - now) / 1000;
-    SmartCache sc = (SmartCache)getLockCache(lock.getEntityType());
+    
+    if ( cacheIntervalSecs > 0 )
+    {
+        SmartCache sc = (SmartCache)getLockCache(lock.getEntityType());
 
-    synchronized (sc) {
-        sc.put( getCacheKey(lock), lock, (cacheIntervalSecs) );
+        synchronized (sc) {
+            sc.put( getCacheKey(lock), lock, (cacheIntervalSecs) );
+        }
     }
+    // Else the lock has already expired.  
 }
 }
