@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.services.LogService;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
@@ -105,6 +107,16 @@ public class ChannelManager implements LayoutEventListener {
 
     private Context portalContext;
     private Context channelContext;
+    
+    // inter-channel communication tables
+    private HashMap iccTalkers;
+    private HashMap iccListeners;
+
+    // a set of channels requested for rendering, but
+    // awaiting rendering set commit due to inter-channel
+    // communication
+    private Set pendingChannels;
+    private boolean groupedRendering;
 
     private IAuthorizationPrincipal ap;
 
@@ -124,7 +136,10 @@ public class ChannelManager implements LayoutEventListener {
     public ChannelManager() {
         channelTable=new Hashtable();
         rendererTable=new Hashtable();
+        iccTalkers=new HashMap();
+        iccListeners=new HashMap();
         channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
+        groupedRendering=false;
     }
     
     /**
@@ -177,6 +192,48 @@ public class ChannelManager implements LayoutEventListener {
      * Note: This information is used to identify relevant channel communication dependencies
      */
     public void commitToRenderingChannelSet() {
+        if(groupedRendering) {
+            // separate out the dependency group in s0
+            
+            HashSet s0=new HashSet();
+            Set children;
+            
+            s0.add(channelTarget);
+            pendingChannels.remove(channelTarget);
+            children=getListeningChannels(channelTarget);
+            if(children!=null && !children.isEmpty()) {
+                children.retainAll(pendingChannels);
+                while(!children.isEmpty()) {
+                    // move to the next generation
+                    HashSet newChildren=new HashSet();
+                    for(Iterator ci=children.iterator();ci.hasNext();) {
+                        String childId=(String)ci.next();
+                        s0.add(childId);
+                        pendingChannels.remove(childId);
+                        Set currentChildren=getListeningChannels(childId);
+                        if(currentChildren!=null) {
+                            newChildren.addAll(currentChildren);
+                        }
+                    }
+                    newChildren.retainAll(pendingChannels);
+                    children=newChildren;
+                }
+            }
+            
+            // now s0 group must be synchronized at renderXML(), while the remaining pendingChildren can be rendered freely
+            SetCheckInSemaphore s0semaphore= new SetCheckInSemaphore(new HashSet(s0));
+            for(Iterator gi=s0.iterator();gi.hasNext();) {
+                String channelSubscribeId=(String)gi.next();
+                ChannelRenderer cr=(ChannelRenderer) rendererTable.get(channelSubscribeId);
+                cr.startRendering(s0semaphore,channelSubscribeId);
+            }
+
+            for(Iterator oi=pendingChannels.iterator();oi.hasNext();) {
+                String channelSubscribeId=(String)oi.next();
+                ChannelRenderer cr=(ChannelRenderer) rendererTable.get(channelSubscribeId);
+                cr.startRendering();
+            }
+        }
     }
 
 
@@ -188,6 +245,8 @@ public class ChannelManager implements LayoutEventListener {
         rendererTable.clear();
         clearRepeatedRenderings();
         targetParams=null;
+        pendingChannels=new HashSet();
+        groupedRendering=false;
     }
 
 
@@ -374,8 +433,12 @@ public class ChannelManager implements LayoutEventListener {
                     InternalPortalException ipe=(InternalPortalException) t;
                     Throwable e=ipe.getException();
                     message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
+                    System.out.println("CError produced the following exception. Please fix CError immediately!");
+                    e.printStackTrace();
                 } else {
                     message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
+                    System.out.println("CError produced the following exception. Please fix CError immediately!");
+                    t.printStackTrace();
                 }
             } else {
                 // check status
@@ -391,15 +454,15 @@ public class ChannelManager implements LayoutEventListener {
                 if(t instanceof InternalPortalException) {
                     InternalPortalException ipe=(InternalPortalException) t;
                     Throwable channelException=ipe.getException();
-                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,false);
+                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
                 } else {
-                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,false);
+                    replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,true);
                 }
             } else {
                 if(renderingStatus==ChannelRenderer.RENDERING_TIMED_OUT) {
-                    replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,false);
+                    replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,true);
                 } else {
-                    replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,false);
+                    replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,true);
                 }
             }
 
@@ -545,8 +608,10 @@ public class ChannelManager implements LayoutEventListener {
             sd.setPerson(upm.getPerson());
 
             sd.setJNDIContext(channelContext);
+            sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
 
             ch.setStaticData(sd);
+
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -596,8 +661,15 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         if(channelTarget!=null) {
+            // process parametersy
             Enumeration en = req.getParameterNames();
             if (en != null) {
+                if(en.hasMoreElements()) {
+                    // only do grouped rendering if there are some parameters passed
+                    // to the target channel.
+                    // detect if channel target talks to other channels
+                    groupedRendering=hasListeningChannels(channelTarget);
+                }
                 while (en.hasMoreElements()) {
                     String pName= (String) en.nextElement();
                     if (!pName.equals ("uP_channelTarget")) {
@@ -656,7 +728,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,false);
                 }
             }
         }
@@ -876,11 +948,63 @@ public class ChannelManager implements LayoutEventListener {
             cr.setTimeout(timeOut);
         }
 
-        cr.startRendering();
+        if(groupedRendering && (isListeningToChannels(channelSubscribeId) || channelSubscribeId.equals(channelTarget))) {
+            // channel might depend on the target channel
+            pendingChannels.add(channelSubscribeId); // defer rendering start
+        } else {
+            cr.startRendering();
+        }
         rendererTable.put(channelSubscribeId,cr);
         return cr;        
-
     }
+
+    synchronized void registerChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
+        Set talkers=(Set)iccListeners.get(listenerChannelSubscribeId);
+        if(talkers==null) {
+            talkers=new HashSet();
+            iccListeners.put(listenerChannelSubscribeId,talkers);
+        }
+        talkers.add(talkerChannelSubscribeId);
+
+        Set listeners=(Set)iccTalkers.get(talkerChannelSubscribeId);
+        if(listeners==null) {
+            listeners=new HashSet();
+            iccTalkers.put(talkerChannelSubscribeId,listeners);
+        }
+        listeners.add(listenerChannelSubscribeId);
+    }
+
+    
+    private Set getListeningChannels(String talkerChannelSubscribeId) {
+        return (Set)iccTalkers.get(talkerChannelSubscribeId);
+    }
+
+    private boolean isListeningToChannels(String listenerChannelSubscribeId) {
+        return (iccListeners.get(listenerChannelSubscribeId)!=null);
+    }
+
+    private boolean hasListeningChannels(String talkerChannelSubscribeId) {
+        return (iccTalkers.get(talkerChannelSubscribeId)!=null);
+    }
+    
+    synchronized void removeChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
+        Set talkers=(Set)iccListeners.get(listenerChannelSubscribeId);
+        if(talkers!=null) {
+            talkers.remove(talkerChannelSubscribeId);
+            if(talkers.isEmpty()) {
+                iccListeners.remove(listenerChannelSubscribeId);
+            }
+        }
+
+        Set listeners=(Set)iccTalkers.get(talkerChannelSubscribeId);
+        if(listeners!=null) {
+            listeners.remove(listenerChannelSubscribeId);
+            if(listeners.isEmpty()) {
+                iccTalkers.remove(talkerChannelSubscribeId);
+            }
+        }
+    }
+    
 
     // LayoutEventListener interface implementation
     public void channelAdded(LayoutEvent ev) {}
