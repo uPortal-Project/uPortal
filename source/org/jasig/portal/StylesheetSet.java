@@ -264,13 +264,13 @@ public class StylesheetSet extends SAXFilterImpl
 
   public XSLTInputSource getStylesheet (String title, HttpServletRequest req)
   {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	Logger.log(Logger.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     return getStylesheet (title,getMedia (req));
   }
 
   public XSLTInputSource getStylesheet (HttpServletRequest req)
   {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd=getStylesheetDescription (getMedia (req));
 
     if (sd!=null)
@@ -281,7 +281,7 @@ public class StylesheetSet extends SAXFilterImpl
 
     public XSLTInputSource getStylesheetByMedia (String media)
   {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd=getStylesheetDescription (media);
 
     if (sd!=null)
@@ -353,7 +353,7 @@ public class StylesheetSet extends SAXFilterImpl
       this.setMediaProps ((String) null);
 
     if (props!=null)
-      return props.getValue (req.getHeader ("user-Agent"));
+      return props.getValue (req.getHeader ("User-Agent"));
 
     return (String) null;
   }

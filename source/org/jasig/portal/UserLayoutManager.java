@@ -113,7 +113,7 @@ public class UserLayoutManager {
         IUserPreferencesDB updb=new UserPreferencesDBImpl();
 
         // determine user profile
-        String userAgent=req.getHeader("user-Agent");
+        String userAgent=req.getHeader("User-Agent");
         UserProfile upl=updb.getUserProfile(this.person.getID(),userAgent);
         if(upl!=null) {
             IUserLayoutDB uldb = new UserLayoutDBImpl();

@@ -164,7 +164,7 @@ public class MediaManager
       this.setMediaProps ((String) null);
 
     if (mediaProps != null)
-      return mediaProps.getValue (req.getHeader ("user-Agent"));
+      return mediaProps.getValue (req.getHeader ("User-Agent"));
 
     return (String) null;
   }
@@ -413,7 +413,7 @@ public class MediaManager
 
     if (mediaProps != null)
     {
-      return getSerializer (mediaProps.getValue (req.getHeader ("user-Agent")), out);
+      return getSerializer (mediaProps.getValue (req.getHeader ("User-Agent")), out);
     }
     else
     {
@@ -435,7 +435,7 @@ public class MediaManager
 
     if (mediaProps != null)
     {
-      return getSerializer (mediaProps.getValue (req.getHeader ("user-Agent")), out);
+      return getSerializer (mediaProps.getValue (req.getHeader ("User-Agent")), out);
     }
     else
     {
