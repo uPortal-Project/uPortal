@@ -1517,6 +1517,10 @@ public class RDBMUserLayoutStore
       String sqlTypeID = channel.getAttribute("typeID");
       String sysdate = tsStart + " '" + new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
       String sqlTimeout = channel.getAttribute("timeout");
+      String timeout = "0";
+      if (sqlTimeout != null && sqlTimeout.trim().length() != 0) {
+        timeout  = sqlTimeout;
+      }
       String sqlMinimizable = dbBool(channel.getAttribute("minimizable"));
       String sqlEditable = dbBool(channel.getAttribute("editable"));
       String sqlHasHelp = dbBool(channel.getAttribute("hasHelp"));
@@ -1541,7 +1545,7 @@ public class RDBMUserLayoutStore
         "CHAN_PUBL_DT=" + sysdate + ", " +
         "CHAN_APVL_ID=NULL, " +
         "CHAN_APVL_DT=NULL, " +
-        "CHAN_TIMEOUT='" + sqlTimeout + "', " +
+        "CHAN_TIMEOUT=" + timeout + ", " +
         "CHAN_MINIMIZABLE='" + sqlMinimizable + "', " +
         "CHAN_EDITABLE='" + sqlEditable + "', " +
         "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
@@ -1557,7 +1561,7 @@ public class RDBMUserLayoutStore
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
             + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
         sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-            + publisherId + ", " + sysdate + ", '" + sqlTimeout + "', '" + sqlMinimizable
+            + publisherId + ", " + sysdate + ", " + timeout + ", '" + sqlMinimizable
             + "', '" + sqlEditable + "', '" + sqlHasHelp
             + "', '" + sqlHasAbout + "', '" + sqlUnremovable
             + "', '" + sqlDetachable + "', '" + sqlName + "', '" + sqlFName + "')";
@@ -1989,7 +1993,7 @@ public class RDBMUserLayoutStore
    * @return
    * @exception Exception
    */
-  public int setChannelRoles (int channelID, Vector roles) throws Exception {
+  public int setChannelRoles (int channelID, org.jasig.portal.security.IAuthorization.RoleAuthorization[] roles) throws Exception {
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -2002,14 +2006,18 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sDelete);
         int recordsDeleted = stmt.executeUpdate(sDelete);
         // Count the number of records inserted
-        for (int i = 0; i < roles.size(); i++) {
-          String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
+        for (int i = 0; i < roles.length; i++) {
+          org.jasig.portal.security.IAuthorization.RoleAuthorization ra = roles[i];
+          String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + ra.getRoleName() + "'";
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
-            int roleId = rs.getInt("ROLE_ID");
-            String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID) VALUES (" + channelID + "," + roleId + ")";
+            int roleId = rs.getInt(1);
+            String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID, RELEASE_DT, APPROVAL_FLG) " +
+              "VALUES (" + channelID + "," + roleId + "," +
+              tsStart + "'" + new java.sql.Timestamp(ra.getAuthorizedDate().getTime()) + "'" + tsEnd + "," +
+              "'" + (ra.getAuthorized() ? "Y" : "N") + "'" + ")";
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sInsert);
             recordsInserted += stmt.executeUpdate(sInsert);
           } finally {
