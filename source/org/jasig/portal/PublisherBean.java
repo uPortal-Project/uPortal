@@ -18,7 +18,7 @@ import org.jasig.portal.GenericPortalBean;
  * This includes naming and defining characteristics.
  * Channel may then be subject for approval and added to a registry.
  * @author John Laker
- * @version %I%, %G%
+ * @version $Revision$
  */
 public class PublisherBean extends GenericPortalBean{
 
@@ -30,6 +30,41 @@ public class PublisherBean extends GenericPortalBean{
   public PublisherBean() {
   }
 
+  /**
+   * Method creates an instance of the channel class
+   * and then writes the fields needed to set the channel parameters
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
+  public void writeParamFields(HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+   try
+   {
+    Object channelObject = Class.forName("org.jasig.portal.channels."+req.getParameter("chan_type")).newInstance();
+    org.jasig.portal.IChannel ch = (org.jasig.portal.IChannel) channelObject;
+    Vector v = ch.getParameters();
+    Enumeration enum = v.elements();
+    while(enum.hasMoreElements()) {
+      String [] param = new String[5];
+      param = (String[])enum.nextElement();
+      out.println(param[4]+ "<br>");
+      out.println("<table width=\"40%\" border=\"0\">");
+      out.println("<tr>");
+      out.println("<td width=\"19%\">"+param[0]+":</td>");
+      out.println("<td width=\"81%\">");
+      out.println("<input type=\"text\" name=\""+param[1]+"\" size=\""+param[2]+"\" maxlength=\""+param[3]+"\" >");
+      out.println("</td>");
+      out.println("</tr>");
+      out.println("</table>");
+      out.println("<br>");
+    }
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+  }
 
   /**
    * Creates a new channel object
