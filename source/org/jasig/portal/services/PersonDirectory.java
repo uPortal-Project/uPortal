@@ -36,6 +36,7 @@
 package org.jasig.portal.services;
 
 import org.jasig.portal.RdbmServices;
+import  org.jasig.portal.security.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -161,25 +162,7 @@ public class PersonDirectory {
             continue; // whitespace (typically \n) between tags
           Element pele = (Element) param;
           String tagname = pele.getTagName();
-
-          // Previous versions of Xerces had problems when text contained
-          // a simple entity such as &amp;. So we don't assume that a
-          // parameter contains only a single text node as a child, although
-          // that is normally the case. Go through all the child nodes and
-          // concatenate the text together. If it becomes necessary to
-          // handle other type of nodes (like entities) we are ready.
-          StringBuffer vb = new StringBuffer();
-          NodeList vnodes = pele.getChildNodes();
-          for (int j =0; j<vnodes.getLength();j++) {
-            Node vnode = vnodes.item(j);
-            if (vnode instanceof Text)
-              vb.append(((Text)vnode).getData());
-            //if (vnode instanceof Entity) {
-            //  Entity en = (Entity) vnode;
-            //  vb.append("???");
-            //}
-          }
-          String value = vb.toString();
+          String value = getTextUnderElement(pele);
 
           // each tagname corresponds to an object data field
           if (tagname.equals("url")) {
@@ -197,31 +180,53 @@ public class PersonDirectory {
           } else if (tagname.equals("usercontext")) {
             pdi.usercontext=value;
           } else if (tagname.equals("attributes")) {
-            // The <attributes> tag contains a list of names
-            // and optionally aliases each in the form
-            // name[:alias]
-            // The name is an LDAP property or database column name.
-            // The alias, if it exists, is an eduPerson property that
-            // corresponds to the previous LDAP or DBMS name.
-            // If no alias is specified, the eduPerson name is also
-            // the LDAP or DBMS column name.
-            StringTokenizer st = new StringTokenizer(value);
-            int n = st.countTokens();
-            pdi.attributenames = new String[n];
-            pdi.attributealiases = new String[n];
-            for (int k=0;k<n;k++) {
-              String tk = st.nextToken();
-              int pos =tk.indexOf(':');
-              if (pos>0) { // There is an alias
-                pdi.attributenames[k]=tk.substring(0,pos);
-                pdi.attributealiases[k]=tk.substring(pos+1);
-              } else { // There is no alias
-                pdi.attributenames[k]=tk;
-                pdi.attributealiases[k]=tk;
+            NodeList anodes = pele.getElementsByTagName("attribute");
+            int anodecount = anodes.getLength();
+            if (anodecount!=0) {
+              pdi.attributenames = new String[anodecount];
+              pdi.attributealiases = new String[anodecount];
+              for (int j =0; j<anodecount;j++) {
+                Element anode = (Element) anodes.item(j);
+                NodeList namenodes = anode.getElementsByTagName("name");
+                String aname = "$$$";
+                if (namenodes.getLength()!=0)
+                  aname= getTextUnderElement(namenodes.item(0));
+                pdi.attributenames[j]=aname;
+                NodeList aliasnodes = anode.getElementsByTagName("alias");
+                if (aliasnodes.getLength()==0) {
+                  pdi.attributealiases[j]=aname;
+                } else {
+                  pdi.attributealiases[j]=getTextUnderElement(aliasnodes.item(0));
+                }
+              }
+            } else {
+              // The <attributes> tag contains a list of names
+              // and optionally aliases each in the form
+              // name[:alias]
+              // The name is an LDAP property or database column name.
+              // The alias, if it exists, is an eduPerson property that
+              // corresponds to the previous LDAP or DBMS name.
+              // If no alias is specified, the eduPerson name is also
+              // the LDAP or DBMS column name.
+              StringTokenizer st = new StringTokenizer(value);
+              int n = st.countTokens();
+              pdi.attributenames = new String[n];
+              pdi.attributealiases = new String[n];
+              for (int k=0;k<n;k++) {
+                String tk = st.nextToken();
+                int pos =tk.indexOf(':');
+                if (pos>0) { // There is an alias
+                  pdi.attributenames[k]=tk.substring(0,pos);
+                  pdi.attributealiases[k]=tk.substring(pos+1);
+
+                } else { // There is no alias
+                  pdi.attributenames[k]=tk;
+                  pdi.attributealiases[k]=tk;
+                }
               }
             }
           } else {
-            ;
+      	    LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         sources.addElement(pdi); // Add one LDAP or JDBC source to the list
@@ -235,6 +240,20 @@ public class PersonDirectory {
     return true;
   }
 
+
+  private String getTextUnderElement(Node nele) {
+    if (!(nele instanceof Element))
+      return null;
+    Element pele = (Element) nele;
+    StringBuffer vb = new StringBuffer();
+    NodeList vnodes = pele.getChildNodes();
+    for (int j =0; j<vnodes.getLength();j++) {
+      Node vnode = vnodes.item(j);
+      if (vnode instanceof Text)
+        vb.append(((Text)vnode).getData());
+    }
+    return vb.toString();
+  }
 
   /**
    * Run down the list of LDAP or JDBC sources and extract info from each
@@ -252,6 +271,18 @@ public class PersonDirectory {
     }
     return attribs;
   }
+
+  public void getUserDirectoryInformation(String uid,  IPerson m_Person) {
+    java.util.Hashtable attribs = this.getUserDirectoryInformation(uid);
+    java.util.Enumeration en = attribs.keys();
+      while (en.hasMoreElements()) {
+        String key = (String) en.nextElement();
+        String value = (String) attribs.get(key);
+        m_Person.setAttribute(key,value);
+      }
+  }
+
+
 
   /**
    * Extract named attributes from a single LDAP directory

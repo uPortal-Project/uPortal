@@ -1,12 +1,31 @@
 <?xml version="1.0"?>
-
 <!-- JDBC Properties -->
 <PersonDirInfo>
-  <driver>org.hsql.jdbcDriver</driver>
-  <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
-  <logonid>sa</logonid>
-  <logonpassword></logonpassword>
-  <uidquery>SELECT FIRST_NAME||' '||LAST_NAME FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
-  <attributes>FIRST_LAST:displayName FIRST_NAME:givenName LAST_NAME:sn EMAIL:mail</attributes>		
+	<driver>org.hsql.jdbcDriver</driver>
+	<url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
+	<logonid>sa</logonid>
+	<logonpassword/>
+	<uidquery>SELECT FIRST_NAME||' '||LAST_NAME FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
+	<attributes>
+		<attribute>
+			<name>FIRST_LAST</name>
+			<alias>displayName</alias>
+		</attribute>
+		<attribute>
+			<name>FIRST_NAME</name>
+			<alias>givenName</alias>
+		</attribute>
+		<attribute>
+			<name>LAST_NAME</name>
+			<alias>sn</alias>
+		</attribute>
+		<attribute>
+			<name>FIRST_NAME</name>
+			<alias>givenName</alias>
+		</attribute>
+		<attribute>
+			<name>EMAIL</name>
+			<alias>mail</alias>
+		</attribute>
+	</attributes>
 </PersonDirInfo>
-
