@@ -26,6 +26,10 @@ public class CApplet implements org.jasig.portal.IChannel
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return false;}  
+  public boolean hasHelp () {return false;}  
+  
+  public int getDefaultDetachWidth () {return 250;}
+  public int getDefaultDetachHeight () {return 350;}
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

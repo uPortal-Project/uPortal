@@ -24,6 +24,10 @@ public class CSearch implements org.jasig.portal.IChannel
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return false;}  
+  public boolean hasHelp () {return false;}  
+  
+  public int getDefaultDetachWidth () {return 175;}
+  public int getDefaultDetachHeight () {return 250;}
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

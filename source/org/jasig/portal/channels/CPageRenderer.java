@@ -29,6 +29,10 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return true;}  
+  public boolean hasHelp () {return false;}  
+  
+  public int getDefaultDetachWidth () {return 0;}
+  public int getDefaultDetachHeight () {return 0;}
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

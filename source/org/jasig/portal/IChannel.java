@@ -12,6 +12,10 @@ public interface IChannel
   public boolean isDetachable ();
   public boolean isRemovable ();
   public boolean isEditable ();
+  public boolean hasHelp ();
+  
+  public int getDefaultDetachWidth ();
+  public int getDefaultDetachHeight ();
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out);

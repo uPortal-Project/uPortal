@@ -25,6 +25,10 @@ public class CAuthorization implements org.jasig.portal.IChannel
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return false;}
   public boolean isEditable () {return false;}  
+  public boolean hasHelp () {return true;}  
+  
+  public int getDefaultDetachWidth () {return 0;}
+  public int getDefaultDetachHeight () {return 0;}
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

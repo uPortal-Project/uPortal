@@ -27,6 +27,10 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return true;}
+  public boolean hasHelp () {return false;}  
+  
+  public int getDefaultDetachWidth () {return 450;}
+  public int getDefaultDetachHeight () {return 400;}
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
