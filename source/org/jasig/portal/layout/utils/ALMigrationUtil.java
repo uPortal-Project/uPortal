@@ -37,10 +37,13 @@ package org.jasig.portal.layout.utils;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.CommonUtils;
 
 /**
  * The aggregated layout migration utility
