@@ -69,7 +69,6 @@ class GPreferencesState extends BaseState {
     ThemeStylesheetDescription tsd=null;
     StructureStylesheetDescription ssd=null;
     ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
-    IUserLayoutDB uldb=null;
 
     // these state variables are kept for the use by the internalStates
     private static final String layoutID = "top"; // just a way to refer to the layout element since it doesn't have an ID attribute
@@ -104,10 +103,15 @@ class GPreferencesState extends BaseState {
         this.internalState=new GBrowseState(this);
     }
 
-    public Document getUserLayoutXML() {
+    public Document getUserLayoutXML() throws PortalException {
         if(userLayoutXML==null) {
             // get the layout from the database
-            userLayoutXML=this.getUserLayoutDB().getUserLayout(context.getUserLayoutManager().getPerson().getID(),context.getCurrentUserPreferences().getProfile().getProfileId());
+            try {
+              userLayoutXML=GenericPortalBean.getDbImplObject().getUserLayout(context.getUserLayoutManager().getPerson().getID(),context.getCurrentUserPreferences().getProfile().getProfileId());
+            } catch (Exception e) {
+              Logger.log(Logger.ERROR, e);
+              throw new GeneralRenderingException(e.getMessage());
+            }
         }
         return userLayoutXML;
     }
@@ -120,7 +124,7 @@ class GPreferencesState extends BaseState {
         return updb;
     }
 
-    public UserPreferences getUserPreferences() throws ResourceMissingException {
+    public UserPreferences getUserPreferences() throws ResourceMissingException, PortalException {
         if(up==null) {
             // load UserPreferences from the DB
             up=this.getUserPreferencesDB().getUserPreferences(context.getUserLayoutManager().getPerson().getID(),this.getProfile());
@@ -134,12 +138,6 @@ class GPreferencesState extends BaseState {
         return csddb;
     }
 
-
-    public IUserLayoutDB getUserLayoutDB() {
-        if(uldb==null) uldb= new UserLayoutDBImpl();
-        return uldb;
-    }
-
     public ThemeStylesheetDescription getThemeStylesheetDescription() {
         if(tsd==null) {
             ThemeStylesheetUserPreferences ssup=up.getThemeStylesheetUserPreferences();
@@ -151,7 +149,7 @@ class GPreferencesState extends BaseState {
         return tsd;
 
         }
-    public StructureStylesheetDescription getStructureStylesheetDescription() throws ResourceMissingException {
+    public StructureStylesheetDescription getStructureStylesheetDescription() throws ResourceMissingException, PortalException {
         if(ssd==null) {
             ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
             StructureStylesheetUserPreferences fsup=this.getUserPreferences().getStructureStylesheetUserPreferences();
@@ -673,7 +671,7 @@ class GPreferencesState extends BaseState {
             }
         }
 
-        private void prepareReorder () {
+        private void prepareReorder () throws PortalException {
             String folderID = runtimeData.getParameter ("elementID"); // the folder or channel ID
             String direction = runtimeData.getParameter ("dir"); // "up" or "down"
 

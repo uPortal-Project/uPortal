@@ -187,7 +187,7 @@ public class CUserPreferences implements IPrivilegedChannel
     }
 
 
-    private void prepareSaveChanges () {
+    private void prepareSaveChanges () throws PortalException {
         // write code to persist the userLayoutXML to the session
         // and the database (remember, as the user interacts with this
         // channel, changes are only made to a copy of the userLayoutXML
