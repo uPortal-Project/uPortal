@@ -1,3 +1,38 @@
+/**
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels;
 
 import java.net.URL;
@@ -7,8 +42,6 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NotContextException;
-// import org.jasig.portal.security.Permission;
-// import org.jasig.portal.security.PermissionManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
@@ -31,7 +64,7 @@ import org.w3c.dom.Element;
  * to be included in a layout folder of type "header".  Most stylesheets
  * will render the content of such header channels consistently on every
  * page.
- * @author Peter Kharchenko
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision 1.1$
@@ -74,6 +107,7 @@ public class CHeader extends BaseChannel
       return  (false);
     }
   }
+
   /**
    * put your documentation comment here
    * @return ChannelCacheKey
@@ -105,6 +139,7 @@ public class CHeader extends BaseChannel
     k.setKeyValidity(new Long(System.currentTimeMillis()));
     return  k;
   }
+
   /**
    * Gets the current date/time with specified format
    * @param format the format string
@@ -123,6 +158,7 @@ public class CHeader extends BaseChannel
 
     return "&nbsp;";
   }
+
   /**
    * Returns the DOM object associated with the user
    * NOTE: This should be made more effecient through caching
@@ -186,6 +222,7 @@ public class CHeader extends BaseChannel
     doc.appendChild(headerEl);
     return  (doc);
   }
+
   /**
    * put your documentation comment here
    * @param validity
@@ -204,6 +241,7 @@ public class CHeader extends BaseChannel
     }
     return  false;
   }
+
   /**
    * Render method.
    * @param out
