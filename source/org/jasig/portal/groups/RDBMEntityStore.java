@@ -64,6 +64,8 @@ public RDBMEntityStore()
  * Find the <code>IEntities</code> that are members of the <code>IEntityGroup</code>.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @deprecated
+ * replaced by <code>RDBMEntityGroupStore.findEntitiesForGroup(IEntityGroup)</code>.
  */
 public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
@@ -78,7 +80,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
         Statement stmnt = conn.createStatement();
         try {
 
-            String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP_B" +
+            String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP" +
                            " WHERE GROUP_ID = " + "'" + groupID + "'" +
                            " AND MEMBER_IS_GROUP = 'F' ";
 
