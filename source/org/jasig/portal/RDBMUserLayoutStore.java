@@ -95,6 +95,14 @@ public class RDBMUserLayoutStore
     "FROM {oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHAN_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE",
     "FROM {oj UP_STRUCT_SS USS LEFT OUTER JOIN UP_STRUCT_PARAMS USP ON USS.SS_ID=USP.SS_ID} WHERE",
     "FROM {oj UP_THEME_SS UTS LEFT OUTER JOIN UP_THEME_PARAMS UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
+
+  /* Some database with broken jdbc drivers */
+  static final DbStrings PostgreSQLDb = new DbStrings(
+    "FROM UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE",
+    "FROM UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_STRUCT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID WHERE",
+    "FROM UP_CHANNEL UC LEFT OUTER JOIN UP_CHAN_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE",
+    "FROM UP_STRUCT_SS USS LEFT OUTER JOIN UP_STRUCT_PARAMS USP ON USS.SS_ID=USP.SS_ID WHERE",
+    "FROM UP_THEME_SS UTS LEFT OUTER JOIN UP_THEME_PARAMS UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
   static final DbStrings OracleDb = new DbStrings(
     "FROM UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND",
     "FROM UP_LAYOUT_STRUCT ULS, UP_STRUCT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND",
@@ -102,7 +110,7 @@ public class RDBMUserLayoutStore
     "FROM UP_STRUCT_SS USS, UP_STRUCT_PARAMS USP WHERE USS.SS_ID=USP.SS_ID(+) AND",
     "FROM UP_THEME_SS UTS, UP_THEME_PARAMS UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
 
-  static final DbStrings[] joinDbStrings = {jdbcDb, OracleDb};
+  static final DbStrings[] joinDbStrings = {jdbcDb, PostgreSQLDb, OracleDb};
   static DbStrings dbStrings;
   static {
       String sql;
@@ -607,7 +615,7 @@ public class RDBMUserLayoutStore
    * @param structId
    * @exception java.sql.SQLException
    */
-   protected void createLayout (HashMap layoutStructure, DocumentImpl doc,
+   protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
         Element root, int structId) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
@@ -828,7 +836,7 @@ public class RDBMUserLayoutStore
                   try {
                     MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
                     try {
-                      do {
+                      readLayout: while (true) {
                         int chanId = rs.getInt(4);
                         ls = new LayoutStructure(structId,rs.getInt(2), rs.getInt(3), chanId, rs.getString(7),rs.getString(8),rs.getString(9));
                         layoutStructure.put(new Integer(structId), ls);
@@ -845,10 +853,14 @@ public class RDBMUserLayoutStore
                         if (supportsOuterJoins) {
                           do {
                             String name = rs.getString(10);
-                            if (name != null) { // may not be there because of the join
+                            if (!rs.wasNull()) { // may not be there because of the join
                               ls.addParameter(name, rs.getString(11));
                             }
-                          } while (rs.next() && (structId = rs.getInt(1)) == lastStructId);
+                            if (!rs.next()) {
+                              break readLayout;
+                            }
+                            structId = rs.getInt(1);
+                          } while (structId == lastStructId);
                         } else { // Do second SELECT later on for structure parameters
                           if (ls.isChannel()) {
                             structParms.append(sepChar + ls.chanId);
@@ -856,9 +868,11 @@ public class RDBMUserLayoutStore
                           }
                           if (rs.next()) {
                             structId = rs.getInt(1);
+                          } else {
+                            break readLayout;
                           }
                         }
-                      } while (!rs.isAfterLast());
+                      }
                       rs.close();
                     } finally {
                       if (pstmtChannelParm != null) {
@@ -878,13 +892,16 @@ public class RDBMUserLayoutStore
                   try {
                     if (rs.next()) {
                       int structId = rs.getInt(1);
-                      do {
+                      readParm: while(true) {
                         ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
                         lastStructId = structId;
                         do {
                           ls.addParameter(rs.getString(2), rs.getString(3));
-                        } while (rs.next() && (structId = rs.getInt(1)) == lastStructId);
-                      } while(!rs.isAfterLast());
+                          if (!rs.next()) {
+                            break readParm;
+                          }
+                        } while ((structId = rs.getInt(1)) == lastStructId);
+                      }
                     }
                   } finally {
                     rs.close();
@@ -991,22 +1008,17 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * convert true/false int Y/N for database
+   * convert true/false into Y/N for database
    * @param value to check
    * @result Y/N
    */
   protected static final String dbBool (String value) {
-    if (value != null && value.equals("true")) {
-      return  "Y";
-    }
-    else {
-      return  "N";
-    }
+      return (value != null && value.equals("true") ? "Y" : "N");
   }
 
   /**
    * put your documentation comment here
-   * @param node
+   * @param nodeup
    * @param stmt
    * @param userId
    * @param layoutId
@@ -1014,11 +1026,8 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
-  protected int saveStructure (Node node, MyPreparedStatement structStmt, MyPreparedStatement parmStmt) throws java.sql.SQLException {
-    if (node == null) {
-      return  0;
-    }
-    else if (node.getNodeName().equals("parameter")) {
+  protected final int saveStructure (Node node, MyPreparedStatement structStmt, MyPreparedStatement parmStmt) throws java.sql.SQLException {
+    if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
     }
     Element structure = (Element)node;
