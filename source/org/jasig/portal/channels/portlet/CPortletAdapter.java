@@ -389,6 +389,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
 				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
                 
+                // Add the user information
+                wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
+ 
                 // Put the current runtime data and wrapped request into the portlet window
                 PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
                 portletWindow.setChannelRuntimeData(rd);
