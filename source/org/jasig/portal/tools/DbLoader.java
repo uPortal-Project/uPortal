@@ -78,10 +78,15 @@ public class DbLoader
       UtilitiesBean.setPortalBaseDir(portalBaseDir);
       con = rdbmService.getConnection ();
 
-      XMLReader parser = new org.apache.xerces.parsers.SAXParser();
-      doProperties(parser);
-      doTables(parser);
-      doData(parser);
+      if (con != null)
+      {
+        XMLReader parser = new org.apache.xerces.parsers.SAXParser();
+        doProperties(parser);
+        doTables(parser);
+        doData(parser);
+      }
+      else
+        System.out.println("Couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
     }
     catch (Exception e)
     {
