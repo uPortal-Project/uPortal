@@ -28,7 +28,7 @@
 -->
 
 
-<project name="uPortal" default="compile" basedir=".">
+<project name="uPortal" default="help" basedir=".">
 
 
 <!-- ===================== Property Definitions =========================== -->
@@ -428,6 +428,26 @@
 
 
 
+<!-- ==================== Help target ===================================== -->
+<!--	
+	
+	The "help" target prints a help message describing the available targets.
+	This target is the default target so that deployers who blindly execute the Ant task receive help.
+
+-->	
+	
+	<target name="help" description="Prints information about using this ant build file.">
+		
+		<loadfile property="helpMessage"
+		      srcFile="docs/antHelp.txt"/>
+		
+		<echo message="uPortal build.xml help task:"/>
+		<echo message="Prints the file docs/antHelp.txt:"/>
+		<echo message="---"/>
+		<echo message="${helpMessage}"/>
+	</target>
+	
+	
 <!-- ==================== All Target ====================================== -->
 
 <!--
