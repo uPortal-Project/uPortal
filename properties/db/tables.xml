@@ -2,6 +2,75 @@
 <!-- $Revision$ -->
 
 <tables>
+  <table sinceMajor="2" sinceMinor="4">
+    <name>UP_PORTLET_DEFINITION_PREFS</name>
+    <desc>The restrictions</desc>
+     <columns>
+      <column>
+		<name>CHAN_ID</name>
+		<type>INTEGER</type>
+		<desc>Foreign key from up_channel</desc>
+        <key>FK</key>        
+      </column>
+      <column>
+      	<name>PORTLET_PREF_NAME</name>
+      	<type>LONGVARCHAR</type>
+        <desc>The name of the preference</desc>
+      </column>
+      <column>
+      	<name>PORTLET_PREF_VALUE</name>
+      	<type>LONGVARCHAR</type>
+        <desc>The value of the preference</desc>
+      </column>
+      <column> 
+      	<name>PORTLET_PREF_READONLY</name>   
+      	<type>VARCHAR</type> 
+      	<param>1</param>
+        <desc>Y/N Toggle on to see if the preference is read only</desc>
+      </column>
+    </columns>
+    <not-null>CHAN_ID</not-null>
+    <not-null>PORTLET_PREFERENCES_NAME</not-null>
+  </table>
+  
+  <table sinceMajor="2" sinceMinor="4">
+    <name>UP_PORTLET_ENTITY_PREFS</name>
+    <desc>The restrictions</desc>
+     <columns>
+      <column> 
+      	<name>USER_ID</name>         
+      	<type>INTEGER</type>
+        <desc>Foreign key user_id of table up_user</desc>
+        <key>CK</key>
+      </column>
+      <column> 
+      	<name>LAYOUT_ID</name>       
+      	<type>INTEGER</type>
+        <desc>Foreign key layout_id of table up_user_layout and compound key</desc>
+        <key>CK</key>
+      </column>
+      <column> 
+      	<name>STRUCT_ID</name>       
+      	<type>INTEGER</type>
+        <desc>Foreign key of table UP_LAYOUT_STRUCT and compound key</desc>
+        <key>CK</key>
+      </column>          
+      <column>
+      	<name>PORTLET_PREF_NAME</name>
+      	<type>LONGVARCHAR</type>
+        <desc>The name of the preference</desc>
+      </column>
+      <column>
+      	<name>PORTLET_PREF_VALUE</name>
+      	<type>LONGVARCHAR</type>
+        <desc>The value of the preference</desc>
+      </column>
+    </columns>
+    <not-null>USER_ID</not-null>
+    <not-null>LAYOUT_ID</not-null>
+    <not-null>STRUCT_ID</not-null>
+    <not-null>PORTLET_PREFERENCES_NAME</not-null>
+  </table>  
 
   <table sinceMajor="2" sinceMinor="2">
     <name>UP_RESTRICTIONS</name>
