@@ -262,7 +262,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
             // determine channel name
             if(portcs!=null) {
-                String chName=(portcs.getUserPreferencesManager()).getNodeName(str_channelSubscribeId);
+                String chName=null;
+                try {
+                    chName=portcs.getUserPreferencesManager().getUserLayoutManager().getNode(str_channelSubscribeId).getName();
+                } catch (Exception e) {
+                    chName="undetermined name";
+                }
                 if(chName!=null) {
                     Element nameEl=doc.createElement("name");
                     nameEl.appendChild(doc.createTextNode(chName));

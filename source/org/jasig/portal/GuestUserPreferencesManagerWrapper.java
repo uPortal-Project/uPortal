@@ -41,7 +41,8 @@ import  org.jasig.portal.utils.BooleanLock;
 import  org.w3c.dom.*;
 import  javax.servlet.http.*;
 import  java.util.*;
-
+import org.jasig.portal.layout.IUserLayoutManager;
+import javax.servlet.http.HttpSessionBindingEvent;
 
 /**
  * A class that allows {@link GuestUserpreferencesManager} to be presented as {@link IUserpreferencesManager}
@@ -89,15 +90,6 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
     }
 
     /**
-     * Returns a global channel Id given a channel instance Id
-     * @param channelInstanceId instance id of a channel
-     * @return channel global id
-     */
-    public String getChannelPublishId (String channelInstanceId) {
-        return this.gulm.getChannelGlobalId(channelInstanceId,this.sessionId);
-    }
-
-    /**
      * Determine if the user agent associated with this session has been successfuly mapped to a profile
      * @return <code>true</code> if no mapping was found
      */
@@ -109,17 +101,8 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
-        this.gulm.setNewUserLayoutAndUserPreferences(newLayout,newPreferences,this.sessionId, channelsAdded);
-    }
-
-
-    /**
-     * Create and return a copy of the user layout
-     * @return a copy of the user layout <code>Document</code>
-     */
-    public Document getUserLayoutCopy () {
-        return this.gulm.getUserLayoutCopy(this.sessionId);
+    public void setNewUserLayoutAndUserPreferences (IUserLayoutManager newLayout, UserPreferences newPreferences) throws PortalException {
+        this.gulm.setNewUserLayoutAndUserPreferences(newLayout,newPreferences,this.sessionId);
     }
 
     /**
@@ -154,21 +137,8 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
         return this.gulm.getStructureStylesheetDescription(this.sessionId);
     }
 
-    /**
-     * Returns a user layout node.
-     * @param elementId node's Id value
-     * @return <code>Node</code> that matches elementId
-     */
-    public Node getUserLayoutNode (String elementId) {
-        return this.gulm.getUserLayoutNode(elementId,this.sessionId);
-    }
-
-    /**
-     * Returns user layout root node. Careful, this is not a copy!
-     * @return user layout <code>Document</code>
-     */
-    public Document getUserLayout() {
-        return this.gulm.getUserLayout(this.sessionId);
+    public IUserLayoutManager getUserLayoutManager() {
+        return this.gulm.getUserLayoutManager(this.sessionId);
     }
 
     /**
@@ -179,28 +149,10 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
         return this.gulm.getUserPreferences(this.sessionId);
     }
 
-    public BooleanLock getUserLayoutWriteLock() {
-        //        return layout_write_lock;
-        return this.gulm.getUserLayoutWriteLock(this.sessionId);
+    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
+        this.gulm.finishedSession(bindingEvent,this.sessionId);
     }
 
-    /**
-     * helper function that allows to determine the name of a channel or
-     *  folder in the current user layout given their Id.
-     * @param nodeID id of the node
-     * @return node's name value
-     */
-    public String getNodeName (String nodeId) {
-        return this.gulm.getNodeName(nodeId,this.sessionId);
-    }
-
-    /**
-     * Removes a channel
-     * @param  channelSubscribeId channel subscribe Id
-     */
-    public boolean removeChannel (String channelSubscribeId) throws PortalException {
-        return this.gulm.removeChannel(channelSubscribeId,this.sessionId);
-    }
 }
 
 

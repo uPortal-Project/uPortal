@@ -82,25 +82,28 @@ public interface IUserLayoutManager {
      * @param nodeId a <code>String</code> value of a node Id.
      * @param parentId a <code>String</code> id of a folder to which the node should be moved.
      * @param nextSiblingId a <code>String</code> id of a sibling node (folder or channel) prior to which the node should be placed. (<code>null</code> to append at the end)
+     * @return a <code>boolean</code> value noting if the operation was successful
      * @exception PortalException if an error occurs
      */
-    public void moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException;
+    public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException;
 
     /**
      * Delete a node (folder or a channel) from a user layout.
      *
      * @param nodeId a <code>String</code> id (channel subscribe id or folder id)
+     * @return a <code>boolean</code> value noting if the operation was successful
      * @exception PortalException if an error occurs
      */
-    public void deleteNode(String nodeId) throws PortalException;
+    public boolean deleteNode(String nodeId) throws PortalException;
 
     /**
      * Update a given node.
      *
      * @param node an <code>UserLayoutNodeDescription</code> value with a valid id.
+     * @return a <code>boolean</code> value noting if the operation was successful
      * @exception PortalException if an error occurs
      */
-    public void updateNode(UserLayoutNodeDescription node) throws PortalException;
+    public boolean updateNode(UserLayoutNodeDescription node) throws PortalException;
 
 
     /**
@@ -190,12 +193,32 @@ public interface IUserLayoutManager {
     public String getNextSiblingId(String nodeId) throws PortalException;
 
 
-    // temp methods, to be removed (getDOM() might actually stay)
-    // This method should be removed whenever it becomes possible
-    public void setUserLayoutDOM(DocumentImpl doc);
+    /**
+     * Determine an Id of a previous sibling node.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>String</code> Id value of a previous sibling node, or <code>null</code> if this is the first sibling.
+     * @exception PortalException if an error occurs
+     */
+    public String getPreviousSiblingId(String nodeId) throws PortalException;
+
+    /**
+     * Return a cache key, uniqly corresponding to the composition and the structure of the user layout.
+     *
+     * @return a <code>String</code> value
+     * @exception PortalException if an error occurs
+     */
+    public String getCacheKey() throws PortalException;
+
 
     // This method should be removed whenever it becomes possible
     public DocumentImpl getUserLayoutDOM();
 
-
+    /**
+     * Returns a layout Id associated with this manager/
+     *
+     * @return an <code>int</code> layout Id value;
+     */
+    public int getLayoutId();
+    
 }

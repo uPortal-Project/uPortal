@@ -38,7 +38,6 @@ package  org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.utils.BooleanLock;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.PropsMatcher;
 import org.jasig.portal.services.LogService;
@@ -56,6 +55,10 @@ import java.util.Collections;
 import java.net.URL;
 import java.io.IOException;
 
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import javax.servlet.http.HttpSessionBindingEvent;
 
 /**
  * Multithreaded version of {@link UserPreferencesManager}.
@@ -69,7 +72,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         private StructureStylesheetDescription ssd;
         private boolean unmapped_user_agent;
         private UserPreferences complete_up;
-        private Document uLayoutXML;
+        private IUserLayoutManager ulm;
         public MState() {
             tsd=null; ssd=null; complete_up=null;
             unmapped_user_agent=false;
@@ -109,7 +112,6 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         ss_descripts=new Hashtable();
         m_person = person;
         ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-        layout_write_lock.setValue(true);
     }
 
 
@@ -183,45 +185,43 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             if (upl != null) {
                 // see if the user layout xml has been cached
                 if(upl.isSystemProfile()) {
-                    newState.uLayoutXML=(Document)sp_layouts.get(new Integer(upl.getProfileId()));
+                    newState.ulm=(IUserLayoutManager)sp_layouts.get(new Integer(upl.getProfileId()));
                 } else {
-                    newState.uLayoutXML=(Document)up_layouts.get(new Integer(upl.getProfileId()));
+                    newState.ulm=(IUserLayoutManager)up_layouts.get(new Integer(upl.getProfileId()));
                 }
-                if(newState.uLayoutXML==null) {
-                    // read uLayoutXML
+                if(newState.ulm==null) {
                     try {
-                        newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl);
-                        if(newState.uLayoutXML!=null) {
-                            if(upl.isSystemProfile()) {
-                                sp_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
-                            } else {
-                                up_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
-                            }
+                        newState.ulm=UserLayoutManagerFactory.immutableUserLayoutManager(UserLayoutManagerFactory.getUserLayoutManager(m_person,upl));
+                        if(upl.isSystemProfile()) {
+                            sp_layouts.put(new Integer(upl.getProfileId()),newState.ulm);
+                        } else {
+                            up_layouts.put(new Integer(upl.getProfileId()),newState.ulm);
                         }
+                    } catch (PortalException pe) {
+                        throw pe;
                     } catch (Exception e) {
                         throw new PortalException("GuestUserPreferencesManager::registerSession() : caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
                     }
                 }
 
-                if (newState.uLayoutXML == null) {
-                    throw new PortalException("UserPreferencesManager::UserPreferencesManager() : unable to retreive userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".");
-                } else {
-                    // modify the entire profile to be unremovable and immutable
-                    // mark all of the folders
-                    NodeList folderList=newState.uLayoutXML.getElementsByTagName("folder");
-                    for(int i=0;i<folderList.getLength();i++) {
-                        Element e=(Element)folderList.item(i);
-                        e.setAttribute("immutable","true");
-                        e.setAttribute("unremovable","true");                        
-                    }
-                    // mark all of the channels
-                    NodeList channelList=newState.uLayoutXML.getElementsByTagName("channel");
-                    for(int i=0;i<channelList.getLength();i++) {
-                        Element e=(Element)channelList.item(i);
-                        e.setAttribute("immutable","true");
-                        e.setAttribute("unremovable","true");                        
-                    }
+                /*
+                // modify the entire profile to be unremovable and immutable
+                // mark all of the folders
+                NodeList folderList=newState.uLayoutXML.getElementsByTagName("folder");
+                for(int i=0;i<folderList.getLength();i++) {
+                    Element e=(Element)folderList.item(i);
+                    e.setAttribute("immutable","true");
+                    e.setAttribute("unremovable","true");                        
                 }
+                // mark all of the channels
+                NodeList channelList=newState.uLayoutXML.getElementsByTagName("channel");
+                for(int i=0;i<channelList.getLength();i++) {
+                    Element e=(Element)channelList.item(i);
+                    e.setAttribute("immutable","true");
+                    e.setAttribute("unremovable","true");                        
+                }
+                */
+
 
                 // see if the user preferences for this profile are cached
                 UserPreferences cleanUP;
@@ -254,7 +254,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 }
 
                 // Initialize the JNDI context for this user
-                JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),newState.uLayoutXML);
+                JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),newState.ulm.getUserLayoutDOM());
             } else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
@@ -375,19 +375,14 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
      * @param channelInstanceId
      * @return Channel's global Id
      */
-    public String getChannelGlobalId (String channelInstanceId, String sessionId) {
+    protected String getChannelGlobalId (String channelSubscribeId, String sessionId) throws PortalException {
         // Get the channel node from the user's layout
-        Node channelNode = getUserLayoutNode(channelInstanceId,sessionId);
-        if (channelNode == null) {
-            return  (null);
+        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) getUserLayoutManager(sessionId).getNode(channelSubscribeId);
+        if(channel!=null) {
+            return channel.getChannelPublishId();
+        } else {
+            return null;
         }
-        // Get the global channel Id from the channel node
-        Node channelPublishIdNode = channelNode.getAttributes().getNamedItem("chanID");
-        if (channelPublishIdNode == null) {
-            return  (null);
-        }
-        // Return the channel's publish Id
-        return  (channelPublishIdNode.getNodeValue());
     }
 
     public boolean isUserAgentUnmapped (String sessionId) {
@@ -419,30 +414,15 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     /*
      * Guest users can not (by definition) save any preferences. Method does nothing.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences,String sessionId, boolean channelsAdded) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences (IUserLayoutManager newLayout, UserPreferences newPreferences,String sessionId) throws PortalException {
+        // not implemented yet
     }
 
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences (IUserLayoutManager newLayout, UserPreferences newPreferences) throws PortalException {
         throw new UnsupportedOperationException();
     }
 
 
-    /**
-     * Get a copy of user layout.
-     * @return a copy of user layout
-     */
-    public Document getUserLayoutCopy (String sessionId) {
-        MState state=(MState)stateTable.get(sessionId);
-        if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return null;
-        }
-        return  XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)state.uLayoutXML);
-    }
-
-    public Document getUserLayoutCopy () {
-        throw new UnsupportedOperationException();
-    }
 
     public UserPreferences getUserPreferencesCopy (String sessionId) {
         return  new UserPreferences(this.getUserPreferences(sessionId));
@@ -506,83 +486,25 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns a node from a user layout
-     * @param elementId node id
-     * @return a node
-     */
-    public Node getUserLayoutNode (String elementId,String sessionId) {
-        return  getUserLayout(sessionId).getElementById(elementId);
-    }
-
-    public Node getUserLayoutNode (String elementId) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the root of the user layout
-     * @return root node of the user layout
-     */
-    public Document getUserLayout (String sessionId) {
+    public IUserLayoutManager getUserLayoutManager(String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
             LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
-        return  state.uLayoutXML;
+        return  state.ulm;
     }
 
-    public Document getUserLayout () {
+    public IUserLayoutManager getUserLayoutManager() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns user layout write lock
-     *
-     * @return an <code>Object</code> lock
-     */
-    public BooleanLock getUserLayoutWriteLock() {
-        throw new UnsupportedOperationException();
+    public void finishedSession(HttpSessionBindingEvent bindingEvent, String sessionId) {
+        // remove session state info
+        stateTable.remove(sessionId);
     }
 
-    /**
-     * Returns user layout write lock
-     *
-     * @return an <code>Object</code> lock
-     */
-    public BooleanLock getUserLayoutWriteLock(String sessionId) {
-        return super.getUserLayoutWriteLock();
-    }
-
-    /**
-     * helper function that allows to determine the name of a channel or
-     *  folder in the current user layout given their Id.
-     * @param nodeId
-     * @return node name
-     */
-    public String getNodeName (String nodeId,String sessionId) {
-        Element node = getUserLayout(sessionId).getElementById(nodeId);
-        if (node != null) {
-            return  node.getAttribute("name");
-        } else {
-            return  null;
-        }
-    }
-
-    public String getNodeName (String nodeId) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Guest users can not remove channels. 
-     * @param  channelSubscribeId channel subscribe id
-     * @return false
-     */
-    public boolean removeChannel (String channelSubscribeId,String sessionId) throws PortalException {
-        return false;
-    }
-
-    public boolean removeChannel (String channelSubscribeId) throws PortalException {
+    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
         throw new UnsupportedOperationException();
     }
 }

@@ -48,6 +48,11 @@ import  java.util.Enumeration;
 import  java.util.Hashtable;
 import  java.net.URL;
 
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
@@ -62,14 +67,14 @@ class GPreferencesState extends BaseState {
     private UserProfile profile;
     protected ChannelRuntimeData runtimeData;
     private UserPreferences up = null;
-    private Document userLayoutXML = null;
+    private IUserLayoutManager ulm=null;
     ThemeStylesheetDescription tsd = null;
     StructureStylesheetDescription ssd = null;
     protected IUserLayoutStore ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     // these state variables are kept for the use by the internalStates
 
     // just a way to refer to the layout element since it doesn't have an ID attribute
-    private static final String layoutID = "top";                
+    private static final String layoutID = "root";                
     private String folderID = layoutID;
     private boolean modified = false;             // becomes true after user makes changes to layout
 
@@ -143,18 +148,29 @@ class GPreferencesState extends BaseState {
     this.internalState = new GBrowseState(this);
   }
 
-  protected Document getUserLayoutXML() throws PortalException {
-    if (userLayoutXML == null) {
-      // get the layout from the database
-      try {
-        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserPreferencesManager().getPerson(), context.getCurrentUserPreferences().getProfile());
-      } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
-        throw  new GeneralRenderingException(e.getMessage());
+  protected IUserLayoutManager getUserLayoutManager() throws PortalException {
+      if(this.ulm==null) {
+          IUserPreferencesManager upm = context.getUserPreferencesManager();
+          // If the we are editing the current user layout, get a copy of the current user layout,
+          // otherwise get it from the database or other persistant storage
+          if (modifyingCurrentUserLayout()) {
+              // get it from the preferences manager
+              this.ulm=upm.getUserLayoutManager();
+          }  else {
+              // construct a new one
+              this.ulm=UserLayoutManagerFactory.getUserLayoutManager(upm.getPerson(),context.getCurrentUserPreferences().getProfile());
+          }
       }
-    }
-    return  userLayoutXML;
+      return this.ulm;
   }
+
+  private boolean modifyingCurrentUserLayout () throws PortalException {
+      // check if we're editing the same layout (note: this relies on the layout Ids to be meaningful, which
+      // is not entirely true with the current "template user layout" feature. Hopefully this will go away soon.
+      //      return (context.getUserPreferencesManager().getCurrentProfile().getProfileId()==context.getEditedUserProfile().getProfileId() && context.getUserPreferencesManager().getCurrentProfile().isSystemProfile()==context.getEditedUserProfile().isSystemProfile());
+      return (context.getUserPreferencesManager().getCurrentProfile().getLayoutId()==context.getEditedUserProfile().getLayoutId());
+  }
+    
 
 
   protected IUserPreferencesManager getUserPreferencesManager() {
@@ -167,7 +183,7 @@ class GPreferencesState extends BaseState {
       // load UserPreferences from the DB
       try {
         up = ulsdb.getUserPreferences(context.getUserPreferencesManager().getPerson(), this.getProfile());
-        up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
+        up.synchronizeWithUserLayoutXML(this.getUserLayoutManager().getUserLayoutDOM());
       } catch (Exception e) {
         throw new PortalException(e.getMessage(), e);
       }
@@ -287,21 +303,13 @@ class GPreferencesState extends BaseState {
     }
 
     private void prepareSaveEditedItem() throws PortalException {
-      Element target = context.getUserLayoutXML().getElementById(editElementID);
-      String elType = target.getTagName();
+      // update node name
+      UserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
+      node.setName(runtimeData.getParameter("name"));
+      getUserLayoutManager().updateNode(node);
+      
       // reset the name
-      target.setAttribute("name", runtimeData.getParameter("name"));
-      if (elType.equals("folder")) {
-        // target is a folder
-        StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
-        for (Enumeration fe = ssup.getFolderAttributeNames(); fe.hasMoreElements();) {
-          String atName = (String)fe.nextElement();
-          String atValue = runtimeData.getParameter(atName);
-          if (atValue.equals(context.getStructureStylesheetDescription().getFolderAttributeDefaultValue(atName)))
-            atValue = null;
-          ssup.setFolderAttributeValue(editElementID, atName, atValue);
-        }
-      } else if (elType.equals("channel")) {
+      if (node instanceof UserLayoutChannelDescription) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
         for (Enumeration ce = ssup.getChannelAttributeNames(); ce.hasMoreElements();) {
@@ -317,9 +325,21 @@ class GPreferencesState extends BaseState {
         for (Enumeration ca = tsup.getChannelAttributeNames(); ca.hasMoreElements();) {
           String atName = (String)ca.nextElement();
           String atValue = runtimeData.getParameter(atName);
-          if (atValue.equals(context.getThemeStylesheetDescription().getChannelAttributeDefaultValue(atName)))
+          if (atValue.equals(context.getThemeStylesheetDescription().getChannelAttributeDefaultValue(atName))) {
             atValue = null;
+          }
           tsup.setChannelAttributeValue(editElementID, atName, atValue);
+        }
+      } else {
+        // target is a folder
+        StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
+        for (Enumeration fe = ssup.getFolderAttributeNames(); fe.hasMoreElements();) {
+          String atName = (String)fe.nextElement();
+          String atValue = runtimeData.getParameter(atName);
+          if (atValue.equals(context.getStructureStylesheetDescription().getFolderAttributeDefaultValue(atName))) {
+            atValue = null;
+          }
+          ssup.setFolderAttributeValue(editElementID, atName, atValue);
         }
       }
       context.setModified(true);
@@ -330,8 +350,12 @@ class GPreferencesState extends BaseState {
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-      Element target = context.getUserLayoutXML().getElementById(editElementID);
-      String elType = target.getTagName();
+        UserLayoutNodeDescription node=getUserLayoutManager().getNode(editElementID);
+        String elType="folder";
+        if(node instanceof UserLayoutChannelDescription) {
+            elType="channel";
+        }
+
       // construct the descriptive XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("editelement");
@@ -344,7 +368,7 @@ class GPreferencesState extends BaseState {
 
       edEl.appendChild(typeEl);
       Element nameEl = doc.createElement("name");
-      nameEl.appendChild(doc.createTextNode(target.getAttribute("name")));
+      nameEl.appendChild(doc.createTextNode(node.getName()));
       edEl.appendChild(nameEl);
       // determine element type
       if (elType.equals("folder")) {
@@ -640,7 +664,7 @@ class GPreferencesState extends BaseState {
       }
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
-        xslt.setXML(context.getUserLayoutXML());
+        xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameters(params);
@@ -659,35 +683,36 @@ class GPreferencesState extends BaseState {
       // changes in userLayoutXML are always related back to the UserPreferencesManager.
       // (unless profile-specific layouts will be introduced)
       if (context.getUserPreferencesManager().getCurrentProfile() == context.getProfile()) {
-        context.getUserPreferencesManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences(), false);
+          context.getUserPreferencesManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutManager(), context.getUserPreferences());
       } else {
         // do a database save on the preferences
         try {
-          ulsdb.putUserPreferences(context.getUserPreferencesManager().getPerson(), context.getUserPreferences());
+            // persist layout
+            context.getUserLayoutManager().saveUserLayout();
+            ulsdb.putUserPreferences(context.getUserPreferencesManager().getPerson(), context.getUserPreferences());
         } catch (Exception e) {
-          throw new PortalException(e.getMessage(), e);
+            throw new PortalException(e.getMessage(), e);
         }
-        context.getUserPreferencesManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null, false);
       }
     }
 
     private void prepareReorder() throws PortalException {
       String folderID = runtimeData.getParameter("elementID");                  // the folder or channel ID
       String direction = runtimeData.getParameter("dir");       // "up" or "down"
-      Node element = context.getUserLayoutXML().getElementById(folderID);
-      Node parent = element.getParentNode();
+
+      IUserLayoutManager lm=context.getUserLayoutManager();
       if (direction.equals("up")) {
-        Node prev;
-        // Goto the previous channel or folder element
-        for (prev = element.getPreviousSibling(); prev != null && prev.getNodeType() != Node.ELEMENT_NODE && (!prev.getNodeName().equals("channel")
-            || !prev.getNodeName().equals("folder")); prev = prev.getPreviousSibling());
-        parent.insertBefore(element, prev);
-      }
-      else if (direction.equals("down")) {
-        Node next;
-        // Goto the next channel or folder element
-        for(next = element.getNextSibling(); next != null && next.getNodeType() != Node.ELEMENT_NODE && (!next.getNodeName().equals("channel") || !next.getNodeName().equals("folder")); next = next.getNextSibling());
-        parent.insertBefore(next, element);
+          String prevSiblingId=lm.getPreviousSiblingId(folderID);
+          if(prevSiblingId!=null) {
+              lm.moveNode(folderID,lm.getParentId(folderID),prevSiblingId);
+          }
+          //        for (prev = element.getPreviousSibling(); prev != null && prev.getNodeType() != Node.ELEMENT_NODE && (!prev.getNodeName().equals("channel")  || !prev.getNodeName().equals("folder")); prev = prev.getPreviousSibling());
+      } else if (direction.equals("down")) {
+          String nextSiblingId=lm.getNextSiblingId(folderID);
+          if(nextSiblingId!=null) {
+              lm.moveNode(folderID,lm.getParentId(folderID),nextSiblingId);
+          }       
+          //        for(next = element.getNextSibling(); next != null && next.getNodeType() != Node.ELEMENT_NODE && (!next.getNodeName().equals("channel") || !next.getNodeName().equals("folder")); next = next.getNextSibling());
       }
       context.setModified(true);
     }
@@ -724,7 +749,7 @@ class GPreferencesState extends BaseState {
       String xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
-        xslt.setXML(context.getUserLayoutXML());
+        xslt.setXML(context.getUserLayoutManager().getUserLayoutDOM());
         xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
@@ -743,28 +768,13 @@ class GPreferencesState extends BaseState {
 
     private void prepareMoveTo () throws PortalException {
       String destinationID = runtimeData.getParameter("destination");
-      Node destination = null;
-      if (destinationID == null) {
-        LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : received a null destinationID !");
-      } else {
-          if (destinationID.equals(context.getLayoutRootID())) {
-              destination = context.getUserLayoutXML().getDocumentElement();        // the layout element
-          } else {
-              destination = context.getUserLayoutXML().getElementById(destinationID);
-          }
-          if (destination == null) {
-              LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
-          } else {
-              for (int i = 0; i < moveIDs.length; i++) {
-                  Node relocating = context.getUserLayoutXML().getElementById(moveIDs[i]);
-                  destination.insertBefore(relocating, null);         // adds to end of children nodes
-              }
-              context.setModified(true);
-              IPrivilegedChannel bstate = new GBrowseState(context);
-              bstate.setRuntimeData(runtimeData);
-              context.setState(bstate);
-          }
+      for (int i = 0; i < moveIDs.length; i++) {
+          getUserLayoutManager().moveNode(moveIDs[i],destinationID,null);
       }
+      context.setModified(true);
+      IPrivilegedChannel bstate = new GBrowseState(context);
+      bstate.setRuntimeData(runtimeData);
+      context.setState(bstate);
     }
   }
 }

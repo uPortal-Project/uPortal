@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Collections;
 
 
 /**
@@ -62,7 +63,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         // channel-specific attributes
         this.setTitle(xmlNode.getAttribute("title"));
         this.setDescription(xmlNode.getAttribute("description"));
-        this.setClassName(xmlNode.getAttribute("className"));
+        this.setClassName(xmlNode.getAttribute("class"));
         this.setChannelPublishId(xmlNode.getAttribute("chanID"));
         this.setChannelTypeId(xmlNode.getAttribute("typeID"));
         this.setFunctionalName(xmlNode.getAttribute("fname"));
@@ -371,8 +372,17 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      *
      * @return a <code>Set</code> of <code>String</code> parameter names.
      */
-    public Set parameterNames() {
+    public Set getParameterNames() {
         return parameters.keySet();
+    }
+
+    /**
+     * Returns an entire mapping of parameters.
+     *
+     * @return a <code>Map</code> of parameter names on parameter values.
+     */
+    public Map getParameterMap() {
+        return Collections.unmodifiableMap(parameters);
     }
 
     /**
@@ -408,7 +418,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     }
     
     protected void addParameterChildren(Element node, Document root) {
-        for(Iterator i=this.parameterNames().iterator();i.hasNext();) {
+        for(Iterator i=this.getParameterNames().iterator();i.hasNext();) {
             Element pElement=root.createElement("parameter");
             String pName=(String)i.next();
             pElement.setAttribute("name",pName);
@@ -421,7 +431,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         super.addNodeAttributes(node);
         node.setAttribute("title",this.getTitle());
         node.setAttribute("description",this.getDescription());
-        node.setAttribute("className",this.getClassName());
+        node.setAttribute("class",this.getClassName());
         node.setAttribute("chanID",this.getChannelPublishId());
         node.setAttribute("typeID",this.getChannelTypeId());
         node.setAttribute("fname",this.getFunctionalName());

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import  org.apache.xerces.dom.DocumentImpl;
+import java.util.Random;
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.
@@ -34,6 +35,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     protected DocumentImpl userLayoutDocument=null;
     
+    protected static Random rnd=new Random();
+    protected String cacheKey="initialKey";
+
     
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
         if(owner==null) {
@@ -52,8 +56,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     // This method should be removed whenever it becomes possible
-    public void setUserLayoutDOM(DocumentImpl doc) {
+    private void setUserLayoutDOM(DocumentImpl doc) {
         this.userLayoutDocument= doc;
+        this.updateCacheKey();
     }
     // This method should be removed whenever it becomes possible
     public DocumentImpl getUserLayoutDOM() {
@@ -189,12 +194,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
             // register element id
             ulm.putIdentifier(node.getId(),childElement);
+            this.updateCacheKey();
             return node;
         }
         return null;
     }
 
-    public void moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
+    public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
         UserLayoutNodeDescription parent=this.getNode(parentId);
         UserLayoutNodeDescription node=this.getNode(nodeId);
         if(canMoveNode(node,parent,nextSiblingId)) {
@@ -208,19 +214,31 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 Node nextSibling=ulm.getElementById(nextSiblingId);
                 parentElement.insertBefore(childElement,nextSibling);
             }
+            this.updateCacheKey();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void deleteNode(String nodeId) throws PortalException {
+    public boolean deleteNode(String nodeId) throws PortalException {
         if(canDeleteNode(nodeId)) {
             Document ulm=this.getUserLayoutDOM();
             Element childElement=(Element)ulm.getElementById(nodeId);
             Node parent=childElement.getParentNode();
-            parent.removeChild(childElement);
+            if(parent!=null) {
+                parent.removeChild(childElement);
+            } else {
+                throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
+            }
+            this.updateCacheKey();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public synchronized void updateNode(UserLayoutNodeDescription node) throws PortalException {
+    public synchronized boolean updateNode(UserLayoutNodeDescription node) throws PortalException {
         if(canUpdateNode(node)) {
             // normally here, one would determine what has changed
             // but we'll just make sure that the node type has not
@@ -252,6 +270,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 } else {
                     throw new PortalException("Change channel to folder is not allowed by updateNode() method!");
                 }
+            } else if(oldNode instanceof UserLayoutRootDescription) {
+                throw new PortalException("Update of root node is not currently allowed!");
             } else {
                 // must be a folder
                 UserLayoutFolderDescription oldFolder=(UserLayoutFolderDescription) oldNode;
@@ -277,11 +297,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
                     ulm.putIdentifier(node.getId(),newFolderElement);
-                } else {
-                    throw new PortalException("Change channel to folder is not allowed by updateNode() method!");
                 }
             }
-
+            this.updateCacheKey();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -336,11 +357,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public void markAddTargets(UserLayoutNodeDescription node) {
         // get all folders
+        this.updateCacheKey();
     }
     
 
     public void markMoveTargets(String nodeId) throws PortalException {
         UserLayoutNodeDescription node=getNode(nodeId);
+        this.updateCacheKey();
     }
 
     public String getParentId(String nodeId) throws PortalException {
@@ -383,6 +406,26 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
+    public String getPreviousSiblingId(String nodeId) throws PortalException {
+        Document ulm=this.getUserLayoutDOM();
+        Element nelement=(Element)ulm.getElementById(nodeId);
+        if(nelement!=null) {
+            Node nsibling=nelement.getPreviousSibling();
+            // scroll to the next element node
+            while(nsibling!=null && nsibling.getNodeType()!=Node.ELEMENT_NODE){
+                nsibling=nsibling.getNextSibling();
+            }
+            if(nsibling!=null) {
+                Element e=(Element) nsibling;
+                return e.getAttribute("ID");
+            } else {
+                return null;
+            }
+        } else {
+            throw new PortalException("Node with id=\""+nodeId+"\" doesn't exist.");
+        }
+    }
+
     public List getChildIds(String nodeId) throws PortalException {
         Vector v=new Vector();
         UserLayoutNodeDescription node=getNode(nodeId);
@@ -399,5 +442,25 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
         }
         return v;
+    }
+
+    public String getCacheKey() {
+        return this.cacheKey;
+    }
+
+    /**
+     * This is outright cheating ! We're supposed to analyze the user layout tree
+     * and return a key that corresponds uniqly to the composition and the sturcture of the tree.
+     * Here we just return a different key wheneever anything changes. So if one was to move a 
+     * node back and forth, the key would always never (almost) come back to the original value, 
+     * even though the changes to the user layout are cyclic.
+     *
+     */
+    private void updateCacheKey() {
+        this.cacheKey=Long.toString(rnd.nextLong());
+    }
+
+    public int getLayoutId() {
+        return profile.getLayoutId();
     }
 }

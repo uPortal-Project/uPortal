@@ -18,6 +18,8 @@ public abstract class UserLayoutNodeDescription {
     protected boolean immutable=false;
     protected boolean unremovable=false;
     protected boolean hidden=false;
+
+    public static final String ROOT_FOLDER_ID="root";
     
     /**
      * Returns a node Id. 
@@ -91,6 +93,7 @@ public abstract class UserLayoutNodeDescription {
         node.setAttribute("name",this.getName());
         node.setAttribute("unremovable",(new Boolean(this.isUnremovable())).toString());
         node.setAttribute("immutable",(new Boolean(this.isImmutable())).toString());
+        node.setAttribute("hidden",(new Boolean(this.isHidden())).toString());
     }
 
     /**
@@ -108,6 +111,9 @@ public abstract class UserLayoutNodeDescription {
             return new UserLayoutChannelDescription(xmlNode);
         } else if(nodeName.equals("folder")) {
             return new UserLayoutFolderDescription(xmlNode);
+        } else if(nodeName.equals("layout")) {
+            // root node
+            return new UserLayoutRootDescription(xmlNode);
         } else {
             throw new PortalException("Given XML element is neither folder nor channel");
         }

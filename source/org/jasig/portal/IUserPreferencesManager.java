@@ -40,9 +40,8 @@ import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.*;
 import  javax.servlet.http.*;
 import  java.util.*;
-import org.jasig.portal.utils.BooleanLock;
-
-
+import org.jasig.portal.layout.IUserLayoutManager;
+import javax.servlet.http.HttpSessionBindingEvent;
 
 /**
  * Interface to user preferences management class.
@@ -66,11 +65,18 @@ public interface IUserPreferencesManager {
     public IPerson getPerson ();
 
     /**
+     * Returns {@link IUserLayoutManager} object for performing layout-related operations.
+     *
+     * @return an <code>IUserLayoutManager</code> value
+     */
+    public IUserLayoutManager getUserLayoutManager();
+
+    /**
      * Returns a global channel Id given a channel instance Id
      * @param channelInstanceId instance id of a channel
      * @return channel global id
      */
-    public String getChannelPublishId (String channelInstanceId);
+    //    public String getChannelPublishId (String channelInstanceId);
 
     /**
      * Determine if the user agent associated with this session has been successfuly mapped to a profile
@@ -82,14 +88,7 @@ public interface IUserPreferencesManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException;
-
-
-    /**
-     * Create and return a copy of the user layout
-     * @return a copy of the user layout <code>Document</code>
-     */
-    public Document getUserLayoutCopy ();
+    public void setNewUserLayoutAndUserPreferences (IUserLayoutManager newLayout, UserPreferences newPreferences) throws PortalException;
 
     /**
      * Returns a copy of the user preferences
@@ -116,47 +115,12 @@ public interface IUserPreferencesManager {
     public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception;
 
     /**
-     * Returns a user layout node.
-     * @param elementId node's Id value
-     * @return <code>Node</code> that matches elementId
-     */
-    public Node getUserLayoutNode (String elementId);
-
-    /**
-     * Returns user layout root node. Careful, this is not a copy!
-     * @return user layout <code>Document</code>
-     */
-    public Document getUserLayout();
-
-    /**
      * Returns current user preferences.
      * @return current <code>UserPreferences</code>
      */
     public UserPreferences getUserPreferences();
 
-    /**
-     * helper function that allows to determine the name of a channel or
-     *  folder in the current user layout given their Id.
-     * @param nodeId id of the node
-     * @return node's name value
-     */
-    public String getNodeName (String nodeId);
-
-    /**
-     * Removes a channel
-     * @param channelSubscribeId channel instance Id
-     * @return true if the remove operation was successful
-     */
-    public boolean removeChannel (String channelSubscribeId) throws PortalException;
-
-    /**
-     * Returns a layout write lock.
-     * The lock is also serves as a flag to mark the dirty (modified) layouts.
-     *
-     * @return an <code>Object</code> layout write lock
-     */
-    public BooleanLock getUserLayoutWriteLock();
-
+    public void finishedSession(HttpSessionBindingEvent bindingEvent);
 }
 
 

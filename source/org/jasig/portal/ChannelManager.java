@@ -64,6 +64,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+
 import tyrex.naming.MemoryContext;
 
 /**
@@ -79,7 +81,7 @@ import tyrex.naming.MemoryContext;
  * @version $Revision$
  */
 public class ChannelManager {
-    private IUserPreferencesManager ulm;
+    private IUserPreferencesManager upm;
     private PortalControlStructures pcs;
 
     private Hashtable channelTable;
@@ -122,9 +124,9 @@ public class ChannelManager {
      */
     public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserPreferencesManager manager,UPFileSpec uPElement) {
         this();
-        this.ulm=manager;
+        this.upm=manager;
         pcs=new PortalControlStructures();
-        pcs.setUserPreferencesManager(ulm);
+        pcs.setUserPreferencesManager(upm);
         pcs.setChannelManager(this);
         this.setReqNRes(request,response,uPElement);
     }
@@ -132,7 +134,7 @@ public class ChannelManager {
 
     public ChannelManager(IUserPreferencesManager manager) {
         this();
-        this.ulm=manager;
+        this.upm=manager;
         pcs=new PortalControlStructures();
         pcs.setUserPreferencesManager(manager);
         pcs.setChannelManager(this);
@@ -351,24 +353,18 @@ public class ChannelManager {
      * @param channelSubscribeId a channel instance Id in the userLayout
      * @return an <code>IChannel</code> object
      */
-    public IChannel instantiateChannel(String channelSubscribeId) {
+    public IChannel instantiateChannel(String channelSubscribeId) throws PortalException {
         if (channelTable.get(channelSubscribeId) != null) {
             // reinstantiation
             channelTable.remove(channelSubscribeId);
         }
         // get channel information from the user layout manager
-        Element elChannel=(Element) ulm.getUserLayoutNode(channelSubscribeId);
-        if(elChannel!=null) {
-            String className=elChannel.getAttribute("class");
-            String channelPublishId=elChannel.getAttribute("chanID");
-            long timeOut=java.lang.Long.parseLong(elChannel.getAttribute("timeout"));
-            Hashtable params=new Hashtable();
-            NodeList paramsList=elChannel.getElementsByTagName("parameter");
-            int nnodes=paramsList.getLength();
-            for(int i=0;i<nnodes;i++) {
-                Element param=(Element) paramsList.item(i);
-                params.put(param.getAttribute("name"),param.getAttribute("value"));
-            }
+        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
+        if(channel!=null) {
+            String className=channel.getClassName();
+            String channelPublishId=channel.getChannelPublishId();
+            long timeOut=channel.getTimeout();
+            Hashtable params=new Hashtable(channel.getParameterMap());
             try {
                 return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,params);
             } catch (Exception ex) {
@@ -434,12 +430,18 @@ public class ChannelManager {
             sd.setTimeout(timeOut);
             sd.setParameters(params);
             // Set the Id of the channel that exists in UP_CHANNELS
-            sd.setChannelPublishId(ulm.getChannelPublishId(channelSubscribeId));
+            try {
+                UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
+                if(channel!=null) {
+                    sd.setChannelPublishId(channel.getChannelPublishId());
+                }
+            } catch (Exception e) {};
+
             // Set the PermissionManager for this channel (no longer necessary)
             // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelSubscribeId(channelSubscribeId)));
 
             // get person object from UsreLayoutManager
-            sd.setPerson(ulm.getPerson());
+            sd.setPerson(upm.getPerson());
 
             sd.setJNDIContext(channelContext);
 
@@ -710,7 +712,7 @@ public class ChannelManager {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
             try {
-                if(ulm.removeChannel(channelSubscribeId)) {
+                if(upm.getUserLayoutManager().deleteNode(channelSubscribeId)) {
                     // clean up channel cache
                     channelCacheTable.remove(ch);
                     ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
@@ -765,7 +767,7 @@ public class ChannelManager {
     }
 
     public void setUserPreferencesManager(IUserPreferencesManager m) {
-        ulm=m;
+        upm=m;
     }
 
 
@@ -840,7 +842,7 @@ public class ChannelManager {
         }
 
         // Check if channel is rendering as the root element of the layout
-        String userLayoutRoot = ulm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+        String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
         if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root"))
           rd.setRenderingAsRoot(true);
 

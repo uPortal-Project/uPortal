@@ -236,18 +236,16 @@ public class PortalSessionManager extends HttpServlet {
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (PortalException pe) {
-                if(pe.getRecordedException()!=null) {
-                    StringWriter sw=new StringWriter();
-                    pe.getRecordedException().printStackTrace(new PrintWriter(sw));
-                    sw.flush();
-                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
-                    throw new ServletException(pe.getRecordedException());
-                } else {
                 StringWriter sw=new StringWriter();
                 pe.printStackTrace(new PrintWriter(sw));
                 sw.flush();
-                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
-                throw new ServletException(pe);
+                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
+                if(pe.getRecordedException()!=null) {
+                    StringWriter sw2=new StringWriter();
+                    pe.getRecordedException().printStackTrace(new PrintWriter(sw2));
+                    sw2.flush();
+                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an encolsed PortalException stated : "+sw2.toString());
+                    throw new ServletException(pe.getRecordedException());
                 }
             } catch (Exception e) {
                 StringWriter sw=new StringWriter();

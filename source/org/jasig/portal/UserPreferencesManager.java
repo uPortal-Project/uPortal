@@ -40,7 +40,6 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.jndi.PortalNamingException;
-import org.jasig.portal.utils.BooleanLock;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.PropsMatcher;
 import org.w3c.dom.Node;
@@ -55,6 +54,8 @@ import java.util.StringTokenizer;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import javax.servlet.http.HttpSessionBindingEvent;
 
 
 /**
@@ -81,7 +82,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     private boolean unmapped_user_agent = false;
     IPerson m_person;
     IUserLayoutStore ulsdb = null;
-    BooleanLock layout_write_lock=new BooleanLock(true);
 
     /**
      * Constructor does the following
@@ -147,8 +147,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 } catch(PortalException ipe) {
                   LogService.instance().log(LogService.ERROR, "UserPreferencesManager(): Could not properly initialize user context", ipe);
                 }
-                // set dirty flag on the layout
-                layout_write_lock.setValue(true);
             } else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
@@ -185,18 +183,11 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 if(saveWhat.equals("preferences")) {
                     ulsdb.putUserPreferences(m_person, complete_up);
                 } else if(saveWhat.equals("layout")) {
-                    synchronized(layout_write_lock) {
-                        layout_write_lock.setValue(true);
-                        ulm.saveUserLayout();
-                        //                        ulsdb.setUserLayout(m_person, complete_up.getProfile(), ulm.getUserLayoutDOM(), false);
-                    }
+                    ulm.saveUserLayout();
                 } else if(saveWhat.equals("all")) {
                     ulsdb.putUserPreferences(m_person, complete_up);
-                    synchronized(layout_write_lock) {
-                        layout_write_lock.setValue(true);
-                        ulm.saveUserLayout();
-                            //                        ulsdb.setUserLayout(m_person, complete_up.getProfile(), ulm.getUserLayoutDOM(), false);
-                    }
+                    ulm.saveUserLayout();
+
                 }
                 LogService.instance().log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
@@ -298,19 +289,14 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * @param channelSubscribeId subscribe id of a channel
      * @return channel global id
      */
-    public String getChannelPublishId(String channelSubscribeId) {
+    protected String getChannelPublishId(String channelSubscribeId) throws PortalException {
         // Get the channel node from the user's layout
-        Node channelNode = getUserLayoutNode(channelSubscribeId);
-        if (channelNode == null) {
-            return  (null);
+        UserLayoutChannelDescription channel=(UserLayoutChannelDescription) getUserLayoutManager().getNode(channelSubscribeId);
+        if(channel!=null) {
+            return channel.getChannelPublishId();
+        } else {
+            return null;
         }
-        // Get the global channel Id from the channel node
-        Node channelIdNode = channelNode.getAttributes().getNamedItem("chanID");
-        if (channelIdNode == null) {
-            return  (null);
-        }
-        // Return the channel's global Id
-        return  (channelIdNode.getNodeValue());
     }
 
     public boolean isUserAgentUnmapped() {
@@ -321,38 +307,41 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences(Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences(IUserLayoutManager newUlm, UserPreferences newPreferences) throws PortalException {
       try {
         if (newPreferences != null) {
             // see if the profile has changed
             if(complete_up.getProfile().getProfileId()!=newPreferences.getProfile().getProfileId() || complete_up.getProfile().isSystemProfile()!=newPreferences.getProfile().isSystemProfile()) {
-                // construct a new user layout manager, for a new profile
-                ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,newPreferences.getProfile());
+                // see if a layout was passed
+                if(newUlm !=null && newUlm.getLayoutId()==newPreferences.getProfile().getLayoutId()) {
+                    // just use a new layout
+                    this.ulm=newUlm;
+                } else {
+                    // construct a new user layout manager, for a new profile
+                    ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,newPreferences.getProfile());
+                }
             }
             ulsdb.putUserPreferences(m_person, newPreferences);
             complete_up=newPreferences;
 
         }
-        synchronized(layout_write_lock) {
-            if (newLayout != null) {
-                ulm.setUserLayoutDOM((org.apache.xerces.dom.DocumentImpl)newLayout);
-                layout_write_lock.setValue(true);
-                ulm.saveUserLayout();
-            }
-        }
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
-
     }
 
-    /**
-     * Gets a cloned copy of the user layout
-     * @return a clone of the user layout document
-     */
-    public Document getUserLayoutCopy() {
-        return XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)ulm.getUserLayoutDOM());
+    public IUserLayoutManager getUserLayoutManager() {
+        return ulm;
+    }
+
+    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
+        // persist the layout
+        try {
+            ulm.saveUserLayout();
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
+        }
     }
 
     public UserPreferences getUserPreferencesCopy() {
@@ -378,267 +367,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         return  ssd;
     }
 
-    public Node getUserLayoutNode (String elementId) {
-        return  ulm.getUserLayoutDOM().getElementById(elementId);
-    }
-    public Document getUserLayout () {
-        return  ulm.getUserLayoutDOM();
-    }
-
     public UserPreferences getUserPreferences() {
         return complete_up;
-    }
-
-    /**
-     * helper function that allows to determine the name of a channel or
-     *  folder in the current user layout given their Id.
-     * @param nodeId
-     * @return node name
-     */
-    public String getNodeName(String nodeId) {
-        Element node = ulm.getUserLayoutDOM().getElementById(nodeId);
-        if (node != null) {
-            return  node.getAttribute("name");
-        }
-        else
-            return  null;
-    }
-
-    public boolean removeChannel(String channelSubscribeId) throws PortalException {
-        // warning .. the channel should also be removed from uLayoutXML
-        Element channel = ulm.getUserLayoutDOM().getElementById(channelSubscribeId);
-        if (channel != null) {
-            boolean rval=true;
-            synchronized(layout_write_lock) {
-                if(!this.deleteNode(channel)) {
-                    // unable to remove channel due to unremovable/immutable restrictionsn
-                    LogService.instance().log(LogService.INFO,"UserPreferencesManager::removeChannlel() : unable to remove a channel \""+channelSubscribeId+"\"");
-                    rval=false;
-                } else {
-                    layout_write_lock.setValue(true);
-                    // channel has been removed from the userLayoutXML .. persist the layout ?
-                    // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
-                    // (or, alternatively, an incremental update should be done on the UserLayoutStore())
-                    try {
-                        /*
-                          The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
-                        */
-                        ulm.saveUserLayout();
-                        /* end of patch */
-                    } catch (Exception e) {
-                        LogService.instance().log(LogService.ERROR,"UserPreferencesManager::removeChannle() : database operation resulted in an exception "+e);
-                        throw new GeneralRenderingException("Unable to save layout changes.");
-                    }
-                    //	    LogService.instance().log(LogService.INFO,"UserPreferencesManager::removeChannlel() : removed a channel \""+channelId+"\"");
-                }
-            }
-            return rval;
-        } else {
-            LogService.instance().log(LogService.ERROR, "UserPreferencesManager::removeChannel() : unable to find a channel with Id=" + channelSubscribeId);
-            return false;
-        }
-    }
-
-    /**
-     * Returns user layout write lock
-     *
-     * @return an <code>Object</code> lock
-     */
-    public BooleanLock getUserLayoutWriteLock() {
-        return layout_write_lock;
-    }
-
-    /**
-     * Returns a child with a particular tagname
-     * @param node parent node
-     * @param tagName child's tag name
-     * @return child that matches the tag name
-     */
-    private static Element getChildByTagName (Node node, String tagName) {
-        if (node == null)
-            return  null;
-        NodeList children = node.getChildNodes();
-        for (int i = children.getLength() - 1; i >= 0; i--) {
-            Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                Element el = (Element)child;
-                if ((el.getTagName()).equals(tagName))
-                    return  el;
-            }
-        }
-        return  null;
-    }
-
-    /**
-     * Determines if the node or any of it's parents are marked
-     * as "unremovable".
-     * @param node the node to be tested
-     */
-    public static boolean isUnremovable (Node node) {
-        if (getUnremovableParent(node) != null)
-            return  true;
-        else
-            return  false;
-    }
-
-    /**
-     * Determines if the node or any of it's parents are marked as immutables
-     * @param node the node to be tested
-     * @param root the root node of the layout tree
-     */
-    public static boolean isImmutable (Node node) {
-        if (getImmutableParent(node) != null)
-            return  true;
-        else
-            return  false;
-    }
-
-    /**
-     * Returns first parent of the node (or the node itself) that's marked
-     * as "unremovable". Note that if the node itself is marked as
-     * "unremovable", the method will return the node itself.
-     * @param node node from which to move up the tree
-     */
-    public static Node getUnremovableParent (Node node) {
-        if (node == null)
-            return  null;
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            String r = ((Element)node).getAttribute("unremovable");
-            if (r != null) {
-                if (r.equals("true"))
-                    return  node;
-            }
-        }
-        return  getUnremovableParent(node.getParentNode());
-    }
-
-    /**
-     * Returns first parent of the node (or the node itself) that's marked
-     * as "immutable". Note that if the node itself is marked as
-     * "ummutable", the method will return the node itself.
-     * @param node node from which to move up the tree
-     */
-    public static Node getImmutableParent (Node node) {
-        if (node == null)
-            return  null;
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            String r = ((Element)node).getAttribute("immutable");
-            if (r != null) {
-                if (r.equals("true"))
-                    return  node;
-            }
-        }
-        return  getUnremovableParent(node.getParentNode());
-    }
-
-    /**
-     * Returns true if a node has any unremovable children.
-     * This function does a depth-first traversal down the user layout, so it's rather expensive.
-     *
-     * @param node a <code>Node</code> current node
-     * @return a <code>boolean</code> true if there are any unremovable children of this node
-     */
-    public static  boolean hasUnremovableChildren (Node node) {
-        NodeList nl = node.getChildNodes();
-        if (nl != null)
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node n = nl.item(i);
-                if (n.getNodeType() == Node.ELEMENT_NODE) {
-                    String r = ((Element)n).getAttribute("unremovable");
-                    if (r != null) {
-                        if (r.equals("true")) {
-                            return  true;
-                        }
-                    }
-                    if (hasUnremovableChildren(n))
-                        return  true;
-                }
-            }
-        return  false;
-    }
-
-    /**
-     * Removes a channel or a folder from the userLayout structure
-     * @param node the node to be removed
-     * @return removal has been successfull
-     */
-    public static boolean deleteNode (Node node) {
-        // first of all check if this is an Element node
-        if (node == null || node.getNodeType() != Node.ELEMENT_NODE)
-            return  false;
-        // check if the node is removable
-        if (isUnremovable(node))
-            return  false;
-        // see if any of the parent nodes marked as immutable
-        if (isImmutable(node.getParentNode()))
-            return  false;
-        // see if any of the node children are marked as unremovable
-        if (hasUnremovableChildren(node))
-            return  false;
-        // all checks out, delete the node
-        if (node.getParentNode() != null) {
-            (node.getParentNode()).removeChild(node);
-            return  true;
-        } else {
-            LogService.instance().log(LogService.ERROR,"UserPreferencesManager::deleteNode() : trying to remove a root node ?!?");
-            return false;
-        }
-    }
-
-    /**
-     * Checks if a particular node is a descendent of some other node.
-     * Note that if both ancestor and node point at the same node, true
-     * will be returned.
-     * @param node the node to be checked
-     * @param ancestor potential ancestor
-     * @return true if node is an descendent of ancestor
-     */
-    private static boolean isDescendentOf (Node ancestor, Node node) {
-        if (node == null)
-            return  false;
-        if (node == ancestor)
-            return  true;
-        else
-            return  isDescendentOf(ancestor, node.getParentNode());
-    }
-
-    /**
-     * Moves node from one location in the userLayout tree to another
-     * @param node the node to be moved
-     * @param target the node to which it should be appended.
-     * @param sibiling a sibiling before which the node should be inserted under the target node (can be null)
-     * @return move has been successfull
-     */
-    public static boolean moveNode (Node node, Node target, Node sibiling) {
-        // make sure this is an element node
-        if (node == null || node.getNodeType() != Node.ELEMENT_NODE)
-            return  false;
-        if (target == null || target.getNodeType() != Node.ELEMENT_NODE)
-            return  false;
-        // source node checks
-        // see if the source is a descendent of an immutable node
-        if (isImmutable(node.getParentNode()))
-            return  false;
-        // see if the source is a descendent of some unremovable node
-        Node unrp = getUnremovableParent(node.getParentNode());
-        if (unrp != null) {
-            // make sure the target node is a descendent of the same unremovable
-            // node as well.
-            if (!isDescendentOf(unrp, target))
-                return  false;
-        }
-        // target node checks
-        // check if the target is unremovable or immutable
-        if (isUnremovable(target) || isImmutable(target))
-            return  false;
-        // everything checks out, do the move
-        if (sibiling != null && sibiling.getParentNode() == target) {
-            target.insertBefore(node, sibiling);
-        }
-        else {
-            target.appendChild(node);
-        }
-        return  true;
     }
 }
 

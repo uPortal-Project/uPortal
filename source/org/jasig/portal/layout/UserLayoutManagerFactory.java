@@ -47,4 +47,15 @@ public class UserLayoutManagerFactory {
             throw new PortalException("Unable to instantiate a \""+coreUserLayoutManagerImpl.getName()+"\"",e);
         }
     }
+
+    /**
+     * Returns an immutable version of a user layout manager.
+     *
+     * @param man an <code>IUserLayoutManager</code> value
+     * @return an immutable <code>IUserLayoutManager</code> value
+     * @exception PortalException if an error occurs
+     */
+    public static IUserLayoutManager immutableUserLayoutManager(IUserLayoutManager man) throws PortalException {
+        return new ImmutableUserLayoutManagerWrapper(man);
+    }
 }
