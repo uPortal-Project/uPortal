@@ -721,10 +721,10 @@ public class UserInstance implements HttpSessionBindingListener {
         // Sending the theme stylesheets parameters based on the user security context
         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
-		StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
+        StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
-        themePrefs.putParameterValue("authenticated", authenticated);
+        structPrefs.putParameterValue("authenticated", authenticated);
         String userName = person.getFullName();
         if (userName != null && userName.trim().length() > 0)
             themePrefs.putParameterValue("userName", userName);
