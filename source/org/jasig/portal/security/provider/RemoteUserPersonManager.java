@@ -69,7 +69,7 @@ public class RemoteUserPersonManager
 	public IPerson getPerson(HttpServletRequest request)
 		throws PortalSecurityException {
 		// Return the person object if it exists in the user's session
-		IPerson person = (IPerson) request.getSession(false).getAttribute("org.jasig.portal.IPerson");
+		IPerson person = (IPerson) request.getSession(false).getAttribute(PERSON_SESSION_KEY);
 		if (person != null) {
 			return person;
 		}
@@ -93,7 +93,7 @@ public class RemoteUserPersonManager
 		person.setID(1);
         person.setAttribute(person.USERNAME, user);
 		// Add this person object to the user's session
-		request.getSession(false).setAttribute("org.jasig.portal.IPerson", person);
+		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
 		// Return the new person object
 		return (person);
 	}
