@@ -395,8 +395,12 @@ public class PortalControlParameter {
 					  url.append("&");
 					String name = (String) names.next();
 					Object value = parameters.get(name);
-					url.append(encodeParameter(name)).append("=").
-					append(value.toString());
+					if ( value instanceof String[] ) {
+					 String[] values = (String[]) value;
+					 for (int j = 0; j < values.length; j++ )
+					  url.append(encodeParameter(name)).append("=").append(values[j]);	
+					} else
+					  url.append(encodeParameter(name)).append("=").append((String)value);
 				}
 			}
 		}
