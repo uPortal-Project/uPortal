@@ -37,6 +37,7 @@ package  org.jasig.portal;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -132,24 +133,36 @@ public class ChannelRegistryManager {
    * @param the user ID of the channel publisher
    * @throws java.lang.Exception
    */
-  public static void publishChannel (Node channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
+  public static void publishChannel (Element channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
     // Wipe out the channel registry
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
-    int nextID = chanRegStore.getNextId();
+    // Use current channel ID if modifying previously published channel, otherwise get a new ID
+    int ID = 0;
+    String chanID = channel.getAttribute("ID");
+    if (chanID != null) {
+      ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
+      LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
+    }
+    else {
+      ID = chanRegStore.getNextId();
+      LogService.instance().log(LogService.INFO, "Attempting to publish new channel " + ID + "...");
+    }
 
     // Add channel
     String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
-    Document channelDoc = channel.getOwnerDocument();
-    channelDoc.appendChild(channel);
-    chanRegStore.addChannel(nextID, publisherID, "Channel Title", channelDoc, catIDs);
+    Document channelDoc = DocumentFactory.getNewDocument();
+    channelDoc.appendChild(channelDoc.importNode(channel, true));
+    chanRegStore.addChannel(ID, publisherID, "Channel Title", channelDoc, catIDs);
 
     // Set roles
     java.util.Vector vRoles = new java.util.Vector(roles);
-    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(nextID, vRoles);
+    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, vRoles);
 
     // Approve channel
-    chanRegStore.approveChannel(nextID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));
+    chanRegStore.approveChannel(ID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));
+
+    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
   }
 
   /**
