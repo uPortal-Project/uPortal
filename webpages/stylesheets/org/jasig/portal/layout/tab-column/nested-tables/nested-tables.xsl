@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="baseIdempotentActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="skin" select="'imm'"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
   <!-- This template is supposed to render a fragment of the layout. 
@@ -380,7 +381,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
-    <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
+    <a href="#" onClick="openBrWindow('{$baseIdempotentActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
       <img alt="detach" title="detach" src="{$mediaPath}/{$skin}/controls/detach.gif" width="16" height="16" border="0"/>
     </a>
     <xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
