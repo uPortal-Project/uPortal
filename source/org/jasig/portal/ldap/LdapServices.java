@@ -69,6 +69,8 @@ import org.w3c.dom.Text;
  */
 public class LdapServices
 {  
+    public static final String DEFAULT_LDAP_SERVER = "DEFAULT_LDAP_SERVER";
+    
     private static final Log log = LogFactory.getLog(LdapServices.class);
     
     private static final String PROPERTIES_PATH = "/properties/";
@@ -104,6 +106,10 @@ public class LdapServices
      * @return An {@link ILdapServer} with the specified name, <code>null</code> if there is no connection with the specified name.
      */
     public static ILdapServer getLdapServer(String name) {
+        if (DEFAULT_LDAP_SERVER.equals(name)) {
+            return getDefaultLdapServer();
+        }
+        
         initConnections();
         
         synchronized (ldapConnections) {
