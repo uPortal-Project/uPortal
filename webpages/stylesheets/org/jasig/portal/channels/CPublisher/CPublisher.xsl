@@ -107,13 +107,13 @@ function xml(nodelist){
 		<xsl:if test="@modify != 'subscribe-only'">
 			<tr>
 				<xsl:choose>
-					<xsl:when test="type/base='text'">
+					<xsl:when test="type/@input='text'">
 						<xsl:call-template name="text"/>
 					</xsl:when>
-					<xsl:when test="type/base='single-choice'">
+					<xsl:when test="type/@input='single-choice'">
 						<xsl:call-template name="single-choice"/>
 					</xsl:when>
-					<xsl:when test="type/base='multi-choice'">
+					<xsl:when test="type/@input='multi-choice'">
 						<xsl:call-template name="multi-choice"/>
 					</xsl:when>
 				</xsl:choose>
@@ -138,7 +138,7 @@ function xml(nodelist){
 	<!-- display all the input fields with a base type of 'single-choice'-->
 	<xsl:template name="single-choice">
 		<xsl:choose>
-			<xsl:when test="type/display='drop-down'">
+			<xsl:when test="type/@display='drop-down'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -155,7 +155,7 @@ function xml(nodelist){
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:when>
-			<xsl:when test="type/display='radio'">
+			<xsl:when test="type/@display='radio'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -193,7 +193,7 @@ function xml(nodelist){
 	<!-- display all the input fields with a base type of 'multi-choice'-->
 	<xsl:template name="multi-choice">
 		<xsl:choose>
-			<xsl:when test="type/display='select-list'">
+			<xsl:when test="type/@display='select-list'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -210,7 +210,7 @@ function xml(nodelist){
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:when>
-			<xsl:when test="type/display='checkbox'">
+			<xsl:when test="type/@display='checkbox'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -261,7 +261,7 @@ function xml(nodelist){
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:choose>
-			<xsl:when test="type/display='text'">
+			<xsl:when test="type/@display='text'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -269,7 +269,7 @@ function xml(nodelist){
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:when>
-			<xsl:when test="type/display='textarea'">
+			<xsl:when test="type/@display='textarea'">
 				<td>
 					<xsl:value-of select="label"/>:</td>
 				<td>
@@ -279,7 +279,7 @@ function xml(nodelist){
 				</td>
 				<xsl:call-template name="subscribe"/>
 			</xsl:when>
-			<xsl:when test="type/display='hidden'">
+			<xsl:when test="type/@display='hidden'">
 				<input type="hidden" name="{name}" value="{defaultValue}"/>
 			</xsl:when>
 			<xsl:otherwise>
