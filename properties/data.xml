@@ -2165,7 +2165,7 @@
         <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_full.gif</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
         <column><name>DEVICE_TYPE</name><value>workstation</value></column>
-        <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
+        <column><name>SERIALIZER_NAME</name><value>XHTML</value></column>
         <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
       </row>
       <row>
