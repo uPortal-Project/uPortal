@@ -36,32 +36,33 @@
 
 package  org.jasig.portal.tools;
 
-import  java.io.*;
-import  java.util.*;
-import  java.lang.SecurityManager;
-import  javax.naming.Context;
-import  javax.naming.InitialContext;
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.security.AccessController;
-import  org.jasig.portal.jndi.JNDIManager;
-import  org.jasig.portal.StylesheetSet;
-import  org.jasig.portal.MediaManager;
-import  org.jasig.portal.IChannel;
-import  org.jasig.portal.IPrivilegedChannel;
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.PortalControlStructures;
-import  org.jasig.portal.BrowserInfo;
-import  org.jasig.portal.PortalSessionManager;
-import  org.jasig.portal.ChannelSAXStreamFilter;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.GeneralRenderingException;
-import  org.jasig.portal.utils.XSLT;
-import  org.jasig.portal.utils.SAX2BufferImpl;
-import  org.jasig.portal.security.IPerson;
-import  org.xml.sax.*;
-import  org.jasig.portal.serialize.*;
+import java.io.*;
+import java.util.*;
+import java.lang.SecurityManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.security.AccessController;
+import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.ChannelSAXStreamFilter;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.security.IPerson;
+import org.xml.sax.*;
+import org.jasig.portal.serialize.*;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.Source;
@@ -98,10 +99,10 @@ public class ChannelServlet extends HttpServlet {
       // initialize stylesheet set
       // once JNDI DB access is in place the following line can be removed
       try {
-        this.set = new StylesheetSet(this.getClass().getResource(relativeSSLLocation).toString());
-        String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-        String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-        String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+	this.set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), relativeSSLLocation));
+        String mediaPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/media.properties");
+        String mimePropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/mime.properties");
+        String serializerPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/serializer.properties");
         this.set.setMediaProps(mediaPropsUrl);
         this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
       } catch (PortalException pe) {

@@ -39,20 +39,21 @@
 package  org.jasig.portal;
 
 
-import  java.io.*;
-import  java.util.*;
-import  java.lang.SecurityManager;
-import  javax.naming.Context;
-import  javax.naming.InitialContext;
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.security.AccessController;
+import java.io.*;
+import java.util.*;
+import java.lang.SecurityManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.security.AccessController;
 import org.jasig.portal.channels.BaseChannel;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.jndi.JNDIManager;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.utils.XSLT;
-import  org.xml.sax.*;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.security.IPerson;
+import org.xml.sax.*;
 
 import  org.jasig.portal.serialize.*;
 import javax.xml.transform.sax.TransformerHandler;
@@ -81,7 +82,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
     private boolean dataIsSet=false;
     private static final String chanID="singleton";
     private static final String fs = File.separator;
-    private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
+    private static final String relativeSSLLocation = "/org/jasig/portal/tools/ChannelServlet/ChannelServlet.ssl";
 
 
     /**
@@ -95,10 +96,10 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param person a user IPerson object
      */
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
-	this.set = new StylesheetSet(this.getClass().getResource(relativeSSLLocation).toString());
-        String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-        String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-        String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+	this.set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), relativeSSLLocation));
+        String mediaPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/media.properties");
+        String mimePropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/mime.properties");
+        String serializerPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/serializer.properties");
 	this.set.setMediaProps(mediaPropsUrl);
         this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
 	this.channelName=channelName;
@@ -161,7 +162,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	BaseMarkupSerializer ser = mediaM.getSerializer(mediaM.getMedia(req), res.getWriter());
 	ser.asContentHandler();
 	// get the framing stylesheet
-	String xslURI = set.getStylesheetURI(req);
+	String xslURI = ResourceLoader.getResourceAsURLString(this.getClass(), set.getStylesheetURI(req));
 	try {
             TransformerHandler th=XSLT.getTransformerHandler(xslURI);
             th.setResult(new SAXResult(ser));
