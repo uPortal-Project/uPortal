@@ -29,7 +29,7 @@ function openWin(url, title, width, height)
   <tr>
     <td width=100><img src="images/MyIBS.gif" width=100 height=50 border=0></td>
     <td width=300><font face=Arial size=2 color=blue>Hello <%= session.getValue ("userName") == null ? "Guest" : session.getValue ("userName")%>, Welcome to MyIBS!</font><br>
-        <font face=Arial size=1 color=#444444><%= UtilitiesBean.getDate (request) %></font></td>
+        <font face=Arial size=1 color=#444444><%= UtilitiesBean.getDate () %></font></td>
     <td align=right><%= session.getValue ("userName") == null ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></td>
   </tr>
 </table>
