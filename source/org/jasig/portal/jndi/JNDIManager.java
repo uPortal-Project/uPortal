@@ -104,22 +104,23 @@ public class JNDIManager {
           + ne.getMessage());
       throw  new InternalPortalException(ne);
     }
+    /*
     Context userSessionContext = null;
-    try {
+        try {
       // Create a subcontext for the new session
       userSessionContext = sessionsContext.createSubcontext(sessionID);
     } catch (NamingException ne) {
       LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not create /sessions/ "
           + sessionID + " context - " + ne.getMessage());
       throw  new InternalPortalException(ne);
-    }
+      }*/
     // Create a guest IPerson object, this should be retrieved from a factory
     IPerson person = new org.jasig.portal.security.provider.PersonImpl();
     person.setID(1);
     person.setFullName("Guest");
     try {
       // Bind a guest IPerson object to this new subcontext
-      userSessionContext.bind("iperson", person);
+        sessionsContext.bind(session.getId(), person);
     } catch (NamingException ne) {
       LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not bind IPerson to /sessions/ "
           + sessionID + " context - " + ne.getMessage());
@@ -151,7 +152,7 @@ public class JNDIManager {
       // Get the context that keeps track of session IDs
       Context sessionsContext = (Context)context.lookup("sessions");
       // Bind the Person object to it's session ID in JNDI
-      sessionsContext.bind(session.getId(), person);
+      sessionsContext.rebind(session.getId(), person);
       // Get the users subcontext
       Context usersContext = (Context)context.lookup("users");
       // Create a subcontext for this specific useer
