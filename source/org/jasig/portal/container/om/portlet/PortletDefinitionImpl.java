@@ -52,6 +52,7 @@ import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.portlet.PortletDefinitionCtrl;
 import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.common.PreferenceSetImpl;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -106,6 +107,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     }
 
     public PreferenceSet getPreferenceSet() {
+        ((PreferenceSetImpl)preferences).setClassLoader(this.getPortletClassLoader());
         return preferences;
     }
 
