@@ -133,6 +133,7 @@
       <column> <name>CHAN_TITLE</name>       <type>VARCHAR</type>   <param>35</param>  </column>
       <column> <name>CHAN_DESC</name>        <type>VARCHAR</type>   <param>255</param> </column>
       <column> <name>CHAN_CLASS</name>       <type>VARCHAR</type>   <param>100</param> </column>
+      <column> <name>CHAN_TYPE_ID</name>     <type>INTEGER</type>                      </column>
       <column> <name>CHAN_PUBL_ID</name>     <type>INTEGER</type>                      </column>
       <column> <name>CHAN_PUBL_DT</name>     <type>TIMESTAMP</type>                    </column>
       <column> <name>CHAN_APVL_ID</name>     <type>INTEGER</type>                      </column>
