@@ -624,6 +624,31 @@
     </java>
   </target>
 
+<!-- ==================== deluser Target ============================ -->
+<!--
+	The deluser target runs uPortal's DeleteUser program to delete all
+	traces of a uportal user from the uPortal database.
+Example:
+	ant deluser -Duser=username
+
+	ant deluser -Duser=ashenoy
+-->
+
+  <target name="deluser" >
+    <echo message="Invoking DeleteUser"/>
+    <property name="user" value=" "/>   
+    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser">
+      <classpath>
+        <pathelement path="${build.home}"/>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+      </classpath>
+      <arg value="${user}"/>
+    </java>
+  </target> 
 
 <!-- ==================== regchantype Target ============================== -->
 
