@@ -58,16 +58,12 @@ import org.xml.sax.ContentHandler;
 public class CSessionLocalesSelector extends BaseChannel implements IPrivileged {
     
     protected final String sslUri = "sessionLocales.ssl";
-    private LocaleManager lm = null;
-
-    public void setPortalControlStructures(PortalControlStructures pcs)
-        throws PortalException {
-        lm = pcs.getUserPreferencesManager().getUserPreferences().getProfile().getLocaleManager();
-        Locale[] userLocales = lm.getUserLocales();
+    
+    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
+ 
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-        if (LocaleManager.isLocaleAware()) {
             Locale[] locales = runtimeData.getLocales();
             Document doc = LocaleManager.xmlValueOf(locales, locales[0]);
             XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
@@ -77,7 +73,6 @@ public class CSessionLocalesSelector extends BaseChannel implements IPrivileged 
             xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
             xslt.setStylesheetParameter("localesParam", Constants.LOCALES_PARAM);
             xslt.transform();
-        }
     }
 
 }
