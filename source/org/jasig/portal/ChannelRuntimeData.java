@@ -81,7 +81,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     return  crd;
   }
 
-    
+
     /**
      * Setter method for baseActionURL
      *
@@ -184,7 +184,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * Returns the URL to invoke one of the workers specified in PortalSessionManager.
    * Typically the channel that is invoked with the worker will have to implement an
    * interface specific for that worker.
-   * @param worker - Worker string must be a PortalSessionManager.xxx value.
+   * @param worker - Worker string must be a UPFileSpec.xxx value.
    * @return URL to invoke the worker.
    */
     public String getWorkerActionURL(String worker) {
