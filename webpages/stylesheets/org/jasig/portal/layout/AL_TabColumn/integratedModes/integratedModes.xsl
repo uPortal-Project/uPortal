@@ -136,6 +136,7 @@ Version $Revision$
                             <tr>
                                 <td>
                                     <a href="{$baseActionURL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">
+                                        <xsl:if test="not($mode='view')"><xsl:attribute name="onclick">return confirm('Have you saved your changes?\nAre you sure you want to exit preferences?')</xsl:attribute></xsl:if>
                                         <img src="{$mediaPathIcons}/home.gif" width="24" height="24" alt="Home" title="Home" border="0"/>
                                     </a>
                                 </td>
