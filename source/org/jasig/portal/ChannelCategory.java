@@ -35,10 +35,6 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.services.GroupService;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IEntity;
-
 /**
  * A channel category.
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -46,26 +42,30 @@ import org.jasig.portal.groups.IEntity;
  */
 public class ChannelCategory {
 
-  private IEntityGroup categoryGroup;
+  int id;
+  String name;
+  String descr;
+  int creatorId;
 
   /**
-   * Constructs a ChannelCategory based on an existing category
+   * Constructs a ChannelCategory
    */
-  public ChannelCategory(int id) throws PortalException {
-    categoryGroup = GroupService.findGroup(String.valueOf(id));
-  }
-
-  /**
-   * Constructs a brand new ChannelCategory
-   */
-  public ChannelCategory(String name, String descr) throws PortalException {
-    categoryGroup = GroupService.newGroup(ChannelDefinition.class);
-    categoryGroup.setName(name);
-    categoryGroup.setDescription(descr);
+  public ChannelCategory(int id) {
+    this.id = id;
   }
 
   // Getter methods
-  public int getId() { return Integer.parseInt(categoryGroup.getKey()); }
-  public String getName() { return categoryGroup.getName(); }
-  public String getDescription() { return categoryGroup.getDescription(); }
+  public int getId() { return id; }
+  public String getName() { return name; }
+  public String getDescription() { return descr; }
+  public int getCreatorId() { return creatorId; }
+
+  // Setter methods
+  public void setName(String name) { this.name = name; }
+  public void setDescription(String descr) { this.descr = descr; }
+  public void setCreatorId(int creatorId) { this.creatorId = creatorId; }
+
+  public String toString() {
+    return "ChannelCategory: id=" + id + ", name=" + name + ", description=" + descr + ", creatorId=" + creatorId;
+  }
 }
