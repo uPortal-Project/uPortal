@@ -38,9 +38,6 @@ public class AggregatedLayout implements IAggregatedLayout {
     // The layout ID value
     private String layoutId;
 
-    // The restriction mask
-    private int restrictionMask = 0;
-
     // The layout manager
     private IAggregatedUserLayoutManager layoutManager = null;
 
@@ -52,7 +49,6 @@ public class AggregatedLayout implements IAggregatedLayout {
   public AggregatedLayout (  String layoutId, IAggregatedUserLayoutManager layoutManager ) throws PortalException {
     this ( layoutId );
     this.layoutManager = layoutManager;
-    restrictionMask = layoutManager.getRestrictionMask();
   }
 
   public AggregatedLayout (  String layoutId ) throws PortalException {
@@ -86,7 +82,6 @@ public class AggregatedLayout implements IAggregatedLayout {
       Hashtable restrictions = nodeDesc.getRestrictions();
       for ( Enumeration e = restrictions.keys(); e.hasMoreElements(); ) {
        IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
-       //if ( ( restriction.getRestrictionType() & restrictionMask ) > 0 ) {
          AttributesImpl paramAttrs = new AttributesImpl();
          paramAttrs.addAttribute("","path","path","CDATA",restriction.getRestrictionPath());
          // we have to re-scale the priority restriction for the UI
@@ -97,10 +92,9 @@ public class AggregatedLayout implements IAggregatedLayout {
          } else
           paramAttrs.addAttribute("","value","value","CDATA",restriction.getRestrictionExpression());
 
-         paramAttrs.addAttribute("","type","type","CDATA",restriction.getName()+"");
+         paramAttrs.addAttribute("","type","type","CDATA",restriction.getName());
          contentHandler.startElement("",RESTRICTION,RESTRICTION,paramAttrs);
          contentHandler.endElement("",RESTRICTION,RESTRICTION);
-       //}
       }
   }
 
@@ -133,6 +127,18 @@ public class AggregatedLayout implements IAggregatedLayout {
      }
        return node;
   }
+  
+  /**
+   * Gets the tree depth for a given node
+   * @param nodeId a <code>String</code> node ID
+   * @return a depth value
+   * @exception PortalException if an error occurs
+   */
+  public int getDepth(String nodeId) throws PortalException {
+	 int depth = 0;
+	 for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ );
+	 return depth;
+  }
 
   private void createMarkingLeaf(ContentHandler contentHandler, String leafName, String parentNodeId, String nextNodeId) throws PortalException {
      try {
@@ -157,43 +163,6 @@ public class AggregatedLayout implements IAggregatedLayout {
          throw new PortalException(saxe.getMessage());
        }
   }
-
-   /*private void createFragmentList(Document document, Node rootNode) throws PortalException {
-     try {
-      Element alternateLayouts = document.createElement("fragments");
-      if ( fragments != null ) {
-       for ( Iterator fragEnum = fragments.keySet().iterator(); fragEnum.hasNext(); ) {
-        Element alternate = document.createElement("fragment");
-        String key = (String) fragEnum.next();
-        alternate.setAttribute("ID",key);
-        alternate.setAttribute("desc",(String) fragments.get(key));
-        alternateLayouts.appendChild(alternate);
-       }
-      }
-        rootNode.appendChild(alternateLayouts);
-     } catch ( Exception saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
-   }
-
-   private void createFragmentList(ContentHandler contentHandler) throws PortalException {
-     try {
-       contentHandler.startElement("","fragments","fragments",new AttributesImpl());
-      if ( fragments != null ) {
-       for ( Iterator fragEnum = fragments.keySet().iterator(); fragEnum.hasNext(); ) {
-        AttributesImpl attributes = new AttributesImpl();
-        String key = (String) fragEnum.next();
-        attributes.addAttribute("","ID","ID","CDATA",key);
-        attributes.addAttribute("","desc","desc","CDATA",(String) fragments.get(key));
-        contentHandler.startElement("","fragment","fragment",attributes);
-        contentHandler.endElement("","fragment","fragment");
-       }
-      }
-       contentHandler.endElement("","fragments","fragments");
-     } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
-   }*/
 
    /**
      * Build the DOM consistent of folders and channels using the internal representation
@@ -356,8 +325,6 @@ public class AggregatedLayout implements IAggregatedLayout {
 
            if (nodeId.equals(getRootId())) {
               contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
-              // Create a fragment list that the user owns
-              //createFragmentList(contentHandler);
            }
 
              ALFolder folder = (ALFolder) node;
@@ -408,8 +375,7 @@ public class AggregatedLayout implements IAggregatedLayout {
                   }
 
              // Putting restrictions to the content handler
-              if ( restrictionMask > 0 )
-                bindRestrictions(folderDescription,contentHandler);
+             bindRestrictions(folderDescription,contentHandler);
 
              contentHandler.endElement("",FOLDER,FOLDER);
 
@@ -462,8 +428,7 @@ public class AggregatedLayout implements IAggregatedLayout {
               }
 
               // Putting restrictions to the content handler
-              if ( restrictionMask > 0 )
-                bindRestrictions(channelDescription,contentHandler);
+              bindRestrictions(channelDescription,contentHandler);
 
               contentHandler.endElement("",CHANNEL,CHANNEL);
 

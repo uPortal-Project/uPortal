@@ -45,7 +45,7 @@ import org.xml.sax.ContentHandler;
  */
 public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
-    private static final Log log = LogFactory.getLog(AggregatedLayoutManager.class);
+  private static final Log log = LogFactory.getLog(AggregatedLayoutManager.class);
     
   private AggregatedUserLayoutStore layoutStore;
   private AggregatedLayout layout;
@@ -59,7 +59,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   private IALNodeDescription addTargetsNodeDesc;
   private String moveTargetsNodeId;
-  private int restrictionMask = 0;
   private boolean autoCommit = false;
 
   // The ID of the current loaded fragment
@@ -98,7 +97,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       return layout;
   }
 
-  public void setUserLayout(IUserLayout userLayout) throws PortalException {
+  public void setUserLayout(IUserLayout layout) throws PortalException {
    if ( !(layout instanceof AggregatedLayout) )
     throw new PortalException ( "The user layout instance must have AggregatedLayout type!" );
     this.layout = (AggregatedLayout) layout;
@@ -1768,25 +1767,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       return (node != null ) ? (IALNodeDescription) node.getNodeDescription() : null;
      }
       return null;
-    }
-
-
-    /**
-     * Sets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
-     * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
-     * @param restrictionMask a restriction mask
-     */
-    public void setRestrictionMask (int restrictionMask) {
-      this.restrictionMask = restrictionMask;
-    }
-
-    /**
-     * Gets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
-     * is responsible for filtering restrictions for the layout output to ContentHandler or DOM
-     * @return a restriction mask
-     */
-    public int getRestrictionMask () {
-      return restrictionMask;
     }
 
     public boolean addLayoutEventListener(LayoutEventListener l){

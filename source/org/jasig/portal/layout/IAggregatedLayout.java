@@ -62,5 +62,21 @@ public interface IAggregatedLayout extends IUserLayout {
      * @return a <code>ALNode</code> instance
      */
     public ALNode getLayoutNode(String nodeId);
+    
+    /**
+     * Returns the folder by a given folder ID.
+     *
+     * @param folderId a <code>String</code> value
+     * @return a <code>ALFolder</code> instance
+     */
+    public ALFolder getLayoutFolder(String folderId);
+    
+    /**
+     * Gets the tree depth for a given node
+     * @param nodeId a <code>String</code> node ID
+     * @return a depth value
+     * @exception PortalException if an error occurs
+     */
+    public int getDepth(String nodeId) throws PortalException;
    
 }
