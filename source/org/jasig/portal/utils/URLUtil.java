@@ -198,9 +198,10 @@ public class URLUtil
             if (qs != null && !"".equals(qs)) {
                 sb.append('?').append(buildRequestParams(req, ignoreParams));
             }
-            log.debug(
-                "URLUtil::redirectGet() " +
-                "Redirecting to framework: " + sb.toString());
+            if (log.isDebugEnabled())
+                log.debug(
+                        "URLUtil::redirectGet() " +
+                        "Redirecting to framework: " + sb.toString());
              res.sendRedirect(res.encodeRedirectURL(sb.toString()));
         } catch (IOException ioe) {
             log.error(
@@ -262,9 +263,10 @@ public class URLUtil
                 thisUri);
         }
     
-        log.debug(
-            "URLUtil::redirectPost() " +
-            "Redirecting to framework: " + urlStr.toString());
+        if (log.isDebugEnabled())
+            log.debug(
+                    "URLUtil::redirectPost() " +
+                    "Redirecting to framework: " + urlStr.toString());
         OutputStreamWriter wr = null;
         BufferedReader br = null;
         HttpURLConnection conn = null;
