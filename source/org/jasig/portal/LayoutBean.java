@@ -137,36 +137,36 @@ public class LayoutBean extends GenericPortalBean
    * @return handle to the layout xml
    */
   public IXml getLayoutXml (HttpServletRequest req, String sUserName)
-  {    
+  {
     RdbmServices rdbmService = new RdbmServices ();
     Connection con = null;
     IXml layoutXml = null;
-    
-    try 
+
+    try
     {    
       synchronized (dummyObject)
       {
         HttpSession session = req.getSession (false);
         layoutXml = (IXml) session.getAttribute ("layoutXml");
-        
+
         if (layoutXml != null)
           return layoutXml;
-        
+
         if (sUserName == null)
           sUserName = "guest";
-                  
+
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement();
-          
+
         String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
         Logger.log (Logger.DEBUG, sQuery);
-      
+
         ResultSet rs = stmt.executeQuery (sQuery);
-        
+
         if (rs.next ())
         {
           String sLayoutXml = rs.getString ("LAYOUT_XML");
-          
+
           // Tack on the full path to layout.dtd
           int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
           sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
@@ -177,22 +177,22 @@ public class LayoutBean extends GenericPortalBean
         }
         stmt.close ();
       }
-      
+
       return layoutXml;
     }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
-    }    
+    }
     finally
     {
       rdbmService.releaseConnection (con);
     }
     return null;
-  }  
-    
+  }
+
   public void setLayoutXml (String sUserName, IXml layoutXml)
-  {    
+  {
     RdbmServices rdbmService = new RdbmServices ();
     Connection con = null;
     
@@ -458,7 +458,7 @@ public class LayoutBean extends GenericPortalBean
           {
             org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);            
                                                 
-            // Check for minimized, maximized, or removed channel
+            // Check for minimized, maximized, added or removed channel
             String sResize = req.getParameter ("resize");
             String sTab = req.getParameter ("tab");
             String sColumn = req.getParameter ("column");
@@ -1278,9 +1278,9 @@ public class LayoutBean extends GenericPortalBean
    * @param the servlet request object
    */
   public void removeChannel (HttpServletRequest req)
-  {    
-    try 
-    {      
+  {
+    try
+    {
       int iTab = Integer.parseInt (req.getParameter ("tab"));
       int iCol = Integer.parseInt (req.getParameter ("column"));
       int iChan = Integer.parseInt (req.getParameter ("channel"));
@@ -1292,7 +1292,28 @@ public class LayoutBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-  }      
+  }
+
+  /**
+   * Adds a channel
+   * @param the servlet request object
+   * @param a channel object
+   */
+  public void addChannel (HttpServletRequest req, org.jasig.portal.layout.IChannel channel)
+  {
+    try
+    {
+      int iTab = getActiveTab(req);
+      int iCol = Integer.parseInt (req.getParameter ("column"));
+
+      IColumn column = getColumn (req, iTab, iCol);
+      column.addChannel(channel);
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+  }
 
   /**
    * Moves a channel to the bottom of the list of the column to the left
