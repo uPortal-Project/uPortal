@@ -729,7 +729,7 @@
         <column><name>CHAN_ID</name><value>15</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/CCssViewer/cssViewer.xml</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
