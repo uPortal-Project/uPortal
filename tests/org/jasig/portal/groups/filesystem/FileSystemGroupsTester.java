@@ -1,12 +1,27 @@
 package org.jasig.portal.groups.filesystem;
 
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
+import org.jasig.portal.groups.GroupServiceConfiguration;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IEntityGroupStore;
+import org.jasig.portal.groups.IEntityStore;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.RDBMEntityStore;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -37,7 +52,7 @@ public class FileSystemGroupsTester extends TestCase {
     private String GROUP_SERVICE_NAME = "filesystem";
     private IEntityGroupStore groupStore;
 /**
- * EntityLockTester constructor comment.
+ * FileSystemGroupsTester.
  */
 public FileSystemGroupsTester(String name) {
     super(name);
@@ -91,7 +106,7 @@ private IEntityGroup findGroup(File file) throws GroupsException
  */
 private IEntityGroup findGroup(String key) throws GroupsException
 {
-    return getService().findGroup(key);
+    return GroupService.findGroup(key);
 }
 /**
  * @return RDBMEntityStore
@@ -152,7 +167,7 @@ private String getKeyFromFile(File file) throws GroupsException
     if ( key.startsWith(GROUPS_ROOT) )
     {
         key = key.substring(GROUPS_ROOT.length());
-        key = key.replace(getGroupStore().PERIOD, getGroupStore().SUBSTITUTE_PERIOD);
+        key = key.replace(FileSystemGroupStore.PERIOD, FileSystemGroupStore.SUBSTITUTE_PERIOD);
     }
     return key;
 }
@@ -161,7 +176,7 @@ private String getKeyFromFile(File file) throws GroupsException
  */
 private IEntity getNewEntity(String key) throws GroupsException
 {
-    return 	getService().getEntity(key, IPERSON_CLASS);
+    return 	GroupService.getEntity(key, IPERSON_CLASS);
 }
 /**
 *  @return java.lang.String
@@ -262,7 +277,7 @@ protected void setUp()
     GROUPS_ROOT = getGroupStore().getGroupsRootPath();
 
     // initialize composite service:
-    getService().findGroup("local.0");
+    GroupService.findGroup("local.0");
 
     IPERSON_GROUPS_ROOT = GROUPS_ROOT + IPERSON_CLASS.getName();
     iPersonGroupsRootDir = new File(IPERSON_GROUPS_ROOT);
@@ -669,25 +684,25 @@ public void testSearchForGroups() throws Exception
         badQuery = is + " a b c";
 
         msg = "Searching for IS " + is;
-        ids = getGroupStore().searchForGroups(is, getGroupStore().IS, type);
+        ids = getGroupStore().searchForGroups(is, IGroupConstants.IS, type);
         assertEquals(msg, ids.length, 1);
         member = GroupService.findGroup(GROUP_SERVICE_NAME + "." + ids[0].getKey());
         assertTrue(msg, member.isGroup());
 
         msg = "Searching for STARTS WITH " + startsWith;
-        ids = getGroupStore().searchForGroups(startsWith, getGroupStore().STARTS_WITH, type);
+        ids = getGroupStore().searchForGroups(startsWith, IGroupConstants.STARTS_WITH, type);
         assertTrue(msg, ids.length > 0);
 
         msg = "Searching for ENDS WITH " + endsWith;
-        ids = getGroupStore().searchForGroups(endsWith, getGroupStore().ENDS_WITH, type);
+        ids = getGroupStore().searchForGroups(endsWith, IGroupConstants.ENDS_WITH, type);
         assertTrue(msg, ids.length > 0);
 
         msg = "Searching for CONTAINS " + contains;
-        ids = getGroupStore().searchForGroups(contains, getGroupStore().CONTAINS, type);
+        ids = getGroupStore().searchForGroups(contains, IGroupConstants.CONTAINS, type);
         assertTrue(msg, ids.length > 0);
 
         msg = "Searching for IS " + badQuery;
-        ids = getGroupStore().searchForGroups(badQuery, getGroupStore().IS, type);
+        ids = getGroupStore().searchForGroups(badQuery, IGroupConstants.IS, type);
         assertEquals(msg, ids.length, 0);
 
     }
