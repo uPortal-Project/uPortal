@@ -69,6 +69,11 @@ public class RemoteChannelServiceLocator extends Service implements RemoteChanne
     "      serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"" +
     "      deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"" +    
     "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +    
+    "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:PortalEvent\"" +
+    "      type=\"java:org.jasig.portal.PortalEvent\"" +
+    "      serializer=\"org.jasig.portal.webservices.ser.PortalEventSerializerFactory\"" +
+    "      deserializer=\"org.jasig.portal.webservices.ser.PortalEventDeserializerFactory\"" +    
+    "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +
     "  </service>" +
     "  <transport name=\"http\" pivot=\"java:org.apache.axis.transport.http.HTTPSender\"/>" +
     "</deployment>";
