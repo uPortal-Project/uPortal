@@ -66,10 +66,11 @@ public void add(IEntityLock lock) throws LockingException
 {
     long now = System.currentTimeMillis();
     long willExpire = lock.getExpirationTime().getTime();
+    long cacheIntervalSecs = (willExpire - now) / 1000;
     SmartCache sc = (SmartCache)getLockCache(lock.getEntityType());
 
     synchronized (sc) {
-        sc.put( getCacheKey(lock), lock, (willExpire - now) );
+        sc.put( getCacheKey(lock), lock, (cacheIntervalSecs) );
     }
 }
 /**

@@ -17,27 +17,27 @@ public class EntityLockTester extends TestCase {
     private IEntityLockStore lockStore;
     private int numUnexpiredIEntityGroupLocksInStore = 0;
     private int numExpiredLocks = 0;
-    private int numUnexpiredIPersonLocksInStore = 0;    
-    private int numIPersonLocksInStoreForTestId = 0;    
+    private int numUnexpiredIPersonLocksInStore = 0;
+    private int numIPersonLocksInStoreForTestId = 0;
     private String[] testKeys = {"101", "102", "9999999", "12345"};
     private String[] testIds = {"de3", "df7", "av317"};
 /**
  * EntityLockTester constructor comment.
  */
 public EntityLockTester(String name) {
-	super(name);
+    super(name);
 }
 /**
  * @return org.jasig.portal.concurrency.locking.IEntityLockStore
  */
 private IEntityLockStore getLockStore() {
-	return lockStore;
+    return lockStore;
 }
 /**
  * @return org.jasig.portal.groups.IEntityLockService
  */
 private IEntityLockService getService()  throws LockingException{
-	return ReferenceEntityLockService.singleton();
+    return ReferenceEntityLockService.singleton();
 }
 /**
  * Starts the application.
@@ -45,18 +45,18 @@ private IEntityLockService getService()  throws LockingException{
  */
 public static void main(java.lang.String[] args) throws Exception
 {
-	String[] mainArgs = {"org.jasig.portal.concurrency.locking.EntityLockTester"};
+    String[] mainArgs = {"org.jasig.portal.concurrency.locking.EntityLockTester"};
     print("START TESTING LOCK STORE");
     printBlankLine();
     junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();    
+    printBlankLine();
     print("END TESTING LOCK STORE");
-    
+
 }
 /**
  * @param msg java.lang.String
  */
-private static void print (IEntityLock[] locks) 
+private static void print (IEntityLock[] locks)
 {
     for ( int i=0; i<locks.length; i++ )
     {
@@ -67,7 +67,7 @@ private static void print (IEntityLock[] locks)
 /**
  * @param msg java.lang.String
  */
-private static void print(String msg) 
+private static void print(String msg)
 {
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
     System.out.println(ts + " : " + msg);
@@ -75,27 +75,27 @@ private static void print(String msg)
 /**
  * @param msg java.lang.String
  */
-private static void printBlankLine() 
+private static void printBlankLine()
 {
     System.out.println("");
 }
 /**
  */
-protected void setUp() 
+protected void setUp()
 {
     try {
-        if ( GROUP_CLASS == null ) 
+        if ( GROUP_CLASS == null )
             { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
-        if ( IPERSON_CLASS == null ) 
+        if ( IPERSON_CLASS == null )
             { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
 
 
     try
     {
-        boolean multiServer = 
+        boolean multiServer =
             PropertiesManager.getPropertyAsBoolean("org.jasig.portal.concurrency.multiServer");
 
-        lockStore = ( multiServer ) 
+        lockStore = ( multiServer )
             ? RDBMEntityLockStore.singleton()
             : MemoryEntityLockStore.singleton();
     }
@@ -104,30 +104,30 @@ protected void setUp()
         System.out.println("EntityLockTester:setUp(): Failed to instantiate entity lock store. " + e);
     }
 
-            
+
         lockStore.deleteAll();
 
-        java.util.Date now  = 
-            new java.util.Date(System.currentTimeMillis());   
-        java.util.Date later = 
+        java.util.Date earlier  =
+            new java.util.Date(System.currentTimeMillis() - 1000);    // - 1 second
+        java.util.Date later =
             new java.util.Date(System.currentTimeMillis() + 300000);  // + 5 minutes
         testLocks = new IEntityLock[5];
         testLocks[0] = new EntityLockImpl(GROUP_CLASS, testKeys[0], 0, later, testIds[0]);
-        testLocks[1] = new EntityLockImpl(GROUP_CLASS, testKeys[1], 0, later, testIds[0]);    
-        testLocks[2] = new EntityLockImpl(IPERSON_CLASS, testKeys[0], 0, now, testIds[0]);
+        testLocks[1] = new EntityLockImpl(GROUP_CLASS, testKeys[1], 0, later, testIds[0]);
+        testLocks[2] = new EntityLockImpl(IPERSON_CLASS, testKeys[0], 0, earlier, testIds[0]);
         testLocks[3] = new EntityLockImpl(IPERSON_CLASS, testKeys[1], 1, later, testIds[0]);
         testLocks[4] = new EntityLockImpl(IPERSON_CLASS, testKeys[2], 1, later, testIds[1]);
 
         print("Adding test locks.");
-        for (int i=0; i<testLocks.length; i++) { 
-	        getLockStore().add(testLocks[i]); 
-	        // print("Added " + testLocks[i]);
-	    }
-        
+        for (int i=0; i<testLocks.length; i++) {
+            getLockStore().add(testLocks[i]);
+            // print("Added " + testLocks[i]);
+        }
+
         numUnexpiredIEntityGroupLocksInStore = 2;
         numExpiredLocks = 1;
         numUnexpiredIPersonLocksInStore = 2;
-        numIPersonLocksInStoreForTestId = 1;        
+        numIPersonLocksInStoreForTestId = 1;
     }
     catch (Exception ex) { print("EntityLockTester.setUp(): " + ex.getMessage());}
  }
@@ -145,15 +145,15 @@ public static junit.framework.Test suite() {
     suite.addTest(new EntityLockTester("testServiceLockRenewal"));
     suite.addTest(new EntityLockTester("testServiceConvert"));
     suite.addTest(new EntityLockTester("testService"));
-    
+
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
 
-	return suite;
+    return suite;
 }
 /**
  */
-protected void tearDown() 
+protected void tearDown()
 {
     try {
         // delete any remaining test locks.
@@ -166,13 +166,13 @@ protected void tearDown()
  */
 public void testExistsInStore() throws Exception
 {
-	    String msg = null;
+        String msg = null;
         IEntityLock lock = testLocks[4];
         msg = "Checking if " + lock + " exists in database.";
         print(msg);
         boolean exists = getService().existsInStore(lock);
         assertTrue(msg, exists);
-        
+
         // Delete the lock:
         print("Deleting lock from database.");
         getLockStore().delete(lock);
@@ -192,12 +192,12 @@ public void testExistsInStore() throws Exception
  */
 public void testExpirationInStore() throws Exception
 {
-	int numLocks = 0;
-	int ctr = 0;
-	String msg = null;
+    int numLocks = 0;
+    int ctr = 0;
+    String msg = null;
     IEntityLock[] selectedLocks = null;
     java.util.Date now = new java.util.Date(System.currentTimeMillis());
-    
+
     // select unexpired locks by entity type
     msg = "Selecting unexpired locks by type.";
     print(msg);
@@ -215,9 +215,11 @@ public void testExpirationInStore() throws Exception
     msg = "Selected all remaining locks.";
     print(msg);
     selectedLocks = getLockStore().find(null, null, null, null, null);
-    
+
     numLocks = selectedLocks.length;
-    assertEquals(numLocks, testLocks.length - numExpiredLocks);
+    msg = "Selected " + numLocks + " unexpired locks";
+    print(msg);
+    assertEquals(msg, testLocks.length - numExpiredLocks, numLocks);
     for (ctr=0; ctr<numLocks; ctr++)
         { assertTrue(msg, selectedLocks[ctr].getExpirationTime().after(now)); }
 
@@ -226,12 +228,12 @@ public void testExpirationInStore() throws Exception
  */
 public void testSelectFromStore() throws Exception
 {
-	int numLocks = 0;
-	int ctr = 0;
+    int numLocks = 0;
+    int ctr = 0;
     IEntityLock[] selectedLocks = null;
     String msg = null;
     java.util.Date now = new java.util.Date(System.currentTimeMillis());
-    
+
         // select locks by entity type
         msg = "Selecting locks for Group type.";
         print(msg);
@@ -258,8 +260,8 @@ public void testSelectFromStore() throws Exception
         assertEquals(msg, numLocks, 1);
         assertEquals(msg, selectedLocks[0].getEntityType(), IPERSON_CLASS);
         assertEquals(msg, selectedLocks[0].getEntityKey(), testKeys[1]);
-        assertEquals(msg, selectedLocks[0].getLockType(), 1);        
-    
+        assertEquals(msg, selectedLocks[0].getLockType(), 1);
+
         selectedLocks = getLockStore().find(IPERSON_CLASS, testKeys[1], new Integer(0), null, null);
         numLocks = selectedLocks.length;
         assertEquals(msg, numLocks, 0);
@@ -289,15 +291,15 @@ public void testService() throws Exception
 
     print("Creating first read lock.");
     readLock1 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[0]);
-    
+
     print("Creating second read lock (for same entity).");
     readLock2 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[1]);
 
     msg = "Attempting to create a write lock for the entity: should fail.";
-    print(msg);    
-    try 
+    print(msg);
+    try
         { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[2]); }
-    catch (LockingException le) 
+    catch (LockingException le)
         { System.out.println("Caught Exception: " + le.getMessage()); }
 
     assertNull(msg, writeLock);
@@ -310,17 +312,17 @@ public void testService() throws Exception
     assertTrue( msg, ! readLock2.isValid() );
 
     msg = "Attempting to create a write lock for the entity: should succeed.";
-    print(msg);    
-    try 
+    print(msg);
+    try
         { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[2]); }
-    catch (LockingException le) 
+    catch (LockingException le)
         { System.out.println("Caught Exception: " + le.getMessage()); }
 
     assertTrue( msg, writeLock.isValid() );
     msg = "Releasing write lock: should be invalid.";
     print(msg);
     writeLock.release();
-    assertTrue( msg, ! writeLock.isValid() ); 
+    assertTrue( msg, ! writeLock.isValid() );
 }
 /**
  */
@@ -332,7 +334,7 @@ public void testServiceConvert() throws Exception
     IEntityLockService service = getService();
     int readSecs = 30;
     int writeSecs = 45;
-    
+
     // Create a READ lock on Group testKeys[3], owned by testIds[0]:
     print("Creating new READ lock");
     IEntityLock lock = service.newLock(GROUP_CLASS, testKeys[3], IEntityLockService.READ_LOCK, testIds[0], readSecs);
@@ -356,15 +358,15 @@ public void testServiceConvert() throws Exception
     valid = service.isValid(lock);
     print(msg);
     assertTrue(msg, valid);
-    
-    // Now try to create a WRITE lock on the same entity for a different owner.  
+
+    // Now try to create a WRITE lock on the same entity for a different owner.
     IEntityLock duplicateLock = null;
     msg = "Attempting to create a duplicate lock; should be null";
     print(msg);
-    
+
     try { duplicateLock = service.newLock(GROUP_CLASS, testKeys[3], IEntityLockService.WRITE_LOCK, testIds[1]); }
     catch (LockingException le) {print("Caught exception: " + le.getMessage()); }
-    
+
     assertNull(msg, duplicateLock);
 
 }
@@ -375,7 +377,7 @@ public void testServiceLockRenewal() throws Exception
     String msg = null;
     boolean valid = false;
     IEntityLockService service = getService();
-    
+
     msg = "Attempting to renew an old lock";
     print(msg);
     IEntityLock badLock = testLocks[2];
@@ -386,12 +388,12 @@ public void testServiceLockRenewal() throws Exception
 
     msg = "Attempting to renew a valid lock";
     print(msg);
-    IEntityLock goodLock = testLocks[0];    
+    IEntityLock goodLock = testLocks[0];
     msg = "Checking if lock was renewed.";
     print(msg);
     try { service.renew(goodLock); } catch (Exception ex) {print("Caught Exception: " + ex.getMessage()); }
     assertTrue(msg, service.isValid(goodLock));
-    
+
 }
 /**
  */
@@ -425,19 +427,19 @@ public void testStoreUpdate() throws Exception
     long tenMinutes =  1000 * 60 * 10;
     long now = System.currentTimeMillis();
     String msg = null;
-    	
+
     print("Update expiration and lock type of lock1.");
-    
+
     java.util.Date newExpiration = new java.util.Date(now + fiveMinutes);
     int newType = IEntityLockService.WRITE_LOCK;
-    
+
     IEntityLock lock1 = new EntityLockImpl
-        (testLocks[1].getEntityType(), testLocks[1].getEntityKey(), 
-	     testLocks[1].getLockType(), testLocks[1].getExpirationTime(), testLocks[1].getLockOwner());
+        (testLocks[1].getEntityType(), testLocks[1].getEntityKey(),
+         testLocks[1].getLockType(), testLocks[1].getExpirationTime(), testLocks[1].getLockOwner());
     getLockStore().update(testLocks[1], newExpiration, new Integer(newType));
     ((EntityLockImpl)testLocks[1]).setExpirationTime(newExpiration);
     ((EntityLockImpl)testLocks[1]).setLockType(newType);
-    
+
     msg = "Check if the old version of lock1 still exists in store.";
     print(msg);
     assertTrue(msg, ! getService().existsInStore(lock1) );

@@ -6046,9 +6046,9 @@
     </rows>
   </table>
 
-  <!-- Groups tables -->
+  <!-- IBasicEntity types -->
 <table>
-    <name>UP_GROUP_ENTITY_TYPE</name>
+    <name>UP_ENTITY_TYPE</name>
     <rows>
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>1</value></column>
@@ -6230,7 +6230,7 @@
         <column><name>CREATOR_ID</name><value>0</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CApplet</value></column>
-        <column><name>DESCRIPTION</name><value>Renders a hava applet</value></column>
+        <column><name>DESCRIPTION</name><value>Renders a java applet</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>57</value></column>

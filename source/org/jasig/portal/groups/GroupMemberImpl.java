@@ -228,7 +228,7 @@ public java.util.Iterator getMembers() throws GroupsException
 public Class getType()
 {
     return ( isGroup() )
-        ? EntityTypes.GROUP_ENTITY_TYPE
+        ? org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE
         : getEntityType();
 }
 /*
@@ -348,7 +348,7 @@ private void setEntityType(Class newEntityType) throws GroupsException
         entityType = getDefaultEntityType();
     else
     {
-        Integer typeID = EntityTypes.getEntityTypeID(newEntityType);
+        Integer typeID = org.jasig.portal.EntityTypes.getEntityTypeID(newEntityType);
         if ( typeID == null )
             throw new GroupsException("Unknown entity type: " + newEntityType);
         entityType = newEntityType;

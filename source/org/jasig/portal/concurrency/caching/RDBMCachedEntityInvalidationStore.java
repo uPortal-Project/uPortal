@@ -43,7 +43,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import org.jasig.portal.concurrency.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.groups.EntityTypes;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
@@ -98,7 +98,7 @@ public void add(IBasicEntity entity) throws CachingException
     catch (SQLException sqle)
         { throw new CachingException("Problem adding " + entity + ": " + sqle.getMessage()); }
 
-	finally
+    finally
         { RDBMServices.releaseConnection(conn); }
 }
 /**
@@ -203,7 +203,7 @@ throws CachingException
  */
 private static String getAddSql()
 {
-	if ( addSql == null )
+    if ( addSql == null )
     {
         addSql = "INSERT INTO " + ENTITY_INVALIDATION_TABLE +
           "(" + getAllTableColumns() + ") VALUES (?, ?, ?)";
@@ -257,7 +257,7 @@ private static java.lang.String getSelectSql()
  */
 private static String getUpdateSql()
 {
-	if ( updateSql == null )
+    if ( updateSql == null )
     {
         updateSql = "UPDATE " + ENTITY_INVALIDATION_TABLE +
         " SET " + INVALIDATION_TIME_COLUMN + EQ + "?" +
@@ -486,7 +486,7 @@ throws CachingException
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
         sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + sqlQuote(ts));
-	}
+    }
 
     return primSelect(sqlQuery.toString(), conn);
 }
@@ -523,7 +523,7 @@ throws CachingException
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
         sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
-	}
+    }
 
     return primSelect(sqlQuery.toString(), conn);
 }
@@ -560,7 +560,7 @@ throws CachingException
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
         sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
-	}
+    }
 
     return primSelect(sqlQuery.toString(), conn);
 }

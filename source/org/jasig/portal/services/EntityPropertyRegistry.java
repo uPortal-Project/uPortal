@@ -51,9 +51,9 @@ import  org.apache.xpath.*;
 /**
  * A Service to allow the querying and storing of properties relating
  * to portal entities.  Configured using /properties/EntityPropertyRegistry.xml
- * 
+ *
  * see dtds/EntityPropertyRegistry.dtd for configuration file grammar
- * 
+ *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
  */
@@ -69,7 +69,7 @@ public class EntityPropertyRegistry {
     }
 
     protected void init() throws Exception {
-        Document def = ResourceLoader.getResourceAsDocument(this.getClass(), 
+        Document def = ResourceLoader.getResourceAsDocument(this.getClass(),
                 "/properties/EntityPropertyRegistry.xml");
         NodeList ss = def.getElementsByTagName("store");
         if (ss.getLength() == 1) {
@@ -141,14 +141,14 @@ public class EntityPropertyRegistry {
     }
 
     protected String getPropKey(IBasicEntity entity) {
-        return  EntityTypes.getEntityTypeID(entity.getEntityType()).toString()
+        return  org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).toString()
                 + "." + entity.getEntityKey();
     }
 
     protected EntityProperties getProperties(IBasicEntity entity) {
         EntityProperties ep = null;
         try {
-            ep = (EntityProperties)EntityCachingService.instance().get(propsType, 
+            ep = (EntityProperties)EntityCachingService.instance().get(propsType,
                     getPropKey(entity));
         } catch (CachingException e) {
             LogService.instance().log(LogService.ERROR, e);
@@ -163,11 +163,11 @@ public class EntityPropertyRegistry {
                 IEntityPropertyFinder finder;
                 if (i == storePrecedence) {
                     finder = store;
-                } 
+                }
                 else {
                     if (entity.getEntityType().equals(finderTypes[i])) {
                         finder = finders[i];
-                    } 
+                    }
                     else {
                         finder = null;
                     }
@@ -175,7 +175,7 @@ public class EntityPropertyRegistry {
                 if (finder != null) {
                     String[] names = finder.getPropertyNames(entity);
                     for (int j = 0; j < names.length; j++) {
-                        ep.setProperty(names[j], finder.getProperty(entity, 
+                        ep.setProperty(names[j], finder.getProperty(entity,
                                 names[j]));
                     }
                 }

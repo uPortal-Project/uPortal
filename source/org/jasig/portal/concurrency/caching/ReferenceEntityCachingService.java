@@ -38,7 +38,7 @@ package org.jasig.portal.concurrency.caching;
 import java.util.*;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.groups.EntityTypes;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.services.LogService;
 /**
  * Caching service reference implementation.
@@ -51,13 +51,13 @@ public class ReferenceEntityCachingService implements IEntityCachingService
     private static IEntityCachingService singleton;
 
     // Our cache of caches:
- 	private Map caches = new HashMap(10);
+    private Map caches = new HashMap(10);
 
     // The following properties can be overridden via settings in portal.properties.
     // Here they are initialized to their defaults.
 
     // Will there be peer caches on other servers?
-	boolean multiServer = false;
+    boolean multiServer = false;
 
     // Default maximum cache size.
     int defaultMaxCacheSize = 1000;
@@ -186,14 +186,14 @@ private void loadDefaultProperties()
         int defaultSweepIntervalSecs = PropertiesManager.getPropertyAsInt
             ("org.jasig.portal.concurrency.IEntityCachingService.defaultSweepInterval");
         defaultSweepIntervalMillis = defaultSweepIntervalSecs * 1000;
-	}
+    }
     catch ( Exception ex ) { /* defaults to 60 seconds */ }
 
     try
     {
         defaultMaxCacheSize = PropertiesManager.getPropertyAsInt
             ("org.jasig.portal.concurrency.IEntityCachingService.defaultMaxCacheSize");
-	}
+    }
     catch ( Exception ex ) { /* defaults to 1000 */ }
 
     try
@@ -201,7 +201,7 @@ private void loadDefaultProperties()
         int defaultMaxIdleTimeSecs = PropertiesManager.getPropertyAsInt
             ("org.jasig.portal.concurrency.IEntityCachingService.defaultMaxIdleTime");
         defaultMaxIdleTimeMillis = defaultMaxIdleTimeSecs * 1000;
-	}
+    }
     catch ( Exception ex ) { /* defaults to 30 minutes */ }
 
 }

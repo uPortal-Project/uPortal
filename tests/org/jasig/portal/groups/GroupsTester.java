@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.*;
 import junit.framework.*;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.concurrency.IBasicEntity;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.security.IPerson;
@@ -62,7 +63,7 @@ protected void addTestEntityType()
     {
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
-        String sql =  "INSERT INTO UP_GROUP_ENTITY_TYPE " +
+        String sql =  "INSERT INTO UP_ENTITY_TYPE " +
                       "VALUES (99, " + "'" + MINIMAL_ENTITY_CLASS.getName() + "')";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )
@@ -79,7 +80,7 @@ protected void deleteTestEntityType()
     {
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
-        String sql =  "DELETE FROM UP_GROUP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
+        String sql =  "DELETE FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
                       MINIMAL_ENTITY_CLASS.getName() + "'";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,28 +33,27 @@
  *
  */
 
-package org.jasig.portal.groups;
+package org.jasig.portal;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**
- * This class provides access to the entity types used by <code>IEntityGroups</code>.
- * Type, to a group, is like <code>Class</code> to an <code>Array</code>.  It specifies
- * what kind of entities the <code>IEntityGroup</code> contains.
+ * This class provides access to the entity types used by <code>IBasicEntities</code>
+ * and the classes in <code>org.jasig.portal.groups</code> and
+ * <code>org.jasig.portal.concurrency.*</code>.
  * <p>
- * Each type is associated with an <code>Integer</code> which is used to store the type in
- * the portal data store.  This class translates between the <code>Integer</code> and
- * <code>Class</code> values.
+ * Each type is associated with an <code>Integer</code> used to represent the
+ * type in the portal data store.  This class translates between the
+ * <code>Integer</code> and <code>Class</code> values.
  *
  * @author Dan Ellentuck
  * @version $Revision$
- * @deprecated As of uPortal 2.1, replaced by {@link org.jasig.portal.EntityTypes}
+ * @see org.jasig.portal.IBasicEntity
  */
 public class EntityTypes {
 

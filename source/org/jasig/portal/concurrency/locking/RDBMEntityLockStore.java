@@ -43,7 +43,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
-import org.jasig.portal.groups.EntityTypes;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 

@@ -615,16 +615,16 @@
     <name>UP_GROUP</name>
     <desc>Entries that uniquely identify a uPortal group</desc>
     <columns>
-      <column> <name>GROUP_ID</name>        <type>VARCHAR</type>     <param>255</param>
+      <column> <name>GROUP_ID</name>        <type>VARCHAR</type>     <param>240</param>
         <desc>Group ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
         <key>PK</key>
       </column>
-      <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>255</param>
+      <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>240</param>
         <desc>Who created this group, foreign key USER_ID of table UP_USER</desc>
         <key>FK</key>
       </column>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
-        <desc>The entity to be called when a member of this group, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <desc>The entity to be called when a member of this group, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
         <key>FK</key>
       </column>
       <column> <name>GROUP_NAME</name>      <type>VARCHAR</type>     <param>255</param>
@@ -641,8 +641,8 @@
   </table>
 
   <table>
-    <name>UP_GROUP_ENTITY_TYPE</name>
-    <desc>Holds permissible group types, where "type" is analogous to the type of an array, which defines what the container can contain.</desc>
+    <name>UP_ENTITY_TYPE</name>
+    <desc>Holds known IBasicEntity types, associating an Integer code with the name of a class.</desc>
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>    <type>INTEGER</type>
         <desc>Entity type ID is an unique identifying sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
@@ -725,7 +725,7 @@
     <desc>Each row indicates an entity that has been updated or deleted and whose cache entry is now invalid.</desc>
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
-        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
         <key>CK</key>
       </column>
       <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
@@ -747,7 +747,7 @@
     <desc>Each row represents a lock held on a portal entity on behalf of an owner.</desc>
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
-        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
         <key>CK</key>
       </column>
       <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
@@ -760,7 +760,7 @@
       <column> <name>EXPIRATION_TIME</name>  <type>TIMESTAMP</type>
         <desc>The time the lock expires.</desc>
       </column>
-     <column> <name>LOCK_OWNER</name>       <type>VARCHAR</type>     <param>30</param>
+     <column> <name>LOCK_OWNER</name>       <type>VARCHAR</type>     <param>240</param>
         <desc>The owner of the lock.</desc>
         <key>CK</key>
       </column>
@@ -778,7 +778,7 @@
     <desc>Each row represents a property of a portal entity.</desc>
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
-        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
       </column>
       <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>255</param>
         <desc>The unique key of the entity.</desc>
