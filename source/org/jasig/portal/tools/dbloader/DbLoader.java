@@ -250,7 +250,7 @@ public class DbLoader
 
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
         tablesXslUri = PropertiesHandler.properties.getTablesXslUri();
-        XSLT xslt = XSLT.getTransformer(DbLoader.class);
+        XSLT xslt = XSLT.getTransformer(new DbLoader());
         xslt.setXML(tablesDoc);
         xslt.setXSL(tablesXslUri);
         xslt.setTarget(new TableHandler());
