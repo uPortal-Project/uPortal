@@ -70,6 +70,9 @@ import java.net.MalformedURLException;
  *  4) "xslUri" - a URI representing the stylesheet to use
  *                  <i>If <code>xslUri</code> is supplied, <code>sslUri</code>
  *                  and <code>xslTitle</code> will be ignored.
+ *  5) "cacheTimeout" - the amount of time (in seconds) that the contents of the 
+ *                  channel should be cached (optional).  If this parameter is left
+ *                  out, a default timeout value will be used.
  * </p>
  * <p>The static parameters above can be overridden by including
  * parameters of the same name (<code>xmlUri</code>, <code>sslUri</code>,
@@ -81,7 +84,8 @@ import java.net.MalformedURLException;
  * <code>&lt;xsl:param name="yourParamName"&gt;aDefaultValue&lt;/xsl:param&gt;</code></p>
  * <p>CGenericXSLT is also useful for channels that have no dynamic data.  In these types
  * of channels, all the markup comes from the XSLT stylesheets.  An empty XML document
- * can be used and is included with CGenericXSLT.  Just set the xml parameter</p>
+ * can be used and is included with CGenericXSLT.  Just set the xml parameter to this
+ * empty document.</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
@@ -100,12 +104,14 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private String sslUri;
     private String xslTitle;
     private String xslUri;
+    private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
 
     public CState() 
     {
       xmlUri = sslUri = xslTitle = xslUri = null;
-      runtimeData=null;
+      cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
+      runtimeData = null;
     }
   }
 
@@ -125,6 +131,12 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 	  
     state.xslTitle = sd.getParameter("xslTitle");
     state.xslUri = sd.getParameter("xslUri");
+    
+    String cacheTimeout = sd.getParameter("cacheTimeout");
+    
+    if (cacheTimeout != null)
+      state.cacheTimeout = Long.parseLong(cacheTimeout);
+    
     stateTable.put(uid,state);
   }
     
@@ -256,7 +268,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       return false;
     } 
     else 
-      return (System.currentTimeMillis() - ((Long)validity).longValue() < 15*60*1000);
+      return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
 
   private static String getKey(CState state)
@@ -278,6 +290,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     }
     
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+    sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
     sbKey.append("params:").append(state.runtimeData.toString());
     return sbKey.toString();
   }
