@@ -31,119 +31,98 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+package  org.jasig.portal;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.io.IOException;
+import  java.sql.Connection;
+import  java.sql.DriverManager;
+import  java.io.File;
+import  java.io.FileNotFoundException;
+import  java.io.FileInputStream;
+import  java.io.IOException;
+import  java.util.Properties;
+import  org.jasig.portal.Logger;
 
-import java.util.Properties;
-
-import org.jasig.portal.Logger;
 
 /**
  * Provides database access
  * @author Ken Weiner
  * @version $Revision$
  */
-public class RdbmServices extends GenericPortalBean
-{
+public class RdbmServices extends GenericPortalBean {
   private static String sJdbcDriver = null;
   private static String sJdbcUrl = null;
   private static String sJdbcUser = null;
   private static String sJdbcPassword = null;
-
-  static
-  {
+  static {
+    // This should point to the rdbm.properties file
     String propertiesFilePath = getPortalBaseDir() + "properties" + File.separator + "rdbm.properties";
-    
     File jdbcPropsFile = new File(propertiesFilePath);
-    Properties jdbcProps = new Properties ();
-    
-    try
-    {
-      jdbcProps.load (new FileInputStream (jdbcPropsFile));
-    }
-    catch(Exception e)
-    {
-      Logger.log(Logger.ERROR, "RdbmServices.static: Could not load " + propertiesFilePath);
-      Logger.log(Logger.ERROR, e);
-    }
-    
-    sJdbcDriver   = jdbcProps.getProperty("jdbcDriver");
-    sJdbcUrl      = jdbcProps.getProperty("jdbcUrl");
-    sJdbcUser     = jdbcProps.getProperty("jdbcUser");
-    sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
-    
-    try
-    {
-      Class.forName(sJdbcDriver).newInstance();
-    }
-    catch(ClassNotFoundException e)
-    {
-      Logger.log(Logger.ERROR, "RdbmServices.static: Could not load JDBC driver " + sJdbcDriver);
-      Logger.log(Logger.ERROR, e);
-    } catch (InstantiationException ie) {
+    // Give up if the properties file does not exist
+    if (!jdbcPropsFile.exists()) {
+      Logger.log(Logger.ERROR, "Cannot find rdbm.properties at: " + propertiesFilePath);
+    } 
+    else {
+      Properties jdbcProps = new Properties();
+      try {
+        jdbcProps.load(new FileInputStream(jdbcPropsFile));
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, "RdbmServices.static: Could not load " + propertiesFilePath);
+        Logger.log(Logger.ERROR, e);
+      }
+      sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
+      sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
+      sJdbcUser = jdbcProps.getProperty("jdbcUser");
+      sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
+      try {
+        Class.forName(sJdbcDriver).newInstance();
+      } catch (ClassNotFoundException e) {
+        Logger.log(Logger.ERROR, "RdbmServices.static: Could not load JDBC driver " + sJdbcDriver);
+        Logger.log(Logger.ERROR, e);
+      } catch (InstantiationException ie) {
         Logger.log(Logger.ERROR, "RdbmServices.static: Could not instantiate JDBC driver " + sJdbcDriver);
         Logger.log(Logger.ERROR, ie);
-    } catch (IllegalAccessException iae) {
+      } catch (IllegalAccessException iae) {
         Logger.log(Logger.ERROR, "RdbmServices.static: Could not instantiate JDBC driver " + sJdbcDriver);
         Logger.log(Logger.ERROR, iae);
+      }
     }
-  }
-  
-  /**
-   * Constructor which loades JDBC parameters from property file
-   * upon first invocation
-   */
-  public RdbmServices ()
-  {
   }
 
   /**
    * Gets a database connection
    * @return a database Connection object
    */
-  public static Connection getConnection()
-  {
+  public static Connection getConnection () {
     Connection conn = null;
-
-    try
-    {
-      conn = DriverManager.getConnection (sJdbcUrl, sJdbcUser, sJdbcPassword);
-    }
-    catch(Exception e)
-    {
+    try {
+      conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, "RdbmServices.getConnection(): Problem getting connection to " + sJdbcUrl);
       Logger.log(Logger.ERROR, e);
     }
-
-    return conn;
+    return  conn;
   }
 
   /**
    * Releases database connection
    * @param a database Connection object
    */
-  public static void releaseConnection(Connection con)
-  {
-    try
-    {
-      if(con != null)
-      {
+  public static void releaseConnection (Connection con) {
+    try {
+      if (con != null) {
         con.close();
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, "RdbmServices.releaseConnection(): Problem releasing connection");
       Logger.log(Logger.ERROR, e);
     }
   }
 }
+
+
+
