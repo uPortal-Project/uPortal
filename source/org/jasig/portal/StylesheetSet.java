@@ -64,8 +64,12 @@ import javax.xml.transform.stream.StreamSource;
  * @version $Revision$
  */
 public class StylesheetSet extends SAX2FilterImpl {
+  // Default URI for the media properties file
+  protected static final String m_defaultMediaPropsUri = UtilitiesBean.fixURI("properties/media.properties");
+  protected static Hashtable m_mediaPropsCache = new Hashtable(5);
+  protected String m_myMediaPropsUri = m_defaultMediaPropsUri;
   protected Hashtable title_table;
-  protected OrderedProps props = null;
+  
 
   /**
    * put your documentation comment here
@@ -399,26 +403,65 @@ public class StylesheetSet extends SAX2FilterImpl {
     }
   }
 
+  protected OrderedProps getMediaProps() throws PortalException
+  {
+    // Check to see if the media properties are in the cache
+    if(m_mediaPropsCache.containsKey(m_myMediaPropsUri))
+    {
+      return((OrderedProps)m_mediaPropsCache.get(m_myMediaPropsUri));
+    }
+    else
+    {
+      // Try to load the media properties
+      setMediaProps(m_myMediaPropsUri); 
+    }
+    
+    // Try to return them from the cache again
+    return((OrderedProps)m_mediaPropsCache.get(m_myMediaPropsUri));
+  }
+  
   /**
    * put your documentation comment here
    * @param uri
    */
   public void setMediaProps (String uri) throws PortalException {
-    if (uri == null) {
-      uri = "properties/media.properties";
+    if (uri == null)
+    {
+      // Use the default URI
+      uri = m_defaultMediaPropsUri;
     }
-    uri = UtilitiesBean.fixURI(uri);
-    try {
+    else
+    {
+      // Fix up the provided URI
+      uri = UtilitiesBean.fixURI(uri);
+      
+      // Cache the URI of the media props that this instance will use
+      m_myMediaPropsUri = uri;
+    }
+
+    // Check to see if we've already cached these properties
+    if(m_mediaPropsCache.containsKey(uri))
+    {
+      return;
+    }
+
+    try 
+    {
       // Create a URL from the given URI
       URL url = expandSystemId(uri);
-      if (url != null) {
-        props = new OrderedProps(url.openStream());
+      if (url != null)
+      {
+        // Put the loaded media properties in the cache
+        m_mediaPropsCache.put(uri, new OrderedProps(url.openStream()));
       } 
-      else {
+      else 
+      {
         throw new ResourceMissingException(uri, "The media.properties file", "Unable to understand the media.properties URI");
       }
-    } catch (IOException ioe) {
-        throw new ResourceMissingException(uri, "The media.properties file", ioe.getMessage());
+    }
+    catch (IOException ioe)
+    {
+      throw new ResourceMissingException(uri, "The media.properties file ", ioe.getMessage());
     }
   }
 
@@ -435,17 +478,9 @@ public class StylesheetSet extends SAX2FilterImpl {
    * @param req
    * @return 
    */
-  protected String getMedia (HttpServletRequest req) throws PortalException {
-    // Try to set the 
-    if (props == null) {
-      this.setMediaProps(null);
-    }
-    if (props != null) {
-      return  props.getValue(req.getHeader("User-Agent"));
-    } 
-    else {
-      return  (null);
-    }
+  protected String getMedia (HttpServletRequest req) throws PortalException
+  {
+    return(getMediaProps().getValue(req.getHeader("User-Agent")));
   }
 
   /**
@@ -454,11 +489,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * @return 
    */
   protected String getMedia (BrowserInfo bi) throws PortalException {
-    if (props == null)
-      this.setMediaProps((String)null);
-    if (props != null)
-      return  props.getValue(bi.getUserAgent());
-    return  (String)null;
+    return(getMediaProps().getValue(bi.getUserAgent()));
   }
 
   /**
