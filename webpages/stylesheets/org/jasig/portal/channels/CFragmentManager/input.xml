@@ -3,15 +3,15 @@
     <category name="Fragments" expanded="true">
         <fragment>
             <ID>f001</ID>
-            <rootNodeID>frnid001</rootNodeID>
+            <rootNodeID immutable='N'>frnid001</rootNodeID>
             <type>pulled</type>
             <fname>News</fname>
-            <name>News Feeds</name>
+            <name></name>
             <description>A tab fragment with 2 columns each containing news feeds</description>
         </fragment>
         <fragment>
             <ID>f005</ID>
-            <rootNodeID>frnid005</rootNodeID>
+            <rootNodeID immutable='Y'>frnid005</rootNodeID>
             <type>pushed</type>
             <fname>BioDept</fname>
             <name>Biology Department</name>
@@ -19,7 +19,7 @@
         </fragment>
         <fragment>
             <ID>f006</ID>
-            <rootNodeID>frnid006</rootNodeID>
+            <rootNodeID immutable='Y'>frnid006</rootNodeID>
             <type>pulled</type>
             <fname>Bio180</fname>
             <name>Biology 180</name>
@@ -27,7 +27,7 @@
         </fragment>
         <fragment>
             <ID>f004</ID>
-            <rootNodeID>frnid004</rootNodeID>
+            <rootNodeID immutable='N'>frnid004</rootNodeID>
             <type>pulled</type>
             <fname>Bio101</fname>
             <name>Biology 101</name>
@@ -35,7 +35,7 @@
         </fragment>
         <fragment>
             <ID>f002</ID>
-            <rootNodeID>frnid002</rootNodeID>
+            <rootNodeID immutable='Y'>frnid002</rootNodeID>
             <type>pushed</type>
             <fname>Bio123</fname>
             <name>Biology123</name>
@@ -43,7 +43,7 @@
         </fragment>
         <fragment>
             <ID>f003</ID>
-            <rootNodeID>frnid003</rootNodeID>
+            <rootNodeID immutable='N'>frnid003</rootNodeID>
             <type>pushed</type>
             <fname>Bio322</fname>
             <name>Biology 322</name>
