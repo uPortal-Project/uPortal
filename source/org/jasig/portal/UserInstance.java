@@ -56,6 +56,7 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -68,6 +69,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.CommonUtils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -116,7 +118,9 @@ public class UserInstance implements HttpSessionBindingListener {
     final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
-    IPerson person;
+    protected IPerson person;
+
+    private IUserLayoutNodeDescription newNodeDescription = null;
 
     public UserInstance (IPerson person) {
         this.person=person;
@@ -651,7 +655,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param channelManager a <code>ChannelManager</code> value
      * @exception PortalException if an error occurs
      */
-    private void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm) throws PortalException {
+    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm) throws PortalException {
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
@@ -679,28 +683,45 @@ public class UserInstance implements HttpSessionBindingListener {
           }
 
         if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
+            String[] values1;
             int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
-            ulm.markAddTargets(ulm.createNodeDescription(nodeType));
+            IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
+            nodeDesc.setName("Unnamed");
+            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (values1 = req.getParameterValues("contentPublishID")) != null )
+             ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(values1[0]);
+            newNodeDescription = nodeDesc;
+            ulm.markAddTargets(nodeDesc);
         } else {
             ulm.markAddTargets(null);
           }
 
         if ((values = req.getParameterValues("uP_add_target")) != null) {
          String[] values1, values2;
+         String value = null;
          int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
-         if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
-            if ( values1[0].trim().length() == 0 ) values1[0] = null;
-            IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
-            nodeDesc.setName("Unnamed");
-            nodeDesc = ulm.addNode(nodeDesc,values2[0],values1[0]);
+         values1 =  req.getParameterValues("targetNextID");
+         if ( values1 != null && values1.length > 0 )
+            value = values1[0];
+         if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
+            if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
+            if ( newNodeDescription == null ) {
+             newNodeDescription = ulm.createNodeDescription(nodeType);
+             newNodeDescription.setName("Unnamed");
+            }
+            ulm.addNode(newNodeDescription,values2[0],value);
          }
+            newNodeDescription = null;
         }
 
         if ((values = req.getParameterValues("uP_move_target")) != null) {
          String[] values1, values2;
-         if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
-            if ( values1[0].trim().length() == 0 ) values1[0] = null;
-            ulm.moveNode(values[0],values2[0],values1[0]);
+         String value = null;
+         values1 = req.getParameterValues("targetNextID");
+         if ( values1 != null && values1.length > 0 )
+            value = values1[0];
+         if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
+            if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
+            ulm.moveNode(values[0],values2[0],value);
          }
         }
 
