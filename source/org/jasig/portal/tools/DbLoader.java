@@ -846,6 +846,7 @@ public class DbLoader
     private static boolean insideRow = false;
     private static boolean insideColumn = false;
     private static boolean insideValue = false;
+    private static boolean supportsPreparedStatements = false;
 
     static Table table;
     static Row row;
@@ -857,6 +858,8 @@ public class DbLoader
 
       if (!populateTables)
         System.out.print("disabled.");
+
+      supportsPreparedStatements = supportsPreparedStatements();
     }
 
     public void endDocument ()
@@ -953,10 +956,14 @@ public class DbLoader
            sb.append("?");
         else
         {
-          sb.append("'");
           String value = column.getValue();
-          sb.append(value != null ? value.trim() : "");
-          sb.append("'");
+          if (value != null && value.equals("SYSDATE")) {
+            sb.append(value);
+          } else {
+            sb.append("'");
+            sb.append(value != null ? value.trim() : "");
+            sb.append("'");
+          }
         }
 
         sb.append(", ");
@@ -978,7 +985,6 @@ public class DbLoader
       if (createScript)
         scriptOut.println(prepareInsertStatement(table.getName(), row, false) + PropertiesHandler.properties.getStatementTerminator());
 
-      boolean supportsPreparedStatements = supportsPreparedStatements();
 
       if (supportsPreparedStatements)
       {
@@ -1007,7 +1013,21 @@ public class DbLoader
               // Get a java sql data type for column name
               int javaSqlDataType = getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName());
 
-              if (valueLength <= 4000)
+              if (javaSqlDataType == Types.DATE) {
+                java.sql.Date date;
+
+                try {
+                  if (value.equals("SYSDATE")) {
+                    date = new java.sql.Date(System.currentTimeMillis());
+                  } else {
+                    date = java.sql.Date.valueOf(value);
+                  }
+                  pstmt.setDate(i, date);
+                } catch (Exception e) {
+                  throw new SQLException("Invalid date: " + value);
+                }
+              }
+              else if (valueLength <= 4000)
               {
                 try
                 {
@@ -1112,7 +1132,6 @@ public class DbLoader
       {
         try { pstmt.close(); } catch (Exception e) { }
       }
-
       return supportsPreparedStatements;
     }
 
