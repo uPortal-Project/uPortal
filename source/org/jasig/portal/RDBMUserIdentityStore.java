@@ -101,19 +101,19 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_PROFILES  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = '" + uPortalUID + "'";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_SS_ATTS WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = '" + uPortalUID + "'";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_SS_PARMS  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = '" + uPortalUID + "'";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_STRUCT_PARAM WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = '" + uPortalUID + "'";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
@@ -300,10 +300,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_user_profiles */
-        Insert = "INSERT INTO UP_USER_PROFILES (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
+        /* insert row into up_user_profile */
+        Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
           " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID "+
-          "FROM UP_USER_PROFILES WHERE USER_ID="+templateUID;
+          "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
 
@@ -313,24 +313,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_user_ss_atts */
-        Insert = "INSERT INTO UP_USER_SS_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
+        /* insert row into up_ss_user_atts */
+        Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
           " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
-          " FROM UP_USER_SS_ATTS WHERE USER_ID="+templateUID;
+          " FROM UP_SS_USER_ATTS WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_user_ss_parms */
-        Insert = "INSERT INTO UP_USER_SS_PARMS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+        /* insert row into up_ss_user_parm */
+        Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
           " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
-          " FROM UP_USER_SS_PARMS WHERE USER_ID="+templateUID;
+          " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_struct_param */
-        Insert = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) "+
+        /* insert row into up_layout_param */
+        Insert = "INSERT INTO UP_LAYOUT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) "+
           " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL "+
-          " FROM UP_STRUCT_PARAM WHERE USER_ID="+templateUID;
+          " FROM UP_LAYOUT_PARAM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
 
