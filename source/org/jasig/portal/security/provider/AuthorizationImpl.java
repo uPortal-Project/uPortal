@@ -80,7 +80,7 @@ public class AuthorizationImpl implements IAuthorizationService {
   /**
    *
    */
-public AuthorizationImpl () throws AuthorizationException
+private AuthorizationImpl () throws AuthorizationException
 {
     super();
     initialize();
