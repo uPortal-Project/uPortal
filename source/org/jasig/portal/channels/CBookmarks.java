@@ -48,8 +48,8 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       for (int i = 0; i < bookmarks.length; i++)
       {
         out.println ("  <tr bgcolor=#eeeeee>");
-        out.println ("    <td><font face=Arial><a href=\"" + bookmarks[i].getAttribute ("url") + "\">" + bookmarks[i].getAttribute ("name") + "</a></font></td>");
-        out.println ("    <td><font face=Arial>" + bookmarks[i].getAttribute ("comments") + "</font></td>");
+        out.println ("    <td><a href=\"" + bookmarks[i].getAttribute ("url") + "\">" + bookmarks[i].getAttribute ("name") + "</a></td>");
+        out.println ("    <td>" + bookmarks[i].getAttribute ("comments") + "</td>");
         out.println ("  </tr>");
       }
       
@@ -148,9 +148,9 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       out.println ("    <th>Comments</th>");
       out.println ("  </tr>");
       out.println ("  <tr>");
-      out.println ("    <td><font face=Arial><input type=text name=name value=\"" + sName + "\" size=20></font></td>");
-      out.println ("    <td><font face=Arial><input type=text name=url value=\"" + sUrl + "\" size=40></font></td>");
-      out.println ("    <td><font face=Arial><input type=text name=comments value=\"" + sComments + "\" size=40></font></td>");
+      out.println ("    <td><input type=text name=name value=\"" + sName + "\" size=20></td>");
+      out.println ("    <td><input type=text name=url value=\"" + sUrl + "\" size=40></td>");
+      out.println ("    <td><input type=text name=comments value=\"" + sComments + "\" size=40></td>");
       out.println ("  </tr>");
       out.println ("</table>");
       out.println ("<input type=hidden name=bookmark value=\""+ i + "\">");

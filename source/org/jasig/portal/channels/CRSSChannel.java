@@ -6,6 +6,7 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
+import org.jasig.portal.*;
 import org.jasig.portal.channels.rss.*;
 import com.objectspace.xml.*;
 
@@ -24,6 +25,7 @@ import java.net.*;
 public class CRSSChannel implements org.jasig.portal.IChannel                           
 { 
   private static RSSCache m_RSSCache = new RSSCache (3600);
+  //private static SmartCache m_RSSCache = new SmartCache (3600);
   private Hashtable params = null;
   
   public void initParams (Hashtable params) {this.params = params;}
@@ -43,7 +45,10 @@ public class CRSSChannel implements org.jasig.portal.IChannel
         String sXmlPackage = "org.jasig.portal.channels.rss";
         InputStream xmlStream = url.openStream();
         xml = Xml.openDocument (sXmlPackage, xmlStream);
+        //m_RSSCache.put (sUrl, xml, 3600);
         m_RSSCache.put (sUrl, xml);
+        Logger.log (Logger.INFO, "Caching RSS at URL: " + sUrl);
+        System.out.println ("Ch: Caching RSS at URL: " + sUrl);
       }
       
       IRss rss = (IRss) xml.getRoot ();            
@@ -129,7 +134,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       }
       
       out.println ("<p><a href=\"" + sTitleLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right></a>");
-      out.println ("<p><font face=Arial size=2><i>" + sDescription + "</i></font>");
+      out.println ("<p><em>" + sDescription + "</em>");
       
       for (int i = 0; i < channelAttr.length; i++)
       {
@@ -169,7 +174,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
                 out.println ("<p>" + sItemTitle);
                 
               if (sItemDescription != null)
-                out.println ("<font face=Arial size=2>" + sItemDescription + "</font>");
+                out.println (sItemDescription);
               
               out.println ("</ul>");
             }

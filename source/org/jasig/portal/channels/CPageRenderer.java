@@ -63,15 +63,15 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       }
       else
       {
-        out.println ("<font face=Arial><p>The page you chose cannot be rendered within a channel. Please choose another.  <p><i>Note: Pages containing framesets are not allowed.</i></font>");
+        out.println ("<p>The page you chose cannot be rendered within a channel. Please choose another.  <p><i>Note: Pages containing framesets are not allowed.</i>");
       }
     }
     catch (Exception e)
     {
       try
       {
-        out.println ("<font face=Arial><b>" + m_sUrl + "</b> is currently unreachable.");
-        out.println ("Please choose another.</font>");
+        out.println ("<b>" + m_sUrl + "</b> is currently unreachable.");
+        out.println ("Please choose another.");
       }
       catch (Exception ex)
       {

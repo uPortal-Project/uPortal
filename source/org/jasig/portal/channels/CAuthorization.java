@@ -71,11 +71,11 @@ public class CAuthorization implements org.jasig.portal.IChannel
   {
     try
     {
-      out.println ("<p><font face=\"Arial,Helvetica,sans-serif\">Please sign in with the following user name and password:</font>");
+      out.println ("<p>Please sign in with the following user name and password:");
       out.println ("<p><p>");
       out.println ("<table border=0 cellspacing=5 cellpadding=5>");
-      out.println ("  <tr><th align=right><font face=\"Arial,Helvetica,sans-serif\">User name:</font></th><td><tt>demo</tt></td></tr>");
-      out.println ("  <tr><th align=right><font face=\"Arial,Helvetica,sans-serif\">Password:</font></th><td><tt>demo</tt></td></tr>");
+      out.println ("  <tr><th align=right>User name:</th><td><tt>demo</tt></td></tr>");
+      out.println ("  <tr><th align=right>Password:</th><td><tt>demo</tt></td></tr>");
       out.println ("</table>");
 
       out.println ("<form action=\"layout.jsp\" method=post>");
@@ -108,17 +108,17 @@ public class CAuthorization implements org.jasig.portal.IChannel
     out.println ("<form action=\"authorization.jsp\" method=post>");
     out.println ("<table align=center border=0 width=100%>");
     out.println ("  <tr>");
-    out.println ("    <td><font face=\"Helvetica,Arial,sans-serif\" size=-1>User Name: </font></td>");
+    out.println ("    <td>User Name: </td>");
     out.println ("    <td><input name=userName type=text size=15 value=\"\"></td>");
     out.println ("  </tr>");
     out.println ("  <tr>");
-    out.println ("    <td><font face=\"Helvetica,Arial,sans-serif\" size=-1>Password: </font></td>");
+    out.println ("    <td>Password: </td>");
     out.println ("    <td><input name=password type=password size=15 value=\"\"></td>");
     out.println ("  </tr>");
     out.println ("</table>");
       
     out.println ("<center>");  
-    out.println ("<input name=remember type=checkbox><font face=\"Helvetica,Arial,sans-serif\" size=-1>Remember my user name</font>");
+    out.println ("<input name=remember type=checkbox>Remember my user name");
     out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
     out.println ("</center>");  
     out.println ("<input name=authorizationAction type=hidden value=\"signIn\"><br>");
@@ -134,7 +134,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
    */
   protected void doDisplayFailedLogonMsg (HttpServletRequest req, HttpServletResponse res, JspWriter out) throws IOException
   {
-    out.print ("<font face=\"Helvetica,Arial,sans-serif\" color=red size=-1>");
+    out.print ("<font color=red>");
     out.print ("Invalid user name or password!<br>");
     out.print ("Please try again.");
     out.print ("</font>");
