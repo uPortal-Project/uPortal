@@ -960,7 +960,7 @@ public class RDBMUserLayoutStore
           stmt.executeUpdate(sQuery);
 
           /* insert row(s) into up_ss_user_atts */
-          sQuery = "DELETE UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
+          sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
@@ -971,7 +971,7 @@ public class RDBMUserLayoutStore
           stmt.executeUpdate(Insert);
 
           /* insert row(s) into up_ss_user_parm */
-          sQuery = "DELETE UP_SS_USER_PARM WHERE USER_ID=" + realUserId;
+          sQuery = "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=" + realUserId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
           Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
