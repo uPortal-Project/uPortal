@@ -80,7 +80,7 @@
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="authorization-scheme"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Local: </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Locale: </p></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="locale"/></td>
     </tr>
   </xsl:template>
