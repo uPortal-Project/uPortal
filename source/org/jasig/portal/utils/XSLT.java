@@ -619,33 +619,8 @@ public class XSLT {
    */
     protected static String escape(String s){
         // for initial implementation, just look for single quote
-        s = replace(s,"'","\u2019");
+        s = CommonUtils.replaceText(s,"'","\u2019");
         return s;
     }
-    
-    /**
-   * Basic string replacement
-   *
-   * @param input the string to search
-   * @param match the substring to search for
-   * @param replace the substring to replace matches
-   */
-    protected static final String replace(String input, String match, String replace){
-        String r=input;
-        int i=input.indexOf(match);
-        if(i>=0){
-            StringBuffer buffer = new StringBuffer();
-            int from=0;
-            while(i>=0){
-                buffer.append(input.substring(from,i)).append(replace);
-                from=i+match.length();
-                i=input.indexOf(match,from);
-            }
-            buffer.append(input.substring(from));
-            r= buffer.toString();
-        }
-        return r;
-    }   
 }
-
 
