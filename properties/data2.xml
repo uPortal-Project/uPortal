@@ -1724,39 +1724,37 @@
         <column><name>PORTAL_USER_ID</name><value>0</value></column>
         <column><name>BOOKMARK_XML</name><value><![CDATA[
           <?xml version="1.0"?>
-          <bookmarks>
-            <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
-            <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
-            <bookmark url="http://www.paypal.com" name="PayPal" comments="Send and receive money online!"/>
-            <bookmark url="http://google.com" name="Google" comments="great search engine"/>
-          </bookmarks>
-          ]]></value></column>
-      </row>
-
-      <row>
-        <column><name>ID</name><value>1</value></column>
-        <column><name>PORTAL_USER_ID</name><value>1</value></column>
-        <column><name>BOOKMARK_XML</name><value><![CDATA[
-          <?xml version="1.0"?>
-          <bookmarks>
-            <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
-            <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
-            <bookmark url="http://www.paypal.com" name="PayPal" comments="Send and receive money online!"/>
-            <bookmark url="http://google.com" name="Google" comments="great search engine"/>
-          </bookmarks>
-          ]]></value></column>
-      </row>
-      <row>
-        <column><name>ID</name><value>2</value></column>
-        <column><name>PORTAL_USER_ID</name><value>2</value></column>
-        <column><name>BOOKMARK_XML</name><value><![CDATA[
-          <?xml version="1.0"?>
-          <bookmarks>
-            <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
-            <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
-            <bookmark url="http://www.paypal.com" name="PayPal" comments="Send and receive money online!"/>
-            <bookmark url="http://google.com" name="Google" comments="great search engine"/>
-          </bookmarks>
+          <!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Bernard Durfee (Interactive Business Solutions) -->
+          <!DOCTYPE xbel PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML" "file:/xbel-1.0.dtd">
+          <xbel>
+            <title>Default Bookmarks</title>
+            <info>
+              <metadata owner="Default User"/>
+            </info>
+            <folder id="node1" folded="yes">
+              <title>uPortal</title>
+              <folder id="node2" folded="yes">
+                <title>Resources</title>
+                <bookmark href="http://www.interactivebusiness.com" visited="8/24/00 4:40:17 PM" id="node3">
+                  <title>IBS Homepage</title>
+                  <desc>Homepage of the uPortal specialists</desc>
+                </bookmark>
+              </folder>
+              <folder id="node4" folded="yes">
+                <title>uPortal Demos</title>
+                <bookmark href="http://www.interactivebusiness.com" visited="8/24/00 4:40:17 PM" id="node5">
+                  <title>IBS Homepage</title>
+                  <desc>Homepage of the uPortal specialists</desc>
+                </bookmark>
+              </folder>
+            </folder>
+            <folder id="node6" folded="yes">
+              <title>XML</title>
+              <bookmark href="http://xml.apache.org" visited="8/24/00 4:47:35 PM" id="node7">
+                <title>Apache XML Links</title>
+              </bookmark>
+            </folder>
+          </xbel>
           ]]></value></column>
       </row>
     </rows>
