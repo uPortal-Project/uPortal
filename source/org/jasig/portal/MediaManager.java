@@ -31,19 +31,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
 package  org.jasig.portal;
 
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.net.*;
-import  org.apache.xml.serialize.*;
+import org.jasig.portal.services.LogService;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Vector;
+import java.util.StringTokenizer;
+import java.net.URL;
+import java.net.MalformedURLException;
+import org.apache.xml.serialize.BaseMarkupSerializer;
+import org.apache.xml.serialize.XMLSerializer;
+import org.apache.xml.serialize.CachingXHTMLSerializer;
+import org.apache.xml.serialize.HTMLSerializer;
+import org.apache.xml.serialize.OutputFormat;
 
 
 /**
@@ -59,9 +67,10 @@ public class MediaManager {
   protected OrderedProps mediaProps = null;
   protected OrderedProps mimeProps = null;
   protected OrderedProps serializerProps = null;
+  private static boolean outputIndenting = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting");
 
   /**
-   * put your documentation comment here
+   * Constructs a MediaManager
    */
   public MediaManager () {
   }
@@ -87,17 +96,17 @@ public class MediaManager {
    */
   public void setMediaProps (String uri) {
     if (uri == null) {
-      uri = "file://" + GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
+      uri = UtilitiesBean.fixURI("properties/media.properties");
     }
     uri = UtilitiesBean.fixURI(uri);
     try {
       URL url = expandSystemId(uri);
-      Logger.log(Logger.DEBUG, "MediaManager::setMediaProps() uri=" + uri + " URL=" + url);
+      LogService.instance().log(LogService.DEBUG, "MediaManager::setMediaProps() uri=" + uri + " URL=" + url);
       if (url != null) {
         mediaProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe1) {
-      Logger.log(Logger.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " + 
+      LogService.instance().log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
           uri + ". " + ioe1);
     }
   }
@@ -108,7 +117,7 @@ public class MediaManager {
    */
   public void setMimeProps (String uri) {
     if (uri == null) {
-      uri = "file://" + GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "mime.properties";
+      uri = UtilitiesBean.fixURI("properties/mime.properties");
     }
     uri = UtilitiesBean.fixURI(uri);
     try {
@@ -117,7 +126,7 @@ public class MediaManager {
         mimeProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe1) {
-      Logger.log(Logger.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " + 
+      LogService.instance().log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
           uri + ". " + ioe1);
     }
   }
@@ -128,7 +137,7 @@ public class MediaManager {
    */
   public void setSerializerProps (String uri) {
     if (uri == null) {
-      uri = "file://" + GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "serializer.properties";
+      uri = UtilitiesBean.fixURI("properties/serializer.properties");
     }
     uri = UtilitiesBean.fixURI(uri);
     try {
@@ -137,7 +146,7 @@ public class MediaManager {
         serializerProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe1) {
-      Logger.log(Logger.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: "
+      LogService.instance().log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: "
           + uri + ". " + ioe1);
     }
   }
@@ -208,7 +217,7 @@ public class MediaManager {
     }
     if (mimeProps != null) {
       return  mimeProps.getValue(mediaType);
-    } 
+    }
     else {
       return  null;
     }
@@ -255,82 +264,36 @@ public class MediaManager {
       serializerName = serializerProps.getValue(mediaType);
     }
     if (serializerName != null) {
-      if (serializerName.equals("WML")) {
-        OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
-        frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
-        return  new XMLSerializer(out, frmt);
-      } 
-      /*      else if (serializerName.equals("PalmHTML")) {
-        OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-        return  new PalmHTMLSerializer(out, frmt);
-        } */
-      else if (serializerName.equals("XML")) {
-        OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
-        return  new XMLSerializer(out, frmt);
-      } 
-      else if (serializerName.equals("XHTML")) {
-        OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
-        frmt.setPreserveSpace(true);
-        return  new CachingXHTMLSerializer(out, frmt);
-      } 
-      else {
-        // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-        frmt.setPreserveSpace(true);
-        return  new HTMLSerializer(out, frmt);
-      }
-    } 
+      return getSerializerByName(serializerName, out);
+    }
     else {
-      Logger.log(Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
+      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
       return  null;
     }
   }
 
   /**
-   * put your documentation comment here
+   * Gets a serializer by name which writes to the provided OutputStream
    * @param serializerName
    * @param out
-   * @return 
+   * @return the serializer
    */
   public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.OutputStream out) {
-    if (serializerName.equals("WML")) {
-      OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
-      frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
-      return  new XMLSerializer(out, frmt);
-    } 
-    /*    else if (serializerName.equals("PalmHTML")) {
-      OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-      return  new PalmHTMLSerializer(out, frmt);
-      } */
-    else if (serializerName.equals("XML")) {
-      OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
-      return  new XMLSerializer(out, frmt);
-    } 
-    else if (serializerName.equals("XHTML")) {
-      OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
-      frmt.setPreserveSpace(true);
-      return  new CachingXHTMLSerializer(out, frmt);
-    } 
-    else {
-      // default case is HTML, such as that for netscape and explorer
-      OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-      frmt.setPreserveSpace(true);
-      return  new HTMLSerializer(out, frmt);
-    }
+    return getSerializerByName(serializerName, new OutputStreamWriter(out));
   }
 
   /**
-   * put your documentation comment here
+   * Gets a serializer by name which writes to the provided Writer
    * @param serializerName
    * @param out
-   * @return 
+   * @return the serializer
    */
   public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.Writer out) {
     if (serializerName != null && serializerName.equals("WML")) {
       OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
       frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
       return  new XMLSerializer(out, frmt);
-    } 
+    }
     /*    else if (serializerName != null && serializerName.equals("PalmHTML")) {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       return  new PalmHTMLSerializer(out, frmt);
@@ -338,16 +301,18 @@ public class MediaManager {
     else if (serializerName != null && serializerName.equals("XML")) {
       OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
       return  new XMLSerializer(out, frmt);
-    } 
+    }
     else if (serializerName != null && serializerName.equals("XHTML")) {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
+      frmt.setIndenting(outputIndenting);
       return  new CachingXHTMLSerializer(out, frmt);
-    } 
+    }
     else {
       // default case is HTML, such as that for netscape and explorer
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
+      frmt.setIndenting(outputIndenting);
       return  new HTMLSerializer(out, frmt);
     }
   }
@@ -359,43 +324,7 @@ public class MediaManager {
    * @return the markup serializer
    */
   public BaseMarkupSerializer getSerializer (String mediaType, java.io.OutputStream out) {
-    String serializerName = null;
-    if (serializerProps == null) {
-      this.setSerializerProps((String)null);
-    }
-    if (serializerProps != null) {
-      serializerName = serializerProps.getValue(mediaType);
-    }
-    if (serializerName != null) {
-      if (serializerName.equals("WML")) {
-        OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
-        frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
-        return  new XMLSerializer(out, frmt);
-      } 
-      /*      else if (serializerName.equals("PalmHTML")) {
-        OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-        return  new PalmHTMLSerializer(out, frmt);
-        } */
-      else if (serializerName.equals("XML")) {
-        OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
-        return  new XMLSerializer(out, frmt);
-      } 
-      else if (serializerName.equals("XHTML")) {
-        OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
-        frmt.setPreserveSpace(true);
-        return  new CachingXHTMLSerializer(out, frmt);
-      } 
-      else {
-        // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-        frmt.setPreserveSpace(true);
-        return  new HTMLSerializer(out, frmt);
-      }
-    } 
-    else {
-      Logger.log(Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
-      return  null;
-    }
+    return getSerializer(mediaType, new OutputStreamWriter(out));
   }
 
   /**
@@ -410,9 +339,9 @@ public class MediaManager {
     }
     if (mediaProps != null) {
       return  getSerializer(mediaProps.getValue(req.getHeader("User-Agent")), out);
-    } 
+    }
     else {
-      Logger.log(Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
+      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
       return  null;
     }
   }
@@ -420,26 +349,17 @@ public class MediaManager {
   /**
    * Automatically determines the media type from the request object,
    * @param req the request object
-   * @param out the output writer object
+   * @param out the output stream object
    * @return the markup serializer
    */
   public BaseMarkupSerializer getSerializer (HttpServletRequest req, java.io.OutputStream out) {
-    if (mediaProps == null) {
-      this.setMediaProps((String)null);
-    }
-    if (mediaProps != null) {
-      return  getSerializer(mediaProps.getValue(req.getHeader("User-Agent")), out);
-    } 
-    else {
-      Logger.log(Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
-      return  null;
-    }
+    return getSerializer(req, new OutputStreamWriter(out));
   }
 
   /**
    * put your documentation comment here
    * @param systemId
-   * @return 
+   * @return
    */
   private URL expandSystemId (String systemId) {
     String id = systemId;
@@ -561,7 +481,7 @@ public class MediaManager {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     String getDefaultValue () {
       return  ((String[])attVec.elementAt(0))[1];
