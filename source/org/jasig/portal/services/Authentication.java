@@ -158,7 +158,8 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
-         PersonDirectory.persons.put(person.getAttribute(IPerson.USERNAME), person);
+         PersonDirectory.instance().cachePerson(
+                 (String) person.getAttribute(IPerson.USERNAME), person);
          
          // Record the successful authentication
          StatsRecorder.recordLogin(person);
@@ -226,7 +227,7 @@ public class Authentication {
     * @param credentials
     * @param person
     * @param securityContext
-    * @param BASE_CONTEXT_NAME
+    * @param baseContextName
     * @throws PortalSecurityException
     */
    private void configureSecurityContextChain(final HashMap principals, final HashMap credentials, final IPerson person, final ISecurityContext securityContext, final String baseContextName) throws PortalSecurityException {
