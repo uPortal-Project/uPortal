@@ -1,74 +1,236 @@
-<?xml version='1.0'?>
+<?xml version='1.0' encoding='utf-8' ?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences</xsl:variable>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-<xsl:param name="baseActionURL">default</xsl:param>
+  <xsl:template match="profile">
+        <form name="form1" method="post" action="{$baseActionURL}">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td colspan="4" class="uportal-channel-table-header" valign="top">Edit Profile</td>
+            </tr>
 
-<xsl:template match="profile">
-<html>
-<p align="center">Edit profile</p>
+            <tr>
+              <td colspan="4" class="uportal-background-dark" valign="top">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+              </td>
+            </tr>
 
+            <tr>
+              <td colspan="4" class="uportal-channel-subtitle" valign="top">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+              </td>
+            </tr>
 
-<form method="post" action="{$baseActionURL}">
-<input type="hidden" name="action" value="setProfileNameAndDescription"/>
-<table>
-<tr>
-<td>Profile Name</td>
-<td><input type="text" name="name"><xsl:attribute name="value">
-<xsl:value-of select="name"/></xsl:attribute></input></td>
-<td></td></tr><tr>
-<td>Description</td>
-<td><input type="text" name="description"><xsl:attribute name="value"><xsl:value-of select="description"/></xsl:attribute></input></td>
-<td>
-<input type="submit" name="submit" value="Change"/>
-</td>
-</tr>
-</table>   
-</form>
+            <tr>
+              <td colspan="4" class="uportal-label" valign="top">Profile Name:</td>
+            </tr>
 
-<form method="post" action="{$baseActionURL}">
-<input type="hidden" name="action" value="setMimeType"/>
-<select name="mimeType">
-<xsl:apply-templates select="mimetypes"/>
-</select>
-<input type="submit" name="submit" value="Change"/>
-</form>
+            <tr>
+              <td colspan="4" class="uportal-channel-subtitle" valign="top">
+                <input type="text" name="profileName" class="uportal-input-text" size="20" value="{name}" />
+              </td>
+            </tr>
 
+            <tr>
+              <td colspan="4" class="uportal-channel-subtitle" valign="top">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+              </td>
+            </tr>
 
-<form method="post" action="{$baseActionURL}">
-<input type="hidden" name="action" value="setStructureStylesheet"/>
-<select name="structureStylesheet">
-<xsl:apply-templates select="structurestylesheets"/>
-</select>
-<input type="submit" name="submit" value="Change"/>
-</form> 
+            <tr>
+              <td colspan="4" class="uportal-label" valign="top">Profile Description:</td>
+            </tr>
 
+            <tr>
+              <td colspan="4" class="uportal-channel-subtitle" valign="top">
+                <textarea name="profileDescription" class="uportal-input-text" cols="50" rows="2">
+                  <xsl:value-of select="description" />
+                </textarea>
+              </td>
+            </tr>
 
-<form method="post" action="{$baseActionURL}">
-<input type="hidden" name="action" value="setThemeStylesheet"/>
-<select name="themeStylesheet">
-<xsl:apply-templates select="themestylesheets"/>
-</select>
-<input type="submit" name="submit" value="Change"/>
-</form> 
+            <tr>
+              <td colspan="4" class="uportal-channel-subtitle" valign="top">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+              </td>
+            </tr>
 
-<form method="post" action="{$baseActionURL}">
-<input type="hidden" name="action" value="completeEdit"/>
-<input type="submit" name="submit" value="Save"/>
-<input type="submit" name="submit" value="Cancel"/>
-</form>
+            <xsl:apply-templates select="themestylesheets" />
 
+            <tr>
+              <td class="uportal-text-small" colspan="4">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+              </td>
+            </tr>
 
-</html>
-</xsl:template>
+            <tr>
+              <td class="uportal-text-small" colspan="4">
+                <input type="submit" name="saveSubmit" value="Save Changes" class="uportal-button" />
 
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-<xsl:template match="current">
-<option selected=""><xsl:attribute name="value"><xsl:value-of select="name"/></xsl:attribute><xsl:value-of select="name"/></option>
-</xsl:template>
+                <input type="submit" name="cancelSubmit" value="Cancel" class="uportal-button" />
+              </td>
+            </tr>
+          </table>
+        </form>
+  </xsl:template>
 
-<xsl:template match="alternate">
-<option><xsl:attribute name="value"><xsl:value-of select="name"/></xsl:attribute><xsl:value-of select="name"/></option>
-</xsl:template>
+  <xsl:template match="themestylesheets">
+    <tr>
+      <td class="uportal-label" colspan="4" valign="top">Theme:</td>
+    </tr>
 
+    <tr>
+      <td class="uportal-background-dark" colspan="4" valign="top">
+        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+      </td>
+    </tr>
 
+    <tr>
+      <td colspan="4" valign="top">
+        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="4" valign="top">
+        <table width="100%" border="0" cellspacing="0" cellpadding="5">
+          <tr valign="top">
+            <td align="center" class="uportal-channel-subtitle">Select</td>
+
+            <td align="center" class="uportal-channel-subtitle">Device Type</td>
+
+            <td width="100%" class="uportal-channel-subtitle">
+              <div align="center">Name/Description</div>
+            </td>
+
+            <td class="uportal-channel-subtitle" align="center">
+              <div align="center">Sample</div>
+            </td>
+          </tr>
+
+          <xsl:apply-templates select="current" />
+
+          <xsl:apply-templates select="alternate" />
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="uportal-background-med" colspan="4">
+        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="current">
+    <tr valign="top">
+      <td align="center" class="uportal-text-small" valign="middle">
+        <input type="radio" name="stylesheetID" value="{id}" checked="checked" />
+      </td>
+
+      <td align="center" class="uportal-text-small">
+        <img alt="interface image" src="{deviceiconuri}" width="120" height="90" />
+
+        <br />
+
+        <xsl:value-of select="mimetype" />
+      </td>
+
+      <td width="100%" class="uportal-channel-text" valign="top">
+        <p>
+          <strong>
+            <xsl:value-of select="name" />
+          </strong>
+
+          <br />
+
+          <xsl:value-of select="description" />
+        </p>
+      </td>
+
+      <xsl:choose>
+        <xsl:when test="sampleiconuri =''">
+          <td align="center" valign="middle" class="uportal-text-small">No Sample
+          <br />
+
+          Avaialble</td>
+        </xsl:when>
+
+        <xsl:when test="sampleuri = ''">
+          <td align="center" class="uportal-text-small">
+            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+          </td>
+        </xsl:when>
+
+        <xsl:otherwise>
+          <td align="center" class="uportal-text-small">
+          <a href="{sampleuri}" target="_blank">
+            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+          </a>
+
+          <br />
+
+          Click to enlarge</td>
+        </xsl:otherwise>
+      </xsl:choose>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="alternate">
+    <tr valign="top">
+      <td align="center" class="uportal-text-small" valign="middle">
+        <input type="radio" name="stylesheetID" value="{id}" />
+      </td>
+
+      <td align="center" class="uportal-text-small">
+        <img alt="interface image" src="{deviceiconuri}" width="120" height="90" />
+
+        <br />
+
+        <xsl:value-of select="mimetype" />
+      </td>
+
+      <td width="100%" class="uportal-channel-text" valign="top">
+        <p>
+          <strong>
+            <xsl:value-of select="name" />
+          </strong>
+
+          <br />
+
+          <xsl:value-of select="description" />
+        </p>
+      </td>
+
+      <xsl:choose>
+        <xsl:when test="sampleiconuri =''">
+          <td align="center" valign="middle" class="uportal-text-small">No Sample
+          <br />
+
+          Avaialble</td>
+        </xsl:when>
+
+        <xsl:when test="sampleuri = ''">
+          <td align="center" class="uportal-text-small">
+            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+          </td>
+        </xsl:when>
+
+        <xsl:otherwise>
+          <td align="center" class="uportal-text-small">
+          <a href="{sampleuri}" target="_blank">
+            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+          </a>
+
+          <br />
+
+          Click to enlarge</td>
+        </xsl:otherwise>
+      </xsl:choose>
+    </tr>
+  </xsl:template>
 </xsl:stylesheet>
+
