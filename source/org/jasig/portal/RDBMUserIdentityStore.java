@@ -97,21 +97,26 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       	// START of Addition after bug declaration (bug id 1516)
         // Permissions delete 
       	// must be made before delete user in UP_USER
-      	String SQLDelete = "DELETE UP_PERMISSION FROM UP_PERMISSION, UP_USER, UP_ENTITY_TYPE WHERE " +
-					"UP_USER.USER_ID = " + uPortalUID + " AND " + 
-					"UP_USER.USER_NAME = UP_PERMISSION.PRINCIPAL_KEY AND " +
-					"UP_PERMISSION.PRINCIPAL_TYPE = UP_ENTITY_TYPE.ENTITY_TYPE_ID AND " +
-      				"UP_ENTITY_TYPE.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" ;
+		String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY = "+
+		  " (SELECT USER_NAME FROM UP_USER WHERE USER_ID= " + uPortalUID + ")" +
+			" AND PRINCIPAL_TYPE =  (SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE "+
+			" WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson')";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
         
         // Remove from local group 
         // Delete from DeleteUser.java and place here
       	// must be made before delete user in UP_USER
-      	SQLDelete = "DELETE UP_GROUP_MEMBERSHIP FROM UP_GROUP_MEMBERSHIP, UP_USER WHERE " +
-					"UP_GROUP_MEMBERSHIP.MEMBER_KEY = UP_USER.USER_NAME AND " +
-					"UP_USER.USER_ID = " + uPortalUID + " AND "+
-					"UP_GROUP_MEMBERSHIP.MEMBER_IS_GROUP = 'F'";
+		SQLDelete = "DELETE FROM UP_GROUP_MEMBERSHIP "+
+			"WHERE MEMBER_KEY = (SELECT USER_NAME FROM UP_USER WHERE USER_ID= "+
+			+ uPortalUID + ") AND GROUP_ID IN " +
+			"(SELECT M.GROUP_ID " +
+			"FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
+			"WHERE M.GROUP_ID = G.GROUP_ID " + 
+			"  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
+			"  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
+			"  AND  M.MEMBER_KEY = (SELECT USER_NAME FROM UP_USER WHERE USER_ID= "+
+			uPortalUID + ")   AND  M.MEMBER_IS_GROUP = 'F')";     
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
         // END of Addition after bug declaration (bug id 1516)
