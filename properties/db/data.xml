@@ -3857,7 +3857,7 @@
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
-        <column><name>PRINCIPAL_KEY</name><value>local.4</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.80</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
@@ -3865,7 +3865,7 @@
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
-        <column><name>PRINCIPAL_KEY</name><value>local.4</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.81</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
@@ -5365,18 +5365,6 @@
         <column><name>MEMBER_KEY</name><value>22</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
-     <row>
-        <column><name>GROUP_ID</name><value>50</value></column>
-        <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>80</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-      </row>
-       <row>
-        <column><name>GROUP_ID</name><value>50</value></column>
-        <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>81</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-      </row>
      <row>
         <column><name>GROUP_ID</name><value>51</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
