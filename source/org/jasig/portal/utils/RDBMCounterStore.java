@@ -47,7 +47,9 @@ public class RDBMCounterStore implements ICounterStore {
             createCounterPstmt = con.prepareStatement(createCounterInsert);
             createCounterPstmt.setString(1, counterName);
             
-            log.debug("RDBMCounterStore::createCounter(" + counterName + "): " + createCounterInsert);
+            if (log.isDebugEnabled())
+                log.debug("RDBMCounterStore::createCounter(" + counterName + 
+                        "): " + createCounterInsert);
             int updateCount = createCounterPstmt.executeUpdate();
             
             if (updateCount <= 0) {
@@ -102,8 +104,9 @@ public class RDBMCounterStore implements ICounterStore {
             setCounterPstmt = con.prepareStatement(setCounterUpdate);
             setCounterPstmt.setInt(1, value);
             setCounterPstmt.setString(2, counterName);
-            
-            log.debug("RDBMCounterStore::setCounter(" + counterName + ", " + value + "): " + setCounterUpdate);
+            if (log.isDebugEnabled())
+                log.debug("RDBMCounterStore::setCounter(" + counterName + ", " + 
+                        value + "): " + setCounterUpdate);
             int updateCount = setCounterPstmt.executeUpdate();
             
             if (updateCount <= 0) {
@@ -167,7 +170,8 @@ public class RDBMCounterStore implements ICounterStore {
             
             for (int i = 0; i < 25; i++) 
             {
-                log.debug("RDBMCounterStore::getIncrementInteger(" 
+                if (log.isDebugEnabled())
+                    log.debug("RDBMCounterStore::getIncrementInteger(" 
                         + counterName + "): " + getCounterQuery);
                 rs = getCounterPstmt.executeQuery();
                 
@@ -194,7 +198,8 @@ public class RDBMCounterStore implements ICounterStore {
                 updateCounterPstmt.setInt(1, nextId);
                 updateCounterPstmt.setInt(3, origId);
                 
-                log.debug("RDBMCounterStore::getIncrementInteger(" + counterName + ", " + nextId + ", " + origId + "): " + updateCounterQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMCounterStore::getIncrementInteger(" + counterName + ", " + nextId + ", " + origId + "): " + updateCounterQuery);
                 int rowsUpdated = updateCounterPstmt.executeUpdate();
                 
                 if (rowsUpdated > 0) { 
