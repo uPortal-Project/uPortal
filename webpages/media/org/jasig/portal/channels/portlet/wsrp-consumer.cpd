@@ -62,7 +62,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org/wsrp/WSRPBaseService</example>
+        <example>http://www.webservices.org:8080/wsrp/WSRPBaseService</example>
         <description>
           The WSRP Base service
         </description>
@@ -76,7 +76,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org/wsrp/WSRPServiceDescriptionService</example>
+        <example>http://www.webservices.org:8080/wsrp/WSRPServiceDescriptionService</example>
         <description>
           The WSRP Service Description service
         </description>
@@ -90,7 +90,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org/wsrp/WSRPRegistrationService</example>
+        <example>http://www.webservices.org:8080/wsrp/WSRPRegistrationService</example>
         <description>
           The WSRP Registration service (optional)
         </description>
@@ -104,7 +104,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org/wsrp/WSRPPortletManagementService</example>
+        <example>http://www.webservices.org:8080/wsrp/WSRPPortletManagementService</example>
         <description>
           The WSRP Portlet Management service (optional)
         </description>
@@ -133,7 +133,7 @@ Version $Revision: 1.1 $
         Enter the WSRP portlet handle.
       </description>
       
-      <parameter modify="publish">
+      <parameter modify="subscribe">
         <name>PORTLET.wsrp_portlet_handle</name>
         <label>Portlet Handle</label>
         <type base="string" input="text" display="text">
@@ -143,7 +143,10 @@ Version $Revision: 1.1 $
         </type>
         <example>thePortletHandle</example>
         <description>
-          The WSRP Portlet Handle
+          The WSRP Portlet Handle.  Keep the \'User can modify?\' checkbox checked
+          (translates to a read-only preference setting of \'No\')
+          so that the consumer can programmatically change the portlet handle
+          if the producer decides to clone the portlet.
         </description>
       </parameter>
       
