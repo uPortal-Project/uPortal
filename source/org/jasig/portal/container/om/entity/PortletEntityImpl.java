@@ -138,7 +138,7 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
         this.preferences = preferences;
     }
     
-    public void loadPreferences() throws Exception {
+    public void loadPreferences() throws IOException {
         try {
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             int userId = person.getID();

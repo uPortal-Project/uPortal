@@ -149,7 +149,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
         try {
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             portletPrefsStore.setDefinitionPreferences(channelDefinition.getId(), preferences);
-        } catch (Exception e) {
+        } catch (Exception e){
             log.error("Could not store portlet definition preferences.", e);
 
             if (e instanceof IOException)
@@ -158,8 +158,8 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
                 IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
                 ioe.initCause(e);
                 throw ioe;
-            }
         }
+    }
     }
     
     // Additional methods
@@ -184,7 +184,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
         this.preferences = preferences;
     }
     
-    public void loadPreferences() throws Exception {
+    public void loadPreferences() throws IOException {
         try {
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             PreferenceSet publishPreferences = portletPrefsStore.getDefinitionPreferences(channelDefinition.getId());
@@ -199,8 +199,8 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
                 IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
                 ioe.initCause(e);
                 throw ioe;
-            }
         }
+    }
     }
 
     public void setContentTypes(ContentTypeSet contentTypes) {
