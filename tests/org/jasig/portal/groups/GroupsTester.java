@@ -271,8 +271,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testGroupMemberUpdate"));
   suite.addTest(new GroupsTester("testRetrieveParentGroups"));
   suite.addTest(new GroupsTester("testUpdateMembersVisibility"));
-    suite.addTest(new GroupsTester("testUpdateLockableGroups"));
-    
+  suite.addTest(new GroupsTester("testUpdateLockableGroups"));
+  suite.addTest(new GroupsTester("testUpdateLockableGroupsWithRenewableLock"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -807,6 +807,81 @@ public void testUpdateLockableGroups() throws Exception
     assertNull(msg, nonLockableGroup);
 
     print(CR + "***** LEAVING GroupsTester.testUpdateLockableGroups() *****" + CR);
+
+}
+/**
+ */
+public void testUpdateLockableGroupsWithRenewableLock() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testUpdateLockableGroupsWithRenewableLock() *****" + CR);
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    IEntityGroup group = null;
+    boolean testValue = false;
+    Exception e = null;
+    String groupKey = null;
+
+    msg = "Creating new group.";
+    print(msg);
+    group = getNewGroup();
+    group.update();
+    assertNotNull(msg, group);
+    
+    msg = "Getting group key.";
+    print(msg);
+    groupKey = group.getKey();
+
+    msg = "Retrieving lockable group for key " + groupKey;
+    print(msg);
+    ILockableEntityGroup lockableGroup = findLockableGroup(groupKey);
+    assertNotNull(msg, lockableGroup);
+
+    msg = "Checking lock of first group";
+    print(msg);
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    String oldName = lockableGroup.getName();
+    String newName = "NEW GROUP NAME";
+    msg = "Updating name of lockable group but not committing.";
+    print(msg);
+    lockableGroup.setName(newName);
+    assertEquals(msg, newName, lockableGroup.getName());
+
+    msg = "Checking lock of first group";
+    print(msg);
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    msg = "Committing change to lockable group and renewing lock.";
+    print(msg);
+    lockableGroup.updateAndRenewLock();
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+
+    msg = "Retrieving duplicate group from service; change should be visible now.";
+    print(msg);
+    IEntityGroup nonLockableGroup = findGroup(groupKey);
+    assertEquals(msg, newName, nonLockableGroup.getName());
+
+    msg = "Update name of lockable group again.";
+    print(msg);
+    lockableGroup.setName(oldName);
+    assertEquals(msg, oldName, lockableGroup.getName());
+    
+    msg = "Committing change to lockable group and renewing lock.";
+    print(msg);
+    lockableGroup.updateAndRenewLock();
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+
+    msg = "Attempting to delete lockable group " + groupKey;
+    print(msg);
+    lockableGroup.delete();
+    nonLockableGroup = findGroup(groupKey);
+    assertNull(msg, nonLockableGroup);
+
+    print(CR + "***** LEAVING GroupsTester.testUpdateLockableGroupsWithRenewableLock() *****" + CR);
 
 }
 /**
