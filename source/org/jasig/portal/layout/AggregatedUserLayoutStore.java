@@ -394,8 +394,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
           rs = stmt.executeQuery(sQuery);
           try {
-            if ( rs.next() );
+            if ( rs.next() ){
              nodeId = rs.getInt(1)+1;
+            }
           } finally {
             rs.close();
           }
