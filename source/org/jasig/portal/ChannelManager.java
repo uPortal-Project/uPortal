@@ -326,6 +326,7 @@ public class ChannelManager {
         ChannelRenderer cr;
 
         if ((cr = (ChannelRenderer) rendererTable.get (chanID)) != null) {
+	    rendererTable.remove(chanID);
             ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter (dh);
             try {
                 int out = cr.outputRendering (custodian);
