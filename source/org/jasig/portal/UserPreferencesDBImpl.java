@@ -61,24 +61,24 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
 
     public UserPreferences getUserPreferences(String userName, UserProfile profile) {
-	String pName=profile.getProfileName();
-	UserPreferences up=new UserPreferences(profile);
-	up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userName,pName,profile.getStructureStylesheetName()));
-	up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userName,pName,profile.getThemeStylesheetName()));
+        String pName=profile.getProfileName();
+        UserPreferences up=new UserPreferences(profile);
+        up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userName,pName,profile.getStructureStylesheetName()));
+        up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userName,pName,profile.getThemeStylesheetName()));
         return up;
     }
-	
+
     public UserPreferences getUserPreferences(String userName, String profileName) {
-	UserPreferences up=null;
-	UserProfile profile=this.getUserProfileByName(userName,profileName);
-	if(profile!=null) {
-	    up=getUserPreferences(userName,profile);
-	}
-	return up;
+        UserPreferences up=null;
+        UserProfile profile=this.getUserProfileByName(userName,profileName);
+        if(profile!=null) {
+            up=getUserPreferences(userName,profile);
+        }
+        return up;
     }
 
     public String getUserBrowserMapping(String userName,String userAgent) {
-	String profileName=null;
+        String profileName=null;
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
@@ -86,7 +86,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-		profileName=rs.getString("PROFILE_NAME");
+                profileName=rs.getString("PROFILE_NAME");
             } else { return null; }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -99,12 +99,16 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     public void setUserBrowserMapping(String userName,String userAgent, String profileName) {
         try {
             con=rdbmService.getConnection();
-	    // remove the old mapping and add the new one
+            // remove the old mapping and add the new one
             Statement stmt=con.createStatement();
-            String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_NAME='"+userName+"' AND USER_AGENT='"+userAgent+"'; INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
+            String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_NAME='"+userName+"' AND USER_AGENT='"+userAgent+"'";
+            String sQuery2 = "INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
-        } catch (Exception e) {
+            sQuery = "INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
+            Logger.log(Logger.DEBUG,sQuery);
+            rs=stmt.executeQuery(sQuery);
+         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         } finally {
             rdbmService.releaseConnection (con);
@@ -112,79 +116,79 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     }
 
     public void setSystemBrowserMapping(String userAgent,String profileName) {
-	this.setUserBrowserMapping("",userAgent,profileName);
+        this.setUserBrowserMapping("",userAgent,profileName);
     }
 
     public String getSystemBrowserMapping(String userAgent) {
-	return getUserBrowserMapping("",userAgent);
+        return getUserBrowserMapping("",userAgent);
     }
-    
+
     public UserProfile getUserProfile(String userName,String userAgent) {
-	return this.getUserProfileByName(userName,getUserBrowserMapping(userName,userAgent));
+        return this.getUserProfileByName(userName,getUserBrowserMapping(userName,userAgent));
     }
-    
+
     public UserProfile getSystemProfile(String userAgent) {
-	UserProfile up= this.getUserProfileByName("",getSystemBrowserMapping(userAgent));
-	up.setSystemProfile(true);
-	return up;
+        UserProfile up= this.getUserProfileByName("",getSystemBrowserMapping(userAgent));
+        up.setSystemProfile(true);
+        return up;
     }
 
 
     public UserProfile getSystemProfileByName(String profileName) {
-	UserProfile up=this.getUserProfileByName("",profileName);
-	up.setSystemProfile(true);
-	return up;
+        UserProfile up=this.getUserProfileByName("",profileName);
+        up.setSystemProfile(true);
+        return up;
     }
 
     public UserProfile getUserProfileByName(String userName, String profileName) {
-	UserProfile upl=null;
-	if(profileName!=null) {
-	    try {
-		con=rdbmService.getConnection();
-		Statement stmt=con.createStatement();
-		String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"' AND PROFILE_NAME='"+profileName+"'";
-		Logger.log(Logger.DEBUG,sQuery);
-		ResultSet rs=stmt.executeQuery(sQuery);
-		if(rs.next()) {
-		    upl=new UserProfile(profileName,rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
-		} else { return null; }
-	    } catch (Exception e) {
-		Logger.log(Logger.ERROR,e);
-	    } finally {
-		rdbmService.releaseConnection (con);
-	    }
-	}
+        UserProfile upl=null;
+        if(profileName!=null) {
+            try {
+                con=rdbmService.getConnection();
+                Statement stmt=con.createStatement();
+                String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"' AND PROFILE_NAME='"+profileName+"'";
+                Logger.log(Logger.DEBUG,sQuery);
+                ResultSet rs=stmt.executeQuery(sQuery);
+                if(rs.next()) {
+                    upl=new UserProfile(profileName,rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
+                } else { return null; }
+            } catch (Exception e) {
+                Logger.log(Logger.ERROR,e);
+            } finally {
+                rdbmService.releaseConnection (con);
+            }
+        }
         return upl;
     }
 
 
     public Hashtable getUserProfileList(String userName) {
-	Hashtable pv=new Hashtable();
-	try {
-	    con=rdbmService.getConnection();
-	    Statement stmt=con.createStatement();
-	    String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"'";
-	    Logger.log(Logger.DEBUG,sQuery);
-	    ResultSet rs=stmt.executeQuery(sQuery);
-	    while(rs.next()) {
-		UserProfile upl=new UserProfile(rs.getString("PROFILE_NAME"),rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
-		pv.put(upl.getProfileName(),upl);
-	    } 
-	} catch (Exception e) {
-	    Logger.log(Logger.ERROR,e);
-	} finally {
-	    rdbmService.releaseConnection (con);
-	}
-	return pv;
+        Hashtable pv=new Hashtable();
+        try {
+            con=rdbmService.getConnection();
+            Statement stmt=con.createStatement();
+            String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"'";
+            Logger.log(Logger.DEBUG,sQuery);
+            ResultSet rs=stmt.executeQuery(sQuery);
+            while(rs.next()) {
+                UserProfile upl=new UserProfile(rs.getString("PROFILE_NAME"),rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
+                pv.put(upl.getProfileName(),upl);
+            }
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+        return pv;
     }
 
     public Hashtable getSystemProfileList() {
-	Hashtable pl=this.getUserProfileList("");
-	for(Enumeration e=pl.elements(); e.hasMoreElements(); ) {
-	    UserProfile up=(UserProfile) e.nextElement();
-	    up.setSystemProfile(true);
-	}
-	return pl;
+        Hashtable pl=this.getUserProfileList("");
+        for(Enumeration e=pl.elements(); e.hasMoreElements(); ) {
+            UserProfile up=(UserProfile) e.nextElement();
+            up.setSystemProfile(true);
+        }
+        return pl;
     }
 
     public void setUserProfile(String userName,UserProfile profile) {
@@ -214,13 +218,13 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     }
 
     public void setSystemProfile(UserProfile profile) {
-	this.setUserProfile("",profile);
+        this.setUserProfile("",profile);
     }
 
     public void putUserPreferences(String userName, UserPreferences up) {
-	// store profile
-	UserProfile profile=up.getProfile();
-	this.setUserProfile(userName,profile);
+        // store profile
+        UserProfile profile=up.getProfile();
+        this.setUserProfile(userName,profile);
 
         this.setStructureStylesheetUserPreferences(userName,profile.getProfileName(),up.getStructureStylesheetUserPreferences());
         this.setThemeStylesheetUserPreferences(userName,profile.getProfileName(),up.getThemeStylesheetUserPreferences());
