@@ -57,7 +57,7 @@ public class StylesheetUtils
       int i = base.indexOf("://");
       if (i != -1)
       {
-        int first = base.indexOf("/", i+1);
+        int first = base.indexOf("/", i+3);
         uri = base.substring(0, first).concat(file);
       }
     }
