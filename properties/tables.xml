@@ -54,7 +54,7 @@
 			<column>
 				<name>TITLE</name>
 				<type>VARCHAR</type>
-				<param>256</param>
+				<param>255</param>
 			</column>
 			<column>
 				<name>PUB_ID</name>
