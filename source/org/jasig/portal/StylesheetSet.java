@@ -189,6 +189,10 @@ public class StylesheetSet extends SAXFilterImpl
     return ssURI;
   }
 
+    public String getStylesheetURI (String title, HttpServletRequest req) {
+	return getStylesheetURI(title,getMedia(req));
+    }
+
   /**
    * Returns the URI of the stylesheet matching the title and media
    * @param title
