@@ -25,6 +25,10 @@
         <column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
     </rows>
   </table>
 
@@ -2540,6 +2544,53 @@
     <rows>
       <row>
         <column><name>IPERMISSIBLE_CLASS</name><value>org.jasig.portal.channels.permissionsmanager.PermissiblePublishSubscribeChannels</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- A table that is used by CGroupsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_GROUP_MGR</name>
+    <rows>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>0</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
+      </row>
+      <row>
+        <column><name>OWNER_ID</name><value>4</value></column>
+        <column><name>OWNER_TYPE</name><value>g</value></column>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>ORDINAL</name><value>1</value></column>
+        <column><name>EXPANDED</name><value>y</value></column>
+        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
       </row>
     </rows>
   </table>
