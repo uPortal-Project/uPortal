@@ -61,44 +61,48 @@ import  com.oreilly.servlet.multipart.ParamPart;
 public class PortalSessionManager extends HttpServlet {
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
+  private static String portalBaseDir = null;
   private static int sizeLimit = 3000000;       // Should be channel specific
   private static boolean initialized = false;
 
   /**
+   * Set the top level directory for the portal.  This makes it possible
+   * to use relative paths in the application for loading properties files, etc.
+   * @param pbd, the portal base directory
+   */
+  public static void setPortalBaseDir(String pbd) {
+    portalBaseDir = fixPortalBaseDir(pbd);
+  }
+
+  /**
+   * Gets the portal base directory which makes it possible
+   * to use relative paths in the application for loading properties files, etc.
+   * @return portalBaseDir
+   */
+  public static String getPortalBaseDir() {
+    return portalBaseDir;
+  }
+
+  /**
    * Initialize the PortalSessionManager servlet
-   * @exception ServletException
+   * @throws ServletException
    */
   public void init () throws ServletException {
     if(!initialized)
     {
       // Retrieve the servlet configuration object from the servlet container
+      // and make sure it's available
       ServletConfig sc = getServletConfig();
-      // Make sure the ServletConfig object is available
       if (sc == null) {
-        throw  new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
+        throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
 
       // Get the portal base directory
-      String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
-      // Make sure the directory is a properly formatted string
-      sPortalBaseDir.replace('/', File.separatorChar);
-      sPortalBaseDir.replace('\\', File.separatorChar);
-      // Add a seperator on the end of the path if it's missing
-      if (!sPortalBaseDir.endsWith(File.separator)) {
-        sPortalBaseDir += File.separator;
-      }
-      // Make sure the portal base directory is properly set
-      if (sPortalBaseDir == null) {
-        throw  new ServletException("PortalSessionManager.init(): portalBaseDir not found, check web.xml file");
-      }
-      // Try to create a file pointing to the portal base directory
-      File portalBaseDir = new java.io.File(sPortalBaseDir);
-      // Make sure the directory exists
-      if (!portalBaseDir.exists()) {
-        throw  new ServletException("PortalSessionManager.init(): Portal base directory " + sPortalBaseDir + " does not exist");
-      }
+      setPortalBaseDir(sc.getInitParameter("portalBaseDir"));
+
       // Set the portal base directory
-      GenericPortalBean.setPortalBaseDir(sPortalBaseDir);
+      GenericPortalBean.setPortalBaseDir(portalBaseDir);
+
       JNDIManager.initializePortalContext();
       // Flag that the portal has been initialized
       initialized = true;
@@ -170,7 +174,7 @@ public class PortalSessionManager extends HttpServlet {
           // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
           LogService.instance().log(LogService.ERROR, e);
         }
-        /** 
+        /**
         UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
         if (layout == null) {
           layout = UserInstanceFactory.getUserInstance(myReq);
@@ -205,6 +209,34 @@ public class PortalSessionManager extends HttpServlet {
     }
   }
 
+
+  /**
+   * Fixes portal base directory by adding a file separater to the end and making
+   * sure the directory actually exists.
+   * @param portalBaseDir
+   * @return fixed portal base directory
+   */
+   private static String fixPortalBaseDir (String pbd) {
+     if (pbd != null) {
+       // Make sure the directory is a properly formatted string
+       pbd.replace('/', File.separatorChar);
+       pbd.replace('\\', File.separatorChar);
+       // Add a seperator on the end of the path if it's missing
+       if (!pbd.endsWith(File.separator)) {
+         pbd += File.separator;
+       }
+       // Try to create a file pointing to the portal base directory
+       File portalBaseDirFile = new File(pbd);
+       // Make sure the directory exists
+       if (!portalBaseDirFile.exists()) {
+         throw  new RuntimeException("PortalSessionManager.fixPortalBaseDir(): Portal base directory " + pbd + " does not exist. Check its setting in your servlet engine\'s web.xml file");
+       }
+     } else {
+       throw  new RuntimeException("PortalSessionManager.fixPortalBaseDir(): portalBaseDir not found. Check its setting in your servlet engine\'s web.xml file.");
+     }
+     return pbd;
+   }
+
   /**
    * This function determines if a given request needs to be redirected
    * @param req
@@ -232,6 +264,8 @@ public class PortalSessionManager extends HttpServlet {
     // redirect by default
     return  "/" + renderBase;
   }
+
+
 
   /**
    * RequestParamWrapper persists various information

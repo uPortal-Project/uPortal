@@ -28,13 +28,10 @@ public class RegisterStylesheet {
     String portalBaseDirParam = System.getProperty("portal.home");
     if (portalBaseDirParam != null) {
       portalBaseDir = portalBaseDirParam;
-      if (!portalBaseDir.endsWith(File.separator))
-        portalBaseDir += File.separator;
-      UtilitiesBean.setPortalBaseDir(portalBaseDir);
-      GenericPortalBean.setPortalBaseDir(portalBaseDir);
+      PortalSessionManager.setPortalBaseDir(portalBaseDir);
       // Should obtain implementation in a different way!!
       GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
-    } 
+    }
     else {
       System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
       java.lang.System.exit(1);
@@ -68,23 +65,23 @@ public class RegisterStylesheet {
           stylesheetURI = args[i];
           stylesheetDescriptionURI = args[++i];
           stylesheetId = Integer.parseInt(args[++i]);
-        } 
+        }
         else {
           if (i < 1 || args.length < i + 2)
             printHelp();
           stylesheetURI = args[i];
           stylesheetDescriptionURI = args[++i];
         }
-      } 
+      }
       else if (args[i].equals("-s")) {
         isTheme = false;
-      } 
+      }
       else if (args[i].equals("-t")) {
         isTheme = true;
-      } 
+      }
       else if (args[i].equals("-u")) {
         update = true;
-      } 
+      }
       else {
         printHelp();
         return;
@@ -99,28 +96,28 @@ public class RegisterStylesheet {
       boolean success = false;
       if (isTheme) {
         success = csdb.updateThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
-      } 
+      }
       else {
         success = csdb.updateStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
       }
       if (success) {
         System.out.println("Update successful!");
-      } 
+      }
       else {
         System.out.println("Update failed!");
         return;
       }
-    } 
+    }
     else {
       Integer id = null;
       if (isTheme)
-        id = csdb.addThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI); 
-      else 
+        id = csdb.addThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
+      else
         id = csdb.addStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
       if (id == null) {
         System.out.println("Save failed!");
         return;
-      } 
+      }
       else {
         stylesheetId = id.intValue();
         System.out.println("Save successfull!");
@@ -130,7 +127,7 @@ public class RegisterStylesheet {
       // verify
       if (isTheme) {
         ThemeStylesheetDescription tsd = GenericPortalBean.getUserLayoutStore().getThemeStylesheetDescription(stylesheetId);
-      } 
+      }
       else {
         StructureStylesheetDescription ssd = GenericPortalBean.getUserLayoutStore().getStructureStylesheetDescription(stylesheetId);
       }

@@ -52,7 +52,7 @@ import  java.sql.*;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class RdbmServices extends GenericPortalBean {
+public class RdbmServices {
   private static boolean bPropsLoaded = false;
   private static String sJdbcDriver = null;
   private static String sJdbcUrl = null;
@@ -75,7 +75,7 @@ public class RdbmServices extends GenericPortalBean {
   protected static void loadProps () {
     try {
       if (!bPropsLoaded) {
-        File jdbcPropsFile = new File(getPortalBaseDir() + "properties" + File.separator + "rdbm.properties");
+        File jdbcPropsFile = new File(PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "rdbm.properties");
         Properties jdbcProps = new Properties();
         jdbcProps.load(new FileInputStream(jdbcPropsFile));
         sJdbcDriver = jdbcProps.getProperty("jdbcDriver");

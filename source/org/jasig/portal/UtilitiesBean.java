@@ -56,7 +56,7 @@ import org.jasig.portal.services.LogService;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class UtilitiesBean extends GenericPortalBean
+public class UtilitiesBean
 {
   /**
    * Prevents an html page from being cached by the browser
@@ -151,7 +151,7 @@ public class UtilitiesBean extends GenericPortalBean
     else if (str.indexOf ("://") == -1 && str.indexOf (":/") == -1 && ch1 != ':')
     {
       // Relative path was specified, so prepend portal base dir
-      str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
+      str = (bWindows ? "file:/" : "file://") + PortalSessionManager.getPortalBaseDir () + str;
     }
 
     // Handle platform-dependent strings

@@ -200,7 +200,7 @@ public class md5passwd {
       if (!portalBaseDirParam.endsWith(File.separator))
          portalBaseDirParam += File.separator;
 
-      UtilitiesBean.setPortalBaseDir(portalBaseDirParam);
+      PortalSessionManager.setPortalBaseDir(portalBaseDirParam);
     }
     else
     {

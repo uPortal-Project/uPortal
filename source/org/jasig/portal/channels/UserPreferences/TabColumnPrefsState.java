@@ -58,7 +58,7 @@ import org.jasig.portal.RdbmServices;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.factories.DocumentFactory;
+import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -80,6 +80,8 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.ext.LexicalHandler;
 
+import org.apache.xpath.XPathAPI;
+import org.w3c.dom.traversal.NodeIterator;
 
 /**
  * This user preferences component is for use with layouts based
@@ -1029,6 +1031,52 @@ final class TabColumnPrefsState extends BaseState
           // User clicked "?"
           if (runtimeData.getParameter("channelMoreInfo") != null) {
             // Implement channel preview here!
+            String selectedChannel = runtimeData.getParameter("selectedChannel");
+            /*
+            if (selectedChannel != null) {
+              Element channelE = ChannelRegistryManager.getChannel(selectedChannel);
+              String javaClass = channelE.getAttribute("class");
+              org.jasig.portal.IChannel channel = null;
+              try {
+                System.out.println("Instantiating class: " + javaClass);
+                channel = (org.jasig.portal.IChannel)Class.forName(javaClass).newInstance();
+              } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, "Not able to instantiate channel: " + javaClass);
+                e.printStackTrace();
+              }
+              NodeIterator ni = null;
+              try {
+                ni = XPathAPI.selectNodeIterator(channelE, "parameter");
+              } catch (javax.xml.transform.TransformerException te) {
+                te.printStackTrace();
+              }
+              ChannelStaticData sdata = new ChannelStaticData();
+              for (Node n = ni.nextNode(); n != null; n = ni.nextNode()) {
+                Element parameter = (Element)n;
+                System.out.println(parameter.getAttribute("name") + "=" + parameter.getAttribute("value"));
+                sdata.setParameter(parameter.getAttribute("name"), parameter.getAttribute("value"));
+              }
+              channel.setStaticData(sdata);
+              ChannelRuntimeData rdata = new ChannelRuntimeData();
+              rdata.setBaseActionURL(rd.getBaseActionURL());
+              rdata.setRenderingAsRoot(true);
+              rdata.setBrowserInfo(rd.getBrowserInfo());
+              channel.setRuntimeData(rdata);
+
+              java.io.StringWriter sw = new java.io.StringWriter();
+              org.apache.xml.serialize.OutputFormat outputFormat = new org.apache.xml.serialize.OutputFormat();
+              outputFormat.setIndenting(true);
+              org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(sw, outputFormat);
+
+              try {
+                channel.renderXML(ser.asContentHandler());
+              } catch (java.io.IOException ioe) {
+                 ioe.printStackTrace();
+              }
+              System.out.println("Channel output:");
+              System.out.println(sw.toString());
+
+            }*/
           } else if (runtimeData.getParameter("addChannel") != null) {
             // User clicked "Add"
             String selectedChannel = runtimeData.getParameter("selectedChannel");

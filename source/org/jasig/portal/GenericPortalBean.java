@@ -55,7 +55,6 @@ import  java.io.*;
 public class GenericPortalBean {
   private static String sPortalBaseDir = null;
   private static IUserLayoutStore m_userLayoutStore = null;
-  public boolean DEBUG = false;
 
   /**
    * Set the top level directory for the portal.  This makes it possible
@@ -84,20 +83,12 @@ public class GenericPortalBean {
 
   /**
    * Get the UserLayoutStore object for the portal
-   * @return 
+   * @return
    */
   public static IUserLayoutStore getUserLayoutStore () {
     return  m_userLayoutStore;
   }
 
-  /**
-   * Just a simple debug method that prints
-   * messages to System.out
-   */
-  public void debug (String message) {
-    if (DEBUG)
-      System.out.println("DEBUG: " + message);
-  }
 }
 
 

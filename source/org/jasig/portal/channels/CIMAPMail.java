@@ -308,7 +308,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
   private ChannelRuntimeData runtimeData = null;
   private static String fs = File.separator;
-  private static String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
+  private static String portalBaseDir = PortalSessionManager.getPortalBaseDir ();
   private static String stylesheetDir = portalBaseDir + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CIMAPMail";
   private static final String sslLocation = stylesheetDir + fs + "CIMAPMail.ssl";
   public CIMAPMail ()

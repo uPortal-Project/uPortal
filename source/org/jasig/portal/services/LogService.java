@@ -110,7 +110,7 @@ public final class LogService {
     if (bInitialized) {
       return;
     }
-    String sPortalBaseDir = org.jasig.portal.UtilitiesBean.getPortalBaseDir();
+    String sPortalBaseDir = org.jasig.portal.PortalSessionManager.getPortalBaseDir();
     if (sPortalBaseDir == null) {
       System.err.println("Portal base directory is not yet set. Will log to console until it gets set.");
       return;

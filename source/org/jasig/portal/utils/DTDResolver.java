@@ -35,8 +35,8 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.Logger;
-import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.services.LogService;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
@@ -51,7 +51,7 @@ import org.xml.sax.InputSource;
  */
 public class DTDResolver implements EntityResolver
 {
-  private String pathToDtd = UtilitiesBean.getPortalBaseDir() + "webpages" + File.separator + "dtd" + File.separator;
+  private String pathToDtd = PortalSessionManager.getPortalBaseDir() + "webpages" + File.separator + "dtd" + File.separator;
   private String dtdName = null;
 
   /**
@@ -95,7 +95,7 @@ public class DTDResolver implements EntityResolver
     }
     catch (FileNotFoundException fnfe)
     {
-      Logger.log(Logger.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
+      LogService.instance().log(LogService.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
     }
 
     return inSrc;

@@ -44,15 +44,15 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.UtilitiesBean;
 
 /**
- * Provides access to properties
+ * Provides access to properties and manages the portal base directory.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class PropertiesManager {
 
-  private static final String PORTAL_PROPERTIES_FILE_NAME = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "portal.properties";
+  private static final String PORTAL_PROPERTIES_FILE_NAME = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "portal.properties";
   private static final Properties props = new Properties();
-  
+
   static {
     loadProps();
   }
@@ -72,9 +72,9 @@ public class PropertiesManager {
     } catch (IOException ioe) {
       LogService.instance().log(LogService.ERROR, "Unable to read portal.properties file.");
       LogService.instance().log(LogService.ERROR, ioe);
-    }    
+    }
   }
-  
+
   /**
    * Returns the value of a property for a given name. A runtime exception is
    * throws in the property cannot be found
@@ -86,8 +86,8 @@ public class PropertiesManager {
     if (val == null)
       throw new RuntimeException("Property " + name + " not found!");
     return val;
-  }    
-  
+  }
+
   /**
    * Returns the value of a property for a given name.
    * This method can be used if the property is boolean in
@@ -109,8 +109,8 @@ public class PropertiesManager {
         retValue = true;
     }
     return retValue;
-  }  
-  
+  }
+
   /**
    * Returns the value of a property for a given name as a <code>byte</code>
    * @param name the name of the requested property
@@ -118,8 +118,8 @@ public class PropertiesManager {
    */
   public static byte getPropertyAsByte(String name) {
     return Byte.parseByte(getProperty(name));
-  }   
- 
+  }
+
   /**
    * Returns the value of a property for a given name as a <code>short</code>
    * @param name the name of the requested property
@@ -127,8 +127,8 @@ public class PropertiesManager {
    */
   public static short getPropertyAsShort(String name) {
     return Short.parseShort(getProperty(name));
-  }  
-  
+  }
+
   /**
    * Returns the value of a property for a given name as an <code>int</code>
    * @param name the name of the requested property
@@ -136,8 +136,8 @@ public class PropertiesManager {
    */
   public static int getPropertyAsInt(String name) {
     return Integer.parseInt(getProperty(name));
-  }   
-  
+  }
+
   /**
    * Returns the value of a property for a given name as a <code>long</code>
    * @param name the name of the requested property
@@ -145,8 +145,8 @@ public class PropertiesManager {
    */
   public static long getPropertyAsLong(String name) {
     return Long.parseLong(getProperty(name));
-  }   
-  
+  }
+
   /**
    * Returns the value of a property for a given name as a <code>float</code>
    * @param name the name of the requested property
@@ -154,8 +154,8 @@ public class PropertiesManager {
    */
   public static float getPropertyAsFloat(String name) {
     return Float.parseFloat(getProperty(name));
-  }     
-  
+  }
+
   /**
    * Returns the value of a property for a given name as a <code>long</code>
    * @param name the name of the requested property
@@ -163,7 +163,7 @@ public class PropertiesManager {
    */
   public static double getPropertyAsDouble(String name) {
     return Double.parseDouble(getProperty(name));
-  }     
+  }
 }
 
 

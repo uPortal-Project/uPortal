@@ -606,24 +606,6 @@ public class CChannelManager extends BaseChannel {
     return  roleDoc;
   }
 
-  // This method is just for testing and will be removed...
-  public static void main(String[] args) throws Exception {
-    UtilitiesBean.setPortalBaseDir("C:\\Projects\\JA-SIG\\uPortal2\\");
-    org.jasig.portal.IChannelRegistryStore chanReg = org.jasig.portal.RdbmServices.getChannelRegistryStoreImpl();
-
-    // Getting the channel types...
-    Document channelTypes = chanReg.getChannelTypesXML();
-    //System.out.println(UtilitiesBean.dom2PrettyString(channelTypes));
-
-    // Getting the channel registry...
-    Document channelRegistry = chanReg.getChannelRegistryXML();
-    //System.out.println(UtilitiesBean.dom2PrettyString(channelRegistry));
-
-    // Getting the CPDDoc...
-    Document cpdDoc = getCPDDoc("3");
-    System.out.println(UtilitiesBean.dom2PrettyString(cpdDoc));
-  }
-
   /**
    * Keeps track of page settings for MODIFY_CHANNEL_STATE
    */

@@ -37,6 +37,7 @@ package org.jasig.portal.tools;
 
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.XSLT;
@@ -223,17 +224,10 @@ public class DbLoader
 
   private static void setPortalBaseDir()
   {
-    String portalBaseDirParam = System.getProperty("portal.home");
+    String portalBaseDir = System.getProperty("portal.home");
 
-    if (portalBaseDirParam != null)
-    {
-      portalBaseDir = portalBaseDirParam;
-
-      if (!portalBaseDir.endsWith(File.separator))
-         portalBaseDir += File.separator;
-
-      UtilitiesBean.setPortalBaseDir(portalBaseDir);
-    }
+    if (portalBaseDir != null)
+      PortalSessionManager.setPortalBaseDir(portalBaseDir);
     else
     {
       System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
@@ -277,7 +271,7 @@ public class DbLoader
 
   private static void initScript() throws java.io.IOException
   {
-    String scriptFileName = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + PropertiesHandler.properties.getScriptFileName().replace('/', File.separatorChar);
+    String scriptFileName = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + PropertiesHandler.properties.getScriptFileName().replace('/', File.separatorChar);
     File scriptFile = new File(scriptFileName);
     if (scriptFile.exists())
       scriptFile.delete();

@@ -37,7 +37,7 @@ package  org.jasig.portal.utils;
 
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
@@ -104,7 +104,7 @@ public class XSLT {
   // ensure that pre-compiled stylesheets and stylesheet sets are cached.
   private static boolean stylesheetRootCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
   private static boolean stylesheetSetCacheEnabled = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
-  private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
+  private static final String mediaProps = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "media.properties";
   private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
   private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
