@@ -77,11 +77,11 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
      Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
       Document xmlDoc = getXmlDoc(sessionData);
       String theCommand = getCommand(runtimeData);
-      String cmdIds = getCommandIds(runtimeData);
+      String cmdIds = getCommandArg(runtimeData);
       Object parentGroup = null;
       IGroupMember childGm = null;
       String hasMbrs = "duh";
-      String userID = runtimeData.getParameter("username");
+      String userID = getUserID(sessionData);
       Utility.logMessage("DEBUG", "RemoveMember::execute(): About to get parent and child keys");
       String parentID = Utility.parseStringDelimitedBy("parent.", cmdIds, "|");
       String childID = Utility.parseStringDelimitedBy("child.", cmdIds, "|");
@@ -138,8 +138,7 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
       } catch (Exception ge) {
          // We let groups catch any error for the adds (ie. group member is already in the parent group).
          // Processing subsequent adds is allowed to continue.
-         String cmdResponse = runtimeData.getParameter("commandResponse") + "\n Unable to remove : child";
-         runtimeData.setParameter("commandResponse", cmdResponse);
+         sessionData.feedback = sessionData.feedback + "\n Unable to remove : child";
       }
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Completed");
    }
