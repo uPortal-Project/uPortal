@@ -839,6 +839,12 @@ final class TabColumnPrefsState extends BaseState
         {
           try
           {
+            // Get the source column if this is a one-step move, otherwise we already
+            // have it stored as elementID
+            String sourceId = runtimeData.getParameter("sourceID");
+            if (sourceId != null)
+              elementID = sourceId;
+
             String method = runtimeData.getParameter("method");
             String destinationId = runtimeData.getParameter("elementID");
 
@@ -922,6 +928,12 @@ final class TabColumnPrefsState extends BaseState
         {
           try
           {
+            // Get the source channel if this is a one-step move, otherwise we already
+            // have it stored as elementID
+            String sourceId = runtimeData.getParameter("sourceID");
+            if (sourceId != null)
+              elementID = sourceId;
+
             String method = runtimeData.getParameter("method");
             String destinationId = runtimeData.getParameter("elementID");
 
