@@ -39,8 +39,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.jasig.portal.PortalException;
 
+
 /**
- * An interface describing a folder node fo the user layout structure.
+ * An interface describing a folder user layout node.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
@@ -76,4 +77,4 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      */
     public Element getXML(Document root);
 
-}
+};

@@ -90,4 +90,6 @@ public interface IUserLayoutNodeDescription {
      */
     public Element getXML(Document root);
 
+    public void addNodeAttributes(Element node);
+
 }
