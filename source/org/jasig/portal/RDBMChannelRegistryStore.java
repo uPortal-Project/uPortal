@@ -675,7 +675,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         
         // Notify the cache
         try {
-          EntityCachingService.instance().remove(channelDef.getEntityIdentifier());
+          EntityCachingService.instance().remove(channelDef);
         } catch (Exception e) {
           LogService.log(LogService.ERROR, e);
         }
