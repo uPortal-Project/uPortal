@@ -230,7 +230,7 @@ class ManageProfilesState extends BaseState {
 	    }
             this.context=context;
         }
-	
+
         public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
             this.runtimeData=rd;
             // internal state handling
@@ -269,33 +269,28 @@ class ManageProfilesState extends BaseState {
                         }
                     }
                 } else if (action.equals ("completeEdit")) {
-                    String submit=runtimeData.getParameter("submit");
-                    if(submit.equals("Cancel")) {
-                        context.setState(null);
-                    } else if(submit.equals("Save")) {
-                        // save edit profile
+		    if(runtimeData.getParameter("submitCancel")!=null) {
+			// cancel button has been hit
+			context.setState(null);
+		    } else if(runtimeData.getParameter("submitSave")!=null) {
+			// save changes
+			profile.setProfileName(runtimeData.getParameter("profileName"));
+			profile.setProfileDescription(runtimeData.getParameter("profileDescription"));
+			// determine new theme stylesheet id
+			int newId=Integer.parseInt(runtimeData.getParameter("stylesheetID"));
+			if(newId!=profile.getThemeStylesheetId()) {
+			    profile.setThemeStylesheetId(newId);
+			    // see if the mime type has changed, alert user
+
+			}
+
                         if(profile.isSystemProfile())
                             // only administrative users should be able to do this
                             context.getUserPreferencesDB().updateSystemProfile(profile);
                         else
                             context.getUserPreferencesDB().updateUserProfile(context.getPerson().getID(),profile);
-
                         context.setState(null);
-                    }
-                } else if(action.equals("setProfileNameAndDescription")) {
-                    String newName=runtimeData.getParameter("name");
-                    if(newName!=null) profile.setProfileName(newName);
-                    profile.setProfileDescription(runtimeData.getParameter("description"));
-
-                } else if(action.equals("setMimeType")) {
-                    String newType=runtimeData.getParameter("mimeType");
-                    if(newType!=null) currentMimeType=newType;
-                } else if(action.equals("setStructureStylesheet")) {
-                    String sName=runtimeData.getParameter("structureStylesheet");
-		    //FIXX                    if(sName!=null) profile.setStructureStylesheetName(sName);
-                } else if(action.equals("setThemeStylesheet")) {
-                    String sName=runtimeData.getParameter("themeStylesheet");
-		    //FIXX                    if(sName!=null) profile.setThemeStylesheetName(sName);
+		    }
                 }
             }
         }
@@ -463,13 +458,13 @@ class ManageProfilesState extends BaseState {
 		    Element altsuEl=doc.createElement("sampleuri");
 		    if(tsd.getSamplePictureURI()==null || tsd.getSamplePictureURI().equals(""))
 			altsuEl.appendChild(doc.createTextNode(""));
-		    else 
+		    else
 			altsuEl.appendChild(doc.createTextNode(tsd.getSamplePictureURI()));
 
 		    Element altsiuEl=doc.createElement("sampleiconuri");
-		    if(tsd.getSampleIconURI()==null || tsd.getSampleIconURI().equals("")) 
+		    if(tsd.getSampleIconURI()==null || tsd.getSampleIconURI().equals(""))
 			altsiuEl.appendChild(doc.createTextNode(""));
-		    else 
+		    else
 			altsiuEl.appendChild(doc.createTextNode(tsd.getSampleIconURI()));
 
 
