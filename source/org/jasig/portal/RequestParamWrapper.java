@@ -12,8 +12,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
 
@@ -28,8 +26,6 @@ import com.oreilly.servlet.multipart.ParamPart;
  * @version $Revision$
  */
 public class RequestParamWrapper extends HttpServletRequestWrapper {
-    
-    private static final Log log = LogFactory.getLog(RequestParamWrapper.class);
     
     protected Hashtable parameters;
     protected boolean request_verified;
