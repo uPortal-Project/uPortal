@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ‰© 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,27 +52,39 @@ import org.jasig.portal.utils.CommonUtils;
  */
 public class LocaleManager  {
 
-    final static boolean localeAware=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+    static boolean localeAware=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
     private Locale[] DEFAULT_LOCALES;
     private Locale   localeFromSessionParameter;
     private Locale[] localesFromBrowserSetting;
 
     public LocaleManager() {
 
-        String default_locales=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.portal_locales");
+        if (localeAware) {
 
-        String [] strarr = CommonUtils.getSplitStringByCommas(default_locales, ",");
+            String default_locales=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.portal_locales");
 
-        DEFAULT_LOCALES = new Locale[strarr.length]; 
+            if (default_locales == null) {
 
-        LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: default_locales = " + default_locales);
+                LogService.log(LogService.ERROR, "LocaleManager.LocaleManager: default_locales = null. It must be specified in portal.properties. " + default_locales);
 
-        for (int i=0; i < strarr.length; i++) {
-            DEFAULT_LOCALES[i] = getLocaleForLanguage(strarr[i]);
-            LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: uPortal-wide default locale #" + i + " = " + DEFAULT_LOCALES[i]);
+                localeAware = false;
+
+            }  else {
+
+                String [] strarr = CommonUtils.getSplitStringByCommas(default_locales, ",");
+
+                DEFAULT_LOCALES = new Locale[strarr.length]; 
+
+                LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: default_locales = " + default_locales);
+
+                for (int i=0; i < strarr.length; i++) {
+                    DEFAULT_LOCALES[i] = getLocaleForLanguage(strarr[i]);
+                    LogService.log(LogService.DEBUG, "LocaleManager.LocaleManager: uPortal-wide default locale #" + i + " = " + DEFAULT_LOCALES[i]);
+                }
+            }
         }
     }
-
+    
     public boolean localeAware() {
         return localeAware;
     }
@@ -81,10 +93,10 @@ public class LocaleManager  {
 
         // get uPortal-wide default locales from "properties/portal.properties"
         this();
-    
+        
         // set user preferred languages from accept-language http header
         setLocalesFromBrowserSetting(request);
-    	
+        
         // set the current locale from `locale' session parameter
         setLocaleFromSessionParameter(request);
     
