@@ -202,6 +202,9 @@ public class DbLoader
       e.printStackTrace();
     }
     finally
+    // call local exit method to clean up.  This does not actually
+    // do a system.exit() allowing a stack trace to the console in
+    // the case of a run time error.
     {
       exit();
     }
@@ -1141,7 +1144,5 @@ public class DbLoader
 
     if (scriptOut != null)
       scriptOut.close();
-
-    System.exit(0);
   }
 }
