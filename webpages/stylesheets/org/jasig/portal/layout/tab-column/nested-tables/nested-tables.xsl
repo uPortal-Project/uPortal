@@ -49,37 +49,13 @@
       </head>
 
       <body>
-        <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td valign="top">
               <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td height="100" valign="top">
                     <img alt="interface image" src="{$mediaPath}/{$skin}/uportal_logo.gif" border="0" />
-                  </td>
-
-                  <td class="uportal-channel-subtitle" align="center" valign="top" width="10%">
-                    <u>Skins</u><br />
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=imm">
-                    <span><xsl:if test="$skin='imm'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
-                      IMM
-                    </span></a> |
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=java">
-                    <span><xsl:if test="$skin='java'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
-                      Java
-                    </span></a>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=vsac">
-                    <span><xsl:if test="$skin='vsac'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
-                      VSAC
-                    </span></a> |
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=matrix">
-                    <span><xsl:if test="$skin='matrix'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
-                      Matrix
-                    </span></a><br/>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=uosm">
-                    <span><xsl:if test="$skin='uosm'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
-                      UOSM
-                    </span></a>
                   </td>
                 
                   <xsl:apply-templates select="header"/>
