@@ -53,8 +53,6 @@ import org.apache.pluto.services.information.PortletActionProvider;
 import org.apache.pluto.services.information.PortletURLProvider;
 import org.apache.pluto.services.information.ResourceURLProvider;
 
-import org.jasig.portal.container.servlet.ServletRequestImpl;
-import org.jasig.portal.ChannelRuntimeData;
 
 /**
  * Implementation of Apache Pluto DynamicInformationProvider.
@@ -71,7 +69,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     
     public DynamicInformationProviderImpl(HttpServletRequest request, ServletConfig servletConfig ) {
         this.request = request;
-        controlParameter = new PortalControlParameter(getRequestedPortalURL());
+        controlParameter = new PortalControlParameter(request.getParameterMap());
         if ( servletConfig != null && staticInfoProvider == null )
 		staticInfoProvider = InformationProviderAccess.getStaticProvider();
         responseContentType = "text/html";
@@ -126,14 +124,5 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 		Collection supportedStates = staticInfoProvider.getPortalContextProvider().getSupportedWindowStates();
 		return supportedStates.contains(state);
     }
-    
-	public String getRequestedPortalURL() throws ClassCastException {
-	      // TO GET requested portal URL from HttpServletRequest !!!!!
-	  if ( request instanceof ServletRequestImpl ) {    
-		ChannelRuntimeData rd = ((ServletRequestImpl)request).getChannelRuntimeData();
-		return rd.getBaseActionURL();
-	  }
-	    throw new ClassCastException( "The HttpServletRequest object must be ServletRequestImpl type!!");	
-	}
 
 }

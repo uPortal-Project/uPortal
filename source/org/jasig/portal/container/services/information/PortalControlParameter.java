@@ -66,7 +66,6 @@ public class PortalControlParameter {
     private Map requestParameters = new HashMap();
     private Map statefulControlParameters = new HashMap();
     private Map statelessControlParameters = new HashMap();
-    private String portalURL = null;
 
     public static String decodeParameterName(String paramName) {
         return paramName.substring(PREFIX.length());
@@ -174,10 +173,9 @@ public class PortalControlParameter {
         return false;
     }
 
-    public PortalControlParameter(String url) {
-        this.portalURL = url;
-        // GET statefulControlParameters and statelessControlParameters from portalURL!!!
-	
+    public PortalControlParameter(Map requestParameters) {
+        this.requestParameters = requestParameters;
+        // GET statefulControlParameters and statelessControlParameters from requestParameters!!!	
     }
 
     public void clearRenderParameters(PortletWindow portletWindow) {
