@@ -52,12 +52,8 @@
                 </channel>
               </folder>
               <folder ID="col02" priority="0" name="Column 2">
-                 <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks"/>
+                <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks"/>
                 <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CSnoop" name="Snooper"/>
-                <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-                  <parameter value="webpages/rss/news.rss" name="xml"/>
-                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-                </channel>
               </folder>
             </folder>
             <folder ID="t02" priority="0" name="uPortal Tools">
@@ -305,34 +301,6 @@
             </channel>      				 
 					  ]]></value>
 			  </column>
-			</row>
-			<row>
-			  <column>
-				  <name>CHAN_ID</name>
-				  <value>4</value>
-				</column>
-				<column>
-				  <name>TITLE</name>
-				  <value>XML.com</value>
-				</column>
-				<column>
-				  <name>PUB_ID</name>
-				  <value>0</value>
-			  </column>
-				<column>
-					<name>APPROVED</name>
-					<value>0</value>
-				</column>
-				<column>
-					<name>CHANNEL_XML</name>
-					<value>
-					  <![CDATA[
-					  <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-              <parameter value="webpages/rss/news.rss" name="xml"/>
-              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-            </channel>     				 
-					  ]]></value>
-				</column>
 			</row>
 			<row>
 				<column>
