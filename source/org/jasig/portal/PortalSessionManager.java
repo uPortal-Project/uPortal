@@ -107,15 +107,7 @@ public class PortalSessionManager extends HttpServlet {
       // Get the SAX implementation
       if (System.getProperty("org.xml.sax.driver") == null)
         System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
-
-      // Set the UserLayoutStoreImpl
-      try {
-        // Should obtain implementation in a better way!
-        GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
-      } catch (Exception e) {
-        throw  new ServletException(e);
-      }
-    }
+   }
   }
 
   /**
