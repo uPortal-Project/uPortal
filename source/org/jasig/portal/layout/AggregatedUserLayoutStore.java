@@ -1178,10 +1178,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
       // Clear the previous data related to the user layout
-      PreparedStatement psDeleteLayoutNode = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE user_id=? AND layout_id=? AND node_id=?");
+      PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE user_id=? AND layout_id=?");
+      // Deleting the node from the user layout
+      psDeleteLayout.setInt(1,userId);
+      psDeleteLayout.setInt(2,layoutId);
+      psDeleteLayout.executeUpdate();
 
       // Deleting restrictions for regular nodes
-      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM up_layout_restrictions WHERE user_id=? AND layout_id=? AND node_id=?");
+      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM up_layout_restrictions WHERE user_id=? AND layout_id=?");
+      // Deleting restrictions for the node
+      psDeleteLayoutRestriction.setInt(1,userId);
+      psDeleteLayoutRestriction.setInt(2,layoutId);
+      psDeleteLayoutRestriction.executeUpdate();
 
        // Deleting restrictions for "pseudo" fragment nodes that exist in the user layout
       PreparedStatement psDeleteFragmentRestriction = con.prepareStatement("DELETE FROM up_fragment_restrictions WHERE fragment_id=? AND node_id=?");
@@ -1217,11 +1225,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentId = CommonUtils.parseInt(node.getFragmentId());
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
-          // Deleting the node from the user layout
-          psDeleteLayoutNode.setInt(1,userId);
-          psDeleteLayoutNode.setInt(2,layoutId);
-          psDeleteLayoutNode.setInt(3,nodeId);
-          psDeleteLayoutNode.executeUpdate();
+
 
          if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
            /*ps = psFragment;
@@ -1244,17 +1248,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
              else {
 
               // Deleting "pseudo" fragment node restrictions
-              if ( fragmentNodeId > 0 && fragmentId > 0 ) {
+              /*if ( fragmentNodeId > 0 && fragmentId > 0 ) {
                psDeleteFragmentRestriction.setInt(1,fragmentId);
                psDeleteFragmentRestriction.setInt(2,fragmentNodeId);
                psDeleteFragmentRestriction.executeUpdate();
-              } else {
+              }
+              /*else {
                   // Deleting restrictions for the node
                   psDeleteLayoutRestriction.setInt(1,userId);
                   psDeleteLayoutRestriction.setInt(2,layoutId);
                   psDeleteLayoutRestriction.setInt(3,nodeId);
                   psDeleteLayoutRestriction.executeUpdate();
-                }
+                }*/
 
                boolean channelParamsExist = false;
 
@@ -1292,7 +1297,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( psUpdateLayoutNode != null ) psUpdateLayoutNode.close();
       if ( psUpdateLayoutRestriction != null ) psUpdateLayoutRestriction.close();
 
-      if ( psDeleteLayoutNode != null ) psDeleteLayoutNode.close();
+      if ( psDeleteLayout != null ) psDeleteLayout.close();
       if ( psDeleteLayoutRestriction != null ) psDeleteLayoutRestriction.close();
 
       //if ( psAddFragmentNode != null ) psAddFragmentNode.close();

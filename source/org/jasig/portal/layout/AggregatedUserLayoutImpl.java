@@ -393,8 +393,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     if ( !(parentNode.getNodeType()==IUserLayoutNodeDescription.FOLDER ) )
       throw new PortalException ("The target parent node should be a folder!");
 
-    if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
-
+    //if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    if ( !parentNode.getNodeDescription().isImmutable() ) {
 
      // Checking children related restrictions
      Vector restrictions = parentNode.getRestrictionsByPath("children");
@@ -443,8 +443,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     ALNode oldParentNode = getLayoutNode(node.getParentNodeId());
     ALNode newParentNode = getLayoutNode(newParentId);
 
-    if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
-         checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    /*if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
+         checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {*/
+    if ( !oldParentNode.getNodeDescription().isImmutable() && !newParentNode.getNodeDescription().isImmutable() ) {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
@@ -487,9 +488,11 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   private boolean checkDeleteRestrictions( String nodeId ) throws PortalException {
     ALNode node = getLayoutNode(nodeId);
     if ( node == null ) return true;
-    if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    //if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    if ( !getLayoutNode(node.getParentNodeId()).getNodeDescription().isImmutable() ) {
          // Checking the unremovable restriction on the node to be deleted
-         return checkRestriction(node.getParentNodeId(),RestrictionTypes.UNREMOVABLE_RESTRICTION,"false");
+         //return checkRestriction(nodeId,RestrictionTypes.UNREMOVABLE_RESTRICTION,"false");
+         return !node.getNodeDescription().isUnremovable();
     } else
          return false;
   }
@@ -1635,7 +1638,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
 
         // Checking the immutable node restriction
-        if ( !checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") )
+        //if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
+        if ( currentNodeDesc.isImmutable() )
             return false;
         // Checking the immutable parent node related restriction
         if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )
