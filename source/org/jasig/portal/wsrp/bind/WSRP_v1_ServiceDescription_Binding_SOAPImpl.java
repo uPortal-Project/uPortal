@@ -36,14 +36,28 @@
 package org.jasig.portal.wsrp.bind;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.rpc.holders.BooleanHolder;
 
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.wsrp.Constants;
 import org.jasig.portal.wsrp.intf.WSRP_v1_ServiceDescription_PortType;
 import org.jasig.portal.wsrp.types.CookieProtocol;
 import org.jasig.portal.wsrp.types.Extension;
 import org.jasig.portal.wsrp.types.InvalidRegistrationFault;
 import org.jasig.portal.wsrp.types.ItemDescription;
+import org.jasig.portal.wsrp.types.LocalizedString;
+import org.jasig.portal.wsrp.types.MarkupType;
 import org.jasig.portal.wsrp.types.ModelDescription;
 import org.jasig.portal.wsrp.types.OperationFailedFault;
 import org.jasig.portal.wsrp.types.PortletDescription;
@@ -64,24 +78,98 @@ import org.jasig.portal.wsrp.types.holders.StringArrayHolder;
  * This file was originally auto-generated from WSDL
  * by the Apache Axis WSDL2Java emitter.
  * 
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_ServiceDescription_PortType {
 
-  public void getServiceDescription(RegistrationContext registrationContext, String[] desiredLocales, BooleanHolder requiresRegistration, PortletDescriptionArrayHolder offeredPortlets, ItemDescriptionArrayHolder userCategoryDescriptions, ItemDescriptionArrayHolder customUserProfileItemDescriptions, ItemDescriptionArrayHolder customWindowStateDescriptions, ItemDescriptionArrayHolder customModeDescriptions, CookieProtocolHolder requiresInitCookie, ModelDescriptionHolder registrationPropertyDescription, StringArrayHolder locales, ResourceListHolder resourceList, ExtensionArrayHolder extensions) throws RemoteException, InvalidRegistrationFault, OperationFailedFault {
+    public void getServiceDescription(RegistrationContext registrationContext, String[] desiredLocales, BooleanHolder requiresRegistration, PortletDescriptionArrayHolder offeredPortlets, ItemDescriptionArrayHolder userCategoryDescriptions, ItemDescriptionArrayHolder customUserProfileItemDescriptions, ItemDescriptionArrayHolder customWindowStateDescriptions, ItemDescriptionArrayHolder customModeDescriptions, CookieProtocolHolder requiresInitCookie, ModelDescriptionHolder registrationPropertyDescription, StringArrayHolder locales, ResourceListHolder resourceList, ExtensionArrayHolder extensions) throws RemoteException, InvalidRegistrationFault, OperationFailedFault {
     
-    // Initialize return values
-    requiresRegistration.value = true;
-    offeredPortlets.value = new PortletDescription[0];
-    userCategoryDescriptions.value = new ItemDescription[0];
-    customUserProfileItemDescriptions.value = new ItemDescription[0];
-    customWindowStateDescriptions.value = new ItemDescription[0];
-    customModeDescriptions.value = new ItemDescription[0];
-    requiresInitCookie.value = CookieProtocol.none;
-    registrationPropertyDescription.value = new ModelDescription();
-    locales.value = new String[0];
-    resourceList.value = new ResourceList();
-    extensions.value = new Extension[0];
-  }
+        // Initialize return values
+        requiresRegistration.value = true;
+        offeredPortlets.value = new PortletDescription[0];
+        userCategoryDescriptions.value = new ItemDescription[0];
+        customUserProfileItemDescriptions.value = new ItemDescription[0];
+        customWindowStateDescriptions.value = new ItemDescription[0];
+        customModeDescriptions.value = new ItemDescription[0];
+        requiresInitCookie.value = CookieProtocol.none;
+        registrationPropertyDescription.value = new ModelDescription();
+        locales.value = new String[0];
+        resourceList.value = new ResourceList();
+        extensions.value = new Extension[0];
+        
+        // Requires registration
+        requiresRegistration.value = false;
+        
+        // Offered portlets
+        try {
+            IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+            ChannelDefinition[] chanDefs = crs.getChannelDefinitions();
+            List portletDescriptionList = new ArrayList(chanDefs.length);
+            for (int i = 0; i < chanDefs.length; i++) {
+                ChannelDefinition chanDef = chanDefs[i];
+                PortletDescription portletDescription = new PortletDescription();
+                portletDescription.setPortletHandle(chanDef.getFName());
+                MarkupType markupType = new MarkupType();
+                markupType.setMimeType("*");
+                List modeList = new ArrayList();
+                if (chanDef.isEditable()) {
+                    modeList.add(Constants.WSRP_EDIT);
+                }
+                if (chanDef.hasHelp()) {
+                    modeList.add(Constants.WSRP_HELP);
+                }
+                markupType.setModes((String[])modeList.toArray(new String[0]));
+                markupType.setWindowStates(new String[] { Constants.WSRP_NORMAL, Constants.WSRP_MINIMIZED, Constants.WSRP_MAXIMIZED, Constants.WSRP_SOLO});                
+                portletDescription.setMarkupTypes(new MarkupType[] {markupType}); // We can't really know what a channel supports
+                portletDescriptionList.add(portletDescription);
+            }
+            offeredPortlets.value = (PortletDescription[])portletDescriptionList.toArray(new PortletDescription[0]);
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+        }
+        
+        // User category descriptions
+        try {
+            List userCategoryDescriptionList = new ArrayList();
+            IEntityGroup everyone = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
+            Iterator iter = everyone.getAllMembers();
+            while (iter.hasNext()) {
+                IGroupMember gm = (IGroupMember)iter.next();
+                if (gm.isGroup()) {
+                    IEntityGroup eg = (IEntityGroup)gm;
+                    ItemDescription itemDescription = new ItemDescription();
+                    itemDescription.setItemName(eg.getName());
+                    LocalizedString ls = new LocalizedString();
+                    ls.setValue(eg.getDescription());
+                    itemDescription.setDescription(ls);
+                    userCategoryDescriptionList.add(itemDescription);
+                }
+            }
+            userCategoryDescriptions.value = (ItemDescription[])userCategoryDescriptionList.toArray(new ItemDescription[0]);
+        } catch (PortalException pe) {
+            LogService.log(LogService.ERROR, pe);
+        }
+        
+        // Custom user profile item descriptions
+        // None yet
+        
+        // Custom window state descriptions
+        // None yet
+        
+        // Custom mode descriptions
+        // None yet
+        
+        // Requires initCookie
+        requiresInitCookie.value = CookieProtocol.none;
+        
+        // Registration property description
+        // None yet
+        
+        // Locales
+        // Not sure what should go here yet
+        
+        // Resource list
+        // Not sure what should go here yet
+    }
 }
