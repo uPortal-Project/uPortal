@@ -1085,7 +1085,7 @@ $Revision$
                           <xsl:for-each select="ancestor-or-self::category">
                             <table width="100%" border="0">
                               <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                              <input type="hidden" name="action" value="newChannel"/>
+                                <input type="hidden" name="action" value="newChannel"/>
                                 <tr>
                                   <td nowrap="nowrap" align="left" valign="top">
                                     <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
@@ -1139,7 +1139,7 @@ $Revision$
                             </table>
                             <table width="100%" border="0">
                               <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                              <input type="hidden" name="action" value="newChannel"/>
+                                <input type="hidden" name="action" value="newChannel"/>
                                 <tr>
                                   <td nowrap="nowrap" align="left" valign="top">
                                     <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
@@ -1172,7 +1172,7 @@ $Revision$
                     <xsl:if test="$catID != 'top'">
                       <table width="100%" border="0" class="uportal-channel-text">
                         <form name="formSelectChannel" method="post" action="{$baseActionURL}">
-                        <input type="hidden" name="action" value="newChannel"/>
+                          <input type="hidden" name="action" value="newChannel"/>
                           <tr valign="top">
                             <td>
                               <strong>2.</strong>
@@ -1192,6 +1192,7 @@ $Revision$
                                 <xsl:choose>
                                   <xsl:when test="$catID = 'all'">
                                     <xsl:for-each select="/layout/registry//channel[not(@ID=following::channel/@ID)]">
+                                      <xsl:sort select="@name"/>
                                       <option value="{@ID}">
                                         <xsl:value-of select="@name"/>
                                       </option>
@@ -1199,6 +1200,7 @@ $Revision$
                                   </xsl:when>
                                   <xsl:otherwise>
                                     <xsl:for-each select="/layout/registry//category[@ID=$catID]/channel">
+                                      <xsl:sort select="@name"/>
                                       <option value="{@ID}">
                                         <xsl:value-of select="@name"/>
                                       </option>
