@@ -61,7 +61,7 @@ import java.io.*;
  * Bookmarks channel applies different stylesheets to different locations of the DOM structure produced by reading the bookmarks.xml file. </p>
  * <p> Note the use of a helper StylesheetSet class </p>
  * <p> Exibits the same behavior as the regular CBookmarks Channel, will pull and push data
- * to and from the database, under the table name PORTAL_BOOKMARKS.
+ * to and from the database, under the table name UPC_BOOKMARKS.
  * <p> If user's bookmarks are empty, then it will get the 'default' bookmarks from the
  * default (userid = 0) layout.
  * @author Peter Kharchenko
@@ -109,7 +109,7 @@ public class CBookmarks implements IChannel
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    
+
     // leave most properties at their default values, except a couple.
     csb.setName ("myWeb Bookmarks");
     csb.setEditable (true);
@@ -139,41 +139,41 @@ public class CBookmarks implements IChannel
   {
     staticData=sd;
   }
-  
+
   protected Document getBookmarkXML ()
   {
     return  getBookmarkXML (runtimeData);
   }
-  
+
   protected Document getBookmarkXML (ChannelRuntimeData rd)
   {
     if (bookmarksXML == null)
-    {  
+    {
       //If there is no bookmarks, then go and get it from the database
       Connection con;
       String inputXML = null;
-      
+
       try
       {
         con = this.rdbmService.getConnection ();
         String userid = GetUserID (rd.getHttpRequest ());
-        ResultSet statem = con.createStatement ().executeQuery ("SELECT BOOKMARK_XML FROM PORTAL_BOOKMARKS WHERE PORTAL_USER_ID=" + userid);
+        ResultSet statem = con.createStatement ().executeQuery ("SELECT BOOKMARK_XML FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userid);
 
         DOMParser domP = new DOMParser ();
-        
+
         if (statem.next ())
         {
           inputXML = statem.getString ("BOOKMARK_XML");
         }
         else
         {
-          statem = con.createStatement ().executeQuery ("select portal_bookmarks.bookmark_xml from portal_bookmarks , portal_users where portal_users.user_name = 'default' and portal_users.id = portal_bookmarks.portal_user_id ");
+          statem = con.createStatement ().executeQuery ("SELECT UPC_BOOKMARKS.BOOKMARK_XML FROM UPC_BOOKMARKS, UP_USERS WHERE UP_USERS.USER_NAME = 'default' AND UP_USERS.ID = UPC_BOOKMARKS.PORTAL_USER_ID ");
           statem.next ();
           inputXML = statem.getString ("BOOKMARK_XML");
           Statement cstate = con.createStatement ();
-          cstate.executeQuery ("INSERT INTO PORTAL_BOOKMARKS VALUES ('"+userid+"','"+userid+"','"+inputXML+"')");
+          cstate.executeQuery ("INSERT INTO UPC_BOOKMARKS VALUES ('"+userid+"','"+userid+"','"+inputXML+"')");
         }
-        
+
         domP.parse (new InputSource (new StringReader (inputXML)));
         bookmarksXML=domP.getDocument ();
         rdbmService.releaseConnection (con);
@@ -182,7 +182,7 @@ public class CBookmarks implements IChannel
       {
         Logger.log (Logger.ERROR, e);
         Logger.log (Logger.ERROR, this.userID);
-        
+
         if (inputXML != null)
         {
           Logger.log (Logger.ERROR,inputXML);
@@ -191,20 +191,20 @@ public class CBookmarks implements IChannel
     }
     return bookmarksXML;
   }
-  
+
   protected void saveXML (ChannelRuntimeData rd)
   {
     if ( bookmarksXML != null)
     {
       StringWriter outString = new StringWriter ();
-      
+
       try
       {
         XMLSerializer xsl = new XMLSerializer (outString,new OutputFormat ( this.bookmarksXML ) );
         xsl.serialize (bookmarksXML);
         this.con = this.rdbmService.getConnection ();
         Statement statem = con.createStatement ();
-        statem.executeUpdate ("UPDATE PORTAL_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + GetUserID (rd.getHttpRequest ()));
+        statem.executeUpdate ("UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + GetUserID (rd.getHttpRequest ()));
       }
       catch (Exception e)
       {
@@ -217,18 +217,18 @@ public class CBookmarks implements IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData=rd;
-    
+
     // process actions that are passed
     // the names of these parameters are entirely up to the channel.
     // please see the eidt stylesheet for the construction of the URLs that are used to pass actions to the channel.
     // in brief, action URL is constructe by runtimeData.getBaseActionURL() + any parameters you lke
     // in this case we are parsing "runtimeData.baseActionURL() + "action=something"+"&"+...
     String action;
-    
+
     if ((action=runtimeData.getParameter ("action")) != null)
     {
       if (action.equals ("doneEditing"))
-      {  
+      {
         //if editing is done, then save the XML to the database and exit edit mode.
         saveXML (rd);
         editMode=false;
@@ -271,7 +271,7 @@ public class CBookmarks implements IChannel
   public static String makeUrlSafe (String url)
   {
     String safeUrl = url.toLowerCase ();
-    
+
     if (!(safeUrl.startsWith ("http://")))
     {
       if (safeUrl.startsWith ("http:/"))
@@ -319,15 +319,15 @@ public class CBookmarks implements IChannel
         // default
         else renderViewXML (out);
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
 
   // the rest are private helper functions, should be rather self-explanatory
-  
+
   private void renderViewXML (DocumentHandler out) throws org.xml.sax.SAXException
   {
     // a block, typical for the IChannel:
@@ -340,22 +340,22 @@ public class CBookmarks implements IChannel
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
       processor.process (new XSLTInputSource (getBookmarkXML ()),stylesheet,new XSLTResultTarget (out));
-    } 
-    else 
+    }
+    else
       Logger.log (Logger.ERROR,"BookmarksChannel::renderViewXML() : unable to find a stylesheet for rendering");
   }
 
   private void renderEditXML (DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource stylesheet=set.getStylesheet ("edit",runtimeData.getHttpRequest ());
-    
+
     if (stylesheet!=null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
       processor.setStylesheetParam ("baseActionURL",processor.createXString (runtimeData.getBaseActionURL ()));
       processor.process (new XSLTInputSource (getBookmarkXML ()),stylesheet,new XSLTResultTarget (out));
-    } 
-    else 
+    }
+    else
       Logger.log (Logger.ERROR,"BookmarksChannel::renderEditXML() : unable to find a stylesheet for rendering");
   }
 
@@ -363,15 +363,15 @@ public class CBookmarks implements IChannel
   {
     Node bookmark= ((getBookmarkXML ()).getElementsByTagName ("bookmark")).item (bookmarkNumber-1);
     XSLTInputSource stylesheet=set.getStylesheet ("editbookmark",runtimeData.getHttpRequest ());
- 
+
     if (stylesheet!=null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
       processor.setStylesheetParam ("channelID",processor.createXString (staticData.getChannelID ()));
       processor.setStylesheetParam ("bookmarkID",processor.createXString (String.valueOf (bookmarkNumber)));
       processor.process (new XSLTInputSource (bookmark),stylesheet,new XSLTResultTarget (out));
-    } 
-    else 
+    }
+    else
       Logger.log (Logger.ERROR,"BookmarksChannel::renderEditBookmarkXML() : unable to find a stylesheet for rendering");
   }
 
@@ -395,8 +395,8 @@ public class CBookmarks implements IChannel
       processor.setStylesheetParam ("channelID",processor.createXString (staticData.getChannelID ()));
       processor.setStylesheetParam ("newBookmark",processor.createXString ("true"));
       processor.process (new XSLTInputSource (bookmark),stylesheet,new XSLTResultTarget (out));
-    } 
-    else 
+    }
+    else
       Logger.log (Logger.ERROR,"BookmarksChannel::renderEditBookmarkXML() : unable to find a stylesheet for rendering");
   }
 
@@ -405,43 +405,43 @@ public class CBookmarks implements IChannel
     Document root = this.getBookmarkXML ();
     NodeList elements = root.getElementsByTagName ("bookmark");
     Node bookmark=elements.item (bookmarkNumber - 1);
-    
+
     if (bookmark!=null)
     {
        (bookmark.getParentNode ()).removeChild (bookmark);
-    } 
-    else 
+    }
+    else
       Logger.log (Logger.ERROR,"BookmarksChannel::deleteBookmark() : attempting to remove nonexistent bookmark #"+bookmarkNumber);
   }
 
   protected String userID=null;
-  
+
   protected String GetUserID (HttpServletRequest req)
-  {  
+  {
     //goes to the DB and gets the user ID unless is has already been collected.
     if (userID == null)
     {
       HttpSession session = req.getSession (false);
       Connection con = null;
       String username = (String)session.getAttribute ("userName");
-      
+
       if (username ==null)
       {
         username = "guest";
       }
-      
+
       try
       {
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement ();
-        String userQuery = "SELECT ID FROM PORTAL_USERS WHERE USER_NAME = '" + username + "'";
+        String userQuery = "SELECT ID FROM UP_USERS WHERE USER_NAME = '" + username + "'";
         ResultSet rs = stmt.executeQuery (userQuery);
-        
+
         if (rs.next ())
         {
           userID = rs.getString ("ID");
         }
-        
+
         stmt.close ();
       }
       catch (Exception e)
@@ -453,7 +453,7 @@ public class CBookmarks implements IChannel
         rdbmService.releaseConnection (con);
       }
     }
-    
+
     return userID;
   }
 }

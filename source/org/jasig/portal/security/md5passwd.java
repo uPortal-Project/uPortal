@@ -53,11 +53,11 @@ import java.sql.*;
 public class md5passwd {
 
   static private final String SELECTSTMT =
-    "SELECT COUNT(*) FROM PORTAL_SHADOW WHERE USER_NAME = ?";
+    "SELECT COUNT(*) FROM UP_SHADOW WHERE USER_NAME = ?";
   static private final String UPDATESTMT =
-    "UPDATE PORTAL_SHADOW SET PASSWORD = ? WHERE USER_NAME = ?";
+    "UPDATE UP_SHADOW SET PASSWORD = ? WHERE USER_NAME = ?";
   static private final String INSERTSTMT =
-    "INSERT INTO PORTAL_SHADOW (USER_NAME, PASSWORD) " +
+    "INSERT INTO UP_SHADOW (USER_NAME, PASSWORD) " +
     "VALUES (?, ?)";
 
   public md5passwd(String user, boolean create, boolean lock)

@@ -43,7 +43,7 @@ import java.sql.*;
 
 /**
  * <p>This is an implementation of a SecurityContext that merely checks to see
- * if the user exists in the portal_users database table but otherwise presumes
+ * if the user exists in the UP_USERS database table but otherwise presumes
  * to be pre-authenticated by the context from which it is called. The typical
  * system where this might be used is a portal whose main page is protected by
  * HTTP authentication (BASIC or otherwise).</p>
@@ -74,7 +74,7 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
       try {
         String first_name, last_name;
         String query = "SELECT FIRST_NAME, LAST_NAME " +
-            "FROM PORTAL_USERS WHERE USER_NAME = ?";
+            "FROM UP_USERS WHERE USER_NAME = ?";
         conn = rdbmservices.getConnection();
         stmt = conn.prepareStatement(query);
         stmt.setString(1, this.myPrincipal.UID);

@@ -3,7 +3,7 @@
 <tables xmlns="http://www.jasig.org/uPortal/database/tables">
 
   <table>
-    <name>PORTAL_USERS</name>
+    <name>UP_USERS</name>
     <columns>
       <column><name>ID</name><type>INTEGER</type></column>
       <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
@@ -15,7 +15,7 @@
   </table>
   
   <table>
-    <name>PORTAL_SHADOW</name>
+    <name>UP_SHADOW</name>
     <columns>
       <column><name>USER_NAME</name><type>VARCHAR</type><param>64</param></column>
       <column><name>PASSWORD</name><type>VARCHAR</type><param>64</param></column>
@@ -23,7 +23,7 @@
   </table>
   
   <table>
-    <name>PORTAL_CHANNELS</name>
+    <name>UP_CHANNELS</name>
     <columns>
       <column><name>ID</name><type>INTEGER</type></column>
       <column><name>CHANNEL_REG</name><type>LONGVARCHAR</type></column>
@@ -32,7 +32,7 @@
   </table>
 
   <table>
-    <name>USER_PREFERENCES_TABLE</name>
+    <name>UP_USER_PREFS</name>
     <columns>
       <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
       <column><name>MEDIA</name><type>VARCHAR</type><param>15</param></column>
@@ -43,7 +43,7 @@
   </table>
 
   <table>
-    <name>USER_STYLESHEET_PREFERENCES_TABLE</name>
+    <name>UP_USER_SS_PREFS</name>
     <columns>
       <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
@@ -52,7 +52,7 @@
   </table>
 
   <table>
-    <name>STRUCTURE_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_STRUCT_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
       <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
@@ -63,7 +63,7 @@
   </table>
 
   <table>
-    <name>THEME_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_THEME_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
       <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
@@ -74,7 +74,7 @@
   </table>
 
   <table>
-    <name>CSS_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_CSS_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
       <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
@@ -85,7 +85,7 @@
   </table>
 
   <table>
-    <name>STRUCTURE_TRANSFORMATION_STYLESHEET_MEDIA_MAPPING</name>
+    <name>UP_STRUCT_SS_MAP</name>
     <columns>
       <column><name>MEDIA</name><type>VARCHAR</type><param>15</param></column>
       <column><name>STRUCTURE_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
@@ -93,7 +93,7 @@
   </table>
 
   <table>
-    <name>THEME_TRANSFORMATION_STYLESHEET_MAPPING</name>
+    <name>UP_THEME_SS_MAP</name>
     <columns>
       <column><name>THEME_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
       <column><name>STRUCTURE_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
@@ -101,7 +101,7 @@
   </table>
 
   <table>
-    <name>CSS_STYLESHEET_MAPPING</name>
+    <name>UP_CSS_SS_MAP</name>
     <columns>
       <column><name>CSS_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
       <column><name>THEME_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
@@ -109,7 +109,7 @@
   </table>
 
   <table>
-    <name>PORTAL_BOOKMARKS</name>
+    <name>UPC_BOOKMARKS</name>
     <columns>
       <column><name>ID</name><type>INTEGER</type></column>
       <column><name>PORTAL_USER_ID</name><type>INTEGER</type></column>

@@ -3,7 +3,7 @@
 <data xmlns="http://www.jasig.org/uPortal/database/data">
 
   <table>
-    <name>PORTAL_USERS</name>
+    <name>UP_USERS</name>
     <rows>
       <row>
         <column><name>ID</name><value>0</value></column>
@@ -109,7 +109,7 @@
   </table>
 
   <table>
-    <name>PORTAL_SHADOW</name>
+    <name>UP_SHADOW</name>
     <rows>
       <row>
         <column><name>USER_NAME</name><value>demo</value></column>
@@ -119,7 +119,7 @@
   </table>
 
   <table>
-    <name>PORTAL_CHANNELS</name>
+    <name>UP_CHANNELS</name>
     <rows>
       <row>
         <column><name>ID</name><value>0</value></column>
@@ -174,7 +174,7 @@
   </table>
 
   <table>
-    <name>USER_PREFERENCES_TABLE</name>
+    <name>UP_USER_PREFS</name>
     <rows>
       <row>
         <column><name>USER_NAME</name><value>guest</value></column>
@@ -208,7 +208,7 @@
   </table>
 
   <table>
-    <name>USER_STYLESHEET_PREFERENCES_TABLE</name>
+    <name>UP_USER_SS_PREFS</name>
     <rows>
       <row>
         <column><name>USER_NAME</name><value>guest</value></column>
@@ -302,7 +302,7 @@
   </table>
 
   <table>
-    <name>STRUCTURE_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_STRUCT_SS</name>
     <rows>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>
@@ -314,7 +314,7 @@
   </table>
 
   <table>
-    <name>THEME_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_THEME_SS</name>
     <rows>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Nested tables</value></column>
@@ -326,7 +326,7 @@
   </table>
 
   <table>
-    <name>CSS_STYLESHEET_DESCRIPTION_TABLE</name>
+    <name>UP_CSS_SS</name>
     <rows>
       <row>
         <column><name>STYLESHEET_NAME</name><value>general CSS</value></column>
@@ -338,7 +338,7 @@
   </table>
 
   <table>
-    <name>CSS_STYLESHEET_MAPPING</name>
+    <name>UP_CSS_SS_MAP</name>
     <rows>
       <row>
         <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>
@@ -348,7 +348,7 @@
   </table>
 
   <table>
-    <name>THEME_TRANSFORMATION_STYLESHEET_MAPPING</name>
+    <name>UP_THEME_SS_MAP</name>
     <rows>
       <row>
         <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>
@@ -358,7 +358,7 @@
   </table>
 
   <table>
-    <name>STRUCTURE_TRANSFORMATION_STYLESHEET_MEDIA_MAPPING</name>
+    <name>UP_STRUCT_SS_MAP</name>
     <rows>
       <row>
         <column><name>MEDIA</name><value>netscape</value></column>
@@ -372,7 +372,7 @@
   </table>
 
   <table>
-    <name>PORTAL_BOOKMARKS</name>
+    <name>UPC_BOOKMARKS</name>
     <rows>
       <row>
         <column><name>ID</name><value>0</value></column>

@@ -72,10 +72,10 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
       String first_name = null, last_name = null, md5_passwd = null;
       int globalUID;
       try {
-        String query = "SELECT ID, FIRST_NAME, LAST_NAME, PORTAL_SHADOW.PASSWORD " +
-            "FROM PORTAL_USERS, PORTAL_SHADOW WHERE " +
-            "PORTAL_USERS.USER_NAME = PORTAL_SHADOW.USER_NAME AND " +
-            "PORTAL_USERS.USER_NAME = ?";
+        String query = "SELECT ID, FIRST_NAME, LAST_NAME, UP_SHADOW.PASSWORD " +
+            "FROM UP_USERS, UP_SHADOW WHERE " +
+            "UP_USERS.USER_NAME = UP_SHADOW.USER_NAME AND " +
+            "UP_USERS.USER_NAME = ?";
         conn = rdbmservices.getConnection();
         stmt = conn.prepareStatement(query);
         stmt.setString(1, this.myPrincipal.UID);

@@ -84,7 +84,7 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
       String first_name = null, last_name = null;
       try {
         String query = "SELECT FIRST_NAME, LAST_NAME " +
-            "FROM PORTAL_USERS WHERE " +
+            "FROM UP_USERS WHERE " +
             "USER_NAME = ?";
         conn = rdbmservices.getConnection();
         stmt = conn.prepareStatement(query);

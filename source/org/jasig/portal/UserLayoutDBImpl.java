@@ -36,8 +36,8 @@ public class UserLayoutDBImpl implements IUserLayoutDB {
             con = rdbmService.getConnection ();
             Statement stmt = con.createStatement ();
 
-            // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
-            String sQuery = "SELECT USER_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + userName + "'";
+            // for now, the media parameter gets ignored. Need to restructure UP_USERS table to sepearate layouts, so they can be media-specific
+            String sQuery = "SELECT USER_LAYOUT_XML FROM UP_USERS WHERE USER_NAME='" + userName + "'";
             Logger.log (Logger.DEBUG, sQuery);
 
             ResultSet rs = stmt.executeQuery (sQuery);
@@ -92,8 +92,8 @@ public class UserLayoutDBImpl implements IUserLayoutDB {
             xsl.serialize (layoutXML);
             String str_userLayoutXML=outString.toString();
 
-            // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
-            String sQuery = "UPDATE PORTAL_USERS SET USER_LAYOUT_XML='"+str_userLayoutXML+"' WHERE USER_NAME='"+userName+"';";
+            // for now, the media parameter gets ignored. Need to restructure UP_USERS table to sepearate layouts, so they can be media-specific
+            String sQuery = "UPDATE UP_USERS SET USER_LAYOUT_XML='" + str_userLayoutXML + "' WHERE USER_NAME='" + userName + "';";
             Logger.log (Logger.DEBUG, sQuery);
 
             ResultSet rs = stmt.executeQuery (sQuery);
