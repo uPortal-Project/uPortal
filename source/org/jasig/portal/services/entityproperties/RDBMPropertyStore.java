@@ -45,6 +45,7 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.EntityPropertyRegistry;
 
 
 /**
@@ -158,17 +159,7 @@ public class RDBMPropertyStore
    }
 
    protected EntityProperties getCachedProperties(EntityIdentifier entityID) {
-      EntityProperties ep = null;
-      try {
-         ep = (EntityProperties) EntityCachingService.instance().get(propsType,
-                                                                     entityID.getKey());
-      } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
-         }
-      }
+      EntityProperties ep = EntityPropertyRegistry.instance().getCachedProperties(entityID);
       if (ep == null) {
          ep = new EntityProperties(entityID.getKey());
          Connection conn = null;
@@ -197,27 +188,11 @@ public class RDBMPropertyStore
    }
 
    protected void clearCache(EntityIdentifier entityID) {
-      try {
-         EntityCachingService.instance().remove(entityID.getType(), entityID.getKey());
-      } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
-         }
-      }
+      EntityPropertyRegistry.instance().clearCache(entityID);
    }
 
    protected void addToCache(EntityProperties ep) {
-      try {
-         EntityCachingService.instance().add(ep);
-      } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
-         }
-      }
+      EntityPropertyRegistry.instance().addToCache(ep);
    }
 
 }
