@@ -282,6 +282,9 @@ throws GroupsException
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
+    LogService.log (LogService.DEBUG,
+       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " + principal.toString());
+
     IGroupMember gm = (IGroupMember)groupMembersCache.get(principal);
     if ( gm == null )
     {
@@ -294,6 +297,10 @@ throws GroupsException
 
         groupMembersCache.put(principal, gm);
     }
+
+    LogService.log (LogService.DEBUG,
+       "AuthorizationImpl.getGroupMemberForPrincipal(): got group member " + gm);
+
     return gm;
 }
 /**
@@ -522,6 +529,10 @@ throws GroupsException
 {
     String key = groupMember.getKey();
     Class type = groupMember.getType();
+
+    LogService.log (LogService.DEBUG,
+       "AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
+
     return newPrincipal(key, type);
 }
 /**

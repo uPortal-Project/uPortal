@@ -71,15 +71,15 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       config = ResourceLoader.getResourceAsDocument(this.getClass(),"/properties/groups/LDAPGroupStoreConfig.xml");
     }
     catch(Exception rme){
-      throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document"); 
+      throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document");
     }
     init(config);
   }
-  
+
   public LDAPGroupStore(Document config){
     init(config);
   }
-  
+
   protected void init(Document config){
     this.groups = new HashMap();
     this.contexts = new SmartCache(120);
@@ -102,27 +102,27 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
             String text = ((Text) t).getData();
             //System.out.println(name+" = "+text);
             if (name.equals("url")){
-              url = text; 
+              url = text;
             }
             else if (name.equals("logonid")){
-              logonid = text; 
+              logonid = text;
             }
             else if (name.equals("logonpassword")){
-              logonpassword = text; 
+              logonpassword = text;
             }
             else if (name.equals("keyfield")){
-              keyfield = text; 
+              keyfield = text;
             }
             else if (name.equals("namefield")){
-              namefield = text; 
+              namefield = text;
             }
             else if (name.equals("usercontext")){
-              usercontext = text; 
-            } 
+              usercontext = text;
+            }
             else if (name.equals("refresh-minutes")){
               try{
                  refreshminutes = Integer.parseInt(text);
-              } 
+              }
               catch(Exception e){}
             }
           }
@@ -131,11 +131,11 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       }
     }
     else{
-      throw new RuntimeException("LDAPGroupStore: config file must contain one config element"); 
+      throw new RuntimeException("LDAPGroupStore: config file must contain one config element");
     }
-    
+
     this.personkeys = new SmartCache(refreshminutes*60);
-    
+
     NodeList gl = root.getChildNodes();
     for (int j=0; j<gl.getLength(); j++){
       if(gl.item(j).getNodeType() == ELEMENT_NODE){
@@ -143,12 +143,12 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         if (g.getNodeName().equals("group")){
           GroupShadow shadow = processXmlGroupRecursive(g);
           groups.put(shadow.key,shadow);
-        } 
+        }
       }
     }
-    
+
   }
-  
+
   protected String[] getPersonKeys(String groupKey){
     String[] r= (String[]) personkeys.get(groupKey);
     if(r==null){
@@ -157,13 +157,13 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         r = shadow.entities.getPersonKeys();
       }
       else {
-        r = new String[0]; 
+        r = new String[0];
       }
       personkeys.put(groupKey,r);
-    } 
+    }
     return r;
   }
-  
+
   protected GroupShadow processXmlGroupRecursive(Element groupElem){
     GroupShadow shadow = new GroupShadow();
     shadow.key = groupElem.getAttribute("key");
@@ -181,12 +181,12 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         }
         else if(e.getNodeName().equals("entity-set")){
           shadow.entities = new EntitySet(e);
-        } 
+        }
         else if(e.getNodeName().equals("description")){
           e.normalize();
           Text t= (Text) e.getFirstChild();
           if (t!=null){
-            shadow.description = t.getData(); 
+            shadow.description = t.getData();
           }
         }
       }
@@ -194,7 +194,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     shadow.subgroups = (GroupShadow[]) subgroups.toArray(new GroupShadow[0]);
     return shadow;
   }
-  
+
   protected class GroupShadow{
     protected String key;
     protected String name;
@@ -202,7 +202,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     protected GroupShadow[] subgroups;
     protected EntitySet entities;
   }
-  
+
   protected class EntitySet{
     public static final int FILTER=1;
     public static final int UNION=2;
@@ -210,17 +210,17 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     public static final int INTERSECTION=4;
     public static final int SUBTRACT=5;
     public static final int ATTRIBUTES=6;
-    
-    protected int type; 
+
+    protected int type;
     protected String filter;
     protected Attributes attributes;
     protected EntitySet[] subsets;
-    
+
     protected EntitySet(Element entityset){
       entityset.normalize();
       Node n = entityset.getFirstChild();
       while (n.getNodeType()!=n.ELEMENT_NODE){
-        n = n.getNextSibling(); 
+        n = n.getNextSibling();
       }
       Element e = (Element) n;
       String type = e.getNodeName();
@@ -238,7 +238,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
             Element a = (Element) atts.item(i);
             attributes.put(a.getAttribute("name"),a.getAttribute("value"));
           }
-        } 
+        }
       }
       else if (type.equals("union")){
         this.type = UNION;
@@ -256,20 +256,20 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         this.type = SUBTRACT;
         collectSubsets = true;
       }
-      
+
       if(collectSubsets){
         ArrayList subs = new ArrayList();
         NodeList nl = e.getChildNodes();
         for (int i=0; i < nl.getLength(); i++){
           if (nl.item(i).getNodeType() == nl.item(i).ELEMENT_NODE){
             EntitySet subset = new EntitySet((Element)nl.item(i));
-            subs.add(subset); 
+            subs.add(subset);
           }
-        } 
+        }
         subsets = (EntitySet[]) subs.toArray(new EntitySet[0]);
       }
     }
-    
+
     protected String[] getPersonKeys(){
       ArrayList keys = new ArrayList();
       //System.out.println("Loading keys!!");
@@ -308,9 +308,9 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
             for(int j=0;j<subkeys.length;j++){
               String key =  subkeys[j];
               if(!keys.contains(key)){
-                keys.add(key); 
+                keys.add(key);
               }
-            } 
+            }
           }
           break;
         case INTERSECTION:
@@ -327,19 +327,19 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
                     if (subkeys[o].equals(interkeys[n])){
                       // found a match, so far the intersection for this key is valid
                       remove=false;
-                      break; 
+                      break;
                     }
                   }
                   if (remove){
-                    interkeys[n] = null; 
+                    interkeys[n] = null;
                   }
-                } 
+                }
               }
             }
             for (int p=0; p< interkeys.length; p++){
               if (interkeys[p] != null){
-                keys.add(interkeys[p]); 
-              } 
+                keys.add(interkeys[p]);
+              }
             }
           }
           break;
@@ -349,7 +349,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
             subkeys = subsets[0].getPersonKeys();
             // load initial keys from first entity set
             for(int q=0; q<subkeys.length; q++){
-              keys.add(subkeys[q]); 
+              keys.add(subkeys[q]);
             }
             for (int r=1; r<subsets.length; r++){
               subkeys = subsets[r].getPersonKeys();
@@ -357,32 +357,32 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
                 String ky = subkeys[s];
                 if (keys.contains(ky)){
                   keys.remove(ky);
-                  discardKeys.add(ky); 
+                  discardKeys.add(ky);
                 }
                 else{
                   if (!discardKeys.contains(ky)){
-                    keys.add(ky); 
-                  } 
+                    keys.add(ky);
+                  }
                 }
-              } 
+              }
             }
-            
+
           }
           break;
-        case SUBTRACT: 
+        case SUBTRACT:
           if (subsets.length>0){
             subkeys = subsets[0].getPersonKeys();
             // load initial keys from first entity set
             for(int t=0; t<subkeys.length; t++){
-              keys.add(subkeys[t]); 
+              keys.add(subkeys[t]);
             }
             for(int u=1; u<subsets.length; u++){
               subkeys = subsets[u].getPersonKeys();
               for(int v=0; v<subkeys.length; v++){
                 String kyy = subkeys[v];
                 if(keys.contains(kyy)){
-                  keys.remove(kyy); 
-                } 
+                  keys.remove(kyy);
+                }
               }
             }
           }
@@ -391,7 +391,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       return (String[]) keys.toArray(new String[0]);
     }
   }
-  
+
   protected void processLdapResults(NamingEnumeration results, ArrayList keys){
     //long time1 = System.currentTimeMillis();
     //long casting=0;
@@ -430,13 +430,13 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     //  +setting+" for setting, "+casting+" for casting, "+looping+" for looping,"
     //  +(time5-loop1)+" for closing");
   }
-  
+
   protected DirContext getConnection(){
      //JNDI boilerplate to connect to an initial context
     DirContext context = (DirContext) contexts.get("context");
     if (context==null){
       Hashtable jndienv = new Hashtable();
-      
+
       jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
       jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
       jndienv.put(Context.PROVIDER_URL,url);
@@ -454,19 +454,19 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     }
     return context;
   }
-  
+
   protected IEntityGroup makeGroup(GroupShadow shadow) throws GroupsException{
     IEntityGroup group = new EntityGroupImpl(shadow.key,iperson);
     group.setDescription(shadow.description);
     group.setName(shadow.name);
     return group;
   }
-  
+
   protected GroupShadow getShadow(IEntityGroup group){
     /**@todo: change to getStoreKey() when available*/
     return (GroupShadow) groups.get(group.getKey());
   }
-  
+
   public void delete(IEntityGroup group) throws GroupsException {
     throw new java.lang.UnsupportedOperationException("LDAPGroupStore: Method delete() not supported.");
   }
@@ -484,12 +484,12 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         for (int j=0; j< keys.length; j++){
           if (keys[j].equals(key)){
             al.add(makeGroup(shadows[i]));
-            break; 
+            break;
           }
         }
        }
      }
-     
+
      if (gm.isGroup()){
         /**@todo: change to getStoreKey() when available*/
         key = gm.getKey();
@@ -497,19 +497,30 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           for (int j=0; j< shadows[i].subgroups.length; j++){
             if (shadows[i].subgroups[j].key.equals(key)){
               al.add(makeGroup(shadows[i]));
-              break; 
+              break;
             }
           }
         }
      }
-     
+
      return al.iterator();
+  }
+
+  public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
+  {
+    List keys = new ArrayList();
+    for ( Iterator itr=findMemberGroups(group); itr.hasNext(); )
+    {
+        IEntityGroup eg = (IEntityGroup) itr.next();
+        keys.add(eg.getKey());
+    }
+    return (String[]) keys.toArray(new String[keys.size()]);
   }
   public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
     ArrayList al = new ArrayList();
     GroupShadow shadow = getShadow(group);
     for(int i=0; i < shadow.subgroups.length; i++){
-      al.add(makeGroup(shadow.subgroups[i])); 
+      al.add(makeGroup(shadow.subgroups[i]));
     }
     return al.iterator();
   }
@@ -525,11 +536,11 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   public ILockableEntityGroup findLockable(String key) throws GroupsException {
     throw new java.lang.UnsupportedOperationException("LDAPGroupStore: Method findLockable() not supported");
   }
-  
+
   protected GroupShadow[] getGroupShadows(){
      return (GroupShadow[]) groups.values().toArray(new GroupShadow[0]);
   }
-  
+
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
     ArrayList ids = new ArrayList();
     GroupShadow[] g = getGroupShadows();
@@ -538,29 +549,29 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       case IS:
         for (i=0; i<g.length;i++){
           if(g[i].name.equals("query")){
-            ids.add(new EntityIdentifier(g[i].key,group)); 
-          } 
+            ids.add(new EntityIdentifier(g[i].key,group));
+          }
         }
-        break; 
+        break;
       case STARTS_WITH:
         for (i=0; i<g.length;i++){
           if(g[i].name.startsWith("query")){
-            ids.add(new EntityIdentifier(g[i].key,group)); 
-          } 
+            ids.add(new EntityIdentifier(g[i].key,group));
+          }
         }
         break;
       case ENDS_WITH:
         for (i=0; i<g.length;i++){
           if(g[i].name.endsWith("query")){
-            ids.add(new EntityIdentifier(g[i].key,group)); 
-          } 
+            ids.add(new EntityIdentifier(g[i].key,group));
+          }
         }
         break;
       case CONTAINS:
         for (i=0; i<g.length;i++){
           if(g[i].name.indexOf("query") > -1){
-            ids.add(new EntityIdentifier(g[i].key,group)); 
-          } 
+            ids.add(new EntityIdentifier(g[i].key,group));
+          }
         }
         break;
     }
@@ -571,7 +582,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     ArrayList al = new ArrayList();
     String[] keys = getPersonKeys(shadow.key);
     for (int i=0; i < keys.length; i++){
-      al.add(new EntityImpl(keys[i],iperson)); 
+      al.add(new EntityImpl(keys[i],iperson));
     }
     return al.iterator();
   }
@@ -612,7 +623,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     processLdapResults(userlist,keys);
     String[] k = (String[]) keys.toArray(new String[0]);
     for (int i=0; i<k.length; i++){
-      ids.add(new EntityIdentifier(k[i],iperson)); 
+      ids.add(new EntityIdentifier(k[i],iperson));
     }
     return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[0]);
   }

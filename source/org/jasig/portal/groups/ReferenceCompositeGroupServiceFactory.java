@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,62 +31,41 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jasig.portal.groups;
 
-package org.jasig.portal;
+import org.jasig.portal.services.LogService;
 
 /**
- * A key and type that uniquely identify a portal entity.
+ * Creates an instance of the reference <code>ICompositeGroupService</code>.
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
  */
-public class EntityIdentifier {
-    protected String key;
-    protected Class type;
+
+public class ReferenceCompositeGroupServiceFactory implements ICompositeGroupServiceFactory {
 /**
- * KeyTypePair constructor.
+ * ReferenceGroupServiceFactory constructor.
  */
-public EntityIdentifier(String entityKey, Class entityType) {
+public ReferenceCompositeGroupServiceFactory() {
     super();
-    key = entityKey;
-    type = entityType;
 }
 /**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
+ * Return an instance of the service implementation.
+ * @return ICompositeGroupService
+ * @exception GroupsException
  */
-public boolean equals(Object o) {
-    if ( o == null )
-        return false;
-    if ( ! (o instanceof EntityIdentifier) )
-        return false;
-    EntityIdentifier ei = (EntityIdentifier) o;
-    return ei.getType() == getType() &&
-        ei.getKey().equals(key);
-}
-/**
- * @return java.lang.String
- */
-public String getKey() {
-    return key;
-}
-/**
- * @return java.lang.Class
- */
-public Class getType() {
-    return type;
-}
-/**
- * @return an integer hash code for the receiver
- */
-public int hashCode() {
-    return getType().hashCode() + getKey().hashCode();
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString() {
-    return "EntityIdentifier (" + type + "(" + key + "))";
+public ICompositeGroupService newGroupService() 
+throws GroupsException
+{
+    try
+    { 
+	   ReferenceCompositeGroupService service =  new ReferenceCompositeGroupService();
+	   service.initializeComponentServices();
+	   return service; 
+    }
+    catch ( Exception ex )
+    {
+        LogService.log (LogService.ERROR, "ReferenceCompositeGroupServiceFactory.newGroupService(): " + ex);
+        throw new GroupsException(ex.getMessage());
+    }
 }
 }

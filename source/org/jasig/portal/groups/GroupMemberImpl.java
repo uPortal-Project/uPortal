@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,6 +149,13 @@ protected String getCacheKey() {
 //  return getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
+ * Returns the composite group service.  
+ */
+protected ICompositeGroupService getCompositeGroupService() throws GroupsException
+{
+    return GroupService.getCompositeGroupService();
+}
+/**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
  * @return java.util.Iterator
  */
@@ -161,7 +167,7 @@ public java.util.Iterator getContainingGroups() throws GroupsException
     for ( Iterator i = getGroupKeys().iterator(); i.hasNext(); )
     {
         String groupKey = (String) i.next();
-        groupsColl.add(getGroupService().findGroup(groupKey));
+        groupsColl.add(getCompositeGroupService().findGroup(groupKey));
     } 
     return groupsColl.iterator();
 }
@@ -277,7 +283,7 @@ public boolean hasMembers() throws GroupsException
  */
 private void initializeContainingGroupKeys() throws GroupsException
 {
-    for ( Iterator it = getGroupService().findContainingGroups(this); it.hasNext(); )
+    for ( Iterator it = getCompositeGroupService().findContainingGroups(this); it.hasNext(); )
         {  addGroup((IEntityGroup) it.next()); }
 }
 /**
@@ -310,7 +316,6 @@ public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
 
     return isMember;
 }
-
 /**
  * @return boolean
  */

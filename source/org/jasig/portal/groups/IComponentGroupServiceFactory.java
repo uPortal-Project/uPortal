@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,61 +32,21 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.groups;
 
 /**
- * A key and type that uniquely identify a portal entity.
+ * Factory interface for creating an <code>IComponentGroupService</code>.
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
  */
-public class EntityIdentifier {
-    protected String key;
-    protected Class type;
+public interface IComponentGroupServiceFactory {
 /**
- * KeyTypePair constructor.
+ * 
  */
-public EntityIdentifier(String entityKey, Class entityType) {
-    super();
-    key = entityKey;
-    type = entityType;
-}
+public IComponentGroupService newGroupService() throws GroupsException;
 /**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
+ * @param descriptor org.jasig.portal.groups.ComponentGroupServiceDescriptor
  */
-public boolean equals(Object o) {
-    if ( o == null )
-        return false;
-    if ( ! (o instanceof EntityIdentifier) )
-        return false;
-    EntityIdentifier ei = (EntityIdentifier) o;
-    return ei.getType() == getType() &&
-        ei.getKey().equals(key);
-}
-/**
- * @return java.lang.String
- */
-public String getKey() {
-    return key;
-}
-/**
- * @return java.lang.Class
- */
-public Class getType() {
-    return type;
-}
-/**
- * @return an integer hash code for the receiver
- */
-public int hashCode() {
-    return getType().hashCode() + getKey().hashCode();
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString() {
-    return "EntityIdentifier (" + type + "(" + key + "))";
-}
+public IComponentGroupService newGroupService(ComponentGroupServiceDescriptor descriptor)
+throws GroupsException;
 }

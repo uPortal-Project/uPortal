@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,61 +32,46 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.groups;
+
+import org.jasig.portal.services.LogService;
 
 /**
- * A key and type that uniquely identify a portal entity.
+ * Creates an instance of the reference <code>IIndividualGroupService</code>.
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
  */
-public class EntityIdentifier {
-    protected String key;
-    protected Class type;
+
+public class ReferenceIndividualGroupServiceFactory implements IComponentGroupServiceFactory {
 /**
- * KeyTypePair constructor.
+ * ReferenceGroupServiceFactory constructor.
  */
-public EntityIdentifier(String entityKey, Class entityType) {
+public ReferenceIndividualGroupServiceFactory() {
     super();
-    key = entityKey;
-    type = entityType;
 }
 /**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
+ * Return an instance of the service implementation.
+ * @return IIndividualGroupService
+ * @exception GroupsException
  */
-public boolean equals(Object o) {
-    if ( o == null )
-        return false;
-    if ( ! (o instanceof EntityIdentifier) )
-        return false;
-    EntityIdentifier ei = (EntityIdentifier) o;
-    return ei.getType() == getType() &&
-        ei.getKey().equals(key);
+public IComponentGroupService newGroupService() throws GroupsException
+{
+    return newGroupService(new ComponentGroupServiceDescriptor());
 }
 /**
- * @return java.lang.String
+ * Return an instance of the service implementation.
+ * @return IIndividualGroupService
+ * @exception GroupsException
  */
-public String getKey() {
-    return key;
-}
-/**
- * @return java.lang.Class
- */
-public Class getType() {
-    return type;
-}
-/**
- * @return an integer hash code for the receiver
- */
-public int hashCode() {
-    return getType().hashCode() + getKey().hashCode();
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString() {
-    return "EntityIdentifier (" + type + "(" + key + "))";
+public IComponentGroupService newGroupService(ComponentGroupServiceDescriptor svcDescriptor) 
+throws GroupsException
+{
+    try
+        { return new ReferenceIndividualGroupService(svcDescriptor); }
+    catch ( GroupsException ge )
+    {
+        LogService.log (LogService.ERROR, "ReferenceIndividualGroupServiceFactory.newGroupService(): " + ge);
+        throw new GroupsException(ge.getMessage());
+    }
 }
 }

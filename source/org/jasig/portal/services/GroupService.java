@@ -1,5 +1,4 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +34,9 @@
 
 package org.jasig.portal.services;
 
+import javax.naming.Name;
+import javax.naming.CompositeName;
+import javax.naming.InvalidNameException;
 import org.jasig.portal.groups.*;
 import org.jasig.portal.*;
 
@@ -50,15 +52,21 @@ public class GroupService implements IGroupConstants
 {
     // Singleton instance of the bootstrap class:
     private static GroupService instance = null;
+
+    // Switch for composite/simple service
+    private static boolean composite;
+
     // The group service:
     private IGroupService groupService = null;
+    private ICompositeGroupService compositeGroupService = null;
+
+    protected static final String GROUP_SERVICE_KEY = "org.jasig.portal.services.GroupService.key_";
     /** Creates new GroupService */
     private GroupService() throws GroupsException
     {
         super();
-        initialize();
+        initializeCompositeService();
     }
-
     /*
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
@@ -69,7 +77,49 @@ public class GroupService implements IGroupConstants
     {
         return instance().ifindGroup(key);
     }
-
+    /*
+     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
+     * group is not found.
+     * @param key String - the group key.
+     * @param lockOwner String - the owner of the lock, typically the user.
+     * @return org.jasig.portal.groups.ILockableEntityGroup
+     */
+    public static ILockableEntityGroup findLockableGroup(String key, String lockOwner)
+    throws GroupsException
+    {
+        return instance().ifindLockableGroup(key, lockOwner);
+    }
+    /*
+    * Returns the <code>ICompositeGroupService</code> implementation in use.
+    * @return org.jasig.portal.groups.ICompositeGroupService
+    */
+    public static ICompositeGroupService getCompositeGroupService() throws GroupsException
+    {
+        return instance().compositeGroupService;
+    }
+/**
+ * @return java.lang.String
+ */
+protected String getDefaultServiceName() throws GroupsException
+{
+    return (String)getServiceConfiguration().getAttributes().get("defaultService");
+}
+    /**
+     * Refers to the PropertiesManager to get the key for the group
+     * associated with 'name' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
+     */
+    public static IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
+      return instance().igetDistinguishedGroup(name);
+    }
+/**
+ * @return java.lang.String
+ * @exception org.jasig.portal.groups.GroupsException.
+ */
+public String getDistinguishedGroupKey(String name)
+{
+    return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name);
+}
    /*
     * Returns an <code>IEntity</code> representing a portal entity.  This does
     * not guarantee that the entity actually exists.
@@ -82,25 +132,6 @@ public class GroupService implements IGroupConstants
     {
         return instance().igetEntity(key, type);
     }
-
-    /**
-     * Refers to the PropertiesManager to get the key for the group
-     * associated with 'name' and asks the group store implementation for the corresponding
-     * <code>IEntityGroup</code>.
-     */
-    public static IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
-      return instance().igetDistinguishedGroup(name);
-    }
-
-    /**
-     * Refers to the PropertiesManager to get the key for the root group
-     * associated with 'type' and asks the group store implementation for the corresponding
-     * <code>IEntityGroup</code>.
-     */
-    public static IEntityGroup getRootGroup(Class type) throws GroupsException{
-      return instance().igetRootGroup(type);
-    }
-
     /*
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,
@@ -111,7 +142,6 @@ public class GroupService implements IGroupConstants
     {
         return instance().igetGroupMember(key, type);
     }
-
     /**
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity, based on the <code>EntityIdentifier</code>, which
@@ -123,7 +153,32 @@ public class GroupService implements IGroupConstants
       return getGroupMember(underlyingEntityIdentifier.getKey(),
           underlyingEntityIdentifier.getType());
     }
-
+    /*
+    * Returns the <code>IGroupService</code> implementation in use.
+    * @return org.jasig.portal.groups.IGroupService
+    */
+    public static IGroupService getGroupService() throws GroupsException
+    {
+        return instance().groupService;
+    }
+    /**
+     * Refers to the PropertiesManager to get the key for the root group
+     * associated with 'type' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
+     */
+    public static IEntityGroup getRootGroup(Class type) throws GroupsException{
+      return instance().igetRootGroup(type);
+    }
+/**
+ * @return java.lang.String
+ */
+protected GroupServiceConfiguration getServiceConfiguration() throws GroupsException
+{
+    try
+        { return GroupServiceConfiguration.getConfiguration(); }
+    catch (Exception ex)
+        { throw new GroupsException("Problem retrieving service configuration: " + ex.getMessage());}
+}
     /*
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
@@ -132,9 +187,35 @@ public class GroupService implements IGroupConstants
      */
     protected IEntityGroup ifindGroup(String key) throws GroupsException
     {
-        return groupService.findGroup(key);
+        return compositeGroupService.findGroup(key);
     }
-
+    /*
+     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
+     * group is not found.
+     * @param key String - the group key.
+     * @param lockOwner String - typically the user.
+     * @return org.jasig.portal.groups.ILockableEntityGroup
+     */
+    protected ILockableEntityGroup ifindLockableGroup(String key, String lockOwner)
+    throws GroupsException
+    {
+        return compositeGroupService.findGroupWithLock(key, lockOwner);
+    }
+/**
+ * Refers to the PropertiesManager to get the key for the group
+ * associated with 'name' and asks the group store implementation for the corresponding
+ * <code>IEntityGroup</code>.
+ */
+protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
+{
+    try
+    {
+        String key = getDistinguishedGroupKey(name);
+        return compositeGroupService.findGroup(key);
+    }
+    catch (Exception ex)
+        { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }
+}
     /*
      * Returns an <code>IEntity</code> representing a pre-existing portal entity.
      * @param key String - the group key.
@@ -143,27 +224,8 @@ public class GroupService implements IGroupConstants
      */
     protected IEntity igetEntity(String key, Class type) throws GroupsException
     {
-        return groupService.getEntity(key, type);
+        return compositeGroupService.getEntity(key, type);
     }
-
-    /**
-     * Refers to the PropertiesManager to get the key for the group
-     * associated with 'name' and asks the group store implementation for the corresponding
-     * <code>IEntityGroup</code>.
-     */
-    protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsException{
-      return groupService.getDistinguishedGroup(name);
-    }
-
-    /**
-     * Refers to the PropertiesManager to get the key for the root group
-     * associated with 'type' and asks the group store implementation for the corresponding
-     * <code>IEntityGroup</code>.
-     */
-    protected IEntityGroup igetRootGroup(Class type) throws GroupsException{
-      return groupService.getRootGroup(type);
-    }
-
     /*
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,
@@ -172,18 +234,38 @@ public class GroupService implements IGroupConstants
      */
     protected IGroupMember igetGroupMember(String key, Class type) throws GroupsException
     {
-        return groupService.getGroupMember(key, type);
+        return compositeGroupService.getGroupMember(key, type);
     }
-
+    /**
+     * Refers to the PropertiesManager to get the key for the root group
+     * associated with 'type' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
+     */
+    protected IEntityGroup igetRootGroup(Class type) throws GroupsException
+    {
+        return igetDistinguishedGroup(type.getName());
+    }
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
      * @return org.jasig.portal.groups.IEntityGroup
      */
-    protected IEntityGroup inewGroup(Class type) throws GroupsException {
-        return groupService.newGroup(type);
+    protected IEntityGroup inewGroup(Class type) throws GroupsException
+    {
+        return inewGroup(type, getDefaultServiceName());
     }
-
+    /**
+     * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+     * key.
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
+    protected IEntityGroup inewGroup(Class type, String serviceName) throws GroupsException
+    {
+        try
+            { return compositeGroupService.newGroup(type, parseServiceName(serviceName)); }
+        catch (InvalidNameException ine)
+            { throw new GroupsException("GroupService.inewGroup(): invalid service name: " + ine.getMessage());}
+    }
     /**
      * @exception org.jasig.portal.groups.GroupsException
      */
@@ -213,14 +295,49 @@ public class GroupService implements IGroupConstants
           throw new GroupsException(eMsg);
       }
     }
+/**
+ * @exception org.jasig.portal.groups.GroupsException
+ */
+private void initializeCompositeService() throws GroupsException
+{
+    String eMsg = null;
+    try
+    {
+        GroupServiceConfiguration cfg = getServiceConfiguration();
+        String factoryName = (String)cfg.getAttributes().get("compositeFactory");
 
+        if ( factoryName == null )
+        {
+            eMsg = "GroupService.initialize(): No entry for CompositeServiceFactory in configuration";
+            LogService.instance().log(LogService.ERROR, eMsg);
+            throw new GroupsException(eMsg);
+        }
+
+        ICompositeGroupServiceFactory serviceFactory =
+          (ICompositeGroupServiceFactory)Class.forName(factoryName).newInstance();
+        compositeGroupService = serviceFactory.newGroupService();
+    }
+    catch (Exception e)
+    {
+        eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new GroupsException(eMsg);
+    }
+}
     public static synchronized GroupService instance() throws GroupsException {
         if ( instance==null ) {
             instance = new GroupService();
         }
         return instance;
     }
-
+    /*
+     * Answer if the underlying group service is a composite service,
+     * implementing ICompositeGroupService.
+     */
+    public static boolean isComposite()
+    {
+        return composite;
+    }
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
@@ -229,52 +346,48 @@ public class GroupService implements IGroupConstants
     public static IEntityGroup newGroup(Class type) throws GroupsException {
         return instance().inewGroup(type);
     }
-
-    /*
-    * Returns the <code>IGroupService</code> implementation in use.
-    * @return org.jasig.portal.groups.IGroupService
-    */
-    public static IGroupService getGroupService() throws GroupsException
-    {
-        return instance().groupService;
-    }
-
-    /*
-     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
-     * group is not found.
-     * @param key String - the group key.
-     * @param lockOwner String - the owner of the lock, typically the user.
-     * @return org.jasig.portal.groups.ILockableEntityGroup
+    /**
+     * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+     * key.
+     * @return org.jasig.portal.groups.IEntityGroup
      */
-    public static ILockableEntityGroup findLockableGroup(String key, String lockOwner)
-    throws GroupsException
-    {
-        return instance().ifindLockableGroup(key, lockOwner);
+    public static IEntityGroup newGroup(Class type, String serviceName) throws GroupsException {
+        return instance().inewGroup(type, serviceName);
     }
-
-    /*
-     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
-     * group is not found.
-     * @param key String - the group key.
-     * @param lockOwner String - typically the user.
-     * @return org.jasig.portal.groups.ILockableEntityGroup
-     */
-    protected ILockableEntityGroup ifindLockableGroup(String key, String lockOwner)
-    throws GroupsException
-    {
-        return ((ILockableGroupService)groupService).findGroupWithLock(key, lockOwner);
-    }
-    
-  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
-    return instance().groupService.searchForGroups(query,method,leaftype);
-  }
-  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
-    return instance().groupService.searchForGroups(query,method,leaftype,ancestor);
-  }
+/**
+ * Extracts the final node from the String form of a composite key.
+ * @return String
+ * @exception javax.naming.InvalidNameException
+ */
+public static String parseLocalKey(String compositeKey)
+throws InvalidNameException, GroupsException
+{
+    return new CompositeEntityIdentifier(compositeKey, new Object().getClass()).getLocalKey();
+}
+/**
+ * Converts the String form of a service name into a Name.
+ * @return javax.naming.Name
+ * @exception javax.naming.InvalidNameException .
+ */
+public static Name parseServiceName(String serviceName)
+throws InvalidNameException, GroupsException
+{
+    return new CompositeServiceIdentifier(serviceName).getServiceName();
+}
   public static EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
-    return instance().groupService.searchForEntities(query,method,type);
+    return instance().compositeGroupService.searchForEntities(query,method,type);
   }
   public static EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
-    return instance().groupService.searchForEntities(query,method,type,ancestor);
+    return instance().compositeGroupService.searchForEntities(query,method,type,ancestor);
   }
+  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    return instance().compositeGroupService.searchForGroups(query,method,leaftype);
+  }
+  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
+    return instance().compositeGroupService.searchForGroups(query,method,leaftype,ancestor);
+  }
+public static void startUp() throws GroupsException
+{
+    instance();
+}
 }

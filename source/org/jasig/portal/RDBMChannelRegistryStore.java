@@ -737,7 +737,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws org.jasig.portal.groups.GroupsException
    */
   public ChannelCategory getChannelCategory(int channelCategoryId) throws GroupsException {
-    String key = String.valueOf(channelCategoryId);
+
+// DE 11/21/02
+    LogService.instance().log(LogService.DEBUG,
+       "RDBMChannelRegistryStore.getChannelCategory() for " + channelCategoryId);
+    String key = "local." + String.valueOf(channelCategoryId);
+//  String key = String.valueOf(channelCategoryId);
+
     IEntityGroup categoryGroup = GroupService.findGroup(key);
     ChannelCategory category = new ChannelCategory(channelCategoryId);
     category.setName(categoryGroup.getName());
@@ -904,7 +910,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     String channelDefKey = String.valueOf(channelDef.getId());
     IEntity channelDefEntity = GroupService.getEntity(channelDefKey, ChannelDefinition.class);
     String categoryKey = String.valueOf(category.getId());
-    IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
+
+// DE 11/21/02
+    IEntityGroup categoryGroup = GroupService.findGroup("local." + categoryKey);
+//  IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
+
     categoryGroup.addMember(channelDefEntity);
     categoryGroup.updateMembers();
   }

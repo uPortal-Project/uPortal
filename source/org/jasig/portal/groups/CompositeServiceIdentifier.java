@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,61 +32,50 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.groups;
+
+import javax.naming.Name;
 
 /**
- * A key and type that uniquely identify a portal entity.
+ * A composite key that identifies a component group service.
+ *
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
  */
-public class EntityIdentifier {
-    protected String key;
-    protected Class type;
+public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
 /**
- * KeyTypePair constructor.
+ * CompositeServiceIdentifier.
+ * @param serviceKey java.lang.String
+ * @exception org.jasig.portal.groups.GroupsException
  */
-public EntityIdentifier(String entityKey, Class entityType) {
-    super();
-    key = entityKey;
-    type = entityType;
+public CompositeServiceIdentifier(String serviceKey) throws GroupsException 
+{
+    super(serviceKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE);
 }
 /**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
+ * CompositeServiceIdentifier.
+ * @param entityKey java.lang.String
+ * @param entityType java.lang.Class
+ * @exception org.jasig.portal.groups.GroupsException .
  */
-public boolean equals(Object o) {
-    if ( o == null )
-        return false;
-    if ( ! (o instanceof EntityIdentifier) )
-        return false;
-    EntityIdentifier ei = (EntityIdentifier) o;
-    return ei.getType() == getType() &&
-        ei.getKey().equals(key);
+public CompositeServiceIdentifier(String entityKey, Class entityType) throws GroupsException 
+{
+    super(entityKey, entityType);
 }
 /**
- * @return java.lang.String
+ * The service name is the entire key.
+ * @return javax.naming.Name
  */
-public String getKey() {
-    return key;
-}
-/**
- * @return java.lang.Class
- */
-public Class getType() {
-    return type;
-}
-/**
- * @return an integer hash code for the receiver
- */
-public int hashCode() {
-    return getType().hashCode() + getKey().hashCode();
-}
+public Name getServiceName() 
+{
+    return getCompositeKey();
+} 
 /**
  * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
+ * @return java.lang.String
  */
 public String toString() {
-    return "EntityIdentifier (" + type + "(" + key + "))";
+    return "CompositeServiceIdentifier (" + getKey() + ")";
+
 }
 }

@@ -35,6 +35,7 @@
 package org.jasig.portal.groups;
 
 import java.util.*;
+import javax.naming.Name;
 import org.jasig.portal.*;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.services.EntityCachingService;
@@ -48,9 +49,10 @@ import org.jasig.portal.services.GroupService;
  */
 public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
 {
-    private java.lang.String creatorID;
-    private java.lang.String name;
-    private java.lang.String description;
+    private String creatorID;
+    private String name;
+    private String description;
+    protected IIndividualGroupService localGroupService;
 
     // A group and its members share an entityType.
     private java.lang.Class leafEntityType;
@@ -72,8 +74,10 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
 /**
  * EntityGroupImpl
  */
-public EntityGroupImpl(String groupKey, Class entityType) throws GroupsException {
-    super(new EntityIdentifier(groupKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
+public EntityGroupImpl(String groupKey, Class entityType) 
+throws GroupsException 
+{
+    super(new CompositeEntityIdentifier(groupKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
     if ( isKnownEntityType(entityType) )
         { leafEntityType = entityType; }
     else
@@ -233,7 +237,7 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
  */
 public void delete() throws GroupsException
 {
-    getGroupService().deleteGroup(this);
+    getLocalGroupService().deleteGroup(this);
 }
 /**
  * @param obj the Object to compare with
@@ -252,24 +256,9 @@ public boolean equals(Object obj)
     return this.getKey().equals(((IGroupMember)obj).getKey());
 }
 /**
- * Finds the <code>IEntities</code> that are members of this.  Delegate to
- * our factory.
- */
-private Iterator findMemberEntities() throws GroupsException
-{
-    return getEntityFactory().findEntitiesForGroup(this);
-}
-/**
- * Delegate to our service.
- */
-public Iterator findMemberGroups() throws GroupsException
-{
-    return getGroupService().findMemberGroups(this);
-}
-/**
  * @return java.util.HashMap
  */
-protected HashMap getAddedMembers()
+public HashMap getAddedMembers()
 {
     if ( this.addedMembers == null )
         this.addedMembers = new HashMap();
@@ -293,6 +282,17 @@ public java.util.Iterator getAllEntities() throws GroupsException
 public java.util.Iterator getAllMembers() throws GroupsException
 {
     return primGetAllMembers(new HashSet()).iterator();
+}
+/**
+ * Returns the <code>EntityIdentifier</code> cast to a 
+ * <code>CompositeEntityIdentifier</code> so that its service nodes
+ * can be pushed and popped.
+ *
+ * @return CompositeEntityIdentifier
+ */
+protected CompositeEntityIdentifier getCompositeEntityIdentifier()
+{
+    return (CompositeEntityIdentifier)getEntityIdentifier();
 }
 /**
  * @return java.lang.String
@@ -345,6 +345,12 @@ public String getGroupID() {
     return getKey();
 }
 /**
+ * @return IGroupService
+ */
+protected IGroupService getGroupService() throws GroupsException {
+    return groupService;
+}
+/**
  * Returns the entity type of this groups's members.
  *
  * @return java.lang.Class
@@ -352,6 +358,20 @@ public String getGroupID() {
  */
  public java.lang.Class getLeafType() {
     return leafEntityType;
+}
+/**
+ * @return IIndividualGroupService
+ */
+protected IIndividualGroupService getLocalGroupService() {
+    return localGroupService;
+}
+/**
+ * Returns the key from the group service of origin.
+ * @return String
+ */
+public String getLocalKey()
+{
+    return getCompositeEntityIdentifier().getLocalKey();
 }
 /**
  * Returns an <code>Iterator</code> over the entities in our member
@@ -367,7 +387,7 @@ protected java.util.Iterator getMemberEntities() throws GroupsException
     for ( Iterator i = getMemberEntityKeys().iterator(); i.hasNext(); )
     {
         String key = (String) i.next();
-        members.add(getGroupService().getEntity(key, getLeafType()));
+        members.add(getLocalGroupService().getEntity(key, getLeafType()));
     }
     return members.iterator();
 }
@@ -417,7 +437,7 @@ protected java.util.Iterator getMemberGroups() throws GroupsException
     for ( Iterator i = getMemberGroupKeys().iterator(); i.hasNext(); )
     {
         String key = (String) i.next();
-        members.add(getGroupService().findGroup(key));
+        members.add(getLocalGroupService().findGroup(key));
     }
     return members.iterator();
 }
@@ -450,11 +470,25 @@ public java.lang.String getName() {
 /**
  * @return java.util.HashMap
  */
-protected HashMap getRemovedMembers()
+public HashMap getRemovedMembers()
 {
     if ( this.removedMembers == null )
         this.removedMembers = new HashMap();
     return removedMembers;
+}
+/**
+ * @return IGroupService
+ */
+protected GroupService getService() throws GroupsException {
+    return GroupService.instance();
+}
+/**
+ * Returns the Name of the group service of origin.
+ * @return javax.naming.Nme
+ */
+public Name getServiceName()
+{
+    return getCompositeEntityIdentifier().getServiceName();
 }
 /**
  * Returns this object's type for purposes of caching and locking, as
@@ -470,7 +504,7 @@ public Class getType()
  * Answers if there are any added memberships not yet committed to the database.
  * @return boolean
  */
-protected boolean hasAdds()
+public boolean hasAdds()
 {
     return (addedMembers != null) && (addedMembers.size() > 0);
 }
@@ -478,7 +512,7 @@ protected boolean hasAdds()
  * Answers if there are any deleted memberships not yet committed to the database.
  * @return boolean
  */
-protected boolean hasDeletes()
+public boolean hasDeletes()
 {
     return (removedMembers != null) && (removedMembers.size() > 0);
 }
@@ -501,47 +535,36 @@ public boolean hasMembers() throws GroupsException
     return getMembers().hasNext();
 }
 /**
- * Cache the <code>IEntity</code> members.
- */
-private void initializeMemberEntities() throws GroupsException
-{
-    Iterator entities = findMemberEntities();
-    while ( entities.hasNext() )
-    {
-        IEntity ie = (IEntity) entities.next();
-        primAddMember(ie);
-    }
-}
-/**
  * Cache the <code>IEntityGroup</code> members.
  * @return org.jasig.portal.groups.IGroupMember
  * @param name java.lang.String
  */
-private void initializeMemberGroups() throws GroupsException
-{
-    Iterator groups = this.findMemberGroups();
-    while ( groups.hasNext() )
-    {
-        IEntityGroup ug = (IEntityGroup) groups.next();
-        primAddMember(ug);
-    }
-}
-/**
- * Cache my members.
- */
 private void initializeMembers() throws GroupsException
 {
-    initializeMemberEntities();
-    initializeMemberGroups();
+    Iterator members = getLocalGroupService().findMembers(this);
+    while ( members.hasNext() )
+    {
+        IGroupMember gm = (IGroupMember) members.next();
+        primAddMember(gm);
+    }
     setMemberKeysInitialized(true);
 }
 /**
  * Answers if there are any added or deleted memberships not yet committed to the database.
  * @return boolean
  */
-protected boolean isDirty()
+public boolean isDirty()
 {
     return hasAdds() || hasDeletes();
+}
+/**
+ * Answers if this <code>IEntityGroup</code> can be changed or deleted.
+ * @return boolean
+ * @exception GroupsException
+ */
+public boolean isEditable() throws GroupsException
+{
+    return getLocalGroupService().isEditable(this);
 }
 /**
  * @return boolean
@@ -616,7 +639,7 @@ protected void primRemoveMember(IGroupMember gm)
 /**
  * @param newName java.lang.String
  */
-void primSetName(java.lang.String newName)
+public void primSetName(java.lang.String newName)
 {
     name = newName;
 }
@@ -676,6 +699,21 @@ public void setDescription(java.lang.String newDescription) {
     description = newDescription;
 }
 /**
+ * @param newGroupService IGroupService
+ */
+public void setGroupService(IGroupService newGroupService) {
+    groupService = newGroupService;
+}
+/**
+ * @param newLocalGroupService IIndividualGroupService
+ */
+public void setLocalGroupService(IIndividualGroupService newIndividualGroupService)
+throws GroupsException
+{
+    localGroupService = newIndividualGroupService;
+    setServiceName(localGroupService.getServiceName());
+}
+/**
  * @param newMemberKeysInitialized boolean
  */
 private void setMemberKeysInitialized(boolean newMemberKeysInitialized) {
@@ -702,6 +740,17 @@ public void setName(java.lang.String newName) throws GroupsException
     primSetName(newName);
 }
 /**
+ * Sets the service Name of the group service of origin.
+ */
+public void setServiceName(Name newServiceName) throws GroupsException
+{
+    try 
+        { getCompositeEntityIdentifier().setServiceName(newServiceName); }
+    catch (javax.naming.InvalidNameException ine)
+        { throw new GroupsException("Problem setting service name: " + ine.getMessage()); }
+
+}
+/**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
  */
@@ -714,7 +763,7 @@ public String toString()
  */
 public void update() throws GroupsException
 {
-    getGroupService().updateGroup(this);
+    getLocalGroupService().updateGroup(this);
     primUpdateMembers();
     clearPendingUpdates();
 }
@@ -723,7 +772,7 @@ public void update() throws GroupsException
  */
 public void updateMembers() throws GroupsException
 {
-    getGroupService().updateGroupMembers(this);
+    getLocalGroupService().updateGroupMembers(this);
     primUpdateMembers();
     clearPendingUpdates();
 }

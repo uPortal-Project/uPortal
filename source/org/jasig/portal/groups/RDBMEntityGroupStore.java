@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,19 +41,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.GroupService;
 
 /**
  * Store for <code>EntityGroupImpl</code>.
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class RDBMEntityGroupStore implements IEntityGroupStore {
+public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
     private static RDBMEntityGroupStore singleton;
 
     // Constant strings for GROUP table:
@@ -69,9 +70,11 @@ public class RDBMEntityGroupStore implements IEntityGroupStore {
     // SQL strings for GROUP crud:
     private static String allGroupColumns;
     private static String allGroupColumnsWithTableAlias;
-    private static String findContainingGroupsSql;
+    private static String findContainingGroupsForEntitySql;
+    private static String findContainingGroupsForGroupSql;
     private static String findGroupSql;
     private static String findGroupsByCreatorSql;
+    private static String findMemberGroupKeysSql;
     private static String findMemberGroupSql;
     private static String findMemberGroupsSql;
     private static String insertGroupSql;
@@ -81,6 +84,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore {
     private static String MEMBER_TABLE = "UP_GROUP_MEMBERSHIP";
     private static String MEMBER_TABLE_ALIAS = "T2";
     private static String MEMBER_GROUP_ID_COLUMN = "GROUP_ID";
+    private static String MEMBER_MEMBER_SERVICE_COLUMN = "MEMBER_SERVICE";
     private static String MEMBER_MEMBER_KEY_COLUMN = "MEMBER_KEY";
     private static String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
     private static String MEMBER_IS_ENTITY = "F";
@@ -89,26 +93,21 @@ public class RDBMEntityGroupStore implements IEntityGroupStore {
     // SQL strings for group MEMBERS crud:
     private static String allMemberColumns;
     private static String deleteMembersInGroupSql;
-    private static String deleteMemberSql;
+    private static String deleteMemberGroupSql;
+    private static String deleteMemberEntitySql;
     private static String insertMemberSql;
-    
+
     // SQL group search string
     private static String searchGroupsPartial = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" LIKE ?";
     private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" = ?";
-    private Class groupType;
-    
+
+    private IGroupService groupService;
 /**
  * RDBMEntityGroupStore constructor.
  */
 public RDBMEntityGroupStore()
 {
     super();
-    try{
-      groupType = Class.forName("org.jasig.portal.groups.IEntityGroup");
-    }
-    catch(Exception e){
-      LogService.instance().log(LogService.ERROR,e); 
-    }
 }
 /**
  * @param conn java.sql.Connection
@@ -139,7 +138,7 @@ public void delete(IEntityGroup group) throws GroupsException
  */
 private boolean existsInDatabase(IEntityGroup group) throws GroupsException
 {
-    IEntityGroup ug = this.find(group.getKey());
+    IEntityGroup ug = this.find(group.getLocalKey());
     return ug != null;
 }
 /**
@@ -152,11 +151,52 @@ public IEntityGroup find(String groupID) throws GroupsException
     return primFind(groupID, false);
 }
 /**
+ * Find the groups that this entity belongs to.
+ * @return java.util.Iterator
+ * @param group org.jasig.portal.groups.IEntity
+ */
+public java.util.Iterator findContainingGroups(IEntity ent) throws GroupsException
+{
+    String memberKey = ent.getKey();
+    Integer type = EntityTypes.getEntityTypeID(ent.getLeafType());
+    return findContainingGroupsForEntity(memberKey, type.intValue(), false);
+}
+/**
+ * Find the groups that this group belongs to.
+ * @return java.util.Iterator
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+public java.util.Iterator findContainingGroups(IEntityGroup group) throws GroupsException
+{
+    String memberKey = group.getLocalKey();
+    String serviceName = group.getServiceName().toString();
+    Integer type = EntityTypes.getEntityTypeID(group.getLeafType());
+    return findContainingGroupsForGroup(serviceName, memberKey, type.intValue(), true);
+}
+/**
+ * Find the groups that this group member belongs to.
+ * @return java.util.Iterator
+ * @param group org.jasig.portal.groups.IGroupMember
+ */
+public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+{
+    if ( gm.isGroup() )
+    {
+        IEntityGroup group = (IEntityGroup) gm;
+        return findContainingGroups(group);
+    }
+    else
+    {
+        IEntity ent = (IEntity) gm;
+        return findContainingGroups(ent);
+    }
+}
+/**
  * Find the groups associated with this member key.
  * @return java.util.Iterator
  * @param String memberKey
  */
-private java.util.Iterator findContainingGroups(String memberKey, int type, boolean isGroup)
+private java.util.Iterator findContainingGroupsForEntity(String memberKey, int type, boolean isGroup)
 throws GroupsException
 {
     java.sql.Connection conn = null;
@@ -167,7 +207,7 @@ throws GroupsException
     try
     {
             conn = RDBMServices.getConnection();
-            String sql = getFindContainingGroupsSql();
+            String sql = getFindContainingGroupsForEntitySql();
             RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
@@ -175,7 +215,7 @@ throws GroupsException
                     ps.setInt(2, type);
                     ps.setString(3, groupOrEntity);
                     LogService.log (LogService.DEBUG,
-                      "RDBMEntityGroupStore.findContainingGroups(): " + ps +
+                      "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + ps +
                       " (" + memberKey + ", " + type + ", " + groupOrEntity + ")");
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
@@ -194,7 +234,7 @@ throws GroupsException
     }
     catch (Exception e)
     {
-        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findContainingGroups(): " + e);
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + e);
         throw new GroupsException("Problem retrieving containing groups: " + e);
     }
 
@@ -204,16 +244,104 @@ throws GroupsException
     return groups.iterator();
 }
 /**
- * Find the groups that this group member belongs to.
+ * Find the groups associated with this member key.
  * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IGroupMember
+ * @param String memberKey
  */
-public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+private java.util.Iterator findContainingGroupsForGroup(String serviceName, String memberKey, int type, boolean isGroup)
+throws GroupsException
 {
-    String memberKey = gm.getKey();
-    Integer type = EntityTypes.getEntityTypeID(gm.getLeafType());
-    boolean isGroup = gm.isGroup();
-    return findContainingGroups(memberKey, type.intValue(), isGroup);
+    java.sql.Connection conn = null;
+    Collection groups = new ArrayList();
+    IEntityGroup eg = null;
+    String groupOrEntity = isGroup ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
+
+    try
+    {
+            conn = RDBMServices.getConnection();
+            String sql = getFindContainingGroupsForGroupSql();
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, serviceName);
+                    ps.setString(2, memberKey);
+                    ps.setInt(3, type);
+                    ps.setString(4, groupOrEntity);
+                    LogService.log (LogService.DEBUG,
+                      "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + ps +
+                      " (" + memberKey + ", " + type + ", " + groupOrEntity + ")");
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                            {
+                                    eg = instanceFromResultSet(rs);
+                                    groups.add(eg);
+                            }
+                    }
+                    finally
+                        { rs.close(); }
+        }
+            finally
+                { ps.close(); }
+    }
+    catch (Exception e)
+    {
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + e);
+        throw new GroupsException("Problem retrieving containing groups: " + e);
+    }
+
+    finally
+        { RDBMServices.releaseConnection(conn); }
+
+    return groups.iterator();
+}
+/**
+ * Find the <code>IEntities</code> that are members of the <code>IEntityGroup</code>.
+ * @return java.util.Iterator
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
+{
+    Collection entities = new ArrayList();
+    Connection conn = null;
+    String groupID = group.getLocalKey();
+    Class cls = group.getLeafType();
+
+    try
+    {
+        conn = RDBMServices.getConnection();
+        Statement stmnt = conn.createStatement();
+        try {
+
+            String query = "SELECT " + MEMBER_MEMBER_KEY_COLUMN + " FROM " + MEMBER_TABLE +
+                           " WHERE " + MEMBER_GROUP_ID_COLUMN + " = '" +  groupID +
+                           "' AND "  + MEMBER_IS_GROUP_COLUMN + " = '" + MEMBER_IS_ENTITY + "'";
+
+            ResultSet rs = stmnt.executeQuery(query);
+            try {
+                while (rs.next())
+                {
+                    String key = rs.getString(1);
+                    IEntity e = newEntity(cls, key);
+                    entities.add(e);
+                }
+            } finally {
+                  rs.close();
+              }
+        } finally {
+              stmnt.close();
+          }
+        }
+    catch (SQLException sqle)
+    {
+        LogService.log(LogService.ERROR, sqle);
+        throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
+    }
+    finally
+        { RDBMServices.releaseConnection(conn); }
+
+    return entities.iterator();
 }
 /**
  * Find the groups with this creatorID.
@@ -262,6 +390,61 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
     return groups.iterator();
 }
 /**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ * @param key java.lang.Object
+ */
+public ILockableEntityGroup findLockable(String groupID) throws GroupsException
+{
+    return (ILockableEntityGroup) primFind(groupID, true);
+}
+/**
+ * Find the keys of groups that are members of group.
+ * @return String[]
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
+{
+    java.sql.Connection conn = null;
+    Collection groupKeys = new ArrayList();
+    String groupKey = null;
+
+    try
+    {
+        conn = RDBMServices.getConnection();
+        String sql = getFindMemberGroupKeysSql();
+        RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+        try
+        {
+            ps.setString(1, group.getLocalKey());
+            LogService.log (LogService.DEBUG,
+              "RDBMEntityGroupStore.findMemberGroupKeys(): " + ps + " (" + group.getLocalKey() + ")");
+            java.sql.ResultSet rs = ps.executeQuery();
+            try
+            {
+                while (rs.next())
+                {
+                    groupKey = rs.getString(1) + NODE_SEPARATOR + rs.getString(2);
+                    groupKeys.add(groupKey);
+                }
+            }
+            finally
+                { rs.close(); }
+        }
+        finally
+            { ps.close(); }
+    }
+    catch (Exception sqle)
+        {
+            LogService.log (LogService.ERROR, "RDBMEntityGroupStore.findMemberGroupKeys(): " + sqle);
+            throw new GroupsException("Problem retrieving member group keys: " + sqle);
+        }
+    finally
+        { RDBMServices.releaseConnection(conn); }
+
+    return (String[]) groupKeys.toArray(new String[groupKeys.size()]);
+}
+/**
  * Find the IUserGroups that are members of the group.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
@@ -271,6 +454,8 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
     java.sql.Connection conn = null;
     Collection groups = new ArrayList();
     IEntityGroup eg = null;
+    String serviceName = group.getServiceName().toString();
+    String localKey = group.getLocalKey();
 
     try
     {
@@ -279,9 +464,10 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
         try
         {
-            ps.setString(1, group.getKey());
+            ps.setString(1, localKey);
+            ps.setString(2, serviceName);
             LogService.log (LogService.DEBUG,
-              "RDBMEntityGroupStore.findMemberGroups(): " + ps + " (" + group.getKey() + ")");
+              "RDBMEntityGroupStore.findMemberGroups(): " + ps + " (" + localKey + ", " + serviceName + ")");
             java.sql.ResultSet rs = ps.executeQuery();
             try
             {
@@ -364,6 +550,8 @@ private static java.lang.String getAllMemberColumns()
 
             buff.append(MEMBER_GROUP_ID_COLUMN);
             buff.append(", ");
+            buff.append(MEMBER_MEMBER_SERVICE_COLUMN);
+            buff.append(", ");
             buff.append(MEMBER_MEMBER_KEY_COLUMN);
             buff.append(", ");
             buff.append(MEMBER_IS_GROUP_COLUMN);
@@ -383,9 +571,55 @@ private static java.lang.String getDeleteGroupSql(IEntityGroup group)
     buff.append(" WHERE ");
     buff.append(GROUP_ID_COLUMN);
     buff.append(" = '");
-    buff.append(group.getKey());
+    buff.append(group.getLocalKey());
     buff.append("'");
     return buff.toString();
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getDeleteMemberEntitySql()
+{
+    if ( deleteMemberEntitySql == null )
+    {
+        StringBuffer buff = new StringBuffer(100);
+        buff.append("DELETE FROM ");
+        buff.append(MEMBER_TABLE);
+        buff.append(" WHERE ");
+        buff.append(MEMBER_GROUP_ID_COLUMN);
+        buff.append(" = ? AND ");
+        buff.append(MEMBER_MEMBER_KEY_COLUMN);
+        buff.append(" = ? AND ");
+        buff.append(MEMBER_IS_GROUP_COLUMN);
+        buff.append(" = ? ");
+
+        deleteMemberEntitySql = buff.toString();
+    }
+    return deleteMemberEntitySql;
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getDeleteMemberGroupSql()
+{
+    if ( deleteMemberGroupSql == null )
+    {
+        StringBuffer buff = new StringBuffer(100);
+        buff.append("DELETE FROM ");
+        buff.append(MEMBER_TABLE);
+        buff.append(" WHERE ");
+        buff.append(MEMBER_GROUP_ID_COLUMN);
+        buff.append(" = ? AND ");
+        buff.append(MEMBER_MEMBER_SERVICE_COLUMN);
+        buff.append(" = ? AND ");
+        buff.append(MEMBER_MEMBER_KEY_COLUMN);
+        buff.append(" = ? AND ");
+        buff.append(MEMBER_IS_GROUP_COLUMN);
+        buff.append(" = ? ");
+
+        deleteMemberGroupSql = buff.toString();
+    }
+    return deleteMemberGroupSql;
 }
 /**
  * @return java.lang.String
@@ -412,38 +646,16 @@ private static java.lang.String getDeleteMembersInGroupSql(IEntityGroup group)
 {
     StringBuffer buff = new StringBuffer(getDeleteMembersInGroupSql());
     buff.append("'");
-    buff.append(group.getKey());
+    buff.append(group.getLocalKey());
     buff.append("'");
     return buff.toString();
 }
 /**
  * @return java.lang.String
  */
-private static java.lang.String getDeleteMemberSql()
+private static java.lang.String getFindContainingGroupsForEntitySql()
 {
-    if ( deleteMemberSql == null )
-    {
-        StringBuffer buff = new StringBuffer(100);
-        buff.append("DELETE FROM ");
-        buff.append(MEMBER_TABLE);
-        buff.append(" WHERE ");
-        buff.append(MEMBER_GROUP_ID_COLUMN);
-        buff.append(" = ? AND ");
-        buff.append(MEMBER_MEMBER_KEY_COLUMN);
-        buff.append(" = ? AND ");
-        buff.append(MEMBER_IS_GROUP_COLUMN);
-        buff.append(" = ? ");
-
-        deleteMemberSql = buff.toString();
-    }
-    return deleteMemberSql;
-}
-/**
- * @return java.lang.String
- */
-private static java.lang.String getFindContainingGroupsSql()
-{
-    if ( findContainingGroupsSql == null)
+    if ( findContainingGroupsForEntitySql == null)
     {
         StringBuffer buff = new StringBuffer(500);
         buff.append("SELECT ");
@@ -464,11 +676,42 @@ private static java.lang.String getFindContainingGroupsSql()
         buff.append(prependMemberTableAlias(MEMBER_IS_GROUP_COLUMN));
         buff.append(" = ? ");
 
-       findContainingGroupsSql = buff.toString();
+       findContainingGroupsForEntitySql = buff.toString();
     }
-    return findContainingGroupsSql;
+    return findContainingGroupsForEntitySql;
 }
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getFindContainingGroupsForGroupSql()
+{
+    if ( findContainingGroupsForGroupSql == null)
+    {
+        StringBuffer buff = new StringBuffer(500);
+        buff.append("SELECT ");
+        buff.append(getAllGroupColumnsWithTableAlias());
+        buff.append(" FROM ");
+        buff.append(GROUP_TABLE + " " + GROUP_TABLE_ALIAS);
+        buff.append(", ");
+        buff.append(MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS);
+        buff.append(" WHERE ");
+        buff.append(prependGroupTableAlias(GROUP_ID_COLUMN));
+        buff.append(" = ");
+        buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
+        buff.append(" AND ");
+        buff.append(prependMemberTableAlias(MEMBER_MEMBER_SERVICE_COLUMN));
+        buff.append(" = ? AND ");
+        buff.append(prependMemberTableAlias(MEMBER_MEMBER_KEY_COLUMN));
+        buff.append(" = ? AND ");
+        buff.append(prependGroupTableAlias(GROUP_TYPE_COLUMN));
+        buff.append(" = ? AND ");
+        buff.append(prependMemberTableAlias(MEMBER_IS_GROUP_COLUMN));
+        buff.append(" = ? ");
 
+       findContainingGroupsForGroupSql = buff.toString();
+    }
+    return findContainingGroupsForGroupSql;
+}
 /**
  * @return java.lang.String
  */
@@ -513,6 +756,31 @@ private static java.lang.String getFindGroupSql()
 /**
  * @return java.lang.String
  */
+private static java.lang.String getFindMemberGroupKeysSql()
+{
+    if (findMemberGroupKeysSql == null)
+    {
+            StringBuffer buff = new StringBuffer(200);
+            buff.append("SELECT ");
+            buff.append(MEMBER_MEMBER_SERVICE_COLUMN + ", " + MEMBER_MEMBER_KEY_COLUMN);
+            buff.append(" FROM ");
+            buff.append(MEMBER_TABLE);
+            buff.append(" WHERE ");
+            buff.append(MEMBER_GROUP_ID_COLUMN);
+            buff.append(" = ? AND ");
+            buff.append(MEMBER_IS_GROUP_COLUMN);
+            buff.append(" = '");
+            buff.append(MEMBER_IS_GROUP);
+            buff.append("'");;
+
+            findMemberGroupKeysSql = buff.toString();
+    }
+
+    return findMemberGroupKeysSql;
+}
+/**
+ * @return java.lang.String
+ */
 private static java.lang.String getFindMemberGroupSql()
 {
     if ( findMemberGroupSql == null )
@@ -552,11 +820,20 @@ private static java.lang.String getFindMemberGroupsSql()
             buff.append("' AND ");
             buff.append(prependMemberTableAlias(MEMBER_GROUP_ID_COLUMN));
             buff.append(" = ? ");
+            buff.append(" AND ");
+            buff.append(prependMemberTableAlias(MEMBER_MEMBER_SERVICE_COLUMN));
+            buff.append(" = ? ");
 
             findMemberGroupsSql = buff.toString();
         }
 
     return findMemberGroupsSql;
+}
+/**
+ * @return org.jasig.portal.groups.IGroupService
+ */
+public IGroupService getGroupService() {
+    return groupService;
 }
 /**
  * @return java.lang.String
@@ -588,7 +865,7 @@ private static java.lang.String getInsertMemberSql()
             buff.append(MEMBER_TABLE);
             buff.append(" (");
             buff.append(getAllMemberColumns());
-            buff.append(") VALUES (?, ?, ? )");
+            buff.append(") VALUES (?, ?, ?, ? )");
 
             insertMemberSql = buff.toString();
     }
@@ -652,6 +929,29 @@ throws  SQLException,
     return eg;
 }
 /**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ * @param key java.lang.Object
+ */
+private ILockableEntityGroup lockableInstanceFromResultSet(java.sql.ResultSet rs)
+throws  SQLException,
+        GroupsException
+{
+    ILockableEntityGroup eg = null;
+
+    String key = rs.getString(1);
+    String creatorID = rs.getString(2);
+    Integer entityTypeID = new Integer(rs.getInt(3));
+    Class entityType = EntityTypes.getEntityType(entityTypeID);
+    String groupName = rs.getString(4);
+    String description = rs.getString(5);
+
+    if ( key != null )
+        { eg = newLockableInstance(key, entityType, creatorID, groupName, description); }
+
+    return eg;
+}
+/**
  *
  */
 protected static void logNoTransactionWarning()
@@ -660,6 +960,15 @@ protected static void logNoTransactionWarning()
                  "This is not a supported production environment for uPortal.  " +
                  "Sooner or later, your database will become corrupt.";
     LogService.instance().log(LogService.WARN, msg);
+}
+/**
+ * @return org.jasig.portal.groups.IEntity
+ */
+public IEntity newEntity(Class type, String key) throws GroupsException
+{
+    if ( EntityTypes.getEntityTypeID(type) == null )
+        { throw new GroupsException("Invalid group type: " + type); }
+    return GroupService.getEntity(key, type);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -691,6 +1000,23 @@ private IEntityGroup newInstance
     return egi;
 }
 /**
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ */
+private ILockableEntityGroup newLockableInstance
+    (String newKey,
+    Class newType,
+    String newCreatorID,
+    String newName,
+    String newDescription)
+    throws GroupsException
+{
+    LockableEntityGroupImpl group = new LockableEntityGroupImpl(newKey, newType);
+    group.setCreatorID(newCreatorID);
+    group.primSetName(newName);
+    group.setDescription(newDescription);
+    return group;
+}
+/**
  * @return java.lang.String
  */
 private static java.lang.String prependGroupTableAlias(String column)
@@ -717,14 +1043,14 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
        try
         {
             Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
-            ps.setString(1, group.getKey());
+            ps.setString(1, group.getLocalKey());
             ps.setString(2, group.getCreatorID());
             ps.setInt   (3, typeID.intValue());
             ps.setString(4, group.getName());
             ps.setString(5, group.getDescription());
 
             LogService.log(LogService.DEBUG, "RDBMEntityGroupStore.primAdd(): " +
-              ps + "(" + group.getKey() + ", " + group.getCreatorID() + ", " +
+              ps + "(" + group.getLocalKey() + ", " + group.getCreatorID() + ", " +
               typeID + ", " + group.getName() + ", " +
               group.getDescription() + ")" );
 
@@ -756,7 +1082,6 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
 private void primDelete(IEntityGroup group) throws SQLException
 {
     java.sql.Connection conn = null;
-    String groupID = group.getKey();
     String deleteGroupSql = getDeleteGroupSql(group);
     String deleteMembershipSql = getDeleteMembersInGroupSql(group);
 
@@ -793,6 +1118,52 @@ private void primDelete(IEntityGroup group) throws SQLException
     }
 }
 /**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.IEntityGroup
+ * @param key java.lang.Object
+ * @param lockable boolean
+ */
+private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsException
+{
+    IEntityGroup eg = null;
+    java.sql.Connection conn = null;
+    try
+    {
+            conn = RDBMServices.getConnection();
+            String sql = getFindGroupSql();
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, groupID);
+                    LogService.log (LogService.DEBUG,
+                      "RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                            {
+                                eg = (lockable)
+                                    ? lockableInstanceFromResultSet(rs)
+                                    : instanceFromResultSet(rs);
+                            }
+                    }
+                    finally
+                        { rs.close(); }
+            }
+            finally
+                { ps.close(); }
+    }
+    catch (Exception e)
+    {
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.find(): " + e);
+        throw new GroupsException("Error retrieving " + groupID + ": " + e);
+    }
+    finally
+        { RDBMServices.releaseConnection(conn); }
+
+    return eg;
+}
+/**
  * Update the entity in the database.
  * @param group org.jasig.portal.groups.IEntityGroup
  */
@@ -811,12 +1182,12 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
             ps.setInt(2, typeID.intValue());
             ps.setString(3, group.getName());
             ps.setString(4, group.getDescription());
-            ps.setString(5, group.getKey());
+            ps.setString(5, group.getLocalKey());
 
             LogService.log(LogService.DEBUG,
               "RDBMEntityGroupStore.primUpdate(): " + ps + "(" +
               group.getCreatorID() + ", " + typeID + ", " + group.getName() +
-              ", " + group.getDescription() + ", " + group.getKey() +  ")" );
+              ", " + group.getDescription() + ", " + group.getLocalKey() +  ")" );
 
             int rc = ps.executeUpdate();
 
@@ -843,37 +1214,82 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
  */
 private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java.sql.SQLException
 {
-    String groupKey = egi.getKey();
-    String memberKey = null;
-    String isGroup = null;
+    String groupKey = egi.getLocalKey();
+    String memberKey, isGroup, serviceName = null;
     try
     {
         if ( egi.hasDeletes() )
         {
-            RDBMServices.PreparedStatement psDelete =
-                new RDBMServices.PreparedStatement(conn, getDeleteMemberSql());
-
-            try
+            List deletedGroups = new ArrayList();
+            List deletedEntities = new ArrayList();
+            Iterator deletes = egi.getRemovedMembers().values().iterator();
+            while ( deletes.hasNext() )
             {
-                Iterator deletes = egi.getRemovedMembers().values().iterator();
-                while ( deletes.hasNext() )
-                {
-                    IGroupMember removedGM = (IGroupMember) deletes.next();
-                    memberKey = removedGM.getKey();
-                    isGroup = removedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
-                    psDelete.setString(1, groupKey);
-                    psDelete.setString(2, memberKey);
-                    psDelete.setString(3, isGroup);
-
-                    LogService.log(LogService.DEBUG,
-                      "RDBMEntityGroupStore.primUpdateMembers(): " + psDelete +
-                      "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
-
-                    psDelete.executeUpdate();
-                }
+                IGroupMember gm = (IGroupMember) deletes.next();
+                if ( gm.isGroup() )
+                    { deletedGroups.add(gm);}
+                else
+                    { deletedEntities.add(gm);}
             }
-            finally
-                { psDelete.close(); }
+
+            if ( ! deletedGroups.isEmpty() )
+            {
+                RDBMServices.PreparedStatement psDeleteMemberGroup =
+                    new RDBMServices.PreparedStatement(conn, getDeleteMemberGroupSql());
+
+                try
+                {
+                    for ( Iterator groups = deletedGroups.iterator(); groups.hasNext(); )
+                    {
+                        IEntityGroup removedGroup = (IEntityGroup) groups.next();
+                        memberKey = removedGroup.getLocalKey();
+                        isGroup = MEMBER_IS_GROUP;
+                        serviceName = removedGroup.getServiceName().toString();
+
+                        psDeleteMemberGroup.setString(1, groupKey);
+                        psDeleteMemberGroup.setString(2, serviceName);
+                        psDeleteMemberGroup.setString(3, memberKey);
+                        psDeleteMemberGroup.setString(4, isGroup);
+
+                        LogService.log(LogService.DEBUG,
+                          "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberGroup +
+                          "(" + groupKey + ", " + serviceName + ", " + memberKey + ", " + isGroup + ")" );
+
+                        psDeleteMemberGroup.executeUpdate();
+                    } // for
+                }     // try
+                finally
+                    { psDeleteMemberGroup.close(); }
+            }         // if ( ! deletedGroups.isEmpty() )
+
+            if ( ! deletedEntities.isEmpty() )
+            {
+                RDBMServices.PreparedStatement psDeleteMemberEntity =
+                    new RDBMServices.PreparedStatement(conn, getDeleteMemberEntitySql());
+
+                try
+                {
+                    for ( Iterator entities = deletedEntities.iterator(); entities.hasNext(); )
+                    {
+                        IGroupMember removedEntity = (IGroupMember) entities.next();
+                        memberKey = removedEntity.getUnderlyingEntityIdentifier().getKey();
+                        isGroup = MEMBER_IS_ENTITY;
+
+                        psDeleteMemberEntity.setString(1, groupKey);
+                        psDeleteMemberEntity.setString(2, memberKey);
+                        psDeleteMemberEntity.setString(3, isGroup);
+
+                        LogService.log(LogService.DEBUG,
+                          "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberEntity +
+                          "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
+
+                        psDeleteMemberEntity.executeUpdate();
+                    }  // for
+                }      // try
+                finally
+                    { psDeleteMemberEntity.close(); }
+            }          //  if ( ! deletedEntities.isEmpty() )
+
         }
 
         if ( egi.hasAdds() )
@@ -888,10 +1304,24 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                 {
                     IGroupMember addedGM = (IGroupMember) adds.next();
                     memberKey = addedGM.getKey();
-                    isGroup = addedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
+                    if ( addedGM.isGroup() )
+                    {
+                        IEntityGroup addedGroup = (IEntityGroup) addedGM;
+                        isGroup = MEMBER_IS_GROUP;
+                        serviceName = addedGroup.getServiceName().toString();
+                        memberKey = addedGroup.getLocalKey();
+                    }
+                    else
+                    {
+                        isGroup = MEMBER_IS_ENTITY;
+                        serviceName = new String();
+                        memberKey = addedGM.getUnderlyingEntityIdentifier().getKey();
+                    }
+
                     psAdd.setString(1, groupKey);
-                    psAdd.setString(2, memberKey);
-                    psAdd.setString(3, isGroup);
+                    psAdd.setString(2, serviceName);
+                    psAdd.setString(3, memberKey);
+                    psAdd.setString(4, isGroup);
 
                     LogService.log(LogService.DEBUG,
                       "RDBMEntityGroupStore.primUpdateMembers(): " + psAdd +
@@ -919,6 +1349,53 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 {
     SqlTransaction.rollback(conn);
 }
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    EntityIdentifier[] r = new EntityIdentifier[0];
+    ArrayList ar = new ArrayList();
+    Connection conn = null;
+    RDBMServices.PreparedStatement ps = null;
+    int type = EntityTypes.getEntityTypeID(leaftype).intValue();
+    System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
+
+        try {
+            conn = RDBMServices.getConnection();
+            switch(method){
+              case IS:
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroups);
+                break;
+              case STARTS_WITH:
+                query = query+"%";
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              case ENDS_WITH:
+                query = "%"+query;
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              case CONTAINS:
+                query = "%"+query+"%";
+                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                break;
+              default:
+                throw new GroupsException("Unknown search type");
+            }
+            ps.clearParameters();
+            ps.setInt(1,type);
+            ps.setString(2,query);
+            ResultSet rs = ps.executeQuery();
+            //System.out.println(ps.toString());
+            while (rs.next()){
+              //System.out.println("result");
+              ar.add(new EntityIdentifier(rs.getString(1), org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
+            }
+            ps.close();
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.instance().log(LogService.ERROR, e);
+        } finally {
+            RDBMServices.releaseConnection(conn);
+        }
+      return (EntityIdentifier[]) ar.toArray(r);
+  }
 /**
  * @param conn java.sql.Connection
  * @param newValue boolean
@@ -927,6 +1404,12 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
 {
     SqlTransaction.setAutoCommit(conn, newValue);
+}
+/**
+ * @param newGroupService org.jasig.portal.groups.IGroupService
+ */
+public void setGroupService(IGroupService newGroupService) {
+    groupService = newGroupService;
 }
 /**
  * @return org.jasig.portal.groups.RDBMEntityGroupStore
@@ -1017,150 +1500,4 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
         RDBMServices.releaseConnection(conn);
     }
 }
-
-/**
- * Find and return an instance of the group.
- * @return org.jasig.portal.groups.ILockableEntityGroup
- * @param key java.lang.Object
- */
-public ILockableEntityGroup findLockable(String groupID) throws GroupsException
-{
-    return (ILockableEntityGroup) primFind(groupID, true);
-}
-
-/**
- * Find and return an instance of the group.
- * @return org.jasig.portal.groups.ILockableEntityGroup
- * @param key java.lang.Object
- */
-private ILockableEntityGroup lockableInstanceFromResultSet(java.sql.ResultSet rs)
-throws  SQLException,
-        GroupsException
-{
-    ILockableEntityGroup eg = null;
-
-    String key = rs.getString(1);
-    String creatorID = rs.getString(2);
-    Integer entityTypeID = new Integer(rs.getInt(3));
-    Class entityType = EntityTypes.getEntityType(entityTypeID);
-    String groupName = rs.getString(4);
-    String description = rs.getString(5);
-
-    if ( key != null )
-        { eg = newLockableInstance(key, entityType, creatorID, groupName, description); }
-
-    return eg;
-}
-
-/**
- * @return org.jasig.portal.groups.ILockableEntityGroup
- */
-private ILockableEntityGroup newLockableInstance
-    (String newKey,
-    Class newType,
-    String newCreatorID,
-    String newName,
-    String newDescription)
-    throws GroupsException
-{
-    LockableEntityGroupImpl group = new LockableEntityGroupImpl(newKey, newType);
-    group.setCreatorID(newCreatorID);
-    group.primSetName(newName);
-    group.setDescription(newDescription);
-    return group;
-}
-
-/**
- * Find and return an instance of the group.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param key java.lang.Object
- * @param lockable boolean 
- */
-private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsException
-{
-    IEntityGroup eg = null;
-    java.sql.Connection conn = null;
-    try
-    {
-            conn = RDBMServices.getConnection();
-            String sql = getFindGroupSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
-            try
-            {
-                    ps.setString(1, groupID);
-                    LogService.log (LogService.DEBUG,
-                      "RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
-                    java.sql.ResultSet rs = ps.executeQuery();
-                    try
-                    {
-                            while (rs.next())
-                            { 
-                                eg = (lockable) 
-                                    ? lockableInstanceFromResultSet(rs) 
-                                    : instanceFromResultSet(rs); 
-	                        }
-                    }
-                    finally
-                        { rs.close(); }
-            }
-            finally
-                { ps.close(); }
-    }
-    catch (Exception e)
-    {
-        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.find(): " + e);
-        throw new GroupsException("Error retrieving " + groupID + ": " + e);
-    }
-    finally
-        { RDBMServices.releaseConnection(conn); }
-
-    return eg;
-}
-  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
-    EntityIdentifier[] r = new EntityIdentifier[0];
-    ArrayList ar = new ArrayList();
-    Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
-    int type = EntityTypes.getEntityTypeID(leaftype).intValue();
-    //System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
-
-        try {
-            conn = RDBMServices.getConnection();
-            switch(method){
-              case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroups);
-                break;
-              case STARTS_WITH:
-                query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
-                break;
-              case ENDS_WITH:
-                query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
-                break;
-              case CONTAINS:
-                query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
-                break;
-              default:
-                throw new GroupsException("Unknown search type");
-            }
-            ps.clearParameters();
-            ps.setInt(1,type);
-            ps.setString(2,query);
-            ResultSet rs = ps.executeQuery();
-            //System.out.println(ps.toString());
-            while (rs.next()){
-              //System.out.println("result");
-              ar.add(new EntityIdentifier(rs.getString(1),groupType));
-            }
-            ps.close();
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.instance().log(LogService.ERROR, e);
-        } finally {
-            RDBMServices.releaseConnection(conn);
-        }
-      return (EntityIdentifier[]) ar.toArray(r);
-  }
 }

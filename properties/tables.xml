@@ -659,16 +659,20 @@
     <not-null>ENTITY_TYPE_NAME</not-null>
   </table>
 
-  <table>
+ <table>
     <name>UP_GROUP_MEMBERSHIP</name>
     <desc>Mapping of member (that is, portal entity or group) to its containing group and flag if it is a group</desc>
     <columns>
-      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>240</param>
+      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>200</param>
         <desc>Unique group id number, key to GROUP_ID in UP_GROUP</desc>
         <key>CK</key>
       </column>
-      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>240</param>
-        <desc>Key to either the entity or group, e.g., GROUP_ID in UP_GROUP, USER_ID in UP_USER, etc.</desc>
+      <column> <name>MEMBER_SERVICE</name>       <type>VARCHAR</type>     <param>80</param>
+        <desc>For a group, the name of the service of origin.  For an entity, the name of this service.</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>200</param>
+        <desc>Key to either the entity or group, e.g., GROUP_ID in UP_GROUP, USER_NAME in UP_USER, etc.</desc>
         <key>CK</key>
       </column>
       <column> <name>MEMBER_IS_GROUP</name>  <type>VARCHAR</type>     <param>1</param>
@@ -676,6 +680,7 @@
       </column>
     </columns>
     <primary-key>GROUP_ID</primary-key>
+    <primary-key>MEMBER_SERVICE</primary-key>
     <primary-key>MEMBER_KEY</primary-key>
     <primary-key>MEMBER_IS_GROUP</primary-key>
   </table>

@@ -1,5 +1,4 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,4 +51,7 @@ public interface IGroupConstants {
     public final int STARTS_WITH=2;
     public final int ENDS_WITH=3;
     public final int CONTAINS=4;
+
+    // Composite group service:
+    public final String NODE_SEPARATOR = ".";
 }

@@ -467,7 +467,13 @@ public class ChannelRegistryManager {
     // For each category ID, add channel to category
     for (int i = 0; i < categoryIDs.length; i++) {
       categoryIDs[i] = categoryIDs[i].startsWith("cat") ? categoryIDs[i].substring(3) : categoryIDs[i];
-      int iCatID = Integer.parseInt(categoryIDs[i]);
+
+// de 11/21/02:
+      String catKey = GroupService.parseLocalKey(categoryIDs[i]);
+      int iCatID = Integer.parseInt(catKey);
+//    int iCatID = Integer.parseInt(categoryIDs[i]);
+
+
       ChannelCategory category = crs.getChannelCategory(iCatID);
       crs.addChannelToCategory(channelDef, category);
     }
@@ -496,7 +502,7 @@ public class ChannelRegistryManager {
     crs.approveChannelDefinition(channelDef, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
-    
+
     // Record that a channel has been published or modified
     if (newChannel)
       StatsRecorder.recordChannelDefinitionPublished(publisher, channelDef);
@@ -518,7 +524,7 @@ public class ChannelRegistryManager {
     int channelPublishId = Integer.parseInt(sChannelPublishId);
     ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
     crs.disapproveChannelDefinition(channelDef);
-    
+
     // Record that a channel has been deleted
     StatsRecorder.recordChannelDefinitionRemoved(person, channelDef);
   }

@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ©  2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,61 +32,43 @@
  *
  */
 
-package org.jasig.portal;
+package org.jasig.portal.groups;
+
+import java.util.Map;
+import javax.naming.Name;
 
 /**
- * A key and type that uniquely identify a portal entity.
+ * Defines a component group service that is part of a composite groups system.
+ * A component contains individual group services, which may themselves be
+ * components.
+ * <p> 
+ * The component is only used in the process of composing the composite
+ * service, so it does not define any operations on groups, only on other
+ * components.
+ *
  * @author Dan Ellentuck
  * @version $Revision$
- * @see IBasicEntity
+ *
  */
-public class EntityIdentifier {
-    protected String key;
-    protected Class type;
-/**
- * KeyTypePair constructor.
- */
-public EntityIdentifier(String entityKey, Class entityType) {
-    super();
-    key = entityKey;
-    type = entityType;
-}
-/**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- */
-public boolean equals(Object o) {
-    if ( o == null )
-        return false;
-    if ( ! (o instanceof EntityIdentifier) )
-        return false;
-    EntityIdentifier ei = (EntityIdentifier) o;
-    return ei.getType() == getType() &&
-        ei.getKey().equals(key);
-}
-/**
- * @return java.lang.String
- */
-public String getKey() {
-    return key;
-}
-/**
- * @return java.lang.Class
- */
-public Class getType() {
-    return type;
-}
-/**
- * @return an integer hash code for the receiver
- */
-public int hashCode() {
-    return getType().hashCode() + getKey().hashCode();
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString() {
-    return "EntityIdentifier (" + type + "(" + key + "))";
-}
+ public interface IComponentGroupService {
+
+  /**
+   * Returns a <code>Map</code> of the services contained by this component,
+   * keyed on the name of the service WITHIN THIS COMPONENT.  
+   */
+  public Map getComponentServices();
+  /**
+   * Returns the FULLY-QUALIFIED <code>Name</code> of the service, which 
+   * may not be known until the composite service is assembled.  
+   */
+  public Name getServiceName();
+  /**
+   * Answers if this service is a leaf in the composite; a service that
+   * actually operates on groups.
+   */
+  public boolean isLeafService();
+  /**
+   * Sets the name of the service to the new value. 
+   */
+  public void setServiceName(Name newServiceName);
 }

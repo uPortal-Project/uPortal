@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +34,7 @@
 
 package org.jasig.portal.groups;
 
+import java.util.Iterator;
 import org.jasig.portal.EntityIdentifier;
 
 /**
@@ -61,18 +61,48 @@ public IEntityGroup find(String key) throws GroupsException;
  * @return java.util.Iterator
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
-public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+public Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+/**
+ * Returns an <code>Iterator</code> over the <code>Collection</code> of
+ * <code>IEntities</code> that are members of this <code>IEntityGroup</code>.
+ * @return java.util.Iterator
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException;
+/**
+ * Returns an instance of the <code>ILockableEntityGroup</code> from the data store.
+ * @return org.jasig.portal.groups.IEntityGroup
+ * @param key java.lang.String
+ */
+public ILockableEntityGroup findLockable(String key) throws GroupsException;
+/**
+ * Returns a <code>String[]</code> containing the keys of  <code>IEntityGroups</code>
+ * that are members of this <code>IEntityGroup</code>.  In a composite group
+ * system, a group may contain a member group from a different service.  This is
+ * called a foreign membership, and is only possible in an internally-managed
+ * service.  A group store in such a service can return the key of a foreign member
+ * group, but not the group itself, which can only be returned by its local store.
+ *
+ * @return String[]
+ * @param group org.jasig.portal.groups.IEntityGroup
+ */
+public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException;
 /**
  * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntityGroups</code> that are members of this <code>IEntityGroup</code>.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
  */
-public java.util.Iterator findMemberGroups(IEntityGroup group) throws GroupsException;
+public Iterator findMemberGroups(IEntityGroup group) throws GroupsException;
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
 public IEntityGroup newInstance(Class entityType) throws GroupsException;
+/**
+ * Find EntityIdentifiers for groups whose name matches the query string
+ * according to the specified method and matches the provided leaf type
+ */
+public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException;
 /**
  * Adds or updates the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the
  * data store, as appropriate.
@@ -85,17 +115,4 @@ public void update(IEntityGroup group) throws GroupsException;
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void updateMembers(IEntityGroup group) throws GroupsException;
-
-/**
- * Returns an instance of the <code>ILockableEntityGroup</code> from the data store.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param key java.lang.String
- */
-public ILockableEntityGroup findLockable(String key) throws GroupsException;
-
-/**
- * Find EntityIdentifiers for groups whose name matches the query string 
- * according to the specified method and matches the provided leaf type 
- */
-public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException;
 }

@@ -37,7 +37,7 @@ package org.jasig.portal.groups;
 
 import org.jasig.portal.concurrency.IEntityLock;
 
- /**
+  /**
  * Extends <code>EntityGroupImpl</code> to make it lockable for writing.
  * <p>
  * @author Dan Ellentuck
@@ -74,7 +74,7 @@ public IEntityLock getLock() {
  */
 protected ILockableGroupService getLockableGroupService() throws GroupsException
 {
-    return (ILockableGroupService) super.getGroupService();
+    return (ILockableGroupService) super.getLocalGroupService();
 }
 /**
  *

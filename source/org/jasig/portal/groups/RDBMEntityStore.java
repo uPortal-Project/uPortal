@@ -68,7 +68,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
     Collection entities = new ArrayList();
     Connection conn = null;
-    String groupID = group.getKey();
+    String groupID = group.getLocalKey();
     Class cls = group.getLeafType();
 
     try
@@ -77,7 +77,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
         Statement stmnt = conn.createStatement();
         try {
 
-            String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP" +
+            String query = "SELECT MEMBER_KEY FROM UP_GROUP_MEMBERSHIP_B" +
                            " WHERE GROUP_ID = " + "'" + groupID + "'" +
                            " AND MEMBER_IS_GROUP = 'F' ";
 
