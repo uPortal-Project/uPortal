@@ -58,6 +58,8 @@ public class PersonImpl implements IPerson
    * a <code>java.util.Vector</code>.  For objects represented as strings,
    * a <code>java.lang.String</code> will be returned.  Binary values will
    * be represented a byte arrays.
+   * This reference implementation supports the attribute: Email
+   * corresponding to the eduPerson attribute: mail.
    * @param key Attribute's name.
    * @return Value of an attribute identified by the key.
    */
@@ -83,6 +85,8 @@ public class PersonImpl implements IPerson
 
   /**
    * Sets the specified attribute to a value.
+   * This reference implementation supports the attribute: Email
+   * corresponding to the eduPerson attribute: mail.
    * @param key Attribute's name
    * @param value Attribute's value
    */
@@ -96,6 +100,8 @@ public class PersonImpl implements IPerson
 
   /**
    * Returns the user's ID that was used for authentication.
+   * Does not correlate to any eduPerson attribute but is the key
+   * for user data in uPortal reference rdbms.
    * @return User's ID.
    */
   public int getID ()
@@ -106,6 +112,8 @@ public class PersonImpl implements IPerson
   /**
    * Sets the user's ID.
    * @param sID User's ID as supplied for authentication
+   * Does not correlate to any eduPerson attribute but is the key
+   * for user data in uPortal reference rdbms.
    */
   public void setID (int sID)
   {
@@ -114,6 +122,7 @@ public class PersonImpl implements IPerson
 
   /**
    * Returns the user's name that was established during authentication.
+   * Correlates to cn (common name) in the eduPerson 1.0 specification.
    * @return User's name.
    */
   public String getFullName ()
@@ -124,6 +133,7 @@ public class PersonImpl implements IPerson
   /**
    * Sets the user's full name.
    * @param sFullName User's name as established during authentication
+   * Correlates to cn (common name) in the eduPerson 1.0 specification.
    */
   public void setFullName (String sFullName)
   {
