@@ -446,6 +446,15 @@ public class CChannelManager extends BaseChannel {
         // Set the channel definition
         channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(chanID));
 
+        // Set the groups
+        int channelID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
+        org.jasig.portal.security.IPermission[] permissions = staticData.getAuthorizationPrincipal().getAllPermissions("UP_FRAMEWORK", "SUBSCRIBE", "CHAN_ID." + channelID);
+        for (int i = 0; i < permissions.length; i++) {
+          String principal = permissions[i].getPrincipal();
+          String groupKey = principal.substring(principal.indexOf(".") + 1);
+          groupSettings.addSelectedGroup(GroupService.find(groupKey));
+        }
+
         // Set the categories
         Set categories = new TreeSet();
         org.w3c.dom.NodeList nl = ChannelRegistryManager.getCategories(chanID);
@@ -931,17 +940,17 @@ public class CChannelManager extends BaseChannel {
       Iterator iter = selectedGroups.iterator();
       for (int i = 0; iter.hasNext(); i++) {
         String key = (String)iter.next();
-        IEntityGroup group = GroupService.find(key);
-        if (group != null) {
+        IEntityGroup group = GroupService.find(key.substring(groupIDPrefix.length()));
+        if (group != null)
           selectedEntityGroups[i] = group;
-        } else {
+        else
           throw new GroupsException("Unable to find group '" + key + "'");
-        }
       }
       return selectedEntityGroups;
     }
     protected void setSelectedGroups(Set selectedGroups) { this.selectedGroups = selectedGroups; }
     protected void addSelectedGroup(String group) { selectedGroups.add(group); }
+    protected void addSelectedGroup(IEntityGroup group) { selectedGroups.add(groupIDPrefix + group.getKey()); }
     protected void removeGroup(String group) { selectedGroups.remove(group); }
 
     protected Element toXML() {
