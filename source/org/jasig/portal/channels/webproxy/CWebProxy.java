@@ -502,7 +502,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                      appendchar = "&";
                      newXML.append(pName);
                      newXML.append("=");
-                     newXML.append(URLEncoder.encode(value_array[i++]));
+                     newXML.append(URLEncoder.encode(value_array[i++].trim()));
                    }
                  }
                }
