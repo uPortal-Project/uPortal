@@ -712,6 +712,8 @@
     <java dir="${basedir}" classname="org.jasig.portal.security.md5passwd">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
