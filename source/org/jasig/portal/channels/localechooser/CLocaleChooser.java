@@ -60,6 +60,8 @@ public class CLocaleChooser implements IChannel
     private ChannelStaticData staticData;
     private final String channelName = "Locale Chooser";
     protected final String sslLocation = "CLocaleChooser.ssl";
+    // I18n propertiy
+    protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
 
     public CLocaleChooser()
     {
@@ -89,6 +91,8 @@ public class CLocaleChooser implements IChannel
 	Document doc = DocumentFactory.getNewDocument();
 	String locale = runtimeData.getParameter("locale");
 
+
+        if (localeAware == false) return;
 
 	// Create <locale-status> element
 	Element localeStatusElement = doc.createElement("locale-status");
