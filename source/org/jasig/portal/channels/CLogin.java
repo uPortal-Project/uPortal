@@ -36,6 +36,7 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.DocumentHandler;
 import java.io.File;
 
@@ -54,6 +55,9 @@ public class CLogin implements IChannel
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
   private String channelName = "Log in...";
+  private String media;
+  private static final String fs = File.separator;
+  private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
 
   public CLogin()
   {
@@ -83,32 +87,19 @@ public class CLogin implements IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
+
+    // The media will soon be passed to the channel I think.
+    // This code can then be replaced with runtimeData.getMedia()
+    MediaManager mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    media = mm.getMedia(runtimeData.getHttpRequest());
   }
 
   public void renderXML (DocumentHandler out) throws Exception
   {
-    String fs = File.separator;
-    String sslLocation = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
-
-    StringBuffer sb = new StringBuffer ();
-    sb.append ("<?xml version='1.0'?>\n");
+    StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append ("<xml/>\n");
 
-    transform(out, sb.toString(), sslLocation, "login");
-  }
-
-  // This will get moved out to a util or service class
-  private void transform (DocumentHandler out, String xml, String sslUrl, String stylesheetKey) throws org.xml.sax.SAXException
-  {
-    StylesheetSet set = new StylesheetSet(sslUrl);
-    set.setMediaProps (GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "media.properties");
-
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTInputSource xslSource = set.getStylesheet(stylesheetKey, runtimeData.getHttpRequest());
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
-    processor.process (xmlSource, xslSource, xmlResult);
+    XSLT.transform(out, media, sb.toString(), sslLocation, "login");
   }
 }

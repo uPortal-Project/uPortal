@@ -36,9 +36,11 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
+import org.jasig.portal.utils.XSLT;
 import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
 import java.io.*;
+import java.util.Hashtable;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>
@@ -50,10 +52,12 @@ public class CNumberGuess implements IChannel
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;
+  private String media;
 
   private static final String fs = File.separator;
-  private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
-  String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CNumberGuess";
+  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
+  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CNumberGuess";
+  private static final String sslLocation = stylesheetDir + fs + "CNumberGuess.ssl";
 
   private int iMinNum = 0;
   private int iMaxNum = 0;
@@ -61,7 +65,7 @@ public class CNumberGuess implements IChannel
   private int iGuesses = 0;
   private int iAnswer = 0;
   private boolean bFirstTime = true;
-  
+
   /** Constructs a CNumberGuess.
    */
   public CNumberGuess ()
@@ -78,7 +82,7 @@ public class CNumberGuess implements IChannel
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    
+
     // Properties which are not specifically set here will assume default
     // values as determined by ChannelSubscriptionProperties
     csb.setName ("Number Guessing Game");
@@ -106,11 +110,11 @@ public class CNumberGuess implements IChannel
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd)
-  { 
+  {
     this.staticData = sd;
     String sMinNum = null;
     String sMaxNum = null;
-    
+
     try
     {
       if ((sMinNum = sd.getParameter ("minNum")) != null )
@@ -118,7 +122,7 @@ public class CNumberGuess implements IChannel
 
       if ((sMaxNum = sd.getParameter ("maxNum")) != null)
         iMaxNum = Integer.parseInt (sMaxNum);
-      
+
       iAnswer = getRandomNumber (iMinNum, iMaxNum);
     }
     catch (NumberFormatException nfe)
@@ -130,15 +134,22 @@ public class CNumberGuess implements IChannel
    }
 
 
-  /** Receives channel runtime data from the portal and processes actions 
-   * passed to it.  The names of these parameters are entirely up to the channel. 
+  /** Receives channel runtime data from the portal and processes actions
+   * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    String sGuess = runtimeData.getParameter ("guess");   
-   
+
+    // The media will soon be passed to the channel I think.
+    // This code can then be replaced with runtimeData.getMedia()
+    MediaManager mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    media = mm.getMedia(runtimeData.getHttpRequest());
+
+    String sGuess = runtimeData.getParameter ("guess");
+
     if (sGuess != null)
     {
       try
@@ -149,7 +160,7 @@ public class CNumberGuess implements IChannel
       {
         // Assume that the guess was the same as last time
       }
-      
+
       bFirstTime = false;
       iGuesses++;
     }
@@ -161,12 +172,12 @@ public class CNumberGuess implements IChannel
   public void renderXML (DocumentHandler out)
   {
     String sSuggest = null;
-    
+
     if (iGuess < iAnswer)
       sSuggest = "higher";
     else if (iGuess > iAnswer)
       sSuggest = "lower";
-   
+
     try
     {
       if (set != null)
@@ -192,32 +203,18 @@ public class CNumberGuess implements IChannel
           w.write ("  <suggest>" + sSuggest + "</suggest>\n");
 
         w.write ("</content>\n");
-        
-        processXML (w.toString (), out);
+
+        Hashtable ssParams = new Hashtable();
+        ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
+        XSLT.transform(out, media, w.toString(), sslLocation, "main", ssParams);
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
-  
-  private void processXML (String sXml, DocumentHandler out) throws org.xml.sax.SAXException
-  {
-    XSLTInputSource xmlSource = new XSLTInputSource (new StringReader(sXml));
-    XSLTInputSource xslSource = set.getStylesheet("main", runtimeData.getHttpRequest());
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
-    if (xslSource != null)
-    {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));        
-      processor.process (xmlSource, xslSource, xmlResult);
-    }
-    else 
-      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CNumberGuess: unable to find a stylesheet for rendering");
-  }
-  
   private int getRandomNumber (int min, int max)
   {
     return new Double ((max - min) * Math.random () + min).intValue ();
