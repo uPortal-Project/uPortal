@@ -552,15 +552,15 @@
 
   The "db" target can be invoked thusly:
 
-  To use properties/mytables.xml instead of the tables file specified in
+  To use /properties/mytables.xml instead of the tables file specified in
   dbloader.xml:
 
-  ant db -Dusetable=-t -Dtablefile=properties/mytables.xml
+  ant db -Dusetable=-t -Dtablefile=/properties/mytables.xml
 
-  To use properties/mydata.xml instead of the data file specified in
+  To use /properties/mydata.xml instead of the data file specified in
   dbloader.xml:
 
-  ant db -Dusedata=-d -Ddatafile=properties/mydata.xml
+  ant db -Dusedata=-d -Ddatafile=/properties/mydata.xml
 
   Note: the tables and data files can both be overridden by combining the 
   arguments.  The usetable and tablefile must be used in tandem and 
