@@ -35,7 +35,7 @@
 
 package org.jasig.portal;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 
 /**
  * An interface for multithreaded channels.
@@ -63,5 +63,5 @@ public interface IMultithreadedChannel {
     public void receiveEvent (PortalEvent ev,String uid);
 
     public ChannelRuntimeProperties getRuntimeProperties (String uid);
-    public void renderXML (DocumentHandler out,String uid) throws PortalException;
+    public void renderXML (ContentHandler out,String uid) throws PortalException;
 }

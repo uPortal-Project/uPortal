@@ -35,7 +35,7 @@
 
 package org.jasig.portal;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 
 /**
  * An interface presented by a channel to a portal.
@@ -78,7 +78,7 @@ public interface IChannel
 
   /**
    * Ask channel to render its content.
-   * @param out the SAX DocumentHandler to output content to
+   * @param out the SAX ContentHandler to output content to
    */
-    public void renderXML (DocumentHandler out) throws PortalException;
+    public void renderXML (ContentHandler out) throws PortalException;
 }
