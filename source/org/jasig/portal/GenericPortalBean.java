@@ -50,6 +50,7 @@ import java.io.*;
 public class GenericPortalBean
 {
   private static String sPortalBaseDir = null;
+  private static IDBImpl dbImplObject = null;
   public boolean DEBUG = false;
 
   /**
@@ -69,6 +70,25 @@ public class GenericPortalBean
   public static String getPortalBaseDir ()
   {
     return sPortalBaseDir;
+  }
+
+  /**
+   * Set the DBImpl object that the portal should use
+   * @param dbImpl
+   */
+  public static void setDbImpl(IDBImpl dbImpl)
+  {
+    dbImplObject = dbImpl;
+                  System.err.println(dbImpl);
+
+  }
+  /**
+   * Get the dbImpl object for the portal
+   * @return dbImpl
+   */
+  public static IDBImpl getDbImplObject()
+  {
+    return dbImplObject;
   }
 
   /**

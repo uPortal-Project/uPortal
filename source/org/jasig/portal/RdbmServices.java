@@ -55,6 +55,7 @@ public class RdbmServices extends GenericPortalBean
   private static String sJdbcUrl = null;
   private static String sJdbcUser = null;
   private static String sJdbcPassword = null;
+  private static String sDbImplClass = null;
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";  // reduce noise in log file
 
@@ -85,7 +86,7 @@ public class RdbmServices extends GenericPortalBean
         sJdbcUrl = jdbcProps.getProperty ("jdbcUrl");
         sJdbcUser = jdbcProps.getProperty ("jdbcUser");
         sJdbcPassword = jdbcProps.getProperty ("jdbcPassword");
-
+        sDbImplClass = jdbcProps.getProperty ("dbImplClass");
         bPropsLoaded = true;
       }
     }
@@ -170,5 +171,14 @@ public class RdbmServices extends GenericPortalBean
   public static String getJdbcUser ()
   {
     return sJdbcUser;
+  }
+
+  /**
+   * Get the dbImpl class we should use
+   * @return dbImpl object
+   */
+  public static IDBImpl getDbImpl() throws ClassNotFoundException, IllegalAccessException, InstantiationException
+  {
+    return (org.jasig.portal.DBImpl) Class.forName (sDbImplClass).newInstance ();
   }
 }

@@ -63,6 +63,7 @@ import com.oreilly.servlet.multipart.ParamPart;
  */
 public class PortalSessionManager extends HttpServlet
 {
+    private boolean dbImplSet = false;
     private boolean baseDirSet=false;
     public static String renderBase="render.uP";
     public static String detachBaseStart="detach_";
@@ -74,7 +75,7 @@ public class PortalSessionManager extends HttpServlet
     }
 
     public void doPost (HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException  {
+        throws ServletException, IOException {
         doGet( req, res );
     }
 
@@ -100,6 +101,14 @@ public class PortalSessionManager extends HttpServlet
         }
 
         if(baseDirSet) {
+            if (!dbImplSet) {
+              try {
+                GenericPortalBean.setDbImpl(RdbmServices.getDbImpl());
+              } catch (Exception e) {
+                throw new ServletException(e);
+              }
+              dbImplSet = true;
+            }
             // forwarding
             ServletContext sc=this.getServletContext();
 
