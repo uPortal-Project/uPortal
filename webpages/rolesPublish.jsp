@@ -55,9 +55,12 @@
 <%-- Always force this page to reload --%>
 <%-- <% UtilitiesBean.preventPageCaching (response); %> --%>
 
+<%-- Update the allowed and denied roles list --%>
+<% publish.updateRoles(request, response, out); %>
+
 <html>
   <head>
-    <title>Publish Channel</title>
+    <title>Publish Channel - Select Roles</title>
     <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
     <script language="javascript">
       function submitForm(nextPage)
@@ -68,37 +71,73 @@
     </script>
   </head>
 
-  <% layoutBean.writeBodyStyle (request, response, out); %>
+  <% layoutBean.writeBodyStyle(request, response, out); %>
 
     <%-- Header --%>
-    <% session.setAttribute ("headerTitle", "Publish Channel"); %>
+    <% session.setAttribute("headerTitle", "Publish Channel"); %>
     <%@ include file="header.jsp" %>
 
     <form method="post" name="data">
       <table border="0" width="100%">
         <tr bgcolor="#dddddd">
-          <td colspan="2"><p><font size=4><b>Preview Channel for Registration</b></font></p></td>
+          <td colspan="5"><p><font size=4><b>Channel Authorization Setup</b></font></p></td>
         </tr>
         <tr>
-          <td colspan="2">
-            This is a preview of the channel you are registering. If it is rendered correctly then pick any appropriate categories and click 'Finished'
-            button to register. Otherwise cancel or go back and make necessary corrections.
-          </td>
+          <td colspan="5">This step allows you to determine what roles will be able to subscribe to your channel.<td>
         </tr>
-        <tr bgcolor="#ffffff">
-          <td width="50%"><% publish.previewChannel(request, response, out); %></td>
-          <td valign="top"><b>Channel Categories</b><p><% publish.writeChanCats(request, response, out); %></td>
+        <%
+          if(!publish.checkAllowedRoles())
+          {
+        %>
+          <tr>
+            <td colspan="5"><font color="#FF0000"><b>You must allow at least one role to subscribe to your channel.<b></font></td>
+          </tr>
+        <%
+          }
+          else
+          {
+        %>
+          <tr>
+            <td colspan="5">&nbsp;</td>
+          </tr>
+        <%
+          }
+        %>
+      </table>
+
+      <table border="0" width="50%">
+        <tr>
+          <td><table align="center">
+            <tr>
+              <td><b>Roles allowed to subscribe</b></td>
+            </tr>
+            <tr>
+              <td><select size="20" name="allowedRoles" multiple><% publish.writeAllowedRoles(request, response, out); %></select></td>
+            </tr>
+          </table></td>
+          <td><table align="center">
+            <tr>
+              <td><input type="button" name="allowButton" value="<- Allow" onClick="javascript:submitForm('rolesPublish.jsp?userAction=allow')"></input></td>
+            </tr>
+            <tr>
+              <td><input type="button" name="denyButton" value="Deny ->" onClick="javascript:submitForm('rolesPublish.jsp?userAction=deny')"></input></td>
+            </tr>
+          </table></td>
+          <td><table align="center">
+            <tr>
+              <td><b>Roles <i>not</i> allowed to subscribe</b></td>
+            </tr>
+            <tr>
+              <td><select size="20" name="deniedRoles" multiple><% publish.writeDeniedRoles(request, response, out); %></select></td>
+            </tr>
+          </table></td>
         </tr>
       </table>
 
       <table border="0" width="100%">
         <tr>
-          <td width="5%"><input type="button" value="Next" onClick="javascript:submitForm('rolesPublish.jsp')"></td>
-          <td>Restrict user access to this channel</td>
-        </tr>
-        <tr>
           <td width="5%"><input type="button" value="Finish" onClick="javascript:submitForm('finishPublish.jsp')"></td>
-          <td>Finish publishing your channel with unlimited user access</td>
+          <td>Finish publishing your channel</td>
         </tr>
         <tr>
           <td width="5%"><input type="button" value="Cancel" onClick="javascript:submitForm('publish.jsp')"></td>

@@ -83,15 +83,15 @@ else {
 Click on a channel to preview.
 </form>
 
-<%
-subscribe.getAllChannels(request, response, out);
-%>
+<% subscribe.getAllChannels(request, response, out); %>
 
 <%-- Finished and Cancel Changes buttons --%>
 <form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'">
-</td></tr></table>
+  <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd">
+    <tr>
+      <td><input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'"></td>
+    </tr>
+  </table>
 </form>
 
 <jsp:include page="footer.jsp" flush="true" />

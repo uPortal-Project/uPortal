@@ -37,6 +37,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
+<%@ page import="org.jasig.portal.security.IPerson" %>
 
 <%-- If the portal base directory hasn't been set, forward back to
   -- index.jsp, which retrives it from the ServletContext.  The portal
@@ -48,22 +49,26 @@
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
-<% String sUserName = (String) session.getAttribute ("userName"); %>
-<% UtilitiesBean.preventPageCaching (response); %>
+<%
+  String sUserName = (String)session.getAttribute("userName");
+  UtilitiesBean.preventPageCaching(response);
+  IPerson person = (IPerson)session.getAttribute("Person");
+%>
 
 <html>
 <head>
 <title>Portal Framework</title>
 <script language="JavaScript">
 <!--hide
-
 function openWin(url, title, width, height)
 {
   var newWin = window.open(url, title, 'width=' + width + ',height=' + height +',resizable=yes,scrollbars=yes')
 }
-
 //stop hiding-->
 </script>
+  </head>
+
+  <%-- This method call writes the opening body tag --%>
 <% layoutBean.writeBodyStyle (request, response, out); %>
 
 <!-- Header -->
@@ -77,7 +82,16 @@ function openWin(url, title, width, height)
       <% if (sUserName == null || sUserName.equals ("guest")) { %>
       &nbsp;
       <% } else { %>
-      Channels -> <a href="publish.jsp">Publish</a> | <a href="subscribe.jsp">Subscribe</a><br>
+            Channels ->
+            <%
+              if(layoutBean.canUserPublish(person))
+              {
+            %>
+                <a href="publish.jsp">Publish</a> |
+            <%
+              }
+            %>
+            <a href="subscribe.jsp">Subscribe</a><br>
       Personalize -> <a href="personalizeColors.jsp">Colors</a> | <a href="personalizeTabs.jsp">Tabs</a> | <a href="personalizeLayout.jsp">Layout</a>
       <% } %>
     </td>
@@ -93,3 +107,4 @@ layoutBean.writeChannels (request, response, out);
 
 </body>
 </html>
+

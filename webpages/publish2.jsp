@@ -37,68 +37,107 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.*" %>
 <%@ page errorPage="error.jsp" %>
+
 <%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" type="org.jasig.portal.ILayoutBean" scope="session" />
-<jsp:useBean id="publish" class="org.jasig.portal.PublisherBean"  scope="session" />
+<jsp:useBean id="publish" class="org.jasig.portal.PublisherBean" scope="session" />
 
-<%
-String sChan_type = request.getParameter ("chan_type");
-String sPub_email = request.getParameter("pub_email");
-%>
+<%-- Get the user action passed in --%>
+<% String sUserAction = request.getParameter("userAction"); %>
 
- <%-- UtilitiesBean.preventPageCaching (response); --%>
+<%-- Set the incoming user data in the bean --%>
+<% publish.setChannelData(request); %>
+
+<%-- Always force this page to reload --%>
+<%-- <% UtilitiesBean.preventPageCaching (response); %> --%>
 
 <html>
-<head>
-<title>Publish Channel</title>
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-</head>
+  <head>
+    <title>Publish Channel</title>
+    <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
+    <script language="javascript">
+      function submitForm(nextPage)
+      {
+        document.data.action = nextPage;
+        document.data.submit();
+      }
+    </script>
+  </head>
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
+  <% layoutBean.writeBodyStyle(request, response, out); %>
 
-<%-- Header --%>
-<% session.setAttribute ("headerTitle", "Publish Channel"); %>
-<%@ include file="header.jsp" %>
+    <%-- Header --%>
+    <% session.setAttribute ("headerTitle", "Publish Channel"); %>
+    <%@ include file="header.jsp" %>
 
-<form action="previewPublish.jsp" method=post name="">
+    <%--make sure we got an email and channel type--%>
+    <%
+      String sChanType = publish.getChanType();
+      String sPubEmail = publish.getPubEmail();
 
-<%--make sure we got an email and channel type--%>
-<%
-if ((sChan_type == null) || (sPub_email== null))
-{
-%>
+      if((sChanType == null) || (sPubEmail == null) || (sChanType.equals("")) || (sPubEmail.equals("")))
+      {
+    %>
+        <p>You failed to enter required information.<br></p>
+        <ul>
+          <%
+            if((sChanType == null) || (sChanType.equals("")))
+            {
+          %>
+              <li><b>Channel Type</b></li>
+          <%
+            }
+          %>
+          <%
+            if((sPubEmail == null) || (sPubEmail.equals("")))
+            {
+          %>
+              <li><b>Email Address</b></li>
+          <%
+            }
+          %>
+        </ul>
+        <p>Please go back and enter this information and proceed.</p>
+    <%
+    }
+    else
+    {
+    %>
 
-  <p>You failed to enter required information.<br>
-  </p>
-  <ul>
-  <%= sChan_type == null ? "<li><b>Channel Type</b>" : " "%>
-  <%= sChan_type == null ? "<li><b>Email Address</b>" : " "%>
-  </ul>
+    <form method="post" name="data">
+      <table border="0" width="100%">
+        <tr bgcolor="#dddddd">
+          <td colspan="5"><p><font size=4><b>Specify Channel Parameters</b></font></p></td>
+        </tr>
+        <tr>
+          <td><p><font size="3"><b>Step 3.</b></font><br></td>
+        </tr>
+      </table>
 
-  <p>Please go back and enter this information and proceed. 
-  </p>
-  
-<%
-}
-else 
-{
-%>
-  <p><font size="5"><b>Step 3.</b></font><br>
+      <table border="0" width="100%">
+        <% publish.writeParamFields(request, response, out); %>
+      </table>
 
-   <% publish.writeParamFields(request, response, out); %>
-   
-  <p> 
-    <input type="hidden" name="chan_type" value="<%= sChan_type %>">
-	<input type="hidden" name="pub_email" value="<%= sPub_email %>">
-    <input type="submit" value="Next">
-  </p>
-<% } %>  
-</form>
+      <table border="0" width="100%">
+        <tr>
+          <td width="5%"><input type="button" value="Next" onClick="javascript:submitForm('previewPublish.jsp')"></td>
+          <td>Preview and catagorize your channel</td>
+        </tr>
+        <tr>
+          <td width="5%"><input type="button" value="Cancel" onClick="javascript:submitForm('publish.jsp')"></td>
+          <td>Start the publishing process over</td>
+        </tr>
+        <tr bgcolor="#dddddd">
+          <td colspan="2">&nbsp;</td>
+        </tr>
+      </table>
+    <% } %>
+    </form>
 
-<%-- Footer --%>
-<%@ include file="footer.jsp" %>
+    <%-- Footer --%>
+    <%@ include file="footer.jsp" %>
 
-</body>
+  </body>
 </html>

@@ -35,6 +35,7 @@
 
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.*" %>
+<%@ page import="org.jasig.portal.security.IPerson" %>
 <%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="authBean" class="org.jasig.portal.AuthenticationBean"
@@ -63,6 +64,10 @@ if (bAuthorized)
 
   // Put the username in the session
   session.setAttribute ("userName", sUserName);
+  
+  // Get the Person object and put it in the session as well
+  IPerson person = authBean.getPerson ();
+  session.setAttribute ("Person", person);
 }
 else
   session.setAttribute ("userName", "guest");

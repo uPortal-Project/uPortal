@@ -57,7 +57,7 @@
 
 <html>
   <head>
-    <title>Publish Channel</title>
+    <title>Publish Channel - Finished Publishing</title>
     <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
     <script language="javascript">
       function submitForm(nextPage)
@@ -68,47 +68,92 @@
     </script>
   </head>
 
-  <% layoutBean.writeBodyStyle (request, response, out); %>
+  <% layoutBean.writeBodyStyle(request, response, out); %>
 
     <%-- Header --%>
     <% session.setAttribute ("headerTitle", "Publish Channel"); %>
     <%@ include file="header.jsp" %>
 
-    <form method="post" name="data">
-      <table border="0" width="100%">
-        <tr bgcolor="#dddddd">
-          <td colspan="2"><p><font size=4><b>Preview Channel for Registration</b></font></p></td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            This is a preview of the channel you are registering. If it is rendered correctly then pick any appropriate categories and click 'Finished'
-            button to register. Otherwise cancel or go back and make necessary corrections.
-          </td>
-        </tr>
-        <tr bgcolor="#ffffff">
-          <td width="50%"><% publish.previewChannel(request, response, out); %></td>
-          <td valign="top"><b>Channel Categories</b><p><% publish.writeChanCats(request, response, out); %></td>
-        </tr>
-      </table>
+    <%
+      if(sUserAction != null && sUserAction.equals("register"))
+      {
+        if(publish.registerChannel(request))
+        {
+    %>
+          <h2>Congratulations!</h2>
+          <br>
+          You have successfully published your channel. Once it has been approved, others will be able to
+          subscribe to it and view its content.
+    <%
+        }
+          else
+        {
+    %>
+          <h2>Error!</h2>
+          <br>
+          Your channel was not successfully registered. Please go back and retry. Notify administrator
+          if problem persists.
+    <%
+        }
 
-      <table border="0" width="100%">
-        <tr>
-          <td width="5%"><input type="button" value="Next" onClick="javascript:submitForm('rolesPublish.jsp')"></td>
-          <td>Restrict user access to this channel</td>
-        </tr>
-        <tr>
-          <td width="5%"><input type="button" value="Finish" onClick="javascript:submitForm('finishPublish.jsp')"></td>
-          <td>Finish publishing your channel with unlimited user access</td>
-        </tr>
-        <tr>
-          <td width="5%"><input type="button" value="Cancel" onClick="javascript:submitForm('publish.jsp')"></td>
-          <td>Start the publishing process over</td>
-        </tr>
-        <tr bgcolor="#dddddd">
-          <td colspan="2">&nbsp;</td>
-        </tr>
-      </table>
-    </form>
+        // Reset the bean after publishing
+        publish.reset();
+      }
+      else
+      {
+    %>
+      <form method="post" name="data">
+        <table border="0" width="100%">
+          <tr bgcolor="#dddddd">
+            <td colspan="2"><p><font size="4"><b>Complete the Publishing of Your New Channel</b></font></p></td>
+          </tr>
+        </table>
+
+        <p></p>
+
+        <table border="0" width="50%">
+          <tr>
+            <td width="30%">Publisher's Email Address:</td>
+            <td><%= publish.getPubEmail() %></td>
+          </tr>
+          <tr>
+            <td>Channel Name:</td>
+            <td><%= publish.getChanName() %></td>
+          </tr>
+          <tr>
+            <td>Channel Type:</td>
+            <td><%= publish.getChanType() %></td>
+          </tr>
+          <tr>
+            <td>Subscription Catagories:</td>
+            <td><% publish.writeChanCatsList(out); %></td>
+          </tr>
+          <tr>
+            <td>Roles Allowed to Subscribe:</td>
+            <td><% publish.writeAllowedRolesList(out); %></td>
+          </tr>
+          <% publish.writeChanParamFieldsList(out); %>
+        </table>
+
+        <p></p>
+
+        <table border="0" width="100%">
+          <tr>
+            <td width="5%"><input type="button" width="20" value="Finish" onClick="javascript:submitForm('finishPublish.jsp?userAction=register')"></input></td>
+            <td>Finish publishing your channel with unlimited user access</td>
+          </tr>
+          <tr>
+            <td width="5%"><input type="button" width="20" value="Cancel" onClick="javascript:submitForm('publish.jsp')"></input></td>
+            <td>Start the publishing process over</td>
+          </tr>
+          <tr bgcolor="#dddddd">
+            <td colspan="2">&nbsp;</td>
+          </tr>
+        </table>
+      </form>
+    <%
+      }
+    %>
 
     <jsp:include page="footer.jsp" flush="true" />
 
