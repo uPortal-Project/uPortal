@@ -43,6 +43,7 @@ import  java.io.File;
 import  java.util.Enumeration;
 import  javax.servlet.ServletOutputStream;
 import  java.io.IOException;
+import  org.jasig.portal.services.LogService;
 
 /**
  * A set of runtime data acessable by a channel.
@@ -185,10 +186,15 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * interface specific for that worker.
    * @param worker - Worker string must be a PortalSessionManager.xxx value.
    * @return URL to invoke the worker.
-   *
    */
     public String getWorkerActionURL(String worker) {
-        return UPFileSpec.WORKER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+worker+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+this.channelSubscribeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
+        String url=null;
+        try {
+            url=UPFileSpec.buildUPFile(null,UPFileSpec.WORKER_METHOD,worker,this.channelSubscribeId,null);
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+        }
+        return url;
     }
 
   /**
