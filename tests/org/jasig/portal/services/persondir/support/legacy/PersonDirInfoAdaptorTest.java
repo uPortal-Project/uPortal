@@ -1,10 +1,3 @@
-/*
- * Created on Nov 4, 2004
- *
- * Copyright(c) Yale University, Nov 4, 2004.  All rights reserved.
- * (See licensing and redistribution disclosures at end of this file.)
- * 
- */
 /* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
