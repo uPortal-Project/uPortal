@@ -109,7 +109,7 @@ public class RdbmServices extends GenericPortalBean {
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
-          Logger.log(Logger.WARN, "Driver " + sJdbcDriver + "produced error " + SQLe.getMessage() + " tring to get connection again.");
+          Logger.log(Logger.WARN, "Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
           Logger.log(Logger.INFO, SQLe);
           prevErrorMsg = errMsg;
         }
@@ -157,7 +157,7 @@ public class RdbmServices extends GenericPortalBean {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public static IUserLayoutStore getUserLayoutStoreImpl () {
     try {
@@ -170,7 +170,7 @@ public class RdbmServices extends GenericPortalBean {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public static IUserPreferencesStore getUserPreferencesStoreImpl () {
     try {
@@ -183,7 +183,7 @@ public class RdbmServices extends GenericPortalBean {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public static ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionImpl () {
     try {
@@ -196,7 +196,7 @@ public class RdbmServices extends GenericPortalBean {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public static IChannelRegistryStore getChannelRegistryStoreImpl () {
     try {
