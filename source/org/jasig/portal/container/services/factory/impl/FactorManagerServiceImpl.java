@@ -71,7 +71,7 @@ public class FactorManagerServiceImpl implements PortletContainerService, Factor
         // These need to be read from some config file
         
         //addFactory("javax.servlet.http.HttpServletRequest", "org.jasig.portal.servlet.ServletRequestFactoryImpl");
-        addFactory("javax.servlet.http.HttpServletResponse", "org.jasig.portal.servlet.ServletResponseFactoryImpl");
+        addFactory("javax.servlet.http.HttpServletResponse", "org.jasig.portal.container.servlet.ServletResponseFactoryImpl");
 
         addFactory("javax.portlet.ActionRequest", "org.apache.pluto.factory.impl.ActionRequestFactoryImpl");
         addFactory("javax.portlet.RenderRequest", "org.apache.pluto.factory.impl.RenderRequestFactoryImpl");
