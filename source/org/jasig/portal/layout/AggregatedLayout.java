@@ -37,7 +37,9 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
+import java.util.Iterator;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
@@ -70,7 +72,7 @@ public class AggregatedLayout implements IAggregatedLayout {
     private int restrictionMask = 0;
 
     // The IDs and names of the fragments which a user is owner of
-    private Hashtable fragments = null;
+    private Map fragments = null;
 
     // The layout manager
     private IAggregatedUserLayoutManager layoutManager = null;
@@ -99,6 +101,11 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   public void setLayoutManager ( IAggregatedUserLayoutManager layoutManager ) {
     this.layoutManager = layoutManager;
+  }
+  
+
+  public void setFragments ( Map fragments ) {
+	this.fragments = fragments;
   }
 
   public void setLayoutData ( Hashtable layout ) throws PortalException {
@@ -193,9 +200,9 @@ public class AggregatedLayout implements IAggregatedLayout {
      try {
       Element alternateLayouts = document.createElement("fragments");
       if ( fragments != null ) {
-       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
+       for ( Iterator fragEnum = fragments.keySet().iterator(); fragEnum.hasNext(); ) {
         Element alternate = document.createElement("fragment");
-        String key = (String) fragEnum.nextElement();
+        String key = (String) fragEnum.next();
         alternate.setAttribute("ID",key);
         alternate.setAttribute("desc",(String) fragments.get(key));
         alternateLayouts.appendChild(alternate);
@@ -211,9 +218,9 @@ public class AggregatedLayout implements IAggregatedLayout {
      try {
        contentHandler.startElement("","fragments","fragments",new AttributesImpl());
       if ( fragments != null ) {
-       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
+       for ( Iterator fragEnum = fragments.keySet().iterator(); fragEnum.hasNext(); ) {
         AttributesImpl attributes = new AttributesImpl();
-        String key = (String) fragEnum.nextElement();
+        String key = (String) fragEnum.next();
         attributes.addAttribute("","ID","ID","CDATA",key);
         attributes.addAttribute("","desc","desc","CDATA",(String) fragments.get(key));
         contentHandler.startElement("","fragment","fragment",attributes);
