@@ -39,6 +39,27 @@ function xml(nodelist){
 		</p>
 	</xsl:template>
 	
+	<!-- Display the channel categories available for publish-->
+	<xsl:template match="channelCats">
+		<p align="center">Pick the channel categories you wish to publish this channel in.		
+		<form action="{$baseActionURL}" method="post">
+			<input type="hidden" name="action" value="cats"/>
+			<table align="center" border="1" cellspacing="0" cellpadding="5">
+				<xsl:for-each select="category">
+					<tr>
+   					 <td align="right"><input type="checkbox" name="cat" value="{@ID}"/></td>
+   					 <td>
+     					<xsl:value-of select="@name"/></td>
+   					 <td><img src="{$imageDir}/blank.gif" border="0" /></td>
+  					</tr>
+				</xsl:for-each>
+			<input type="submit" name="next" value="Next"/>
+			</table>
+		</form>
+		<br/>
+		</p>
+	</xsl:template>
+
 	<xsl:template match="channelDef">
 	<xsl:choose>
 	<xsl:when test="$currentStep='end'">
