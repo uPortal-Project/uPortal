@@ -328,7 +328,7 @@ throws AuthorizationException
     try
         { i = getGroupsForPrincipal(principal); }
     catch ( GroupsException ge )
-        { throw new AuthorizationException("Could not retrieve Groups for " + principal + " " + ge.getMessage()); }
+        { throw new AuthorizationException("Could not retrieve Groups for " + principal,ge) ; }
 
     while ( i.hasNext() )
     {
