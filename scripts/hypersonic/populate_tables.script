@@ -4,7 +4,7 @@ INSERT INTO PORTAL_USERS (ID, USER_NAME, FIRST_NAME, LAST_NAME) values (1, 'demo
 
 UPDATE PORTAL_USERS SET USER_LAYOUT_XML=
 '<?xml version="1.0"?>
-<!DOCTYPE layout SYSTEM "userLayout.dtd">
+<!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
 <layout>
   <folder ID="t01" priority="1" name="Main">
     <folder ID="col01" priority="0" width="40%" name="Column 1">
@@ -29,7 +29,7 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML=
   <folder ID="t02" priority="0" name="uPortal Tools">
     <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
       </channel>
-    <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CLayoutManager" name="Layout Manager">
+    <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CUserPreferences" name="User Preferences">
       </channel>
   </folder>
   <folder ID="t03" priority="0" name="More">
@@ -110,7 +110,7 @@ INSERT INTO STRUCTURE_TRANSFORMATION_STYLESHEET_MEDIA_MAPPING (MEDIA, STRUCTURE_
 
 INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (0, 0, 
 '<?xml version="1.0"?>
-<!DOCTYPE bookmarks SYSTEM "http://localhost:8080/portal-2/dtd/bookmarks.dtd">
+<!DOCTYPE bookmarks SYSTEM "http://localhost:8080/portal/dtd/bookmarks.dtd">
 <bookmarks>
   <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
   <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
