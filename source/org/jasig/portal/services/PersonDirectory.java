@@ -36,7 +36,9 @@
 package org.jasig.portal.services;
 
 import org.jasig.portal.RdbmServices;
-import  org.jasig.portal.security.*;
+import org.jasig.portal.security.*;
+import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.ResourceLoader;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -147,7 +149,7 @@ public class PersonDirectory {
 
       // Build a DOM tree out of uPortal/properties/PersonDirs.xml
       DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      java.io.InputStream personDirs = this.getClass().getResourceAsStream("/properties/PersonDirs.xml");
+      java.io.InputStream personDirs = ResourceLoader.getResourceAsStream(this.getClass(), "/properties/PersonDirs.xml");
       Document doc = docBuilder.parse(personDirs); // DOM Parse the XML
 
       // Each directory source is a <PersonDirInfo> (and its contents)
@@ -162,7 +164,7 @@ public class PersonDirectory {
             continue; // whitespace (typically \n) between tags
           Element pele = (Element) param;
           String tagname = pele.getTagName();
-          String value = getTextUnderElement(pele);
+          String value = XML.getElementText(pele);
 
           // each tagname corresponds to an object data field
           if (tagname.equals("url")) {
@@ -190,13 +192,13 @@ public class PersonDirectory {
                 NodeList namenodes = anode.getElementsByTagName("name");
                 String aname = "$$$";
                 if (namenodes.getLength()!=0)
-                  aname= getTextUnderElement(namenodes.item(0));
+                  aname = XML.getElementText((Element)(namenodes.item(0)));
                 pdi.attributenames[j]=aname;
                 NodeList aliasnodes = anode.getElementsByTagName("alias");
                 if (aliasnodes.getLength()==0) {
                   pdi.attributealiases[j]=aname;
                 } else {
-                  pdi.attributealiases[j]=getTextUnderElement(aliasnodes.item(0));
+                  pdi.attributealiases[j]=XML.getElementText((Element)(aliasnodes.item(0)));
                 }
               }
             } else {
@@ -238,21 +240,6 @@ public class PersonDirectory {
       return false;
     }
     return true;
-  }
-
-
-  private String getTextUnderElement(Node nele) {
-    if (!(nele instanceof Element))
-      return null;
-    Element pele = (Element) nele;
-    StringBuffer vb = new StringBuffer();
-    NodeList vnodes = pele.getChildNodes();
-    for (int j =0; j<vnodes.getLength();j++) {
-      Node vnode = vnodes.item(j);
-      if (vnode instanceof Text)
-        vb.append(((Text)vnode).getData());
-    }
-    return vb.toString();
   }
 
   /**
@@ -386,7 +373,10 @@ public class PersonDirectory {
       // Foreach attribute, put its value and alias in the hashtable
       for (int i=0;i<pdi.attributenames.length;i++) {
         try {
-          String value = rs.getString(pdi.attributenames[i]);
+          String value = null;
+          String attName = pdi.attributenames[i];
+          if (attName != null)
+            value = rs.getString(attName);
           if (value!=null) {
             attribs.put(pdi.attributealiases[i],value);
           }
