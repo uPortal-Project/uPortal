@@ -105,6 +105,7 @@ public class AuthorizationBean extends GenericPortalBean implements IAuthorizati
     return(m_authorization.isUserInRole(person, role));
   }
 
+  // This should be available to channels
   public Vector getAllRoles()
   {
     return(m_authorization.getAllRoles());
@@ -138,6 +139,7 @@ public class AuthorizationBean extends GenericPortalBean implements IAuthorizati
   }
 
   // For the administration mechanism to use
+  // This should be available to channels
   public Vector getUserRoles(IPerson person)
   {
     return(m_authorization.getUserRoles(person));
