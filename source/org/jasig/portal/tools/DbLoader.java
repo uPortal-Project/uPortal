@@ -1117,19 +1117,35 @@ public class DbLoader
         // The assumption is that if a SQLException is thrown, it doesn't support them.
         // I don't know of any other way to check if the database/driver accepts
         // prepared statements.  If you do, please change this method!
-        pstmt = con.prepareStatement("SELECT * FROM UP_USERS WHERE USER_NAME=?");
+        Statement stmt;
+        stmt = con.createStatement();
+        try {
+          stmt.executeUpdate("CREATE TABLE PREP_TEST (A VARCHAR(1))");
+        } catch (Exception e){/* Assume it already exists */
+        } finally {
+          try {stmt.close();} catch (Exception e) { }
+        }
+
+        pstmt = con.prepareStatement("SELECT A FROM PREP_TEST WHERE A=?");
         pstmt.clearParameters ();
-        pstmt.setString(1, "DUMMY_VALUE");
-        pstmt.execute();
-      }
+        pstmt.setString(1, "D");
+        pstmt.executeQuery();
+     }
       catch (SQLException sqle)
       {
         supportsPreparedStatements = false;
         sqle.printStackTrace();
-        exit();
-      }
+     }
       finally
       {
+        try {
+          stmt = con.createStatement();
+          stmt.executeUpdate("DROP TABLE PREP_TEST");
+        } catch (Exception e){/* Assume it already exists */
+        } finally {
+          try {stmt.close();} catch (Exception e) { }
+        }
+
         try { pstmt.close(); } catch (Exception e) { }
       }
       return supportsPreparedStatements;
