@@ -648,8 +648,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             }
         }
         catch (Exception e) {
-            String portletId = staticData.getParameter(portletDefinitionIdParamName);
-            log.warn("Error parsing portlet expiration time (" + exprCacheTimeStr + ") for portlet (" + portletId + ").", e);
+            if (log.isWarnEnabled()) {
+                String portletId = staticData.getParameter(portletDefinitionIdParamName);
+                log.warn("Error parsing portlet expiration time (" + exprCacheTimeStr + ") for portlet (" + portletId + ").", e);
+            }
         }
 
         // Determine if the channel focus has changed
