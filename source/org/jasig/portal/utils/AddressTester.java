@@ -42,14 +42,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * This class checks a URL or a webserver hosting a URl. It only allows a specific time allocated for
+ * This class checks a URL or a webserver hosting a URL. It only allows a specific time allocated for
  * connecting to the URL rather than waiting for a timeout.
  * This class user the java.util.timer to schedule a task which is cancelling the attempt of calling
  * httpURLConnection.
  *
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
- * @Date  Nov 26, 2003
- * @version 1.0
+ * @version $Revision$
  * @since uPortal 2.2
  */
 
@@ -75,8 +74,8 @@ public class AddressTester {
 
 	/**
 	 * Constructor
-	 * @param milliSeconds - the number of milliseconds to let the connectioon attempt run 
-	 * @parma urlString - the String representing a URL
+	 * @param milliSeconds the number of milliseconds to let the connectioon attempt run 
+	 * @param urlString the String representing a URL
 	 */
     public AddressTester(int milliSeconds, String urlString) throws Exception{
 		urlToTry = urlString;
@@ -86,7 +85,7 @@ public class AddressTester {
     
         /**
          * Constructor
-         * @parma urlString - the String representing a URL
+         * @param urlString the String representing a URL
          */
     public AddressTester(String urlString) throws Exception{
                 urlToTry = urlString;
@@ -124,7 +123,7 @@ public class AddressTester {
     
     /**
      * This method returns the response code that was set in checkURL ()
-     * @return int - returns the response code
+     * @return the response code
      */
     public int getResponseCode()
     {
@@ -141,7 +140,7 @@ public class AddressTester {
     
     /**
      * 
-     * @return boolean -false if the adress is not available. True otherwise
+     * @return <code>false</code> if the address is not available. <code>True</code> otherwise
      */
     public boolean URLAvailable()
     {
@@ -178,9 +177,9 @@ public class AddressTester {
 	    
     /**
      * This is the main method and is left as a usage sample
-     * @param args[]
+     * @param args
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         System.out.println("About to schedule task.");       
         try{
         

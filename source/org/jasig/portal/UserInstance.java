@@ -41,7 +41,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
 

@@ -60,7 +60,6 @@ public class LocaleAwareXSLT extends XSLT {
     /**
      * Constructor that configures the calling class.
      * @param instance class name used to search for resources
-     * @param locales a list of locales
      */
     public LocaleAwareXSLT(Object instance) {
         super(instance);

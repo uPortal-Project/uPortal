@@ -50,7 +50,7 @@ import org.jasig.portal.services.SequenceGenerator;
 /**
  * This class provides access to the entity types used by <code>IBasicEntities</code>
  * and the classes in <code>org.jasig.portal.groups</code> and
- * <code>org.jasig.portal.concurrency.</code>.
+ * <code>org.jasig.portal.concurrency</code>.
  * <p>
  * Each type is associated with an <code>Integer</code> used to represent the
  * type in the portal data store.  This class translates between the

@@ -47,7 +47,7 @@ import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.utils.AddressTester;
 
 /**
- * This Class allows appendingl PROXY_REWRITE_PREFIX String  infront of all the references to images, javascript files, etc.. 
+ * This Class allows appending PROXY_REWRITE_PREFIX String in front of all the references to images, javascript files, etc.. 
  * that are on a remote location. This allows the browser while portal is running in https assume that these resources 
  * are secure resources(are referenced by https rather than http). This is because the resource URI insteadof 
  * http://www.abc.com/image.gif will be rewriten as as https://[portal address]/PROXY_REWRITE_PREFIX/www.abc.com/image.gif
@@ -60,8 +60,7 @@ import org.jasig.portal.utils.AddressTester;
  *
  *
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
- * @Date  Nov 14, 2003
- * @version 1.0
+ * @version $Revision$
  * @since uPortal 2.2
  */
 
