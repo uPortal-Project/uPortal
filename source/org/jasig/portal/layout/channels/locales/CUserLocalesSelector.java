@@ -64,7 +64,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
     private LocaleManager lm = null;
     private Locale userLocale = null;
     private static final String sslUri = "userLocales.ssl";
-        
+
     public void setPortalControlStructures(PortalControlStructures pcs)
         throws PortalException {
         upm = pcs.getUserPreferencesManager();
@@ -74,7 +74,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
             userLocale = userLocales[0];
         }
     }
-    
+
     public void setRuntimeData(ChannelRuntimeData runtimeData) throws PortalException {
         this.runtimeData = runtimeData;
         String localeString = runtimeData.getParameter("locale");
@@ -82,6 +82,9 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
             userLocale = LocaleManager.parseLocale(localeString);
             try {
                 lm.updateUserLocales(new Locale[] { userLocale });
+                System.out.println ( "Before loading...");
+                upm.getUserLayoutManager().loadUserLayout();
+                System.out.println ( "After loading...");
             } catch (Exception e) {
                 throw new PortalException(e);
             }
@@ -98,39 +101,39 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
           Element locE = doc.createElement("locale");
           locE.setAttribute("displayName", locales[i].getDisplayName());
           locE.setAttribute("code", locales[i].toString());
-          
+
           // Mark which locale is the user's preference
           if (userLocale != null && userLocale.equals(locales[i])) {
               locE.setAttribute("selected", "true");
           }
-      
+
           // <language iso2="..." iso3="..." displayName="..."/>
           Element languageE = doc.createElement("language");
           languageE.setAttribute("iso2", locales[i].getLanguage());
           languageE.setAttribute("iso3", locales[i].getISO3Language());
           languageE.setAttribute("displayName", locales[i].getDisplayLanguage());
           locE.appendChild(languageE);
-      
+
           // <country iso2="..." iso3="..." displayName="..."/>
           Element countryE = doc.createElement("country");
           countryE.setAttribute("iso2", locales[i].getCountry());
           countryE.setAttribute("iso3", locales[i].getISO3Country());
           countryE.setAttribute("displayName", locales[i].getDisplayCountry());
           locE.appendChild(countryE);
-      
+
           // <variant code="..." displayName="..."/>
           Element variantE = doc.createElement("variant");
           variantE.setAttribute("code", locales[i].getVariant());
           variantE.setAttribute("displayName", locales[i].getDisplayVariant());
           locE.appendChild(variantE);
-      
+
           localesE.appendChild(locE);
         }
 
         doc.appendChild(localesE);
-        
+
         System.out.println(XML.serializeNode(doc));
-        
+
         XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
