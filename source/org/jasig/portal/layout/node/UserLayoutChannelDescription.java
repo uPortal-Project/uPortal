@@ -356,6 +356,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return a <code>String</code> value that was set.
      */
     public String setParameterValue(String parameterName, String parameterValue) {
+        // don't try to store a null value
+    	if (parameterValue==null)  return null;
         return (String) parameters.put(parameterName,parameterValue);
     }
 
