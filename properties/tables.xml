@@ -370,6 +370,43 @@
     <primary-key>MIME_TYPE</primary-key>
   </table>
 
+  <table>
+    <name>UP_GROUP</name>
+    <columns>
+      <column> <name>GROUP_ID</name>        <type>VARCHAR</type>     <param>255</param>  </column>
+      <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>                        </column>
+      <column> <name>GROUP_NAME</name>      <type>VARCHAR</type>     <param>255</param> </column>
+      <column> <name>DESCRIPTION</name>     <type>VARCHAR</type>     <param>255</param> </column>
+    </columns>
+    <primary-key>GROUP_ID</primary-key>
+    <not-null>CREATOR_ID</not-null>
+    <not-null>ENTITY_TYPE_ID</not-null>
+    <not-null>GROUP_NAME</not-null>
+  </table>
+
+  <table>
+    <name>UP_GROUP_ENTITY_TYPE</name>
+    <columns>
+      <column> <name>ENTITY_TYPE_ID</name>    <type>INTEGER</type>                      </column>
+      <column> <name>ENTITY_TYPE_NAME</name>  <type>VARCHAR</type>  <param>255</param>  </column>
+    </columns>
+    <primary-key>ENTITY_TYPE_ID</primary-key>
+    <not-null>ENTITY_TYPE_NAME</not-null>
+  </table>
+
+  <table>
+    <name>UP_GROUP_MEMBERSHIP</name>
+    <columns>
+      <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>MEMBER_IS_GROUP</name>  <type>VARCHAR</type>     <param>1</param>   </column>
+    </columns>
+    <primary-key>GROUP_ID</primary-key>
+    <primary-key>MEMBER_KEY</primary-key>
+    <primary-key>MEMBER_IS_GROUP</primary-key>
+  </table>
+
 </tables>
 
 

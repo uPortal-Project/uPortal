@@ -2405,6 +2405,243 @@
     </rows>
   </table>
 
+  <!-- Groups tables -->
+<table>
+    <name>UP_GROUP_ENTITY_TYPE</name>
+    <rows>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>1</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>java.lang.Object</value></column>
+      </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.security.IPerson</value></column>
+      </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>3</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntityGroup</value></column>
+      </row>
+    </rows>
+  </table>
+  <!-- Groups tables SAMPLE DATA --> 
+<table>
+    <name>UP_GROUP</name>
+    <rows>
+      <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled University students</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Undergraduate Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled undergraduate students</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Full Time</value></column>
+        <column><name>DESCRIPTION</name><value>All full time undergraduate Students</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Part Time</value></column>
+        <column><name>DESCRIPTION</name><value>All part time undergraduate students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>5</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Graduate Students</value></column>
+        <column><name>DESCRIPTION</name><value>All enrolled graduate students</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>6</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Staff</value></column>
+        <column><name>DESCRIPTION</name><value>All University staff members</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>7</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Officers</value></column>
+        <column><name>DESCRIPTION</name><value>All Officers of the Administration</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>8</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Support Staff</value></column>
+        <column><name>DESCRIPTION</name><value>All Support Staff employees</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>9</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Faculty</value></column>
+        <column><name>DESCRIPTION</name><value>All University faculty</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Tenured Professors</value></column>
+        <column><name>DESCRIPTION</name><value>All tenured University faculty</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>11</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Associate Professors</value></column>
+        <column><name>DESCRIPTION</name><value>All associate University faculty</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>CREATOR_ID</name><value>30</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Everyone</value></column>
+        <column><name>DESCRIPTION</name><value>All persons affiliated with the University</value></column>
+      </row>
+    </rows>
+  </table>
+
+<table>
+    <name>UP_GROUP_MEMBERSHIP</name>
+    <rows>
+      <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>2</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>1</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>2</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>6</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>6</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>9</value></column>
+        <column><name>MEMBER_KEY</name><value>10</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>9</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>joe</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_KEY</name><value>bill</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_KEY</name><value>bob</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>MEMBER_KEY</name><value>louise</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>11</value></column>
+        <column><name>MEMBER_KEY</name><value>frank</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>7</value></column>
+        <column><name>MEMBER_KEY</name><value>dan</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>7</value></column>
+        <column><name>MEMBER_KEY</name><value>don</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>8</value></column>
+        <column><name>MEMBER_KEY</name><value>emily</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>8</value></column>
+        <column><name>MEMBER_KEY</name><value>eric</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>12</value></column>
+        <column><name>MEMBER_KEY</name><value>guest</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>11</value></column>
+        <column><name>MEMBER_KEY</name><value>fred</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>MEMBER_KEY</name><value>lars</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>3</value></column>
+        <column><name>MEMBER_KEY</name><value>jim</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+    </rows>
+  </table>
+
+  <!-- END Groups tables SAMPLE DATA --> 
+
   <table>
     <name>UPC_BOOKMARKS</name>
     <rows>
