@@ -127,6 +127,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state.sslUri != null)
       state.sslUri = this.getClass().getResource(state.sslUri).toString();
+      //state.sslUri = state.sslUri;
 
     state.xslTitle = sd.getParameter("xslTitle");
     state.xslUri = sd.getParameter("xslUri");
@@ -283,7 +284,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     // get it by looking in the stylesheet list file
     String xslUriForKey = null;
     try {
-      xslUriForKey = state.xslUri != null ? state.xslUri : XSLT.getStylesheetURI(state.sslUri, state.runtimeData.getBrowserInfo());
+      String sslUri = ResourceLoader.getResourceAsURLString(CGenericXSLT.class, state.sslUri);
+      xslUriForKey = state.xslUri != null ? state.xslUri : XSLT.getStylesheetURI(sslUri, state.runtimeData.getBrowserInfo());
     } catch (PortalException pe) {
       xslUriForKey = "Not attainable!";
     }
