@@ -240,6 +240,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       if (this.UID == null)
         this.UID = UID;
     }
+    
+	public void setFullName(String FullName) {
+	  if(this.FullName == null)
+		 this.FullName = FullName;
+	}
+
+    
   }
 
   protected class ChainingOpaqueCredentials implements IOpaqueCredentials {
