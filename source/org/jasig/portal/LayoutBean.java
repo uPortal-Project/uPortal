@@ -114,7 +114,7 @@ public class LayoutBean
    * @param the servlet response object
    * @param the JspWriter object
    */
-  public void writeContent (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  public void writeContent (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out)
   {
       // This function does ALL the content gathering/presentation work.
       // The following filter sequence is processed:
