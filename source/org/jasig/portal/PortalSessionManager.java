@@ -115,7 +115,7 @@ public class PortalSessionManager extends HttpServlet {
             URLConnection conn = url.openConnection();
             conn.setDefaultUseCaches(false);
          } catch (Exception e) {
-            log.warn("PortalSessionManager.init(): Caught Exception trying to disable URL Caching");
+            log.warn("PortalSessionManager.init(): Caught Exception trying to disable URL Caching", e);
          }
       }
 
