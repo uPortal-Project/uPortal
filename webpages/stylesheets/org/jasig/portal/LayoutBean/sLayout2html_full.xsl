@@ -25,7 +25,13 @@ function openBrWindow(theURL,winName,features) {
 <td height="100" valign="top">
 <img alt="interface image" src="{$mediaPath}/theme_{$theme}/uportal_logo.gif" border="0" width="133" height="75" />
 </td>
-<td colspan="2" align="center" width="100%">Header Channel Here -- Theme is <xsl:value-of select="$theme"/></td>
+<td class="uportal-channel-title" colspan="2" align="center" width="100%">Header Channel Here -- Current theme: <xsl:value-of select="$theme"/>
+ -- Alternates: 
+<a href="{$baseActionURL}?uP_tparam=theme&amp;theme=imm">imm, </a>
+<a href="{$baseActionURL}?uP_tparam=theme&amp;theme=java">java, </a>
+<a href="{$baseActionURL}?uP_tparam=theme&amp;theme=vsac">vsac, </a>
+<a href="{$baseActionURL}?uP_tparam=theme&amp;theme=uosm">uosm</a>
+</td>
 </tr>
 </table>
 </td>
