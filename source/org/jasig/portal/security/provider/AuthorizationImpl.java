@@ -23,8 +23,8 @@ public class AuthorizationImpl implements IAuthorizationService {
   // Clear the caches every 5 minutes
 	protected SmartCache permissionsCache = new SmartCache(300);
 	protected Object permissionsCacheLock = new Object();
-	protected String CHANNEL_PUBLISHER_ACTIVITY = null;
-	protected String CHANNEL_SUBSCRIBER_ACTIVITY = null;	
+	protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
+	protected String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";	
 	private static AuthorizationImpl singleton;
   /**
    *
@@ -417,23 +417,7 @@ throws AuthorizationException
  */
 private void initialize() throws AuthorizationException
 {
-	try 
-	{
-		// Find our properties file and open it
-		String filename = GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "security.properties";
-		File propFile = new File(filename);
-		Properties securityProps = new Properties();
-		securityProps.load(new FileInputStream(propFile));
-		CHANNEL_PUBLISHER_ACTIVITY = securityProps.getProperty("channelPublisherRole");
-		CHANNEL_SUBSCRIBER_ACTIVITY = securityProps.getProperty("channelSubscriberRole");		
-		setPermissionStore(new PermissionImplRDBM()); 
-	} 
-	catch (java.lang.Exception e) 
-	{
-		AuthorizationException ae = new AuthorizationException(e.getMessage());
-		LogService.log(LogService.ERROR, ae);
-		throw ae;
-	}
+	setPermissionStore(new PermissionImplRDBM()); 
 }
 /**
  * Factory method for an <code>IPermission</code>.
