@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet title="view" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/view_regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet alternate="true" title="view" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/view_wml.xsl"  type="text/xsl" media="WAP"?>
+
+<?xml-stylesheet title="edit" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/edit_regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet alternate="true" title="edit" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/edit_wml.xsl"  type="text/xsl" media="WAP"?>
+<?xml-stylesheet alternate="true" title="edit" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/edit_pp.xsl"  type="text/xsl" media="avantgo"?>
+
+<?xml-stylesheet title="editbookmark" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/editBookmark_regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet title="editbookmark" href="webpages/stylesheets/org/jasig/portal/channels/CBookmarks/editBookmark_wml.xsl"  type="text/xsl" media="WAP"?>
+
+<document>
+</document>
