@@ -37,6 +37,7 @@ package org.jasig.portal.wsrp.bind;
 
 import java.io.StringWriter;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -60,6 +61,7 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannel;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IChannelRenderer;
 import org.jasig.portal.IChannelRendererFactory;
 import org.jasig.portal.MediaManager;
@@ -86,6 +88,7 @@ import org.jasig.portal.wsrp.types.InvalidUserCategoryFault;
 import org.jasig.portal.wsrp.types.MarkupContext;
 import org.jasig.portal.wsrp.types.MarkupParams;
 import org.jasig.portal.wsrp.types.MissingParametersFault;
+import org.jasig.portal.wsrp.types.NamedString;
 import org.jasig.portal.wsrp.types.OperationFailedFault;
 import org.jasig.portal.wsrp.types.PortletContext;
 import org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault;
@@ -119,89 +122,46 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
     protected static final Random randomNumberGenerator = new Random();
     // Change portal.properties and then change the following line!
     private static final IChannelRendererFactory channelRendererFactory = ChannelRendererFactory.newInstance(RemoteChannel.class.getName());
+    private static final IChannelRegistryStore channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+    // Maps session ID --> IChannel instance
+    private static final Map channelCache = Collections.synchronizedMap(new HashMap());
 
-    public void getMarkup(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, MarkupContextHolder markupContext, SessionContextHolder sessionContext, ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
+    public void getMarkup(RegistrationContext registrationContext, 
+                          PortletContext portletContext, 
+                          RuntimeContext runtimeContext, 
+                          UserContext userContext, 
+                          MarkupParams markupParams, 
+                          MarkupContextHolder markupContext, 
+                          SessionContextHolder sessionContext, 
+                          ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
         // Initialize return values
         markupContext.value = new MarkupContext();
         sessionContext.value = new SessionContext();
         extensions.value = new Extension[0];
 
-        String regHandle = registrationContext.getRegistrationHandle();
-
+        // --- Ignore registration context (no registration required)
+        
+        // --- Extract information from portlet context
         String portletHandle = portletContext.getPortletHandle();
 
+        // --- Extract information from runtime context
         String userAuth = runtimeContext.getUserAuthentication();
         String sessionId = runtimeContext.getSessionID();
+        if (sessionId == null) {
+            sessionId = "wsrpsid:" + Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();            
+        }
+        sessionContext.value.setSessionID(sessionId);
 
+        // --- Extract information from user context
         String user = userContext.getProfile().getName().getGiven();
-    
-        // Locate the channel by portletHandle (uPortal calls this an "fname")
-        ChannelDefinition channelDef = null;
-        try {
-            channelDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(portletHandle);
-        } catch (Exception e) {
-            // Do nothing
-        }
-        if (channelDef == null) {
-            LogService.log(LogService.DEBUG, "Unable to find a channel with functional name '" + portletHandle + "'");      
-            throw new InvalidHandleFault();
-        }
-    
-        try {
-            // Make sure user is authorized to access this channel
-            IPerson person = getPerson();
-            EntityIdentifier ei = person.getEntityIdentifier();
-            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-            int channelPublishId = channelDef.getId();
-            boolean authorized = ap.canSubscribe(channelPublishId);
-            if (!authorized) {
-                LogService.log(LogService.DEBUG, "User '" + person.getAttribute(IPerson.USERNAME) + "' is not authorized to access channel with functional name '" + portletHandle + "'");
-                throw new AccessDeniedFault();
-            }
-            
-            // Instantiate channel
-            // Should this block be synchronized?
-            String javaClass = channelDef.getJavaClass();
-            String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();    
-            String uid = sessionId + "/" + instanceId;
-            IChannel channel = ChannelFactory.instantiateChannel(javaClass, uid);
-            
-            // Construct channel static data
-            ChannelStaticData staticData = new ChannelStaticData();
-            
-            // Set the publish ID, person, and timeout
-            staticData.setChannelPublishId(String.valueOf(channelPublishId));
-            staticData.setPerson(person);
-            staticData.setTimeout(channelDef.getTimeout());
-            
-            // Set channel context
-            Hashtable environment = new Hashtable(1);
-            environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-            Context portalContext = new InitialContext(environment);
-            Context channelContext = new tyrex.naming.MemoryContext(new Hashtable());
-            Context servicesContext = (Context)portalContext.lookup("services");
-            channelContext.bind("services", servicesContext);
-            staticData.setJNDIContext(channelContext);
-            
-            // Set the channel parameters
-            ChannelParameter[] channelParams = channelDef.getParameters();
-            for (int i = 0; i < channelParams.length; i++) {
-              staticData.setParameter(channelParams[i].getName(), channelParams[i].getValue());
-            }
-            
-            // Done stuffing the ChannelStaticData, now pass it to the channel
-            channel.setStaticData(staticData);
-            
-            // Construct channel runtime data
-            ChannelRuntimeData runtimeData = new ChannelRuntimeData();
-            runtimeData.setBaseActionURL(runtimeContext.getTemplates().getRenderTemplate());
-            String userAgent = markupParams.getClientData().getUserAgent();
-            Map headers = new HashMap(1);
-            headers.put("user-agent", userAgent);
-            runtimeData.setBrowserInfo(new BrowserInfo(new Cookie[] {}, headers));
-            runtimeData.setHttpRequestMethod("GET");
-            runtimeData.setLocales(null); // get this from markup params
-            // there is more to set!!!!
+
+        // --- Ignore markup params
+        
+        try {   
+            ChannelDefinition channelDef = getChannelDefinition(portletHandle);
+            IChannel channel = getChannel(sessionId, channelDef);
+                     
+            ChannelRuntimeData runtimeData = getChannelRuntimeData(runtimeContext, markupParams);
             
             // Start rendering
             IChannelRenderer cr = channelRendererFactory.newInstance(channel, runtimeData);
@@ -234,12 +194,18 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
             
         } catch (Throwable t) {
             t.printStackTrace();
-        }
-        
-        sessionContext.value.setSessionID("put a session ID here");
+        }        
     }
 
-    public void performBlockingInteraction(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, InteractionParams interactionParams, UpdateResponseHolder updateResponse, StringHolder redirectURL, ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, PortletStateChangeRequiredFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
+    public void performBlockingInteraction(RegistrationContext registrationContext, 
+                                           PortletContext portletContext, 
+                                           RuntimeContext runtimeContext, 
+                                           UserContext userContext, 
+                                           MarkupParams markupParams, 
+                                           InteractionParams interactionParams, 
+                                           UpdateResponseHolder updateResponse, 
+                                           StringHolder redirectURL, 
+                                           ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, PortletStateChangeRequiredFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
         // Initialize return values
         updateResponse.value = new UpdateResponse();
         redirectURL.value = new String();
@@ -247,6 +213,18 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
         
         // TODO: Get the runtimeData out of InteractionParams
         // TODO: Figure out some way of storing the channel instance in the session
+        try {
+            String portletHandle = portletContext.getPortletHandle();
+            String sessionId = runtimeContext.getSessionID();
+            ChannelDefinition channelDef = getChannelDefinition(portletHandle);
+            IChannel channel = getChannel(sessionId, channelDef);
+            
+            ChannelRuntimeData runtimeData = getChannelRuntimeData(runtimeContext, markupParams);
+            channel.setRuntimeData(runtimeData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         
     }
 
@@ -303,6 +281,120 @@ public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType 
         }
         return baseUrl;
     }  
+
+    /**
+     * Retrieves a channel definition.  The underlying implementation
+     * if IChannelRegistryStore does the caching.
+     * @return channelDef a channel definition
+     * @throws java.lang.Exception
+     */
+    protected ChannelDefinition getChannelDefinition(String portletHandle) throws Exception {
+        // Locate the channel by portletHandle (uPortal calls this an "fname")
+        ChannelDefinition channelDef = null;
+        try {
+            channelDef = channelRegistryStore.getChannelDefinition(portletHandle);
+        } catch (Exception e) {
+            // Do nothing
+        }
+        if (channelDef == null) {
+            LogService.log(LogService.DEBUG, "Unable to find a channel with functional name '" + portletHandle + "'");      
+            throw new InvalidHandleFault();
+        }
+        return channelDef;        
+    }
     
+    /**
+     * Retrieves a channel instance for this session.
+     * @return channel a channel instance for this session
+     * @throws java.lang.Exception
+     */
+    protected IChannel getChannel(String sessionId, ChannelDefinition channelDef) throws Exception {
+        IChannel channel = (IChannel)channelCache.get(sessionId);
+        if (channel == null) {       
+            System.out.println("Making a new WSRP channel instance...." + sessionId);        
+            // Make sure user is authorized to access this channel
+            IPerson person = getPerson();
+            EntityIdentifier ei = person.getEntityIdentifier();
+            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+            int channelPublishId = channelDef.getId();
+            boolean authorized = ap.canSubscribe(channelPublishId);
+            if (!authorized) {
+                LogService.log(LogService.DEBUG, "User '" + person.getAttribute(IPerson.USERNAME) + "' is not authorized to access channel with functional name '" + channelDef.getFName() + "'");
+                throw new AccessDeniedFault();
+            }
+            
+            // Instantiate channel
+            // Should this block be synchronized?
+            String javaClass = channelDef.getJavaClass();
+            String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();    
+            String uid = sessionId + "/" + instanceId;
+            channel = ChannelFactory.instantiateChannel(javaClass, uid);
+            
+            // Construct channel static data
+            ChannelStaticData staticData = new ChannelStaticData();
+            
+            // Set the publish ID, person, and timeout
+            staticData.setChannelPublishId(String.valueOf(channelPublishId));
+            staticData.setPerson(person);
+            staticData.setTimeout(channelDef.getTimeout());
+            
+            // Set channel context
+            Hashtable environment = new Hashtable(1);
+            environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+            Context portalContext = new InitialContext(environment);
+            Context channelContext = new tyrex.naming.MemoryContext(new Hashtable());
+            Context servicesContext = (Context)portalContext.lookup("services");
+            channelContext.bind("services", servicesContext);
+            staticData.setJNDIContext(channelContext);
+            
+            // Set the channel parameters
+            ChannelParameter[] channelParams = channelDef.getParameters();
+            for (int i = 0; i < channelParams.length; i++) {
+              staticData.setParameter(channelParams[i].getName(), channelParams[i].getValue());
+            }
+            
+            // Done stuffing the ChannelStaticData, now pass it to the channel
+            channel.setStaticData(staticData);
+            
+            // Put the channel in the cache
+            channelCache.put(sessionId, channel);
+        }
+        
+        return channel;
+    }
+    
+    /**
+     * Retrieves channel runtime data.
+     * @return runtimeData the channel runtime data
+     */
+    protected ChannelRuntimeData getChannelRuntimeData(RuntimeContext runtimeContext, MarkupParams markupParams) {
+        return getChannelRuntimeData(runtimeContext, markupParams, (InteractionParams)null);
+    }
+    
+    /**
+     * Retrieves channel runtime data.
+     * @return runtimeData the channel runtime data
+     */
+    protected ChannelRuntimeData getChannelRuntimeData(RuntimeContext runtimeContext, MarkupParams markupParams, InteractionParams interactionParams) {
+        // Construct channel runtime data
+        ChannelRuntimeData runtimeData = new ChannelRuntimeData();
+        runtimeData.setBaseActionURL(runtimeContext.getTemplates().getRenderTemplate());
+        String userAgent = markupParams.getClientData().getUserAgent();
+        Map headers = new HashMap(1);
+        headers.put("user-agent", userAgent);
+        runtimeData.setBrowserInfo(new BrowserInfo(new Cookie[] {}, headers));
+        runtimeData.setHttpRequestMethod("GET");
+        runtimeData.setLocales(null); // get this from markup params
+        // there is more to set!!!!
+        if (interactionParams != null) {
+            NamedString[] formParams = interactionParams.getFormParameters();
+            for (int i = 0; i < formParams.length; i++) {
+                NamedString formParam = formParams[i];
+                runtimeData.setParameter(formParam.getName(), formParam.getValue());
+            }
+        }
+        
+        return runtimeData;
+    }    
 
 }

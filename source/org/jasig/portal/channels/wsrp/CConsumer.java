@@ -204,9 +204,6 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      * @throws org.jasig.portal.PortalException
      */
     public void setRuntimeData(ChannelRuntimeData rd, String uid) throws PortalException {
-        // Temporary
-        rd.setLocales(new Locale[] { Locale.getDefault(), Locale.JAPANESE});
-
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         channelState.setRuntimeData(rd);
@@ -215,54 +212,59 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         MarkupService markupService = cd.getMarkupService();
         PortletContext portletContext = cd.getPortletContext();
         
-        try {
-            // Runtime context
-            RuntimeContext runtimeContext = new RuntimeContext();
-            runtimeContext.setUserAuthentication("wsrp:none");
-            runtimeContext.setSessionID(cd.getSessionId());
-            Templates templates = new Templates();
-            templates.setRenderTemplate(rd.getBaseActionURL());
-            runtimeContext.setTemplates(templates);        
-            
-            // User context
-            UserContext userContext = new UserContext();
-            IPerson person = staticData.getPerson();
-            UserProfile userProfile = new UserProfile();
-            PersonName personName = new PersonName();
-            personName.setGiven((String)person.getAttribute("givenName"));
-            personName.setFamily((String)person.getAttribute("sn"));
-            userProfile.setName(personName); // much more could be set here!
-            userContext.setUserContextKey((String)person.getAttribute(IPerson.USERNAME));
-            userContext.setProfile(userProfile);
-            
-            // Markup params
-            MarkupParams markupParams = new MarkupParams();
-            ClientData clientData = new ClientData();
-            clientData.setUserAgent(rd.getBrowserInfo().getUserAgent());
-            markupParams.setClientData(clientData);
-            markupParams.setSecureClientCommunication(false); // is consumer currently communicating securly with end user?
-            markupParams.setLocales(getLocalesAsStringArray(rd.getLocales()));
-            MediaManager mediaManager = new MediaManager();
-            markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(rd.getBrowserInfo())) });
-            markupParams.setMode("wsrp:view"); // can be a different mode
-            markupParams.setWindowState("wsrp:normal");
-            markupParams.setNavigationalState(""); // ???
-            markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
-            markupParams.setValidateTag(""); // ???
-            markupParams.setValidNewModes(new String[] {""}); // ??
-            markupParams.setValidNewWindowStates(new String[] {""}); // ??
-            
-            // Interaction params
-            InteractionParams interactionParams = new InteractionParams();
-            interactionParams.setPortletStateChange(StateChange.readWrite);
-            //interactionParams.setInteractionState(""); ??
-            interactionParams.setFormParameters(getFormParameters(rd));
-            
-            markupService.performBlockingInteraction(registrationContext, portletContext, runtimeContext, userContext, markupParams, interactionParams);
-            
-        } catch (Exception e) {
-            throw new PortalException(e);
-        }    
+        // If request contains request parameters, then the
+        // user has just interacted with the channel so
+        // call performBlockingInteraction on markup service
+        if (rd.getParameters().size() > 0) {
+            try {
+                // Runtime context
+                RuntimeContext runtimeContext = new RuntimeContext();
+                runtimeContext.setUserAuthentication("wsrp:none");
+                runtimeContext.setSessionID(cd.getSessionId());
+                Templates templates = new Templates();
+                templates.setRenderTemplate(rd.getBaseActionURL());
+                runtimeContext.setTemplates(templates);        
+                
+                // User context
+                UserContext userContext = new UserContext();
+                IPerson person = staticData.getPerson();
+                UserProfile userProfile = new UserProfile();
+                PersonName personName = new PersonName();
+                personName.setGiven((String)person.getAttribute("givenName"));
+                personName.setFamily((String)person.getAttribute("sn"));
+                userProfile.setName(personName); // much more could be set here!
+                userContext.setUserContextKey((String)person.getAttribute(IPerson.USERNAME));
+                userContext.setProfile(userProfile);
+                
+                // Markup params
+                MarkupParams markupParams = new MarkupParams();
+                ClientData clientData = new ClientData();
+                clientData.setUserAgent(rd.getBrowserInfo().getUserAgent());
+                markupParams.setClientData(clientData);
+                markupParams.setSecureClientCommunication(false); // is consumer currently communicating securly with end user?
+                markupParams.setLocales(getLocalesAsStringArray(rd.getLocales()));
+                MediaManager mediaManager = new MediaManager();
+                markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(rd.getBrowserInfo())) });
+                markupParams.setMode("wsrp:view"); // can be a different mode
+                markupParams.setWindowState("wsrp:normal");
+                markupParams.setNavigationalState(""); // ???
+                markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
+                markupParams.setValidateTag(""); // ???
+                markupParams.setValidNewModes(new String[] {""}); // ??
+                markupParams.setValidNewWindowStates(new String[] {""}); // ??
+                
+                // Interaction params
+                InteractionParams interactionParams = new InteractionParams();
+                interactionParams.setPortletStateChange(StateChange.readWrite);
+                //interactionParams.setInteractionState(""); ??
+                interactionParams.setFormParameters(getFormParameters(rd));
+                
+                markupService.performBlockingInteraction(registrationContext, portletContext, runtimeContext, userContext, markupParams, interactionParams);
+                
+            } catch (Exception e) {
+                throw new PortalException(e);
+            }    
+        }
     }
 
     /**
@@ -389,6 +391,9 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
     }
     
     private static String[] getLocalesAsStringArray(Locale[] locales) {
+        if (locales == null) {
+            locales = new Locale[] { Locale.getDefault() };
+        }
         String[] localesStringArray = new String[locales.length];
         for (int i = 0; i < locales.length; i++) {
             localesStringArray[i] = locales[i].toString();
