@@ -1,0 +1,308 @@
+/*  Web Services for Remote Portlets Specification v1.0 - July 02 2003  =
+*/
+
+/*####  Section 10.6 CSS Style Definitions  #####*/
+
+/*##  Section 10.6.1 Links (Anchor) - defined by uPortal CSS  ##*/
+
+/*##  Section 10.6.2 Fonts  ##*/
+
+.portlet-font {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+} /*  uPortal equivalent style =3D  "uportal-text "  */
+
+.portlet-font-dim {
+	color : Gray;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+
+
+/*##  Section 10.6.3 Messages  ##*/
+
+.portlet-msg-status {
+	font-size: xx-small;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+	font-style : italic;
+} /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+
+.portlet-msg-info {
+	font-size: xx-small;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+} /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+
+.portlet-msg-error {
+	font-size: xx-small;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+	text-decoration : underline;
+} /*  uPortal equivalent style =3D  " uportal-channel-error"  */
+
+.portlet-msg-alert {
+	font-size: xx-small;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+	font-style : italic;
+} /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+
+.portlet-msg-success {
+	font-size: xx-small;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #993333;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+
+
+
+/*##  Section 10.6.4 Sections ##*/
+
+.portlet-section-header {
+	color : #FFFFCC;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	font-weight : bold;
+	background-color : #7F804D;
+} /*  uPortal equivalent style =3D  " uportal-channel-title"  */
+
+.portlet-section-body {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+} /*  uPortal equivalent style =3D  " uportal-text"  */
+
+.portlet-section-alternate {
+	color : #666666;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+} /*  uPortal equivalent style =3D  " uportal-channel-table-row-odd"  */
+
+.portlet-section-selected {
+	background : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;;
+	font-size : x-small;
+	color : White;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-section-subheader {
+	color : #999999;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : x-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " uportal-channel-subtitle"  */
+
+.portlet-section-footer {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-section-text {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  "uportal-text-small "  */
+
+
+
+/*##  Section 10.6.5 Tables ##*/
+
+.portlet-table-header {
+	color : #993333;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : x-small;
+	font-weight : bold;
+	text-align: left;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  " uportal-channel-table-header with =
+class uportal-background-light"  */
+
+.portlet-table-body {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+	background-color : #FFFFCC;
+} /*  uPortal equivalent style =3D  " uportal-channel-table-row-even =
+with class uportal-background-content"  */
+
+.portlet-table-alternate {
+	color : #666666;
+	font-size: x-small;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	background-color : #CCCC99;
+} /*  uPortal equivalent style =3D  " uportal-channel-table-row-odd with =
+class uportal-background-light"  */
+
+.portlet-table-selected {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+	background-color : #FF9933;
+} /*  uPortal equivalent style =3D  " uportal-channel-table-row-even =
+with class uportal-background-selected"  */
+
+.portlet-table-subheader {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-table-footer {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-table-text {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+
+
+/*##  Section 10.6.5 Tables ##*/
+
+.portlet-form-label {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " uportal-label"  */
+
+.portlet-form-input-field {
+	color : Black;
+	font-size: x-small;
+	font-family: Monaco, Andale Mono, monospace;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  " uportal-input-text"  */
+
+.portlet-form-button {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  "uportal-button "  */
+
+.portlet-icon-label {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  " uportal-button"  */
+
+.portlet-dlg-icon-label {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  " uportal-button"  */
+
+.portlet-form-field-label {
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " uportal-label"  */
+
+.portlet-form-field {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : x-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+
+
+/*##  Section 10.6.7 Menus ##*/
+
+.portlet-menu {
+	background : #CCCC99;
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-item {
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	background : #CCCC99;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-item-selected {
+	background : #666633;
+	color : White;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-item-hover {
+	background : #666633;
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-item-hover-selected {
+	background : #666633;
+	color : White;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-cascade-item {
+	background : #CCCC99;
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-cascade-item-selected {
+	background : #666633;
+	color : White;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-description {
+	background : #CCCC99;
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : xx-small;
+	font-style : italic;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+.portlet-menu-caption {
+	background : #CCCC99;
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+	font-weight : bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
