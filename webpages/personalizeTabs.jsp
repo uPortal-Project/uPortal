@@ -49,7 +49,7 @@ org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayout
 // protect the layout from being collected while we do stuff
 // the layout MUST be released after either Finished or Cancel is pressed
 layoutBean.protectLayoutXml();
-%> 
+%>
 
 
 <%
@@ -70,14 +70,14 @@ if (sAction != null)
   // Go back to default layout xml
   else if (sAction.equals ("revertToDefaultLayoutXml"))
   {
-    IXml layoutXml = layoutBean.getDefaultLayoutXml (request);
+    IXml layoutXml = layoutBean.getDefaultLayoutXml ();
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
     layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("layout.jsp");
   }
   else if (sAction.equals ("changeLayout"))
   {
-    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
+    IXml layoutXml = layoutBean.getLayoutXml (layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
     layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("personalizeLayout.jsp?tab=" + request.getParameter ("tab"));
@@ -86,9 +86,9 @@ if (sAction != null)
   // Save the layout xml
   else if (sAction.equals ("save"))
   {
-    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
+    IXml layoutXml = layoutBean.getLayoutXml (layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
-     layoutBean.releaseLayoutXml();  // let the GC collect it
+    layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("layout.jsp");
   }
 

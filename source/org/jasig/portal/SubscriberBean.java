@@ -117,7 +117,7 @@ public class SubscriberBean extends GenericPortalBean {
         List instanceIDs = new ArrayList();
         HttpSession session = req.getSession (false);
         ILayoutBean layoutBean = (ILayoutBean)session.getAttribute("layoutBean");
-        IXml layoutXml = layoutBean.getLayoutXml(req, layoutBean.getUserName(req));
+        IXml layoutXml = layoutBean.getLayoutXml(layoutBean.getUserName(req));
         ILayout layout = (ILayout)layoutXml.getRoot ();
         ITab[] tabs = layout.getTabs ();
 
@@ -183,7 +183,7 @@ public class SubscriberBean extends GenericPortalBean {
             out.print ("    <td bgcolor=cccccc>");
 
             // Channel heading
-            IXml layoutXml = layoutbean.getLayoutXml (req, layoutbean.getUserName (req));
+            IXml layoutXml = layoutbean.getLayoutXml (layoutbean.getUserName (req));
             ILayout layout = (ILayout) layoutXml.getRoot ();
 
             out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");

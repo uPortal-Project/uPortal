@@ -67,6 +67,8 @@ public final class LayoutBean extends GenericPortalBean
 
     /**
      *  Default constructor
+     *
+     *@since
      */
     public LayoutBean() {
         try {
@@ -101,6 +103,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  sUserName  The new LayoutXml value
      *@param  layoutXml  The new LayoutXml value
+     *@since
      */
     public final void setLayoutXml(String sUserName, IXml layoutXml) {
         // setup the layoutCache if it isn't already
@@ -117,6 +120,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  req   The new ActiveTab value
      *@param  iTab  The new ActiveTab value
+     *@since
      */
     public final void setActiveTab(HttpServletRequest req, int iTab) {
         try {
@@ -137,10 +141,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  req  The new Colors value
      *@param  res  The new Colors value
      *@param  out  The new Colors value
+     *@since
      */
     public final void setColors(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             layout.setAttribute("bgcolor", "#" + req.getParameter("bgColor"));
@@ -163,12 +168,13 @@ public final class LayoutBean extends GenericPortalBean
      *  Sets the default tab
      *
      *@param  req  The new DefaultTab value
+     *@since
      */
     public final void setDefaultTab(HttpServletRequest req) {
         try {
             String sDefaultTab = req.getParameter("tab");
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             layout.setActiveTabAttribute(sDefaultTab);
         }
@@ -182,6 +188,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Changes the width of a column at the desired location
      *
      *@param  req  The new ColumnWidth value
+     *@since
      */
     public final void setColumnWidth(HttpServletRequest req) {
         try {
@@ -200,13 +207,41 @@ public final class LayoutBean extends GenericPortalBean
 
 
     /**
+     *  Sets whether this layouBean is readOnly or not. This is done by the
+     *  findLayoutInstance method when the user is a guest. It is meant to
+     *  prevent guest users from making changes to the layout for all guests
+     *  (since they all share one layout). It does two additional things: It
+     *  turns off constrained caching of channels and dynamic loading of the
+     *  layoutXml document. This is done to avoid performance hits for the guest
+     *  users. This is private for right now, to prevent accidentally making
+     *  this readwrite.
+     *
+     *@param  state  The new ReadOnly value
+     *@since
+     */
+
+    private final void setReadOnly(boolean state) {
+        readOnly = state;
+        // turn off the constrained caching so that they are loaded faster
+        channelCache.setConstrainedCaching(false);
+
+        // create a LayoutXmlCache right away for the guest user
+        layoutCache = new LayoutXmlCache("guest");
+
+        // make sure the layoutXmlCache is not claimable too
+        layoutCache.setClaimable(false);
+    }
+
+
+    /**
      *  Gets the tabs
      *
      *@param  req  Description of Parameter
      *@return      The Tabs value
+     *@since
      */
     public final ITab[] getTabs(HttpServletRequest req) {
-        IXml layoutXml = getLayoutXml(req, getUserName(req));
+        IXml layoutXml = getLayoutXml(getUserName(req));
         ILayout layout = (ILayout) layoutXml.getRoot();
         ITab[] tabs = layout.getTabs();
         return tabs;
@@ -216,12 +251,13 @@ public final class LayoutBean extends GenericPortalBean
     /**
      *  Gets a tab
      *
-     *@param  req   Description of Parameter
      *@param  iTab  Description of Parameter
+     *@param  req   Description of Parameter
      *@return       The Tab value
+     *@since
      */
     public final ITab getTab(HttpServletRequest req, int iTab) {
-        IXml layoutXml = getLayoutXml(req, getUserName(req));
+        IXml layoutXml = getLayoutXml(getUserName(req));
         ILayout layout = (ILayout) layoutXml.getRoot();
         ITab tab = layout.getTabAt(iTab);
         return tab;
@@ -231,13 +267,14 @@ public final class LayoutBean extends GenericPortalBean
     /**
      *  Gets a column
      *
-     *@param  req   Description of Parameter
      *@param  iTab  Description of Parameter
      *@param  iCol  Description of Parameter
+     *@param  req   Description of Parameter
      *@return       The Column value
+     *@since
      */
     public final IColumn getColumn(HttpServletRequest req, int iTab, int iCol) {
-        IXml layoutXml = getLayoutXml(req, getUserName(req));
+        IXml layoutXml = getLayoutXml(getUserName(req));
         ILayout layout = (ILayout) layoutXml.getRoot();
         ITab tab = layout.getTabAt(iTab);
         IColumn column = tab.getColumnAt(iCol);
@@ -253,9 +290,10 @@ public final class LayoutBean extends GenericPortalBean
      *@param  iCol   Description of Parameter
      *@param  iChan  Description of Parameter
      *@return        The Channel value
+     *@since
      */
     public final org.jasig.portal.layout.IChannel getChannel(HttpServletRequest req, int iTab, int iCol, int iChan) {
-        IXml layoutXml = getLayoutXml(req, getUserName(req));
+        IXml layoutXml = getLayoutXml(getUserName(req));
         ILayout layout = (ILayout) layoutXml.getRoot();
         ITab tab = layout.getTabAt(iTab);
         IColumn column = tab.getColumnAt(iCol);
@@ -267,11 +305,11 @@ public final class LayoutBean extends GenericPortalBean
     /**
      *  Retrieves a handle to the layout xml
      *
-     *@param  req        Description of Parameter
      *@param  sUserName  Description of Parameter
      *@return            handle to the layout xml
+     *@since
      */
-    public final IXml getLayoutXml(HttpServletRequest req, String sUserName) {
+    public final IXml getLayoutXml(String sUserName) {
         // setup the layoutCache if it isn't done already
         if (layoutCache == null) {
             layoutCache = new LayoutXmlCache(sUserName);
@@ -288,11 +326,11 @@ public final class LayoutBean extends GenericPortalBean
      *  configuration portions of the system, where the user can ask to have
      *  their layout reset to the default.
      *
-     *@param  req  Description of Parameter
-     *@return      The DefaultLayoutXml value
-     *@author      Zed A. Shaw <zed.shaw@ubc.ca>
+     *@return    The DefaultLayoutXml value
+     *@since
+     *@author    Zed A. Shaw <zed.shaw@ubc.ca>
      */
-    public final IXml getDefaultLayoutXml(HttpServletRequest req) {
+    public final IXml getDefaultLayoutXml() {
         // since we are getting the layout for the user "default"
         // and we don't want to replace the current user's layout,
         // we just make a local copy of the cache
@@ -314,12 +352,13 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  req  Description of Parameter
      *@return      the active tab
+     *@since
      */
     public final int getActiveTab(HttpServletRequest req) {
         int iActiveTab = 0;
 
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             HttpSession session = req.getSession(false);
@@ -359,10 +398,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
      *@return      The BackgroundColor value
+     *@since
      */
     public final String getBackgroundColor(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sBgColor = layout.getAttribute("bgcolor");
 
@@ -385,10 +425,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
      *@return      The ForegroundColor value
+     *@since
      */
     public final String getForegroundColor(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sFgColor = layout.getAttribute("fgcolor");
 
@@ -411,10 +452,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
      *@return      The TabColor value
+     *@since
      */
     public final String getTabColor(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sTabColor = layout.getAttribute("tabColor");
 
@@ -437,10 +479,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
      *@return      The ActiveTabColor value
+     *@since
      */
     public final String getActiveTabColor(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sActiveTabColor = layout.getAttribute("activeTabColor");
 
@@ -463,10 +506,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
      *@return      The ChannelHeadingColor value
+     *@since
      */
     public final String getChannelHeadingColor(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sChannelHeadingColor = layout.getAttribute("channelHeadingColor");
 
@@ -488,6 +532,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  channel  object from layout XML
      *@return          portal channel object
+     *@since
      */
     public final org.jasig.portal.IChannel getChannelInstance(org.jasig.portal.layout.IChannel channel) {
         return channelCache.getChannel(channel);
@@ -500,6 +545,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  sChannelID  Description of Parameter
      *@return             portal channel object
+     *@since
      */
     public final org.jasig.portal.IChannel getChannelInstance(String sChannelID) {
         org.jasig.portal.IChannel channel = null;
@@ -544,6 +590,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  channel  object from layout XML
      *@return          a unique identifier for the channel instance
+     *@since
      */
     public final String getChannelID(org.jasig.portal.layout.IChannel channel) {
         return channelCache.getChannelID(channel);
@@ -555,6 +602,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  channel  object from layout XML
      *@return          the ID that was assigned at publish time
+     *@since
      */
     public final String getGlobalChannelID(org.jasig.portal.layout.IChannel channel) {
         try {
@@ -574,6 +622,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  req  Description of Parameter
      *@return      the username
+     *@since
      */
     public final String getUserName(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
@@ -586,10 +635,24 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  req  Description of Parameter
      *@return      the Person object
+     *@since
      */
     public final IPerson getPerson(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         return (IPerson) session.getAttribute("Person");
+    }
+
+
+    /**
+     *  Returns the current read only state of this layout. Not really used by
+     *  anyone internally.
+     *
+     *@return    The ReadOnly value
+     *@since
+     *@author    $Author$
+     */
+    private final boolean getReadOnly() {
+        return readOnly;
     }
 
 
@@ -601,10 +664,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  req  Description of Parameter
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
+     *@since
      */
     public final void writeBodyStyle(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             String sBgColor = layout.getAttribute("bgcolor");
             String sFgColor = layout.getAttribute("fgcolor");
@@ -655,6 +719,7 @@ public final class LayoutBean extends GenericPortalBean
      *  work, but you'll get a ton of ERROR log messages if you don't follow the
      *  rules.
      *
+     *@since
      *@author    Zed A. Shaw
      */
     public final void reloadLayoutXml() {
@@ -680,6 +745,7 @@ public final class LayoutBean extends GenericPortalBean
      *  return, but you should still call it in case the option is set to "yes"
      *  in the future.
      *
+     *@since
      *@author    Zed A. Shaw
      */
     public final void protectLayoutXml() {
@@ -704,6 +770,7 @@ public final class LayoutBean extends GenericPortalBean
      *  return, but you should still call it in case the option is set to "yes"
      *  in the future.
      *
+     *@since
      *@author    Zed A. Shaw
      */
     public final void releaseLayoutXml() {
@@ -722,6 +789,7 @@ public final class LayoutBean extends GenericPortalBean
      *@param  req  Description of Parameter
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
+     *@since
      */
     public final void writeTabs(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
@@ -729,7 +797,7 @@ public final class LayoutBean extends GenericPortalBean
             out.println("<table border=0 width=\"100%\" cellspacing=0 cellpadding=0>");
             out.println("<tr>");
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             // Get Tabs
@@ -796,6 +864,7 @@ public final class LayoutBean extends GenericPortalBean
      *@param  req  Description of Parameter
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
+     *@since
      */
     public final void writeChannels(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
@@ -829,7 +898,7 @@ public final class LayoutBean extends GenericPortalBean
                             columns[iCol].removeChannel(channels[iChan]);
 
                             // Save the user's layout
-                            setLayoutXml(getUserName(req), getLayoutXml(req, getUserName(req)));
+                            setLayoutXml(getUserName(req), getLayoutXml(getUserName(req)));
                         }
                         else {
                             org.jasig.portal.IChannel ch = getChannelInstance(channels[iChan]);
@@ -853,7 +922,7 @@ public final class LayoutBean extends GenericPortalBean
                                     columns[iCol].removeChannel(channels[iChan]);
 
                                     // Save the user's layout (readOnly is tested for in parent if statement)
-                                    setLayoutXml(getUserName(req), getLayoutXml(req, getUserName(req)));
+                                    setLayoutXml(getUserName(req), getLayoutXml(getUserName(req)));
 
                                     continue;
                                 }
@@ -870,7 +939,7 @@ public final class LayoutBean extends GenericPortalBean
                             String hiddenAttribute = channels[iChan].getAttribute("hidden");
                             if (hiddenAttribute != null && hiddenAttribute.equals("false")) {
                                 // Channel heading
-                                IXml layoutXml = getLayoutXml(req, getUserName(req));
+                                IXml layoutXml = getLayoutXml(getUserName(req));
                                 ILayout layout = (ILayout) layoutXml.getRoot();
 
                                 out.println("<table border=0 cellpadding=1 cellspacing=4 width=\"100%\">");
@@ -974,10 +1043,11 @@ public final class LayoutBean extends GenericPortalBean
      *@param  req  Description of Parameter
      *@param  res  Description of Parameter
      *@param  out  Description of Parameter
+     *@since
      */
     public final void writePersonalizeLayoutPage(HttpServletRequest req, HttpServletResponse res, JspWriter out) {
         try {
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             // Get Tabs
@@ -1153,6 +1223,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Removes a channel instance from the member hashtable htChannelInstances.
      *
      *@param  sChannelID  Description of Parameter
+     *@since
      */
     public final void removeChannelInstance(String sChannelID) {
         try {
@@ -1168,13 +1239,14 @@ public final class LayoutBean extends GenericPortalBean
      *  Adds a tab at the desired location
      *
      *@param  req  The feature to be added to the Tab attribute
+     *@since
      */
     public final void addTab(HttpServletRequest req) {
         try {
             int iTab = Integer.parseInt(req.getParameter("tab"));
             String sNewTabName = "New Tab";
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             // Get a new tab and set its name
@@ -1197,6 +1269,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Renames a tab at the desired location
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void renameTab(HttpServletRequest req) {
         try {
@@ -1208,7 +1281,7 @@ public final class LayoutBean extends GenericPortalBean
                 sTabName = "Blank Tab";
             }
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             ITab tabToRename = layout.getTabAt(iTab);
@@ -1224,12 +1297,13 @@ public final class LayoutBean extends GenericPortalBean
      *  Removes a tab at the desired location
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void removeTab(HttpServletRequest req) {
         try {
             int iTab = Integer.parseInt(req.getParameter("tab"));
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
 
             layout.removeTabAt(iTab);
@@ -1244,12 +1318,13 @@ public final class LayoutBean extends GenericPortalBean
      *  Move the tab at the desired location down
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveTabDown(HttpServletRequest req) {
         try {
             int iTab = Integer.parseInt(req.getParameter("tab"));
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             ITab tabToMoveDown = layout.getTabAt(iTab);
 
@@ -1269,12 +1344,13 @@ public final class LayoutBean extends GenericPortalBean
      *  Move the tab at the desired location up
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveTabUp(HttpServletRequest req) {
         try {
             int iTab = Integer.parseInt(req.getParameter("tab"));
 
-            IXml layoutXml = getLayoutXml(req, getUserName(req));
+            IXml layoutXml = getLayoutXml(getUserName(req));
             ILayout layout = (ILayout) layoutXml.getRoot();
             ITab tabToMoveUp = layout.getTabAt(iTab);
 
@@ -1294,6 +1370,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Adds a column at the desired location
      *
      *@param  req  The feature to be added to the Column attribute
+     *@since
      */
     public final void addColumn(HttpServletRequest req) {
         try {
@@ -1317,6 +1394,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Removes a column at the desired location
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void removeColumn(HttpServletRequest req) {
         try {
@@ -1336,6 +1414,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Move the column at the desired location right
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveColumnRight(HttpServletRequest req) {
         try {
@@ -1357,6 +1436,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Move the column at the desired location left
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveColumnLeft(HttpServletRequest req) {
         try {
@@ -1378,6 +1458,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Minimize a channel
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void minimizeChannel(HttpServletRequest req) {
         try {
@@ -1398,6 +1479,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Maximize a channel
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void maximizeChannel(HttpServletRequest req) {
         try {
@@ -1418,6 +1500,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Removes a channel
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void removeChannel(HttpServletRequest req) {
         try {
@@ -1438,6 +1521,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Adds a channel to layout.xml
      *
      *@param  req  The feature to be added to the Channel attribute
+     *@since
      */
     public final void addChannel(HttpServletRequest req) {
         HttpSession ses = req.getSession(false);
@@ -1468,6 +1552,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Moves a channel to the bottom of the list of the column to the left
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveChannelLeft(HttpServletRequest req) {
         try {
@@ -1492,6 +1577,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Moves a channel to the bottom of the list of the column to the right
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveChannelRight(HttpServletRequest req) {
         try {
@@ -1516,6 +1602,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Moves a channel up a position
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveChannelUp(HttpServletRequest req) {
         try {
@@ -1542,6 +1629,7 @@ public final class LayoutBean extends GenericPortalBean
      *  Moves a channel down a position
      *
      *@param  req  Description of Parameter
+     *@since
      */
     public final void moveChannelDown(HttpServletRequest req) {
         try {
@@ -1570,6 +1658,7 @@ public final class LayoutBean extends GenericPortalBean
      *
      *@param  person  Description of Parameter
      *@return         Description of the Returned Value
+     *@since
      */
     public final boolean canUserPublish(IPerson person) {
         try {
@@ -1591,6 +1680,7 @@ public final class LayoutBean extends GenericPortalBean
      *  listings.
      *
      *@param  event  Description of Parameter
+     *@since
      */
     public final void valueBound(HttpSessionBindingEvent event) {
         HttpSession session = event.getSession();
@@ -1614,6 +1704,7 @@ public final class LayoutBean extends GenericPortalBean
      *  listings.
      *
      *@param  event  Description of Parameter
+     *@since
      */
     public final void valueUnbound(HttpSessionBindingEvent event) {
         HttpSession session = event.getSession();
@@ -1625,50 +1716,13 @@ public final class LayoutBean extends GenericPortalBean
 
 
     /**
-     *  Sets whether this layouBean is readOnly or not. This is done by the
-     *  findLayoutInstance method when the user is a guest. It is meant to
-     *  prevent guest users from making changes to the layout for all guests
-     *  (since they all share one layout). It does two additional things: It
-     *  turns off constrained caching of channels and dynamic loading of the
-     *  layoutXml document. This is done to avoid performance hits for the guest
-     *  users. This is private for right now, to prevent accidentally making
-     *  this readwrite.
-     *
-     *@param  state  The new ReadOnly value
-     */
-
-    private final void setReadOnly(boolean state) {
-        readOnly = state;
-        // turn off the constrained caching so that they are loaded faster
-        channelCache.setConstrainedCaching(false);
-
-        // create a LayoutXmlCache right away for the guest user
-        layoutCache = new LayoutXmlCache("guest");
-
-        // make sure the layoutXmlCache is not claimable too
-        layoutCache.setClaimable(false);
-    }
-
-
-    /**
-     *  Returns the current read only state of this layout. Not really used by
-     *  anyone internally.
-     *
-     *@return    The ReadOnly value
-     *@author    $Author$
-     */
-    private final boolean getReadOnly() {
-        return readOnly;
-    }
-
-
-    /**
      *  This is the method that JSP pages should use to get at the specific
      *  layoutBean for a user.
      *
      *@param  application  Description of Parameter
      *@param  session      Description of Parameter
      *@return              Description of the Returned Value
+     *@since
      *@author              Zed A. Shaw (zed.shaw@ubc.ca)
      */
     public final static ILayoutBean findLayoutInstance(ServletContext application, HttpSession session) {
@@ -1685,7 +1739,7 @@ public final class LayoutBean extends GenericPortalBean
                 // use a regular LayoutBean so we can access the setReadOnly method
                 LayoutBean layout = new org.jasig.portal.LayoutBean();
                 layout.setReadOnly(true);
-                layout.getLayoutXml(null, "guest");
+                layout.getLayoutXml("guest");
                 // guests cannot make changes
                 // then cast it to our interface to restrict people from changing it
                 layoutBean = (ILayoutBean) layout;

@@ -54,7 +54,7 @@ if (sAction != null)
   // Tabs
   if (sAction.equals ("addTab"))
     layoutBean.addTab (request);
-  else if (sAction.equals ("renameTab"))  {
+  else if (sAction.equals ("renameTab")) {
 	    String sTabNameEntered = request.getParameter ("tabName");
             String sTabName = UtilitiesBean.removeSpecialChars(sTabNameEntered);
             if ( sTabName == null || !sTabNameEntered.equals(sTabName) ) {
@@ -65,7 +65,7 @@ if (sAction != null)
  	    }
     	layoutBean.renameTab (request);
 
-  } else if (sAction.equals ("setDefaultTab"))
+  }  else if (sAction.equals ("setDefaultTab"))
     layoutBean.setDefaultTab (request);
 
   // Columns
@@ -97,7 +97,7 @@ if (sAction != null)
   // Go back to default layout xml
   else if (sAction.equals ("revertToDefaultLayoutXml"))
   {
-    IXml layoutXml = layoutBean.getDefaultLayoutXml (request);
+    IXml layoutXml = layoutBean.getDefaultLayoutXml ();
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
     layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("layout.jsp");
@@ -106,7 +106,7 @@ if (sAction != null)
   // Save the layout xml
   else if (sAction.equals ("save"))
   {
-    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
+    IXml layoutXml = layoutBean.getLayoutXml (layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
     layoutBean.releaseLayoutXml (); 
     response.sendRedirect ("layout.jsp");
@@ -171,3 +171,6 @@ if (sAction != null)
     <%@ include file="footer.jsp" %>
   </body>
 </html>
+
+
+

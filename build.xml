@@ -340,7 +340,7 @@
       <javac srcdir="${classsrc}"
              destdir="${build}/${dist}/WEB-INF/classes"
              debug="on"
-             deprecation="on">
+             deprecation="off">
              <!-- set up the CLASSPATH  -->
              <classpath>
                 <pathelement path="${classpath}"/>
