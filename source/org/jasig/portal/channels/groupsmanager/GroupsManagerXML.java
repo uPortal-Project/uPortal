@@ -45,7 +45,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.EntityTypes;
+import org.jasig.portal.EntityTypes;  /* @todo remove when groups/EntityTypes is removed */
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerAdminPermissions;
 import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerDefaultPermissions;
