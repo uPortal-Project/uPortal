@@ -11,19 +11,6 @@
 		<!-- displayed at the top of the step screen -->
 		<description/>
 		<!-- intention is for documentation but could be used for other things -->
-
-      <!--
-  		<parameter modify="publish-only">
-        <name>protocol</name>
-   			<label>Protocol</label>
-  			<type base="string" input="single-choice" display="drop-down">
-  			  <restriction type="enumeration">
-  			    <value>http://</value>
-  			    <value default="true">file://</value>
-  			  </restriction>
-  			</type>
-  		</parameter>
-      -->
 		
       <parameter modify="publish">
   		  <name>xmlUri</name>
@@ -42,12 +29,16 @@
   			<!-- default value for text field -->
       </parameter>
 			
+      <!-- Choose which RSS version from a drop down list-->
       <parameter modify="publish">
         <name>sslUri</name>
-  			<label/>
-  			<type base="string" input="text" display="hidden">
+  			<label>RSS Version</label>
+  			<type base="string" input="single-choice" display="drop-down">
+  			  <restriction type="enumeration">
+  			    <value display="0.9x" default="true" >webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+  			    <value display="1.0x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+  			  </restriction>
   			</type>
-  			<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</defaultValue>
   		</parameter>
 
 	  </step>
