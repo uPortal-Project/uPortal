@@ -1355,7 +1355,7 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
     Connection conn = null;
     RDBMServices.PreparedStatement ps = null;
     int type = EntityTypes.getEntityTypeID(leaftype).intValue();
-    System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
+    //System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
 
         try {
             conn = RDBMServices.getConnection();
