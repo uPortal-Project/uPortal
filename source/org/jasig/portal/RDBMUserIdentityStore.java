@@ -234,7 +234,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         if (rset.next())
         {
           templateUID = rset.getInt("USER_ID");
-          templateUSER_DFLT_USR_ID = rset.getInt("USER_DFLT_USR_ID");
+          templateUSER_DFLT_USR_ID = templateUID;
           templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
         }
         else
@@ -279,7 +279,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             "null, "+
             "null, "+
             "null)";
-            //"'"+templateLST_CHAN_UPDT_DT+"')";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
@@ -297,7 +296,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_profile */
         Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, STRUCTURE_SS_ID, THEME_SS_ID "+
+          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
           "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
