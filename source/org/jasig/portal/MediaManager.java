@@ -271,7 +271,7 @@ public class MediaManager {
       else if (serializerName.equals("XHTML")) {
         OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
         frmt.setPreserveSpace(true);
-        return  new XHTMLSerializer(out, frmt);
+        return  new CachingXHTMLSerializer(out, frmt);
       } 
       else {
         // default case is HTML, such as that for netscape and explorer
@@ -309,7 +309,7 @@ public class MediaManager {
     else if (serializerName.equals("XHTML")) {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
-      return  new XHTMLSerializer(out, frmt);
+      return  new CachingXHTMLSerializer(out, frmt);
     } 
     else {
       // default case is HTML, such as that for netscape and explorer
@@ -342,7 +342,7 @@ public class MediaManager {
     else if (serializerName != null && serializerName.equals("XHTML")) {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
-      return  new XHTMLSerializer(out, frmt);
+      return  new CachingXHTMLSerializer(out, frmt);
     } 
     else {
       // default case is HTML, such as that for netscape and explorer
@@ -383,7 +383,7 @@ public class MediaManager {
       else if (serializerName.equals("XHTML")) {
         OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
         frmt.setPreserveSpace(true);
-        return  new XHTMLSerializer(out, frmt);
+        return  new CachingXHTMLSerializer(out, frmt);
       } 
       else {
         // default case is HTML, such as that for netscape and explorer
