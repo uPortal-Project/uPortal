@@ -95,8 +95,13 @@ public class Authentication {
           String value = (String) attribs.get(key);
           m_Person.setAttribute(key,value);
         }
-        if (attribs.get("displayName") != null)
+        // use portal display name if one exists
+        if (attribs.get("portalDisplayName") != null)
+          m_Person.setFullName((String)attribs.get("portalDisplayName"));
+        // if not try the eduPerson displyName
+        else if (attribs.get("displayName") != null)
           m_Person.setFullName((String)attribs.get("displayName"));
+        // if still no FullName use an unrecognized string
         if (m_Person.getFullName() == null)
           m_Person.setFullName("Unrecognized person: " + m_Person.getAttribute("username"));
       }
