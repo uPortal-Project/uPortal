@@ -33,7 +33,6 @@
  *
  */
 
-
 package  org.jasig.portal;
 
 import javax.servlet.http.HttpServlet;
@@ -43,6 +42,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonManagerFactory;
 
 /**
  * Simple servlet to handle user logout. When a user
@@ -75,10 +77,18 @@ public class LogoutServlet extends HttpServlet {
   public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession(false);
 
+    // Record that the user is requesting to log out
+    try {
+      IPerson person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+      StatsRecorder.recordLogout(person);    
+    } catch (Exception e) {
+      LogService.log(LogService.ERROR, e);
+    }
+    
     // Clear out the existing session for the user
     if (session != null)
       session.invalidate();
-
+      
     // Send the user back to the guest page
     response.sendRedirect(request.getContextPath() + '/' + redirectString);
   }
