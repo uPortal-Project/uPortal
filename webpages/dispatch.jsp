@@ -35,8 +35,12 @@
 
 <%@ page errorPage="error.jsp" %>
 <%@ page import="java.lang.reflect.Method" %>
+<%@ page import="java.util.Enumeration" %>
+
 <%@ page import="org.jasig.portal.*" %>
 <%@ page import="org.jasig.portal.layout.*" %>
+<%@ page import="org.jasig.portal.security.IPerson" %>
+
 <%@ page import="org.xml.sax.DocumentHandler" %>
 <%@ page import="org.apache.xml.serialize.HTMLSerializer" %>
 <%@ page import="org.apache.xml.serialize.OutputFormat" %>
@@ -45,42 +49,84 @@
 
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
-
-<% org.jasig.portal.IChannel ch = dispatchBean.getChannel (request); %>
-<% UtilitiesBean.preventPageCaching (response); %>
+<jsp:useBean id="authorizationBean" class="org.jasig.portal.AuthorizationBean" scope="session" />
 
 <%
-String sMethodName = request.getParameter ("method");
-String sTitle = ch.getName ();
-session.setAttribute ("headerTitle", sTitle);
+  // This will check to see if the channel wants to return
+  //  to layout. This allow channels to behave the same way
+  //  in uPortal 2.0.
+  String sUserLayoutRoot = request.getParameter("userLayoutRoot");
+  if(sUserLayoutRoot != null && sUserLayoutRoot.equals("root"))
+  {
+    // Reconstruct URL parameters
+    String jspfile = "layout.jsp?";
+
+    for(Enumeration e = request.getParameterNames(); e.hasMoreElements();)
+    {
+      String pName  = (String)e.nextElement();
+      String pValue = request.getParameter(pName);
+      jspfile += pName + "=" + pValue + "&";
+    }
+
+    response.sendRedirect(jspfile);
+    return;
+  }
 %>
 
+<%
+  org.jasig.portal.IChannel ch = dispatchBean.getChannel(request);
+%>
 
+<% UtilitiesBean.preventPageCaching(response); %>
+
+<%
+  String sTitle = ch.getName();
+  session.setAttribute("headerTitle", sTitle);
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title><%= sTitle %></title>
-<link rel="stylesheet" href="stylesheets/portal.css" TYPE="text/css" />
-</head>
+  <head>
+    <title><%= sTitle %></title>
+    <link rel="stylesheet" href="stylesheets/portal.css" TYPE="text/css" />
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
+  <% layoutBean.writeBodyStyle(request, response, out); %>
 
-<%-- Header --%>
-<%@ include file="header.jsp" %>
+  <body>
 
-<%
-Class[] paramTypes = null;
-Object[] methodParams = null;
-Method method = null;
+  <%
+    /*
+    String sGlobalChannelID = req.getParameter("globalChannelID");
 
-  paramTypes = new Class[] {Class.forName ("javax.servlet.http.HttpServletRequest"), Class.forName ("javax.servlet.http.HttpServletResponse"), Class.forName ("javax.servlet.jsp.JspWriter")};
-  methodParams = new Object[] {request, response, out};
-  method = ch.getClass ().getMethod (sMethodName, paramTypes);
-  method.invoke (ch, methodParams);
-%>
+    if(!authorizationBean.canUserRender((IPerson)session.getAttribute("Person"), dispatchBean.getGlobalChannelID(ch)))
+    {
+      dispatchBean.finish(request, response);
+    }
+    */
+  %>
 
-<%-- Footer --%>
-<%@ include file="footer.jsp" %>
+  <%-- Header --%>
+  <%@ include file="header.jsp" %>
 
-</body>
+  <div class="portalChannelText">
+  <%-- Render Channel --%>
+  <%
+    String sMethodName = request.getParameter ("method");
+
+    if(sMethodName == null)
+    {
+      sMethodName = "render";
+    }
+
+    Class[] paramTypes = new Class[] {Class.forName ("javax.servlet.http.HttpServletRequest"), Class.forName ("javax.servlet.http.HttpServletResponse"), Class.forName ("javax.servlet.jsp.JspWriter")};
+    Object[] methodParams = new Object[] {request, response, out};
+    java.lang.reflect.Method method = ch.getClass ().getMethod (sMethodName, paramTypes);
+    method.invoke(ch, methodParams);
+  %>
+  </div>
+
+  <%-- Footer --%>
+  <%@ include file="footer.jsp" %>
+
+  </body>
 </html>
