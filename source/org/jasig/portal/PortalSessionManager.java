@@ -159,8 +159,17 @@ public class PortalSessionManager extends HttpServlet {
         {
           session.removeAttribute("forwarded");
         }
-        // Retrieve the user's UserInstance object
-        UserInstance userInstance = UserInstanceManager.getUserInstance(req);
+        UserInstance userInstance = null;
+        try
+        {
+          // Retrieve the user's UserInstance object
+          userInstance = UserInstanceManager.getUserInstance(req);
+        }
+        catch(Exception e)
+        {
+          // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
+          LogService.instance().log(LogService.ERROR, e);
+        }
         /** 
         UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
         if (layout == null) {
