@@ -13,15 +13,16 @@ public class CachingOutputStream extends OutputStream implements CharacterCachin
         this.out=out;
     }
 
-    public boolean startCaching() {
+    public boolean startCaching() throws IOException {
         if(caching) return false;
+        flush();
         caching=true;
         cache=new ByteArrayOutputStream();
         return true;
     }
 
     public String getCache(String encoding) throws UnsupportedEncodingException, IOException {
-        cache.flush();
+        flush();
         return cache.toString(encoding);
     }
 
@@ -35,7 +36,8 @@ public class CachingOutputStream extends OutputStream implements CharacterCachin
     }
     
     public void flush() throws IOException {
-        out.flush();
+        if(out!=null) out.flush();
+        if(cache!=null) cache.flush();
     }
 
     public void write(byte[] b) throws IOException {

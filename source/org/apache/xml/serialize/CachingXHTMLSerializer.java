@@ -153,7 +153,7 @@ public final class CachingXHTMLSerializer
     }
 
     // caching methods
-    public boolean startCaching() {
+    public boolean startCaching() throws IOException{
         _printer.flush();
         return cacher.startCaching();
     }
@@ -174,6 +174,21 @@ public final class CachingXHTMLSerializer
      */
     public void printRawCharacters(String text) {
         _printer.printText(text);
-        _printer.flush();
+        //        _printer.flush();
     }
+
+    /**
+     * Let the serializer know if the document has already been started.
+     *
+     * @param setting a <code>boolean</code> value
+     */
+    public void setDocumentStarted(boolean setting) {
+        _started=setting;
+    }
+
+    public void flush() throws IOException {
+        _printer.flush();
+        cacher.flush();
+    }
+        
 }

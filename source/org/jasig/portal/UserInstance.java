@@ -288,8 +288,14 @@ public class UserInstance implements HttpSessionBindingListener {
                             Logger.log(Logger.ERROR,"UserInstance::renderState() : channelId character cache has invalid size !");
                         }
                         CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
+                        cSerializer.setDocumentStarted(true);
+
                         for(int sb=0; sb<ccsize-1;sb++) {
                             cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
+
+                            //Logger.log(Logger.DEBUG,"----------printing frame piece "+Integer.toString(sb));
+                            //Logger.log(Logger.DEBUG,(String)cCache.systemBuffers.get(sb));
+
                             // get channel output
                             Vector chanEntry=(Vector) cCache.channelIds.get(sb);
                             String chanId=(String)chanEntry.get(0);
@@ -301,6 +307,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                 if(o instanceof String) {
                                     Logger.log(Logger.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
                                     cSerializer.printRawCharacters((String)o);
+                                    //Logger.log(Logger.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
+                                    //Logger.log(Logger.DEBUG,(String)o);
                                 } else if(o instanceof SAXBufferImpl) {
                                     Logger.log(Logger.DEBUG,"UserInstance::renderState() : received an XSLT result for channelId=\""+chanId+"\"");
                                     // extract a character cache 
@@ -317,6 +325,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                     if(cSerializer.stopCaching()) {
                                         try {
                                             channelManager.setChannelCharacterCache(chanId,cSerializer.getCache());
+                                            //Logger.log(Logger.DEBUG,"----------generated channel cache #"+Integer.toString(sb));
+                                            //Logger.log(Logger.DEBUG,cSerializer.getCache());
                                         } catch (UnsupportedEncodingException e) {
                                             Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
                                         } catch (IOException ioe) {
@@ -333,7 +343,11 @@ public class UserInstance implements HttpSessionBindingListener {
                         }
 
                         // print out the last block
-                        out.write((String)cCache.systemBuffers.get(ccsize-1));
+                        cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
+                        //Logger.log(Logger.DEBUG,"----------printing frame piece "+Integer.toString(ccsize-1));
+                        //Logger.log(Logger.DEBUG,(String)cCache.systemBuffers.get(ccsize-1));
+
+                        cSerializer.flush();
                         output_produced=true;
                     }
                 }
@@ -442,7 +456,9 @@ public class UserInstance implements HttpSessionBindingListener {
                         // record cache
                         systemCharacterCache.put(cacheKey,ce);
                         Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
-                        /*                        Logger.log(Logger.DEBUG,"Printing transformation cache system blocks:");
+                        
+                        /*
+                        Logger.log(Logger.DEBUG,"Printing transformation cache system blocks:");
                         for(int i=0;i<ce.systemBuffers.size();i++) {
                             Logger.log(Logger.DEBUG,"----------piece "+Integer.toString(i));
                             Logger.log(Logger.DEBUG,(String)ce.systemBuffers.get(i));
@@ -451,7 +467,10 @@ public class UserInstance implements HttpSessionBindingListener {
                         for(int i=0;i<ce.channelIds.size();i++) {
                             Logger.log(Logger.DEBUG,"----------channel entry "+Integer.toString(i));
                             Logger.log(Logger.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
-                            }*/
+                        }
+                        */
+
+
                     }
                 }
                 

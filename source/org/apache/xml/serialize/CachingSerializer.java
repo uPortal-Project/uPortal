@@ -48,7 +48,7 @@ public interface CachingSerializer {
      *
      * @return <code>false</code> if the serializer is already caching.
      */
-    public boolean startCaching();
+    public boolean startCaching() throws IOException ;
 
     /**
      * Commands serializer to stop caching.
@@ -72,4 +72,19 @@ public interface CachingSerializer {
      * @param text a <code>String</code> value
      */
     public void printRawCharacters(String text);
+
+    /**
+     * Let the serializer know if the document has already
+     * been started. 
+     *
+     * @param setting a <code>boolean</code> value
+     */
+    public void setDocumentStarted(boolean setting);
+
+    /**
+     * Flushes all the buffers
+     *
+     * @exception IOException if an error occurs
+     */
+    public void flush() throws IOException;
 }

@@ -13,15 +13,16 @@ public class CachingWriter extends Writer implements CharacterCachingWriter {
         this.out=out;
     }
 
-    public boolean startCaching() {
+    public boolean startCaching() throws IOException {
         if(caching) return false;
+        flush();
         caching=true;
         cache=new StringWriter();
         return true;
     }
 
     public String getCache(String encoding) throws IOException {
-        cache.flush();
+        flush();
         return cache.toString();
     }
 
@@ -35,7 +36,8 @@ public class CachingWriter extends Writer implements CharacterCachingWriter {
     }
     
     public void flush() throws IOException {
-        out.flush();
+        if(out!=null) out.flush();
+        if(cache!=null) cache.flush();
     }
 
     public void write(char[] c) throws IOException {
