@@ -43,13 +43,17 @@ import java.sql.SQLException;
 /**
  * Manages the channel registry which is a listing of published channels
  * that one can subscribe to (add to their layout).
+ * Also currently manages the channel types data. (maybe this should be managed
+ * by another class  -Ken)
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class ChannelRegistryManager {
   protected static final IChannelRegistryStore chanRegStore = RdbmServices.getChannelRegistryStoreImpl();
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
+  protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
+  protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
   
   /**
    * Returns the channel registry as a Document.  This list is not filtered by roles.
@@ -62,8 +66,8 @@ public class ChannelRegistryManager {
       // Channel registry has expired, so get it and cache it
       try {
         channelRegistry = chanRegStore.getChannelRegistryXML();
-      } catch (SQLException sqle) {
-        throw new GeneralRenderingException(sqle.getMessage());
+      } catch (Exception e) {
+        throw new GeneralRenderingException(e.getMessage());
       }
 
       if (channelRegistry != null)
@@ -73,7 +77,32 @@ public class ChannelRegistryManager {
       }
     }
     return channelRegistry;    
-  }         
+  }     
+  
+  /**
+   * Returns the publishable channel types as a Document.
+   * @return a list of channel types as a Document
+   */
+  public static Document getChannelTypes() throws PortalException {
+    String key = "channelTypes";
+    Document channelTypes = (Document)channelTypesCache.get(key);
+    if (channelTypes == null)
+    {
+      // Channel types doc has expired, so get it and cache it
+      try {
+        channelTypes = chanRegStore.getChannelTypesXML();
+      } catch (Exception e) {
+        throw new GeneralRenderingException(e.getMessage());
+      }
+
+      if (channelTypes != null)
+      {
+        channelTypesCache.put(key, channelTypes);
+        LogService.instance().log(LogService.INFO, "Caching channel types.");
+      }
+    }
+    return channelTypes;    
+  }           
 }
 
 
