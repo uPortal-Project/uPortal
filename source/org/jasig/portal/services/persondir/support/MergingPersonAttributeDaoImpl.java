@@ -59,8 +59,8 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
         if (this.personAttributeDaos == null)
             throw new IllegalStateException("No IPersonAttributeDaos have been specified.");
         
-        
-        Map resultAttributes = new HashMap();
+        //Initialize null, so that if none of the sub-DAOs find the user null is returned appropriately
+        Map resultAttributes = null;
         
         //Iterate through the configured IPersonAttributeDaos, querying each.
         for (final Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
@@ -82,7 +82,11 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
                 }
             }
 
-            if (currentAttributes != null) {
+            if (resultAttributes == null) {
+                //If this is the first valid result set just use it.
+                resultAttributes = currentAttributes;
+            }
+            else if (currentAttributes != null) {
                 //Perform the appropriate attribute attrMerger
                 resultAttributes = this.attrMerger.mergeAttributes(resultAttributes, currentAttributes);
             }

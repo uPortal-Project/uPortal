@@ -121,9 +121,9 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
             //Search the LDAP
             final NamingEnumeration userlist = context.search(this.ldapServer.getBaseDN(), this.query, args, sc);
             try {
-                final Map rowResults = new HashMap();
-                
                 if (userlist.hasMoreElements()) {
+                    final Map rowResults = new HashMap();
+                    
                     final SearchResult result = (SearchResult)userlist.next();
                     
                     //Only allow one result for the query, do the check here to
@@ -167,9 +167,12 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
                             }
                         }
                     }
+                    
+                    return rowResults;
                 }
-                
-                return rowResults;
+                else {
+                    return null;
+                }
             }
             finally {
                 try {

@@ -77,8 +77,8 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
         if (this.personAttributeDaos == null)
             throw new IllegalStateException("No IPersonAttributeDaos have been specified.");
         
-        
-        Map resultAttributes = new HashMap();
+        //Initialize null, so that if none of the sub-DAOs find the user null is returned appropriately
+        Map resultAttributes = null;
         
         //Denotes that this is the first time we are running a query and the seed should be used
         boolean isFirstQuery = true;
@@ -108,7 +108,11 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
                 }
             }
 
-            if (currentAttributes != null) {
+            if (resultAttributes == null) {
+                //If this is the first valid result set just use it.
+                resultAttributes = currentAttributes;
+            }
+            else if (currentAttributes != null) {
                 //Perform the appropriate attribute attrMerger
                 resultAttributes = this.attrMerger.mergeAttributes(resultAttributes, currentAttributes);
             }
