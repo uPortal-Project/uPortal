@@ -104,9 +104,9 @@ import org.xml.sax.ContentHandler;
 
 
     public void renderXML (ContentHandler out) throws PortalException {
-      
+
     	InputStream xmlStream = null;
-    try {
+        try {
       xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       UserPreferences userPrefs = upm.getUserPreferences();
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
@@ -128,6 +128,6 @@ import org.xml.sax.ContentHandler;
 				LogService.log(LogService.ERROR,"CSkinSelector:renderXML():: Can not close InputStream "+ ioe);
 			}
 		}
-    }
+	}
 
   }

@@ -1910,7 +1910,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += " ULS.FRAGMENT_ID=UF.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += "(ULS.USER_ID="+realUserId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
         LogService.log(LogService.DEBUG, sqlFragment);
 
@@ -3171,7 +3171,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	  */
   public Collection getSubscribableFragments(IPerson person) throws PortalException {
 	int userId = person.getID();
-    Vector fragmentIds = new Vector();
+    Set fragmentIds = new HashSet();
     Connection con = RDBMServices.getConnection();
     try {
 	 IGroupMember groupPerson = null;
@@ -3188,15 +3188,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	  }
 	   int fragmentId = rs.getInt(1);
 	   String groupKey = rs.getString(2);
-	   if ( groupKeys.contains(groupKey) )
-		  fragmentIds.add(Integer.toString(fragmentId));
-	   else {
+	   String fragStrId = Integer.toString(fragmentId);
+	   if ( !fragmentIds.contains(fragStrId) ) {
+	    if ( groupKeys.contains(groupKey) )
+		  fragmentIds.add(fragStrId);
+	    else {
 		 IEntityGroup group = GroupService.findGroup(groupKey);
 		 if ( group != null && groupPerson.isDeepMemberOf(group) ) {
-		  fragmentIds.add(Integer.toString(fragmentId));
+		  fragmentIds.add(fragStrId);
 		  groupKeys.add(groupKey);
 		 }
-	   }
+	    }
+	   } 
 	 }
 	   if ( rs != null ) rs.close();
 	   if ( stmt != null ) stmt.close();
