@@ -303,7 +303,8 @@ public class PortletStateManager {
 	  */ 
 	public static String getKey(PortletWindow window) {
 		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
-		    String sessionId = windowImpl.getHttpServletRequest().getSession().getId();
+		    HttpSession session = windowImpl.getHttpServletRequest().getSession();
+		    String sessionId = (session!=null)?session.getId():null;
 			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
 	}
 	
