@@ -40,43 +40,45 @@ import java.text.*;
 import org.apache.xerces.dom.*;
 import org.w3c.dom.*;
 import java.util.*;
+import java.io.*;
+import java.net.*;
 
 /**
  * Provides methods useful for the portal.  Later on, it may be necessary
  * to create an org.jasig.portal.util package
  * and several utilities classes.
- * @author Ken Weiner
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class UtilitiesBean extends GenericPortalBean
-{  
+{
   /**
    * Prevents an html page from being cached by the browser
    * @param the servlet response object
    */
   public static void preventPageCaching (HttpServletResponse res)
-  {    
-    try 
-    {    
+  {
+    try
+    {
       res.setHeader("pragma", "no-cache");
       res.setHeader( "Cache-Control","no-cache" );
       res.setHeader( "Cache-Control","no-store" );
-      res.setDateHeader( "Expires", 0 );    
+      res.setDateHeader( "Expires", 0 );
     }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
-    }    
-  } 
-  
+    }
+  }
+
   /**
    * Gets the current date/time
    * @return a formatted date and time string
    */
   public static String getDate ()
-  {    
-    try 
-    {         
+  {
+    try
+    {
       // Format the current time.
       SimpleDateFormat formatter = new SimpleDateFormat ("EEEE, MMM d, yyyy 'at' hh:mm a");
       java.util.Date currentTime = new java.util.Date();
@@ -86,10 +88,10 @@ public class UtilitiesBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-    
+
     return "&nbsp;";
   }
-  
+
   /**
    * Allows the hrefs in each .ssl file to be entered in one
    * of 3 ways:
@@ -97,7 +99,7 @@ public class UtilitiesBean extends GenericPortalBean
    * 2) An absolute file system path optionally beginning with file://
    *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
    *    or file://C:\WinNT\whatever.xsl or file:///usr/local/whatever.xsl
-   * 3) A path relative to the portal base dir as determined from 
+   * 3) A path relative to the portal base dir as determined from
    *    GenericPortalBean.getPortalBaseDir()
    */
   public static String fixURI (String str)
@@ -105,7 +107,7 @@ public class UtilitiesBean extends GenericPortalBean
     boolean bWindows = (System.getProperty ("os.name").indexOf ("Windows") != -1) ? true : false;
     char ch0 = str.charAt (0);
     char ch1 = str.charAt (1);
-    
+
     if (str.indexOf ("://") == -1 && ch1 != ':')
     {
       // Relative path was specified, so prepend portal base dir
@@ -126,7 +128,7 @@ public class UtilitiesBean extends GenericPortalBean
     str = str.replace (java.io.File.separatorChar, '/');
 
     return str;
-  }  
+  }
 
 
     /*
@@ -134,21 +136,21 @@ public class UtilitiesBean extends GenericPortalBean
      * ID tables, so that getElementById() would work on the returned clone
      */
     public static DocumentImpl cloneDocument(DocumentImpl olddoc) {
-	DocumentImpl newdoc = new DocumentImpl();
-	
-	// construct the idTable which is a reverse lookup table of 
-	// identifier table in NodeImpl
-	Hashtable idTable=new Hashtable();
-	for(Enumeration e=olddoc.getIdentifiers(); e.hasMoreElements();) {
-	    String id=(String) e.nextElement();
-	    idTable.put(olddoc.getIdentifier(id),id);
-	}
+        DocumentImpl newdoc = new DocumentImpl();
 
-	for(NodeImpl n = (NodeImpl) olddoc.getFirstChild(); n != null; n = (NodeImpl) n.getNextSibling()) {
-	    newdoc.appendChild(importNodeWithId(newdoc,idTable,n));
-	}
+        // construct the idTable which is a reverse lookup table of
+        // identifier table in NodeImpl
+        Hashtable idTable=new Hashtable();
+        for(Enumeration e=olddoc.getIdentifiers(); e.hasMoreElements();) {
+            String id=(String) e.nextElement();
+            idTable.put(olddoc.getIdentifier(id),id);
+        }
 
-	return newdoc;
+        for(NodeImpl n = (NodeImpl) olddoc.getFirstChild(); n != null; n = (NodeImpl) n.getNextSibling()) {
+            newdoc.appendChild(importNodeWithId(newdoc,idTable,n));
+        }
+
+        return newdoc;
 
     }
 
@@ -157,129 +159,129 @@ public class UtilitiesBean extends GenericPortalBean
      * preserves the ID table of the document.
      */
     protected static NodeImpl importNodeWithId(DocumentImpl doc,Hashtable idTable, Node source) {
-	NodeImpl newnode=null;
-	
+        NodeImpl newnode=null;
+
         int type = source.getNodeType();
-    	switch (type) {
-	    
-	case DocumentImpl.ELEMENT_NODE: {
-	    Element newelement = doc.createElement(source.getNodeName());
-	    // copy the identifier
-	    String id=(String)idTable.get((Element) source);
-	    if(id!=null) 
-		doc.putIdentifier(id,newelement);
-	    
-	    NamedNodeMap srcattr = source.getAttributes();
-	    if (srcattr != null) {
-		for(int i = 0; i < srcattr.getLength(); i++) {
-		    newelement.setAttributeNode((AttrImpl)importNodeWithId(doc,idTable,srcattr.item(i)));
-		}
-	    }
-	    newnode = (NodeImpl)newelement;
-	    break;
-	}
+        switch (type) {
 
-	case DocumentImpl.ATTRIBUTE_NODE: {
-	    newnode = (NodeImpl)doc.createAttribute(source.getNodeName());
-	    // Kids carry value
-	    break;
-	}
-	
-	case DocumentImpl.TEXT_NODE: {
-	    newnode = (NodeImpl)doc.createTextNode(source.getNodeValue());
-	    break;
-	}
-	
-	case DocumentImpl.CDATA_SECTION_NODE: {
-	    newnode = (NodeImpl)doc.createCDATASection(source.getNodeValue());
-	    break;
-	}
-	
-	case DocumentImpl.ENTITY_REFERENCE_NODE: {
-	    newnode = (NodeImpl) doc.createEntityReference(source.getNodeName());
-	    break;
-	}
+        case DocumentImpl.ELEMENT_NODE: {
+            Element newelement = doc.createElement(source.getNodeName());
+            // copy the identifier
+            String id=(String)idTable.get((Element) source);
+            if(id!=null)
+                doc.putIdentifier(id,newelement);
 
-	case DocumentImpl.ENTITY_NODE: {
-	    Entity srcentity = (Entity)source;
-	    EntityImpl newentity = (EntityImpl)doc.createEntity(source.getNodeName());
-	    newentity.setPublicId(srcentity.getPublicId());
-	    newentity.setSystemId(srcentity.getSystemId());
-	    newentity.setNotationName(srcentity.getNotationName());
-	    // Kids carry additional value
-	    newnode = newentity;
-	    break;
-	}
-	
-	case DocumentImpl.PROCESSING_INSTRUCTION_NODE: {
-	    newnode = (ProcessingInstructionImpl) doc.createProcessingInstruction(source.getNodeName(), source.getNodeValue());
-	    break;
-	}
-
-	case DocumentImpl.COMMENT_NODE: {
-	    newnode = (NodeImpl)doc.createComment(source.getNodeValue());
-	    break;
-	}
-	
-	case DocumentImpl.DOCUMENT_TYPE_NODE: {
-	    DocumentTypeImpl doctype = (DocumentTypeImpl)source;
-	    DocumentTypeImpl newdoctype =(DocumentTypeImpl)doc.createDocumentType(doctype.getNodeName(),doctype.getPublicId(),doctype.getSystemId());
-	    // Values are on NamedNodeMaps
-	    NamedNodeMap smap = ((DocumentType)source).getEntities();
-	    NamedNodeMap tmap = newdoctype.getEntities();
-	    if(smap != null) {
-		for(int i = 0; i < smap.getLength(); i++) {
-		    tmap.setNamedItem((EntityImpl)importNodeWithId(doc,idTable,smap.item(i)));
-		}
-	    }
-	    smap = ((DocumentType)source).getNotations();
-	    tmap = newdoctype.getNotations();
-	    if (smap != null) {
-		for(int i = 0; i < smap.getLength(); i++) {
-		    tmap.setNamedItem((NotationImpl)importNodeWithId(doc,idTable,smap.item(i)));
-		}
-	    }
-	    // NOTE: At this time, the DOM definition of DocumentType
-	    // doesn't cover Elements and their Attributes. domimpl's
-	    // extentions in that area will not be preserved, even if
-	    // copying from domimpl to domimpl. We could special-case
-	    // that here. Arguably we should. Consider. ?????
-	    newnode = newdoctype;
-	    break;
-	}
-
-	case DocumentImpl.DOCUMENT_FRAGMENT_NODE: {
-	    newnode = (NodeImpl)doc.createDocumentFragment();
-	    // No name, kids carry value
-	    break;
-	}
-
-	case DocumentImpl.NOTATION_NODE: {
-	    Notation srcnotation = (Notation)source;
-	    NotationImpl newnotation = (NotationImpl)doc.createNotation(source.getNodeName());
-	    newnotation.setPublicId(srcnotation.getPublicId());
-	    newnotation.setSystemId(srcnotation.getSystemId());
-	    // Kids carry additional value
-	    newnode = newnotation;
-	    // No name, no value
-	    break;
-	}
-
-	case DocumentImpl.DOCUMENT_NODE : // Document can't be child of Document
-	default: {			 // Unknown node type
-	    throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
-				       "DOM006 Hierarchy request error");
-	}
+            NamedNodeMap srcattr = source.getAttributes();
+            if (srcattr != null) {
+                for(int i = 0; i < srcattr.getLength(); i++) {
+                    newelement.setAttributeNode((AttrImpl)importNodeWithId(doc,idTable,srcattr.item(i)));
+                }
+            }
+            newnode = (NodeImpl)newelement;
+            break;
         }
-	
-    	// If deep, replicate and attach the kids.
-	for (Node srckid = source.getFirstChild();
-	     srckid != null;
-	     srckid = srckid.getNextSibling()) {
-	    newnode.appendChild(importNodeWithId(doc,idTable,srckid));
-	}
 
-    	return newnode;
+        case DocumentImpl.ATTRIBUTE_NODE: {
+            newnode = (NodeImpl)doc.createAttribute(source.getNodeName());
+            // Kids carry value
+            break;
+        }
+
+        case DocumentImpl.TEXT_NODE: {
+            newnode = (NodeImpl)doc.createTextNode(source.getNodeValue());
+            break;
+        }
+
+        case DocumentImpl.CDATA_SECTION_NODE: {
+            newnode = (NodeImpl)doc.createCDATASection(source.getNodeValue());
+            break;
+        }
+
+        case DocumentImpl.ENTITY_REFERENCE_NODE: {
+            newnode = (NodeImpl) doc.createEntityReference(source.getNodeName());
+            break;
+        }
+
+        case DocumentImpl.ENTITY_NODE: {
+            Entity srcentity = (Entity)source;
+            EntityImpl newentity = (EntityImpl)doc.createEntity(source.getNodeName());
+            newentity.setPublicId(srcentity.getPublicId());
+            newentity.setSystemId(srcentity.getSystemId());
+            newentity.setNotationName(srcentity.getNotationName());
+            // Kids carry additional value
+            newnode = newentity;
+            break;
+        }
+
+        case DocumentImpl.PROCESSING_INSTRUCTION_NODE: {
+            newnode = (ProcessingInstructionImpl) doc.createProcessingInstruction(source.getNodeName(), source.getNodeValue());
+            break;
+        }
+
+        case DocumentImpl.COMMENT_NODE: {
+            newnode = (NodeImpl)doc.createComment(source.getNodeValue());
+            break;
+        }
+
+        case DocumentImpl.DOCUMENT_TYPE_NODE: {
+            DocumentTypeImpl doctype = (DocumentTypeImpl)source;
+            DocumentTypeImpl newdoctype =(DocumentTypeImpl)doc.createDocumentType(doctype.getNodeName(),doctype.getPublicId(),doctype.getSystemId());
+            // Values are on NamedNodeMaps
+            NamedNodeMap smap = ((DocumentType)source).getEntities();
+            NamedNodeMap tmap = newdoctype.getEntities();
+            if(smap != null) {
+                for(int i = 0; i < smap.getLength(); i++) {
+                    tmap.setNamedItem((EntityImpl)importNodeWithId(doc,idTable,smap.item(i)));
+                }
+            }
+            smap = ((DocumentType)source).getNotations();
+            tmap = newdoctype.getNotations();
+            if (smap != null) {
+                for(int i = 0; i < smap.getLength(); i++) {
+                    tmap.setNamedItem((NotationImpl)importNodeWithId(doc,idTable,smap.item(i)));
+                }
+            }
+            // NOTE: At this time, the DOM definition of DocumentType
+            // doesn't cover Elements and their Attributes. domimpl's
+            // extentions in that area will not be preserved, even if
+            // copying from domimpl to domimpl. We could special-case
+            // that here. Arguably we should. Consider. ?????
+            newnode = newdoctype;
+            break;
+        }
+
+        case DocumentImpl.DOCUMENT_FRAGMENT_NODE: {
+            newnode = (NodeImpl)doc.createDocumentFragment();
+            // No name, kids carry value
+            break;
+        }
+
+        case DocumentImpl.NOTATION_NODE: {
+            Notation srcnotation = (Notation)source;
+            NotationImpl newnotation = (NotationImpl)doc.createNotation(source.getNodeName());
+            newnotation.setPublicId(srcnotation.getPublicId());
+            newnotation.setSystemId(srcnotation.getSystemId());
+            // Kids carry additional value
+            newnode = newnotation;
+            // No name, no value
+            break;
+        }
+
+        case DocumentImpl.DOCUMENT_NODE : // Document can't be child of Document
+        default: {			 // Unknown node type
+            throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
+                                       "DOM006 Hierarchy request error");
+        }
+        }
+
+        // If deep, replicate and attach the kids.
+        for (Node srckid = source.getFirstChild();
+             srckid != null;
+             srckid = srckid.getNextSibling()) {
+            newnode.appendChild(importNodeWithId(doc,idTable,srckid));
+        }
+
+        return newnode;
     }
 
 
@@ -296,4 +298,22 @@ public class UtilitiesBean extends GenericPortalBean
         }
         return theElement;
     }
+
+  /**
+   * Get the contents of a URI as a String
+   * @param uri the URI
+   * @return the data pointed to by a URI
+   */
+  public static String getContentsAsString (String uri) throws IOException, MalformedURLException
+  {
+    String line = null;
+    URL url = new URL (uri);
+    BufferedReader in = new BufferedReader (new InputStreamReader (url.openStream()));
+    StringBuffer sbText = new StringBuffer (1024);
+
+    while ((line = in.readLine()) != null)
+      sbText.append (line).append ("\n");
+
+    return sbText.toString ();
+  }
 }
