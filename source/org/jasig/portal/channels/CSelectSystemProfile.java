@@ -34,17 +34,18 @@
  */
 
 
-package  org.jasig.portal.channels;
+package org.jasig.portal.channels;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.utils.XSLT;
-import  org.xml.sax.ContentHandler;
-import  java.util.*;
-import  javax.servlet.http.*;
-import  org.w3c.dom.*;
-import  java.io.StringWriter;
-import  java.net.URL;
+import org.jasig.portal.*;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.DocumentFactory;
+import org.xml.sax.ContentHandler;
+import java.util.*;
+import javax.servlet.http.*;
+import org.w3c.dom.*;
+import java.io.StringWriter;
+import java.net.URL;
 
 
 /** <p>Initial profile selection</p>
@@ -98,7 +99,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
 
 
   public void renderXML(ContentHandler out) throws PortalException {
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Document doc = DocumentFactory.getNewDocument();
     Element edEl = doc.createElement("profiles");
     doc.appendChild(edEl);
     // fill out system-defined profiles
