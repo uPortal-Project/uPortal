@@ -179,7 +179,6 @@ public class ChannelServlet extends HttpServlet {
           rd.put(pName, val);
         }
       }
-      rd.setHttpRequest(req);
       rd.setBrowserInfo(new BrowserInfo(req));
       rd.setBaseActionURL(req.getRequestURI());
       if (channel instanceof IPrivilegedChannel) {
@@ -300,15 +299,15 @@ public class ChannelServlet extends HttpServlet {
   }
 
   // the object that does the actual rendering
-  protected class Worker
-      implements Runnable {
-    private boolean successful;
-    private boolean done;
-    private IChannel channel;
-    private ChannelRuntimeData rd;
-    private DocumentHandler documentHandler;
-    private Exception exc = null;
-
+    protected class Worker
+	implements Runnable {
+	private boolean successful;
+	private boolean done;
+	private IChannel channel;
+	private ChannelRuntimeData rd;
+	private DocumentHandler documentHandler;
+	private Exception exc = null;
+	
     /**
      * put your documentation comment here
      * @param     IChannel ch

@@ -214,7 +214,6 @@ public class StandaloneChannelRenderer extends BaseChannel {
 
 
 	ChannelRuntimeData rd= new ChannelRuntimeData();
-	rd.setHttpRequest(req);
 	rd.setBrowserInfo(binfo);
 	if(channelTarget!=null && chanID.equals(channelTarget))
 	    rd.setParameters(targetParams);

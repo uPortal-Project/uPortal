@@ -182,7 +182,6 @@ public class ChannelManager {
 
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setParameters(targetParams);
-                        rd.setHttpRequest (req);
                         rd.setBrowserInfo(binfo);
                         /*			String reqURI = req.getRequestURI ();
                         reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
@@ -199,7 +198,6 @@ public class ChannelManager {
                             // demand output
                             try {
                                 ChannelRuntimeData erd = new ChannelRuntimeData ();
-                                erd.setHttpRequest (req);
                                 erd.setBrowserInfo(binfo);
                                 erd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/"+uPElement);
                                 errorChannel.setPortalControlStructures(pcs);
@@ -312,7 +310,6 @@ public class ChannelManager {
                 }
             }
             rd = new ChannelRuntimeData ();
-            rd.setHttpRequest (req);
             rd.setBrowserInfo(binfo);
             rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
         } else {
@@ -320,7 +317,6 @@ public class ChannelManager {
                 rd = new ChannelRuntimeData ();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
-                rd.setHttpRequest (req);
                 rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
             }
         }
@@ -357,7 +353,6 @@ public class ChannelManager {
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setBrowserInfo(binfo);
-                        rd.setHttpRequest (req);
                         rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
                         errorChannel.setRuntimeData (rd);
 
@@ -388,7 +383,6 @@ public class ChannelManager {
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setBrowserInfo(binfo);
-                        rd.setHttpRequest (req);
                         rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/"+uPElement);
                         errorChannel.setRuntimeData (rd);
 

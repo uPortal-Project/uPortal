@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -52,28 +50,22 @@ import  java.io.IOException;
  * Includes the following data
  * <ul>
  *  <li>Base channel action URL</li>
- *  <li> HTTP request</li>
  *  <li>A hashtable of parameters passed to the current channel</li>
  *
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class ChannelRuntimeData extends Hashtable
-    implements Cloneable {
-  private HttpServletRequest request;
-  private HttpServletResponse response;
-  private String baseActionURL;
-  private static final String fs = File.separator;
-  private BrowserInfo binfo;
+public class ChannelRuntimeData extends Hashtable implements Cloneable {
+    private String baseActionURL;
+    private static final String fs = File.separator;
+    private BrowserInfo binfo;
 
   /**
-   * put your documentation comment here
+   * default empty constructor
    */
   public ChannelRuntimeData () {
     super();
     // set the default values for the parameters here
-    request = null;
-    response = null;
     baseActionURL = null;
   }
 
@@ -83,96 +75,44 @@ public class ChannelRuntimeData extends Hashtable
    */
   public Object clone () {
     ChannelRuntimeData crd = new ChannelRuntimeData();
-    crd.request = request;
-    crd.response = response;
     crd.baseActionURL = baseActionURL;
     crd.binfo = binfo;
     crd.putAll(this);
     return  crd;
   }
 
-  // the set methods ...
+    //set methods
   public void setBaseActionURL (String baURL) {
     baseActionURL = baURL;
   }
 
-  /**
-   * put your documentation comment here
-   * @param bi
-   */
   public void setBrowserInfo (BrowserInfo bi) {
     this.binfo = bi;
   }
 
-  /**
-   * put your documentation comment here
-   * @return
-   */
   public BrowserInfo getBrowserInfo () {
     return  binfo;
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   */
-  public void setHttpRequest (HttpServletRequest req) {
-    request = req;
-  }
-
-  /**
-   * put your documentation comment here
-   * @param res
-   */
-  public void setHttpResponse (HttpServletResponse res) {
-    response = res;
-  }
-
-  /**
-   * put your documentation comment here
-   * @param params
-   */
   public void setParameters (Map params) {
     // copy a Map
     this.putAll(params);
   }
 
-  /**
-   * put your documentation comment here
-   * @param pName
-   * @param values
-   * @return
-   */
   public synchronized String[] setParameterValues (String pName, String[] values) {
     return  (String[])super.put(pName, values);
   }
 
-  /**
-   * put your documentation comment here
-   * @param key
-   * @param value
-   */
   public synchronized void setParameter (String key, String value) {
     String[] valueArray = new String[1];
     valueArray[0] = value;
     super.put(key, valueArray);
   }
 
-  /**
-   * put your documentation comment here
-   * @param pName
-   * @param values
-   * @return
-   */
   public synchronized com.oreilly.servlet.multipart.Part[] setParameterValues (String pName, com.oreilly.servlet.multipart.Part[] values) {
     return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
   }
 
-  /**
-   * put your documentation comment here
-   * @param key
-   * @param value
-   */
   public synchronized void setParameter (String key, com.oreilly.servlet.multipart.Part value) {
     com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
     valueArray[0] = value;
@@ -184,19 +124,6 @@ public class ChannelRuntimeData extends Hashtable
     return  baseActionURL;
   }
 
-  /**
-   * Return the HttpRequest object
-   * @deprecated
-   */
-  public HttpServletRequest getHttpRequest () {
-    return  request;
-  }
-
-  /**
-   * Return the String corresponding to the key
-   * @param object name
-   * @return null if Object, String otherwise
-   */
   public synchronized String getParameter (String key) {
     String[] value_array = this.getParameterValues(key);
     if ((value_array != null) && (value_array.length > 0))
@@ -205,11 +132,6 @@ public class ChannelRuntimeData extends Hashtable
       return  null;
   }
 
-  /**
-   * Return the object corresponding to the key
-   * @param object name
-   * @return Object
-   */
   public synchronized Object getObjectParameter (String key) {
     Object[] value_array = this.getParameterValues(key);
     if ((value_array != null) && (value_array.length > 0))
@@ -218,11 +140,6 @@ public class ChannelRuntimeData extends Hashtable
       return  null;
   }
 
-  /**
-   * Return the String[] corresponding to the key
-   * @param object name
-   * @return null if Object[], otherwise String[]
-   */
   public String[] getParameterValues (String parameter) {
     Object[] pars = (Object[])super.get(parameter);
     if (pars instanceof String[]) {
@@ -233,11 +150,6 @@ public class ChannelRuntimeData extends Hashtable
     }
   }
 
-  /**
-   * Return the Object[] corresponding to the key
-   * @param object name
-   * @return Object[]
-   */
   public Object[] getObjectParameterValues (String parameter) {
     return  (Object[])super.get(parameter);
   }
@@ -249,19 +161,6 @@ public class ChannelRuntimeData extends Hashtable
     return  (Enumeration)super.keys();
   }
 
-  // if you need to pass objects, use this
-  public synchronized Object put (Object key, Object value) {
-    return  super.put(key, value);
-  }
-
-  /**
-   * put your documentation comment here
-   * @param key
-   * @return
-   */
-  public synchronized Object get (Object key) {
-    return  super.get(key);
-  }
 }
 
 
