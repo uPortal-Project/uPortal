@@ -642,6 +642,11 @@
       </row>
       <row>
         <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>      
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
         <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
         <column><name>PROFILE_ID</name><value>3</value></column>
       </row>
