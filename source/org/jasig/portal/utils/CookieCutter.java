@@ -208,7 +208,8 @@ public class CookieCutter
        }
        else
        {
-          log.debug("CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
+           if (log.isDebugEnabled())
+               log.debug("CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
@@ -323,7 +324,8 @@ public class CookieCutter
        }
        else
        {
-          log.debug("CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
+           if (log.isDebugEnabled())
+               log.debug("CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
