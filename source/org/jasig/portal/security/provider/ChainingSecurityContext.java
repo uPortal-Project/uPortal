@@ -38,6 +38,7 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.PropertiesManager;
 import java.util.*;
 
 /**
@@ -49,8 +50,8 @@ import java.util.*;
  */
 
 public abstract class ChainingSecurityContext implements ISecurityContext
-   {
-
+{
+  protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
   protected boolean isauth = false;
 //  protected Hashtable mySubContexts;
   protected Vector mySubContexts;
@@ -98,6 +99,10 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       sp.setUID(this.myPrincipal.UID);
       op.setCredentials(this.myOpaqueCredentials.credentialstring);
       sctx.authenticate();
+      // Stop attempting to authenticate if authenticated and if the property flag is set
+      if(stopWhenAuthenticated && sctx.isAuthenticated()) {
+        break;
+      }
     }
 
     // Zero out the actual credentials
