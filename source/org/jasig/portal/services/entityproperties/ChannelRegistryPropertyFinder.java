@@ -58,11 +58,11 @@ public class ChannelRegistryPropertyFinder
          as defined in channelRegistry.dtd
          */
         names = new String[5];
-        names[0] = "name";
-        names[1] = "title";
-        names[2] = "description";
-        names[3] = "fname";
-        names[4] = "timeout";
+        names[0] = "Name";
+        names[1] = "Title";
+        names[2] = "Description";
+        names[3] = "Functional Name";
+        names[4] = "Timeout";
         try {
             chan = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
@@ -82,10 +82,26 @@ public class ChannelRegistryPropertyFinder
         String r = null;
         if (entityID.getType().equals(chan)) {
             try {
-                Element c = ChannelRegistryManager.getChannel(entityID.getKey());
-                r = c.getAttribute(name);
+                //Element c = ChannelRegistryManager.getChannel("chan"+entityID.getKey());
+                //r = c.getAttribute(name);
+                ChannelDefinition cd = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(entityID.getKey()));
+                if (name.equals("Name")){
+                  r = cd.getName(); 
+                }
+                if (name.equals("Title")){
+                  r = cd.getTitle(); 
+                }
+                if (name.equals("Description")){
+                  r = cd.getDescription();
+                }
+                if (name.equals("Functional Name")){
+                  r = cd.getFName(); 
+                }
+                if (name.equals("Timeout")){
+                  r = String.valueOf(cd.getTimeout()); 
+                }
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty() :");
+                LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
                 LogService.instance().log(LogService.ERROR, e);
             }
         }
