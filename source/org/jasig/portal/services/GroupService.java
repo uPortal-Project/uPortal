@@ -36,9 +36,13 @@
 package org.jasig.portal.services;
 import org.jasig.portal.groups.*;
 import org.jasig.portal.*;
+import org.jasig.portal.utils.ResourceLoader;
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.io.File;
 /**
- *  This class maintains a facade to an underlying IEntityGroupStore implementation specified 
- *  in the portal properties file.  It privately maintains a singleton instance, and is accessed 
+ *  This class maintains a facade to an underlying IEntityGroupStore implementation specified
+ *  in the portal properties file.  It privately maintains a singleton instance, and is accessed
  *  via static methods, which delegate to instance methods, which call on the specific implementation.
  *
  * @author  Alex Vigdor
@@ -48,6 +52,7 @@ public class GroupService {
     private static GroupService _instance = null;
     private static IEntityGroupStore m_groupstore = null;
     private static String s_groupstorename = PropertiesManager.getProperty("org.jasig.portal.services.GroupService.EntityGroupStoreImpl");
+    private static String everyoneGroupKey = null;
     /** Creates new GroupService */
     private GroupService() {
         if (s_groupstorename == null) {
@@ -63,8 +68,17 @@ public class GroupService {
                 ("Failed to instantiate " + s_groupstorename));
             }
         }
+        try {
+          File secFile = ResourceLoader.getResourceAsFile(this.getClass(),"/properties/security.properties");
+          Properties secProps = new Properties();
+          secProps.load(new FileInputStream(secFile));
+          everyoneGroupKey = secProps.getProperty("everyoneKey");
+        }
+        catch (Exception e){
+          LogService.instance().log(LogService.ERROR,"GroupService:: Unable to load everyoneKey from security.properties" + e);
+        }
     }
-    
+
     private static synchronized GroupService instance(){
         if(_instance==null){
             _instance = new GroupService();
@@ -74,7 +88,7 @@ public class GroupService {
     protected void idelete(IEntityGroup group) throws GroupsException{
         m_groupstore.delete(group);
     }
-    
+
     public static void delete(IEntityGroup group) throws GroupsException{
        instance().idelete(group);
     }
@@ -143,5 +157,13 @@ public class GroupService {
     public static void updateMembers(IEntityGroup group) throws GroupsException{
         instance().iupdateMembers(group);
     }
-    
+    /**
+     * Refers to the security.properties file to get the key for the group "Everyone"
+     * and asks the groupStore implementation for the corresponding IEntityGroup
+     */
+    public static IEntityGroup getEveryoneGroup() throws GroupsException{
+        instance();
+        return find(everyoneGroupKey);
+    }
+
 }
