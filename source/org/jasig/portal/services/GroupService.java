@@ -117,7 +117,7 @@ public class GroupService implements IGroupConstants
      * portal entity, based on the <code>EntityIdentifier</code>, which
      * refers to the UNDERLYING entity for the <code>IGroupMember</code>.
      */
-    public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
+    public static IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
     throws GroupsException
     {
       return getGroupMember(underlyingEntityIdentifier.getKey(),
@@ -264,4 +264,17 @@ public class GroupService implements IGroupConstants
     {
         return ((ILockableGroupService)groupService).findGroupWithLock(key, lockOwner);
     }
+    
+  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    return instance().groupService.searchForGroups(query,method,leaftype);
+  }
+  public static EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
+    return instance().groupService.searchForGroups(query,method,leaftype,ancestor);
+  }
+  public static EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+    return instance().groupService.searchForEntities(query,method,type);
+  }
+  public static EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
+    return instance().groupService.searchForEntities(query,method,type,ancestor);
+  }
 }
