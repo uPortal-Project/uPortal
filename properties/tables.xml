@@ -170,6 +170,30 @@
   </table>
 
   <table>
+    <name>UP_USER_LAYOUT_AGGR</name>
+    <desc>For a given user, a layout is created giving it an id and title, basing it on an initial node id</desc>
+    <columns>
+      <column> <name>LAYOUT_ID</name>      <type>INTEGER</type>
+        <desc>Layout ID is not unique to the portal but unique for a given user. It links to up_layout_struct</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>USER_ID</name>        <type>INTEGER</type>
+        <desc>Foreign key user_id of table up_user</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>15</param>
+        <desc>Layout title - the name of the layout in text</desc>
+      </column>
+      <column> <name>INIT_NODE_ID</name> <type>INTEGER</type>
+        <desc>Initial node ID - Points to the first channel/folder in the users layout and sets the start of the document tree</desc>
+        <key>FK</key>
+      </column>
+    </columns>
+    <primary-key>LAYOUT_ID</primary-key>
+    <primary-key>USER_ID</primary-key>
+  </table>
+
+  <table>
     <name>UP_LAYOUT_STRUCT_AGGR</name>
     <desc>Holds the order of a user's layout structure -  the order in the user layout of channels subscribed to, the order of layout components (columns for example)</desc>
     <columns>
@@ -542,7 +566,7 @@
       </column>
       <column> <name>CHAN_SECURE</name>       <type>VARCHAR</type>   <param>1</param>
         <desc>Is the channel secure, meaning is it to be rendered using a secure protocol (i.e. https)? Supported values are 'Y' and 'N'.</desc>
-      </column>      
+      </column>
     </columns>
     <primary-key>CHAN_ID</primary-key>
   </table>
