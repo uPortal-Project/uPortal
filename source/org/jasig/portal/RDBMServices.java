@@ -33,23 +33,26 @@
  *
  */
 
-package  org.jasig.portal;
+package org.jasig.portal;
 
-import  org.jasig.portal.services.LogService;
-import  java.io.InputStream;
-import  java.util.Date;
-import  java.util.HashMap;
-import  java.util.Properties;
-import  java.sql.Connection;
-import  java.sql.DatabaseMetaData;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  java.sql.SQLException;
-import  java.sql.DriverManager;
+import org.jasig.portal.services.LogService;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.DriverManager;
 
 /**
- * Provides database access
+ * Provides relational database access and helper methods.
+ * A static routine determins if the database/driver supports
+ * prepared statements and/or outer joins.
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author George Lindholm, george.lindholm@ubc.ca
  * @version $Revision$
  */
 public class RDBMServices {
@@ -351,6 +354,7 @@ public class RDBMServices {
   public static final String sqlTimeStamp(long date) {
     return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" + tsEnd;
   }
+
   /**
    * SQL format a Date
    * @param date
@@ -419,6 +423,7 @@ public class RDBMServices {
         activeQuery = query;
       }
     }
+
     public void setDate(int index, java.sql.Date value) throws SQLException {
       if (RDBMServices.supportsPreparedStatements) {
         pstmt.setDate(index, value);
@@ -435,6 +440,7 @@ public class RDBMServices {
         }
       }
     }
+
     public void setInt(int index, int value) throws SQLException {
       if (RDBMServices.supportsPreparedStatements) {
         pstmt.setInt(index, value);
@@ -451,6 +457,7 @@ public class RDBMServices {
         }
       }
     }
+
     public void setNull(int index, int sqlType) throws SQLException {
       if (RDBMServices.supportsPreparedStatements) {
         pstmt.setNull(index, sqlType);
@@ -467,6 +474,7 @@ public class RDBMServices {
         }
       }
     }
+
     public void setString(int index, String value) throws SQLException {
       if (RDBMServices.supportsPreparedStatements) {
         pstmt.setString(index, value);
@@ -483,6 +491,7 @@ public class RDBMServices {
         }
        }
     }
+
     public ResultSet executeQuery() throws SQLException {
       if (RDBMServices.supportsPreparedStatements) {
         return pstmt.executeQuery();
@@ -528,6 +537,7 @@ public class RDBMServices {
     protected void setTestJoin(String query) {
       testJoin = query;
     }
+
     protected String getTestJoin() {return testJoin;}
 
     public String getQuery(String key) throws SQLException {
@@ -536,14 +546,14 @@ public class RDBMServices {
         throw new SQLException("Missing query");
       }
       return query;
-    };
+    }
 
     public void addQuery(String key, String value) throws SQLException {
       if (queryStrings.containsKey(key)) {
         throw new SQLException("Trying to add duplicate query");
       }
       queryStrings.put(key, value);
-    };
+    }
 
   }
 
@@ -566,6 +576,4 @@ public class RDBMServices {
   }
 
 }
-
-
 
