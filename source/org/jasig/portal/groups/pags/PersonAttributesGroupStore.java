@@ -87,7 +87,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       try {
         config = ResourceLoader.getResourceAsDocument(this.getClass(), "/properties/groups/PAGSGroupStoreConfig.xml");
       } catch(Exception rme){
-         throw new RuntimeException("PersonAttributesGroupStore: Unable to find configuration configuration document");
+         throw new RuntimeException("PersonAttributesGroupStore: Unable to find configuration document");
       }
       init(config);
       LogService.log(LogService.DEBUG, "PersonAttributeGroupStore: initialized with "+groupDefinitions.size()+" groups");
@@ -98,7 +98,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
    
    /**
-    * Read the XML configuration and create a Map of GroupDefinition objects
+    * Read the XML configuration and create a Map of GroupDefinition objects.
     * 
     * @param config xml config document
     */
@@ -114,15 +114,15 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
             initGroupDef((Element)groupElements.item(i));
          }
       }
-      try 
-          { initGroups(); }
-      catch ( GroupsException ge )
-      {
-          LogService.log(LogService.ERROR, "PersonAttributeGroupStore.init(): " + 
-            "problem initializing groups: " + ge.getMessage());
-          throw new RuntimeException(ge);
+      try { 
+         initGroups(); 
+      } catch ( GroupsException ge ) {
+         String errorMsg = "PersonAttributeGroupStore.init(): " + "Problem initializing groups: " + ge.getMessage();
+         LogService.log(LogService.ERROR, errorMsg);
+         throw new RuntimeException(errorMsg);
       }
    }
+
    /**
     * Iterates over the groupDefinitions Collection and creates the
     * corresponding groups.  Then, caches parents for each child group.
