@@ -143,8 +143,8 @@
       <column> <name>CHLD_STRUCT_ID</name> <type>INTEGER</type>
         <desc>Struct ID that is a child to this ID</desc>
       </column>
-      <column> <name>EXTERNAL_ID</name>    <type>INTEGER</type>
-        <desc>External ID that is ****</desc>
+      <column> <name>EXTERNAL_ID</name>    <type>VARCHAR</type><param>64</param>
+        <desc>External ID that channel can store key for resources used by a channel instance for a user</desc>
       </column>
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>
         <desc>Channel ID if the current Struct_ID entry is a channel, then this is set to the channel id subscribed to and located at this position in the layout</desc>
