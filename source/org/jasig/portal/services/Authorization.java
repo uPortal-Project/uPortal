@@ -54,6 +54,7 @@ import  org.jasig.portal.security.PortalSecurityException;
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.0, replaced by {@link AuthorizationService}
  */
 public class Authorization {
   protected IAuthorization m_authorization = null;
