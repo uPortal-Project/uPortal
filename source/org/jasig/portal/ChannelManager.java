@@ -515,7 +515,6 @@ public class ChannelManager implements LayoutEventListener {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-            rd.setChannelSubscribeId(channelSubscribeId);
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
             rd.setUPFile(up);
@@ -740,7 +739,6 @@ public class ChannelManager implements LayoutEventListener {
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-                rd.setChannelSubscribeId(channelTarget);
 
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
@@ -931,7 +929,6 @@ public class ChannelManager implements LayoutEventListener {
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-            rd.setChannelSubscribeId(channelSubscribeId);
 
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -944,7 +941,6 @@ public class ChannelManager implements LayoutEventListener {
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-                rd.setChannelSubscribeId(channelSubscribeId);
 
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelSubscribeId);
