@@ -198,7 +198,7 @@ public class PortalSessionManager extends HttpServlet
 	    boolean detach_mode=uPFile.startsWith("/"+detachBaseStart);
 	    
             if(!req.getParameterNames().hasMoreElements()) {
-		if(servletPath.equals("/"+renderBase) || detach_mode)
+		if(servletPath.equals("/"+renderBase) || servletPath.startsWith("/"+detachBaseStart))
 		    return null;
 	    }
 	    
