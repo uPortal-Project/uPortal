@@ -2107,7 +2107,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 } //end else
 
                 // Setting up the priority values based on the appropriate priority restrictions
-                PriorityRestriction priorityRestriction = AggregatedUserLayoutImpl.getPriorityRestriction(node);
+                PriorityRestriction priorityRestriction = AggregatedLayoutManager.getPriorityRestriction(node);
                 if ( priorityRestriction != null ) {
                  int priority = node.getPriority();
                  int[] range = priorityRestriction.getRange();
@@ -2577,7 +2577,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 } //end else
 
                 // Setting up the priority values based on the appropriate priority restrictions
-                PriorityRestriction priorityRestriction = AggregatedUserLayoutImpl.getPriorityRestriction(node);
+                PriorityRestriction priorityRestriction = AggregatedLayoutManager.getPriorityRestriction(node);
                 if ( priorityRestriction != null ) {
                  int priority = node.getPriority();
                  int[] range = priorityRestriction.getRange();
