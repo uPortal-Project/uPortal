@@ -711,9 +711,10 @@ Version $Revision$
     <!--groups template - a copy of the groups template for the groups servant-->
     <!--~-->
     <xsl:template name="selectGroups">
-        <xsl:variable name="groupID">
-            <xsl:value-of select="//browsingGroup[1]"/>
-        </xsl:variable>
+        <!-- <xsl:variable name="groupID"> -->
+            <!-- <xsl:value-of select="//browsingGroup[1]"/> -->
+        <!-- </xsl:variable> -->
+        <groupServant/>
     </xsl:template>
     <!--~-->
     <!--save template - displays a friendly message if data is saved-->
