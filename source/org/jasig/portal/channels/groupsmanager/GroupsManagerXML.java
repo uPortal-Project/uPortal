@@ -33,6 +33,7 @@
  *
  */
 
+
 package  org.jasig.portal.channels.groupsmanager;
 
 /**
@@ -48,7 +49,6 @@ import  java.io.*;
 import  org.jasig.portal.groups.*;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.services.GroupService;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.ChannelStaticData;
 import  java.sql.Timestamp;
@@ -72,8 +72,7 @@ import  org.apache.xerces.dom.DocumentImpl;
  * entry in portal.properties. At this point the RDBMInitialGroupContextStore is
  * hardcoded in InitialGroupsContextImpl.getFactory().
  */
-
- /**
+/**
  * Contains a groups of static methods used to centralize the generation and
  * retrieval of xml elements for groups and entities.
  */
@@ -96,19 +95,14 @@ public class GroupsManagerXML
       DocumentImpl viewDoc = new DocumentImpl();
       Element viewRoot = viewDoc.createElement("CGroupsManager");
       viewDoc.appendChild(viewRoot);
-      Element apRoot = getAuthorizationXml(viewDoc, sd);
+      Element apRoot = getAuthorizationXml(sd, null, viewDoc);
       viewRoot.appendChild(apRoot);
-
-      /** @todo take output create xml element and append to xmlDoc
-       *  rename vars and_or rethink flow */
-      //HashMap entTypes = getEntityTypes();
       Element etRoot = getEntityTypesXml(viewDoc);
       viewRoot.appendChild(etRoot);
-
       Element igcRoot = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
       igcRoot.setAttribute("expanded", "true");
-      Element rdfElem = createRdfElement(ROOT_GROUP_TITLE, ROOT_GROUP_DESCRIPTION,
-            "0", viewDoc);
+      Element rdfElem = createRdfElement(ROOT_GROUP_TITLE, ROOT_GROUP_DESCRIPTION, "0",
+            viewDoc);
       igcRoot.appendChild(rdfElem);
       //* Cut this section into a new method to create group xml without a groupmember object
       viewRoot.appendChild(igcRoot);
@@ -221,7 +215,7 @@ public class GroupsManagerXML
          Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(): ERROR retrieving entity "
                + e.toString());
       }
-      return entName;
+      return  entName;
    }
 
    /**
@@ -242,9 +236,9 @@ public class GroupsManagerXML
                + e.toString());
       }
       time2 = Calendar.getInstance().getTime().getTime();
-      msg = "GroupsManagerXML.getEntityName() timer: " + String.valueOf(time2 - time1) + " ms total";
+      msg = "GroupsManagerXML.getEntityName() timer: " + String.valueOf(time2 - time1)
+            + " ms total";
       Utility.logMessage("DEBUG", msg);
-
       return  entName;
    }
 
@@ -351,15 +345,16 @@ public class GroupsManagerXML
    /**
     * Returns an element holding the user's permissions used to determine access
     * privileges in the Groups Manager channel.
-    * @param xmlDoc
     * @param sd
+    * @param apRoot
+    * @param xmlDoc
     * @return Element
     */
-   public static Element getAuthorizationXml (DocumentImpl xmlDoc, ChannelStaticData sd) {
+   public static Element getAuthorizationXml (ChannelStaticData sd, Element apRoot, DocumentImpl xmlDoc) {
       IAuthorizationPrincipal ap = sd.getAuthorizationPrincipal();
-      Element apRoot = null;
-      if (ap != null) {
-         apRoot = xmlDoc.createElement("principal");
+      String princTagName = "principal";
+      if (ap != null && apRoot == null) {
+         apRoot = xmlDoc.createElement(princTagName);
          apRoot.setAttribute("token", ap.getPrincipalString());
          apRoot.setAttribute("type", ap.getType().getName());
          String name = ap.getKey();
@@ -374,11 +369,8 @@ public class GroupsManagerXML
          // owner, activity, target
          IPermission[] perms = ap.getAllPermissions(OWNER, null, null);
          for (int yy = 0; yy < perms.length; yy++) {
-            Element prm = xmlDoc.createElement("permission");
-            prm.setAttribute("principal", perms[yy].getPrincipal());
-            prm.setAttribute("activity", perms[yy].getActivity());
-            prm.setAttribute("type", perms[yy].getType());
-            prm.setAttribute("target", perms[yy].getTarget());
+            Element prm = getPermissionXml(xmlDoc, perms[yy].getPrincipal(), perms[yy].getActivity(),
+                  perms[yy].getType(), perms[yy].getTarget());
             apRoot.appendChild(prm);
          }
       } catch (org.jasig.portal.AuthorizationException ae) {
@@ -389,36 +381,57 @@ public class GroupsManagerXML
    }
 
    /**
+    * Returns an element for a permission.
+    * @param xmlDoc
+    * @param prmPrincipal
+    * @param prmActivity
+    * @param prmType
+    * @param prmTarget
+    * @return Element
+    */
+   public static Element getPermissionXml (DocumentImpl xmlDoc, String prmPrincipal,
+         String prmActivity, String prmType, String prmTarget) {
+      Element prm = xmlDoc.createElement("permission");
+      prm.setAttribute("principal", prmPrincipal);
+      prm.setAttribute("activity", prmActivity);
+      prm.setAttribute("type", prmType);
+      prm.setAttribute("target", prmTarget);
+      return  prm;
+   }
+
+   /**
     * Returns a HashMap of entity types. These are the entity types that can be added
     * to a group. We determine this by retrieving all entity types from the EntityTypes
     * class and using the GroupService class to determine which types have a root
     * group.
     * @return HashMap
     */
-   public static HashMap getEntityTypes() {
+   public static HashMap getEntityTypes () {
       HashMap entTypes = new HashMap(5);
       String entName;
       String entClassName;
       Iterator entTypesItr = EntityTypes.singleton().getAllEntityTypes();
       while (entTypesItr.hasNext()) {
-         Class entType = (Class) entTypesItr.next();
+         Class entType = (Class)entTypesItr.next();
          entClassName = entType.getName();
          entName = entClassName.substring(entClassName.lastIndexOf('.') + 1);
          try {
             if (GroupService.getRootGroup(entType) != null) {
                entTypes.put(entName, entClassName);
-               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Added : " + entName + " -- " + entClassName);
+               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Added : "
+                     + entName + " -- " + entClassName);
             }
             else {
-               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Did NOT Add : " + entName + " -- " + entClassName);
+               Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Did NOT Add : "
+                     + entName + " -- " + entClassName);
             }
-         }
-         catch (Exception e) {
+         } catch (Exception e) {
             // an exception means we do not want to add this entity to the list
-            Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes [Exception] Did NOT Add : " + entName + " -- " + entClassName);
+            Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes [Exception] Did NOT Add : "
+                  + entName + " -- " + entClassName);
          }
       }
-      return entTypes;
+      return  entTypes;
    }
 
    /**
@@ -432,13 +445,15 @@ public class GroupsManagerXML
       Iterator entTypeKeys = entTypes.keySet().iterator();
       while (entTypeKeys.hasNext()) {
          Object key = entTypeKeys.next();
-         String entType = (String) entTypes.get(key);
+         String entType = (String)entTypes.get(key);
          Element etElem = xmlDoc.createElement("entityType");
-         etElem.setAttribute("name", (String) key);
+         etElem.setAttribute("name", (String)key);
          etElem.setAttribute("type", entType);
          etRoot.appendChild(etElem);
       }
       return  etRoot;
    }
-
 }
+
+
+
