@@ -4,8 +4,6 @@
 
    <xsl:param name="baseActionURL">render.uP</xsl:param>
 
-   <xsl:param name="userName">Guest</xsl:param>
-
    <xsl:param name="theme" select="'imm'" />
 
    <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>
@@ -63,12 +61,7 @@ function openBrWindow(theURL,winName,features) {
                               <img alt="interface image" src="{$mediaPath}/theme_{$theme}/uportal_logo.gif" border="0" />
                            </td>
 
-                           <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Hello, 
-                           <xsl:value-of select="$userName" />
-
-                           <br />
-
-                           Current theme: 
+                           <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Current theme: 
                            <xsl:value-of select="$theme" />
 
                            <br />
@@ -83,15 +76,8 @@ function openBrWindow(theURL,winName,features) {
                            <a href="{$baseActionURL}?uP_tparam=theme&amp;theme=matrix">matrix,</a>
 
                            <a href="{$baseActionURL}?uP_tparam=theme&amp;theme=uosm">uosm</a>
-
-                           <xsl:if test="not($userName = 'Guest')">
-                              <br />
-
-                              <br />
-
-                              <a href="logout.jsp">[Logout]</a>
-                           </xsl:if>
                            </td>
+			   <td><xsl:apply-templates select="header"/></td>
                         </tr>
                      </table>
                   </td>
@@ -103,6 +89,14 @@ function openBrWindow(theURL,winName,features) {
             </table>
          </body>
       </html>
+   </xsl:template>
+
+   <xsl:template match="header">
+     <!-- this, obviously, is not a good way of incorporating header channels.
+          Please rewrite -->
+     <xsl:for-each select="channel">
+       <xsl:copy-of select="."/>
+     </xsl:for-each>
    </xsl:template>
 
    <xsl:template match="navigation">
