@@ -38,10 +38,14 @@
 
 
 package  org.jasig.portal;
+import  org.jasig.portal.services.LogService;
 
-import  java.sql.*;
+import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.w3c.dom.Document;
+import org.jasig.portal.security.IPerson;
 
 
 /**
@@ -49,6 +53,7 @@ import  org.apache.xerces.dom.DocumentImpl;
  * @author George Lindholm
  * @version $Revision$
  */
+
 /**
  * Sequence numbers have the form of {Table Name}_SEQ and, at the moment, they must
  * have been created by hand before uPortal is started. See UP_SEQUENCE in properties/data.xml
@@ -57,11 +62,16 @@ import  org.apache.xerces.dom.DocumentImpl;
 public final class OracleUserLayoutStore extends RDBMUserLayoutStore
     implements IUserLayoutStore {
 
-
   /* DBCounter */
   /*
    * get&increment method.
    */
+
+   /**
+    * Get the next incremental value
+   * @param tableName
+   * @exception Exception
+    */
   public int getIncrementIntegerId (String tableName) throws Exception {
     int id;
     Connection con = rdbmService.getConnection();
@@ -69,7 +79,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT " + tableName + "_SEQ.NEXTVAL FROM DUAL";
-        Logger.log(Logger.DEBUG, "OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();            // If this doesn't work then the database is munged up
@@ -87,7 +97,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Create a sequence counter
    * @param tableName
    * @exception Exception
    */
@@ -96,7 +106,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Create a sequence counter, starting with a specific value
    * @param tableName
    * @param startAt
    * @exception Exception
@@ -107,7 +117,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sInsert = "CREATE SEQUENCE " + tableName + "_SEQ INCREMENT BY 1 START WITH " + startAt + " NOMAXVALUE NOCYCLE";
-        Logger.log(Logger.DEBUG, "OracleUserLayoutStore::createCounter(): " + sInsert);
+        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::createCounter(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -118,7 +128,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
   }
 
   /**
-   * put your documentation comment here
+   * Modify the current value of a counter
    * @param tableName
    * @param value
    * @exception Exception
@@ -131,7 +141,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
 
         /* This is dangerous */
         String sUpdate = "DROP SEQUENCE " + tableName + "_SEQ";
-        Logger.log(Logger.DEBUG, "OracleUserLayoutStore::setCounter(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::setCounter(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
         createCounter(tableName, value);
       } finally {
