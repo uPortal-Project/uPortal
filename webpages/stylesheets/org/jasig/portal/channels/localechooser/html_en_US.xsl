@@ -3,7 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">default</xsl:param>
-  <xsl:param name="locale">en_US</xsl:param>
+  <xsl:param name="localesParam">en_US</xsl:param>
   <xsl:variable name="mediaPath" select="'media/org/jasig/portal/channels/localechooser'"/>
 
   <xsl:template match="locale-status">
@@ -19,7 +19,7 @@
         </td>
         -->
         <td align="right" nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
-  	  <select class="uportal-button" name="locale">
+  	  <select class="uportal-button" name="{$localesParam}">
               <option value="en_US" selected="selected">English</option>
               <option value="ja_JP">Japanese</option>
               <option value="sv_SE">Swedish</option>

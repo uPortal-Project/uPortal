@@ -35,13 +35,10 @@
 
 package org.jasig.portal.channels.localechooser;
 
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IChannel;
-import org.jasig.portal.PortalEvent;
+import org.jasig.portal.Constants;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -50,75 +47,50 @@ import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 /**
- * CLocaleChooser
+ * Changes the locale preferences for the current session.
+ * Any changes made via this channel will not be persisted
+ * between sessions.
  * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
  * @version $Revision$
  */
-public class CLocaleChooser implements IChannel
+public class CLocaleChooser extends BaseChannel
 {
-
-    private ChannelRuntimeData runtimeData;
-    private ChannelStaticData staticData;
     private final String channelName = "Locale Chooser";
     protected final String sslLocation = "CLocaleChooser.ssl";
     // I18n propertiy
     protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
 
-    public CLocaleChooser()
-    {
+    public void renderXML(ContentHandler out) throws PortalException {
+        Document doc = DocumentFactory.getNewDocument();
+        String locale = runtimeData.getParameter(Constants.LOCALES_PARAM);
+
+        if (localeAware == false)
+            return;
+
+        // Create <locale-status> element
+        Element localeStatusElement = doc.createElement("locale-status");
+
+        if (locale != null) {
+            // Create <locale> element
+            Element localeElement = doc.createElement("locale");
+            localeElement.appendChild(doc.createTextNode(locale));
+            localeStatusElement.appendChild(localeElement);
+        }
+
+        doc.appendChild(localeStatusElement);
+
+        LogService.log(LogService.DEBUG, "LocaleChooser - render XML");
+        LogService.log(LogService.DEBUG, "LocaleChooser -  locale: " + locale);
+        LogService.log(LogService.DEBUG, "LocaleChooser -  sslLocation: " + sslLocation);
+        LogService.log(LogService.DEBUG, "LocaleChooser -  XSL= " + locale + "/" + sslLocation);
+
+        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+        xslt.setXML(doc);
+        xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.setStylesheetParameter("localesParam", Constants.LOCALES_PARAM);
+        xslt.transform();
     }
-
-    public void setRuntimeData (ChannelRuntimeData rd)
-    {
-	this.runtimeData = rd;
-    }
-
-    public void setStaticData (ChannelStaticData sd)
-    {
-	this.staticData = sd;
-    }
-
-    public ChannelRuntimeProperties getRuntimeProperties()
-    {
-	return new ChannelRuntimeProperties();
-    }
-
-    public void receiveEvent(PortalEvent ev)
-    {
-    }
-
-    public void renderXML (ContentHandler out) throws PortalException
-    {
-	Document doc = DocumentFactory.getNewDocument();
-	String locale = runtimeData.getParameter("locale");
-
-
-        if (localeAware == false) return;
-
-	// Create <locale-status> element
-	Element localeStatusElement = doc.createElement("locale-status");
-
-	if (locale != null)
-	    {
-		// Create <locale> element
-		Element localeElement = doc.createElement("locale");
-		localeElement.appendChild(doc.createTextNode(locale));
-		localeStatusElement.appendChild(localeElement);
-	    }
-
-	doc.appendChild(localeStatusElement);
-
-	LogService.log(LogService.DEBUG, "LocaleChooser - render XML");
-	LogService.log(LogService.DEBUG, "LocaleChooser -  locale: " + locale);
-	LogService.log(LogService.DEBUG, "LocaleChooser -  sslLocation: " + sslLocation);
-	LogService.log(LogService.DEBUG, "LocaleChooser -  XSL= " + locale + "/" + sslLocation);
-
-    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
-	xslt.setXML(doc);
-	xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
-	xslt.setTarget(out);
-	xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-	xslt.transform();
-  }
 
 }
