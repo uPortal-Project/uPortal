@@ -60,7 +60,8 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public static final Integer STARTENTITY = new Integer(20);
     public static final Integer ENDENTITY = new Integer(21);
     
-    protected boolean copyCharBlock = PropertiesManager.getPropertyAsBoolean(SAX2BufferImpl.class.getName() + ".copyCharBlock");
+    protected boolean copyCharBlock 
+        = PropertiesManager.getPropertyAsBoolean(SAX2BufferImpl.class.getName() + ".copyCharBlock", true);
 
     // constructors
 
