@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.portlet.PortletMode;
+import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +77,10 @@ import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
+import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
+import org.jasig.portal.container.om.portlet.UserAttributeImpl;
+import org.jasig.portal.container.om.portlet.UserAttributeListImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
@@ -87,6 +91,7 @@ import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
@@ -215,7 +220,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     // We could consider a convention in which multi-valued preferences
                     // are denoted by a comma-delimited String.  This is a little messy,
                     // but we want to minimize changes to the framework in order to support
-                    // the portlet-to-channel adapter.
+                    // the Portlet adapter.
                     List values = new ArrayList(1);
                     values.add(prefVal);
                     preferences.add(prefName, values);
@@ -223,6 +228,23 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             }
             
             portletEntity.setPreferences(preferences);
+            
+            // Add the user information into the request See PLT.17.2.
+            Map userInfo = cd.getUserInfo();
+            if (userInfo == null) {
+                userInfo = new HashMap();
+                IPerson person = sd.getPerson();
+                if (person.getSecurityContext().isAuthenticated()) {
+                    UserAttributeListImpl userAttributes = ((PortletApplicationDefinitionImpl)portletDefinition.getPortletApplicationDefinition()).getUserAttributes();
+                    for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
+                        UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();
+                        String attName = userAttribute.getName();
+                        String attValue = (String)person.getAttribute(attName);
+                        userInfo.put(attName, attValue);
+                    }
+                    cd.setUserInfo(userInfo);
+                }
+            }
              
             // Now create the PortletWindow and hold a reference to it
             PortletWindowImpl portletWindow = new PortletWindowImpl();
@@ -508,11 +530,14 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 Map renderParameters = actionResponse.getRenderParameters();
                 ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
             }
-                                    
+                                                
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
                 wrappedRequest = new EmptyRequestImpl(wrappedRequest);
             }
+            
+            // Add the user information
+            wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
             
             //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);

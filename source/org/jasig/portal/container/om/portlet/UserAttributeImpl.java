@@ -35,67 +35,30 @@
 
 package org.jasig.portal.container.om.portlet;
 
-import java.io.Serializable;
-
-import org.apache.pluto.om.common.ObjectID;
-import org.apache.pluto.om.portlet.PortletApplicationDefinition;
-import org.apache.pluto.om.portlet.PortletDefinitionList;
-import org.apache.pluto.om.servlet.WebApplicationDefinition;
-import org.jasig.portal.container.om.common.ObjectIDImpl;
-
 /**
  * Implementation of Apache Pluto object model.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class PortletApplicationDefinitionImpl implements PortletApplicationDefinition, Serializable {
-
-    private ObjectID objectId = null;
-    private String version = null;
-    private PortletDefinitionList portletDefinitionList = null;
-    private UserAttributeListImpl userAttributes = null;
-    private WebApplicationDefinition webApplicationDefinition = null;
-
-    public ObjectID getId() {
-        return objectId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public PortletDefinitionList getPortletDefinitionList() {
-        return portletDefinitionList;
-    }
-
-    public UserAttributeListImpl getUserAttributes() {
-        return userAttributes;
-    }
-
-    public WebApplicationDefinition getWebApplicationDefinition() {
-        return webApplicationDefinition;
-    }
-
-    // Additional methods
+public class UserAttributeImpl {
     
-    public void setId(String id) {
-        this.objectId = ObjectIDImpl.createFromString(id);
+    private String description = null;
+    private String name = null;
+
+    public String getDescription() {
+        return description;
     }
 
-    public void setPortletDefinitionList(PortletDefinitionList portletDefinitions) {
-        this.portletDefinitionList = portletDefinitions;
+    public String getName() {
+        return name;
     }
     
-    public void setUserAttributes(UserAttributeListImpl userAttributes) {
-        this.userAttributes = userAttributes;
-    }    
-
-    public void setVersion(String version) {
-        this.version = version;
+    public void setDescription(String description) {
+        this.description = description;
     }
-
-    public void setWebApplicationDefinition(WebApplicationDefinition definition) {
-        this.webApplicationDefinition = definition;
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
