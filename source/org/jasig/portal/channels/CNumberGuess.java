@@ -64,13 +64,8 @@ public class CNumberGuess implements IChannel
 {
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
-  private String media;
 
-  private static final String fs = File.separator;
-  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
-  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CNumberGuess";
-  private static final String sslLocation = stylesheetDir + fs + "CNumberGuess.ssl";
-    private MediaManager mm;
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CNumberGuess/CNumberGuess.ssl");
   private int iMinNum = 0;
   private int iMaxNum = 0;
   private int iGuess = 0;
@@ -84,7 +79,6 @@ public class CNumberGuess implements IChannel
   {
       this.staticData = new ChannelStaticData ();
       this.runtimeData = new ChannelRuntimeData ();
-      this.mm=new MediaManager();
   }
 
   /** Returns channel runtime properties
@@ -128,8 +122,7 @@ public class CNumberGuess implements IChannel
       iMinNum = 0;
       iMaxNum = 100;
 
-      LogService logger = getLogger();
-      logger.log(logger.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      LogService.instance().log(LogService.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 
@@ -141,8 +134,6 @@ public class CNumberGuess implements IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-
-    media = mm.getMedia(runtimeData.getBrowserInfo());
 
     String sGuess = runtimeData.getParameter ("guess");
 
@@ -184,7 +175,7 @@ public class CNumberGuess implements IChannel
         w.write ("  <guess>" + iGuess + "</guess>\n");
 
         if (bFirstTime)
-          ;
+          ; // Do nothing
         else if (iGuess == iAnswer)
         {
           w.write ("  <answer>" + iAnswer + "</answer>\n");
@@ -199,38 +190,16 @@ public class CNumberGuess implements IChannel
 
         Hashtable ssParams = new Hashtable();
         ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-        XSLT.transform(w.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, "main", media);
+        XSLT.transform(w.toString(), new URL(sslLocation), out, ssParams, "main", runtimeData.getBrowserInfo());
     }
     catch (Exception e)
     {
-      LogService logger = getLogger();
-      logger.log(logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
   private int getRandomNumber (int min, int max)
   {
     return new Double ((max - min) * Math.random () + min).intValue ();
-  }
-
-  private LogService getLogger()
-  {
-    try
-    {
-      Hashtable environment = new Hashtable(1);
-
-      // Set up the path
-      environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-      Context ctx = new InitialContext(environment);
-
-      LogService logger = (LogService)ctx.lookup("/services/logger");
-
-      return(logger);
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace();
-      return(null);
-    }
   }
 }
