@@ -79,6 +79,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   private AggregatedLayout layout;
   private UserProfile userProfile;
   private IPerson person;
+  private Set listeners = new HashSet();
 
   // Boolean flags for marking nodes
   //private boolean addTargetsAllowed = false;
@@ -1072,31 +1073,32 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       this.layoutStore = (AggregatedUserLayoutStore) layoutStore;
     }
 
-
     public void loadUserLayout() throws PortalException {
-     try {
-      if ( layoutStore != null ) {
-       fragmentId = null;
-       layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
-       layout.setLayoutManager(this);
-       /*fragments = (Hashtable) layoutStore.getFragments(person);
-       if ( fragments != null && fragments.size() > 0 ) 
-         layout.setFragments(fragments);*/
-       // Setting the first child node id for the root node to NULL if it does not exist in the layout
-       ALFolder rootFolder = getLayoutFolder(getRootFolderId());
-       String firstChildId = rootFolder.getFirstChildNodeId();
-       if ( firstChildId != null && getLayoutNode(firstChildId) == null )
-        rootFolder.setFirstChildNodeId(null);
-       // Moving the wrong pushed fragments to the lost folder
-       moveWrongFragmentsToLostFolder();
-       // Checking restrictions and move "wrong" nodes to the lost folder
-       moveWrongNodesToLostFolder();
-       updateCacheKey();
-      }
-     } catch ( Exception e ) {
-         e.printStackTrace();
-         throw new PortalException(e.getMessage());
-       }
+        try {
+            if ( layoutStore != null ) {
+                fragmentId = null;
+                layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
+                layout.setLayoutManager(this);
+                // Setting the first child node id for the root node to NULL if it does not exist in the layout
+                ALFolder rootFolder = getLayoutFolder(getRootFolderId());
+                String firstChildId = rootFolder.getFirstChildNodeId();
+                if ( firstChildId != null && getLayoutNode(firstChildId) == null )
+                    rootFolder.setFirstChildNodeId(null);
+                // Moving the wrong pushed fragments to the lost folder
+                moveWrongFragmentsToLostFolder();
+                // Checking restrictions and move "wrong" nodes to the lost folder
+                moveWrongNodesToLostFolder();
+                // Inform layout listeners
+                for(Iterator i = listeners.iterator(); i.hasNext();) {
+                    LayoutEventListener lel = (LayoutEventListener)i.next();
+                    lel.layoutLoaded();
+                }
+                updateCacheKey();
+            }
+        } catch ( Exception e ) {
+            LogService.log(LogService.ERROR, e);
+            throw new PortalException(e.getMessage());
+        }
     }
     
 	/**
@@ -1111,10 +1113,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {
       try {
-        if ( !isLayoutFragment() )
+        if ( !isLayoutFragment() ) {
           layoutStore.setAggregatedLayout(person,userProfile,layout);
-        else
+          // Inform layout listeners
+          for(Iterator i = listeners.iterator(); i.hasNext();) {
+              LayoutEventListener lel = (LayoutEventListener)i.next();
+              lel.layoutSaved();
+          }
+        } else {
           saveFragment();
+        }
           
          updateCacheKey();
       } catch ( Exception e ) {
@@ -1285,97 +1293,105 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       return layout.getNodeDescription(nodeId);
     }
 
-
-    public synchronized boolean moveNode(String nodeId, String parentId,String nextSiblingId) throws PortalException {
+    public synchronized boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
     	
-     // if the node is being moved to itself that operation must be prevented	
-     if ( nodeId.equals(nextSiblingId) )
+        // if the node is being moved to itself that operation must be prevented	
+        if ( nodeId.equals(nextSiblingId) )
             return false; 	
       
-            
-	 ALNode node = getLayoutNode(nodeId);    
+        ALNode node = getLayoutNode(nodeId);    
 	 
-	 // If the node is being moved to the same position
-	 if ( parentId.equals(node.getParentNodeId()) )
-	  if ( CommonUtils.nvl(nextSiblingId).equals(CommonUtils.nvl(node.getNextNodeId())))
-		  return true;    
+	    // If the node is being moved to the same position
+	    if ( parentId.equals(node.getParentNodeId()) )
+	        if ( CommonUtils.nvl(nextSiblingId).equals(CommonUtils.nvl(node.getNextNodeId())))
+		        return true;    
        
-     // Checking restrictions if the parent is not the lost folder
-     if ( !parentId.equals(IALFolderDescription.LOST_FOLDER_ID) )
-      if ( !canMoveNode(nodeId,parentId,nextSiblingId) )
-            return false;
+        // Checking restrictions if the parent is not the lost folder
+        if ( !parentId.equals(IALFolderDescription.LOST_FOLDER_ID) )
+            if ( !canMoveNode(nodeId,parentId,nextSiblingId) )
+                return false;
      
-     ALFolder targetFolder = getLayoutFolder(parentId);
-     ALFolder sourceFolder = getLayoutFolder(node.getParentNodeId());
-     String sourcePrevNodeId = node.getPreviousNodeId();
-     String sourceNextNodeId = node.getNextNodeId();
-     ALNode targetNextNode = getLayoutNode(nextSiblingId);
-     ALNode targetPrevNode = null, sourcePrevNode = null, sourceNextNode = null;
-     String prevSiblingId = null;
+        ALFolder targetFolder = getLayoutFolder(parentId);
+        ALFolder sourceFolder = getLayoutFolder(node.getParentNodeId());
+        String sourcePrevNodeId = node.getPreviousNodeId();
+        String sourceNextNodeId = node.getNextNodeId();
+        ALNode targetNextNode = getLayoutNode(nextSiblingId);
+        ALNode targetPrevNode = null, sourcePrevNode = null, sourceNextNode = null;
+        String prevSiblingId = null;
 
-      // If the nextNode != null we calculate the prev node from it otherwise we have to run to the last node in the sibling line
+        // If the nextNode != null we calculate the prev node from it otherwise we have to run to the last node in the sibling line
 
-      if ( targetNextNode != null )
-        targetPrevNode = getLayoutNode(targetNextNode.getPreviousNodeId());
-      else
-        targetPrevNode = getLastSiblingNode(targetFolder.getFirstChildNodeId());
+        if ( targetNextNode != null )
+            targetPrevNode = getLayoutNode(targetNextNode.getPreviousNodeId());
+        else
+            targetPrevNode = getLastSiblingNode(targetFolder.getFirstChildNodeId());
 
-      if ( targetPrevNode != null ) {
-        targetPrevNode.setNextNodeId(nodeId);
-        prevSiblingId = targetPrevNode.getId();
-      }
+        if ( targetPrevNode != null ) {
+            targetPrevNode.setNextNodeId(nodeId);
+            prevSiblingId = targetPrevNode.getId();
+        }
 
-      // Changing the previous node id for the new next sibling node
-      if ( targetNextNode != null )
-        targetNextNode.setPreviousNodeId(nodeId);
+        // Changing the previous node id for the new next sibling node
+        if ( targetNextNode != null )
+            targetNextNode.setPreviousNodeId(nodeId);
 
+        if ( nodeId.equals(sourceFolder.getFirstChildNodeId()) ) {
+            // Set the new first child node ID to the source folder
+            sourceFolder.setFirstChildNodeId(node.getNextNodeId());
+        }
 
-     if ( nodeId.equals(sourceFolder.getFirstChildNodeId()) ) {
-      // Set the new first child node ID to the source folder
-      sourceFolder.setFirstChildNodeId(node.getNextNodeId());
-     }
+        String firstChildId = targetFolder.getFirstChildNodeId();
+        if ( firstChildId == null || firstChildId.equals(nextSiblingId) ) {
+            // Set the new first child node ID to the target folder
+            targetFolder.setFirstChildNodeId(nodeId);
+        }
 
-     String firstChildId = targetFolder.getFirstChildNodeId();
-     if ( firstChildId == null || firstChildId.equals(nextSiblingId) ) {
-      // Set the new first child node ID to the target folder
-      targetFolder.setFirstChildNodeId(nodeId);
-     }
+        // Set the new next node ID for the source previous node
+        if ( sourcePrevNodeId != null ) {
+           sourcePrevNode =  getLayoutNode(sourcePrevNodeId);
+           sourcePrevNode.setNextNodeId(sourceNextNodeId);
+        }
 
-     // Set the new next node ID for the source previous node
-     if ( sourcePrevNodeId != null ) {
-       sourcePrevNode =  getLayoutNode(sourcePrevNodeId);
-       sourcePrevNode.setNextNodeId(sourceNextNodeId);
-     }
+        // Set the new previous node ID for the source next node
+        if ( sourceNextNodeId != null ) {
+            sourceNextNode = getLayoutNode(sourceNextNodeId);
+            sourceNextNode.setPreviousNodeId(sourcePrevNodeId);
+        }
 
-     // Set the new previous node ID for the source next node
-     if ( sourceNextNodeId != null ) {
-       sourceNextNode = getLayoutNode(sourceNextNodeId);
-       sourceNextNode.setPreviousNodeId(sourcePrevNodeId);
-     }
+        node.setParentNodeId(parentId);
+        node.setNextNodeId(nextSiblingId);
+        node.setPreviousNodeId(prevSiblingId);
 
+        // TO UPDATE THE APPROPRIATE INFO IN THE DB
+        // TO BE DONE !!!!!!!!!!!
+        boolean result = true;
+        if ( autoCommit ) {
+            if ( sourcePrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourcePrevNode);
+            if ( sourceNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceNextNode);
+            if ( targetPrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetPrevNode);
+            if ( targetNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetNextNode);
+            result &= layoutStore.updateUserLayoutNode(person,userProfile,targetFolder);
+            result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceFolder);
+            // Changing the node being moved
+            result &= layoutStore.updateUserLayoutNode(person,userProfile,node);
+        }
+      
+        if (result) {
+            // Inform the layout listeners
+            LayoutMoveEvent ev = new LayoutMoveEvent(this, getNode(nodeId), getParentId(nodeId));
+            for (Iterator i = listeners.iterator(); i.hasNext();) {
+                LayoutEventListener lel=(LayoutEventListener)i.next();
+                if (node.getNodeDescription().getType() == IUserLayoutNodeDescription.CHANNEL) {
+                    lel.channelMoved(ev);
+                } else {
+                    lel.folderMoved(ev);
+                }
+            }
+        }
 
-     node.setParentNodeId(parentId);
-     node.setNextNodeId(nextSiblingId);
-     node.setPreviousNodeId(prevSiblingId);
+        updateCacheKey();
 
-
-     // TO UPDATE THE APPROPRIATE INFO IN THE DB
-     // TO BE DONE !!!!!!!!!!!
-     boolean result = true;
-     if ( autoCommit ) {
-      if ( sourcePrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourcePrevNode);
-      if ( sourceNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceNextNode);
-      if ( targetPrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetPrevNode);
-      if ( targetNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetNextNode);
-      result &= layoutStore.updateUserLayoutNode(person,userProfile,targetFolder);
-      result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceFolder);
-      // Changing the node being moved
-      result &= layoutStore.updateUserLayoutNode(person,userProfile,node);
-     }
-
-      updateCacheKey();
-      return result;
-
+        return result;
     }
 
     public synchronized boolean deleteNode(String nodeId) throws PortalException {
@@ -1391,14 +1407,22 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
            LogService.log(LogService.DEBUG, "The node with ID = '" + nodeId + "' cannot be deleted");
            return false;
        }
-
-
+       
+       // Inform the layout listeners
+       LayoutMoveEvent ev = new LayoutMoveEvent(this, node.getNodeDescription(), node.getParentNodeId());
+       for(Iterator i = listeners.iterator(); i.hasNext();) {
+           LayoutEventListener lel = (LayoutEventListener)i.next();
+           if(getNode(nodeId).getType() == IUserLayoutNodeDescription.CHANNEL) {
+               lel.channelDeleted(ev);
+           } else {
+               lel.folderDeleted(ev);
+           }
+       }
 
        // Deleting the node from the parent
        ALFolder parentFolder = getLayoutFolder(node.getParentNodeId());
 
        boolean result = false;
-       //parentNode.deleteChildNode(nodeId);
        if ( nodeId.equals(parentFolder.getFirstChildNodeId()) ) {
          // Set the new first child node ID to the source folder
          parentFolder.setFirstChildNodeId(node.getNextNodeId());
@@ -1429,8 +1453,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
        // Deleting the nodefrom the hashtable and returning the result value
        result = (layout.getLayoutData().remove(nodeId)!=null) && ((autoCommit)?result:true);
-
+       
        updateCacheKey();
+       
        return result;
 
     }
@@ -1439,7 +1464,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         // Checking restrictions
         if ( !canAddNode(nodeDesc,parentId,nextSiblingId) )
-               return null;
+            return null;
 
         ALFolder parentFolder = getLayoutFolder(parentId);
         ALNode nextNode = getLayoutNode(nextSiblingId);
@@ -1457,23 +1482,22 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         ALNode layoutNode=ALNode.createALNode(nodeDesc);
 
-
         // Setting the parent node ID
         layoutNode.setParentNodeId(parentId);
 
-
-        if ( prevNode != null ) layoutNode.setPreviousNodeId(prevNode.getId());
-        if ( nextNode != null ) layoutNode.setNextNodeId(nextSiblingId);
-
+        if ( prevNode != null ) 
+            layoutNode.setPreviousNodeId(prevNode.getId());
+        if ( nextNode != null ) 
+            layoutNode.setNextNodeId(nextSiblingId);
 
         // Add the new node to the database and get the node with a new node ID
         if ( autoCommit ) 
-         layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
+           layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
         else {
-         IALNodeDescription desc = layoutNode.getNodeDescription();
-         desc.setId(layoutStore.getNextNodeId(person));
-         if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
-           layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
+           IALNodeDescription desc = layoutNode.getNodeDescription();
+           desc.setId(layoutStore.getNextNodeId(person));
+           if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
+               layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
         }
           
         String nodeId = layoutNode.getId();
@@ -1481,30 +1505,41 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         // Putting the new node into the hashtable
         layout.getLayoutData().put(nodeId,layoutNode);
 
-        if ( prevNode != null ) prevNode.setNextNodeId(nodeId);
+        if ( prevNode != null ) 
+            prevNode.setNextNodeId(nodeId);
 
-
-        if ( nextNode != null ) nextNode.setPreviousNodeId(nodeId);
+        if ( nextNode != null ) 
+            nextNode.setPreviousNodeId(nodeId);
 
         // Setting new child node ID to the parent node
         if ( prevNode == null )
-          parentFolder.setFirstChildNodeId(nodeId);
+            parentFolder.setFirstChildNodeId(nodeId);
        
         if ( autoCommit ) {
-        
-         // TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE
-         if ( nextNode != null )
-          layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
+            // TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE
+            if ( nextNode != null )
+                layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
 
-         if ( prevNode != null )
-          layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
-
-          // Update the parent node
-          layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
-        
+            if ( prevNode != null )
+                layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
+    
+            // Update the parent node
+            layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
         }  
-
+        
+        // Inform the layout listeners
+        LayoutEvent ev = new LayoutEvent(this, layoutNode.getNodeDescription());
+        for (Iterator i = listeners.iterator(); i.hasNext();) {
+            LayoutEventListener lel = (LayoutEventListener)i.next();
+            if (layoutNode.getNodeDescription().getType() == IUserLayoutNodeDescription.CHANNEL) {
+                lel.channelAdded(ev);
+            } else {
+                lel.folderAdded(ev);
+            }
+        }      
+        
         updateCacheKey();
+          
         return layoutNode.getNodeDescription();
     }
 
@@ -1591,22 +1626,33 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         // Checking restrictions
         if ( !canUpdateNode(nodeDesc) )
-              return false;
+            return false;
 
-          ALNode node = getLayoutNode(nodeDesc.getId());
-          IALNodeDescription oldNodeDesc = node.getNodeDescription();
+            ALNode node = getLayoutNode(nodeDesc.getId());
+            IALNodeDescription oldNodeDesc = node.getNodeDescription();
 
-          // We have to change all the boolean properties on descendants
-          changeDescendantsBooleanProperties((IALNodeDescription)nodeDesc,oldNodeDesc,nodeDesc.getId());
-          node.setNodeDescription((IALNodeDescription)nodeDesc);
+            // We have to change all the boolean properties on descendants
+            changeDescendantsBooleanProperties((IALNodeDescription)nodeDesc,oldNodeDesc,nodeDesc.getId());
+            node.setNodeDescription((IALNodeDescription)nodeDesc);
+          
+            // Inform the layout listeners
+            LayoutEvent ev = new LayoutEvent(this, nodeDesc);
+            for (Iterator i = listeners.iterator(); i.hasNext();) {
+                LayoutEventListener lel = (LayoutEventListener)i.next();
+                if (nodeDesc.getType() == IUserLayoutNodeDescription.CHANNEL) {
+                    lel.channelUpdated(ev);
+                } else {
+                    lel.folderUpdated(ev);
+                }
+            }
 
-          updateCacheKey();
+            updateCacheKey();
 
-          // Update the node into the database
-          if ( autoCommit )
-           return layoutStore.updateUserLayoutNode(person,userProfile,node);
-          else
-           return true;
+            // Update the node into the database
+            if ( autoCommit )
+                return layoutStore.updateUserLayoutNode(person,userProfile,node);
+            else
+                return true;
     }
 
 
@@ -1758,14 +1804,12 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       return restrictionMask;
     }
 
-
     public boolean addLayoutEventListener(LayoutEventListener l){
-        return false;
+        return listeners.add(l);
     }
     public boolean removeLayoutEventListener(LayoutEventListener l){
-        return false;
+        return listeners.remove(l);
     }
-
 
     /**
      * Returns an id of the root folder.
