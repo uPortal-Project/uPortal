@@ -90,6 +90,8 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 
     IPerson m_person;
 
+    final static boolean SAVE_PROFILE_GUESSES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.GuestUserLayoutManager.save_profile_guesses");
+
     /**
      * Initializing constructor.
      *  @param the servlet request object
@@ -168,6 +170,10 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                         // user agent has been matched
                         LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
                         upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
+                        // save mapping
+                        if(SAVE_PROFILE_GUESSES) {
+                            ulsdb.setSystemBrowserMapping(userAgent,upl.getProfileId());
+                        }
                     } else {
                         LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has not matched any profile.");
                     }
