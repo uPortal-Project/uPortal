@@ -294,26 +294,26 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.editUri = sd.getParameter ("cw_edit");
 
     String cacheScope = sd.getParameter ("cw_cacheDefaultScope");
-    if (cacheScope != null)
+    if (cacheScope != null && !cacheScope.trim().equals(""))
       state.cacheDefaultScope = cacheScope;
     cacheScope = sd.getParameter ("cw_cacheScope");
-    if (cacheScope != null)
+    if (cacheScope != null && !cacheScope.trim().equals(""))
       state.cacheScope = cacheScope;
     String cacheMode = sd.getParameter ("cw_cacheDefaultMode");
-    if (cacheMode != null)
+    if (cacheMode != null && !cacheMode.trim().equals(""))
       state.cacheDefaultMode = cacheMode;
     cacheMode = sd.getParameter ("cw_cacheMode");
-    if (cacheMode != null)
+    if (cacheMode != null && !cacheMode.trim().equals(""))
       state.cacheMode = cacheMode;
     String cacheTimeout = sd.getParameter("cw_cacheDefaultTimeout");
-    if (cacheTimeout != null)
+    if (cacheTimeout != null && !cacheTimeout.trim().equals(""))
       state.cacheDefaultTimeout = Long.parseLong(cacheTimeout);
     cacheTimeout = sd.getParameter("cw_cacheTimeout");
-    if (cacheTimeout != null)
+    if (cacheTimeout != null && !cacheTimeout.trim().equals(""))
       state.cacheTimeout = Long.parseLong(cacheTimeout);
 
     String connContext = sd.getParameter ("upc_localConnContext");
-    if (connContext != null)
+    if (connContext != null && !connContext.trim().equals(""))
     {
       try
       {
