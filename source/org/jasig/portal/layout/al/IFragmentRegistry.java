@@ -40,5 +40,11 @@ public interface IFragmentRegistry {
 	 * @return an array of fragment ids
 	 */
 	public IFragmentId[] getPushedFragments();
+    
+    /**
+     * Obtain id of the user's main fragment (containing root node)
+     * @return id of the user's main fragment
+     */
+    public IFragmentId getUserFragmentId();
 	
 }
