@@ -29,7 +29,7 @@
 	<P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
    <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Background</B></A></P>
    <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
-   <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
+   
    <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
    </TD>
 
@@ -45,18 +45,20 @@
 	 <p>DbLoader performs the following tasks:</p>
 	 <ol> 
     
-    <li>Reads in <a href="../implementors/tables.xml.html">properties/tables.xml</a> 
+    
+<li>Reads in <a href="../implementors/properties/tables.xml.html">properties/tables.xml</a> 
 file to determine the database schema </li>
 	 <li>Deletes existing tables specified in tables.xml.</li> 
 	 <li>Creates the tables specified in tables.xml.</li> 
     
-    <li>Reads in <a href="../implementors/data.xml.html">properties/data.xml</a> file 
-to determine sample data.</li> 
+    
+<li>Reads in <a href="../implementors/properties/data.xml.html">properties/data.xml</a> 
+file to determine sample data.</li> 
 	 <li>Inserts data from data.xml into the newly created tables.</li> 
 	 <li>Creates a database script containing all the SQL statements previously executed.</li> 
 	 </ol>
 	 
-<p>DbLoader can be configured by modifying <a href="../implementors/dbloader.xml.html">properties/dbloader.xml</a>. 
+<p>DbLoader can be configured by modifying <a href="../implementors/properties/dbloader.xml.html">properties/dbloader.xml</a>. 
 Because DbLoader relies on database metadata supplied by a JDBC driver, it may 
 be necessary (for some combinations of drivers and databases) to supply a datatype 
 mapping inside dbloader.xml. If this is necessary, DbLoader will print an error 
