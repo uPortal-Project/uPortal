@@ -53,9 +53,9 @@ $Revision$
     <xsl:call-template name="optionMenu"/>
     <br/>
     <!--Begin Layout Table -->
-    <table width="100%" border="0" cellspacing="20" cellpadding="0" class="uportal-background-dark">
-      <tr align="center" valign="top">
-        <td>
+    <table width="100%" border="0" cellspacing="0" cellpadding="20">
+      <tr align="center" valign="top" class="uportal-background-dark">
+        <td class="uportal-background-dark">
           <!--Begin Layout Sub-Table -->
           <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
@@ -1121,8 +1121,7 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios ><scenario default="no" name="Scenario1" url="file://C:\Uportal Work\updesign\upreferences\ulayoutRegistry.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/><scenario default="no" name="Scenario2" url="file://c:\Uportal Work\updesign\upreferences\ulayout.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/><scenario default="yes" name="Scenario3" url="file://C:\Documents and Settings\immdca13\Desktop\pfefile.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" destSchemaPath="" destSchemaRoot="" />
-</metaInformation>
--->
+
+
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->

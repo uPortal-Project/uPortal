@@ -21,20 +21,20 @@
                 <tr class="uportal-channel-table-header">
                   <td>Option</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="16" height="8"/>
                   </td>
                   <td>Thumbnail</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td width="100%"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+                  <td width="100%"><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
                 </tr>
                 <tr class="uportal-channel-table-header">
                   <td colspan="5">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -50,7 +50,6 @@
             <td>
               <input type="hidden" name="action" value="completeEdit"/>
               <input type="submit" name="submitSave" value="Apply" class="uportal-button"/>
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
               <input type="submit" name="submitCancel" value="Cancel" class="uportal-button"/>              
             </td>
           </tr>
@@ -71,11 +70,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
       <td>
-        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}/{skin}_thumb.gif" width="120" border="0"/>
+        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr valign="top">
@@ -87,7 +86,7 @@
             </td>
           </tr>
           <tr valign="top">
-            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
+            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="4" height="4"/></td>
             <td class="uportal-channel-text">
               <xsl:value-of select="skin-description"/>
             </td>
@@ -100,7 +99,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
           <tr>
             <td>
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+              <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/>
             </td>
           </tr>
         </table>
@@ -108,4 +107,5 @@
     </tr>
   </xsl:template>
 </xsl:stylesheet>
+
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
