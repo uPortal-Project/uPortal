@@ -38,10 +38,9 @@ public class UserLayoutRestrictionFactory {
  	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + className +"'" );	
  	  try {	
  	 	IUserLayoutRestriction restriction = (IUserLayoutRestriction) Class.forName(className).newInstance();
- 	 	for ( Enumeration classNames = activeRestrictions.elements(); classNames.hasMoreElements(); ) {
- 	 	  String name = (String) classNames.nextElement();
- 	 	  String cn = (String) classNames.nextElement();
- 	 	  if ( className.equals(cn) ) {
+ 	 	for ( Enumeration names = activeRestrictions.keys(); names.hasMoreElements(); ) {
+ 	 	  String name = (String) names.nextElement();
+ 	 	  if ( className.equals(activeRestrictions.getProperty(name)) ) {
  	 	  	 restriction.setName(name);
  	 	  	 break;
  	 	  }
