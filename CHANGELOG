@@ -1,0 +1,89 @@
+RELEASE NOTES for uPortal 1.6
+
+
+The following changes have been made for this release:
+
+* The creation of a SessionManager that replaces functionality lost by
+the deprecation of the HttpSessionContext and adds additional functionality for
+restricting multiple logins and user accounting.
+
+* SessionManager is as fast as possible and uses limited locking.  It uses
+the new collections framework to do this.
+
+* Lots of changes to the LayoutBean:
+    * No longer shows minimize, edit, remove buttons when the
+    layout is in readOnly mode.
+    * 
+
+* Created a control panel feature that helps you manage the portal.  See the
+control_panel directory.
+
+* RdbmServices has a fix to allow using newer JDBC drivers that require
+a Class.forName().newInstance() call.
+
+* Included the poolman.xml and poolman.policy, and added a commented out
+configuration for it in the rdbm.properties file.  You can now use the
+PoolMan package from www.codestudio.com (it's free and open source) to
+speed up the database accesses.
+
+* Added the performance.html and properties.html files in the 
+docs/administrators.  These two documents describe a bunch of stuff 
+handy for people administering the portal.  You should deffinately read
+both.
+
+* Heavy resource usage optimizations.  The portal now attempts to do 
+everything it can to avoid crashing by using the smallest memory possible,
+reclaiming memory that isn't being used, dynamically loading layouts
+from disk, and restricting logins if there are too many users.
+
+* Big performance improvements.
+
+* Fixes for two denial of service attacks.  This also allows you to load
+a nearly infinite number of guest users (since they all share the a
+single layout).
+
+* Converted to use Log4J entirely.  You can now use everything available 
+to the Log4J package (remote NT event loggers, remote syslog, file logs,
+port logs, on demand roll-over files, etc.).
+
+* The system now has a smarter startup sequence.  If you don't set the
+portalBaseDir correctly, it will try to figure it out.  If it can't then 
+it will complain and stop.  If the Log4J isn't initialized, it will print
+to stdout.
+
+* All jsp files are able to initialize the portal.  No need to go to
+index.jsp first.
+
+* The index.jsp file is just a wrapper for layout.jsp.  They do the 
+same thing.
+
+* Logout redirects go to the / root instead of to index.jsp.  This lets
+you setup your portal to handle either a static .html file or the index.jsp.
+If you are developer, and you have a non-standard docroot, you'll need to change
+logout.jsp to go where you need.
+
+* The portal now uses a cache directory to store all the layouts.  This keeps
+it from accessing the databse all the time and makes things really fast.  You
+can also edit layouts in the directory with a text editor.
+
+* You can now decide to not cache every channel.
+
+* Protection from users typing in XML as the name for Tabs, which can be used to
+hack the layout.  Uses very strict requirements only allowing characters, numbers,
+and spaces.
+
+* Lots of bug fixes and speed improvements.
+
+* Everything that is new is configurable in the properties/session.properties
+file.
+
+* Much more robust, with many full stop exceptions caught, and many common
+XML related exceptions discarded (like Broken pipes that are the result
+of a user closing their HTTP connection).
+
+If you want more detailed information on what changed, just look in the
+CVS logs.
+
+
+
+
