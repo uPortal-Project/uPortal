@@ -40,6 +40,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 import org.jasig.portal.layout.*;
 import com.objectspace.xml.*;
+import org.jasig.portal.security.IPerson;
 
 public interface ILayoutBean
 {
@@ -63,7 +64,10 @@ public interface ILayoutBean
   public org.jasig.portal.IChannel getChannelInstance (String sChannelID);
   public void removeChannelInstance (String sChannelID);
   public String getChannelID (org.jasig.portal.layout.IChannel channel);
+  public String getGlobalChannelID(org.jasig.portal.layout.IChannel channel);
   public String getUserName (HttpServletRequest req);
+  public IPerson getPerson (HttpServletRequest req);
+  public boolean canUserPublish (IPerson person);
 
   // Tabs
   public void addTab (HttpServletRequest req);
