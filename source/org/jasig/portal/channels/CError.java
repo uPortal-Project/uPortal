@@ -46,6 +46,12 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.PortalControlStructures;
@@ -77,7 +83,7 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
-public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable
+public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable, ICharacterChannel
 {
 
     // codes defining the stage at which the exception was thrown
@@ -108,6 +114,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
     private PortalControlStructures portcs;
     private static final String sslLocation = "CError/CError.ssl";
+    protected static MediaManager mediaM=new MediaManager();
 
     public CError() {
     }
@@ -465,4 +472,93 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     private String toString(boolean b) {
         if(b) return("true"); else return ("false");
     }
+
+    public void renderCharacters(PrintWriter out) throws PortalException {
+        // runtime data processing needs to be done here, otherwise replaced
+        // channel will get duplicated setRuntimeData() calls
+        if(str_channelSubscribeId!=null) {
+            String chFate=runtimeData.getParameter("action");
+            if(chFate!=null) {
+                // a fate has been chosen
+                if(chFate.equals("retry")) {
+                    LogService.log(LogService.DEBUG,"CError:renderCharacters() : going for retry");
+                    // clean things up for the channel
+                    ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
+                    crd.clear(); // Remove parameters
+                    try {
+                        if(the_channel instanceof IPrivilegedChannel)
+                            ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
+                        the_channel.setRuntimeData (crd);
+                        ChannelManager cm=portcs.getChannelManager();
+                        cm.setChannelInstance(this.str_channelSubscribeId,this.the_channel);
+                        if(the_channel instanceof ICharacterChannel) {
+                            ((ICharacterChannel) the_channel).renderCharacters(out);
+                        } else {
+                            ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
+                            BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                            the_channel.renderXML(serOut);
+                        }
+                        return;
+                    } catch (Exception e) {
+                        // if any of the above didn't work, fall back to the error channel
+                        resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
+                    }
+                } else if(chFate.equals("restart")) {
+                    LogService.log(LogService.DEBUG,"CError:renderCharacters() : going for reinstantiation");
+
+                    ChannelManager cm=portcs.getChannelManager();
+
+                    ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
+                    crd.clear();
+                    try {
+                        if((the_channel=cm.instantiateChannel(str_channelSubscribeId))==null) {
+                            resetCError(CError.GENERAL_ERROR,null,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
+                        } else {
+                            try {
+                                if(the_channel instanceof IPrivilegedChannel) {
+                                    ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
+                                }
+                                the_channel.setRuntimeData (crd);
+                                if(the_channel instanceof ICharacterChannel) {
+                                    ((ICharacterChannel) the_channel).renderCharacters(out);
+                                } else {
+                                    ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
+                                    BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                                    the_channel.renderXML(serOut);
+                                }
+                                return;
+                            } catch (Exception e) {
+                                // if any of the above didn't work, fall back to the error channel
+                                resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
+                                cm.setChannelInstance(str_channelSubscribeId,this);
+                                LogService.log(LogService.ERROR,"CError::renderCharacters() : an error occurred during channel reinitialization. "+e);
+                            }
+                        }
+                    } catch (Exception e) {
+                        resetCError(CError.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
+                        LogService.log(LogService.ERROR,"CError::renderCharacters() : an error occurred during channel reinstantiation. "+e);
+                    }
+                } else if(chFate.equals("toggle_stack_trace")) {
+                    showStackTrace=!showStackTrace;
+                }
+            }
+        }
+        // if channel's render XML method was to be called, we would've returned by now
+        BaseMarkupSerializer serOut=null;
+        try {
+            ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
+            serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);        
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR,"CError::renderCharacters() : unable to obtain proper markup serializer : "+e); 
+        }
+
+        if(serOut==null) {
+            // default to XML serializer
+            OutputFormat frmt=new OutputFormat("XML", "UTF-8", true);
+            serOut=new XMLSerializer(out, frmt);
+        }
+
+        localRenderXML(serOut);
+    }
+
 }
