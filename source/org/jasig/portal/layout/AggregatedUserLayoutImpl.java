@@ -1597,9 +1597,13 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription nodeDesc) throws PortalException {
 
+        System.out.println ( "################ -1" );
+
         // Checking restrictions
         if ( !canUpdateNode(nodeDesc) )
               return false;
+
+        System.out.println ( "################ -2" );
 
           ALNode node = getLayoutNode(nodeDesc.getId());
           IALNodeDescription oldNodeDesc = node.getNodeDescription();
@@ -1631,6 +1635,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     public boolean canUpdateNode(IUserLayoutNodeDescription nodeDescription) throws PortalException {
         IALNodeDescription nodeDesc=(IALNodeDescription)nodeDescription;
         String nodeId = nodeDesc.getId();
+
         if ( nodeId == null ) return false;
         ALNode node = getLayoutNode(nodeId);
         IALNodeDescription currentNodeDesc = node.getNodeDescription();
@@ -1641,8 +1646,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         //if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
         if ( currentNodeDesc.isImmutable() )
             return false;
+
         // Checking the immutable parent node related restriction
-        if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )
+        if ( getRestriction(getLayoutNode(node.getParentNodeId()),RestrictionTypes.IMMUTABLE_RESTRICTION,"children") != null &&
+             checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )
             return false;
 
         // Checking the immutable children node related restrictions
@@ -1650,10 +1657,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
             ALFolder folder = (ALFolder) node;
             //Loop for all children
             for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-             if ( checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,"parent","true") )
-                return false;
+             if ( getRestriction(getLayoutNode(nextId),RestrictionTypes.IMMUTABLE_RESTRICTION,"parent") != null &&
+                  checkRestriction(nextId,RestrictionTypes.IMMUTABLE_RESTRICTION,"parent","true") )
+                  return false;
         }
-
 
        // if a new node description doesn't contain any restrictions the old restrictions will be used
         if ( nodeDesc.getRestrictions() == null )
@@ -1681,6 +1688,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
             return false;
          }
         }
+
 
         // Checking child related restrictions for the parent
         if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
