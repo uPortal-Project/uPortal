@@ -62,7 +62,7 @@ import org.xml.sax.ContentHandler;
 
 
 /**
- * An implementation of Aggregated User Layout Interface defining common operations on user layout nodes,
+ * An implementation of Aggregated User Layout Manager Interface defining common operations on user layout nodes,
  * that is channels and folders
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
@@ -1145,6 +1145,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       try {
        if ( isLayoutFragment() ) {
         layoutStore.setFragment(person,(ILayoutFragment)layout);
+		fragments = (Hashtable) layoutStore.getFragments(person);
+		if ( fragments != null && fragments.size() > 0 ) 
+		  layout.setFragments(fragments);
        }
         updateCacheKey();
       } catch ( Exception e ) {

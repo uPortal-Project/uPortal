@@ -1617,7 +1617,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		 if ( rs != null ) rs.close();
 		 
 		 if ( !isOwner && !isNewFragment )
-		  throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+		  throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 
       // Check if the fragment is new
       if ( isNewFragment ) {
@@ -1725,7 +1725,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 		Statement stmt = con.createStatement();
 		boolean isOwner = false;
-		boolean isNewFragment = false;
 		// Check if the user was an owner
 		ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
 		if ( rs.next() ) {
@@ -1735,7 +1734,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	     if ( rs != null ) rs.close();
 		 
 		 if ( !isOwner )
-			throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+			throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 		
 		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);	
 			

@@ -853,7 +853,7 @@ public class UserInstance implements HttpSessionBindingListener {
 			} else if ( param.equals("delete") ) {
 			     alm.deleteFragment();
 			}     
-		   themePrefs.putParameterValue("currentFragmentID",CommonUtils.nvl(fragmentId)); 
+		   themePrefs.putParameterValue("currentFragmentID",CommonUtils.envl(fragmentId,"default_layout")); 
 		  }	  
 		}
 
