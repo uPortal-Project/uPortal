@@ -25,9 +25,6 @@
     <antcall target="pubchan">
       <param name="channel" value="layout-sitemap.xml"/>
     </antcall>
-    <antcall target="pushfragment">
-      <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
-    </antcall>
     <antcall target="dbconvert21"/>
     <echo message="Finished initializing uPortal"/>
   </target>
@@ -35,6 +32,9 @@
  <target name="convert-to-al" depends="compile"
    description="Runs all the targets necessary to upgrade the portal database to use aggregated layouts">
     <echo message="Converting to Aggregated Layouts"/>
+    <antcall target="pushfragment">
+      <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
+    </antcall>
     <antcall target="convertprofiles"/>
     <antcall target="convertlayouts">
       <param name="allLayouts" value="-all"/>
