@@ -382,7 +382,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     CharacterCachingChannelIncorporationFilter cif = null;
                     AnchoringChannelIncorporationFilter aif = null;
                     if (useAnchors) {
-                      aif = new AnchoringChannelIncorporationFilter (ulm.getUserLayoutDOM(), markupSerializer);
+                      aif = new AnchoringChannelIncorporationFilter (markupSerializer);
                       cif = new CharacterCachingChannelIncorporationFilter(aif, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
                     } else 
                         cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
