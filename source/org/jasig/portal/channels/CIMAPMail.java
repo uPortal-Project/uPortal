@@ -2365,12 +2365,16 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
   }
 
   private static String HTMLescape (String text) {
-    StringBuffer newText = new StringBuffer (text.length ());
-    for (int i = 0; i < text.length (); i++) {
-      String charAt = text.substring (i, i+1);
-      newText.append (replaceHTMLcharacter (charAt));
+    if (text != null) {
+      StringBuffer newText = new StringBuffer (text.length ());
+      for (int i = 0; i < text.length (); i++) {
+        String charAt = text.substring (i, i+1);
+        newText.append (replaceHTMLcharacter (charAt));
+      }
+      return newText.toString ();
+    } else {
+      return "null string";
     }
-    return newText.toString ();
   }
 
   /**
@@ -2480,7 +2484,7 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
    * @param JspWriter object
    */
   private StringWriter displayErrorMsg (Exception e, boolean navigationBar) {
-    return displayErrorMsg (new String[] {e.getMessage ()}, navigationBar);
+    return displayErrorMsg (new String[] {HTMLescape(e.getMessage ())}, navigationBar);
   }
   /**
    * Present error message to the user
