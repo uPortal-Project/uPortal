@@ -43,28 +43,18 @@ import java.util.HashMap;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IServant;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.IPrivileged;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.layout.ALFolder;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.ALFragment;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
-import org.jasig.portal.layout.ILayoutFragment;
-import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
@@ -75,12 +65,9 @@ import org.xml.sax.Attributes;
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
-public class CFragmentManager extends BaseChannel implements IPrivileged {
+public class CFragmentManager extends FragmentManager {
 
 	private static final String sslLocation = "/org/jasig/portal/channels/CFragmentManager/CFragmentManager.ssl";
-	private IAggregatedUserLayoutManager alm;
-	private ThemeStylesheetUserPreferences themePrefs;
-	private Map fragments;
 	private boolean servantRender = false;
 	private String servantFragmentId;
 	private static Map servants = new HashMap();
@@ -165,7 +152,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	private void analyzeParameters( XSLT xslt ) throws PortalException {
+	protected void analyzeParameters( XSLT xslt ) throws PortalException {
 		
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
@@ -258,111 +245,24 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	}
 	
 	
-	private String getFragmentRootId( String fragmentId ) throws PortalException {
-	  if ( fragments != null && !fragments.isEmpty() ) {
-		ALFragment fragment = (ALFragment) fragments.get(fragmentId);
-		ALFolder rootFolder = (ALFolder) fragment.getNode(fragment.getRootId());
-		return rootFolder.getFirstChildNodeId();	
-	  }
-	    return null;
-	}
-
 	/**
 	 * Passes portal control structure to the channel.
 	 * @see PortalControlStructures
 	 */
 	public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-	    IUserLayoutManager ulm = pcs.getUserPreferencesManager().getUserLayoutManager();
-		if (ulm instanceof TransientUserLayoutManagerWrapper)
-		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-	    if (ulm instanceof IAggregatedUserLayoutManager)
-		  alm = (IAggregatedUserLayoutManager) ulm;
-		else 
+	    super.setPortalControlStructures(pcs);
+	    if ( alm == null )  
 		  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!"); 
-		themePrefs = pcs.getUserPreferencesManager().getUserPreferences().getThemeStylesheetUserPreferences();	
-		// Refresh the fragment list
-		refreshFragments();
 	}
 
 	private Document getFragmentList() throws PortalException {
 		Document document = DocumentFactory.getNewDocument();
-		Element fragmentsNode = document.createElement("fragments");
-		document.appendChild(fragmentsNode);
-		//fragmentsNode.appendChild(getGroupsXML(document));
-		Element category = document.createElement("category");
-		category.setAttribute("name", "Fragments");
-		category.setAttribute("expanded", "true");
-		fragmentsNode.appendChild(category);
-		boolean updateList = false;
-		if (fragments != null) {
-			for ( Iterator ids = fragments.keySet().iterator(); ids.hasNext(); ) {
-				String fragmentId = (String) ids.next();
-				ALFragment fragment = (ALFragment) fragments.get(fragmentId);
-				String fragmentRootId = getFragmentRootId(fragmentId);
-				// if the fragment root ID is NULL then the fragment must be deleted
-				// since it does not have any content
-				if ( fragmentRootId == null ) {
-					alm.deleteFragment(fragmentId);
-				    if ( !updateList ) 
-				      updateList = true;
-				    continue;
-				}
-				Element fragmentNode = document.createElement("fragment");
-				category.appendChild(fragmentNode);
-				Element id = document.createElement("ID");
-				id.appendChild(document.createTextNode(fragmentId));
-				fragmentNode.appendChild(id);
-				Element rootId = document.createElement("rootNodeID");
-				rootId.appendChild(document.createTextNode(fragmentRootId));
-				rootId.setAttribute("immutable",fragment.getNode(fragmentRootId).getNodeDescription().isImmutable()?"Y":"N");
-				fragmentNode.appendChild(rootId);
-				Element type = document.createElement("type");
-				type.appendChild(
-					document.createTextNode(
-						fragment.isPushedFragment() ? "pushed" : "pulled"));
-				fragmentNode.appendChild(type);
-				Element fname = document.createElement("fname");
-				fname.appendChild(
-					document.createTextNode(fragment.getFunctionalName()));
-				fragmentNode.appendChild(fname);
-				Element name = document.createElement("name");
-				name.appendChild(
-					document.createTextNode(
-						fragmentRootId != null
-						? ((ALNode) fragment.getNode(fragmentRootId)).getNodeDescription().getName()
-						: fragment.getFunctionalName()));
-				fragmentNode.appendChild(name);
-				Element desc = document.createElement("description");
-				desc.appendChild(document.createTextNode(fragment.getDescription()));
-				fragmentNode.appendChild(desc);
-			}
-			
-			// If there were any fragments withno rootID and these fragments were deleted - need to update the fragment list
-			if ( updateList )
-			  refreshFragments();
-		}
-		
+		super.getFragmentList(document);
 		return document;
 	}
 
-	public void setStaticData(ChannelStaticData sd) throws PortalException {
-		staticData = sd;
-	}
-	public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-	    runtimeData = rd;	
-	}
-
-	public void refreshFragments() throws PortalException {
-		  Collection fragmentIds = alm.getFragments();
-		  fragments = new HashMap();
-			for (Iterator ids = fragmentIds.iterator(); ids.hasNext(); ) {
-				String fragmentId = (String) ids.next();
-				ILayoutFragment layoutFragment = alm.getFragment(fragmentId);
-				if (layoutFragment == null || !(layoutFragment instanceof ALFragment))
-					throw new PortalException("The fragment must be "+ALFragment.class.getName()+" type!");
-				fragments.put(fragmentId,layoutFragment);
-			}
-		
+	protected Collection getFragments() throws PortalException {
+		return alm.getFragments();
 	}
 
 	public void renderXML(ContentHandler out) throws PortalException {
@@ -376,11 +276,6 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		xslt.setXSL(sslLocation,"fragmentManager",runtimeData.getBrowserInfo());
 		xslt.setTarget(new ServantSAXFilter(out));
 		xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
-	    
-	    
-		/*if ( servantRender ) {
-		  xslt.setStylesheetParameter("action", "selectGroupsButtons");  
-		}*/ 
 		
 		xslt.transform();    
 	}

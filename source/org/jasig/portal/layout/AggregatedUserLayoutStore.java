@@ -1748,9 +1748,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 			throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 
 		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
+		
+		stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
 
 		stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
-
+		
 		String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
 		PreparedStatement ps = con.prepareStatement(sqlUpdate);
 		ps.setInt(1,userId);
@@ -2538,7 +2540,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         String sQuery = "SELECT FRAGMENT_ROOT_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId;
         rs = stmt.executeQuery(sQuery);
         try {
-          rs.next();
+         if ( rs.next() ) {
           firstStructId = rs.getInt(1);
           layout.setName(rs.getString(2));
 		  layout.setDescription(rs.getString(3));
@@ -2546,6 +2548,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		     layout.setPushedFragment();
 		  else
 		     layout.setPulledFragment();
+         }    
         } finally {
           rs.close();
         }

@@ -37,13 +37,7 @@ package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IPrivileged;
-import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -59,18 +53,16 @@ import java.util.Collection;
    * @author Michael Ivanov, mvi@immagic.com
    * @version $Revision$
    */
-  public class CContentSubscriber extends BaseChannel implements IPrivileged {
+public class CContentSubscriber extends FragmentManager {
 
     private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
-    private PortalControlStructures controlStructures;
-    private IUserLayoutManager ulm;
     private static Document channelRegistry;
     private Vector expandedCategories, condensedCategories;
     private Vector expandedChannels, condensedChannels;
     private Vector expandedFragments, condensedFragments;
     private Vector[] expandedItems;
 	private Vector[] condensedItems;
-	private Collection fragments;
+	
 
     public CContentSubscriber() {
        super();
@@ -84,7 +76,7 @@ import java.util.Collection;
 	   condensedItems = new Vector[] { condensedFragments, condensedChannels, condensedCategories }; 
     }
 
-	private void analyzeParameters() throws PortalException {
+	protected void analyzeParameters( XSLT xslt ) throws PortalException {
 		
 		    //Document channelRegistry = (Document) CContentSubscriber.channelRegistry.cloneNode(true);
 		
@@ -184,34 +176,18 @@ import java.util.Collection;
 	}		 	
 
 
-    private void attachSubscribableFragments ( Document doc ) {
-      	
-    }
+	protected Collection getFragments() throws PortalException {
+		 return alm.getSubscribableFragments();
+	}
 
-    /**
-     * Passes portal control structure to the channel.
-     * @see PortalControlStructures
-     */
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-        controlStructures = pcs;
-        ulm = controlStructures.getUserPreferencesManager().getUserLayoutManager();
-		if (ulm instanceof TransientUserLayoutManagerWrapper)
-		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-		if (ulm instanceof IAggregatedUserLayoutManager) {
-		  IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm; 
-		  fragments = alm.getSubscribableFragments();
-		}  
-    }
 
     public void setStaticData (ChannelStaticData sd) throws PortalException {
-       staticData = sd;
+       super.setStaticData(sd);
        if ( channelRegistry == null )
         channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     }
 
     public void renderXML (ContentHandler out) throws PortalException {
-    	
-	  analyzeParameters();	
 
       String catId = CommonUtils.nvl(runtimeData.getParameter("catID"));
 
