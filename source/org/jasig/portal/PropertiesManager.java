@@ -41,16 +41,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.UtilitiesBean;
 
 /**
  * Provides access to properties and manages the portal base directory.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @since uPortal 2.0
  */
 public class PropertiesManager {
 
-  private static final String PORTAL_PROPERTIES_FILE_NAME = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "portal.properties";
+  private static final String PORTAL_PROPERTIES_FILE_NAME = "/properties/portal.properties";
   private static final Properties props = new Properties();
 
   static {
@@ -64,11 +64,7 @@ public class PropertiesManager {
    */
   protected static void loadProps () {
     try {
-      File propsFile = new File(PORTAL_PROPERTIES_FILE_NAME);
-      props.load(new FileInputStream(propsFile));
-    } catch (FileNotFoundException fnfe) {
-      LogService.instance().log(LogService.ERROR, "Unable to open portal.properties file.");
-      LogService.instance().log(LogService.ERROR, fnfe);
+      props.load(PropertiesManager.class.getResourceAsStream(PORTAL_PROPERTIES_FILE_NAME));
     } catch (IOException ioe) {
       LogService.instance().log(LogService.ERROR, "Unable to read portal.properties file.");
       LogService.instance().log(LogService.ERROR, ioe);

@@ -45,6 +45,7 @@ import java.util.Enumeration;
 import org.w3c.dom.*;
 import org.apache.xerces.parsers.*;
 import org.apache.xml.serialize.*;
+import org.xml.sax.InputSource;
 
 
 /**
@@ -235,7 +236,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
@@ -286,7 +287,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
@@ -319,7 +320,7 @@ public class RDBMCoreStylesheetDescriptionStore
     // need to read in the description file to obtain information such as name, word description and media list
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
@@ -352,7 +353,7 @@ public class RDBMCoreStylesheetDescriptionStore
     // need to read iN the description file to obtain information such as name, word description and mime type list
     try {
       DOMParser parser = new DOMParser();
-      parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
       LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
           + this.getName(stylesheetDescriptionXML));

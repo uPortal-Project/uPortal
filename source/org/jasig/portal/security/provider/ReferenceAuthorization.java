@@ -68,11 +68,10 @@ public class ReferenceAuthorization implements IAuthorization {
   static {
     try {
       // Find our properties file and open it
-      String filename = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "security.properties";
-      File propFile = new File(filename);
+      java.io.InputStream stream = ReferenceAuthorization.class.getResourceAsStream("/properties/security.properties");
       Properties securityProps = new Properties();
       try {
-        securityProps.load(new FileInputStream(propFile));
+        securityProps.load(stream);
         s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
         LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));

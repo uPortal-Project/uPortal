@@ -81,8 +81,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
     private boolean dataIsSet=false;
     private static final String chanID="singleton";
     private static final String fs = File.separator;
-    private static final String relativeSSLLocation = "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal"
-	+ fs + "tools" + fs + "ChannelServlet" + fs + "ChannelServlet.ssl";
+    private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
 
 
     /**
@@ -96,10 +95,12 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param person a user IPerson object
      */
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
-	this.set = new StylesheetSet(PortalSessionManager.getPortalBaseDir() + fs + relativeSSLLocation);
-	String propertiesDir = PortalSessionManager.getPortalBaseDir() + fs + "properties" + fs;
-	this.set.setMediaProps(propertiesDir + "media.properties");
-	this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
+	this.set = new StylesheetSet(this.getClass().getResource(relativeSSLLocation).toString());
+        String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+        String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+        String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+	this.set.setMediaProps(mediaPropsUrl);
+        this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
 	this.channelName=channelName;
 	this.hasHelp=hasHelp;
 	this.hasAbout=hasAbout;

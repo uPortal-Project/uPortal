@@ -36,8 +36,6 @@
 package org.jasig.portal.tools;
 
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.UtilitiesBean;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.XSLT;
@@ -63,6 +61,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -116,9 +115,8 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class DbLoader
 {
-  private static String portalBaseDir;
-  private static String propertiesUri;
-  private static String tablesUri;
+  private static URL propertiesURL;
+  private static URL tablesURL;
   private static String tablesXslUri;
   private static Connection con;
   private static Statement stmt;
@@ -136,9 +134,8 @@ public class DbLoader
   {
     try
     {
-      setPortalBaseDir();
       System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
-      propertiesUri = UtilitiesBean.fixURI("properties" + File.separator + "dbloader.xml");
+      propertiesURL = DbLoader.class.getResource("/properties/dbloader.xml");
       con = rdbmService.getConnection ();
 
       if (con != null)
@@ -169,15 +166,15 @@ public class DbLoader
             // Eventually, write and validate against a DTD
             //domParser.setFeature ("http://xml.org/sax/features/validation", true);
             //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
-            tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
-            tablesDoc = domParser.parse(tablesUri);
+            tablesURL = DbLoader.class.getResource(PropertiesHandler.properties.getTablesUri());
+            tablesDoc = domParser.parse(new InputSource(tablesURL.openStream()));
         } catch (ParserConfigurationException pce) {
             System.out.println("Unable to instantiate DOM parser. Pease check your JAXP configuration.");
             pce.printStackTrace();
         }
         catch(Exception e)
         {
-          System.out.println("Could not open " + tablesUri);
+          System.out.println("Could not open " + tablesURL);
           e.printStackTrace();
 
           return;
@@ -190,8 +187,8 @@ public class DbLoader
         replaceDataTypes(tablesDoc);
 
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
-        tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
-        XSLT xslt = new XSLT();
+        tablesXslUri = PropertiesHandler.properties.getTablesXslUri();
+        XSLT xslt = new XSLT(new DbLoader());
         xslt.setXML(tablesDoc);
         xslt.setXSL(tablesXslUri);
         xslt.setTarget(new TableHandler());
@@ -206,7 +203,7 @@ public class DbLoader
         exit();
       }
       else
-        System.out.println("DbLoader couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
+        System.out.println("DbLoader couldn't obtain a database connection.");
 
     }
     catch (Exception e)
@@ -218,19 +215,6 @@ public class DbLoader
     // do a system.exit() allowing a stack trace to the console in
     // the case of a run time error.
     {
-      exit();
-    }
-  }
-
-  private static void setPortalBaseDir()
-  {
-    String portalBaseDir = System.getProperty("portal.home");
-
-    if (portalBaseDir != null)
-      PortalSessionManager.setPortalBaseDir(portalBaseDir);
-    else
-    {
-      System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
       exit();
     }
   }
@@ -263,20 +247,21 @@ public class DbLoader
 
   private static void readData (XMLReader parser) throws SAXException, IOException
   {
+    InputSource dataInSrc = new InputSource(DbLoader.class.getResourceAsStream(PropertiesHandler.properties.getDataUri()));
     DataHandler dataHandler = new DataHandler();
     parser.setContentHandler(dataHandler);
     parser.setErrorHandler(dataHandler);
-    parser.parse(UtilitiesBean.fixURI(PropertiesHandler.properties.getDataUri()));
+    parser.parse(dataInSrc);
   }
 
   private static void initScript() throws java.io.IOException
   {
-    String scriptFileName = PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + PropertiesHandler.properties.getScriptFileName().replace('/', File.separatorChar);
+    String scriptFileName = PropertiesHandler.properties.getScriptFileName();
     File scriptFile = new File(scriptFileName);
     if (scriptFile.exists())
       scriptFile.delete();
     scriptFile.createNewFile();
-    scriptOut = new PrintWriter (new BufferedWriter (new FileWriter (scriptFileName, true)));
+    scriptOut = new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName, true)));
   }
 
   private static void replaceDataTypes (Document tablesDoc)
@@ -428,7 +413,7 @@ public class DbLoader
 
       // No matching type found, report an error
       System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
-      System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
+      System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesURL + "' and run this program again.");
       System.out.println("Exiting...");
       exit();
     }
@@ -565,7 +550,7 @@ public class DbLoader
     PropertiesHandler propertiesHandler = new PropertiesHandler();
     parser.setContentHandler(propertiesHandler);
     parser.setErrorHandler(propertiesHandler);
-    parser.parse(propertiesUri);
+    parser.parse(new InputSource(propertiesURL.openStream()));
   }
 
   static class PropertiesHandler extends DefaultHandler
@@ -578,7 +563,7 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.print("Parsing " + propertiesUri + "...");
+      System.out.print("Parsing " + propertiesURL + "...");
     }
 
     public void endDocument ()

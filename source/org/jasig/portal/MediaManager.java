@@ -50,8 +50,8 @@ import java.net.MalformedURLException;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.serialize.CachingXHTMLSerializer;
-import org.jasig.portal.serialize.HTMLSerializer;
 import org.jasig.portal.serialize.CachingHTMLSerializer;
+import org.jasig.portal.serialize.HTMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 
 
@@ -96,19 +96,18 @@ public class MediaManager {
    * @param uri location of the media properties file, complete with the filename
    */
   public void setMediaProps (String uri) {
-    if (uri == null) {
-      uri = UtilitiesBean.fixURI("properties/media.properties");
-    }
-    uri = UtilitiesBean.fixURI(uri);
+    URL url = null;
     try {
-      URL url = expandSystemId(uri);
-      LogService.instance().log(LogService.DEBUG, "MediaManager::setMediaProps() uri=" + uri + " URL=" + url);
+      if (uri == null)
+        url = this.getClass().getResource("/properties/media.properties");
+      else
+        url = new URL(uri);
       if (url != null) {
         mediaProps = new OrderedProps(url.openStream());
       }
-    } catch (IOException ioe1) {
+    } catch (IOException ioe) {
       LogService.instance().log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
-          uri + ". " + ioe1);
+          uri + ". " + ioe);
     }
   }
 
@@ -117,18 +116,18 @@ public class MediaManager {
    * @param uri location of the mime properties file, complete with the filename
    */
   public void setMimeProps (String uri) {
-    if (uri == null) {
-      uri = UtilitiesBean.fixURI("properties/mime.properties");
-    }
-    uri = UtilitiesBean.fixURI(uri);
+    URL url = null;
     try {
-      URL url = expandSystemId(uri);
+      if (uri == null)
+        url = this.getClass().getResource("/properties/mime.properties");
+      else
+        url = new URL(uri);
       if (url != null) {
         mimeProps = new OrderedProps(url.openStream());
       }
-    } catch (IOException ioe1) {
+    } catch (IOException ioe) {
       LogService.instance().log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
-          uri + ". " + ioe1);
+          uri + ". " + ioe);
     }
   }
 
@@ -137,18 +136,18 @@ public class MediaManager {
    * @param uri location of the serializer properties file, complete with the filename
    */
   public void setSerializerProps (String uri) {
-    if (uri == null) {
-      uri = UtilitiesBean.fixURI("properties/serializer.properties");
-    }
-    uri = UtilitiesBean.fixURI(uri);
+    URL url = null;
     try {
-      URL url = expandSystemId(uri);
+      if (uri == null)
+        url = this.getClass().getResource("/properties/serializer.properties");
+      else
+        url = new URL(uri);
       if (url != null) {
         serializerProps = new OrderedProps(url.openStream());
       }
-    } catch (IOException ioe1) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: "
-          + uri + ". " + ioe1);
+    } catch (IOException ioe) {
+      LogService.instance().log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
+          uri + ". " + ioe);
     }
   }
 
@@ -356,74 +355,6 @@ public class MediaManager {
    */
   public BaseMarkupSerializer getSerializer (HttpServletRequest req, java.io.OutputStream out) {
     return getSerializer(req, new OutputStreamWriter(out));
-  }
-
-  /**
-   * put your documentation comment here
-   * @param systemId
-   * @return
-   */
-  private URL expandSystemId (String systemId) {
-    String id = systemId;
-    // check for bad parameters id
-    if (id == null || id.length() == 0) {
-      return  null;
-    }
-    // if id already expanded, return
-    try {
-      URL url = new URL(id);
-      if (url != null) {
-        return  url;
-      }
-    } catch (MalformedURLException e) {
-    // continue on...
-    }
-    // normalize id
-    id = fixURI(id);
-    // normalize base
-    URL base = null;
-    URL url = null;
-    try {
-      String dir;
-      try {
-        dir = fixURI(System.getProperty("user.dir"));
-      } catch (SecurityException se) {
-        dir = "";
-      }
-      if (!dir.endsWith("/")) {
-        dir = dir + "/";
-      }
-      base = new URL("file", "", dir);
-      // expand id
-      url = new URL(base, id);
-    } catch (Exception e) {
-    // let it go through
-    }
-    return  url;
-  }
-
-  /**
-   * FROM XALAN
-   * Fixes a platform dependent filename to standard URI form.
-   *
-   * @param str The string to fix.
-   *
-   * @return Returns the fixed URI string.
-   */
-  private static String fixURI (String str) {
-    // handle platform dependent strings
-    str = str.replace(java.io.File.separatorChar, '/');
-    // Windows fix
-    if (str.length() >= 2) {
-      char ch1 = str.charAt(1);
-      if (ch1 == ':') {
-        char ch0 = Character.toUpperCase(str.charAt(0));
-        if (ch0 >= 'A' && ch0 <= 'Z') {
-          str = "/" + str;
-        }
-      }
-    }
-    return  str;
   }
 
   /**

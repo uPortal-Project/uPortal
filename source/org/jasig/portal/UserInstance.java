@@ -121,9 +121,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
         // init the media manager
         if(mediaM==null) {
-            String fs = System.getProperty("file.separator");
-            String propertiesDir = PortalSessionManager.getPortalBaseDir() + "properties" + fs;
-            mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
+            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+            String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+            String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+            mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
         }
     }
 
@@ -447,8 +448,8 @@ public class UserInstance implements HttpSessionBindingListener {
             if(!output_produced) {
 
                 // obtain transformer handlers for both structure and theme stylesheets
-                TransformerHandler ssth = XSLT.getTransformerHandler(UtilitiesBean.fixURI(ssd.getStylesheetURI()));
-                TransformerHandler tsth = XSLT.getTransformerHandler(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
+                TransformerHandler ssth = XSLT.getTransformerHandler(PortalSessionManager.getResourceAsURL(ssd.getStylesheetURI()).toString());
+                TransformerHandler tsth = XSLT.getTransformerHandler(PortalSessionManager.getResourceAsURL(tsd.getStylesheetURI()).toString());
 
                 // obtain transformer references from the handlers
                 Transformer sst=ssth.getTransformer();
@@ -557,10 +558,12 @@ public class UserInstance implements HttpSessionBindingListener {
                     LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
                 } else {
                     // attach channel incorporation filter downstream of the theme transformer
-                    tsth.setResult(new SAXResult(cif));
+                   tsth.setResult(new SAXResult(cif));
                 }
                 // fire up theme transformation
-                crb.stopBuffering(); crb.outputBuffer(); crb.clearBuffer();
+                crb.stopBuffering();
+                crb.outputBuffer();
+                crb.clearBuffer();
 
                 // Debug piece to print out the recorded pre-theme transformation XML
                 if (printXMLBeforeThemeTransformation) {

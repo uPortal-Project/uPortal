@@ -61,11 +61,11 @@ public class Authorization {
   protected static IAuthorizationFactory m_Factory = null;
   static {
     // Get the security properties file
-    File secprops = new File(PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "security.properties");
+    java.io.InputStream secprops = Authorization.class.getResourceAsStream("/properties/security.properties");
     // Get the properties from the security properties file
     Properties pr = new Properties();
     try {
-      pr.load(new FileInputStream(secprops));
+      pr.load(secprops);
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
         LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));

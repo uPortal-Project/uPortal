@@ -77,7 +77,6 @@ public class InitialSecurityContext implements ISecurityContext {
     Enumeration ctxnames;
     String factoryname;
     ISecurityContextFactory factory;
-    File secprops;
 
     // Initial contexts must have names that are not compound
 
@@ -87,14 +86,11 @@ public class InitialSecurityContext implements ISecurityContext {
       throw(ep);
       }
 
-
     // Find our properties file and open it
-
-    secprops = new File (PortalSessionManager.getPortalBaseDir() + "properties" +
-        File.separator + "security.properties");
+    java.io.InputStream secprops = this.getClass().getResourceAsStream("/properties/security.properties");
     pr = new Properties();
     try {
-      pr.load(new FileInputStream(secprops));
+      pr.load(secprops);
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());

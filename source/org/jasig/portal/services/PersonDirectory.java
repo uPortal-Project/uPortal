@@ -35,7 +35,6 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -147,8 +146,8 @@ public class PersonDirectory {
 
       // Build a DOM tree out of uPortal/properties/PersonDirs.xml
       DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      String tablesUri = UtilitiesBean.fixURI("properties/PersonDirs.xml");
-      Document doc = docBuilder.parse(tablesUri); // DOM Parse the XML
+      java.io.InputStream personDirs = this.getClass().getResourceAsStream("/properties/PersonDirs.xml");
+      Document doc = docBuilder.parse(personDirs); // DOM Parse the XML
 
       // Each directory source is a <PersonDirInfo> (and its contents)
       NodeList list = doc.getElementsByTagName("PersonDirInfo");

@@ -70,9 +70,9 @@ public class RdbmServices {
   protected static void loadProps () {
     try {
       if (!bPropsLoaded) {
-        File jdbcPropsFile = new File(PortalSessionManager.getPortalBaseDir() + "properties" + File.separator + "rdbm.properties");
+        InputStream inStream = RdbmServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
-        jdbcProps.load(new FileInputStream(jdbcPropsFile));
+        jdbcProps.load(inStream);
         sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
         sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
         sJdbcUser = jdbcProps.getProperty("jdbcUser");

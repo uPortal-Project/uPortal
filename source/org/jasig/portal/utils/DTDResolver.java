@@ -38,8 +38,7 @@ package org.jasig.portal.utils;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.services.LogService;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -51,22 +50,20 @@ import org.xml.sax.InputSource;
  */
 public class DTDResolver implements EntityResolver
 {
-  private String pathToDtd = PortalSessionManager.getPortalBaseDir() + "webpages" + File.separator + "dtd" + File.separator;
+  private String dtdPath = "dtd";
   private String dtdName = null;
 
   /**
    * Constructor for DTDResolver
    */
-  public DTDResolver ()
-  {
+  public DTDResolver () {
   }
 
   /**
    * Constructor for DTDResolver
    * @param dtdName the name of the dtd
    */
-  public DTDResolver (String dtdName)
-  {
+  public DTDResolver (String dtdName) {
     this.dtdName = dtdName;
   }
 
@@ -76,26 +73,17 @@ public class DTDResolver implements EntityResolver
    * @param systemId the system ID
    * @return an input source based on the dtd specified in the xml document
    */
-  public InputSource resolveEntity (String publicId, String systemId)
-  {
-    FileReader fr = null;
+  public InputSource resolveEntity (String publicId, String systemId) {
+    InputStream inStream = null;
     InputSource inSrc = null;
 
-    try
-    {
-      if (systemId != null)
-      {
-        if (dtdName != null && systemId.indexOf(dtdName) != -1)
-          fr = new FileReader(pathToDtd + dtdName);
-        else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
-          fr = new FileReader(pathToDtd + "rss-0.91.dtd");
+    if (systemId != null) {
+      if (dtdName != null && systemId.indexOf(dtdName) != -1)
+        inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
+      else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
+        inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
 
-        inSrc = new InputSource(fr);
-      }
-    }
-    catch (FileNotFoundException fnfe)
-    {
-      LogService.instance().log(LogService.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
+      inSrc = new InputSource(inStream);
     }
 
     return inSrc;

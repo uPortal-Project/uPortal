@@ -50,6 +50,7 @@ import java.net.MalformedURLException;
 import org.xml.sax.helpers.*;
 
 import org.jasig.portal.utils.SAX2FilterImpl;
+import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.transform.Source;
@@ -65,11 +66,11 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class StylesheetSet extends SAX2FilterImpl {
   // Default URI for the media properties file
-  protected static final String m_defaultMediaPropsUri = UtilitiesBean.fixURI("properties/media.properties");
+  protected static final String m_defaultMediaPropsUri = "/properties/media.properties";
   protected static Hashtable m_mediaPropsCache = new Hashtable(5);
   protected String m_myMediaPropsUri = m_defaultMediaPropsUri;
   protected Hashtable title_table;
-  
+
 
   /**
    * put your documentation comment here
@@ -95,8 +96,9 @@ public class StylesheetSet extends SAX2FilterImpl {
         XMLReader reader = XMLReaderFactory.createXMLReader();
         StylesheetSet dummy = new StylesheetSet();
         reader.setContentHandler((ContentHandler)dummy);
-        URL url = expandSystemId(uri);
+        URL url = null;
         try {
+            url = new URL(uri);
             reader.parse(url.toString());
             this.title_table = dummy.getTitleTable();
         } catch (IOException ioe) {
@@ -114,7 +116,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param title
-   * @return 
+   * @return
    */
   public Source getStylesheet (String title) {
     Hashtable media_table = (Hashtable)title_table.get(title);
@@ -126,7 +128,7 @@ public class StylesheetSet extends SAX2FilterImpl {
     for (Enumeration e = media_table.elements(); e.hasMoreElements();) {
       if (sd == null) {
         sd = (StylesheetDescription)e.nextElement();
-      } 
+      }
       else {
         StylesheetDescription tsd = (StylesheetDescription)e.nextElement();
         if (!tsd.getAlternate())
@@ -139,7 +141,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Source getStylesheet () {
     // this is painful ... browse through all possible
@@ -152,7 +154,7 @@ public class StylesheetSet extends SAX2FilterImpl {
         for (Enumeration f = media_table.elements(); f.hasMoreElements();) {
           if (sd == null) {
             sd = (StylesheetDescription)f.nextElement();
-          } 
+          }
           else {
             StylesheetDescription tsd = (StylesheetDescription)f.nextElement();
             if (!tsd.getAlternate())
@@ -170,7 +172,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param media
-   * @return 
+   * @return
    */
   public Source getStylesheet (String title, String media) {
     Hashtable media_table = (Hashtable)title_table.get(title);
@@ -191,7 +193,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param media
-   * @return 
+   * @return
    */
   public Source getStylesheet (String title, BrowserInfo bi) throws PortalException {
     String media = getMedia(bi);
@@ -229,7 +231,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return 
+   * @return
    */
   public String getStylesheetURI (HttpServletRequest req) throws PortalException {
     return  (getStylesheetURI(getMedia(req)));
@@ -238,7 +240,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param bi
-   * @return 
+   * @return
    */
   public String getStylesheetURI (BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(getMedia(bi));
@@ -248,7 +250,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param req
-   * @return 
+   * @return
    */
   public String getStylesheetURI (String title, HttpServletRequest req) throws PortalException {
     return  getStylesheetURI(title, getMedia(req));
@@ -258,7 +260,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param bi
-   * @return 
+   * @return
    */
   public String getStylesheetURI (String title, BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(title, getMedia(bi));
@@ -287,7 +289,7 @@ public class StylesheetSet extends SAX2FilterImpl {
         return  null;
       }
       return  sd.getURI();
-    } 
+    }
     else {
       return  getStylesheetURI(media);
     }
@@ -296,7 +298,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param media
-   * @return 
+   * @return
    */
   protected StylesheetDescription getStylesheetDescription (String media) throws GeneralRenderingException {
     if (media == null) {
@@ -316,7 +318,7 @@ public class StylesheetSet extends SAX2FilterImpl {
           sd = tsd;
           break;
         }
-      } 
+      }
       else {
         Enumeration sls = media_table.elements();
         if (sls.hasMoreElements()) {
@@ -331,7 +333,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param req
-   * @return 
+   * @return
    */
   public Source getStylesheet (String title, HttpServletRequest req) throws PortalException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
@@ -341,13 +343,13 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return 
+   * @return
    */
   public Source getStylesheet (HttpServletRequest req) throws PortalException {
     StylesheetDescription sd = getStylesheetDescription(getMedia(req));
     if (sd != null) {
       return  new StreamSource(sd.getURI());
-    } 
+    }
     else {
       return  null;
     }
@@ -356,14 +358,14 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param media
-   * @return 
+   * @return
    */
   public Source getStylesheetByMedia (String media) throws GeneralRenderingException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new StreamSource(sd.getURI());
-    } 
+    }
     else {
       return  (null);
     }
@@ -380,14 +382,14 @@ public class StylesheetSet extends SAX2FilterImpl {
       media_table = new Hashtable();
       media_table.put(sd.getMedia(), sd);
       title_table.put(sd.getTitle(), media_table);
-    } 
+    }
     else {
       media_table.put(sd.getMedia(), sd);
     }
   }
 
   /**
-   * put your documentation comment here
+   * Fills StylesheetSet by accepting SAX events
    * @param target
    * @param data
    * @exception SAXException
@@ -413,13 +415,13 @@ public class StylesheetSet extends SAX2FilterImpl {
     else
     {
       // Try to load the media properties
-      setMediaProps(m_myMediaPropsUri); 
+      setMediaProps(m_myMediaPropsUri);
     }
-    
+
     // Try to return them from the cache again
     return((OrderedProps)m_mediaPropsCache.get(m_myMediaPropsUri));
   }
-  
+
   /**
    * put your documentation comment here
    * @param uri
@@ -433,8 +435,8 @@ public class StylesheetSet extends SAX2FilterImpl {
     else
     {
       // Fix up the provided URI
-      uri = UtilitiesBean.fixURI(uri);
-      
+      uri = ResourceLoader.getResourceAsURLString(this.getClass(), uri);
+
       // Cache the URI of the media props that this instance will use
       m_myMediaPropsUri = uri;
     }
@@ -445,16 +447,16 @@ public class StylesheetSet extends SAX2FilterImpl {
       return;
     }
 
-    try 
+    try
     {
       // Create a URL from the given URI
-      URL url = expandSystemId(uri);
+      URL url = new URL(uri);
       if (url != null)
       {
         // Put the loaded media properties in the cache
         m_mediaPropsCache.put(uri, new OrderedProps(url.openStream()));
-      } 
-      else 
+      }
+      else
       {
         throw new ResourceMissingException(uri, "The media.properties file", "Unable to understand the media.properties URI");
       }
@@ -467,7 +469,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Hashtable getTitleTable () {
     return  title_table;
@@ -476,7 +478,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return 
+   * @return
    */
   protected String getMedia (HttpServletRequest req) throws PortalException
   {
@@ -486,76 +488,10 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param bi
-   * @return 
+   * @return
    */
   protected String getMedia (BrowserInfo bi) throws PortalException {
     return(getMediaProps().getValue(bi.getUserAgent()));
-  }
-
-  /**
-   * put your documentation comment here
-   * @param systemId
-   * @return 
-   */
-  private URL expandSystemId (String systemId) {
-    String id = systemId;
-    // check for bad parameters id
-    if (id == null || id.length() == 0)
-      return  null;
-    // if id already expanded, return
-    try {
-      URL url = new URL(id);
-      if (url != null)
-        return  url;
-    } catch (MalformedURLException e) {
-    // continue on...
-    }
-    // normalize id
-    id = fixURI(id);
-    // normalize base
-    URL base = null;
-    URL url = null;
-    try {
-      String dir;
-      try {
-        dir = fixURI(System.getProperty("user.dir"));
-      } catch (SecurityException se) {
-        dir = "";
-      }
-      if (!dir.endsWith("/")) {
-        dir = dir + "/";
-      }
-      base = new URL("file", "", dir);
-      // expand id
-      url = new URL(base, id);
-    } catch (Exception e) {
-    // let it go through
-    }
-    return  url;
-  }
-
-  /**
-   * FROM XALAN
-   * Fixes a platform dependent filename to standard URI form.
-   *
-   * @param str The string to fix.
-   *
-   * @return Returns the fixed URI string.
-   */
-  private static String fixURI (String str) {
-    // handle platform dependent strings
-    str = str.replace(java.io.File.separatorChar, '/');
-    // Windows fix
-    if (str.length() >= 2) {
-      char ch1 = str.charAt(1);
-      if (ch1 == ':') {
-        char ch0 = Character.toUpperCase(str.charAt(0));
-        if (ch0 >= 'A' && ch0 <= 'Z') {
-          str = "/" + str;
-        }
-      }
-    }
-    return  str;
   }
 
   /**

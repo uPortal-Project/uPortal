@@ -73,14 +73,12 @@ import javax.xml.transform.stream.StreamSource;
  * @version: $Revision$
  */
 public class ChannelServlet extends HttpServlet {
-  private boolean baseDirSet = false;
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
   private static int sizeLimit = 3000000;       // Should be channel specific
   StylesheetSet set;
   MediaManager mediaM;
   private boolean initialized = false;
-  private String baseDir;
   private IChannel channel;
   private String channelName;
   private boolean hasEdit = false;
@@ -88,8 +86,7 @@ public class ChannelServlet extends HttpServlet {
   private boolean hasHelp = false;
   private long timeOut = 10000;                 // 10 seconds is the default timeout value
   private static final String fs = File.separator;
-  private static final String relativeSSLLocation = "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal"
-      + fs + "tools" + fs + "ChannelServlet" + fs + "ChannelServlet.ssl";
+  private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
 
   /**
    * put your documentation comment here
@@ -98,58 +95,48 @@ public class ChannelServlet extends HttpServlet {
   public void init() throws ServletException {
     ServletConfig sc = this.getServletConfig();
     if (sc != null) {
-      // determine base directory
-      baseDir = sc.getInitParameter("baseDir");
-      if (baseDir != null) {
-        File portalBaseDir = new java.io.File(baseDir);
-        if (portalBaseDir.exists()) {
-          // initialize stylesheet set
-          PortalSessionManager.setPortalBaseDir(baseDir);
-          // once JNDI DB access is in place the following line can be removed
-          try {
-            this.set = new StylesheetSet(baseDir + fs + relativeSSLLocation);
-            String propertiesDir = baseDir + fs + "properties" + fs;
-            this.set.setMediaProps(propertiesDir + "media.properties");
-            this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
-          } catch (PortalException pe) {
-            throw new ServletException(pe);
-          }
-          // determine the channel with its parameters
-          String className = sc.getInitParameter("className");
-          channelName = sc.getInitParameter("channelName");
-          hasEdit = Boolean.getBoolean(sc.getInitParameter("hasEdit"));
-          hasHelp = Boolean.getBoolean(sc.getInitParameter("hasHelp"));
-          hasAbout = Boolean.getBoolean(sc.getInitParameter("hasAbout"));
-          String s_timeOut = sc.getInitParameter("timeOut");
-          if (s_timeOut != null)
-            this.timeOut = Long.parseLong(s_timeOut);
-          // instantiate channel class
-          try {
-            channel = (org.jasig.portal.IChannel)Class.forName(className).newInstance();
-            // construct a ChannelStaticData object
-            ChannelStaticData sd = new ChannelStaticData();
-            sd.setChannelID("singlet");
-            sd.setTimeout(timeOut);
-            // determine the IPerson object
-            int guestUserId = 1;
-            IPerson person = new org.jasig.portal.security.provider.PersonImpl();
-            person.setID(guestUserId);
-            person.setFullName("Guest");
-            sd.setPerson(person);
-            // todo: determine and pass channel publish/subscribe parameters.
-            //		    sd.setParameters (params);
-            channel.setStaticData(sd);
-            initialized = true;
-          } catch (Exception e) {
-            // some diagnostic state can be saved here
-            e.printStackTrace();
-          }
-        }
-        else
-          System.out.println("base diretctory does not exist");
+      // initialize stylesheet set
+      // once JNDI DB access is in place the following line can be removed
+      try {
+        this.set = new StylesheetSet(this.getClass().getResource(relativeSSLLocation).toString());
+        String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+        String mimePropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+        String serializerPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+        this.set.setMediaProps(mediaPropsUrl);
+        this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
+      } catch (PortalException pe) {
+        throw new ServletException(pe);
       }
-      else
-        System.out.println("base directory is null");
+      // determine the channel with its parameters
+      String className = sc.getInitParameter("className");
+      channelName = sc.getInitParameter("channelName");
+      hasEdit = Boolean.getBoolean(sc.getInitParameter("hasEdit"));
+      hasHelp = Boolean.getBoolean(sc.getInitParameter("hasHelp"));
+      hasAbout = Boolean.getBoolean(sc.getInitParameter("hasAbout"));
+      String s_timeOut = sc.getInitParameter("timeOut");
+      if (s_timeOut != null)
+        this.timeOut = Long.parseLong(s_timeOut);
+      // instantiate channel class
+      try {
+        channel = (org.jasig.portal.IChannel)Class.forName(className).newInstance();
+        // construct a ChannelStaticData object
+        ChannelStaticData sd = new ChannelStaticData();
+        sd.setChannelID("singlet");
+        sd.setTimeout(timeOut);
+        // determine the IPerson object
+        int guestUserId = 1;
+        IPerson person = new org.jasig.portal.security.provider.PersonImpl();
+        person.setID(guestUserId);
+        person.setFullName("Guest");
+        sd.setPerson(person);
+        // todo: determine and pass channel publish/subscribe parameters.
+        //		    sd.setParameters (params);
+        channel.setStaticData(sd);
+        initialized = true;
+      } catch (Exception e) {
+          // some diagnostic state can be saved here
+          e.printStackTrace();
+      }
     }
   }
 
