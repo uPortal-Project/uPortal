@@ -344,7 +344,7 @@ public class CPublisher implements IPrivilegedChannel {
     }
     doc.appendChild(chan);
     try {
-      chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
+      chanReg.addChannel(nextID, staticData.getPerson().getID(), doc, catID);
       storeChanRoles(nextID);
       chanReg.approveChannel(nextID, staticData.getPerson().getID(), new java.sql.Timestamp(System.currentTimeMillis()));
     } catch (Exception exc) {
