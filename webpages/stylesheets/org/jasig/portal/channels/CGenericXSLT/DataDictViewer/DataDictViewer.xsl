@@ -37,6 +37,10 @@ Author: Debra Rundle, rundle@princeton.edu
 Version $Revision$
 -->
 
+<xsl:template match="*|/"><xsl:apply-templates/></xsl:template>
+
+<xsl:template match="text()|@*"><xsl:value-of select="."/></xsl:template>
+
 <xsl:template match="tables">
       <xsl:apply-templates select="table"/>
 </xsl:template>
@@ -48,6 +52,8 @@ Version $Revision$
       <tr class="uportal-background-light" align="left" valign="top">
         <td class="uportal-channel-table-header">Table Name</td>
         <td class="uportal-channel-table-header"> </td>
+        <td class="uportal-channel-table-header"> </td>
+        <td class="uportal-channel-table-header"> </td>
         <td class="uportal-channel-table-header">Description</td>
       </tr>
         <tr align="left" valign="top">
@@ -55,13 +61,17 @@ Version $Revision$
             <xsl:value-of select="name"/>
           </td>
           <td class="uportal-channel-text"> </td>
+          <td class="uportal-channel-text"> </td>
+          <td class="uportal-channel-text"> </td>
           <td class="uportal-channel-text" width="100%">
             <xsl:value-of select="desc"/>
           </td>
         </tr>
       <tr class="uportal-background-light" align="left" valign="top">
         <td class="uportal-channel-table-header">Column Name</td>
+        <td class="uportal-channel-table-header">Key</td>
         <td class="uportal-channel-table-header">Type</td>
+        <td class="uportal-channel-table-header">Size</td>
         <td class="uportal-channel-table-header">Description</td>
       </tr>
       <xsl:apply-templates select="columns/column"/>
@@ -79,7 +89,13 @@ Version $Revision$
             <xsl:value-of select="name"/>
           </td>
           <td class="uportal-channel-text" nowrap="nowrap">
+            <xsl:value-of select="key"/>
+          </td>
+          <td class="uportal-channel-text" nowrap="nowrap">
             <xsl:value-of select="type"/>
+          </td>
+          <td class="uportal-channel-text" nowrap="nowrap">
+            <xsl:value-of select="param"/>
           </td>
           <td class="uportal-channel-text" width="100%">
             <xsl:value-of select="desc"/>
