@@ -17,7 +17,6 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Element;
 
 
 /**

@@ -7,7 +7,6 @@ package  org.jasig.portal.channels.groupsmanager.commands;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
