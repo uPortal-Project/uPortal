@@ -122,7 +122,9 @@ public class BrowserInfo {
      * @return a <code>String</code> value
      */
     public String getUserAgent () {
-        return (String)headers.get("user-agent");
+        String ua=(String)headers.get("user-agent");
+        if(ua==null) { ua=MediaManager.NULL_USER_AGENT; }
+        return ua;
     }
 
     /**
