@@ -1036,9 +1036,12 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
           // Setting the first child node ID
           if ( layoutNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-            String id = ((Element)node.getFirstChild()).getAttribute("ID");
-            if ( id != null && id.length() > 0 )
-             ((ALFolder)layoutNode).setFirstChildNodeId(id);
+          	Node firstChild = node.getFirstChild();
+          	if ( firstChild != null ) {
+             String id = ((Element)firstChild).getAttribute("ID");
+             if ( id != null && id.length() > 0 )
+              ((ALFolder)layoutNode).setFirstChildNodeId(id);
+          	} 
           }
 
           // Putting the LayoutNode object into the layout
