@@ -184,13 +184,6 @@
                        Version: 1.2.8
                        URL: http://jakarta.apache.org/log4j/
 
-  jaas.jar             The Java Authentication and Authorization Service (JAAS)
-                       is a Java package that enables services to authenticate
-                       and enforce access controls upon users.  This is only
-                       needed for JDK's less than 1.4.  It is included with JDK 1.4.
-                       Version: 1.0
-                       URL: http://java.sun.com/products/jaas/
-
   cos.jar              Servlet support classes including file upload package
                        MultipartRequest and MultipartParser. Used by the portal
                        to make file uploads possible.
@@ -303,7 +296,6 @@
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
   <property name="activation.jar" value="(set this in build.properties!)"/>
   <property name="log4j.jar" value="(set this in build.properties!)"/>
-  <property name="jaas.jar" value="(set this in build.properties!)"/>
   <property name="cos.jar" value="(set this in build.properties!)"/>
   <property name="oro.jar" value="(set this in build.properties!)"/>
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
@@ -345,7 +337,6 @@
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${activation.jar}"/>
     <pathelement location="${log4j.jar}"/>
-    <pathelement location="${jaas.jar}"/>
     <pathelement location="${cos.jar}"/>
     <pathelement location="${oro.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
@@ -553,7 +544,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
