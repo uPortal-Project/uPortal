@@ -52,12 +52,20 @@ import javax.naming.NamingException;
 public class CompositeEntityIdentifier extends org.jasig.portal.EntityIdentifier 
 implements IGroupConstants
 {
+    // static vars:
     protected static Properties props;
+    protected static String separator;
     static {
         props = new Properties();
-        props.put("jndi.syntax.separator", NODE_SEPARATOR);
+        try 
+            { separator = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
+        catch (Exception ex) 
+            { separator = IGroupConstants.NODE_SEPARATOR; }
+        props.put("jndi.syntax.separator", separator);
         props.put("jndi.syntax.direction", "left_to_right");
     }
+    
+    // instance key:
 	protected Name compositeKey;
 /**
  * @param entityKey java.lang.String
@@ -101,13 +109,14 @@ protected static NameParser getParser()
         public Name parse(String s) throws InvalidNameException
         {
             int start = 0;
-            int end = s.indexOf(NODE_SEPARATOR, start);
+            int separatorLength = separator.length();
+            int end = s.indexOf(separator, start);
             Name name = newCompoundName();
             while (end != -1)
             {
                 name.add(s.substring(start,end));
-	            start = end + 1;
-	            end = s.indexOf(NODE_SEPARATOR, start);
+	            start = end + separatorLength;
+	            end = s.indexOf(separator, start);
             }
             return name.add(s.substring(start));
         }

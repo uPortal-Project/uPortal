@@ -45,12 +45,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.naming.Name;
-import javax.naming.NamingException;
-
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.groups.CompositeEntityIdentifier;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.LogService;
@@ -84,6 +80,8 @@ public class RDBMPermissionImpl implements IPermissionStore {
     private static String insertPermissionSql;
     private static String selectPermissionSql;
     private static String updatePermissionSql;
+    
+    private static String PRINCIPAL_SEPARATOR = ".";
 /**
  * RDBMReferencePermission constructor comment.
  */
@@ -206,10 +204,6 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
     Connection conn = null;
     try
     {
-        Name principalName = CompositeEntityIdentifier.parseCompoundKey(perm.getPrincipal());
-        String type = principalName.get(0);
-        String key = principalName.getSuffix(0).toString();
-
         conn = RDBMServices.getConnection();
         String sQuery = getFindPermissionSql();
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
@@ -343,17 +337,9 @@ private static String getInsertPermissionSql()
  * @param String
  * @exception AuthorizationException
  */
-private String getPrincipalKey(String principalString) throws AuthorizationException
+private String getPrincipalKey(String principalString)
 {
-    try
-    {
-        Name principalName = CompositeEntityIdentifier.parseCompoundKey(principalString);
-        return principalName.getSuffix(1).toString();
-    }
-    catch (NamingException ne)
-    {
-        throw new AuthorizationException("Problem parsing principal key: " + ne.getMessage());
-    }
+    return principalString.substring(principalString.indexOf(PRINCIPAL_SEPARATOR)+1);
 }
 /**
  * Returns the principal key portion of the IPermission principal.
@@ -371,17 +357,9 @@ private String getPrincipalKey(IPermission perm) throws AuthorizationException
  * @param String principalString
  * @exception javax.naming.AuthorizationException
  */
-private int getPrincipalType(String principalString) throws AuthorizationException
+private int getPrincipalType(String principalString)
 {
-    try
-    {
-        Name principalName = CompositeEntityIdentifier.parseCompoundKey(principalString);
-        return Integer.parseInt(principalName.get(0));
-    }
-    catch (NamingException ne)
-    {
-        throw new AuthorizationException("Problem parsing principal type: " + ne.getMessage());
-    }
+    return Integer.parseInt(principalString.substring(0,principalString.indexOf(PRINCIPAL_SEPARATOR)));
 }
 /**
  * Returns the principal type portion of the IPermission principal.

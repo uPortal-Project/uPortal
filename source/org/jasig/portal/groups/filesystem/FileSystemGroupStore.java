@@ -41,6 +41,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
+import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -135,9 +136,11 @@ IEntitySearcher
     protected static String COMMENT = "#";
     protected static String GROUP_PREFIX = "group:";
 
-    // The period is legal in filesystem names but not in the group key.
+    // The period is legal in filesystem names but could conflict with
+    // the node separator in the group key.
     protected static char PERIOD = '.';
     protected static char SUBSTITUTE_PERIOD = '$';
+    protected boolean useSubstitutePeriod = false;
 
     private static String DEBUG_CLASS_NAME = "FileSystemGroupStore";
 
@@ -537,8 +540,12 @@ protected String getFilePathFromKey(String key)
 {
     LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".getFilePathFromKey(): for key: " + key);
+        
+    String groupKey = useSubstitutePeriod 
+      ? key.replace(SUBSTITUTE_PERIOD, PERIOD) 
+      : key;
 
-    String fullKey = getGroupsRootPath() + key.replace(SUBSTITUTE_PERIOD, PERIOD);
+    String fullKey = getGroupsRootPath() + groupKey;
 
      LogService.log(LogService.DEBUG,
         DEBUG_CLASS_NAME + ".getFilePathFromKey(): full key: " + fullKey);
@@ -631,7 +638,9 @@ protected String getKeyFromFile(File f)
     if ( f.getPath().startsWith(getGroupsRootPath()) )
     {
         key = f.getPath().substring(getGroupsRootPath().length());
-        key = key.replace(PERIOD, SUBSTITUTE_PERIOD);
+        
+        if ( useSubstitutePeriod ) 
+            {  key = key.replace(PERIOD, SUBSTITUTE_PERIOD); }
     }
     return key;
 }
@@ -646,6 +655,15 @@ protected void initialize()
     badSeparator = ( goodSeparator == FORWARD_SLASH ) ? BACK_SLASH : FORWARD_SLASH;
 
     defaultEntityType = org.jasig.portal.security.IPerson.class;
+    
+    try
+    {
+        String sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
+        String period = String.valueOf(PERIOD);
+        useSubstitutePeriod = sep.equals(period);
+    }
+    catch (Exception ex) {}
+
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup

@@ -477,9 +477,10 @@ protected ComponentGroupServiceDescriptor getServiceDescriptor()
 private void initialize() throws GroupsException
 {
     String eMsg = null;
+    String svcName = getServiceDescriptor().getName();
+    LogService.log(LogService.DEBUG, "Service descriptor attributes: " + svcName);
 
     // print service descriptor attributes:
-    LogService.log(LogService.DEBUG, "Service descriptor attributes:");
     for (Iterator i=getServiceDescriptor().keySet().iterator(); i.hasNext();)
     {
         String descriptorKey = (String)i.next();
@@ -494,7 +495,7 @@ private void initialize() throws GroupsException
 
     if ( groupStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Group Store factory specified in service descriptor.";
+        eMsg = "ReferenceGroupService.initialize(): (" + svcName + ") No Group Store factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -507,7 +508,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store (" + svcName +"): " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
@@ -515,7 +516,7 @@ private void initialize() throws GroupsException
 
     if ( entityStoreFactoryName == null )
     {
-        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
+        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor (" + svcName + ")";
         LogService.log(LogService.INFO, eMsg);
     }
 

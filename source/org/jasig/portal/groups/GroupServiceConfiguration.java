@@ -152,6 +152,15 @@ public static synchronized GroupServiceConfiguration getConfiguration() throws E
 public String getDefaultService() {
     return (String)getAttributes().get("defaultService");
 }
+/**
+ *
+ */
+public String getNodeSeparator() {
+    Object nodeSeparator = getAttributes().get("nodeSeparator");
+    return  ( nodeSeparator == null )
+        ? IGroupConstants.NODE_SEPARATOR
+        : (String)nodeSeparator;
+}
 public List getServiceDescriptors()
 {
     return serviceDescriptors;
