@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -35,22 +35,35 @@
 
 package org.jasig.portal.utils;
 
-import java.io.StringWriter;
 import java.io.IOException;
-import java.util.Hashtable;
+import java.io.StringWriter;
 import java.util.Enumeration;
-import org.w3c.dom.*;
-import org.apache.xml.serialize.XMLSerializer;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xerces.dom.*;
+import java.util.Hashtable;
 
-import org.xml.sax.ContentHandler;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
+
+import org.apache.xerces.dom.AttrImpl;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.DocumentTypeImpl;
+import org.apache.xerces.dom.EntityImpl;
+import org.apache.xerces.dom.NodeImpl;
+import org.apache.xerces.dom.NotationImpl;
+import org.apache.xerces.dom.ProcessingInstructionImpl;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Entity;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Notation;
+import org.xml.sax.ContentHandler;
 
 
 /**

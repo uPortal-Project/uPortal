@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,24 +34,23 @@
  */
 
 package org.jasig.portal.tools;
-import org.jasig.portal.PropertiesManager;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.EntityImpl;
-import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.RDBMEntityGroupStore;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.provider.PersonImpl;
 
 /**
  * Title:        Delete Portal User

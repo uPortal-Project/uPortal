@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,8 @@
 package  org.jasig.portal.utils;
 
 
-import java.util.Stack;
 import java.util.EmptyStackException;
+import java.util.Stack;
 
 /**
  * A simple FILO stack that has MIN/MAX capacity and

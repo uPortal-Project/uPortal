@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -35,47 +35,41 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.BrowserInfo;
-import org.jasig.portal.services.LogService;
-
-import java.io.File;
-import java.io.StringReader;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Hashtable;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Enumeration;
-import java.net.URL;
 
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.Source;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TemplatesHandler;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.w3c.dom.Node;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * <p>This utility provides methods for transforming XML documents

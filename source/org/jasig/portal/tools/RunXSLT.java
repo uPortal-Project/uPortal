@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,12 @@
  */
 
 package org.jasig.portal.tools;
-import org.jasig.portal.utils.XSLT;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.jasig.portal.PortalException;
-import java.io.*;
+import org.jasig.portal.utils.XSLT;
 
 /**
  * Title:        Run XSLT

@@ -35,8 +35,12 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.*;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.IEntityLockService;
+import org.jasig.portal.concurrency.IEntityLockServiceFactory;
+import org.jasig.portal.concurrency.LockingException;
 
 /**
   * This is a bootstrap class and facade for the IEntityLockService implementation.

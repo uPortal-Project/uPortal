@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@
 
 package  org.jasig.portal.utils;
 
-import java.lang.ref.SoftReference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.AbstractMap;
 import java.util.Set;
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,12 @@
 
 package org.jasig.portal.utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * CommonUtils class contains base useful utilities

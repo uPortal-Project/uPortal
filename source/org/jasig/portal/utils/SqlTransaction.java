@@ -1,8 +1,10 @@
 package org.jasig.portal.utils;
 
-import java.sql.*;
-import org.jasig.portal.services.LogService;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.LogService;
 
 /**
  * This type is a place to centralize the portal's sql transaction code.

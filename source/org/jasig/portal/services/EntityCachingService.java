@@ -35,8 +35,12 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.*;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCachingService;
+import org.jasig.portal.concurrency.IEntityCachingServiceFactory;
 
 /**
   * This class presents a facade for the IEntityCachingService implementation

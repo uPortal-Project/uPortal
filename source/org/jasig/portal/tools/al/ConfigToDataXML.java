@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,32 +36,34 @@
 package org.jasig.portal.tools.al;
 
 
-import org.jasig.portal.utils.XSLT;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.services.*;
-import org.xml.sax.helpers.*;
-import org.xml.sax.*;
-import org.jasig.portal.*;
-import java.sql.*;
-import java.io.*;
-import java.util.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.stream.*;
-
-import org.apache.xalan.serialize.SerializerFactory;
-import org.apache.xalan.serialize.Serializer;
-import org.apache.xalan.templates.OutputProperties;
-
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  java.sql.PreparedStatement;
-import  java.sql.Types;
-import  java.sql.Timestamp;
-import  java.sql.SQLException;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * A utility class to load pushed fragment configuration into the database

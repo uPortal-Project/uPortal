@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,23 +34,18 @@
  */
 
 package org.jasig.portal.tools.dbloader;
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RDBMServices;
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.Types;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import org.jasig.portal.utils.XMLEscaper;
+import java.sql.Statement;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.utils.XMLEscaper;
 /**
  * Title:        DbUnload
  * Description:  Dump database table(s) into a xml format

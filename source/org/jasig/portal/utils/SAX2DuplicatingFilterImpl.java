@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,19 +37,16 @@ package org.jasig.portal.utils;
 
 import java.io.IOException;
 
-import org.xml.sax.XMLReader;
-import org.xml.sax.XMLFilter;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.DTDHandler;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**

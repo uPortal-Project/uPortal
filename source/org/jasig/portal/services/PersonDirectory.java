@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,42 +35,36 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.utils.ResourceLoader;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.StringTokenizer;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.NamingException;
 import javax.naming.NamingEnumeration;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-import javax.naming.directory.SearchControls;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.sql.DataSource;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.w3c.dom.Entity;
 
 /**
  * Extract eduPerson-like attributes from whatever LDAP directory or JDBC

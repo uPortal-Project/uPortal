@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,20 +36,19 @@
 
 package  org.jasig.portal.services;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.ResourceLoader;
-
 import java.io.InputStream;
-import java.util.List;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.xml.sax.Attributes;
-import javax.xml.parsers.SAXParserFactory;
+import javax.naming.Context;
 import javax.xml.parsers.SAXParser;
-import  javax.naming.Context;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.jasig.portal.utils.ResourceLoader;
+import org.xml.sax.Attributes;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
