@@ -145,8 +145,8 @@ public class CSubscriber
     if(channelRegistry == null) {
         try {
 	channelRegistry = chanReg.getChannelRegistryXML();
-        } catch (java.sql.SQLException sqle) {
-          LogService.instance().log(LogService.ERROR, sqle);
+        } catch (Exception e) {
+          LogService.instance().log(LogService.ERROR, e);
         }
     }
     action = runtimeData.getParameter("action");
