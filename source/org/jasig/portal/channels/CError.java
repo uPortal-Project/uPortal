@@ -293,17 +293,26 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             }
 
             Element stEl=doc.createElement("stack");
+            Element oeEl=doc.createElement("outerException");
             java.io.StringWriter sw=new java.io.StringWriter();
             channelException.printStackTrace(new java.io.PrintWriter(sw));
+            sw.flush();
+            oeEl.appendChild(doc.createTextNode(sw.toString()));
+            stEl.appendChild(oeEl);
             if(channelException instanceof PortalException) {
                 PortalException pe=(PortalException) channelException;
                 Throwable realException = pe.getRecordedException();
                 if (realException != null) {
-                  realException.printStackTrace(new java.io.PrintWriter(sw));
+                    Element ieEl=doc.createElement("innerException");
+                    java.io.StringWriter sw2=new java.io.StringWriter();
+                    realException.printStackTrace(new java.io.PrintWriter(sw2));
+                    ieEl.appendChild(doc.createTextNode(sw2.toString()));
+                    stEl.appendChild(ieEl);
                 }
             }
-            sw.flush();
-            stEl.appendChild(doc.createTextNode(sw.toString()));
+
+
+
             excEl.appendChild(stEl);
 
 
