@@ -114,7 +114,7 @@ public class DBImpl implements IDBImpl
     addChannelHeaderAttribute(name, (value != null && value.equals("Y") ? "true" : "false"), channel, system);
   }
 
-  protected static final void createChannelNodeHeaders(DocumentImpl doc, int chanId, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
+  protected static final void createChannelNodeHeaders(DocumentImpl doc, int chanId, String idTag, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
   {
 
         String chanTitle = rs.getString("CHAN_TITLE");
@@ -124,7 +124,6 @@ public class DBImpl implements IDBImpl
         java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
         int chanApvlId = rs.getInt("CHAN_APVL_ID");
         java.sql.Timestamp chanApvlDt = rs.getTimestamp("CHAN_APVL_DT");
-        String chanIdTag = rs.getString("CHAN_ID_TAG");
         int chanPriority = rs.getInt("CHAN_PRIORITY");
         int chanTimeout = rs.getInt("CHAN_TIMEOUT");
         String chanMinimizable = rs.getString("CHAN_MINIMIZABLE");
@@ -135,12 +134,13 @@ public class DBImpl implements IDBImpl
         String chanDetachable = rs.getString("CHAN_DETACHABLE");
         String chanName = rs.getString("CHAN_NAME");
 
-        doc.putIdentifier(chanIdTag, channel);
-        addChannelHeaderAttribute("ID", chanIdTag, channel, system);
+        doc.putIdentifier(idTag, channel);
+        addChannelHeaderAttribute("ID", idTag, channel, system);
+
         channel.setAttribute("chanID", chanId + "");
         system.setAttribute("chanID", chanId + "");
         system.setAttribute("HchanID", chanId + ""); // Tag as not being changeable
-        if (DEBUG > 1) System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanIdTag);
+        if (DEBUG > 1) System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
         addChannelHeaderAttribute("name", chanName, channel, system);
         addChannelHeaderAttribute("class", chanClass, channel, system);
         addChannelHeaderAttribute("timeout", chanTimeout, channel, system);
@@ -178,7 +178,7 @@ public class DBImpl implements IDBImpl
             }
   }
 
-  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId) throws java.sql.SQLException
+  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
   {
     Element channel = null;
     String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
@@ -191,7 +191,7 @@ public class DBImpl implements IDBImpl
       if (rs.next()) {
         channel = doc.createElement("channel");
         Element system = doc.createElement("system");
-        createChannelNodeHeaders(doc, chanId, rs, channel, system);
+        createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
         rs.close();
         stmt.close();
 
@@ -206,11 +206,11 @@ public class DBImpl implements IDBImpl
         channel.appendChild(system);
       }
     } finally {
-      stmt.close();
       if (rs != null) {
         rs.close();
       }
-    }
+       stmt.close();
+   }
     return channel;
   }
 
@@ -236,35 +236,35 @@ public class DBImpl implements IDBImpl
     return null;
   }
 
-  protected void createLayout(Connection con, DocumentImpl doc, Element root, int userId, int profileId, int structId) throws java.sql.SQLException
+  protected void createLayout(Connection con, DocumentImpl doc, Statement stmt, Element root, int userId, int profileId, int structId) throws java.sql.SQLException
   {
 
     if (structId == 0) { // End of line
       return;
     }
 
-    Statement stmt = con.createStatement ();
-    ResultSet rs;
     int nextStructId;
     int chldStructId;
     int priority;
     int externalId;
+    int chanId;
     String idTag;
     String name;
     String type;
     String hidden;
     String removable;
     String immutable;
-    try {
-      String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-      String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
-      Logger.log (Logger.DEBUG, sQuery);
-      rs = stmt.executeQuery (sQuery);
 
+    String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+    String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
+    Logger.log (Logger.DEBUG, sQuery);
+    ResultSet rs = stmt.executeQuery (sQuery);
+    try {
       rs.next();
       nextStructId = rs.getInt("NEXT_STRUCT_ID");
       chldStructId = rs.getInt("CHLD_STRUCT_ID");
       externalId = rs.getInt("EXTERNAL_ID");
+      chanId = rs.getInt("CHAN_ID");
       priority = rs.getInt("PRIORITY");
       idTag = rs.getString("ID_TAG");
       name = rs.getString("NAME");
@@ -273,92 +273,87 @@ public class DBImpl implements IDBImpl
       removable = rs.getString("REMOVABLE");
       immutable = rs.getString("IMMUTABLE");
     } finally {
-      stmt.close();
+      rs.close();
     }
 
-    String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-    String sQuery = "SELECT CHAN_ID FROM UP_USER_CHAN WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID="+structId;
-    Logger.log (Logger.DEBUG, sQuery);
-    stmt = con.createStatement ();
-    ResultSet rs2 = stmt.executeQuery (sQuery);
-    if (rs2.next()) { // Channel
-      int chanId = rs2.getInt("CHAN_ID");
-
+    if (chanId != 0) { // Channel
       /* See if we have access to the channel */
       sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
         "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=" + chanId +" AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
       Logger.log (Logger.DEBUG, sQuery);
-      ResultSet rs3 = stmt.executeQuery (sQuery);
-      if (!rs3.next()) {
-        /* No access to channel. Replace it with the error channel and a suitable message */
+      rs = stmt.executeQuery (sQuery);
+      try {
+        if (!rs.next()) {
+          /* No access to channel. Replace it with the error channel and a suitable message */
 
-        /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-        Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
-
+          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
+          Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
+        }
+      } finally {
+        rs.close();
       }
 
-      Element channel = createChannelNode(con, doc, chanId);
-      stmt = con.createStatement ();
-      try {
-        Element system = (Element) channel.getElementsByTagName("system").item(0);
-        Element parameter = (Element) channel.getElementsByTagName("parameter").item(0);
 
-        sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
-        Logger.log (Logger.DEBUG, sQuery);
-        rs2 = stmt.executeQuery (sQuery);
-        while (rs2.next ()) {
-          String foldHDInd = rs2.getString("STRUCT_H_D_IND");
-          String paramName = rs2.getString("STRUCT_PARM_NM");
+      Element channel = createChannelNode(con, doc, chanId, idTag);
+      Element system = (Element) channel.getElementsByTagName("system").item(0);
+      Element parameter = (Element) channel.getElementsByTagName("parameter").item(0);
+
+      sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
+      Logger.log (Logger.DEBUG, sQuery);
+      rs = stmt.executeQuery (sQuery);
+      try {
+        while (rs.next ()) {
+          String foldHDInd = rs.getString("STRUCT_H_D_IND");
+          String paramName = rs.getString("STRUCT_PARM_NM");
           if (foldHDInd.equals("H")) {
             if (!system.hasAttribute("H" + paramName)) {
-              channel.setAttribute(paramName, rs2.getString("STRUCT_PARM_VAL"));
+              channel.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
             }
           } else if (foldHDInd.equals("D")) {
             if (!system.hasAttribute("D" + paramName)) {
-              parameter.setAttribute(paramName, rs2.getString("STRUCT_PARM_VAL"));
+              parameter.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
             }
           } else {
             throw new SQLException("Invalid value for PARAM_H_D_IND for channel " + chanId);
           }
         }
       } finally {
-       stmt.close();
+       rs.close();
       }
 
       root.appendChild(channel);
     } else { // Folder
-        stmt = con.createStatement ();
-        try {
-          Element folder = doc.createElement("folder");
-          Element system = doc.createElement("system");
-          if (idTag == null) {
-            Logger.log(Logger.ERROR, "No tag for " + name);
-          }
-          doc.putIdentifier(idTag, folder);
-          addChannelHeaderAttribute("ID", idTag, folder, system);
-          addChannelHeaderAttribute("priority", priority, folder, system);
-          addChannelHeaderAttribute("name", name, folder, system);
-          addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder, system);
-          addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
-          addChannelHeaderAttribute("immutable", (immutable == null || immutable.equals("Y") ? "true" : "false"), folder, system);
-          addChannelHeaderAttribute("removable", (removable == null || removable.equals("Y") ? "true" : "false"), folder, system);
-          sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
-          Logger.log (Logger.DEBUG, sQuery);
-          rs2 = stmt.executeQuery (sQuery);
-          while (rs2.next ()) {
-            String foldHDInd = rs2.getString("STRUCT_H_D_IND");
-            String paramName = rs2.getString("STRUCT_PARM_NM");
-            folder.setAttribute(paramName, rs2.getString("STRUCT_PARM_VAL"));
-          }
-          root.appendChild(folder);
-          createLayout(con, doc, folder, userId, profileId, chldStructId);
-          folder.appendChild(system);
-        } finally {
-          stmt.close();
+      Element folder = doc.createElement("folder");
+      Element system = doc.createElement("system");
+      if (idTag == null) {
+        Logger.log(Logger.ERROR, "No tag for " + name);
+      }
+      doc.putIdentifier(idTag, folder);
+      addChannelHeaderAttribute("ID", idTag, folder, system);
+      addChannelHeaderAttribute("priority", priority, folder, system);
+      addChannelHeaderAttribute("name", name, folder, system);
+      addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder, system);
+      addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
+      addChannelHeaderAttribute("immutable", (immutable == null || immutable.equals("Y") ? "true" : "false"), folder, system);
+      addChannelHeaderAttribute("removable", (removable == null || removable.equals("Y") ? "true" : "false"), folder, system);
+      sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
+      Logger.log (Logger.DEBUG, sQuery);
+      rs = stmt.executeQuery (sQuery);
+      try {
+        while (rs.next ()) {
+          String foldHDInd = rs.getString("STRUCT_H_D_IND");
+          String paramName = rs.getString("STRUCT_PARM_NM");
+          folder.setAttribute(paramName, rs.getString("STRUCT_PARM_VAL"));
         }
+      } finally {
+        rs.close();
+      }
+      root.appendChild(folder);
+      createLayout(con, doc, stmt, folder, userId, profileId, chldStructId);
+      folder.appendChild(system);
     }
 
-    createLayout(con, doc, root, userId, profileId, nextStructId);
+    createLayout(con, doc, stmt, root, userId, profileId, nextStructId);
   }
 
   /**
@@ -384,13 +379,16 @@ public class DBImpl implements IDBImpl
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE " + selectString;
         Logger.log (Logger.DEBUG, sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
-
-        if (rs.next ()) {
-          int structId = rs.getInt("INIT_STRUCT_ID");
-          if (structId == 0) {      // Grab the default "Guest" layout
-            structId = 1;
+        try {
+          if (rs.next ()) {
+            int structId = rs.getInt("INIT_STRUCT_ID");
+            if (structId == 0) {      // Grab the default "Guest" layout
+              structId = 1;
+            }
+            createLayout(con, doc, stmt, root, userId, profileId, structId);
           }
-          createLayout(con, doc, root, userId, profileId, structId);
+        } finally {
+          rs.close();
         }
 
         doc.appendChild(root);
@@ -432,20 +430,15 @@ public class DBImpl implements IDBImpl
             if (rs.next())
               layoutId = rs.getInt("LAYOUT_ID");
           } finally {
-            if (rs != null)
+            if (rs != null) {
               rs.close();
-            stmt.close();
+            }
           }
 
           String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
 
-          stmt = con.createStatement ();
           try {
-            String sQuery = "DELETE UP_USER_CHAN WHERE " + selectString;
-            Logger.log (Logger.DEBUG, sQuery);
-            stmt.executeUpdate(sQuery);
-
-            sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
+            String sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
             Logger.log (Logger.DEBUG, sQuery);
             stmt.executeUpdate(sQuery);
 
@@ -480,7 +473,7 @@ public class DBImpl implements IDBImpl
    * @param value to check
    * @result Y/N
    */
-  protected static String dbBool(String value)
+  protected static final String dbBool(String value)
   {
     if (value != null && value.equals("true")) {
       return "Y";
@@ -511,17 +504,25 @@ public class DBImpl implements IDBImpl
       nextStructId = saveStructure(node.getNextSibling(), stmt, userId, layoutId, structId);
 
       Element structure = (Element) node;
+      Element system = findSystemNode(node);
+
+      String chanId;
+      if (node.getNodeName().equals("channel")) {
+        chanId = system.getAttribute("chanID");
+      } else {
+        chanId = "";
+      }
+
       sQuery = "INSERT INTO UP_LAYOUT_STRUCT " +
-      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,REMOVABLE) VALUES (" +
+      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,REMOVABLE) VALUES (" +
         userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," +
-        "'" + structure.getAttribute("external_id") + "','" + structure.getAttribute("ID") + "'," +
+        "'" + structure.getAttribute("external_id") + "','" + chanId + "','" + structure.getAttribute("ID") + "'," +
         "'" + structure.getAttribute("name") + "','" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
         "'" + dbBool(structure.getAttribute("removable")) + "')";
       Logger.log(Logger.DEBUG, sQuery);
-      stmt.execute(sQuery);
+      stmt.executeUpdate(sQuery);
 
-      Element system = findSystemNode(node);
       NamedNodeMap nm = node.getAttributes();
       if (nm != null) {
         for (int i = 0 ; i < nm.getLength(); i++) {
@@ -535,7 +536,7 @@ public class DBImpl implements IDBImpl
             sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
               userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nm.item(i).getNodeValue() + "','" + structHDInd + "')";
             Logger.log(Logger.DEBUG, sQuery);
-            stmt.execute(sQuery);
+            stmt.executeUpdate(sQuery);
           }
         }
       }
@@ -556,17 +557,10 @@ public class DBImpl implements IDBImpl
                 sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL, STRUCT_H_D_IND) VALUES ("+
                   userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "','" + structHDInd + "')";
                 Logger.log(Logger.DEBUG, sQuery);
-                stmt.execute(sQuery);
+                stmt.executeUpdate(sQuery);
               }
             }
           }
-      }
-
-      if (node.getNodeName().equals("channel")) {
-        sQuery = "INSERT INTO UP_USER_CHAN (USER_ID, LAYOUT_ID, STRUCT_ID, CHAN_ID) VALUES (" +
-          userId + "," + layoutId + "," + saveStructId + "," + system.getAttribute("chanID") + ")";
-        Logger.log(Logger.DEBUG, sQuery);
-        stmt.execute(sQuery);
       }
 
       return saveStructId;
@@ -637,11 +631,11 @@ public class DBImpl implements IDBImpl
       setAutoCommit(con, false);
       stmt = con.createStatement();
       String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, " +
-        "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_ID_TAG, CHAN_PRIORITY, CHAN_TIMEOUT, " +
+        "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_PRIORITY, CHAN_TIMEOUT, " +
         "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_REMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
       sInsert += "VALUES (" + id + ",'" + title + "','" + title + " Channel','" + channel.getAttribute("class") + "'," +
         "0,SYSDATE,0,SYSDATE" +
-        ",'" + channel.getAttribute("ID") + "'," + "'" + channel.getAttribute("priority") + "'" +
+        ",'" + channel.getAttribute("priority") + "'" +
         ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable")) + "'" +
         ",'" + dbBool(channel.getAttribute("editable")) + "'" +
         ",'" + dbBool(channel.getAttribute("hasHelp")) + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" +
@@ -721,7 +715,7 @@ public class DBImpl implements IDBImpl
           cat.setAttribute("name", catnm);
           chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
         }
-        Element child = createChannelNode(con, chanDoc, chanId);
+        Element child = createChannelNode(con, chanDoc, chanId, "xchan" + chanId);
         if (DEBUG > 3) System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
         cat.appendChild(child);
 
@@ -1140,7 +1134,7 @@ public class DBImpl implements IDBImpl
       }
   }
 
-  protected void setAutoCommit(Connection connection, boolean autocommit)
+  static final protected void setAutoCommit(Connection connection, boolean autocommit)
   {
     try
     {
@@ -1153,7 +1147,7 @@ public class DBImpl implements IDBImpl
     }
   }
 
-  protected void commit(Connection connection)
+  static final protected void commit(Connection connection)
   {
     try
     {
@@ -1166,7 +1160,7 @@ public class DBImpl implements IDBImpl
     }
   }
 
-  protected void rollback(Connection connection)
+  static final protected void rollback(Connection connection)
   {
     try
     {
@@ -1564,7 +1558,7 @@ public class DBImpl implements IDBImpl
       rdbmService.releaseConnection(con);
     }
   }
-    protected Element constructParametersElement(StylesheetUserPreferences up,Document doc) {
+    static final protected Element constructParametersElement(StylesheetUserPreferences up,Document doc) {
         Element parametersEl = doc.createElement("parameters");
         Hashtable pv=up.getParameterValues();
         for (Enumeration e = pv.keys() ; e.hasMoreElements() ;) {
@@ -1577,7 +1571,7 @@ public class DBImpl implements IDBImpl
         return parametersEl;
     }
 
-    protected Element constructChannelAttributesElement(ThemeStylesheetUserPreferences up,Document doc) {
+    static final protected Element constructChannelAttributesElement(ThemeStylesheetUserPreferences up,Document doc) {
         Element attributesEl = doc.createElement("channelattributes");
         for(Enumeration ae=up.getChannelAttributeNames();ae.hasMoreElements();) {
             String attributeName=(String) ae.nextElement();
@@ -1595,7 +1589,7 @@ public class DBImpl implements IDBImpl
         return attributesEl;
     }
 
-    protected Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
+    static final protected Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
         Element attributesEl = doc.createElement("folderattributes");
         for(Enumeration ae=up.getFolderAttributeNames();ae.hasMoreElements();) {
             String attributeName=(String) ae.nextElement();
@@ -1732,7 +1726,7 @@ public class DBImpl implements IDBImpl
    * @param chanDoc
    * @return
    */
-  protected String serializeDOM (Document chanDoc) {
+  static final protected String serializeDOM (Document chanDoc) {
     StringWriter stringOut = null;
     try {
       OutputFormat format = new OutputFormat(chanDoc);          //Serialize DOM
