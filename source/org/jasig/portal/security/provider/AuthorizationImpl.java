@@ -244,7 +244,8 @@ throws AuthorizationException
 /**
  * Does this mean all channels the principal could conceivably subscribe
  * to or all channels principal is specifically authorized to subscribe to,
- * or what? (Dan).
+ * or what?
+ * 
  * @param principal IAuthorizationPrincipal
  * @return Vector (of channels?)
  * @exception AuthorizationException indicates authorization information could not

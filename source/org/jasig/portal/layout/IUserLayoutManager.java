@@ -186,7 +186,7 @@ public interface IUserLayoutManager {
 
     /**
      * Ask manager to output markings at the locations where a given node can be added.
-     * The marks will appear next time {@link getUserLayout} method is called.
+     * The marks will appear next time <code>getUserLayout</code> method is called.
      *
      * @param node an <code>UserLayoutNodeDescription</code> value or <code>null</code> to stop outputting add markings.
      */
@@ -195,7 +195,7 @@ public interface IUserLayoutManager {
 
     /**
      * Ask manager to output markings at the locations where a given node can be moved.
-     * The marks will appear next time {@link getUserLayout} method is called.
+     * The marks will appear next time <code>getUserLayout</code> method is called.
      *
      * @param nodeId a <code>String</code> value or <code>null</code> to stop outputting move markings.
      * @exception PortalException if an error occurs

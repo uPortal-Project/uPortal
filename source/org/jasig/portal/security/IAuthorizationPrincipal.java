@@ -93,8 +93,8 @@ public interface IAuthorizationPrincipal {
     public IPermission[] getAllPermissions(String owner, String activity, String target)
     throws AuthorizationException;
 /**
- * Return a Vector of (?) IChannels.
- * @return java.util.Vector
+ * Return a Vector of IChannels.
+ * @return a <code>java.util.Vector</code> of IChannels
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
     public Vector getAuthorizedChannels() throws AuthorizationException;
