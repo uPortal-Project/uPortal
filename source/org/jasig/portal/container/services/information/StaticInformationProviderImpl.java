@@ -35,29 +35,24 @@
 
 package org.jasig.portal.container.services.information;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 
-import javax.portlet.PortletMode;
+import javax.servlet.ServletConfig;
 
 import org.apache.pluto.om.common.ObjectID;
+import org.apache.pluto.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.om.portlet.PortletDefinition;
+import org.apache.pluto.om.portlet.PortletDefinitionList;
+import org.apache.pluto.om.servlet.WebApplicationDefinition;
 import org.apache.pluto.services.information.PortalContextProvider;
 import org.apache.pluto.services.information.StaticInformationProvider;
-import org.jasig.portal.container.om.common.DescriptionSetImpl;
-import org.jasig.portal.container.om.common.DisplayNameSetImpl;
-import org.jasig.portal.container.om.common.LanguageSetImpl;
-import org.jasig.portal.container.om.common.ParameterSetImpl;
-import org.jasig.portal.container.om.common.PreferenceSetImpl;
-import org.jasig.portal.container.om.portlet.ContentTypeImpl;
-import org.jasig.portal.container.om.portlet.ContentTypeSetImpl;
-import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
-import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
-import org.jasig.portal.container.om.servlet.ServletDefinitionImpl;
-import org.jasig.portal.container.om.servlet.WebApplicationDefinitionImpl;
+import org.jasig.portal.container.binding.PortletApplicationUnmarshaller;
+import org.jasig.portal.container.binding.WebApplicationUnmarshaller;
+import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionListImpl;
+import org.jasig.portal.services.LogService;
 
 /**
  * Implementation of Apache Pluto StaticInformationProvider.
@@ -66,167 +61,103 @@ import org.jasig.portal.container.om.servlet.WebApplicationDefinitionImpl;
  */
 public class StaticInformationProviderImpl implements StaticInformationProvider {
     
-    public static Map portletDefinitions = null;
-    public static PortalContextProvider portalContextProvider = null;
+    private ServletConfig servletConfig = null;
+    private Properties properties = null;
+    private static PortletApplicationDefinitionListImpl portletApplicationDefinitionList = null;
+    private static PortalContextProvider portalContextProvider = null;
     
-    public StaticInformationProviderImpl() {
-        portletDefinitions = new HashMap();
-        initPortletDefinitions();
-    }
-
     // StaticInformationProvider methods
     
     public PortalContextProvider getPortalContextProvider() {
-       if (  portalContextProvider == null )	
-        portalContextProvider = new PortalContextProviderImpl();
-       return portalContextProvider; 
+        if (portalContextProvider == null)
+            portalContextProvider = new PortalContextProviderImpl();
+        return portalContextProvider;
     }
 
     public PortletDefinition getPortletDefinition(ObjectID portletGUID) {
-        return (PortletDefinition)portletDefinitions.get(portletGUID.toString());
+        String portletDefinitionId = portletGUID.toString();
+        String contextName = portletDefinitionId.substring(0, portletDefinitionId.indexOf("."));
+        PortletApplicationDefinition portletApplicationDefinition = portletApplicationDefinitionList.get(ObjectIDImpl.createFromString(contextName));
+        PortletDefinitionList portletDefinitionList = portletApplicationDefinition.getPortletDefinitionList();
+        PortletDefinition portletDefinition = portletDefinitionList.get(ObjectIDImpl.createFromString(portletDefinitionId));
+        return portletDefinition;
     }
 
     // Additional methods
     
+    public void init(ServletConfig servletConfig, Properties properties) {
+        System.out.println("setting servletConfig="+servletConfig);
+        this.servletConfig = servletConfig;
+        this.properties = properties;
+        portletApplicationDefinitionList = new PortletApplicationDefinitionListImpl();
+        initPortletDefinitions();
+    }
+    
+    /**
+     * Go through the webapps directory, look for all web.xml and portlet.xml files
+     * for portlet web applications. Then parse these files and create data structures
+     * representing the portlet application definitions and servlet definitions.
+     * This should occur just once as the portlet container starts up.
+     */
     private void initPortletDefinitions() {
-        // We should initialize by going though the base web modules directory,
-        // which is "webapps" in Tomcat and look through all subdirectories
-        // for web.xml and portlet.xml files.  Then we need to parse these files
-        // and register each WebApplicationDefinition, ServletDefinition, 
-        // PortletApplicationDefinition and PortletDefinition 
-        // by their GUID into a static HashMap. What a pain!
-        
-        // For now we will just hard-code some PortletDefinitions
-        try {            
-            // Comes out of the portlet context's web.xml file
-            WebApplicationDefinitionImpl webApplicationDefinition = new WebApplicationDefinitionImpl();
-            webApplicationDefinition.setId("testsuite");
-            webApplicationDefinition.addDisplayName("testsuite", Locale.getDefault());
-            webApplicationDefinition.addDescription("Automated generated Application Wrapper", Locale.getDefault());
-            webApplicationDefinition.setContextRoot("/testsuite");
+        try {
+            String portalDirName = servletConfig.getServletContext().getRealPath("/"); //root
+            File webappsDir = new File(portalDirName).getParentFile();
+            File[] files1 = webappsDir.listFiles(); // portlet app candidates
+            for (int i = 0; i < files1.length; i++) {
+                File webapp = files1[i];
+                if (webapp.isDirectory()) {
+                    File[] files2 = webapp.listFiles(); // WEB-INF candidates
+                    for (int j = 0; j < files2.length; j++) {
+                        File webinf = files2[j];
+                        if (webinf.isDirectory() && webinf.getName().equals("WEB-INF")) {
+                            File webXmlFile = null;
+                            File portletXmlFile = null;
+                            boolean isPortletApp = false;
+                            boolean gotWebXml = false;
+                            boolean gotPortletXml = false;
+                            File[] files3 = webinf.listFiles(); // web.xml and portlet.xml candidates
+                            for (int k = 0; k < files3.length; k++) {
+                                File file = files3[k];
+                                if (file.getName().equals("web.xml")) {
+                                    gotWebXml = true;
+                                    webXmlFile = files3[k];
+                                } else if (file.getName().equals("portlet.xml")) {
+                                    gotPortletXml = true;
+                                    portletXmlFile = files3[k];
+                                }
+                            }
+                            isPortletApp = gotWebXml && gotPortletXml;
+                            if (isPortletApp) {
+                                String contextName = files1[i].getName();
+                                String xmlFile = null;
+                                LogService.log(LogService.INFO, "Found portlet " + contextName);
 
-            ServletDefinitionImpl servletDefinition1 = new ServletDefinitionImpl("TestPortlet1", "org.apache.pluto.core.PortletServlet");
-            servletDefinition1.setWebApplicationDefinition(webApplicationDefinition);
-            servletDefinition1.setServletMapping("TestPortlet1", "/TestPortlet1/*");
-
-            ServletDefinitionImpl servletDefinition2 = new ServletDefinitionImpl("TestPortlet2", "org.apache.pluto.core.PortletServlet");
-            servletDefinition2.setWebApplicationDefinition(webApplicationDefinition);
-            servletDefinition2.setServletMapping("TestPortlet2", "/TestPortlet2/*");
-
-            PortletApplicationDefinitionImpl portletApplicationDefinition = new PortletApplicationDefinitionImpl();
-            portletApplicationDefinition.setId("testsuite"); // ???
-            portletApplicationDefinition.setVersion("1.0");
-            portletApplicationDefinition.setWebApplicationDefinition(webApplicationDefinition);
-
-            // Add 1st portlet definition
-            PortletDefinitionImpl portletDefinition1 = null;
-            String portletDefinitionId1 = "testsuite.TestPortlet1";
+                                try {
+                                    // Parse the web.xml file --> WebApplicationDefinition
+                                    xmlFile = "web.xml";
+                                    WebApplicationUnmarshaller wau = new WebApplicationUnmarshaller();
+                                    wau.init(new FileInputStream(webXmlFile), contextName);
+                                    WebApplicationDefinition webApplicationDefinition = wau.getWebApplicationDefinition();
+                                    
+                                    // Parse the portlet.xml file --> PortletApplicationDefinition
+                                    xmlFile = "portlet.xml";
+                                    PortletApplicationUnmarshaller pau = new PortletApplicationUnmarshaller();
+                                    pau.init(new FileInputStream(portletXmlFile), contextName);
+                                    PortletApplicationDefinition portletApplicationDefinition = pau.getPortletApplicationDefinition(webApplicationDefinition);
+                                
+                                    // Add this PortletApplicationDefinition to the list
+                                    portletApplicationDefinitionList.add(portletApplicationDefinition.getId().toString(), portletApplicationDefinition);
+                                } catch (Exception e) {
+                                    throw new Exception("Unable to parse " + xmlFile + " for context '" + contextName + "'", e); 
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            }
             
-            portletDefinition1 = new PortletDefinitionImpl();
-            portletDefinition1.setId(portletDefinitionId1);
-            portletDefinition1.setClassName("org.apache.pluto.portalImpl.portlet.TestPortlet");           
-            portletDefinition1.setName("TestPortlet1");
-                
-            DescriptionSetImpl descriptions = new DescriptionSetImpl();
-            descriptions.add("TestSuiteDescription", Locale.getDefault());
-            portletDefinition1.setDescriptions(descriptions);
-                
-            LanguageSetImpl languages = new LanguageSetImpl("Test Portlet #1", "Test1", "Test, Testen", "TestPortlet");
-            languages.setClassLoader(Thread.currentThread().getContextClassLoader());
-            languages.addLanguage(new Locale("en", ""));
-            languages.addLanguage(new Locale("de", ""));
-            
-            portletDefinition1.setLanguages(languages);
-                
-            ParameterSetImpl parameters = new ParameterSetImpl();
-            parameters.add("dummyName", "dummyValue");
-            portletDefinition1.setInitParameters(parameters);
-                
-            PreferenceSetImpl preferences1 = new PreferenceSetImpl();
-            Collection values11 = new ArrayList();
-            values11.add("dummyValue");
-            preferences1.add("dummyName", values11);
-            Collection values12 = new ArrayList();
-            values12.add("dummyValue2");
-            preferences1.add("dummyName2", values12);
-            preferences1.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
-            portletDefinition1.setPreferences(preferences1);
-                
-            ContentTypeSetImpl contentTypes = new ContentTypeSetImpl();
-            ContentTypeImpl contentType = new ContentTypeImpl();
-            contentType.setContentType("text/html");
-            contentType.addPortletMode(PortletMode.VIEW);
-            contentType.addPortletMode(PortletMode.EDIT);
-            contentType.addPortletMode(PortletMode.HELP);
-            contentTypes.add(contentType);
-            portletDefinition1.setContentTypes(contentTypes);
-    
-            portletDefinition1.setServletDefinition(servletDefinition1);
-            
-            portletDefinition1.setPortletApplicationDefinition(portletApplicationDefinition);
-                
-            DisplayNameSetImpl displayNames1 = new DisplayNameSetImpl();
-            displayNames1.add("Test Portlet #1", Locale.getDefault());
-            portletDefinition1.setDisplayNames(displayNames1);
-                
-            portletDefinition1.setExpirationCache("-1");
-                       
-            portletDefinitions.put(portletDefinitionId1, portletDefinition1);
-
-            // Add 2nd portlet definition
-            PortletDefinitionImpl portletDefinition2 = null;
-            String portletDefinitionId2 = "testsuite.TestPortlet2";
-            
-            portletDefinition2 = new PortletDefinitionImpl();
-            portletDefinition2.setId(portletDefinitionId2);
-            portletDefinition2.setClassName("org.apache.pluto.portalImpl.portlet.TestPortlet");           
-            portletDefinition2.setName("TestPortlet2");
-                
-            DescriptionSetImpl descriptions2 = new DescriptionSetImpl();
-            descriptions2.add("TestSuiteDescription", Locale.getDefault());
-            portletDefinition2.setDescriptions(descriptions2);
-                
-            LanguageSetImpl languages2 = new LanguageSetImpl("Test Portlet #2", "Test2", "Test, Testen", "TestPortlet");
-            languages2.setClassLoader(Thread.currentThread().getContextClassLoader());
-            languages2.addLanguage(new Locale("en", ""));
-            languages2.addLanguage(new Locale("de", ""));
-            
-            portletDefinition2.setLanguages(languages);
-                
-            ParameterSetImpl parameters2 = new ParameterSetImpl();
-            parameters2.add("dummyName", "dummyValue");
-            portletDefinition2.setInitParameters(parameters2);
-                
-            PreferenceSetImpl preferences2 = new PreferenceSetImpl();
-            Collection values21 = new ArrayList();
-            values21.add("dummyValue");
-            preferences2.add("dummyName", values21);
-            Collection values22 = new ArrayList();
-            values22.add("dummyValue2");
-            preferences2.add("dummyName2", values22);
-            preferences2.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
-            portletDefinition2.setPreferences(preferences2);
-                
-            ContentTypeSetImpl contentTypes2 = new ContentTypeSetImpl();
-            ContentTypeImpl contentType2 = new ContentTypeImpl();
-            contentType2.setContentType("text/html");
-            contentType2.addPortletMode(PortletMode.VIEW);
-            contentType2.addPortletMode(PortletMode.EDIT);
-            contentType2.addPortletMode(PortletMode.HELP);
-            contentTypes2.add(contentType2);
-            portletDefinition2.setContentTypes(contentTypes2);
-    
-            portletDefinition2.setServletDefinition(servletDefinition2);
-    
-            portletDefinition2.setPortletApplicationDefinition(portletApplicationDefinition);
-
-            DisplayNameSetImpl displayNames2 = new DisplayNameSetImpl();
-            displayNames2.add("Test Portlet #2", Locale.getDefault());
-            portletDefinition2.setDisplayNames(displayNames2);
-                
-            portletDefinition2.setExpirationCache("-1");
-            
-            portletDefinitions.put(portletDefinitionId2, portletDefinition2);
         } catch (Exception e) {
             e.printStackTrace();
         }      
