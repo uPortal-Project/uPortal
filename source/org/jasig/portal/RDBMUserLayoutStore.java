@@ -898,24 +898,26 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @return id or null if no stylesheet matches the name given.
    */
   public Integer getStructureStylesheetId (String ssName) throws Exception {
-    Connection con = RDBMServices.getConnection();
+    Connection con = null; 
+    Statement stmt = null; 
+    ResultSet rs = null; 
+
     try {
+      con = RDBMServices.getConnection();
       RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT WHERE SS_NAME='" + ssName + "'";
-        ResultSet rs = stmt.executeQuery(sQuery);
-        if (rs.next()) {
-          int id = rs.getInt("SS_ID");
-          if (rs.wasNull()) {
-            id = 0;
-          }
-          return new Integer(id);
+      stmt = con.createStatement();
+      String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT WHERE SS_NAME='" + ssName + "'";
+      rs = stmt.executeQuery(sQuery);
+      if (rs.next()) {
+        int id = rs.getInt("SS_ID");
+        if (rs.wasNull()) {
+          id = 0;
         }
-      } finally {
-        stmt.close();
+        return new Integer(id);
       }
     } finally {
+      RDBMServices.closeResultSet(rs);
+      RDBMServices.closeStatement(stmt);
       RDBMServices.releaseConnection(con);
     }
     return null;
@@ -1189,19 +1191,20 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public Integer getThemeStylesheetId (String tsName) throws Exception {
     Integer id = null;
-    Connection con = RDBMServices.getConnection();
+    Connection con = null;
+    Statement stmt = null;
+    ResultSet rs = null;
     try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE SS_NAME='" + tsName + "'";
-        ResultSet rs = stmt.executeQuery(sQuery);
-        if (rs.next()) {
-          id = new Integer(rs.getInt("SS_ID"));
-        }
-      } finally {
-        stmt.close();
+      con = RDBMServices.getConnection(); 
+      stmt = con.createStatement(); 
+      String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE SS_NAME='" + tsName + "'";
+      rs = stmt.executeQuery(sQuery);
+      if (rs.next()) {
+        id = new Integer(rs.getInt("SS_ID"));
       }
     } finally {
+      RDBMServices.closeResultSet(rs);
+      RDBMServices.closeStatement(stmt);
       RDBMServices.releaseConnection(con);
     }
     return  id;
@@ -2277,12 +2280,17 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
     int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
+    Connection con = null; 
+    Statement stmt = null; 
+    ResultSet rs = null; 
+
     try {
+      con = RDBMServices.getConnection();
+
       // Set autocommit false for the connection
       int stylesheetId = ssup.getStylesheetId();
       RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
+      stmt = con.createStatement();
       try {
         // write out params
         for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
@@ -2291,7 +2299,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
+          rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
             sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
@@ -2303,6 +2311,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
           }
+          rs.close(); 
+          rs = null; 
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
@@ -2323,7 +2333,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=2";
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
+              rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
@@ -2336,6 +2346,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                     + userId + "," + profileId + "," + stylesheetId + ",1," + folderId.substring(1) + ",'" + pName + "',2,'" + pValue
                     + "')";
               }
+              rs.close(); 
+              rs = null; 
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
@@ -2353,7 +2365,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
+              rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
@@ -2366,6 +2378,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                     + userId + "," + profileId + "," + stylesheetId + ",1," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
+              rs.close(); 
+              rs = null; 
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
@@ -2377,10 +2391,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // Roll back the transaction
         RDBMServices.rollback(con);
         throw  e;
-      } finally {
-        stmt.close();
       }
     } finally {
+      RDBMServices.closeResultSet(rs); 
+      RDBMServices.closeStatement(stmt); 
       RDBMServices.releaseConnection(con);
     }
   }

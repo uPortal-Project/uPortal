@@ -75,10 +75,11 @@ public class RDBMPermissibleRegistry {
         LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.init():: setting up registry");
         Connection conn = null;
         Statement st = null;
+        ResultSet rs = null;
         try {
             conn = getConnection();
             st = conn.createStatement();
-            ResultSet rs = st.executeQuery(findPermissibles);
+            rs = st.executeQuery(findPermissibles);
             while (rs.next()) {
                 String classname = rs.getString(1);
                 try {
@@ -90,10 +91,11 @@ public class RDBMPermissibleRegistry {
                     unregister(classname);
                 }
             }
-            st.close();
         } catch (Exception e) {
             LogService.log(LogService.ERROR, e);
         } finally {
+            RDBMServices.closeResultSet(rs); 
+            RDBMServices.closeStatement(st); 
             releaseConnection(conn);
         }
         registerKnownPermissibles();
@@ -173,11 +175,11 @@ public class RDBMPermissibleRegistry {
                     st = conn.createStatement();
                     st.executeUpdate("INSERT INTO UPC_PERM_MGR VALUES('" + classname
                             + "')");
-                    st.close();
                     owners.put(classname, Class.forName(classname));
                 } catch (Exception e) {
                     LogService.log(LogService.ERROR, e);
                 } finally {
+                    RDBMServices.closeStatement(st);
                     releaseConnection(conn);
                 }
             } catch (Throwable th) {
@@ -199,11 +201,11 @@ public class RDBMPermissibleRegistry {
             st = conn.createStatement();
             st.executeUpdate("DELETE FROM UPC_PERM_MGR WHERE IPERMISSIBLE_CLASS like '"
                     + permissibleClass + "'");
-            st.close();
             owners.remove(permissibleClass);
         } catch (Exception e) {
             LogService.log(LogService.DEBUG, e);
         } finally {
+            RDBMServices.closeStatement(st);
             releaseConnection(conn);
         }
     }

@@ -83,133 +83,134 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    */
   public void removePortalUID(int uPortalUID) throws Exception {
     Connection con = RDBMServices.getConnection();
+    java.sql.PreparedStatement ps = null; 
+    Statement stmt = null; 
+    ResultSet rs = null; 
+
     try {
-      Statement stmt = con.createStatement();
+      stmt = con.createStatement();
       if (RDBMServices.supportsTransactions)
         con.setAutoCommit(false);
 
-      try {
-      	// START of Addition after bug declaration (bug id 1516)
-        // Permissions delete 
-      	// must be made before delete user in UP_USER
-      	ResultSet rs = stmt.executeQuery("SELECT USER_NAME FROM UP_USER WHERE USER_ID="+uPortalUID);
-      	String name = "";
-      	if ( rs.next() )
-      	  name = rs.getString(1);
-      	rs.close();
-      	rs = stmt.executeQuery("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'");
-      	int type = -1;
-      	if ( rs.next() )
-      	  type = rs.getInt(1);
-      	rs.close();
-		String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY='"+name+"' AND PRINCIPAL_TYPE="+type;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-        
-        rs = stmt.executeQuery("SELECT M.GROUP_ID " +
+      // START of Addition after bug declaration (bug id 1516)
+      // Permissions delete 
+      // must be made before delete user in UP_USER
+      rs = stmt.executeQuery("SELECT USER_NAME FROM UP_USER WHERE USER_ID="+uPortalUID);
+      String name = "";
+      if ( rs.next() )
+        name = rs.getString(1);
+      rs.close();
+      rs = stmt.executeQuery("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'");
+      int type = -1;
+      if ( rs.next() )
+        type = rs.getInt(1);
+      rs.close();
+      rs = null;
+      String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY='"+name+"' AND PRINCIPAL_TYPE="+type;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      rs = stmt.executeQuery("SELECT M.GROUP_ID " +
 			"FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
 			"WHERE M.GROUP_ID = G.GROUP_ID " + 
 			"  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
 			"  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
 			"  AND  M.MEMBER_KEY ='"+name+"' AND  M.MEMBER_IS_GROUP = 'F'");
-      	java.util.Vector groups = new java.util.Vector();
-      	while ( rs.next() )
-      	  groups.add(rs.getString(1));
-      	rs.close();
+      java.util.Vector groups = new java.util.Vector();
+      while ( rs.next() )
+        groups.add(rs.getString(1));
+      rs.close();
+      rs = null;
         
-        // Remove from local group 
-        // Delete from DeleteUser.java and place here
-      	// must be made before delete user in UP_USER
-		java.sql.PreparedStatement ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");     
-        for ( int i = 0; i < groups.size(); i++ ) {
-		 String group = (String) groups.get(i);
-         ps.setString(1,group);
-		 ps.executeUpdate();
-        }
-        if ( ps != null ) ps.close();
-        // END of Addition after bug declaration (bug id 1516)
-        
-        SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);        
-        
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);        
-        
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT    WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-        
-        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        // START of Addition after bug declaration (bug id 1516)
-        SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_PROFILE_MDATA WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_PROFILE_LOCALE WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT_AGGR WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-        
-        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_AGGR  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
-        
-        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);              
-        
-        SQLDelete = "DELETE FROM UP_LAYOUT_RESTRICTIONS  WHERE USER_ID = " + uPortalUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);      
-        // END of Addition after bug declaration (bug id 1516)
-        
-        if (RDBMServices.supportsTransactions)
-          con.commit();
-
-      } finally {
-        stmt.close();
+      // Remove from local group 
+      // Delete from DeleteUser.java and place here
+      // must be made before delete user in UP_USER
+      ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");     
+      for ( int i = 0; i < groups.size(); i++ ) {
+        String group = (String) groups.get(i);
+        ps.setString(1,group);
+        ps.executeUpdate();
       }
-      
+      if ( ps != null ) ps.close();
+      // END of Addition after bug declaration (bug id 1516)
+        
+      SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);        
+        
+      SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);        
+        
+      SQLDelete = "DELETE FROM UP_USER_LAYOUT    WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+        
+      SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      // START of Addition after bug declaration (bug id 1516)
+      SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_PROFILE_MDATA WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_PROFILE_LOCALE WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_LAYOUT_AGGR WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+
+      SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+        
+      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_AGGR  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);
+        
+      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);              
+        
+      SQLDelete = "DELETE FROM UP_LAYOUT_RESTRICTIONS  WHERE USER_ID = " + uPortalUID;
+      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      stmt.executeUpdate(SQLDelete);      
+      // END of Addition after bug declaration (bug id 1516)
+        
+      if (RDBMServices.supportsTransactions)
+        con.commit();
+
       try {
           IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
           portletPrefStore.deletePortletPreferencesByUser(uPortalUID);
@@ -236,6 +237,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         throw se;
       }
     finally {
+      RDBMServices.closeResultSet(rs); 
+      RDBMServices.closeStatement(stmt); 
+      RDBMServices.closePreparedStatement(ps); 
       RDBMServices.releaseConnection(con);
     }
     }

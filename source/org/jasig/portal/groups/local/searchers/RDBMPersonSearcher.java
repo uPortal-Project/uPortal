@@ -77,6 +77,9 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     RDBMServices.PreparedStatement ps = null;
     RDBMServices.PreparedStatement ups = null;
     RDBMServices.PreparedStatement uis = null;
+    ResultSet rs = null; 
+    ResultSet urs = null; 
+    ResultSet uprs = null; 
 
         try {
             conn = RDBMServices.getConnection();
@@ -107,13 +110,13 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
             ps.clearParameters();
             ps.setString(1,query);
             ps.setString(2,query);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             //System.out.println(ps.toString());
             while (rs.next()){
               //System.out.println("result");
               uis.clearParameters();
               uis.setString(1,rs.getString(1));
-              ResultSet urs = uis.executeQuery();
+              urs = uis.executeQuery();
               if(urs.next()){
                 ar.add(new EntityIdentifier(urs.getString(1),personDef));
               }
@@ -121,17 +124,20 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
             
             ups.clearParameters();
             ups.setString(1,query);
-            ResultSet uprs = ups.executeQuery();
+            uprs = ups.executeQuery();
             while (uprs.next()){
                 ar.add(new EntityIdentifier(uprs.getString(1),personDef));
             }
-            ps.close();
-            uis.close();
-            ups.close();
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
             LogService.log(LogService.ERROR, e);
         } finally {
+            RDBMServices.closeResultSet(rs); 
+            RDBMServices.closeResultSet(urs); 
+            RDBMServices.closeResultSet(uprs); 
+            RDBMServices.closePreparedStatement(ps); 
+            RDBMServices.closePreparedStatement(uis); 
+            RDBMServices.closePreparedStatement(ups); 
             RDBMServices.releaseConnection(conn);
         }
       return (EntityIdentifier[]) ar.toArray(r);
