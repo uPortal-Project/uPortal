@@ -519,5 +519,12 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     public void markAddTargets(UserLayoutNodeDescription node) {}
     public void markMoveTargets(String nodeId) throws PortalException {}
 
+    
+    public boolean addLayoutEventListener(LayoutEventListener l){
+        return false;
+    }
+    public boolean removeLayoutEventListener(LayoutEventListener l){
+        return false;
+    };
 
 }
