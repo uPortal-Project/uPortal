@@ -44,7 +44,11 @@ import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
 import java.net.URL;
 import java.lang.SecurityManager;
 import javax.naming.Context;
@@ -54,6 +58,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +68,8 @@ import java.security.AccessController;
 import org.jasig.portal.services.ExternalServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.utils.SubstitutionWriter;
+import org.jasig.portal.utils.SubstitutionServletOutputStream;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.ParamPart;
@@ -74,20 +81,16 @@ import com.oreilly.servlet.multipart.ParamPart;
  * @version: $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
-    // some URL construction elements
-    public static final String PORTAL_URL_SUFFIX="uP";
-    public static final String PORTAL_URL_SEPARATOR=".";
-    public static final String RENDER_URL_ELEMENT="render";
-    public static final String DETACH_URL_ELEMENT="detach";
-    public static final String WORKER_URL_ELEMENT="worker";
-    public static final String CHANNEL_URL_ELEMENT="channel";
 
-    // individual worker URL elements
-    public static final String FILE_DOWNLOAD_WORKER = "download";    
+    //    public static final String SESSION_TAG_VARIABLE="uP_session_tag";
+    public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
 
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
+
+    // random number generator
+    private static final Random randomGenerator= new Random();
 
   static {
     LogService.instance().log(LogService.INFO, "uPortal started");
@@ -121,9 +124,10 @@ public class PortalSessionManager extends HttpServlet {
       initialized = true;
 
       // Get the SAX implementation
-      if (System.getProperty("org.xml.sax.driver") == null)
-        System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
-   }
+      if (System.getProperty("org.xml.sax.driver") == null) {
+          System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
+      }
+    }
   }
 
 
@@ -154,48 +158,56 @@ public class PortalSessionManager extends HttpServlet {
         res.setHeader("uPortal-version", "uPortal_2-0-pre-release-2002-01-14");
         res.setDateHeader("Expires", 0);
 
-        // forwarding
-        ServletContext sc = this.getServletContext();
+        
+
         HttpSession session = req.getSession();
         if (session != null) {
-            // LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
-            String redirectURL = null;
-            try {
 
-                // determine if the request needs to be forwarded
-                if ((redirectURL = this.getRedirectURL(req)) != null) {
-                    // cache request
-                    sc.setAttribute("oreqp_" + session.getId(), new RequestParamWrapper(req));
-                    session.setAttribute("forwarded", new Boolean(true));
-                    // forward
-                    // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
-                    res.sendRedirect(redirectURL);
-
-                } else {
-                    // delete old request
-                    Boolean forwarded = (Boolean)session.getAttribute("forwarded");
-                    if (forwarded != null) {
-                        session.removeAttribute("forwarded");
-                    }
-                    UserInstance userInstance = null;
-                    try {
-                        // Retrieve the user's UserInstance object
-                        userInstance = UserInstanceManager.getUserInstance(req);
-                    } catch(Exception e) {
-                        // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
-                        LogService.instance().log(LogService.ERROR, e);
-                    }
-                    RequestParamWrapper oreqp = null;
-                    if (forwarded != null && forwarded.booleanValue()) {
-                        oreqp = (RequestParamWrapper)sc.getAttribute("oreqp_" + session.getId());
-                    }
-                    if (oreqp != null) {
-                        oreqp.setBaseRequest(req);
-                        userInstance.writeContent(oreqp, res);
-                    } else {
-                        userInstance.writeContent(req, res);
-                    }
+            // obtain a tag table
+            Set requestTags=null;
+            synchronized(session) {
+                requestTags=(Set)session.getAttribute("uP_requestTags");
+                if(requestTags==null) {
+                    requestTags=Collections.synchronizedSet(new HashSet());
+                    session.setAttribute("uP_requestTags",requestTags);
                 }
+            }
+            
+            // determine current tag
+            UPFileSpec upfs=new UPFileSpec(req);
+
+            String tag=upfs.getTagId();
+
+            // see if the tag was registered
+            boolean request_verified=false;
+            if(tag!=null) {
+                request_verified=requestTags.remove(tag);
+            }
+
+            LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
+
+            try {
+                UserInstance userInstance = null;
+                try {
+                    // Retrieve the user's UserInstance object
+                    userInstance = UserInstanceManager.getUserInstance(req);
+                } catch(Exception e) {
+                    // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
+                    LogService.instance().log(LogService.ERROR, e);
+                }
+
+                // generate and register a new tag
+                String newTag=Long.toHexString(randomGenerator.nextLong());
+                LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+req.getSession(false).getId());
+                // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
+                if(!requestTags.add(newTag)) {
+                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
+                }
+                    
+                // fire away
+                userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+                // userInstance.writeContent(new RequestParamWrapper(req,request_verified),res);
+
             } catch (PortalException pe) {
                 if(pe.getRecordedException()!=null) {
                     StringWriter sw=new StringWriter();
@@ -220,69 +232,8 @@ public class PortalSessionManager extends HttpServlet {
 
         } else {
             throw new ServletException("Session object is null !");
-        }
-    }
-
-    /**
-     * Determines if the current requests needs to be redirected.
-     *
-     * @param req an incoming <code>HttpServletRequest</code> value
-     * @return a URL element relative to the root context path (without the '/')
-     * if redirection is required, otherwise <code>null</code>
-     */
-    private String getRedirectURL(HttpServletRequest req) {
-        HttpSession session = req.getSession();
-        if(session!=null) {
-            // see if the session has already been "forwarded"
-            Boolean forwarded = (Boolean)session.getAttribute("forwarded");
-            if (forwarded != null && forwarded.booleanValue()) {
-                return null;
-            }
-            // get the uPFile URL element
-            String servletPath = req.getServletPath();
-            try {
-                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-                
-                // see if this is a worker dispatch
-                if(uPFile.startsWith(WORKER_URL_ELEMENT)) {
-                    // no redirection needed
-                    return null;
-                } else {
-                    // do we have parameters ?
-                    boolean params_present=req.getParameterNames().hasMoreElements();
-                    // is this render or detach (or something else) ?
-                    if(uPFile.startsWith(RENDER_URL_ELEMENT)) { 
-                        if(params_present) {
-                            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
-                        } else {
-                            return null;
-                        }
-                    } else {
-                        if(uPFile.startsWith(DETACH_URL_ELEMENT)) {
-                            if(params_present) {
-                                // redirect to the same uPFile
-                                return uPFile;
-                            } else {
-                                return null;
-                            }
-                        } else {
-                            // unknown basic URL type
-                            LogService.instance().log(LogService.ERROR, "PortalSessionManager::getRedirectURL() : unknown basic uPFile type encountered. uPFile=\""+uPFile+"\".");
-                            // redirect to the base render
-                            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
-                        }
-                    }
-                    
-                }
-            } catch (IndexOutOfBoundsException iobe) {
-                // request came in without a uPFile spec
-                // redirect to the basic render
-                return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
-            }
-        } else {
-            // not tat this would ever happen...
-            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
-        }
+        }        
+        
     }
 
   /**
@@ -324,380 +275,498 @@ public class PortalSessionManager extends HttpServlet {
   }
 
 
-  /**
-   * RequestParamWrapper persists various information
-   * from the source request.
-   * Once given a "base request", it substitutes corresponding
-   * base information with that acquired from the source.
-   *
-   * The following information is extracted from the source:
-   * request parameters
-   * path info
-   * path translated
-   * context path
-   * query string
-   * servlet path
-   * request uri
-   */
-  public class RequestParamWrapper
-      implements HttpServletRequest, Serializable {
-    // the request being wrapped
-    private HttpServletRequest req;
-    private Hashtable parameters;
-    private String pathInfo;
-    private String pathTranslated;
-    private String contextPath;
-    private String queryString;
-    private String servletPath;
-    private String requestURI;
 
-    /**
-     * put your documentation comment here
-     * @param     HttpServletRequest source
-     */
-    public RequestParamWrapper (HttpServletRequest source) {
-      // leech all of the information from the source request
-      this.req=source;
-      parameters = new Hashtable();
-      String contentType = source.getContentType();
-      if (contentType != null && contentType.startsWith("multipart/form-data")) {
-        com.oreilly.servlet.multipart.Part attachmentPart;
-        try {
-          MultipartParser multi = new MultipartParser(source, sizeLimit, true, true);
-          while ((attachmentPart = multi.readNextPart()) != null) {
-            String partName = attachmentPart.getName();
 
-            if (attachmentPart.isParam()) {
-              ParamPart parameterPart = (ParamPart)attachmentPart;
-              String paramValue = parameterPart.getStringValue();
-              if (parameters.containsKey(partName)) {
 
-                /* Assume they meant a multivalued tag, like a checkbox */
-                String[] oldValueArray = (String[])parameters.get(partName);
-                String[] valueArray = new String[oldValueArray.length + 1];
-                for (int i = 0; i < oldValueArray.length; i++) {
-                  valueArray[i] = oldValueArray[i];
-                }
-                valueArray[oldValueArray.length] = paramValue;
-                parameters.put(partName, valueArray);
-              }
-              else {
-                String[] valueArray = new String[1];
-                valueArray[0] = paramValue;
-                parameters.put(partName, valueArray);
-              }
-            }
-            else if (attachmentPart.isFile()) {
-              FilePart filePart = (FilePart)attachmentPart;
-              String filename = filePart.getFileName();
+    public class ResponseSubstitutionWrapper implements HttpServletResponse {
+        protected final HttpServletResponse res;
+        protected String sessionTag;
+        protected String newTag;
 
-              if (filename != null) {
-                MultipartDataSource fileUpload = new MultipartDataSource(filePart);
-
-                if (parameters.containsKey(partName)) {
-                  MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
-                  MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
-                  for (int i = 0; i < oldValueArray.length; i++) {
-                    valueArray[i] = oldValueArray[i];
-                  }
-                  valueArray[oldValueArray.length] = fileUpload;
-                  parameters.put(partName, valueArray);
-                }
-                else {
-                  MultipartDataSource[] valueArray = new MultipartDataSource[1];
-                  valueArray[0] = fileUpload;
-                  parameters.put(partName, valueArray);
-                }
-              }
-            }
-          }
-        } catch (Exception e) {
-          LogService.instance().log(LogService.ERROR, e);
+        public ResponseSubstitutionWrapper(HttpServletResponse res,String sessionTag, String newTag) {
+            this.res=res;
+            this.sessionTag=sessionTag;
+            this.newTag=newTag;
         }
-      }
-      Enumeration en = source.getParameterNames();
-      if (en != null) {
-        while (en.hasMoreElements()) {
-          String pName = (String)en.nextElement();
-          parameters.put(pName, source.getParameterValues(pName));
+
+        public ServletOutputStream getOutputStream() throws IOException {
+            String encoding=this.getCharacterEncoding();
+            byte[] target,substitute;
+            if(encoding!=null) {
+                // use specified encoding
+                target=sessionTag.getBytes(encoding);
+                substitute=newTag.getBytes(encoding);
+            } else {
+                // use default system encoding
+                target=sessionTag.getBytes();
+                substitute=newTag.getBytes();
+            }
+            return new SubstitutionServletOutputStream(res.getOutputStream(),target,substitute);
         }
-      }
-      pathInfo = source.getPathInfo();
-      pathTranslated = source.getPathTranslated();
-      contextPath = source.getContextPath();
-      queryString = source.getQueryString();
-      servletPath = source.getServletPath();
-      requestURI = source.getRequestURI();
+
+        public PrintWriter getWriter() throws IOException {
+            return new PrintWriter(new SubstitutionWriter(res.getWriter(),sessionTag.toCharArray(),newTag.toCharArray()));
+        }
+
+
+        // pass-through implementation methods 
+
+        // implementation of javax.servlet.ServletResponse interface
+        public String getCharacterEncoding() {
+            return res.getCharacterEncoding();
+        }
+        public void reset() {
+            res.reset();
+        }
+        public void flushBuffer() throws IOException {
+            res.flushBuffer();
+        }
+        public void setContentType(String type) {
+            res.setContentType(type);
+        }
+        public void setContentLength(int len) {
+            res.setContentLength(len);
+        }
+        public void setBufferSize(int size) {
+            res.setBufferSize(size);
+        }
+        public int getBufferSize() {
+            return res.getBufferSize();
+        }
+        public boolean isCommitted() {
+            return res.isCommitted();
+        }
+        public void setLocale(Locale loc) {
+            res.setLocale(loc);
+        }
+        public Locale getLocale() {
+            return res.getLocale();
+        }
+        // servlet 2.3 methods, inderect invokation:
+        public void resetBuffer() {
+            try {
+                java.lang.reflect.Method m = res.getClass().getMethod("reseBuffer", null);
+                m.invoke(res, null);
+            } catch (Exception e) {
+            }
+        }
+
+
+        // implementation of javax.servlet.http.HttpServletResponse interface
+        public void addCookie(Cookie cookie) {
+            this.res.addCookie(cookie);
+        }
+        public boolean containsHeader(String name) {
+            return this.res.containsHeader(name);
+        }
+        public String encodeURL(String url) {
+            return this.res.encodeURL(url);
+        }
+        public String encodeRedirectURL(String url) {
+            return this.res.encodeRedirectURL(url);
+        }
+        public String encodeUrl(String url) {
+            return this.res.encodeUrl(url);
+        }
+        public String encodeRedirectUrl(String url) {
+            return this.res.encodeRedirectUrl(url);
+        }
+        public void sendError(int sc, String msg) throws IOException {
+            this.res.sendError(sc, msg);
+        }
+        public void sendError(int sc) throws IOException {
+            this.res.sendError(sc);
+        }
+        public void sendRedirect(String location) throws IOException {
+            this.res.sendRedirect(location);
+        }
+        public void setDateHeader(String name, long date) {
+            this.res.setDateHeader(name, date);
+        }
+        public void addDateHeader(String name, long date) {
+            this.res.addDateHeader(name, date);
+        }
+        public void setHeader(String name, String value) {
+            this.res.setHeader(name, value);
+        }
+        public void addHeader(String name, String value) {
+            this.res.addHeader(name, value);
+        }
+        public void setIntHeader(String name, int value) {
+            this.res.setIntHeader(name, value);
+        }
+        public void addIntHeader(String name, int value) {
+            this.res.addIntHeader(name, value);
+        }
+        public void setStatus(int sc) {
+            this.res.setStatus(sc);
+        }
+        public void setStatus(int sc, String sm) {
+            this.res.setStatus(sc, sm);
+        }
     }
+
+
 
     /**
-     * put your documentation comment here
-     * @param base
+     * A wrapper around http request object to prevent unverified requests from 
+     * accessing any of the request parameters.
+     *
+     * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
      */
-    public void setBaseRequest (HttpServletRequest base) {
-      this.req = base;
-    }
+    public class RequestParamWrapper implements HttpServletRequest {
+        // the request being wrapped
+        protected final HttpServletRequest req;
+        protected Hashtable parameters;
+        protected boolean request_verified;
 
-    /**
-     * Overloaded method
-     * @param name
-     * @return parameter
-     */
-    public String getParameter (String name) {
-      String[] value_array = this.getParameterValues(name);
-      if ((value_array != null) && (value_array.length > 0))
-        return  value_array[0];
-      else
-        return  null;
-    }
 
-    /**
-     * Overloaded method
-     * @return parameter names
-     */
-    public Enumeration getParameterNames () {
-      return  this.parameters.keys();
-    }
+        /**
+         * Creates a new <code>RequestParamWrapper</code> instance.
+         *
+         * @param source an <code>HttpServletRequest</code> value that's being wrapped.
+         * @param request_verified a <code>boolean</code> flag that determines if the request params should be accessable.
+         */
+        public RequestParamWrapper (HttpServletRequest source,boolean request_verified) {
+            // leech all of the information from the source request
+            this.req=source;
+            this.request_verified=request_verified;
 
-    /**
-     * Return a String[] for this parameter
-     * @param parameter name
-     * @result String[] if parameter is not an Object[]
-     */
-    public String[] getParameterValues (String name) {
-      Object[] pars = (Object[])this.parameters.get(name);
-      if (pars instanceof String[]) {
-        return  (String[])this.parameters.get(name);
-      }
-      else {
-        return  null;
-      }
-    }
+            parameters = new Hashtable();
 
-    /**
-     * Return the Object represented by this parameter name
-     * @param parameter name
-     * @result Object
-     */
-    public Object[] getObjectParameterValues (String name) {
-      return  (Object[])this.parameters.get(name);
-    }
+            // only bother with parameter work if should be accessable
+            if(request_verified) {
+                // parse request body 
+                String contentType = source.getContentType();
+                if (contentType != null && contentType.startsWith("multipart/form-data")) {
+                    com.oreilly.servlet.multipart.Part attachmentPart;
+                    try {
+                        MultipartParser multi = new MultipartParser(source, sizeLimit, true, true);
+                        while ((attachmentPart = multi.readNextPart()) != null) {
+                            String partName = attachmentPart.getName();
 
-    public String getPathInfo () {
-      return  pathInfo;
-    }
+                            if (attachmentPart.isParam()) {
+                                ParamPart parameterPart = (ParamPart)attachmentPart;
+                                String paramValue = parameterPart.getStringValue();
+                                if (parameters.containsKey(partName)) {
 
-    public String getPathTranslated () {
-      return  pathTranslated;
-    }
+                                    /* Assume they meant a multivalued tag, like a checkbox */
+                                    String[] oldValueArray = (String[])parameters.get(partName);
+                                    String[] valueArray = new String[oldValueArray.length + 1];
+                                    for (int i = 0; i < oldValueArray.length; i++) {
+                                        valueArray[i] = oldValueArray[i];
+                                    }
+                                    valueArray[oldValueArray.length] = paramValue;
+                                    parameters.put(partName, valueArray);
+                                }
+                                else {
+                                    String[] valueArray = new String[1];
+                                    valueArray[0] = paramValue;
+                                    parameters.put(partName, valueArray);
+                                }
+                            }
+                            else if (attachmentPart.isFile()) {
+                                FilePart filePart = (FilePart)attachmentPart;
+                                String filename = filePart.getFileName();
 
-    public String getContextPath () {
-      return  contextPath;
-    }
+                                if (filename != null) {
+                                    MultipartDataSource fileUpload = new MultipartDataSource(filePart);
 
-    public String getQueryString () {
-      return  queryString;
-    }
+                                    if (parameters.containsKey(partName)) {
+                                        MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
+                                        MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
+                                        for (int i = 0; i < oldValueArray.length; i++) {
+                                            valueArray[i] = oldValueArray[i];
+                                        }
+                                        valueArray[oldValueArray.length] = fileUpload;
+                                        parameters.put(partName, valueArray);
+                                    }
+                                    else {
+                                        MultipartDataSource[] valueArray = new MultipartDataSource[1];
+                                        valueArray[0] = fileUpload;
+                                        parameters.put(partName, valueArray);
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        LogService.instance().log(LogService.ERROR, e);
+                    }
+                }
+                // regular params 
+                Enumeration en = source.getParameterNames();
+                if (en != null) {
+                    while (en.hasMoreElements()) {
+                        String pName = (String)en.nextElement();
+                        parameters.put(pName, source.getParameterValues(pName));
+                    }
+                }
+            }
+        }
 
-    public String getServletPath () {
-      return  servletPath;
-    }
+        /**
+         * Overloaded method
+         * @param name
+         * @return parameter
+         */
+        public String getParameter(String name) {
+            String[] value_array = this.getParameterValues(name);
+            if ((value_array != null) && (value_array.length > 0)) {
+                return  value_array[0];
+            } else {
+                return  null;
+            }
+        }
+        
+        /**
+         * Overloaded method
+         * @return parameter names
+         */
+        public Enumeration getParameterNames() {
+            return  this.parameters.keys();
+        }
 
-    public String getRequestURI () {
-      return  requestURI;
-    }
+        /**
+         * Return a String[] for this parameter
+         * @param parameter name
+         * @result String[] if parameter is not an Object[]
+         */
+        public String[] getParameterValues(String name) {
+            Object[] pars = (Object[])this.parameters.get(name);
+            if (pars!=null && pars instanceof String[]) {
+                return  (String[])this.parameters.get(name);
+            } else {
+                return  null;
+            }
+        }
 
-    // pass through methods
+        /**
+         * Overloaded method
+         *
+         * @return a <code>Map</code> value
+         */
+        public Map getParameterMap() {
+            return parameters;
+        }
 
-    // This method is new in Servlet 2.3.
-    // java.lang.reflect methods are used here in an effort
-    // to be compatible with older servlet APIs.
-    public StringBuffer getRequestURL () {
-      try {
-        java.lang.reflect.Method m = req.getClass().getMethod("getRequestURL", null);
-        return (StringBuffer)m.invoke(req, null);
-      } catch (Exception e) {
-        return null;
-      }
-    }
+        /**
+         * Return the Object represented by this parameter name
+         * @param parameter name
+         * @result Object
+         */
+        public Object[] getObjectParameterValues(String name) {
+            return  (Object[])this.parameters.get(name);
+        }
 
-    // This method is new in Servlet 2.3.
-    // java.lang.reflect methods are used here in an effort
-    // to be compatible with older servlet APIs.
-    public Map getParameterMap() {
-      try {
-        java.lang.reflect.Method m = req.getClass().getMethod("getParameterMap", null);
-        return (Map)m.invoke(req, null);
-      } catch (Exception e) {
-        return null;
-      }
-    }
 
-    // This method is new in Servlet 2.3.
-    // java.lang.reflect methods are used here in an effort
-    // to be compatible with older servlet APIs.
-    public void setCharacterEncoding(String env) throws java.io.UnsupportedEncodingException {
-      try {
-        Class[] paramTypes = new Class[] { new String().getClass() };
-        java.lang.reflect.Method m = req.getClass().getMethod("setCharacterEncoding", paramTypes);
-        Object[] args = new Object[] { env };
-        m.invoke(req, args);
-      } catch (Exception e) {
-      }
-    }
+        // this method should be overloaded, otherwise params will be visible
+        public String getRequestURI() {
+            return  req.getRequestURI();
+        }
 
-    public String getAuthType () {
-      return  req.getAuthType();
-    }
 
-    public Cookie[] getCookies () {
-      return  req.getCookies();
-    }
+        // pass through methods
+        public String getPathInfo() {
+            return  req.getPathInfo();
+        }
 
-    public long getDateHeader (String name) {
-      return  req.getDateHeader(name);
-    }
+        public String getPathTranslated() {
+            return  req.getPathTranslated();
+        }
 
-    public String getHeader (String name) {
-      return  req.getHeader(name);
-    }
+        public String getContextPath() {
+            return  req.getContextPath();
+        }
 
-    public Enumeration getHeaders (String name) {
-      return  req.getHeaders(name);
-    }
+        public String getQueryString() {
+            return  req.getQueryString();;
+        }
 
-    public Enumeration getHeaderNames () {
-      return  req.getHeaderNames();
-    }
+        public String getServletPath() {
+            return  req.getServletPath();
+        }
 
-    public int getIntHeader (String name) {
-      return  req.getIntHeader(name);
-    }
+        // This method is new in Servlet 2.3.
+        // java.lang.reflect methods are used here in an effort
+        // to be compatible with older servlet APIs.
+        public StringBuffer getRequestURL() {
+            try {
+                java.lang.reflect.Method m = req.getClass().getMethod("getRequestURL", null);
+                return (StringBuffer)m.invoke(req, null);
+            } catch (Exception e) {
+                return null;
+            }
+        }
 
-    public String getMethod () {
-      return  req.getMethod();
-    }
 
-    public String getRemoteUser () {
-      return  req.getRemoteUser();
-    }
+        // peterk: this won't work. Spec says that this method has to be executed prior to 
+        // reading request body, and we do exactly this in the constructor of this class :(
 
-    public boolean isUserInRole (String role) {
-      return  req.isUserInRole(role);
-    }
+        // This method is new in Servlet 2.3.
+        // java.lang.reflect methods are used here in an effort
+        // to be compatible with older servlet APIs.
+        public void setCharacterEncoding(String env) throws java.io.UnsupportedEncodingException {
+            try {
+                Class[] paramTypes = new Class[] { new String().getClass() };
+                java.lang.reflect.Method m = req.getClass().getMethod("setCharacterEncoding", paramTypes);
+                Object[] args = new Object[] { env };
+                m.invoke(req, args);
+            } catch (Exception e) {
+            }
+        }
 
-    public java.security.Principal getUserPrincipal () {
-      return  req.getUserPrincipal();
-    }
+        public String getAuthType() {
+            return  req.getAuthType();
+        }
 
-    public String getRequestedSessionId () {
-      return  req.getRequestedSessionId();
-    }
+        public Cookie[] getCookies() {
+            return  req.getCookies();
+        }
 
-    public HttpSession getSession (boolean create) {
-      return  req.getSession(create);
-    }
+        public long getDateHeader(String name) {
+            return  req.getDateHeader(name);
+        }
 
-    public HttpSession getSession () {
-      return  req.getSession();
-    }
+        public String getHeader(String name) {
+            return  req.getHeader(name);
+        }
 
-    public boolean isRequestedSessionIdValid () {
-      return  req.isRequestedSessionIdValid();
-    }
+        public Enumeration getHeaders(String name) {
+            return  req.getHeaders(name);
+        }
 
-    public boolean isRequestedSessionIdFromCookie () {
-      return  req.isRequestedSessionIdFromCookie();
-    }
+        public Enumeration getHeaderNames() {
+            return  req.getHeaderNames();
+        }
 
-    public boolean isRequestedSessionIdFromURL () {
-      return  req.isRequestedSessionIdFromURL();
-    }
+        public int getIntHeader(String name) {
+            return  req.getIntHeader(name);
+        }
 
-    public boolean isRequestedSessionIdFromUrl () {
-      return  req.isRequestedSessionIdFromURL();
-    }
+        public String getMethod() {
+            return  req.getMethod();
+        }
 
-    public Object getAttribute (String name) {
-      return  req.getAttribute(name);
-    }
+        public String getRemoteUser() {
+            return  req.getRemoteUser();
+        }
 
-    public Enumeration getAttributeNames () {
-      return  req.getAttributeNames();
-    }
+        public boolean isUserInRole(String role) {
+            return  req.isUserInRole(role);
+        }
 
-    public String getCharacterEncoding () {
-      return  req.getCharacterEncoding();
-    }
+        public java.security.Principal getUserPrincipal() {
+            return  req.getUserPrincipal();
+        }
 
-    public int getContentLength () {
-      return  req.getContentLength();
-    }
+        public String getRequestedSessionId() {
+            return  req.getRequestedSessionId();
+        }
 
-    public String getContentType () {
-      return  req.getContentType();
-    }
+        public HttpSession getSession(boolean create) {
+            return  req.getSession(create);
+        }
 
-    public ServletInputStream getInputStream () throws IOException {
-      return  req.getInputStream();
-    }
+        public HttpSession getSession() {
+            return  req.getSession();
+        }
 
-    public String getProtocol () {
-      return  req.getProtocol();
-    }
+        public boolean isRequestedSessionIdValid() {
+            return  req.isRequestedSessionIdValid();
+        }
 
-    public String getScheme () {
-      return  req.getScheme();
-    }
+        public boolean isRequestedSessionIdFromCookie() {
+            return  req.isRequestedSessionIdFromCookie();
+        }
 
-    public String getServerName () {
-      return  req.getServerName();
-    }
+        public boolean isRequestedSessionIdFromURL() {
+            return  req.isRequestedSessionIdFromURL();
+        }
 
-    public int getServerPort () {
-      return  req.getServerPort();
-    }
+        public boolean isRequestedSessionIdFromUrl() {
+            return  req.isRequestedSessionIdFromURL();
+        }
 
-    public BufferedReader getReader () throws IOException {
-      return  req.getReader();
-    }
+        public Object getAttribute(String name) {
+            return  req.getAttribute(name);
+        }
 
-    public String getRemoteAddr () {
-      return  req.getRemoteAddr();
-    }
+        public Enumeration getAttributeNames() {
+            return  req.getAttributeNames();
+        }
 
-    public String getRemoteHost () {
-      return  req.getRemoteHost();
-    }
+        public String getCharacterEncoding() {
+            return  req.getCharacterEncoding();
+        }
 
-    public void setAttribute (String name, Object o) {
-      req.setAttribute(name, o);
-    }
+        public int getContentLength() {
+            return  req.getContentLength();
+        }
 
-    public void removeAttribute (String name) {
-      req.removeAttribute(name);
-    }
+        public String getContentType() {
+            return  req.getContentType();
+        }
 
-    public Locale getLocale () {
-      return  req.getLocale();
-    }
+        public ServletInputStream getInputStream() throws IOException {
+            return  req.getInputStream();
+        }
 
-    public Enumeration getLocales () {
-      return  req.getLocales();
-    }
+        public String getProtocol() {
+            return  req.getProtocol();
+        }
 
-    public boolean isSecure () {
-      return  req.isSecure();
-    }
+        public String getScheme() {
+            return  req.getScheme();
+        }
 
-    public RequestDispatcher getRequestDispatcher (String path) {
-      return  req.getRequestDispatcher(path);
-    }
+        public String getServerName() {
+            return  req.getServerName();
+        }
 
-    public String getRealPath (String path) {
-      throw new RuntimeException("HttpServletRequest.getRealPath(String path) is deprectated!  Use ServletContext.getRealPath(String path) instead.");
+        public int getServerPort() {
+            return  req.getServerPort();
+        }
+
+        public BufferedReader getReader() throws IOException {
+            return  req.getReader();
+        }
+
+        public String getRemoteAddr() {
+            return  req.getRemoteAddr();
+        }
+
+        public String getRemoteHost() {
+            return  req.getRemoteHost();
+        }
+
+        public void setAttribute(String name, Object o) {
+            req.setAttribute(name, o);
+        }
+
+        public void removeAttribute(String name) {
+            req.removeAttribute(name);
+        }
+
+        public Locale getLocale() {
+            return  req.getLocale();
+        }
+
+        public Enumeration getLocales() {
+            return  req.getLocales();
+        }
+
+        public boolean isSecure() {
+            return  req.isSecure();
+        }
+
+        public RequestDispatcher getRequestDispatcher(String path) {
+            return  req.getRequestDispatcher(path);
+        }
+
+        public String getRealPath(String path) {
+            throw new RuntimeException("HttpServletRequest.getRealPath(String path) is deprectated!  Use ServletContext.getRealPath(String path) instead.");
+        }
     }
-  }
 }
 
 
