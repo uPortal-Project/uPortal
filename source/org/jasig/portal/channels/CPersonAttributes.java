@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,11 +90,16 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
       attributeE.appendChild(nameE);
 
       // Get the IPerson attribute value for this eduPerson attribute name
-      if (person.getAttribute(attName) != null) {
-        String value = person.getAttribute(attName).toString();
-        Element valueE = doc.createElement("value");
-        valueE.appendChild(doc.createTextNode(value));
-        attributeE.appendChild(valueE);
+      if (person.getAttributeValues(attName) != null) {
+        Object[] values = person.getAttributeValues(attName);
+        for (int i = 0; i < values.length; i++) {
+           LogService.log(LogService.DEBUG, "type of value["+i+"] is ...");
+           LogService.log(LogService.DEBUG, values[i].getClass().getName());
+           String value = values[i].toString();
+           Element valueE = doc.createElement("value");
+           valueE.appendChild(doc.createTextNode(value));
+           attributeE.appendChild(valueE);
+        }
       }
 
       attributesE.appendChild(attributeE);

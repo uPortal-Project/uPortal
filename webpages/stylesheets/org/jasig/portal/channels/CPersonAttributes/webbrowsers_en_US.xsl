@@ -38,19 +38,23 @@
   </xsl:template>
 
   <xsl:template match="attribute" mode="defined">
-    <xsl:if test="value">
+    <xsl:for-each select="value">
       <tr>
-        <td><xsl:value-of select="name"/></td>
+        <td>
+          <xsl:if test="position() = 1">
+            <xsl:value-of select="../name"/>
+          </xsl:if>
+        </td>
         <xsl:choose>
         <xsl:when test="name='jpegPhoto'">
-            <td><img src="{$downloadWorkerURL}?attribute={name}" /></td>
+            <td><img src="{$downloadWorkerURL}?attribute={.}" /></td>
         </xsl:when>
         <xsl:otherwise>
-            <td><xsl:value-of select="value"/></td>
+            <td><xsl:value-of select="."/></td>
         </xsl:otherwise>
         </xsl:choose>
       </tr>
-    </xsl:if>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="attribute" mode="undefined">
