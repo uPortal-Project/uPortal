@@ -98,39 +98,39 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         con.setAutoCommit(false);
 
       try {
-        String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = '" + uPortalUID + "'";
+        String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
@@ -289,25 +289,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
-        /* Put the new user in the template user's groups */
-        try {
-          IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-          IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator templateGroups =  template.getContainingGroups();
-          while (templateGroups.hasNext())
-          {
-              IEntityGroup eg = (IEntityGroup) templateGroups.next();
-              eg.addMember(me);
-              eg.updateMembers();
-
-          }      // end while()
-        }        // end try
-        catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
-        }
+                /* Put the new user in the template user's groups */
+            try {
+              IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
+              IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
+              java.util.Iterator templateGroups =  template.getContainingGroups();
+              while (templateGroups.hasNext())
+              {
+                  IEntityGroup eg = (IEntityGroup) templateGroups.next();
+                  eg.addMember(me);
+                  eg.updateMembers();
+              }  // end while()
+            }    // end try
+            catch (Exception e) {
+              LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
+            }
         
         try
-        {
+            {
           // Turn off autocommit if the database supports it
           if (RDBMServices.supportsTransactions)
           {
