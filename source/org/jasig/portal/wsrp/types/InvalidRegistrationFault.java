@@ -7,7 +7,7 @@
 
 package org.jasig.portal.wsrp.types;
 
-public class InvalidRegistrationFault  extends org.jasig.portal.wsrp.types.SecurityFault  implements java.io.Serializable {
+public class InvalidRegistrationFault  extends org.jasig.portal.wsrp.types.Fault  implements java.io.Serializable {
 
     public InvalidRegistrationFault() {
     }

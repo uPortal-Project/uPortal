@@ -7,7 +7,7 @@
 
 package org.jasig.portal.wsrp.types;
 
-public class OperationFailedFault  extends org.jasig.portal.wsrp.types.InterfaceFault  implements java.io.Serializable {
+public class OperationFailedFault  extends org.jasig.portal.wsrp.types.Fault  implements java.io.Serializable {
 
     public OperationFailedFault() {
     }

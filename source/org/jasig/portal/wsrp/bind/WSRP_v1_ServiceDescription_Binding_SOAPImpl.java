@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ import org.jasig.portal.wsrp.types.holders.StringArrayHolder;
 public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_ServiceDescription_PortType {
 
   public void getServiceDescription(RegistrationContext registrationContext, String[] desiredLocales, BooleanHolder requiresRegistration, PortletDescriptionArrayHolder offeredPortlets, ItemDescriptionArrayHolder userCategoryDescriptions, ItemDescriptionArrayHolder customUserProfileItemDescriptions, ItemDescriptionArrayHolder customWindowStateDescriptions, ItemDescriptionArrayHolder customModeDescriptions, CookieProtocolHolder requiresInitCookie, ModelDescriptionHolder registrationPropertyDescription, StringArrayHolder locales, ResourceListHolder resourceList, ExtensionArrayHolder extensions) throws RemoteException, InvalidRegistrationFault, OperationFailedFault {
-
+    
     // Initialize return values
     requiresRegistration.value = true;
     offeredPortlets.value = new PortletDescription[0];
@@ -83,8 +83,5 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_Serv
     locales.value = new String[0];
     resourceList.value = new ResourceList();
     extensions.value = new Extension[0];
-    
-    
   }
-
 }

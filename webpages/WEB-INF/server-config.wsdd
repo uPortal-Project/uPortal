@@ -229,14 +229,6 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InterfaceFault"
-        type="java:org.jasig.portal.wsrp.types.InterfaceFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:ID"
         type="java:org.jasig.portal.wsrp.types.ID"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
@@ -493,16 +485,16 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:PortletStateChangeRequiredFault"
-        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
+        qname="ns:InteractionParams"
+        type="java:org.jasig.portal.wsrp.types.InteractionParams"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InteractionParams"
-        type="java:org.jasig.portal.wsrp.types.InteractionParams"
+        qname="ns:PortletStateChangeRequiredFault"
+        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -647,14 +639,6 @@ Version $Revision$
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:OperationFailedFault"
         type="java:org.jasig.portal.wsrp.types.OperationFailedFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:SecurityFault"
-        type="java:org.jasig.portal.wsrp.types.SecurityFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -886,14 +870,6 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InterfaceFault"
-        type="java:org.jasig.portal.wsrp.types.InterfaceFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:ID"
         type="java:org.jasig.portal.wsrp.types.ID"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
@@ -1150,16 +1126,16 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:PortletStateChangeRequiredFault"
-        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
+        qname="ns:InteractionParams"
+        type="java:org.jasig.portal.wsrp.types.InteractionParams"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InteractionParams"
-        type="java:org.jasig.portal.wsrp.types.InteractionParams"
+        qname="ns:PortletStateChangeRequiredFault"
+        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1304,14 +1280,6 @@ Version $Revision$
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:OperationFailedFault"
         type="java:org.jasig.portal.wsrp.types.OperationFailedFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:SecurityFault"
-        type="java:org.jasig.portal.wsrp.types.SecurityFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1543,14 +1511,6 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InterfaceFault"
-        type="java:org.jasig.portal.wsrp.types.InterfaceFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:ID"
         type="java:org.jasig.portal.wsrp.types.ID"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
@@ -1807,16 +1767,16 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:PortletStateChangeRequiredFault"
-        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
+        qname="ns:InteractionParams"
+        type="java:org.jasig.portal.wsrp.types.InteractionParams"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InteractionParams"
-        type="java:org.jasig.portal.wsrp.types.InteractionParams"
+        qname="ns:PortletStateChangeRequiredFault"
+        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1961,14 +1921,6 @@ Version $Revision$
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:OperationFailedFault"
         type="java:org.jasig.portal.wsrp.types.OperationFailedFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:SecurityFault"
-        type="java:org.jasig.portal.wsrp.types.SecurityFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -2200,14 +2152,6 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InterfaceFault"
-        type="java:org.jasig.portal.wsrp.types.InterfaceFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:ID"
         type="java:org.jasig.portal.wsrp.types.ID"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
@@ -2464,16 +2408,16 @@ Version $Revision$
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:PortletStateChangeRequiredFault"
-        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
+        qname="ns:InteractionParams"
+        type="java:org.jasig.portal.wsrp.types.InteractionParams"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
       />
       <typeMapping
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:InteractionParams"
-        type="java:org.jasig.portal.wsrp.types.InteractionParams"
+        qname="ns:PortletStateChangeRequiredFault"
+        type="java:org.jasig.portal.wsrp.types.PortletStateChangeRequiredFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -2618,14 +2562,6 @@ Version $Revision$
         xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
         qname="ns:OperationFailedFault"
         type="java:org.jasig.portal.wsrp.types.OperationFailedFault"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      <typeMapping
-        xmlns:ns="urn:oasis:names:tc:wsrp:v1:types"
-        qname="ns:SecurityFault"
-        type="java:org.jasig.portal.wsrp.types.SecurityFault"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""

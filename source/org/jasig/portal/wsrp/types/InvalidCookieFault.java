@@ -7,7 +7,7 @@
 
 package org.jasig.portal.wsrp.types;
 
-public class InvalidCookieFault  extends org.jasig.portal.wsrp.types.InterfaceFault  implements java.io.Serializable {
+public class InvalidCookieFault  extends org.jasig.portal.wsrp.types.Fault  implements java.io.Serializable {
 
     public InvalidCookieFault() {
     }

@@ -55,13 +55,13 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPSkeleton implements org.jasi
         ((java.util.List)_myOperations.get("getServiceDescription")).add(_oper);
         _fault = new org.apache.axis.description.FaultDesc();
         _fault.setName("InvalidRegistration");
-        _fault.setQName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "InvalidRegistrationFault"));
+        _fault.setQName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "InvalidRegistration"));
         _fault.setClassName("org.jasig.portal.wsrp.types.InvalidRegistrationFault");
         _fault.setXmlType(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "InvalidRegistrationFault"));
         _oper.addFault(_fault);
         _fault = new org.apache.axis.description.FaultDesc();
         _fault.setName("OperationFailed");
-        _fault.setQName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "OperationFailedFault"));
+        _fault.setQName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "OperationFailed"));
         _fault.setClassName("org.jasig.portal.wsrp.types.OperationFailedFault");
         _fault.setXmlType(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "OperationFailedFault"));
         _oper.addFault(_fault);

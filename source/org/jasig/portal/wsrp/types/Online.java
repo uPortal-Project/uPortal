@@ -9,7 +9,7 @@ package org.jasig.portal.wsrp.types;
 
 public class Online  implements java.io.Serializable {
     private java.lang.String email;
-    private java.lang.String[] uri;
+    private java.lang.String uri;
     private org.jasig.portal.wsrp.types.Extension[] extensions;
 
     public Online() {
@@ -23,20 +23,12 @@ public class Online  implements java.io.Serializable {
         this.email = email;
     }
 
-    public java.lang.String[] getUri() {
+    public java.lang.String getUri() {
         return uri;
     }
 
-    public void setUri(java.lang.String[] uri) {
+    public void setUri(java.lang.String uri) {
         this.uri = uri;
-    }
-
-    public java.lang.String getUri(int i) {
-        return uri[i];
-    }
-
-    public void setUri(int i, java.lang.String value) {
-        this.uri[i] = value;
     }
 
     public org.jasig.portal.wsrp.types.Extension[] getExtensions() {
@@ -72,7 +64,7 @@ public class Online  implements java.io.Serializable {
               this.email.equals(other.getEmail()))) &&
             ((this.uri==null && other.getUri()==null) || 
              (this.uri!=null &&
-              java.util.Arrays.equals(this.uri, other.getUri()))) &&
+              this.uri.equals(other.getUri()))) &&
             ((this.extensions==null && other.getExtensions()==null) || 
              (this.extensions!=null &&
               java.util.Arrays.equals(this.extensions, other.getExtensions())));
@@ -91,15 +83,7 @@ public class Online  implements java.io.Serializable {
             _hashCode += getEmail().hashCode();
         }
         if (getUri() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getUri());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getUri(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
+            _hashCode += getUri().hashCode();
         }
         if (getExtensions() != null) {
             for (int i=0;

@@ -8,7 +8,7 @@
 package org.jasig.portal.wsrp.types;
 
 public class InteractionParams  implements java.io.Serializable {
-    private org.jasig.portal.wsrp.types.StateChange portletState;
+    private org.jasig.portal.wsrp.types.StateChange portletStateChange;
     private java.lang.String interactionState;
     private org.jasig.portal.wsrp.types.NamedString[] formParameters;
     private org.jasig.portal.wsrp.types.UploadContext[] uploadContexts;
@@ -17,12 +17,12 @@ public class InteractionParams  implements java.io.Serializable {
     public InteractionParams() {
     }
 
-    public org.jasig.portal.wsrp.types.StateChange getPortletState() {
-        return portletState;
+    public org.jasig.portal.wsrp.types.StateChange getPortletStateChange() {
+        return portletStateChange;
     }
 
-    public void setPortletState(org.jasig.portal.wsrp.types.StateChange portletState) {
-        this.portletState = portletState;
+    public void setPortletStateChange(org.jasig.portal.wsrp.types.StateChange portletStateChange) {
+        this.portletStateChange = portletStateChange;
     }
 
     public java.lang.String getInteractionState() {
@@ -93,9 +93,9 @@ public class InteractionParams  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true && 
-            ((this.portletState==null && other.getPortletState()==null) || 
-             (this.portletState!=null &&
-              this.portletState.equals(other.getPortletState()))) &&
+            ((this.portletStateChange==null && other.getPortletStateChange()==null) || 
+             (this.portletStateChange!=null &&
+              this.portletStateChange.equals(other.getPortletStateChange()))) &&
             ((this.interactionState==null && other.getInteractionState()==null) || 
              (this.interactionState!=null &&
               this.interactionState.equals(other.getInteractionState()))) &&
@@ -119,8 +119,8 @@ public class InteractionParams  implements java.io.Serializable {
         }
         __hashCodeCalc = true;
         int _hashCode = 1;
-        if (getPortletState() != null) {
-            _hashCode += getPortletState().hashCode();
+        if (getPortletStateChange() != null) {
+            _hashCode += getPortletStateChange().hashCode();
         }
         if (getInteractionState() != null) {
             _hashCode += getInteractionState().hashCode();
@@ -169,8 +169,8 @@ public class InteractionParams  implements java.io.Serializable {
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "InteractionParams"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("portletState");
-        elemField.setXmlName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "portletState"));
+        elemField.setFieldName("portletStateChange");
+        elemField.setXmlName(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "portletStateChange"));
         elemField.setXmlType(new javax.xml.namespace.QName("urn:oasis:names:tc:wsrp:v1:types", "StateChange"));
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();

@@ -7,7 +7,7 @@
 
 package org.jasig.portal.wsrp.types;
 
-public class InconsistentParametersFault  extends org.jasig.portal.wsrp.types.SecurityFault  implements java.io.Serializable {
+public class InconsistentParametersFault  extends org.jasig.portal.wsrp.types.Fault  implements java.io.Serializable {
 
     public InconsistentParametersFault() {
     }

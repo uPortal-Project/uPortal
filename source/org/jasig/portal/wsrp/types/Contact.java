@@ -9,8 +9,8 @@ package org.jasig.portal.wsrp.types;
 
 public class Contact  implements java.io.Serializable {
     private org.jasig.portal.wsrp.types.Postal postal;
-    private org.jasig.portal.wsrp.types.Telecom[] telecom;
-    private org.jasig.portal.wsrp.types.Online[] online;
+    private org.jasig.portal.wsrp.types.Telecom telecom;
+    private org.jasig.portal.wsrp.types.Online online;
     private org.jasig.portal.wsrp.types.Extension[] extensions;
 
     public Contact() {
@@ -24,36 +24,20 @@ public class Contact  implements java.io.Serializable {
         this.postal = postal;
     }
 
-    public org.jasig.portal.wsrp.types.Telecom[] getTelecom() {
+    public org.jasig.portal.wsrp.types.Telecom getTelecom() {
         return telecom;
     }
 
-    public void setTelecom(org.jasig.portal.wsrp.types.Telecom[] telecom) {
+    public void setTelecom(org.jasig.portal.wsrp.types.Telecom telecom) {
         this.telecom = telecom;
     }
 
-    public org.jasig.portal.wsrp.types.Telecom getTelecom(int i) {
-        return telecom[i];
-    }
-
-    public void setTelecom(int i, org.jasig.portal.wsrp.types.Telecom value) {
-        this.telecom[i] = value;
-    }
-
-    public org.jasig.portal.wsrp.types.Online[] getOnline() {
+    public org.jasig.portal.wsrp.types.Online getOnline() {
         return online;
     }
 
-    public void setOnline(org.jasig.portal.wsrp.types.Online[] online) {
+    public void setOnline(org.jasig.portal.wsrp.types.Online online) {
         this.online = online;
-    }
-
-    public org.jasig.portal.wsrp.types.Online getOnline(int i) {
-        return online[i];
-    }
-
-    public void setOnline(int i, org.jasig.portal.wsrp.types.Online value) {
-        this.online[i] = value;
     }
 
     public org.jasig.portal.wsrp.types.Extension[] getExtensions() {
@@ -89,10 +73,10 @@ public class Contact  implements java.io.Serializable {
               this.postal.equals(other.getPostal()))) &&
             ((this.telecom==null && other.getTelecom()==null) || 
              (this.telecom!=null &&
-              java.util.Arrays.equals(this.telecom, other.getTelecom()))) &&
+              this.telecom.equals(other.getTelecom()))) &&
             ((this.online==null && other.getOnline()==null) || 
              (this.online!=null &&
-              java.util.Arrays.equals(this.online, other.getOnline()))) &&
+              this.online.equals(other.getOnline()))) &&
             ((this.extensions==null && other.getExtensions()==null) || 
              (this.extensions!=null &&
               java.util.Arrays.equals(this.extensions, other.getExtensions())));
@@ -111,26 +95,10 @@ public class Contact  implements java.io.Serializable {
             _hashCode += getPostal().hashCode();
         }
         if (getTelecom() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getTelecom());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getTelecom(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
+            _hashCode += getTelecom().hashCode();
         }
         if (getOnline() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getOnline());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getOnline(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
+            _hashCode += getOnline().hashCode();
         }
         if (getExtensions() != null) {
             for (int i=0;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,56 +81,56 @@ import org.jasig.portal.wsrp.types.holders.UpdateResponseHolder;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class WSRP_v1_Markup_Binding_SOAPImpl implements WSRP_v1_Markup_PortType {
+public class WSRP_v1_Markup_Binding_SOAPImpl implements org.jasig.portal.wsrp.intf.WSRP_v1_Markup_PortType {
 
-  public void getMarkup(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, MarkupContextHolder markupContext, SessionContextHolder sessionContext, ExtensionArrayHolder extensions) throws java.rmi.RemoteException, InvalidUserCategoryFault, InvalidSessionFault, InconsistentParametersFault, InvalidRegistrationFault, OperationFailedFault, MissingParametersFault, InvalidCookieFault, UnsupportedMimeTypeFault, UnsupportedLocaleFault, UnsupportedModeFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
+    public void getMarkup(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, MarkupContextHolder markupContext, SessionContextHolder sessionContext, ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
 
-    // Initialize return values
-    markupContext.value = new MarkupContext();
-    sessionContext.value = new SessionContext();
-    extensions.value = new Extension[0];
+      // Initialize return values
+      markupContext.value = new MarkupContext();
+      sessionContext.value = new SessionContext();
+      extensions.value = new Extension[0];
 
 
-    String regHandle = registrationContext.getRegistrationHandle();
+      String regHandle = registrationContext.getRegistrationHandle();
 
-    String portletHandle = portletContext.getPortletHandle();
+      String portletHandle = portletContext.getPortletHandle();
 
-    String userAuth = runtimeContext.getUserAuthentication();
-    String sessionId = runtimeContext.getSessionID();
+      String userAuth = runtimeContext.getUserAuthentication();
+      String sessionId = runtimeContext.getSessionID();
 
-    String user = userContext.getProfile().getName().getGiven();
+      String user = userContext.getProfile().getName().getGiven();
     
     
-    // Locate the channel by portletHandle (uPortal calls this an "fname")
-    ChannelDefinition channelDef = null;
-    try {
-      ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(portletHandle);
-    } catch (Exception e) {
-      // Do nothing
+      // Locate the channel by portletHandle (uPortal calls this an "fname")
+      ChannelDefinition channelDef = null;
+      try {
+        ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(portletHandle);
+      } catch (Exception e) {
+        // Do nothing
+      }
+      if (channelDef == null) {
+         //System.out.println("Unable to find a channel with functional name '" + portletHandle + "'");      
+         throw new InvalidHandleFault();
+      }
+    
+
+      markupContext.value.setMarkupString("<b>Hello there.</b>");
+
+      sessionContext.value.setSessionID("put a session ID here");
     }
-    if (channelDef == null) {
-       //System.out.println("Unable to find a channel with functional name '" + portletHandle + "'");      
-       throw new InvalidHandleFault();
+
+    public void performBlockingInteraction(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, InteractionParams interactionParams, UpdateResponseHolder updateResponse, StringHolder redirectURL, ExtensionArrayHolder extensions) throws RemoteException, InconsistentParametersFault, InvalidRegistrationFault, MissingParametersFault, OperationFailedFault, UnsupportedMimeTypeFault, UnsupportedModeFault, UnsupportedLocaleFault, InvalidUserCategoryFault, InvalidSessionFault, InvalidCookieFault, PortletStateChangeRequiredFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
+      updateResponse.value = new UpdateResponse();
+      redirectURL.value = new String();
+      extensions.value = new Extension[0];
     }
-    
 
-    markupContext.value.setMarkupString("<b>Hello there.</b>");
+    public Extension[] releaseSessions(org.jasig.portal.wsrp.types.RegistrationContext registrationContext, java.lang.String[] sessionIDs) throws java.rmi.RemoteException, org.jasig.portal.wsrp.types.InvalidRegistrationFault, org.jasig.portal.wsrp.types.OperationFailedFault, org.jasig.portal.wsrp.types.MissingParametersFault, org.jasig.portal.wsrp.types.AccessDeniedFault {
+      return null;
+    }
 
-    sessionContext.value.setSessionID("put a session ID here");
-  }
-
-  public void performBlockingInteraction(RegistrationContext registrationContext, PortletContext portletContext, RuntimeContext runtimeContext, UserContext userContext, MarkupParams markupParams, InteractionParams interactionParams, UpdateResponseHolder updateResponse, StringHolder redirectURL, ExtensionArrayHolder extensions) throws RemoteException, InvalidUserCategoryFault, InvalidSessionFault, InconsistentParametersFault, InvalidRegistrationFault, OperationFailedFault, MissingParametersFault, InvalidCookieFault, UnsupportedMimeTypeFault, UnsupportedLocaleFault, UnsupportedModeFault, PortletStateChangeRequiredFault, AccessDeniedFault, InvalidHandleFault, UnsupportedWindowStateFault {
-    updateResponse.value = new UpdateResponse();
-    redirectURL.value = new String();
-    extensions.value = new Extension[0];
-  }
-
-  public Extension[] releaseSessions(RegistrationContext registrationContext, String[] sessionIDs) throws java.rmi.RemoteException, InvalidRegistrationFault, OperationFailedFault, MissingParametersFault, AccessDeniedFault {
-    return null;
-  }
-
-  public Extension[] initCookie(RegistrationContext registrationContext) throws RemoteException, InvalidRegistrationFault, OperationFailedFault, AccessDeniedFault {
-    return null;
-  }
+    public Extension[] initCookie(org.jasig.portal.wsrp.types.RegistrationContext registrationContext) throws java.rmi.RemoteException, org.jasig.portal.wsrp.types.InvalidRegistrationFault, org.jasig.portal.wsrp.types.OperationFailedFault, org.jasig.portal.wsrp.types.AccessDeniedFault {
+      return null;
+    }
 
 }
