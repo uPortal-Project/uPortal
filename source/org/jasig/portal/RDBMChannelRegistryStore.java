@@ -918,8 +918,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     String categoryKey = String.valueOf(category.getId());
 
 // DE 11/21/02
-    IEntityGroup categoryGroup = GroupService.findGroup("local." + categoryKey);
-//  IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
+//    IEntityGroup categoryGroup = GroupService.findGroup("local." + categoryKey);
+    IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
 
     categoryGroup.addMember(channelDefEntity);
     categoryGroup.updateMembers();
