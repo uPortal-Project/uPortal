@@ -203,11 +203,11 @@
                        Version: (from jakarta-pluto CVS on November 2, 2004)
                        URL: http://www.jcp.org/en/jsr/detail?id=168
 
-  pluto.jar            Reference Implementation of the Java Portlet Specfication.
+  pluto-1.0.1-rc2.jar  Reference Implementation of the Java Portlet Specfication.
                        This Portlet container provides a runtime environment for
                        portlets implemented according to the Portlet API.
                        The project is still in the Apache Incubator.
-                       Version: (from jakarta-pluto CVS on November 2, 2004)
+                       Version: 1.0.1-rc2
                        URL: http://portals.apache.org/pluto/
 
   wsrp4j-shared.jar    WSRP4J shared classes mostly derived from OASIS WSRP WSDL.
@@ -310,6 +310,7 @@
   <property name="commons-pool.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="spring.jar" value="(set this in build.properties!)"/>
+  <property name="commons-collection.jar" value="(set this in build.properties!)"/>
 
 
 
@@ -345,6 +346,7 @@
     <pathelement location="${wsrp4j-consumer.jar}"/>
     <pathelement location="${proxyportlet.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
+    <pathelement location="${commons-collection.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
@@ -511,6 +513,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-collection.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
