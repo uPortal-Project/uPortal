@@ -617,7 +617,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
       catch (Exception e)
       {
-        throw new GeneralRenderingException ("Problem occured while rendering channel.  Please restart channel.", e, false, true);
+        throw new GeneralRenderingException ("Problem retrieving contents of " + state.fullxmlUri + ".  Please restart channel. ", e, false, true);
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
