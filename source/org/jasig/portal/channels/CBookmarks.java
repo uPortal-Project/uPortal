@@ -162,8 +162,8 @@ public class CBookmarks extends BaseChannel {
   }
 
   /**
-   * put your documentation comment here
-   * @return 
+   * Retrieve the XML for the default set of bookmarks
+   * @return XML Representation of the default user bookmarks
    */
   private String getDefaultBookmarks () {
     Connection connection = null;
