@@ -1,71 +1,124 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8' ?>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-<xsl:output method="html"/>
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
 
- <xsl:template match="rss">
- <html><body>
- <xsl:apply-templates select="channel"/>
- </body></html>
- </xsl:template>
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
 
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+   
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+   
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
 
- <xsl:template match="channel">
-  <table cellspacing="1" cellpadding="4" bgcolor="#FFFFFF" border="0" width="100%">
-    <tr>
+Author: Justin Tilton, jet@immagic.com
+Version $Revision$
+-->
 
-    <td valign="middle" align="left" bgcolor="#EEEEEE">
-       <xsl:apply-templates select="image"/>
-      <font color="#000000" face="Arial,Helvetica"><b>
-        <a>
-        <xsl:attribute name="href">
-         <xsl:value-of select="link"/>
-        </xsl:attribute>
-        <xsl:value-of select="title"/>
-        </a></b>
-      </font>
-    </td></tr>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+   <xsl:output method="html" indent="yes" />
 
-    <tr>
-    <td>
-    <center><xsl:value-of select="description"/></center>
-     <xsl:apply-templates select="item"/>
-    </td>
-    </tr>
-   </table>
- </xsl:template>
+   <xsl:param name="baseActionURL">render.uP</xsl:param>
 
- <xsl:template match="item">
-   <li><a>
-    <xsl:attribute name="href">
-     <xsl:value-of select="link"/>
-    </xsl:attribute>
-    <xsl:value-of select="title"/>
-   </a><br/>
-  <xsl:value-of select="description"/>
- </li>
- </xsl:template>
+   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
 
-<xsl:template match="image">
-  <a>
-  <xsl:attribute name="href">
-   <xsl:value-of select="link"/>
-  </xsl:attribute>
-  <img hspace="10">
-        <xsl:attribute name="src">
-         <xsl:value-of select="url"/>
-        </xsl:attribute>
-        <xsl:attribute name="alt">
-         <xsl:value-of select="description"/>
-        </xsl:attribute>
-        <xsl:attribute name="width">
-         <xsl:value-of select="width"/>
-        </xsl:attribute>
-        <xsl:attribute name="height">
-         <xsl:value-of select="height"/>
-        </xsl:attribute>
-   </img>
-   </a>
- </xsl:template>
+   <xsl:template match="rss">
+      <html>
+         <head>
+            <title>uPortal 2.0</title>
+         </head>
 
+         <body>
+            <xsl:apply-templates select="channel" />
+         </body>
+      </html>
+   </xsl:template>
+
+   <xsl:template match="channel">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+         <tr align="left">
+            <td width="100%" valign="bottom" class="uportal-channel-subtitle">
+               <xsl:value-of select="description" />
+            </td>
+
+            <td>
+               <a href="{image/link}" target="_blank">
+                  <img alt="interface image" src="{image/url}" border="0" />
+               </a>
+            </td>
+         </tr>
+      </table>
+
+      <br />
+
+      <xsl:apply-templates select="item" />
+
+      <br />
+
+      <xsl:apply-templates select="textinput" />
+   </xsl:template>
+
+   <xsl:template match="item">
+      <table width="100%" border="0" cellspacing="0" cellpadding="2">
+         <tr>
+            <td>
+               <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" />
+            </td>
+
+            <td width="100%" class="uportal-channel-subtitle-reversed">
+               <a href="{link}" target="_blank">
+                  <xsl:value-of select="title" />
+               </a>
+            </td>
+         </tr>
+
+         <xsl:if test="description != ''">
+            <tr class="uportal-channel-text">
+               <td> </td>
+
+               <td width="100%">
+                  <xsl:value-of select="description" />
+               </td>
+            </tr>
+         </xsl:if>
+      </table>
+   </xsl:template>
+
+   <xsl:template match="textinput">
+      <form action="{link}">
+         <span class="uportal-label">
+            <xsl:value-of select="description" />
+         </span>
+
+         <br />
+
+         <input type="text" name="{name}" size="30" class="uportal-input-text" />
+
+         <br />
+
+         <input type="submit" name="Submit" value="Submit" class="uportal-button" />
+      </form>
+   </xsl:template>
 </xsl:stylesheet>
+
