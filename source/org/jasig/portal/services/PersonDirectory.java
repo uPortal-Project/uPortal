@@ -37,7 +37,6 @@ package org.jasig.portal.services;
 
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
-import org.jasig.portal.Logger;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -65,8 +64,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.w3c.dom.Entity;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
 
 /**
  * Extract eduPerson-like attributes from whatever LDAP directory or JDBC
@@ -147,10 +146,9 @@ public class PersonDirectory {
     try  {
 
       // Build a DOM tree out of uPortal/properties/PersonDirs.xml
-      DOMParser domParser = new DOMParser();
+      DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       String tablesUri = UtilitiesBean.fixURI("properties/PersonDirs.xml");
-      domParser.parse(tablesUri); // DOM Parse the XML
-      Document doc = domParser.getDocument();
+      Document doc = docBuilder.parse(tablesUri); // DOM Parse the XML
 
       // Each directory source is a <PersonDirInfo> (and its contents)
       NodeList list = doc.getElementsByTagName("PersonDirInfo");
@@ -232,7 +230,7 @@ public class PersonDirectory {
      }
     catch(Exception e)
     {
-      Logger.log(Logger.WARN,"properties/PersonDirs.xml is not available, directory searching disabled.");
+      LogService.instance().log(LogService.WARN,"properties/PersonDirs.xml is not available, directory searching disabled.");
       return false;
     }
     return true;
@@ -341,7 +339,7 @@ public class PersonDirectory {
           } catch (Exception driverproblem) {
             pdi.disabled=true;
             pdi.logged=true;
-            Logger.log(Logger.ERROR,"Cannot register driver class "+pdi.driver);
+            LogService.instance().log(LogService.ERROR,"Cannot register driver class "+pdi.driver);
             return;
           }
         }
