@@ -35,38 +35,42 @@
 
 package org.jasig.portal.layout.channels;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IPrivileged;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IServant;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IPrivileged;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.ALFolder;
-import org.jasig.portal.layout.ALFragment;
 import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.ALFragment;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.ILayoutFragment;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.Attributes;
+
 
 /**
  * A channel for adding new content to a layout.
@@ -80,11 +84,34 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private ThemeStylesheetUserPreferences themePrefs;
 	private Map fragments;
 	private boolean servantRender = false;
-	private static IServant groupServant;
-	private String fragmentId;
+	private String servantFragmentId;
+	private static Map servants = new HashMap();
+	private final static int MAX_SERVANTS = 50; 
 
 	public CFragmentManager() throws PortalException {
 		super();
+	}
+	
+	private class ServantSAXFilter extends SAX2FilterImpl {
+
+		 public ServantSAXFilter(ContentHandler ch) throws PortalException {
+			super(ch);
+		 }
+		   
+		 public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException {
+		  try {	
+			super.startElement(uri,localName,qName,atts);
+			if(qName.equals("groupServant")) {
+			  if ( servantRender ) {
+			   getGroupServant().renderXML(contentHandler);
+			  } 
+			}	
+			
+		  } catch ( Exception e ) {
+		  	  throw new SAXException(e.toString());	
+		  }
+		 }	
+
 	}
 
     private synchronized IGroupMember[] getGroupMembers(String fragmentId) throws PortalException {
@@ -96,54 +123,47 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
        	if ( member != null )
        	 groups.add(member);  
        }
-        return (IGroupMember[]) groups.toArray();
+		IGroupMember[] members = new IGroupMember[groups.size()];
+        for ( int i = 0; i < members.length; i++ ) {
+          	members[i] = (IGroupMember) groups.get(i);
+        }
+        return members;
     }   
 
+
+    private String getServantKey() {
+      return CommonUtils.envl(servantFragmentId,"new"); 	
+    }
 
 	/**
 		 * Produces a group servant
 		 * @return the group servant
 		 */
-	private synchronized IServant getGroupServant() throws PortalException {	
+	private synchronized IServant getGroupServant() throws PortalException {
+		if ( servants.size() > MAX_SERVANTS ) servants.clear();	
+		IServant groupServant = (IServant) servants.get(getServantKey());
 		if ( groupServant == null ) {
 				 try {
 				  // create the appropriate servant
-				  if ( fragmentId != null && CommonUtils.parseInt(fragmentId) > 0  ) {
+				  if ( servantFragmentId != null && CommonUtils.parseInt(servantFragmentId) > 0  ) {
 					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
-													"Please select groups or people who should have access to this channel:",
-													GroupService.EVERYONE,false,true,getGroupMembers(fragmentId));	
+													"Please select groups or people who should have access to this fragment:",
+													GroupService.EVERYONE,true,true,getGroupMembers(servantFragmentId));	
 				  } else 
 					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
-								"Please select groups or people who should have access to this channel:",
-								GroupService.EVERYONE);								
+								"Please select groups or people who should have access to this fragment:",
+								GroupService.EVERYONE);		
+								
+				  if ( groupServant != null ) 
+				     servants.put(getServantKey(),groupServant);	
+				  									
 				} catch (Exception e) {
 					throw new PortalException(e);
 				  }
 		}	
-		 groupServant.setRuntimeData((ChannelRuntimeData)runtimeData.clone());				  
+		 groupServant.setRuntimeData((ChannelRuntimeData)runtimeData.clone());		  
 		 return groupServant;
     }
-
-	/*private Element getGroupsXML ( Document doc ) throws PortalException {
-		   Element selectedGroupsE = doc.createElement("selectedGroups");
-		   IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
-		   System.out.println ( "gms size: " + gms.length );
-		   // Add selected groups if there are any
-		   if (gms != null && gms.length > 0) {
-			   
-			   try {
-				   for (int c = 0; c < gms.length; c++) {
-					   Element selectedGroupE = doc.createElement("selectedGroup");
-					   selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
-					   selectedGroupE.appendChild(doc.createTextNode(gms[c].getKey()));
-					   selectedGroupsE.appendChild(selectedGroupE);
-				   }
-			   } catch (Exception e) {
-				  throw new PortalException(e);
-			   }
-		   }
-		   return  selectedGroupsE;
-	}*/
 
 	private String createFolder( ALFragment fragment ) throws PortalException {
 		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
@@ -153,11 +173,11 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	private void analyzeParameters( XSLT xslt, ContentHandler out ) throws PortalException {
-		fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
+	private void analyzeParameters( XSLT xslt ) throws PortalException {
+		
+		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
-		if ( servantRender && getGroupServant().isFinished() ) 
-		   servantRender = false;
+		  
 				if (action.equals("save_new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String funcName = runtimeData.getParameter("fragment_fname");
@@ -213,7 +233,27 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					   new PortalException ( "Invalid fragment ID="+fragmentId);
 				} else if (action.equals("publish")) {
 					servantRender = true; 
-				}
+					servantFragmentId = fragmentId;
+				}  else if (action.equals("publish_finish")) {
+					IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
+					for ( int i = 0; i < gms.length; i++ )
+				      System.out.println ( "group key: " + gms[i].getKey());
+		            servantRender = false; 
+	               }
+				
+				
+		           if ( getGroupServant().isFinished() ) {
+					IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
+					if ( gms != null && "Done".equals(runtimeData.getParameter("grpCommand")))
+					  alm.setPublishGroups(gms,servantFragmentId);
+		           	servants.remove(getServantKey());
+					servantRender = false;
+		           } 	 
+				
+				   if ( servantRender && action.length() == 0 ) {
+				     fragmentId = servantFragmentId;
+				     action = "publish";	
+				   }
 				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 			    xslt.setStylesheetParameter("uPcFM_action",action);	
@@ -296,7 +336,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		staticData = sd;
 	}
 	public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-	  runtimeData = rd;
+	  runtimeData = rd;	
 	}
 
 	public void refreshFragments() throws PortalException {
@@ -317,16 +357,19 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		
-		analyzeParameters(xslt,out);
-		if ( servantRender )
-		  getGroupServant().renderXML(out); 
-		else {
-		  xslt.setXML(getFragmentList());
-		  xslt.setXSL(sslLocation,"fragmentManager",runtimeData.getBrowserInfo());
-		  xslt.setTarget(out);
-		  xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
-	      xslt.transform();   
-	    } 
+		analyzeParameters(xslt);
+		
+		xslt.setXML(getFragmentList());
+		xslt.setXSL(sslLocation,"fragmentManager",runtimeData.getBrowserInfo());
+		xslt.setTarget(new ServantSAXFilter(out));
+		xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
+	    
+	    
+		/*if ( servantRender ) {
+		  xslt.setStylesheetParameter("action", "selectGroupsButtons");  
+		}*/ 
+		
+		xslt.transform();    
 	}
 
 }
