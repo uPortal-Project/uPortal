@@ -128,7 +128,9 @@ public class CarClassLoader
                                                           e );
                     } finally {
 					try {
-						in.close();
+                        if (in != null) {
+						    in.close();
+                        }
 					} catch (IOException ioe) {
 						LogService.log(LogService.ERROR,
 								"CarClassLoader::findClass() Could not close inputStream "
