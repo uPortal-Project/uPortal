@@ -704,7 +704,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   /**
    * Return the next available folder structure id for a user
    * @param person
-   * @return
+   * @return a <code>String</code> that is the next free structure ID
    * @exception Exception
    */
   public String generateNewFolderId (IPerson person) throws Exception {

@@ -69,7 +69,7 @@ public class CommandFactory {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return a <code>CommandFactory</code> singleton
      */
     protected static synchronized CommandFactory instance () {
         if (_instance == null) {
@@ -81,7 +81,7 @@ public class CommandFactory {
     /**
      * put your documentation comment here
      * @param key
-     * @return
+     * @return the <code>IPermissionCommand</code> for the key
      */
     public static IPermissionCommand get (String key) {
         return  instance().getCommand(key);
@@ -90,7 +90,7 @@ public class CommandFactory {
     /**
      * put your documentation comment here
      * @param key
-     * @return
+     * @return the <code>IPermissionCommand</code> for the key
      */
     protected IPermissionCommand getCommand (String key) {
         return  (IPermissionCommand)commands.get(key);

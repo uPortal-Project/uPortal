@@ -95,7 +95,7 @@ public class PermissibleSubscribeChannels
     /**
      * put your documentation comment here
      * @param token
-     * @return
+     * @return the <code>String</code> activity name
      */
     public String getActivityName (String token) {
         return  (String)activities.get(token);
@@ -103,7 +103,7 @@ public class PermissibleSubscribeChannels
 
     /**
      * put your documentation comment here
-     * @return
+     * @return an array of <code>String</code> target tokens
      */
     public String[] getTargetTokens () {
         return  (String[])targets.keySet().toArray(new String[0]);
@@ -112,7 +112,7 @@ public class PermissibleSubscribeChannels
     /**
      * put your documentation comment here
      * @param token
-     * @return
+     * @return a <code>String</code> target name
      */
     public String getTargetName (String token) {
         return  (String)targets.get(token);
@@ -120,7 +120,7 @@ public class PermissibleSubscribeChannels
 
     /**
      * put your documentation comment here
-     * @return
+     * @return the <code>String</code> owner token
      */
     public String getOwnerToken () {
         return  "UP_FRAMEWORK";
@@ -128,7 +128,7 @@ public class PermissibleSubscribeChannels
 
     /**
      * put your documentation comment here
-     * @return
+     * @return the <code>String</code> owner name
      */
     public String getOwnerName () {
         return  "uPortal Channel Subscription";

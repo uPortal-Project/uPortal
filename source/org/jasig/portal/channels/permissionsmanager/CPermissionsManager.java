@@ -361,7 +361,7 @@ public class CPermissionsManager
 
     /**
      * put your documentation comment here
-     * @return
+     * @return a <code>ChannelCacheKey</code> used to lookup Channels from the cache
      */
     public ChannelCacheKey generateKey () {
         ChannelCacheKey cck;

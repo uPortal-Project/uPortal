@@ -112,7 +112,7 @@ public class RDBMPermissibleRegistry {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return an array of <code>IPermissible</code>
      */
     public static IPermissible[] getAllPermissible () {
         return  instance().igetAllPermissible();
@@ -120,7 +120,7 @@ public class RDBMPermissibleRegistry {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return an array of <code>IPermissible</code>
      */
     private IPermissible[] igetAllPermissible () {
         //IPermissible[] ips = new IPermissible[owners.size()];
