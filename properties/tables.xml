@@ -324,8 +324,8 @@
   <table>
     <name>UP_SS_MAP</name>
     <columns>
-      <column> <name>THEME_SS_NAME</name>  <type>VARCHAR</type> <param>30</param> </column>
-      <column> <name>STRUCT_SS_NAME</name> <type>VARCHAR</type> <param>30</param> </column>
+      <column> <name>THEME_SS_ID</name>    <type>INTEGER</type>                   </column>
+      <column> <name>STRUCT_SS_ID</name>   <type>INTEGER</type>                   </column>
       <column> <name>MIME_TYPE</name>      <type>VARCHAR</type> <param>30</param> </column>
     </columns>
   </table>
