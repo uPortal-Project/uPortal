@@ -186,7 +186,7 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
     
     
     /**
-     * Get the {@link List} of delegates which we will poll for attributes.
+     * Get an unmodifiable {@link List} of delegates which we will poll for attributes.
      * 
      * @return Returns the personAttributeDaos.
      */
@@ -211,7 +211,7 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
      * True if this class will catch exceptions thrown by its delegate DAOs
      * and fail to propogate them.  False if this class will stop on failure.
      * 
-     * @return Returns the recoverExceptions.
+     * @return true if will recover exceptions, false otherwise
      */
     public boolean isRecoverExceptions() {
         return this.recoverExceptions;
@@ -225,7 +225,7 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
      * thrown by its children.  This is desirable in cases where your Portal will not
      * function without attributes from all of its sources.
      * 
-     * @param recover The recoverExceptions to set.
+     * @param recover whether you would like exceptions recovered internally
      */
     public void setRecoverExceptions(boolean recover) {
         this.recoverExceptions = recover;

@@ -14,13 +14,13 @@ import java.util.Set;
  * Simply returns the seed it is passed.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
 
     /**
-     * Returns a duplicate of the seed it is passed
-     * 
+     * Returns a duplicate of the seed it is passed.
+     * @return a Map equal to but not the same reference as the seed.
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
@@ -28,8 +28,8 @@ public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     }
 
     /**
-     * Unknown, will always return <code>null</code>
-     * 
+     * Possible attributes are unknown; will always return <code>null</code>.
+     * @return null
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {
