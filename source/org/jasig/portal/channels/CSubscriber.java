@@ -36,10 +36,12 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
 import java.io.*;
+import java.util.Hashtable;
 
 /**
  * Provides methods associated with subscribing to a channel.
@@ -56,6 +58,7 @@ public class CSubscriber implements IPrivilegedChannel
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;
   ChannelRegistryImpl chanReg = null;
+  private String media;
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
@@ -140,6 +143,9 @@ public class CSubscriber implements IPrivilegedChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
+    
+    media = runtimeData.getMedia();
+    
     String catID = null;
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
@@ -181,16 +187,16 @@ public class CSubscriber implements IPrivilegedChannel
       switch (mode)
       {
         case BROWSE:
-          processXML ("browse", out);
+          processXML ("browse", channelRegistry, out);
           break;
         case SUBSCRIBE:
-          processXML ("subscribe", out);
+          processXML ("subscribe", userLayoutXML, out);
           break;
         case SUBTO:
-          processXML ("browse", out);
+          processXML ("browse", channelRegistry, out);
           break;
         default:
-          processXML ("browse", out);
+          processXML ("browse", channelRegistry, out);
           break;
       }
     }
@@ -200,33 +206,26 @@ public class CSubscriber implements IPrivilegedChannel
     }
   }
 
-  private void processXML (String stylesheetName, DocumentHandler out) throws org.xml.sax.SAXException
+  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException
   {
-    XSLTInputSource xmlSource = null;
+   
+    String xsl = set.getStylesheetURI(stylesheetName, media);
 
-    switch (mode)
-      {
-        case SUBSCRIBE:
-          xmlSource = new XSLTInputSource (userLayoutXML);
-          break;
-        default:
-          xmlSource = new XSLTInputSource (channelRegistry);
-          break;
-      }
-
-    XSLTInputSource xslSource = runtimeData.getStylesheet(stylesheetName, set);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-    if (xslSource != null)
+    try{
+    if (xsl != null)
     {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
-      processor.setStylesheetParam("categoryID", processor.createXString (categoryID));
-      processor.setStylesheetParam("modified", processor.createXBoolean (modified));
-      processor.process (xmlSource, xslSource, xmlResult);
+      Hashtable ssParams = new Hashtable();
+      ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
+      ssParams.put("categoryID", categoryID);
+      ssParams.put("modified", new Boolean(modified));
+      XSLT.transform(out, xmlSource, xsl, ssParams);
     }
     else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
+    }
+    catch(Exception e){
+        Logger.log(Logger.ERROR, e);
+    }
   }
 
   private void prepareBrowse ()
