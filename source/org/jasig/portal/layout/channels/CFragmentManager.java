@@ -35,35 +35,32 @@
 
 package org.jasig.portal.layout.channels;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IPrivileged;
+import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.layout.ALFolder;
+import org.jasig.portal.layout.ALFragment;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IAggregatedUserLayoutStore;
 import org.jasig.portal.layout.ILayoutFragment;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.ALFragment;
-import org.jasig.portal.layout.ALFolder;
-import org.jasig.portal.layout.IALFolderDescription;
-import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-import java.util.Map;
-import java.util.Iterator;
 
 /**
  * A channel for adding new content to a layout.
