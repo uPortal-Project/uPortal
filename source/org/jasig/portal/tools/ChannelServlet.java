@@ -56,7 +56,6 @@ import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -155,13 +154,8 @@ public class ChannelServlet extends HttpServlet {
           rd.put(pName, val);
         }
       }
-
-      try {
-          rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,"servletRoot","singlet",null));
-      } catch (PortalException pe) {
-          System.out.println("unable to construct a UPFile !");
-      }
-
+      rd.setBrowserInfo(new BrowserInfo(req));
+      rd.setBaseActionURL(req.getRequestURI());
       if (channel instanceof IPrivilegedChannel) {
         // provide as much of PCS as we can
         PortalControlStructures pcs = new PortalControlStructures();

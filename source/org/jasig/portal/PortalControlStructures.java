@@ -43,12 +43,12 @@ import javax.servlet.http.*;
  * @version $Revision$
  */
 public class PortalControlStructures {
-    protected IUserPreferencesManager ulm;
+    protected IUserLayoutManager ulm;
     protected HttpServletRequest req;
     protected HttpServletResponse res;
     protected ChannelManager cm;
 
-    public PortalControlStructures(HttpServletRequest req,HttpServletResponse res, ChannelManager cm, IUserPreferencesManager ulm) {
+    public PortalControlStructures(HttpServletRequest req,HttpServletResponse res, ChannelManager cm, IUserLayoutManager ulm) {
         this.req=req;
         this.res=res;
         this.cm=cm;
@@ -63,7 +63,7 @@ public class PortalControlStructures {
     }
         
 
-    public IUserPreferencesManager getUserPreferencesManager() { return ulm; }
+    public IUserLayoutManager getUserLayoutManager() { return ulm; }
     public HttpServletRequest getHttpServletRequest() { return req;}
     public HttpServletResponse getHttpServletResponse() { return res; }
     public ChannelManager getChannelManager() {return cm; }
@@ -79,7 +79,7 @@ public class PortalControlStructures {
       return session;
     }
 
-    public void setUserPreferencesManager(IUserPreferencesManager lm) { ulm=lm; }
+    public void setUserLayoutManager(IUserLayoutManager lm) { ulm=lm; }
     public void setHttpServletRequest(HttpServletRequest r) { req=r; }
     public void setHttpServletResponse(HttpServletResponse r) { res=r; }
     public void setChannelManager(ChannelManager m) { cm=m; }

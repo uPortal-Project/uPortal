@@ -33,13 +33,14 @@
  *
  */
 
-package org.jasig.portal;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
+package  org.jasig.portal;
+
+import  javax.servlet.*;
+import  javax.servlet.http.*;
+import  java.util.Hashtable;
+import  java.util.Enumeration;
+
 
 /*
  * This class contains basic information about the browser.
@@ -49,16 +50,7 @@ public class BrowserInfo {
   protected Cookie[] cookies;
   protected Hashtable headers;
 
-    /**
-     * Constructs a new browser info with supplied cookies and header info
-     * @param cookies, an array of cookies
-     * @param headers, a Map of headers
-     */
-    public BrowserInfo(Cookie[] cookies, Map headers) {
-      this.cookies = cookies;
-      this.headers = new Hashtable(headers);
-    }
-
+    
     /**
      * Construct a new browser info based on HTTP request.
      *
@@ -78,7 +70,7 @@ public class BrowserInfo {
         return  cookies;
     }
 
-
+    
     /**
      * Get value of a particular header.
      *
@@ -87,14 +79,6 @@ public class BrowserInfo {
      */
     public String getHeader(String hName) {
         return  (String)headers.get(hName.toLowerCase());
-    }
-
-    /**
-     * Get the headers as a Map.
-     * @return a map of headers
-     */
-    public Map getHeaders() {
-        return headers;
     }
 
     /**

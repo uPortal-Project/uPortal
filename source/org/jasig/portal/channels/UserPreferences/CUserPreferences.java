@@ -41,7 +41,7 @@ import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
 import  org.xml.sax.ContentHandler;
 import  java.io.File;
-import org.jasig.portal.layout.IUserLayoutManager;
+
 
 /** <p>Manages User Layout, user preferences and profiles </p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
@@ -49,13 +49,14 @@ import org.jasig.portal.layout.IUserLayoutManager;
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {
-  IUserPreferencesManager upm;
+  IUserLayoutManager ulm;
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
   StylesheetSet set = null;
   private static final String fs = File.separator;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/CUserPreferences.ssl";
   private UserPreferences up = null;
+  private Document userLayoutXML = null;
   private int mode;
   public static final int MANAGE_PREFERENCES = 1;
   public static final int MANAGE_PROFILES = 2;
@@ -77,13 +78,10 @@ public class CUserPreferences implements IPrivilegedChannel {
   }
 
 
-  protected IUserPreferencesManager getUserPreferencesManager() {
-    return  upm;
+  protected IUserLayoutManager getUserLayoutManager() {
+    return  ulm;
   }
 
-    protected IUserLayoutManager getUserLayoutManager() {
-        return getUserPreferencesManager().getUserLayoutManager();;
-    }
 
   protected UserPreferences getCurrentUserPreferences() {
     return  up;
@@ -100,10 +98,10 @@ public class CUserPreferences implements IPrivilegedChannel {
 
 
   public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-    if (upm == null)
-      upm = pcs.getUserPreferencesManager();
+    if (ulm == null)
+      ulm = pcs.getUserLayoutManager();
     if (up == null)
-      up = upm.getUserPreferencesCopy();
+      up = ulm.getUserPreferencesCopy();
     // instantiate the browse state here
     this.pcs = pcs;
 
@@ -200,7 +198,7 @@ public class CUserPreferences implements IPrivilegedChannel {
                       instantiateManagePreferencesState(editedProfile);
                   }
               } else {
-                  UserProfile newProfile = ulsdb.getUserProfileById(upm.getPerson(), profileId.intValue());
+                  UserProfile newProfile = ulsdb.getUserProfileById(ulm.getPerson(), profileId.intValue());
                   if(newProfile!=null && (editedProfile.isSystemProfile() || (editedProfile.getProfileId()!=newProfile.getProfileId()))) {
                       // new profile has been selected
                       editedProfile=newProfile;
@@ -239,13 +237,12 @@ public class CUserPreferences implements IPrivilegedChannel {
     // and the database (remember, as the user interacts with this
     // channel, changes are only made to a copy of the userLayoutXML
     // until this method is called)
-    upm.setNewUserLayoutAndUserPreferences(null, up);
-    
+    ulm.setNewUserLayoutAndUserPreferences(userLayoutXML, up, false);
   }
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
-      up = ulsdb.getUserPreferences(getUserPreferencesManager().getPerson(), profile);
-      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserPreferencesManager().getPerson(), getCurrentUserPreferences().getProfile()));
+      up = ulsdb.getUserPreferences(getUserLayoutManager().getPerson(), profile);
+      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile()));
       return up;
   }
 

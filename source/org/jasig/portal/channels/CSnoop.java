@@ -78,7 +78,7 @@ public class CSnoop implements IPrivilegedChannel
 
   /**
    * Sends portal control structures to the portal, i.e. HttpServletRequest,
-   * HttpServletResponse, UserPreferencesManager, etc.
+   * HttpServletResponse, UserLayoutManager, etc.
    * @param pcs the portal control structures
    */
   public void setPortalControlStructures(PortalControlStructures pcs)

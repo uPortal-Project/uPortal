@@ -241,8 +241,7 @@ public class ThreadPool extends ThreadGroup {
 
 	notifyWorkerFinished(pw);
 	// hopefully all of the locks are released
-        pw.interrupt();
-        // pw.stop();
+	pw.stop();
 	this.addWorker();
 	//	System.out.println("Removed and stopped worker "+pw.getName());
     }

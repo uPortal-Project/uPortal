@@ -75,7 +75,7 @@ class ManageProfilesState extends BaseState {
   protected Hashtable getUserProfileList() throws PortalException {
     if (userProfileList == null) {
       try {
-        userProfileList = this.getUserLayoutStore().getUserProfileList(context.getUserPreferencesManager().getPerson());
+        userProfileList = this.getUserLayoutStore().getUserProfileList(context.getUserLayoutManager().getPerson());
       } catch (Exception e) {
         throw new PortalException(e.getMessage(), e);
       }
@@ -126,7 +126,7 @@ class ManageProfilesState extends BaseState {
                     if(p!=null) {
                         // create a new layout
                         try {
-                          p=this.getUserLayoutStore().addUserProfile(context.getUserPreferencesManager().getPerson(),p);
+                          p=this.getUserLayoutStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
                         } catch (Exception e) {
                           throw new PortalException(e.getMessage(), e);
                         }
@@ -141,7 +141,7 @@ class ManageProfilesState extends BaseState {
                         //			systemProfileList=null;
                     } else {
                       try {
-                        this.getUserLayoutStore().deleteUserProfile(context.getUserPreferencesManager().getPerson(), Integer.parseInt(profileId));
+                        this.getUserLayoutStore().deleteUserProfile(context.getUserLayoutManager().getPerson(), Integer.parseInt(profileId));
                       } catch (Exception e) {
                         throw new PortalException(e.getMessage(), e);
                       }
@@ -150,11 +150,11 @@ class ManageProfilesState extends BaseState {
                     }
                 } else if (action.equals("map")) {
                   try {
-                    this.getUserLayoutStore().setUserBrowserMapping(context.getUserPreferencesManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+                    this.getUserLayoutStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
                   } catch (Exception e) {
                     throw new PortalException(e.getMessage(), e);
                   }
-                  // let userPreferencesManager know that the current profile has changed : everything must be reloaded
+                  // let userLayoutManager know that the current profile has changed : everything must be reloaded
                 } else if (action.equals("changeView")) {
                     String view=runtimeData.getParameter("view");
                     boolean expand=false;
@@ -174,7 +174,7 @@ class ManageProfilesState extends BaseState {
                     // create a new profile
                     UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
                     try {
-                      p=this.getUserLayoutStore().addUserProfile(context.getUserPreferencesManager().getPerson(),p);
+                      p=this.getUserLayoutStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
                     } catch (Exception e) {
                       throw new PortalException(e.getMessage(), e);
                     }
@@ -218,7 +218,7 @@ class ManageProfilesState extends BaseState {
 
  
   private IPerson getPerson() {
-    return  context.getUserPreferencesManager().getPerson();
+    return  context.getUserLayoutManager().getPerson();
   }
 
   private StylesheetSet getStylesheetSet() {

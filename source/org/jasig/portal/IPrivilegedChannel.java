@@ -38,7 +38,7 @@ package org.jasig.portal;
 /**
  * Channels implementing this interface are considered "privileged" because
  * they will have access to internal portal control structures such as the
- * HttpServletRequest, HttpServletReponse, and UserPreferencesManager.  IPrivilegedChannel
+ * HttpServletRequest, HttpServletReponse, and UserLayoutManager.  IPrivilegedChannel
  * is intended for channels that are integral to the framework such as those that
  * manage user preferences, channel publishing, and channel subscription.
  * IPrivilegedChannel is NOT intended for "normal" channels.  Channels

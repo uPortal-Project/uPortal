@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,98 +33,71 @@
  *
  */
 
-package org.jasig.portal;
 
-import javax.servlet.http.*;
-import java.util.Hashtable;
-import java.util.Map;
-import java.io.File;
-import java.util.Enumeration;
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import org.jasig.portal.services.LogService;
-import com.oreilly.servlet.multipart.Part;
+package  org.jasig.portal;
+
+import  javax.servlet.http.*;
+import  java.util.Hashtable;
+import  java.util.Map;
+import  java.io.File;
+import  java.util.Enumeration;
+import  javax.servlet.ServletOutputStream;
+import  java.io.IOException;
+import  org.jasig.portal.services.LogService;
 
 /**
- * A set of runtime data accessable by a channel.
+ * A set of runtime data acessable by a channel.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
-    private boolean renderingAsRoot=false;
-    private BrowserInfo binfo=null;
-    private String channelSubscribeId=null;
-    private UPFileSpec channelUPFile;
-    private String baseActionURL = null; // Not sure if this will stay
-    private String httpRequestMethod=null;
+    private String baseActionURL;
+    private boolean renderingAsRoot;
+    private static final String fs = File.separator;
+    private BrowserInfo binfo;
+    private String channelSubscribeId;
+
+  /**
+   * default empty constructor
+   */
+  public ChannelRuntimeData() {
+    super();
+    // set the default values for the parameters here
+    baseActionURL = null;
+  }
+
+  /**
+   * Create a new instance of ourself
+   * Used by the CError channel
+   */
+  public Object clone() {
+    ChannelRuntimeData crd = new ChannelRuntimeData();
+    crd.baseActionURL = baseActionURL;
+    crd.binfo = binfo;
+    crd.channelSubscribeId=channelSubscribeId;
+    crd.renderingAsRoot=renderingAsRoot;
+    crd.putAll(this);
+    return  crd;
+  }
+
 
     /**
-     * Default empty constructor
-     */
-    public ChannelRuntimeData() {
-      super();
-      channelUPFile = new UPFileSpec();
-    }
-
-    /**
-     * Create a new instance of ourself
-     * Used by the CError channel
-     */
-    public Object clone() {
-      ChannelRuntimeData crd = new ChannelRuntimeData();
-      crd.channelUPFile = channelUPFile;
-      crd.binfo = binfo;
-      crd.channelSubscribeId=channelSubscribeId;
-      crd.renderingAsRoot=renderingAsRoot;
-      crd.putAll(this);
-      return  crd;
-    }
-
-    /**
-     * Set a UPFileSpec which will be used to produce
-     * baseActionURL and workerActionURL.
+     * Setter method for baseActionURL
      *
      * @param baURL a baseActionURL value.
      */
-    public void setUPFile(UPFileSpec upfs) {
-        channelUPFile = upfs;
+    public void setBaseActionURL(String baURL) {
+        baseActionURL = baURL;
     }
 
-    /**
-     * Set the HTTP Reqeust method.
-     *
-     * @param method a <code>String</code> value
-     */
-    public void setHttpRequestMethod(String method) {
-        this.httpRequestMethod=method;
-    }
-
-    /**
-     * Get HTTP request method (i.e. GET, POST)
-     *
-     * @return a <code>String</code> value
-     */
-    public String getHttpRequestMethod() {
-        return this.httpRequestMethod;
-    }
-
-    /**
-     * Sets the base action URL.  This was added back in for the benefit
-     * of web services.  Not sure if it is going to stay this way.
-     * @param baseActionURL the base action URL
-     */
-    public void setBaseActionURL(String baseActionURL) {
-        this.baseActionURL = baseActionURL;
-    }
-
-    /**
-     * Sets whether or not the channel is rendering as the root of the layout.
-     * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
-     */
-    public void setRenderingAsRoot(boolean rar) {
-        renderingAsRoot = rar;
-    }
+  /**
+   * Sets whether or not the channel is rendering as the root of the layout.
+   * @param rar <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+   */
+  public void setRenderingAsRoot(boolean rar) {
+    renderingAsRoot = rar;
+  }
 
     /**
      * Setter method for browser info object.
@@ -132,7 +105,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @param bi a browser info associated with the current request
      */
     public void setBrowserInfo(BrowserInfo bi) {
-        this.binfo = bi;
+    this.binfo = bi;
     }
 
     /**
@@ -155,34 +128,12 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 
     /**
      * A convenience method for setting a whole set of parameters at once.
-     * The values in the Map must be object arrays. If (name, value[]) is in
-     * the Map, then a future call to getParameter(name) will return value[0].
-     * @param params a <code>Map</code> of parameter names to parameter value arrays.
+     *
+     * @param params a <code>Map</code> of parameter names to parameter values.
      */
     public void setParameters(Map params) {
-      this.putAll(params); // copy a Map
-    }
-
-    /**
-     * A convenience method for setting a whole set of parameters at once.
-     * The Map should contain name-value pairs.  The name should be a String
-     * and the value should be either a String or a Part.
-     * If (name, value) is in the Map then a future call to getParameter(name)
-     * will return value.
-     * @param params a <code>Map</code> of parameter names to parameter value arrays.
-     */
-    public void setParametersSingleValued(Map params) {
-        if (params != null) {
-            java.util.Iterator iter = params.keySet().iterator();
-            while (iter.hasNext()) {
-                String key = (String)iter.next();
-                Object value = params.get(key);
-                if (value instanceof String)
-                    setParameter(key, (String)value);
-                else if (value instanceof Part)
-                    setParameter(key, (Part)value);
-            }
-        }
+        // copy a Map
+        this.putAll(params);
     }
 
     /**
@@ -212,11 +163,12 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
     }
 
-    public synchronized void setParameter(String key, Part value) {
-        Part[] valueArray = new Part[1];
-        valueArray[0] = value;
-        super.put(key, valueArray);
-    }
+  public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
+    com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
+    valueArray[0] = value;
+    super.put(key, valueArray);
+  }
+
 
     /**
      * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
@@ -225,90 +177,33 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        return this.getBaseActionURL(false);
+        return  baseActionURL;
     }
 
-    /**
-     * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
-     * will be placed into the ChannelRuntimeData object for channel's use.
-     *
-     * @param idempotent a <code>boolean</code> value specifying if a given URL should be idepotent.
-     * @return a value of URL to which parameter sequences should be appended.
-     */
-    public String getBaseActionURL(boolean idempotent) {
-        // If the base action URL was explicitly set, use it 
-        // peterk: we should probably introduce idepotent version of this one as well, at some point
-        if (baseActionURL != null) {
-          return baseActionURL;
-        }
-
+  /**
+   * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+   * Typically the channel that is invoked with the worker will have to implement an
+   * interface specific for that worker.
+   * @param worker - Worker string must be a UPFileSpec.xxx value.
+   * @return URL to invoke the worker.
+   */
+    public String getWorkerActionURL(String worker) {
         String url=null;
         try {
-            if(idempotent) {
-                UPFileSpec upfs=new UPFileSpec(channelUPFile);
-                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
-                url=upfs.getUPFile();
-            } else {
-                url=channelUPFile.getUPFile();
-            }
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
-        }
-        return url;
-    }
-
-    /**
-     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
-     * Typically the channel that is invoked with the worker will have to implement an
-     * interface specific for that worker.
-     * @param worker - Worker string must be a UPFileSpec.xxx value.
-     * @return URL to invoke the worker.
-     */
-    public String getBaseWorkerURL(String worker) {
-        // todo: propagate the exception
-        String url=null;
-        try {
-            url=getBaseWorkerURL(worker,false);
+            url=UPFileSpec.buildUPFile(null,UPFileSpec.WORKER_METHOD,worker,this.channelSubscribeId,null);
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
         return url;
     }
 
-    /**
-     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
-     * Typically the channel that is invoked with the worker will have to implement an
-     * interface specific for that worker.
-     * @param worker - Worker string must be a UPFileSpec.xxx value.
-     * @param idempotent a <code>boolean</code> value sepcifying if a URL should be idempotent
-     * @return URL to invoke the worker.
-     * @exception PortalException if an error occurs
-     */
-    public String getBaseWorkerURL(String worker, boolean idempotent) throws PortalException {
-        String url=null;
-        UPFileSpec upfs=new UPFileSpec(channelUPFile);
-        upfs.setMethod(UPFileSpec.WORKER_METHOD);
-        upfs.setMethodNodeId(worker);
-        if(idempotent) {
-            upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
-        }
-                        
-        url=upfs.getUPFile();
-            /*
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
-        }
-            */
-        return url;
-    }
-
-    /**
-     * Tells whether or not the channel is rendering as the root of the layout.
-     * @return <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
-     */
-    public boolean isRenderingAsRoot() {
-      return renderingAsRoot;
-    }
+  /**
+   * Tells whether or not the channel is rendering as the root of the layout.
+   * @return <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
+   */
+  public boolean isRenderingAsRoot() {
+    return renderingAsRoot;
+  }
 
     /**
      * Get a parameter value. If the parameter has multiple values, only the first value is returned.
@@ -323,6 +218,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         else
             return  null;
     }
+
 
     /**
      * Obtain an <code>Object</code> parameter value. If the parameter has multiple values, only the first value is returned.
@@ -346,13 +242,14 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return an array of parameter string values
      */
     public String[] getParameterValues(String pName) {
-      Object[] pars = (Object[])super.get(pName);
-      if (pars instanceof String[]) {
-        return  (String[])pars;
-      } else {
-        return  null;
-      }
+    Object[] pars = (Object[])super.get(pName);
+    if (pars instanceof String[]) {
+      return  (String[])pars;
     }
+    else {
+      return  null;
+    }
+  }
 
     /**
      * Obtain all values for a given parameter as <code>Object</code>s.
@@ -374,20 +271,6 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  (Enumeration)super.keys();
     }
 
-    /**
-     * Get the parameters as a Map
-     * @return a Map of parameter name-value pairs
-     */
-    public Map getParameters() {
-        Map params = new java.util.HashMap(this.size());
-        Enumeration e = this.getParameterNames();
-        while (e.hasMoreElements()) {
-          String name = (String)e.nextElement();
-          String value = this.getParameter(name);
-          params.put(name, value);
-        }
-        return params;
-    }
 }
 
 

@@ -305,7 +305,6 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    */
   public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception {
     crs.approveChannelDefinition(crs.getChannelDefinition(chanId), approver, approveDate);
-    flushChannelEntry(chanId);
   }
 
   /** A method for getting the next available channel ID.
@@ -403,21 +402,14 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   public ChannelDefinition getChannel(int chanId) {
     ChannelDefinition channelDef = null;
     try {
-      Integer chanID = new Integer(chanId);
-      channelDef  = (ChannelDefinition)channelCache.get(chanID);
-      if (channelDef == null) {
-        synchronized (channelLock) {
-          channelDef = (ChannelDefinition)channelCache.get(chanID);
-        }
-      }
-      if (channelDef == null) {
-        throw new Exception("Channel " + chanID + " not in cache");
-      }
+      channelDef = crs.getChannelDefinition(chanId);
     } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
     }
     return channelDef;
   }
+
+
 
   /**
    * Get a channel from the cache (it better be there)

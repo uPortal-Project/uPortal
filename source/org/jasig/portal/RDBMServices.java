@@ -46,9 +46,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.DriverManager;
-import javax.sql.DataSource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 /**
  * Provides relational database access and helper methods.
@@ -67,7 +64,6 @@ public class RDBMServices {
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
 
-  protected static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi");
   protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.usePreparedStatements");
   protected static boolean supportsPreparedStatements = false;
   public static boolean supportsOuterJoins = false;
@@ -79,8 +75,6 @@ public class RDBMServices {
   private static final OracleDb oracleDb = new OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
   private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
   public static IJoinQueryString joinQuery = null;
-  public static final String PORTAL_DB = "PortalDb"; // JNDI name for portal database
-  public static final String PERSON_DB = "PersonDb"; // JNDI name for person database
 
   static {
     try {
@@ -220,52 +214,11 @@ public class RDBMServices {
   }
 
   /**
-   * Returns a connection produced by a DataSource found in the
-   * JNDI context.  The DataSource should be configured and
-   * loaded into JNDI by the J2EE container.
-   * @param dbName the database name which will be retrieved from
-   *   the JNDI context relative to "jdbc/"
-   * @return a database Connection object or <code>null</code> if no Connection
-   */
-  public static Connection getConnection(String dbName) {
-    Connection conn = null;
-    try {
-      Context initCtx = new InitialContext();
-      Context envCtx = (Context) initCtx.lookup("java:comp/env");
-      DataSource ds = (DataSource)envCtx.lookup("jdbc/" + dbName);
-      if (ds != null) {
-        conn = ds.getConnection();
-      } else {
-        LogService.instance().log(LogService.ERROR, "The database '" + dbName + "' could not be found.");
-      }
-    } catch (javax.naming.NamingException ne) {
-      LogService.instance().log(LogService.ERROR, ne);
-    } catch (SQLException sqle) {
-      LogService.instance().log(LogService.ERROR, sqle);
-    }
-    return conn;
-  }
-
-  /**
-   * Gets a database connection to the portal database.
-   * This method will first try
-   * to get the connection by looking in the JNDI context if
-   * org.jasig.portal.RDBMServices.get_datasource_from_jndi property
-   * is enabled.  If not enabled,
-   * the Connection will be produced by DriverManager.getConnection().
-   * This method should probably be deprecated since obtaining connections
-   * from JNDI is the preferred way to do it according to J2EE.
+   * Gets a database connection
    * @return a database Connection object
    */
   public static Connection getConnection () {
     Connection conn = null;
-
-    // Look in the JNDI context for the DataSource which produces the Connection
-    if (getDatasourceFromJndi) {
-      if ((conn = getConnection(PORTAL_DB)) != null)
-        return conn;
-    }
-
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
         Class.forName(sJdbcDriver).newInstance();

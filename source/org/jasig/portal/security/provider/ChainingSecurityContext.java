@@ -253,7 +253,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     }
 
     public void setCredentials(String credentials) {
-      if (this.credentialstring == null && credentials!=null)
+      if (this.credentialstring == null)
         setCredentials(credentials.getBytes());
     }
   }

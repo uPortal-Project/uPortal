@@ -80,12 +80,7 @@ public class Authentication {
 
     // Retrieve and populate an instance of the principal object
     IPrincipal principalInstance = securityContext.getPrincipalInstance();
-    if (username != null) {
-      principalInstance.setUID(username);
-      // prime userid in person object before authenticated so can be
-      // displayed after failure if desired
-      person.setAttribute("username",principalInstance.getUID());
-    }
+    principalInstance.setUID(username);
 
     // Retrieve and populate an instance of the credentials object
     IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
@@ -94,14 +89,14 @@ public class Authentication {
     // Attempt to authenticate the user
     securityContext.authenticate();
 
+    // Add the person's login username to the person object
+    // the login name may have been provided or reset by the security provider
+    // so this needs to be done after authentication is attempted but it
+    // ends up as either what was typed in or supplied by the security provider
+     person.setAttribute("username",principalInstance.getUID());
+
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
-
-      // Add the authenticated username to the person object
-      // the login name may have been provided or reset by the security provider
-      // so this needs to be done after authentication.
-      person.setAttribute("username",securityContext.getPrincipal().getUID());
-
       // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // Process the additional descriptor if one was created
@@ -192,8 +187,8 @@ public class Authentication {
    * @return An object that implements the
    * <code>org.jasig.portal.security.IPerson</code> interface.
    */
- public IPerson getPerson () {
-   return  m_Person;
+  public IPerson getPerson () {
+    return  m_Person;
   }
 
   /**

@@ -88,7 +88,7 @@
 -->
 
   <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.version"   value="2.0"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -137,12 +137,12 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.3.1
+                       Version: 2.2.0
                        URL: http://xml.apache.org/xalan-j/
 
-  xercesImpl.jar       Xerces2 is the next generation of high performance,
+  xerces.jar           Xerces2 is the next generation of high performance,
                        fully compliant XML parsers in the Apache Xerces family.
-                       Be sure to use the version of XercesImpl that comes with
+                       Be sure to use the version of Xerces that comes with
                        the Xalan you are using.
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xerces2-j/
@@ -162,7 +162,7 @@
 
   tidy.jar             Turns HTML into well formed XHTML. There is a problem with
                        the current release that shows up when uPortal is deployed
-                       in certain web containers including Tomcat 4.0.x.
+                       in certain web containers including Tomcat 4.0.1.
                        For information, see http://www.mun.ca/cc/portal/cw/#depend or
                        download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
                        Used by the CWebProxy channel.
@@ -184,8 +184,7 @@
 
   jaas.jar             The Java Authentication and Authorization Service (JAAS)
                        is a Java package that enables services to authenticate
-                       and enforce access controls upon users.  This is only
-                       needed for JDK's less than 1.4.  It is included with JDK 1.4.
+                       and enforce access controls upon users.
                        Version: 1.0
                        URL: http://java.sun.com/products/jaas/
 
@@ -197,45 +196,13 @@
 
   oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
-                       Version: 2.0.6
+                       Version: 2.0.4
                        URL: http://jakarta.apache.org/oro/
-
-  axis.jar             Web services support. Axis is the next generation of the
-                       Apache SOAP project which itself followed IBM's SOAP4J.
-                       Version: beta1
-                       URL: http://xml.apache.org/axis/
-
-  jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://java.sun.com/xml/jaxrpc/
-
-  wsdl4j.jar           Web Services Description Language for Java Toolkit developed
-                       by IBM - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
-
-  commons-logging.jar  Logging components from the Apache Commons project - needed
-                       for Axis. Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://jakarta.apache.org/commons/logging.html
-
-  tt-bytecode.jar      A library for creating and manipulating java bytecode - needed
-                       for Axis. Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://tt-bytecode.sourceforge.net
 
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2 or 2.3
                        URL: http://jakarta.apache.org/tomcat/
-
-  jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of 
-                       javax.sql.* package. This is only needed for JDK's less than 1.4.  
-                       It is included with JDK 1.4.
-                       Version: 2.0
-                       URL: http://java.sun.com/products/jdbc/
 
   jdbcDriver.jar       This should contain the JDBC driver for whatever relational
                        database you plan to use.  For development, HypersonicSQL is
@@ -247,7 +214,7 @@
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
-  <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
+  <property name="xerces.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
   <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
@@ -257,13 +224,7 @@
   <property name="jaas.jar" value="(set this in build.properties!)"/>
   <property name="cos.jar" value="(set this in build.properties!)"/>
   <property name="oro.jar" value="(set this in build.properties!)"/>
-  <property name="axis.jar" value="(set this in build.properties!)"/>
-  <property name="jaxrpc.jar" value="(set this in build.properties!)"/>
-  <property name="wsdl4j.jar" value="(set this in build.properties!)"/>
-  <property name="commons-logging.jar" value="(set this in build.properties!)"/>
-  <property name="tt-bytecode.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
-  <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
 
 
@@ -284,7 +245,7 @@
 
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
@@ -294,30 +255,11 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${cos.jar}"/>
     <pathelement location="${oro.jar}"/>
-    <pathelement location="${axis.jar}"/>
-    <pathelement location="${jaxrpc.jar}"/>
-    <pathelement location="${wsdl4j.jar}"/>
-    <pathelement location="${commons-logging.jar}"/>
-    <pathelement location="${tt-bytecode.jar}"/>
     <pathelement location="${servlet.jar}"/>
-    <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
 
   </path>
 
-
-<!-- ====================== Tests Classpath =============================== -->
-
-<!--
-
-  Classpath for uPortal test code.
-
--->
-
-  <path id="tests.classpath">
-    <path refid="compile.classpath"/>
-    <pathelement location="${junit.jar}"/>
-  </path>
 
 
 <!-- ==================== All Target ====================================== -->
@@ -422,7 +364,7 @@
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
@@ -432,12 +374,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${axis.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jaxrpc.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${tt-bytecode.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
   </target>
@@ -553,7 +489,7 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
@@ -583,7 +519,7 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
@@ -649,8 +585,7 @@
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -668,9 +603,9 @@
 
   The "addstylesheet" target runs uPortal's RegisterStylesheet program to
   add core framework stylesheets used to create structures and themes.
-
+          
   Example:
-
+  
   ant regstylesheet
     -DstylesheetType=-t
     -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
@@ -678,7 +613,7 @@
 
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
-
+        
 -->
 
 
@@ -686,13 +621,12 @@
     <echo message="Invoking RegisterStylesheet (add)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
-    <property name="descriptionUri" value=" "/>
+    <property name="descriptionUri" value=" "/>    
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -709,18 +643,18 @@
 
   The "modstylesheet" target runs uPortal's RegisterStylesheet program to
   update core framework stylesheets used to create structures and themes.
-
+      
   Example:
-
+  
   ant modstylesheet
     -DstylesheetType=-t
     -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
     -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
     -DstylesheetId=1
-
+    
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
-
+          
 -->
 
 
@@ -728,14 +662,13 @@
     <echo message="Invoking RegisterStylesheet (modify)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
-    <property name="descriptionUri" value=" "/>
+    <property name="descriptionUri" value=" "/>    
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -746,35 +679,34 @@
       <arg value="${stylesheetId}"/>
     </java>
   </target>
-
-
+  
+  
 <!-- ==================== delstylesheet Target ============================ -->
 
 <!--
 
   The "delstylesheet" target runs uPortal's RegisterStylesheet program to
   delete core framework stylesheets used to create structures and themes.
-
+            
   Example:
-
+  
   ant delstylesheet -DstylesheetType=-t -DstylesheetId=1
-
+    
   where -s = specify structure stylesheet
-        -t = specify theme stylesheet
+        -t = specify theme stylesheet 
 
 -->
 
 
   <target name="delstylesheet" depends="compile">
     <echo message="Invoking RegisterStylesheet (delete)"/>
-    <property name="stylesheetType" value=" "/>
+    <property name="stylesheetType" value=" "/>   
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -782,68 +714,6 @@
       <arg value="-d"/>
       <arg value="${stylesheetId}"/>
     </java>
-  </target>
-
-
-<!-- ====================== compiletests Target =========================== -->
-
-<!--
-
-  Peter, please comment here...
-
--->
-
-  <target name="compiletests" depends="compile"
-   description="Compile JUnit Tests">
-    <javac srcdir="tests"
-          destdir="${build.home}/WEB-INF/classes"
-            debug="${compile.debug}"
-      deprecation="${compile.deprecation}"
-         optimize="${compile.optimize}">
-      <classpath refid="tests.classpath"/>
-    </javac>
-
-    <!-- Copy everything in media except for the source files -->
-    <copy  todir="${build.home}/WEB-INF/classes">
-      <fileset dir="tests" excludes="CVS,**/*.java"/>
-    </copy>
-  </target>
-
-
-<!-- ======================= runtests Target ============================== -->
-
-<!--
-
-  Peter, please comment here...
-
--->
-
-  <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <java classname="org.jasig.portal.AllTests">
-      <classpath>
-       <path refid="tests.classpath"/>
-       <path location="${build.home}/WEB-INF/classes"/>
-      </classpath>
-    </java>
-  </target>
-
-
-<!-- ======================= swingtests Target ============================ -->
-
-<!--
-
-  Peter, please comment here...
-
--->
-
-  <target name="swingtests" depends="compiletests" description="Run JUnit Test Suite">
-    <java fork="true" classname="junit.swingui.TestRunner">
-      <classpath>
-       <path refid="tests.classpath"/>
-       <path location="${build.home}/WEB-INF/classes"/>
-      </classpath>
-      <arg value="org.jasig.portal.AllTests"/>
-    </java>
-  </target>
-
+  </target> 
+   
 </project>

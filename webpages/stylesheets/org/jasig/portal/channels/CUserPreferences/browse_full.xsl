@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:param name="baseActionURL">Default</xsl:param>
-<xsl:param name="folderID">root</xsl:param>
+<xsl:param name="folderID">top</xsl:param>
 <xsl:param name="modified">false</xsl:param>
 <xsl:param name="profileName">default profile</xsl:param>
 <xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CUserPreferences'"/>
@@ -30,7 +30,7 @@
   <!--p align="center">Arrange your channels and folders...</p-->
   <p align="center">
     <xsl:choose>
-      <xsl:when test="$folderID = 'root'">
+      <xsl:when test="$folderID = 'top'">
         <xsl:for-each select="//layout">
           <xsl:call-template name="crumbTrail"/> 
         </xsl:for-each>
@@ -55,7 +55,7 @@
       </tr>
 
       <xsl:choose>
-        <xsl:when test="$folderID = 'root'">
+        <xsl:when test="$folderID = 'top'">
           <xsl:for-each select="//layout">
             <xsl:call-template name="folderRoot"/>
           </xsl:for-each>
@@ -89,7 +89,7 @@
       My Channels
     </xsl:when>
     <xsl:otherwise>    
-      <a href="{$baseActionURL}?action=browse&amp;folderID=root">My Channels</a>
+      <a href="{$baseActionURL}?action=browse&amp;folderID=top">My Channels</a>
     </xsl:otherwise>
   </xsl:choose>
 

@@ -41,7 +41,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
 import java.util.Hashtable;
 import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.services.LogService;
+
 
 /**
  * Channel Rendering buffer allows portal to accumulate a list
@@ -154,12 +154,8 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   {
     if (insideChannelElement) {
       if (qName.equals("channel")) {
-          try {
-              cm.startChannelRendering(channelSubscribeId);
-          } catch (PortalException pe) {
-              LogService.log(LogService.ERROR,"ChannelRenderingBuffer::endElement() : unable to start rendering channel! (channelSubscribeId=\""+channelSubscribeId+"\")");
-          }
-          insideChannelElement=false;
+        cm.startChannelRendering(channelSubscribeId, channelPublishId, channelClassName, timeOut,params,this.ccaching);
+        insideChannelElement=false;
       }
     }
     super.endElement (url,localName,qName);

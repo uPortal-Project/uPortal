@@ -51,7 +51,6 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UPFileSpec;
 import org.xml.sax.*;
 
 import  org.jasig.portal.serialize.*;
@@ -205,13 +204,13 @@ public class StandaloneChannelRenderer extends BaseChannel {
 
 	ChannelRuntimeData rd= new ChannelRuntimeData();
 	rd.setBrowserInfo(binfo);
-        rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 	if(channelTarget!=null && chanID.equals(channelTarget)) {
 	    rd.setParameters(targetParams);
         }
 
         try {
-            rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
+            String redirectURL=UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null);
+            rd.setBaseActionURL(req.getContextPath()+"/"+redirectURL);
         } catch (Exception e) {
             LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }

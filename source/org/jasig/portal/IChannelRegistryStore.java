@@ -93,21 +93,10 @@ public interface IChannelRegistryStore {
   /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
-   * @return channelDefinition, a definition of the channel or <code>null</code>
-   *   if no matching channel definition can be found
+   * @return channelDefinition, a definition of the channel
    * @throws java.lang.Exception
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws Exception;
-
-  /**
-   * Get a channel definition.  If there is more than one channel definition
-   * with the given functional name, then the first one will be returned.
-   * @param channelFunctionalName a channel functional name
-   * @return channelDefinition, a definition of the channel or <code>null</code>
-   *   if no matching channel definition can be found
-   * @throws java.lang.Exception
-   */
-  public ChannelDefinition getChannelDefinition(String channelFunctionalName) throws Exception;
 
   /**
    * Get all channel definitions including ones that haven't been approved.

@@ -77,8 +77,6 @@ import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 
-import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.IUserLayoutManager;
 
 /**
  * A class handling holding all user state information. The class is also reponsible for
@@ -96,7 +94,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final boolean printXMLBeforeThemeTransformation = false;
 
     // manages layout and preferences
-    UserPreferencesManager uPreferencesManager;
+    UserLayoutManager uLayoutManager;
     // manages channel instances and channel rendering
     ChannelManager channelManager;
 
@@ -154,14 +152,14 @@ public class UserInstance implements HttpSessionBindingListener {
                 throw new PortalException(e);
             }
         }
-        if (uPreferencesManager==null || uPreferencesManager.isUserAgentUnmapped()) {
-            uPreferencesManager = new UserPreferencesManager(req, this.getPerson());
+        if (uLayoutManager==null || uLayoutManager.isUserAgentUnmapped()) {
+            uLayoutManager = new UserLayoutManager(req, this.getPerson());
         } else {
             // p_browserMapper is no longer needed
             p_browserMapper = null;
         }
 
-        if (uPreferencesManager.isUserAgentUnmapped()) {
+        if (uLayoutManager.isUserAgentUnmapped()) {
             // unmapped browser
             if (p_browserMapper== null) {
                 p_browserMapper = new org.jasig.portal.channels.CSelectSystemProfile();
@@ -182,10 +180,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
         // if we got to this point, we can proceed with the rendering
         if (channelManager == null) {
-            channelManager = new ChannelManager(uPreferencesManager);
+            channelManager = new ChannelManager(uLayoutManager);
             p_rendering_lock=new Object();
         }
-        renderState (req, res, this.channelManager, uPreferencesManager,p_rendering_lock);
+        renderState (req, res, this.channelManager, uLayoutManager,p_rendering_lock);
     }
 
     /**
@@ -193,17 +191,16 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param req the <code>HttpServletRequest</code>
      * @param res the <code>HttpServletResponse</code>
      * @param channelManager the <code>ChannelManager</code> instance
-     * @param upm an <code>IUserPreferencesManager</code> value
+     * @param ulm the <code>IUserLayout</code>
      * @param rendering_lock a lock for rendering on a single user
-     * @exception PortalException if an error occurs
      */
-    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, IUserPreferencesManager upm, Object rendering_lock) throws PortalException {
+    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, IUserLayoutManager ulm, Object rendering_lock) throws PortalException {
         // process possible worker dispatch
-        if(!processWorkerDispatch(req,res,channelManager,upm)) {
+        if(!processWorkerDispatch(req,res,channelManager,ulm)) {
             synchronized(rendering_lock) {
                 // This function does ALL the content gathering/presentation work.
                 // The following filter sequence is processed:
-                //        userLayoutXML (in UserPreferencesManager)
+                //        userLayoutXML (in UserLayoutManager)
                 //              |
                 //        incorporate StructureAttributes
                 //              |
@@ -225,9 +222,9 @@ public class UserInstance implements HttpSessionBindingListener {
                 try {
 
                     // call layout manager to process all user-preferences-related request parameters
-                    // this will update UserPreference object contained by UserPreferencesManager, so that
+                    // this will update UserPreference object contained by UserLayoutManager, so that
                     // appropriate attribute incorporation filters and parameter tables can be constructed.
-                    upm.processUserPreferencesParameters(req);
+                    ulm.processUserPreferencesParameters(req);
                     PrintWriter out=res.getWriter();
 
                     // determine uPElement (optimistic prediction) --begin
@@ -237,7 +234,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // In general transformations will start at the userLayoutRoot node, unless
                     // we are rendering something in a detach mode.
-                    UserLayoutNodeDescription rElement = null;
+                    Node rElement = null;
                     // see if an old detach target exists in the servlet path
 
 
@@ -251,18 +248,18 @@ public class UserInstance implements HttpSessionBindingListener {
                     String newRootNodeId = req.getParameter("uP_detach_target");
 
                     // set optimistic uPElement value
-                    UPFileSpec uPElement=new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
-
+                    String uPElement=null;
                     if(newRootNodeId!=null) {
                         // set a new root
-                        uPElement.setMethodNodeId(newRootNodeId);
+                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null);
+                    } else {
+                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
                     }
-
                     // determine uPElement (optimistic prediction) --end
 
                     // set up the channel manager
-                    channelManager.startRenderingCycle(req, res, uPElement);
-                    // process events that have to be handed directly to the userPreferencesManager.
+                    channelManager.setReqNRes(req, res, uPElement);
+                    // process events that have to be handed directly to the userLayoutManager.
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
@@ -272,48 +269,49 @@ public class UserInstance implements HttpSessionBindingListener {
                     }
 
                     // after this point the layout is determined
-                    IUserLayoutManager ulm=upm.getUserLayoutManager();
+                    Document userLayout;
+                    BooleanLock llock=ulm.getUserLayoutWriteLock();
+                    synchronized(llock) {
+                        // if the layout lock is dirty, prune the cache
+                        if(llock.getValue()) {
+                            LogService.instance().log(LogService.DEBUG,"UserInstance::writeContent() : pruning system caches.");
+                            systemCache.clear();
+                            systemCharacterCache.clear();
+                            llock.setValue(false);
+                        }
+                        userLayout=ulm.getUserLayout();
+                    }
 
-                    UserPreferences userPreferences=upm.getUserPreferences();
-                    StructureStylesheetDescription ssd= upm.getStructureStylesheetDescription();
-                    ThemeStylesheetDescription tsd=upm.getThemeStylesheetDescription();
+                    UserPreferences userPreferences=ulm.getUserPreferences();
+                    StructureStylesheetDescription ssd= ulm.getStructureStylesheetDescription();
+                    ThemeStylesheetDescription tsd=ulm.getThemeStylesheetDescription();
 
                     // verify upElement and determine rendering root --begin
-
+                    // reset uPElement
+                    uPElement = UPFileSpec.RENDER_URL_ELEMENT;
                     if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
                         // see if the new detach traget is valid
-                        try {
-                            rElement = ulm.getNode(newRootNodeId);
-                            //                            rElement = userLayout.getElementById(newRootNodeId);
-                        } catch (PortalException e) {
-                            rElement=null;
-                        }
-
+                        rElement = userLayout.getElementById(newRootNodeId);
                         if (rElement != null) {
                             // valid new root id was specified. need to redirect
                             // peterk: should we worry about forwarding parameters here ? or those passed with detach always get sacked ?
-                            uPElement.setMethodNodeId(newRootNodeId);
-                            res.sendRedirect(uPElement.getUPFile());
-                            // res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
+                            res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
+                            // res.sendRedirect(UPFileSpec.DETACH_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+newRootNodeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                             return;
                         }
                     }
                     // else ignore new id, proceed with the old root target (or the lack of such)
                     if (rootNodeId != null) {
                         // LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+rootNodeId+"\".");
-                        try {
-                            rElement = ulm.getNode(rootNodeId);
-                        } catch (PortalException e) {
-                            rElement=null;
-                        }
+                        rElement = userLayout.getElementById(rootNodeId);
                     }
                     // if we haven't found root node so far, set it to the userLayoutRoot
                     if (rElement == null) {
+                        rElement = userLayout;
                         rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
 
-                    // update the render target
-                    uPElement.setMethodNodeId(rootNodeId);
+                    uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
 
                     // inform channel manager about the new uPElement value
                     channelManager.setUPElement(uPElement);
@@ -329,7 +327,6 @@ public class UserInstance implements HttpSessionBindingListener {
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
                     boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
-                    channelManager.setCharacterCaching(ccaching);
                     // initialize ChannelIncorporationFilter
                     //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
                     CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CACHE_ENABLED && this.CHARACTER_CACHE_ENABLED);
@@ -338,7 +335,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     if(this.CACHE_ENABLED) {
                         boolean ccache_exists=false;
                         // obtain the cache key
-                        cacheKey=constructCacheKey(this.getPerson(),upm,rootNodeId);
+                        cacheKey=constructCacheKey(this.getPerson(),userPreferences,rootNodeId);
                         if(ccaching) {
                             // obtain character cache
                             CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
@@ -347,23 +344,22 @@ public class UserInstance implements HttpSessionBindingListener {
                                 LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                                 // start channel threads
                                 for(int i=0;i<cCache.channelIds.size();i++) {
-                                    String channelSubscribeId=(String) cCache.channelIds.get(i);
-                                    if(channelSubscribeId!=null) {
-                                        try {
-                                            channelManager.startChannelRendering(channelSubscribeId);
-                                        } catch (PortalException e) {
-                                            LogService.log(LogService.ERROR,"UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+upm.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
-                                        }
+                                    Vector chanEntry=(Vector) cCache.channelIds.get(i);
+                                    if(chanEntry!=null || chanEntry.size()!=2) {
+                                        String channelSubscribeId=(String)chanEntry.get(0);
+                                        String chanClassName=(String)chanEntry.get(1);
+                                        Long timeOut=(Long)chanEntry.get(2);
+                                        Hashtable chanParams=(Hashtable)chanEntry.get(3);
+                                        String channelPublishId=(String)chanEntry.get(4);
+                                        channelManager.startChannelRendering(channelSubscribeId,channelPublishId, chanClassName,timeOut.longValue(),chanParams,true);
                                     } else {
-                                        LogService.log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
+                                        LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
                                     }
                                 }
                                 // go through the output loop
                                 int ccsize=cCache.systemBuffers.size();
                                 if(cCache.channelIds.size()!=ccsize-1) {
                                     LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channelIds character cache has invalid size !");
-                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
-                                    
                                 }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                                 cSerializer.setDocumentStarted(true);
@@ -375,8 +371,53 @@ public class UserInstance implements HttpSessionBindingListener {
                                     //LogService.instance().log(LogService.DEBUG,(String)cCache.systemBuffers.get(sb));
 
                                     // get channel output
-                                    String channelSubscribeId=(String) cCache.channelIds.get(sb);
-                                    channelManager.outputChannel(channelSubscribeId,markupSerializer);
+                                    Vector chanEntry=(Vector) cCache.channelIds.get(sb);
+                                    String channelSubscribeId=(String)chanEntry.get(0);
+                                    String chanClassName=(String)chanEntry.get(1);
+                                    Long timeOut=(Long)chanEntry.get(2);
+                                    Hashtable chanParams=(Hashtable)chanEntry.get(3);
+                                    String channelPublishId=(String)chanEntry.get(4);
+                                    Object o=channelManager.getChannelCharacters (channelSubscribeId, channelPublishId, chanClassName,timeOut.longValue(),chanParams);
+                                    if(o!=null) {
+                                        if(o instanceof String) {
+                                            LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received a character result for channelSubscribeId=\""+channelSubscribeId+"\"");
+                                            cSerializer.printRawCharacters((String)o);
+                                            //LogService.instance().log(LogService.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
+                                            //LogService.instance().log(LogService.DEBUG,(String)o);
+                                        } else if(o instanceof SAX2BufferImpl) {
+                                            LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received an XSLT result for channelSubscribeId=\""+channelSubscribeId+"\"");
+                                            // extract a character cache
+
+                                            // start new channel cache
+                                            if(!cSerializer.startCaching()) {
+                                                LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to restart channel cache on a channel start!");
+                                            }
+
+                                            // output channel buffer
+                                            if(o instanceof SAX2BufferImpl) {
+                                                SAX2BufferImpl b=(SAX2BufferImpl) o;
+                                                b.outputBuffer(markupSerializer);
+                                            }
+
+                                            // save the old cache state
+                                            if(cSerializer.stopCaching()) {
+                                                try {
+                                                    channelManager.setChannelCharacterCache(channelSubscribeId,cSerializer.getCache());
+                                                    //LogService.instance().log(LogService.DEBUG,"----------generated channel cache #"+Integer.toString(sb));
+                                                    //LogService.instance().log(LogService.DEBUG,cSerializer.getCache());
+                                                } catch (UnsupportedEncodingException e) {
+                                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
+                                                } catch (IOException ioe) {
+                                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : IO exception occurred while retreiving character cache ! "+ioe);
+                                                }
+
+                                            } else {
+                                                LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to reset cache state ! Serializer was not caching when it should've been !");
+                                            }
+                                        } else {
+                                            LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : ChannelManager.getChannelCharacters() returned an unidentified object!");
+                                        }
+                                    }
                                 }
 
                                 // print out the last block
@@ -428,7 +469,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // determine and set the stylesheet params
                         // prepare .uP element and detach flag to be passed to the stylesheets
                         // Including the context path in front of uPElement is necessary for phone.com browsers to work
-                        sst.setParameter("baseActionURL", uPElement.getUPFile());
+                        sst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
                         Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
@@ -461,22 +502,11 @@ public class UserInstance implements HttpSessionBindingListener {
                             saif.startDocument();
                             saif.startElement("","layout_fragment","layout_fragment", new org.xml.sax.helpers.AttributesImpl());
 
-                            //                            emptyt.transform(new DOMSource(rElement),new SAXResult(new ChannelSAXStreamFilter((ContentHandler)saif)));
-                            if(rElement==null) {
-                                ulm.getUserLayout(new ChannelSAXStreamFilter((ContentHandler)saif));
-                            } else {
-                                ulm.getUserLayout(rElement.getId(),new ChannelSAXStreamFilter((ContentHandler)saif));
-                            }
-                                
+                            emptyt.transform(new DOMSource(rElement),new SAXResult(new ChannelSAXStreamFilter((ContentHandler)saif)));
                             saif.endElement("","layout_fragment","layout_fragment");
                             saif.endDocument();
                         } else {
-                            if(rElement==null) {
-                                ulm.getUserLayout((ContentHandler)saif);
-                            } else {
-                                ulm.getUserLayout(rElement.getId(),(ContentHandler)saif);
-                            }
-                            //                            emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
+                            emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
                         }
                         // all channels should be rendering now
 
@@ -488,7 +518,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // prepare for the theme transformation
 
                         // set up of the parameters
-                        tst.setParameter("baseActionURL", uPElement.getUPFile());
+                        tst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
 
                         Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
@@ -562,18 +592,17 @@ public class UserInstance implements HttpSessionBindingListener {
                                   LogService.instance().log(LogService.DEBUG,"Printing transformation cache channel IDs:");
                                   for(int i=0;i<ce.channelIds.size();i++) {
                                   LogService.instance().log(LogService.DEBUG,"----------channel entry "+Integer.toString(i));
-                                  LogService.instance().log(LogService.DEBUG,(String)ce.channelIds.get(i));
+                                  LogService.instance().log(LogService.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
                                   }
                                 */
 
+
                             }
                         }
-
+                        
                     }
                     // signal the end of the rendering round
-                    channelManager.finishedRenderingCycle();
-                } catch (PortalException pe) {
-                    throw pe;
+                    channelManager.finishedRendering();
                 } catch (Exception e) {
                     throw new PortalException(e);
                 }
@@ -593,12 +622,11 @@ public class UserInstance implements HttpSessionBindingListener {
         return p_rendering_lock;
     }
 
-    private static String constructCacheKey(IPerson person,IUserPreferencesManager upm,String rootNodeId) throws PortalException {
+    private static String constructCacheKey(IPerson person,UserPreferences userPreferences,String rootNodeId) {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
         sbKey.append(rootNodeId).append(",");
-        sbKey.append(upm.getUserPreferences().getCacheKey());
-        sbKey.append(upm.getUserLayoutManager().getCacheKey());
+        sbKey.append(userPreferences.getCacheKey());
         return sbKey.toString();
     }
 
@@ -618,9 +646,8 @@ public class UserInstance implements HttpSessionBindingListener {
      *
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
-    public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-        if(channelManager!=null)  channelManager.finishedSession();
-        if(uPreferencesManager!=null) uPreferencesManager.finishedSession(bindingEvent);
+    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
+        channelManager.finishedSession();
     }
 
     /**
@@ -639,9 +666,8 @@ public class UserInstance implements HttpSessionBindingListener {
      * uP_edit_target
      * uP_remove_target
      * uP_detach_target
-     * @param req a <code>HttpServletRequest</code> value
-     * @param channelManager a <code>ChannelManager</code> value
-     * @exception PortalException if an error occurs
+     * @param the servlet request object
+     * @param the userLayout manager object
      */
     private void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager) throws PortalException {
         String[] values;
@@ -684,11 +710,10 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param req the <code>HttpServletRequest</code>
      * @param res the <code>HttpServletResponse</code>
      * @param cm the <code>ChannelManager</code> instance
-     * @param ulm an <code>IUserPreferencesManager</code> value
-     * @return a <code>boolean</code> value
-     * @exception PortalException if an error occurs
+     * @param ulm the <code>IUserLayout</code>
+     * @param rendering_lock a lock for rendering on a single user
      */
-    protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserPreferencesManager upm) throws PortalException {
+    protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserLayoutManager ulm) throws PortalException {
 
         HttpSession session = req.getSession(false);
         if(session!=null) {
@@ -699,7 +724,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 if(upfs.getMethod()!=null && upfs.getMethod().equals(UPFileSpec.WORKER_URL_ELEMENT)) {
                     // this is a worker dispatch, process it
                     // determine worker type
-
+                    
                     String workerName=upfs.getMethodNodeId();
 
                     if(workerName!=null) {
@@ -712,7 +737,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 LogService.instance().log(LogService.ERROR, "UserInstance::processWorkerDispatch() : Unable to load worker.properties file. "+ioe);
                             }
                         }
-
+                        
                         String dispatchClassName=UserInstance.workerProperties.getProperty(workerName);
                         if(dispatchClassName==null) {
                             throw new PortalException("UserInstance::processWorkerDispatch() : Unable to find processing class for the worker type \""+workerName+"\". Please check worker.properties");
@@ -723,7 +748,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 IWorkerRequestProcessor wrp=(IWorkerRequestProcessor) obj;
                                 // invoke processor
                                 try {
-                                    wrp.processWorkerDispatch(new PortalControlStructures(req,res,cm,upm));
+                                    wrp.processWorkerDispatch(new PortalControlStructures(req,res,cm,ulm));
                                 } catch (PortalException pe) {
                                     throw pe;
                                 } catch (RuntimeException re) {
@@ -740,10 +765,10 @@ public class UserInstance implements HttpSessionBindingListener {
                     } else {
                         throw new PortalException("UserInstance::processWorkerDispatch() : Unable to determine worker type.  uPFile=\""+upfs.getUPFile()+"\".");
                     }
-
+                    
                     return true;
                 } else {
-                    return false;
+                    return false; 
                 }
             } catch (IndexOutOfBoundsException iobe) {
                 // ill-constructed URL
@@ -752,7 +777,7 @@ public class UserInstance implements HttpSessionBindingListener {
         }
         // will never get here
         return false;
-    }
+    } 
 
 }
 

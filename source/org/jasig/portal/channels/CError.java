@@ -58,8 +58,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.net.URL;
 import java.util.Hashtable;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Error channel (aka null channel) is designed to render in
@@ -126,16 +124,11 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         this.errorID=errorCode;
     }
 
-    public CError(int errorCode, Throwable exception, String channelSubscribeId,IChannel channelInstance, String message) {
-        this(errorCode,exception,channelSubscribeId,channelInstance);
-        this.setMessage(message);
-    }
-
     public void setMessage(String m) {
         this.str_message=m;
     }
 
-    private void resetCError(int errorCode, Throwable exception, String channelSubscribeId,IChannel channelInstance,String message) {
+    private void resetCError(int errorCode, Exception exception, String channelSubscribeId,IChannel channelInstance,String message) {
         str_channelSubscribeId=channelSubscribeId;
         this.channelException=exception;
         this.the_channel=channelInstance;
@@ -181,7 +174,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
-                        cm.setChannelInstance(this.str_channelSubscribeId,this.the_channel);
+                        cm.addChannelInstance(this.str_channelSubscribeId,this.the_channel);
                         the_channel.renderXML(out);
                         return;
                     } catch (Exception e) {
@@ -209,7 +202,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
-                                cm.setChannelInstance(str_channelSubscribeId,this);
+                                cm.addChannelInstance(str_channelSubscribeId,this);
                                 LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
@@ -267,12 +260,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
             // determine channel name
             if(portcs!=null) {
-                String chName=null;
-                try {
-                    chName=portcs.getUserPreferencesManager().getUserLayoutManager().getNode(str_channelSubscribeId).getName();
-                } catch (Exception e) {
-                    chName="undetermined name";
-                }
+                String chName=(portcs.getUserLayoutManager()).getNodeName(str_channelSubscribeId);
                 if(chName!=null) {
                     Element nameEl=doc.createElement("name");
                     nameEl.appendChild(doc.createTextNode(chName));
@@ -368,7 +356,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         ssTitle = "friendly";
         try {
           AuthorizationService authService = AuthorizationService.instance();
-          int personID = portcs.getUserPreferencesManager().getPerson().getID();
+          int personID = portcs.getUserLayoutManager().getPerson().getID();
           IAuthorizationPrincipal ap = authService.newPrincipal(String.valueOf(personID), IPerson.class);
           if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS"))
             ssTitle = "detailed";
@@ -401,10 +389,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xslt.setStylesheetParameter("allowReinstantiation", allowRel);
             xslt.transform();
         } catch (Exception e) {
-            StringWriter sw=new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            sw.flush();
-            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
+            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e);
         }
     }
 
