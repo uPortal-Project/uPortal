@@ -982,21 +982,21 @@
         <column><name>CHAN_ID</name><value>17</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_help</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_help.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/num_help.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>17</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_info</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_info.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/num_info.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>17</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_edit</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/num_edit.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/num_edit.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1033,21 +1033,21 @@
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_help</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_help.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/servlet_help.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_info</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_info.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/servlet_info.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>18</value></column>
         <column><name>CHAN_PARM_NM</name><value>cw_edit</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.mun.ca/cc/portal/cw/servlet_edit.html</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>file:docs/website/developers/channel_docs/reference/webproxy/examples/servlet_edit.html</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
