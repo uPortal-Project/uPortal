@@ -45,7 +45,6 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
@@ -83,7 +82,6 @@ public class PortletStateManager {
 	
 	private PortletWindowImpl windowOfAction;
 	private ChannelRuntimeData runtimeData;
-	private InternalActionResponse response;
 	private HttpServletRequest request;
 	
 	// Indicates the current action
@@ -151,7 +149,7 @@ public class PortletStateManager {
     }
 	
 	public void setParameters(Map parameters) {	
-	  if ( parameters != null && !parameters.isEmpty() && response == null )	
+	  if ( parameters != null && !parameters.isEmpty() )	
 	   params.putAll(parameters);
 	}
 
