@@ -76,6 +76,7 @@ public class Authentication {
     * @exception PortalSecurityException
     */
    public void authenticate (HashMap principals, HashMap credentials, IPerson person) throws PortalSecurityException {
+       
       // Retrieve the security context for the user
       ISecurityContext securityContext = person.getSecurityContext();
       Enumeration subCtxNames = securityContext.getSubContextNames();
@@ -143,7 +144,7 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
+            Hashtable attribs = PersonDirectory.instance().getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
             // Add each of the attributes to the IPerson
             Enumeration en = attribs.keys();
             while (en.hasMoreElements()) {

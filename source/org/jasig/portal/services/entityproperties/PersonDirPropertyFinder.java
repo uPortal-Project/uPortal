@@ -58,7 +58,7 @@ public class PersonDirPropertyFinder
     private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
-        pd = new PersonDirectory();
+        pd = PersonDirectory.instance();
         cache = new SoftHashMap(120);
     }
 

@@ -41,11 +41,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.WeakHashMap;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -59,6 +62,8 @@ import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,14 +80,22 @@ import org.w3c.dom.Text;
  */
 public class PersonDirectory {
 
-
-  public PersonDirectory() {
-    getParameters();
-  }
-
   static Vector sources = null; // List of PersonDirInfo objects
   static Hashtable drivers = new Hashtable(); // Registered JDBC drivers
   public static HashSet propertynames = new HashSet();
+  protected static Map persons = new WeakHashMap(1024);
+  private static PersonDirectory instance;
+
+  private PersonDirectory() {
+    getParameters();
+  }
+    
+  public static synchronized PersonDirectory instance() {
+    if (instance == null) {
+      instance = new PersonDirectory();
+    }
+    return instance;
+  }
 
   public static Iterator getPropertyNamesIterator() {
     return propertynames.iterator();
@@ -287,8 +300,8 @@ public class PersonDirectory {
   }
 
   public void getUserDirectoryInformation(String uid,  IPerson m_Person) {
-    java.util.Hashtable attribs = this.getUserDirectoryInformation(uid);
-    java.util.Enumeration en = attribs.keys();
+    Hashtable attribs = this.getUserDirectoryInformation(uid);
+    Enumeration en = attribs.keys();
       while (en.hasMoreElements()) {
         String key = (String) en.nextElement();
         String value=null;
@@ -298,6 +311,7 @@ public class PersonDirectory {
         if (value!=null)
             m_Person.setAttribute(key,value);
       }
+      persons.put(uid, m_Person);
   }
 
 
@@ -460,6 +474,21 @@ public class PersonDirectory {
     if (conn!=null) try {conn.close();} catch (Exception e) {;}
   }
 
+  /**
+   * Returns a reference to a restricted IPerson represented by the supplied user ID.
+   * The restricted IPerson allows access to person attributes, but not the security context.
+   * @param uid the user ID
+   * @return the corresponding person, restricted so that its security context is inaccessible
+   */
+  public static RestrictedPerson getRestrictedPerson(String uid) {
+    IPerson person = (IPerson)persons.get(uid);
+    if (person == null) {
+      person = PersonFactory.createPerson();
+      instance().getUserDirectoryInformation(uid, person);
+    }
+    return new RestrictedPerson(person);
+  }
+
   private class PersonDirInfo {
     String url; // protocol, server, and initial connection parameters
     String ResRefName; // Resource Reference name for a J2EE style DataSource
@@ -475,5 +504,5 @@ public class PersonDirectory {
     boolean disabled = false;
     boolean logged = false;
   }
-
+    
 }

@@ -65,7 +65,7 @@ public class PersonDirNameFinder
     private PersonDirNameFinder () throws SQLException
     {
         super();
-        pd = new PersonDirectory();
+        pd = PersonDirectory.instance();
         names = new SoftHashMap();
     }
 
