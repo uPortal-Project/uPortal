@@ -19,11 +19,11 @@
     <name>UP_PERSON_DIR</name>
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>	                   </column>
-      <column> <name>ENCRPTD_PSWD</name>	  <type>VARCHAR</type>	 <param>64</param> </column>
+      <column> <name>ENCRPTD_PSWD</name>	<type>VARCHAR</type>	 <param>64</param> </column>
       <column> <name>LST_PSWD_CGH_DT</name> <type>TIMESTAMP</type>                   </column>
-                        <column> <name>FIRST_NAME</name>			<type>VARCHAR</type>   <param>15</param> </column>
-                        <column> <name>LAST_NAME</name>       <type>VARCHAR</type>   <param>15</param> </column>
-                        <column> <name>EMAIL</name>           <type>VARCHAR</type>   <param>60</param> </column>
+      <column> <name>FIRST_NAME</name>		<type>VARCHAR</type>   <param>15</param> </column>
+      <column> <name>LAST_NAME</name>       <type>VARCHAR</type>   <param>15</param> </column>
+      <column> <name>EMAIL</name>           <type>VARCHAR</type>   <param>60</param> </column>
     </columns>
     <primary-key>USER_ID</primary-key>
   </table>
@@ -393,6 +393,19 @@
       <column> <name>MIME_TYPE_DESCRIPTION</name> <type>LONGVARCHAR</type>                   </column>
     </columns>
     <primary-key>MIME_TYPE</primary-key>
+  </table>
+
+  <table>
+    <name>UP_SKINS</name>
+    <columns>
+      <column> <name>SKIN_ID</name>                 <type>INTEGER</type>                     </column>
+      <column> <name>SKIN_NAME</name>               <type>VARCHAR</type>   <param>20</param> </column>
+      <column> <name>SKIN_DESCRIPTION</name>        <type>VARCHAR</type>   <param>100</param> </column>
+	  <column> <name>THUMBNAIL_FILE_LOCATION</name> <type>VARCHAR</type>   <param>100</param> </column>
+	  <column> <name>FOLDER_NAME</name>             <type>VARCHAR</type>   <param>30</param> </column>
+    </columns>
+	<not-null>SKIN_ID</not-null>
+	<not-null>FOLDER_NAME</not-null>
   </table>
 
 </tables>
