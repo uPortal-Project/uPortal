@@ -36,7 +36,9 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
 
 /**
@@ -103,6 +105,32 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     String msg = "Channel '" +
                  channelDef.getName() + "' " +
                  "was removed by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    return fixMsg(msg);
+  }  
+
+  public String getMessageForChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = "Channel [" +
+                 channelDesc.getName() + ", " + 
+                 channelDesc.getChannelPublishId() + ", " +
+                 channelDesc.getChannelSubscribeId() + "] " +
+                 "was added to layout " + profile.getLayoutId() + " " +
+                 "by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    return fixMsg(msg);
+  }
+  
+  public String getMessageForChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = "Channel [" +
+                 channelDesc.getName() + ", " + 
+                 channelDesc.getChannelPublishId() + ", " +
+                 channelDesc.getChannelSubscribeId() + "] " +
+                 "was removed from layout " + profile.getLayoutId() + " " + 
+                 "by " +
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
