@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,6 @@ import java.sql.*;
 import javax.security.auth.*;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.*;
-import org.jasig.portal.security.provider.JAASInlineCallbackHandler;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -55,7 +54,7 @@ import org.jasig.portal.security.provider.JAASInlineCallbackHandler;
  *
  */
 
-class JAASSecurityContext extends ChainingSecurityContext implements ISecurityContext {
+class JAASSecurityContext extends ChainingSecurityContext implements SecurityContext {
 
   private final int JAASSECURITYAUTHTYPE = 0xFF05;
 
@@ -67,7 +66,7 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
     return this.JAASSECURITYAUTHTYPE;
   }
 
-  public synchronized void authenticate() throws PortalSecurityException {
+  public synchronized void authenticate() {
     this.isauth = false;
     RdbmServices rdbmservices = new RdbmServices();
 

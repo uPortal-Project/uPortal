@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,12 +40,13 @@ package org.jasig.portal.security.provider;
  * instance of the JAASSecurityContext.</p>
  *
  * @author Nathan Jacobs
+ * @version $Revision$
  */
 
 import org.jasig.portal.security.*;
 
-public class JAASSecurityContextFactory implements ISecurityContextFactory {
-  public ISecurityContext getSecurityContext() {
+public class JAASSecurityContextFactory implements SecurityContextFactory {
+  public SecurityContext getSecurityContext() {
     return new JAASSecurityContext();
   }
 }
