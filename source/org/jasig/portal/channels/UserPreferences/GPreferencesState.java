@@ -439,14 +439,15 @@ class GPreferencesState extends BaseState {
             if (action != null) {
                 if (action.equals ("submitEditValues")) {
                     String submit=runtimeData.getParameter("submit");
-                    if(submit.equals("Cancel")) {
-                        IPrivilegedChannel bstate=new GBrowseState(context);
-                        bstate.setRuntimeData(runtimeData);
-                        context.setState(bstate);
-                    } else if(submit.equals("Save")) {
-                        prepareSaveEditGPrefs();
-                    }
-                }
+		    if(submit==null || submit.equals("Save")) {
+			prepareSaveEditGPrefs();
+		    }
+		    else if(submit.equals("Cancel")) {
+			IPrivilegedChannel bstate=new GBrowseState(context);
+			bstate.setRuntimeData(runtimeData);
+			context.setState(bstate);
+		    }
+		}
             }
         }
 
