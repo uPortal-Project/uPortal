@@ -1,7 +1,7 @@
 package org.jasig.portal.groups;
 
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,7 +136,7 @@ public java.util.Iterator getAllMembers() throws GroupsException
  * @return java.lang.String
  */
 protected String getCacheKey() {
-    return getKey();
+    return getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
