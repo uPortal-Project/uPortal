@@ -6,7 +6,7 @@
 
 <xsl:template match="iframe" >
   Dieser Browser unterstützt keine Inlineframes.<br/> 
-  <a href="{url}" target="_blank">Klicken Sie hier um den Inhalt zu sehen</a> in einem weiteren Fanster.
+  <a href="{url}" target="_blank">Klicken Sie hier um den Inhalt,</a> in einem seperaten Fanster zu sehen.
 </xsl:template>
 
 </xsl:stylesheet>

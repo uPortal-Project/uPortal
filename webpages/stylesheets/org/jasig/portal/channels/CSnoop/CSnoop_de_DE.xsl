@@ -7,27 +7,27 @@
   <xsl:template match="/">
     <xsl:apply-templates select="snooper"/>
   </xsl:template>
-
+  
   <xsl:template match="snooper">
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
       <tr>
         <td colspan="2" class="uportal-background-med">
-  	      <span class="uportal-channel-table-caption">Antragsinfo</span>
-  	    </td>
-  	  </tr>
+  	      <span class="uportal-channel-table-caption">HTTP Antragsinfo</span>
+        </td>
+      </tr>
       <xsl:apply-templates select="request-info"/>
       <tr>
         <td colspan="2" class="uportal-background-med">
   	      <span class="uportal-channel-table-caption">HTTP Überschrift-Info</span>
-  	    </td>
-  	  </tr>  	  
-      <xsl:apply-templates select="request-info/headers"/>  
+        </td>
+      </tr>
+      <xsl:apply-templates select="request-info/headers"/>   
       <tr>
         <td colspan="2" class="uportal-background-med">
   	      <span class="uportal-channel-table-caption">Channel Runtime Data Info</span>
         </td>
       </tr>
-      <xsl:apply-templates select="channel-runtime-data"/>        
+      <xsl:apply-templates select="channel-runtime-data"/>   
     </table>
   </xsl:template>
 
@@ -140,7 +140,7 @@
   
   <xsl:template match="locales">
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Locales: </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Lokals: </p></td>
       <td class="uportal-channel-table-row-odd">
         <table border="0" cellspacing="1" cellpadding="1">
           <tr>
@@ -165,5 +165,5 @@
       <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="variant/@displayName"/> (<xsl:value-of select="variant/@code"/>)</td>
     </tr>
   </xsl:template>
-  
+
 </xsl:stylesheet>
