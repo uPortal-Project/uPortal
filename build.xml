@@ -429,7 +429,11 @@
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="webpages/media" excludes="CVS,**/*.gif,**/*.jpg,**/*.css"/>
     </copy>
-
+    
+    <!-- Copy DTDs -->
+    <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>
+    <copy file="${basedir}/webpages/dtd/web-app_2_3.dtd" todir="${build.home}/WEB-INF/classes/org/jasig/portal/container/deploy"/>
+    
   </target>
 
 
@@ -474,7 +478,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
-
+    
     <!-- This is Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
@@ -1203,9 +1207,7 @@
   
   <target name="pubchan" description="Publishes channels" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
-    
-    <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>
-    
+        
     <property name="channel" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
       <classpath refid="compile.classpath"/>
@@ -1217,5 +1219,32 @@
     </java>
   </target>
   
+
+
+<!-- ===================== deployPortlet Target ========================= -->
+
+<!--
+
+  The "deployPortletApp" target runs the portlet Deployer tool.
+  This tool takes a portlet WAR file, rewrites the web.xml file
+  and deploys the results to the servlet container.
+  Example:
+  ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
+
+-->
+
   
+  <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
+    <echo message="Invoking Portlet Application Deployment Tool"/>
+        
+    <property name="portletApp" value=" "/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
+      <classpath refid="compile.classpath"/>
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+      </classpath>
+      <arg value="${deploy.home}/.."/>
+      <arg value="${portletApp}"/>
+    </java>
+  </target>  
 </project>
