@@ -88,6 +88,13 @@ public class PortalSessionManager extends HttpServlet {
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
+  
+
+    // Following flag allows to disable features that prevent
+    // repeated requests from going through. This is useful
+    // when debugging and typing things in on a command line.
+    // Otherwise, the flag should be set to false.
+    private static final boolean ALLOW_REPEATED_REQUESTS=false;
 
     // random number generator
     private static final Random randomGenerator= new Random();
@@ -205,9 +212,11 @@ public class PortalSessionManager extends HttpServlet {
                 }
                     
                 // fire away
-                userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
-                // userInstance.writeContent(new RequestParamWrapper(req,request_verified),res);
-
+                if(ALLOW_REPEATED_REQUESTS) {
+                    userInstance.writeContent(new RequestParamWrapper(req,true),res);
+                } else {
+                    userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+                }
             } catch (PortalException pe) {
                 if(pe.getRecordedException()!=null) {
                     StringWriter sw=new StringWriter();
