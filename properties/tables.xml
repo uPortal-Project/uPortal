@@ -399,10 +399,9 @@
     <name>UP_SKINS</name>
     <columns>
       <column> <name>SKIN_ID</name>                 <type>INTEGER</type>                     </column>
+	  <column> <name>SKIN</name>                    <type>VARCHAR</type>   <param>30</param> </column>
       <column> <name>SKIN_NAME</name>               <type>VARCHAR</type>   <param>20</param> </column>
       <column> <name>SKIN_DESCRIPTION</name>        <type>VARCHAR</type>   <param>100</param> </column>
-	  <column> <name>THUMBNAIL_URI</name>           <type>VARCHAR</type>   <param>100</param> </column>
-	  <column> <name>SKIN_DIR</name>                <type>VARCHAR</type>   <param>30</param> </column>
     </columns>
 	<not-null>SKIN_ID</not-null>
 	<not-null>SKIN_DIR</not-null>
