@@ -112,19 +112,30 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
         int i = attValue.indexOf(":");
         if ( i==-1 || (i!=-1 && attValue.substring(0, i).indexOf("/")!=-1) )
         {
+          i = baseUrl.indexOf("://");
+          int i2 = baseUrl.indexOf("/", i+3);
           if (attValue.startsWith("/"))
           {
             // Prepend the scheme and the host to the attribute value (HTTP)
-            i = baseUrl.indexOf("://");
             if (i != -1)
-              attValue = baseUrl.substring(0, baseUrl.indexOf("/", i+3)).concat(attValue);
+            {
+              if (i2 != -1)
+                attValue = baseUrl.substring(0, i2).concat(attValue);
+              else
+                attValue = baseUrl.concat(attValue);
+            }
           }
           else if (attValue.trim().equals(""))
             attValue = baseUrl;
           else if (attValue.trim().startsWith("?") || attValue.trim().startsWith("#"))
             attValue = baseUrl.concat(attValue);
           else
-            attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+          {
+            if (i2 != -1)
+              attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+            else
+              attValue = baseUrl.concat("/").concat(attValue);
+          }
 
           if (attValue.indexOf("/../") != -1)
             attValue = removeUpDirs(attValue);
