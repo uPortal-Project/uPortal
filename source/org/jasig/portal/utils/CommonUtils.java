@@ -43,9 +43,29 @@ import java.util.*;
 /**
  * CommonUtils class contains base useful utilities
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version $Revision$ 
+ * @version $Revision$
  */
 public class CommonUtils {
+
+   /**
+    ** <code>min</code> returns the minimum value
+        ** @param int value1 - the first value
+        ** @param int value2 - the second value
+        ** @return int - a minimum value
+    */
+   public static int min(int value1, int value2) {
+     return (value1<value2)?value1:value2;
+   }
+
+   /**
+    ** <code>max</code> returns the maximum value
+        ** @param int value1 - the first value
+        ** @param int value2 - the second value
+        ** @return int - a maximum value
+    */
+   public static int max(int value1, int value2) {
+     return (value1<value2)?value2:value1;
+   }
 
    /**
     ** <code>nvl</code> replaces "sourceString" with "replaceString" if sourceString equals to null
