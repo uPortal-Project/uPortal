@@ -362,26 +362,43 @@
   </xsl:template>
 
   <xsl:template name="controls">
-	          <xsl:if test="not(@hasHelp='false')">
+  
+          <!-- Help button -->
+	      <xsl:if test="not(@hasHelp='false')">
             <a href="{$baseActionURL}?uP_help_target={@ID}">
               <img alt="help" src="{$mediaPath}/{$skin}/controls/help.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
+          
+          <!-- About button -->          
           <xsl:if test="not(@hasAbout='false')">
             <a href="{$baseActionURL}?uP_about_target={@ID}">
               <img alt="about" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
+          
+          <!-- Edit button -->          
           <xsl:if test="not(@editable='false')">
             <a href="{$baseActionURL}?uP_edit_target={@ID}">
               <img alt="edit" src="{$mediaPath}/{$skin}/controls/edit.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
+          
+          <!-- Print button -->          
           <xsl:if test="@printable='true'">
             <a href="{$baseActionURL}?uP_print_target={@ID}">
               <img alt="print" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
+          
+          <!-- Focus button -->
+          <xsl:if test="not(//focused)">
+            <a href="{$baseActionURL}?uP_root={@ID}">
+              <img alt="focus" src="{$mediaPath}/{$skin}/controls/focus.gif" width="16" height="16" border="0"/>
+            </a>
+          </xsl:if>          
+          
+          <!-- Minimize/maximize button -->          
           <xsl:if test="not(@minimizable='false') and not(//focused)">
             <xsl:choose>
               <xsl:when test="@minimized='true'">
@@ -396,12 +413,15 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:if>
+          
+          <!-- Detach button -->
           <xsl:if test="not(@detachable='false')">
             <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
               <img alt="detach" src="{$mediaPath}/{$skin}/controls/detach.gif" width="16" height="16" border="0"/>
             </a>
           </xsl:if>
 
+          <!-- Remove button -->
           <xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
             <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
               <img alt="remove" src="{$mediaPath}/{$skin}/controls/remove.gif" width="16" height="16" border="0"/>
@@ -427,7 +447,7 @@
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_05.gif" width="80" height="33" border="0" usemap="#focused_05_Map" /></td>
         <td width="100%" align="left" valign="bottom" class="uportal-channel-title" nowrap="nowrap"><xsl:value-of select="@name"/></td>
         <td align="right" valign="bottom">
-        <xsl:call-template name="controls"/>
+          <xsl:call-template name="controls"/>
         </td>
         <td width="45"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_08.gif" width="45" height="33" /></td>
       </tr>
