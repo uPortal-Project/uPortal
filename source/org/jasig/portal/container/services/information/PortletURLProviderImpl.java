@@ -35,6 +35,7 @@
 
 package org.jasig.portal.container.services.information;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -42,6 +43,8 @@ import javax.portlet.WindowState;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletURLProvider;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
@@ -91,7 +94,17 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public String toString() {
-        return provider.getRequestedPortalURL();
+        ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
+        String baseActionURL = runtimeData.getBaseActionURL();
+        StringBuffer url = new StringBuffer(baseActionURL).append("?");
+        Iterator names = parameters.keySet().iterator();
+        while (names.hasNext()) {
+            String name = (String)names.next();
+            Object value = parameters.get(name);
+            url.append(name).append("=").append(value.toString());
+            url.append("&"); // Need to add logic to add this the last time though only
+        }
+        return url.toString();
     }
 
 }
