@@ -32,7 +32,7 @@ public class BaseChannel implements IChannel
 	    return csb;
     }
 
-    public ChannelRuntimeProperties getRuntimeProperties ()
+    public ChannelRuntimeProperties getRuntimeProperties () 
     {
 	return new ChannelRuntimeProperties ();
     }
@@ -42,18 +42,18 @@ public class BaseChannel implements IChannel
 	
     }
     
-    public void setStaticData (ChannelStaticData sd)
+    public void setStaticData (ChannelStaticData sd) throws PortalException 
     {
 	this.staticData=sd;
     }
 
 
-    public void setRuntimeData (ChannelRuntimeData rd)
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
     {
 	this.runtimeData=rd;
     }
 
-    public void renderXML (DocumentHandler out)
+    public void renderXML (DocumentHandler out) throws PortalException
     {
 	
     }
