@@ -12,7 +12,7 @@ A:VISITED {
 	color : #9999CC;
 }
 A:HOVER {
-	color : #CCCCFF;
+	color : #000000;
 }
 A.navigation {
 	color : Black;
@@ -21,7 +21,7 @@ A.navigation:visited {
 	color : Black;
 }
 A.navigation:hover {
-	color : #CCCCFF;
+	color : #666699;
 }
 .uportal-text{
 	color : Black;
@@ -39,14 +39,14 @@ A.uportal-navigation-category:visited{
 	font-weight : bold;
 }
 A.uportal-navigation-category:hover{
-	color : #CCCCFF;
+	color : #666699;
 	font-size : 12px;
 	font-weight : bold;
 }
 .uportal-navigation-category-selected{
 	font-size : 12px;
 	font-weight : bold;
-	color : #CCCCFF;
+	color : #666699;
 }
 A.uportal-navigation-channel{
 	color : Black;
@@ -57,11 +57,10 @@ A.uportal-navigation-channel:visited{
 	font-size : 12px;
 }
 A.uportal-navigation-channel:hover{
-	color : #CCCCFF;
+	color : #666699;
 	font-size : 12px;
 }
 .uportal-navigation-channel-selected{
-	background : Black;
 	font-size : 12px;
 	color : White;
 }
@@ -127,5 +126,5 @@ A.uportal-navigation-channel:hover{
 	background : #CCCCFF;
 }
 .uportal-background-content{
-	background : #EEEEFF;
+	background : #FFFFFF;
 }
