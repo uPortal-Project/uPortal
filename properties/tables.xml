@@ -104,8 +104,8 @@
     <name>UP_CHANNEL</name>
     <columns>
       <column> <name>CHAN_ID</name>          <type>INTEGER</type>                      </column>
-      <column> <name>CHAN_TITLE</name>       <type>VARCHAR</type>   <param>35</param>  </column>
-      <column> <name>CHAN_NAME</name>        <type>VARCHAR</type>   <param>35</param>  </column>
+      <column> <name>CHAN_TITLE</name>       <type>VARCHAR</type>   <param>128</param>  </column>
+      <column> <name>CHAN_NAME</name>        <type>VARCHAR</type>   <param>128</param>  </column>
       <column> <name>CHAN_DESC</name>        <type>VARCHAR</type>   <param>255</param> </column>
       <column> <name>CHAN_CLASS</name>       <type>VARCHAR</type>   <param>100</param> </column>
       <column> <name>CHAN_TYPE_ID</name>     <type>INTEGER</type>                      </column>
