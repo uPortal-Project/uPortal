@@ -113,6 +113,10 @@ function xml(nodelist){
 	<xsl:choose>
 	<xsl:when test="$currentStep='end'">
 	  	<p align="center">Channel is now published!</p>
+                <form action="{$baseActionURL}" method="post">
+	        <input type="hidden" name="action" value="cancel"/>
+      	        <p align="center"><input type="submit"  value="Finished"/></p>
+	        </form>
 	</xsl:when>
 	<xsl:otherwise>
         <form action="{$baseActionURL}" method="post">
@@ -129,12 +133,13 @@ function xml(nodelist){
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
       	  <p align="center"><input type="submit" value="Next"/></p>
         </form>
-      </xsl:otherwise>
-	</xsl:choose>
+    
 	<form action="{$baseActionURL}" method="post">
 	<input type="hidden" name="action" value="cancel"/>
-      	  <p align="center"><input type="submit"  value="Finished"/></p>
+      	  <p align="center"><input type="submit"  value="Cancel"/></p>
 	</form>
+        </xsl:otherwise>
+	</xsl:choose>
 	</xsl:template>
 	
 	<!-- The current step info-->
