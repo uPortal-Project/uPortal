@@ -57,12 +57,15 @@ import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.services.Authentication;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.security.InitialSecurityContextFactory;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
 import org.apache.axis.handlers.SimpleSessionHandler;
@@ -142,23 +145,31 @@ public class RemoteChannel implements IRemoteChannel {
     MessageContext messageContext = MessageContext.getCurrentContext();
     Session session = messageContext.getSession();
 
-    IChannel channel = null;
-    String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();
-
     // Locate the channel by "fname" (functional name)
     ChannelDefinition channelDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
     if (channelDef == null)
       throw new ResourceMissingException("fname:" + fname, fname + " channel", "Unable to find a channel with functional name '" + fname + "'");
 
+    // Make sure user is authorized to access this channel
+    IPerson person = getPerson();
+    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(String.valueOf(person.getID()), IPerson.class);
+    int channelPublishId = channelDef.getId();
+    boolean authorized = ap.canSubscribe(channelPublishId);
+    if (!authorized)
+      throw new AuthorizationException("User '" + person.getAttribute("username") + "' is not authorized to access channel with functional name '" + fname + "'");
+      
+    // Instantiate channel
     String javaClass = channelDef.getJavaClass();
+    String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();    
     String uid = messageContext.getProperty(SimpleSessionHandler.SESSION_ID) + "/" + instanceId;
-    channel = ChannelFactory.instantiateChannel(javaClass, uid);
+    IChannel channel = ChannelFactory.instantiateChannel(javaClass, uid);
 
+    // Start to stuff the ChannelStaticData
     ChannelStaticData staticData = new ChannelStaticData();
 
     // Set the publish ID, person, and timeout
-    staticData.setChannelPublishId(String.valueOf(channelDef.getId()));
-    staticData.setPerson(getPerson());
+    staticData.setChannelPublishId(String.valueOf(channelPublishId));
+    staticData.setPerson(person);
     staticData.setTimeout(channelDef.getTimeout());
 
     // Set channel context
@@ -261,6 +272,8 @@ public class RemoteChannel implements IRemoteChannel {
       if (status == ChannelRenderer.RENDERING_TIMED_OUT) {
         throw new InternalTimeoutException("The remote channel has timed out");
       }
+    } catch (Exception e) {
+      throw e;
     } catch (Throwable t) {
       throw new Exception(t.getMessage());
     }
