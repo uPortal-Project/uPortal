@@ -11,6 +11,7 @@ import java.util.Arrays;
  * Legacy PersonDirInfo bean.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 class PersonDirInfo {
     

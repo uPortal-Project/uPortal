@@ -33,6 +33,7 @@ import org.springframework.jndi.JndiObjectFactoryBean;
  * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 final class PersonDirInfoAdaptor {
     private static final Log LOG = LogFactory.getLog(PersonDirInfoAdaptor.class);

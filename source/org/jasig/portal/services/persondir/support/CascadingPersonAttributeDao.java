@@ -44,6 +44,7 @@ import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdde
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttributeDao {
     

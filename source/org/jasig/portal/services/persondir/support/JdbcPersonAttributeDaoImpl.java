@@ -35,6 +35,7 @@ import org.springframework.jdbc.object.MappingSqlQuery;
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
     /**

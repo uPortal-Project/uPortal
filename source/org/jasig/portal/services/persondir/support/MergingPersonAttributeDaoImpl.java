@@ -26,6 +26,7 @@ import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMe
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
     

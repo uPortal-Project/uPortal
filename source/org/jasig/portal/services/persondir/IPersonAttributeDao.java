@@ -16,6 +16,7 @@ import java.util.Set;
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public interface IPersonAttributeDao {
 

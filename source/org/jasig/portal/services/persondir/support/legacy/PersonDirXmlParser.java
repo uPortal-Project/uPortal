@@ -21,11 +21,10 @@ import org.w3c.dom.NodeList;
 
 /**
  * Static function class which parses a Document such as that contained in
- * a PersonDirs.xml file to
- * obtain a List of PersonDirInfo objects.
+ * a PersonDirs.xml file to obtain a List of PersonDirInfo objects.
  * 
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 class PersonDirXmlParser {
 

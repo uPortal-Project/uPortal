@@ -16,6 +16,7 @@ import org.jasig.portal.services.persondir.IPersonAttributeDao;
  * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class MockPersonAttributeDao implements IPersonAttributeDao {
     private Map backingMap;

@@ -15,6 +15,7 @@ import java.util.Set;
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
 

@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
  * 
  * @author andrew.petro@yale.edu, Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class LegacyPersonAttributeDao implements IPersonAttributeDao {
 
