@@ -248,13 +248,13 @@ public class UserInstance implements HttpSessionBindingListener {
                     String newRootNodeId = req.getParameter("uP_detach_target");
 
                     // set optimistic uPElement value
-                    String uPElement=null;
+                    UPFileSpec uPElement=new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
+                    
                     if(newRootNodeId!=null) {
                         // set a new root
-                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null);
-                    } else {
-                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
+                        uPElement.setMethodNodeId(newRootNodeId);
                     }
+
                     // determine uPElement (optimistic prediction) --end
 
                     // set up the channel manager
@@ -287,16 +287,16 @@ public class UserInstance implements HttpSessionBindingListener {
                     ThemeStylesheetDescription tsd=ulm.getThemeStylesheetDescription();
 
                     // verify upElement and determine rendering root --begin
-                    // reset uPElement
-                    uPElement = UPFileSpec.RENDER_URL_ELEMENT;
+
                     if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
                         // see if the new detach traget is valid
                         rElement = userLayout.getElementById(newRootNodeId);
                         if (rElement != null) {
                             // valid new root id was specified. need to redirect
                             // peterk: should we worry about forwarding parameters here ? or those passed with detach always get sacked ?
-                            res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
-                            // res.sendRedirect(UPFileSpec.DETACH_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+newRootNodeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                            uPElement.setMethodNodeId(newRootNodeId);
+                            res.sendRedirect(uPElement.getUPFile());
+                            // res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
                             return;
                         }
                     }
@@ -311,7 +311,8 @@ public class UserInstance implements HttpSessionBindingListener {
                         rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
 
-                    uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
+                    // update the render target
+                    uPElement.setMethodNodeId(rootNodeId);
 
                     // inform channel manager about the new uPElement value
                     channelManager.setUPElement(uPElement);
@@ -469,7 +470,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // determine and set the stylesheet params
                         // prepare .uP element and detach flag to be passed to the stylesheets
                         // Including the context path in front of uPElement is necessary for phone.com browsers to work
-                        sst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
+                        sst.setParameter("baseActionURL", uPElement.getUPFile());
                         Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
@@ -518,7 +519,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // prepare for the theme transformation
 
                         // set up of the parameters
-                        tst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
+                        tst.setParameter("baseActionURL", uPElement.getUPFile());
 
                         Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
