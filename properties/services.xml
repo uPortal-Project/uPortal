@@ -21,6 +21,13 @@
     <name>Some other service</name>
     <class>edu.myschool.services.MyPortalService</class>
     <method type="static">main</method>
+    <arguments>
+      <argitem>
+        <datatype array="true">java.lang.String</datatype>
+        <value>arg1</value>
+        <value>arg2</value>
+      </argitem>
+    </arguments>
   </service>
   -->
 
