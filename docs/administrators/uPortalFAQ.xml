@@ -75,8 +75,10 @@
           </question>
           <answer>
              <para>You can send your contributions, suggestions for
-             improvement, etc to Bill via e-mail. We're discouraging
-             people from modifying the FAQ directly.</para>
+             improvement, etc to Bill via e-mail (see above) and he'll
+             incorporate them. We're discouraging people from
+             modifying the FAQ directly, because we want the document
+             to have a single "voice".</para>
           </answer>
        </qandaentry>
 
@@ -145,6 +147,41 @@
           </question>
           <answer>
              <para>Baz.</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>Why doesn't uPortal use JAAS for authentication
+             and/or authorization?</para>
+          </question>
+          <answer>
+             <para><ulink
+             url="http://java.sun.com/products/jaas/">JAAS</ulink>
+             enables services to authenticate and enforce access
+             controls upon users, but as currently specified by Sun,
+             it makes many assumptions about how the services which
+             use it will operate. JAAS allows authentication modules
+             to be "plugged in" but doesn't allow services to modify
+             the behavior of the system as a whole. </para>
+ 
+             <para>uPortal doesn't operate the way that JAAS assumes
+             because a portal, any portal, must aggregate content and
+             applications from disparate sources. uPortal must have an
+             authentication mechanism that behaves differently than
+             JAAS does because a portal must support single sign-on to
+             applications which have their own, disparate
+             authentication and/or authorization requirements.</para>
+
+             <para>The bottom line is that the uPortal developers
+             think that authentication and authorization are too
+             tightly coupled within JAAS, and would therefore delay
+             the implementation of single sign-on in uPortal until a
+             later revision of the JAAS specification is published
+             that decouples them. Perhaps in the future JAAS could
+             provide uPortal with security services, but in it's
+             current state it does not have the flexibility nor the
+             functionality to be incorporated well into uPortal.</para>
           </answer>
        </qandaentry>
 
