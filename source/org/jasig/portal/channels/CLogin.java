@@ -44,8 +44,11 @@ import java.util.Hashtable;
 import java.net.URL;
 import javax.servlet.http.HttpSession;
 
-/** <p>Allows a user to logon to the portal.  Logon info is posted to
- *  <code>authenticate.jsp</code></p>
+/**
+ * <p>Allows a user to logon to the portal.  Logon info is posted to
+ * <code>authenticate.jsp</code>.  If user enters incorrect username and
+ * password, he/she is instructed to log in again with a different
+ * password (the username of the previous attempt is preserved.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
@@ -59,6 +62,7 @@ public class CLogin implements IPrivilegedChannel
   private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
+  private String userName;
 
   public CLogin()
   {
@@ -103,11 +107,11 @@ public class CLogin implements IPrivilegedChannel
     this.runtimeData = rd;
 
     media = runtimeData.getMedia();
+    userName = runtimeData.getParameter("userName");
   }
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
-    String userName = null;
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append("<login-status>\n");
 
@@ -116,13 +120,16 @@ public class CLogin implements IPrivilegedChannel
 
     sb.append("</login-status>\n");
 
+    Hashtable params = new Hashtable(1);
+    params.put("baseActionURL", runtimeData.getBaseActionURL());
+
     try
     {
-        XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, (Hashtable)null, "login", media);
+      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, params, "login", media);
     }
     catch (Exception e)
     {
-        throw new GeneralRenderingException(e.getMessage());
+      throw new GeneralRenderingException(e.getMessage());
     }
   }
 }
