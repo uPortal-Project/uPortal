@@ -56,6 +56,8 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
 
     Map preferences = null; // Preference name --> Preference
     PreferencesValidator validator = null;
+    String validatorClassName = null;
+    ClassLoader classLoader = null;
     
     public PreferenceSetImpl() {
         preferences = new HashMap();
@@ -72,6 +74,23 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
     }
 
     public PreferencesValidator getPreferencesValidator() {
+        if (validator == null) {
+            if (this.classLoader == null) {
+                throw new IllegalStateException("Portlet class loader is not yet available to load preferences validator.");
+            }
+            try {
+                if (validatorClassName != null) {
+                    Object o = classLoader.loadClass(validatorClassName).newInstance();
+                    if (o instanceof PreferencesValidator) {
+                        validator = (PreferencesValidator)o;
+                    }
+                }
+                    
+            } catch (Exception e) {
+                // Do nothing
+                e.printStackTrace();
+            }
+        }
         return validator;
     }
     
@@ -91,13 +110,16 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
 
     // Additional methods
     
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+    
     public void setPreferencesValidator(PreferencesValidator validator) {
         this.validator = validator;
     }
     
-    public void setPreferencesValidator(String validatorClassName) throws InstantiationException, ClassNotFoundException, IllegalAccessException {
-        PreferencesValidator validator = (PreferencesValidator)Class.forName(validatorClassName).newInstance();
-        this.validator = validator;
+    public void setPreferencesValidator(String validatorClassName) {
+        this.validatorClassName = validatorClassName;
     }
     
     public void clear() {
