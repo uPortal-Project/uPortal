@@ -16,6 +16,9 @@ public interface IChannel
   
   public int getDefaultDetachWidth ();
   public int getDefaultDetachHeight ();
+
+  /*a Vector of arrays [fieldLabel, fieldName, fieldSize, fieldMaxSize, desc] */
+  public Vector getParameters();
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out);

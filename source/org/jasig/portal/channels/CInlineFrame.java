@@ -23,17 +23,33 @@ public class CInlineFrame implements org.jasig.portal.IChannel
 { 
   protected String m_sUrl = null;
   private ChannelConfig chConfig = null;
-  
+
+  private static Vector params = null;
+
+  public CInlineFrame()
+  {
+    params = new Vector();
+    params.addElement(new String[] {"URL", "url", "50", "70", "You have chosen to publish a channel that requires you to provide a URL. Please enter the URL for the channel you wish to publish below."} );
+    params.addElement(new String[] {"Height", "height", "3", "4", "This channel also requires a height parameter. Please enter the height below."} );
+  }
+
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   public String getName () {return (String) chConfig.get ("name");}
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
-  public boolean isEditable () {return false;}  
-  public boolean hasHelp () {return false;}  
-  
+  public boolean isEditable () {return false;}
+  public boolean hasHelp () {return false;}
+
   public int getDefaultDetachWidth () {return 0;}
   public int getDefaultDetachHeight () {return 0;}
+
+ 
+
+  public Vector getParameters()
+  {
+    return params;
+  }
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

@@ -32,6 +32,11 @@ public class XMLChannelWrapper implements IChannel
 	chanID=chConfig.getChannelID();
     }
 
+    public Vector getParameters()
+    {
+      return null;
+    }
+    
     public String getName () {
 	return ch.getSubscriptionProperties().getName();
     }
