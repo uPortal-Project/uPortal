@@ -1,347 +1,344 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">baseActionURL_false</xsl:param>
-  <xsl:param name="profileType">profileType_false</xsl:param>
-  <xsl:param name="profileId">profileId_false</xsl:param>
-  <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/CUserPreferences/</xsl:variable>
-  <!--add to baseMediaURL select 'media/org/jasig/portal/channels/CUserPreferences/'-->
+  <xsl:param name="profileType">system</xsl:param>
+  <xsl:param name="profileId">1</xsl:param>
+  <xsl:param name="allowSystemProfileMap">true</xsl:param>
+  <xsl:param name="allowNewProfiles">true</xsl:param>
+  <xsl:param name="allowAdvancedProfileMapping">false</xsl:param>
+  <!--<xsl:variable name="baseMediaURL">C:\portal\webpages\media\org\jasig\portal\channels\CUserPreferences</xsl:variable>-->
+  <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/CUserPreferences</xsl:variable>
   <xsl:template match="profiles">
-    <!--delete head info for final xsl (should come from portal)-->
-        <div align="center">
-          <center>
-            <table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <xsl:apply-templates select="user"/>
-              <xsl:apply-templates select="system"/>
-              <tr>
-                <td class="uportal-text" colspan="11">
-                  <img alt="interface image" border="0" width="16" height="16">
-                    <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-                  </img>
-                </td>
-              </tr>
-              <tr>
-                <td class="uportal-text"/>
-                <td class="uportal-text" valign="top" align="center">
-                  <a>
-                    <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=newProfile</xsl:attribute>
-                    <img border="0" width="16" height="16" alt="Create new profile">
-                      <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_new.gif</xsl:attribute>
-                    </img>
-                  </a>
-                </td>
-                <td class="uportal-text" valign="top" align="left" colspan="9">
-            Click to create a new Personal profile<br/>
-                  <span class="uportal-text-small">(please read help first by
-            clicking the help icon in the channel header)</span>
-                </td>
-              </tr>
-            </table>
-          </center>
-        </div>
-  </xsl:template>
-  <xsl:template match="user">
-    <tr>
-      <td colspan="11" class="uportal-background-med" valign="bottom">
-        <p class="uportal-channel-title">Personal Profiles</p>
-      </td>
-    </tr>
-    <tr>
-      <td class="uportal-background-light">
-        <img alt="interface image" border="0" width="1" height="1">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td colspan="6" class="uportal-background-light" valign="bottom" align="center">
-        <p class="uportal-channel-subtitle">Action</p>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Name</p>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td width="60%" class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Description</p>
-      </td>
-    </tr>
-    <xsl:choose>
-      <xsl:when test="/profiles/user/profile">
-        <xsl:apply-templates mode="user"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <tr>
-          <td colspan="6"/>
-          <td class="uportal-text" valign="top">no profiles defined</td>
-          <td class="uportal-text" valign="top"/>
-          <td width="60%" class="uportal-text" valign="top">Click the copy button next to the desired System Profile to create a custom profile</td>
-        </tr>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  <xsl:template match="profile" mode="user">
-    <xsl:choose>
-      <xsl:when test="$profileId=@id and $profileType='user'">
-        <xsl:call-template name="selected_userProfile"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <tr>
-          <td/>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit Layout and preferences">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit profile">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_edit.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Copy personal profile">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Delete profile">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_delete.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Map current browser to this profile">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Advanced mapping properties">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map_adv.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top"/>
-          <td class="uportal-text" valign="top">
-            <xsl:value-of select="@name"/>
-          </td>
-          <td class="uportal-text" valign="top"/>
-          <td width="60%" class="uportal-text" valign="top">
-            <xsl:value-of select="description"/>
-          </td>
-        </tr>
-      </xsl:otherwise>
-    </xsl:choose>
+<!--    <html>
+      <head>
+        <link rel="stylesheet" href="file:///C|/LaJolla/uPortal/webpages/media/org/jasig/portal/layout/tab-column/nested-tables/imm/skin/imm.css" type="text/css"/>
+      </head>
+      <body>-->
+        <!--Begin Master Table -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="4" class="uportal-background-light">
+          <form name="form_profiles" method="post" action="{$baseActionURL}">
+            <tr>
+              <td>
+                <!--Begin Profiles Table -->
+                <table width="100%" border="0" cellspacing="10" cellpadding="0" class="uportal-background-light">
+                  <tr>
+                    <td align="left" valign="top" class="uportal-background-content">
+                      <xsl:apply-templates select="system"/>
+                    </td>
+                    <td align="left" valign="top" class="uportal-background-content">
+                      <xsl:apply-templates select="user"/>
+                    </td>
+                  </tr>
+                  <!-- form begin -->
+                  <!-- form end -->
+                </table>
+                <!--End Profiles Table -->
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="10" height="10" border="0"/>
+                <input type="submit" name="submit" value="Cancel" class="uportal-button"/>
+                <input type="hidden" name="action" value="manageProfiles"/>
+              </td>
+            </tr>
+          </form>
+        </table>
+        <!--End Master Table -->
+<!--      </body>
+    </html>-->
   </xsl:template>
   <xsl:template match="system">
-    <tr>
-      <td class="uportal-background-med" valign="top" colspan="11">
-        <p class="uportal-channel-title">System Profiles</p>
-      </td>
-    </tr>
-    <tr>
-      <td class="uportal-background-light">
-        <img alt="interface image" border="0" width="1" height="1">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td colspan="6" class="uportal-background-light" valign="bottom" align="center">
-        <p class="uportal-channel-subtitle">Action</p>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Name</p>
-      </td>
-      <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-        </img>
-      </td>
-      <td width="60%" class="uportal-background-light" valign="bottom">
-        <p class="uportal-channel-subtitle">Profile Description</p>
-      </td>
-    </tr>
-    <xsl:apply-templates mode="system"/>
+    <!--System Header Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+      <tr>
+        <td>
+          <span class="uportal-channel-table-header">System Profiles</span>
+          <strong>
+            <a href="{$baseActionURL}?action=expandAll&amp;profileType=system">
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
+              <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              <span class="uportal-text-small">Expand all</span>
+            </a>
+          </strong>
+          <strong>
+            <a href="{$baseActionURL}?action=condenseAll&amp;profileType=system">
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
+              <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              <span class="uportal-text-small">Condense all</span>
+            </a>
+          </strong>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="1" height="2"/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!--End System Header Table -->
+    <xsl:apply-templates select="profile" mode="system"/>
   </xsl:template>
   <xsl:template match="profile" mode="system">
-    <xsl:choose>
-      <xsl:when test="$profileId=@id and $profileType='system'">
-        <xsl:call-template name="selected_systemProfile"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <tr>
-          <td class="uportal-text"/>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit Layout and preferences">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top" align="center"/>
-          <td class="uportal-text" valign="top" align="center">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-          <img border="0" width="16" height="16" alt="Copy system profile to my profiles">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top" align="center"/>
-          <td class="uportal-text" valign="top">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Map current browser to this profile">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
-              </img>
-            </a>
-          </td>
-          <td class="uportal-text" valign="top" align="center"/>
-          <td class="uportal-text" valign="top"/>
-          <td class="uportal-text" valign="top">
-            <xsl:value-of select="@name"/>
-          </td>
-          <td class="uportal-text" valign="top"/>
-          <td width="60%" class="uportal-text" valign="top">
-            <xsl:value-of select="description"/>
-          </td>
-        </tr>
-      </xsl:otherwise>
-    </xsl:choose>
+    <!--Begin Sys. Profile Instance Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="4">
+      <xsl:choose>
+        <xsl:when test="$profileId = @id and $profileType ='system'">
+          <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="class">uportal-background-content</xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="@view = 'expanded'">
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td rowspan="4" align="left" valign="top" class="uportal-background-content">
+              <strong>
+                <a href="{$baseActionURL}?action=changeView&amp;view=condensed&amp;profileId={@id}&amp;profileType=system">
+                  <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+                </a>
+              </strong>
+            </td>
+            <td class="uportal-channel-text">Name:</td>
+            <td width="100%">
+              <strong>
+                <xsl:value-of select="@name"/>
+              </strong>
+              <xsl:if test="$profileId = @id and $profileType ='system'">
+                <br/>[This profile is mapped to the current browser]</xsl:if>
+            </td>
+          </tr>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td>Description:</td>
+            <td width="100%">
+              <xsl:value-of select="description"/>
+            </td>
+          </tr>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td>Actions:</td>
+            <td width="100%" nowrap="nowrap">
+              <p>
+                <a href="{$baseActionURL}?userPreferencesAction=managePreferences&amp;profileId={@id}&amp;profileType=system">
+                  <img alt="Edit the preferences for this profile" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Edit the preferences for this profile</a>
+                <br/>
+                <xsl:if test="$allowSystemProfileMap = 'true' and not($profileId = @id and $profileType ='system')">
+                  <a href="{$baseActionURL}?action=map&amp;profileId={@id}&amp;profileType=system">
+                    <img alt="Map this profile to my current browser" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Map this profile to my current browser</a>
+                  <br/>
+                </xsl:if>
+                <xsl:if test="/profiles/user">
+                  <a href="{$baseActionURL}?action=copy&amp;profileId={@id}&amp;profileType=system">
+                    <img alt="Copy this profile to my personal profiles" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Copy this profile to my personal profiles</a>
+                </xsl:if>
+              </p>
+            </td>
+          </tr>
+        </xsl:when>
+        <xsl:otherwise>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td rowspan="2" class="uportal-background-content">
+              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
+                <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              </a>
+            </td>
+            <td width="100%">
+              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
+                <strong>
+                  <xsl:value-of select="@name"/>
+                </strong>
+              </a>
+              <xsl:if test="$profileId = @id and $profileType ='system'">
+                <br/>[This profile is mapped to the current browser]</xsl:if>
+            </td>
+          </tr>
+        </xsl:otherwise>
+      </xsl:choose>
+      <tr align="left" valign="top" class="uportal-background-content">
+        <td colspan="2">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="1" height="1"/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!--End Sys. Profile Instance Table -->
   </xsl:template>
-  <xsl:template name="selected_userProfile">
-    <tr>
-      <td class="uportal-text" valign="top">
-        <img border="0" width="16" height="16" alt="Selected profile">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>selected_arrow.gif</xsl:attribute>
-        </img>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit Layout and preferences">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit profile">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_edit.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Copy personal profile">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Delete profile">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_delete.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Map current browser to this profile">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Advanced mapping properties">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map_adv.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top"/>
-      <td class="uportal-channel-emphasis" valign="top">
-        <xsl:value-of select="@name"/>
-      </td>
-      <td class="uportal-text" valign="top"/>
-      <td width="60%" class="uportal-channel-emphasis" valign="top">
-        <xsl:value-of select="description"/>
-      </td>
-    </tr>
+  <xsl:template match="user">
+    <!--Begin Personal Profile Header Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+      <tr>
+        <td>
+          <span class="uportal-channel-table-header">Personal Profiles</span>
+          <strong>
+            <a href="{$baseActionURL}?action=expandAll&amp;profileType=system">
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
+              <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              <span class="uportal-text-small">Expand all</span>
+            </a>
+          </strong>
+          <strong>
+            <a href="{$baseActionURL}?action=condenseAll&amp;profileType=system">
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
+              <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+              <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              <span class="uportal-text-small">Condense all</span>
+            </a>
+          </strong>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="1" height="2"/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!--End Personal Profile Header Table -->
+    <xsl:apply-templates select="profile" mode="user"/>
+    <xsl:if test="$allowNewProfiles = 'true'">
+      <xsl:call-template name="newProfile"/>
+    </xsl:if>
   </xsl:template>
-  <xsl:template name="selected_systemProfile">
-    <tr>
-      <td class="uportal-text" valign="top">
-        <img border="0" width="16" height="16" alt="Selected profile">
-          <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>selected_arrow.gif</xsl:attribute>
-        </img>
-      </td>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Edit Layout and preferences">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top" align="center"/>
-      <td class="uportal-text" valign="top" align="center">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-          <img border="0" width="16" height="16" alt="Copy system profile to my profiles">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top" align="center"/>
-      <td class="uportal-text" valign="top">
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Map current browser to this profile">
-            <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
-          </img>
-        </a>
-      </td>
-      <td class="uportal-text" valign="top" align="center"/>
-      <td class="uportal-text" valign="top"/>
-      <td class="uportal-channel-emphasis" valign="top">
-        <xsl:value-of select="@name"/>
-      </td>
-      <td class="uportal-text" valign="top"/>
-      <td width="60%" class="uportal-channel-emphasis" valign="top">
-        <xsl:value-of select="description"/>
-      </td>
-    </tr>
+  <xsl:template match="profile" mode="user">
+    <!--Begin Personal Profile Instance Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="4">
+      <xsl:choose>
+        <xsl:when test="$profileId = @id and $profileType ='user'">
+          <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="class">uportal-background-content</xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="@view = 'expanded'">
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td rowspan="4" align="left" valign="top" class="uportal-background-content">
+              <strong>
+                <a href="{$baseActionURL}?action=changeView&amp;view=condensed&amp;profileId={@id}&amp;profileType=user">
+                  <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
+                </a>
+              </strong>
+            </td>
+            <td class="uportal-channel-text">Name:</td>
+            <td width="100%">
+              <strong>
+                <xsl:value-of select="@name"/>
+              </strong>
+              <xsl:if test="$profileId = @id and $profileType ='user'">
+                <br/>[This profile is mapped to the current browser]</xsl:if>
+            </td>
+          </tr>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td>Description:</td>
+            <td width="100%">
+              <xsl:value-of select="description"/>
+            </td>
+          </tr>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td>Actions:</td>
+            <td width="100%" nowrap="nowrap">
+              <p>
+                <a href="{$baseActionURL}?userPreferencesAction=managePreferences&amp;profileId={@id}&amp;profileType=user">
+                  <img alt="Edit the preferences for this profile" src="{$baseMediaURL}/profile_user_pref.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Edit the preferences for this profile</a>
+                <br/>
+                <a href="{$baseActionURL}?action=edit&amp;profileId={@id}&amp;profileType=user">
+                  <img alt="Edit this personal profile" src="{$baseMediaURL}/profile_edit.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Edit this personal profile</a>
+                <br/>
+                <xsl:if test="not($profileId = @id and $profileType ='user')">
+                  <a href="{$baseActionURL}?action=map&amp;profileId={@id}&amp;profileType=user">
+                    <img alt="Map this profile to my current browser" src="{$baseMediaURL}/profile_map.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Map this profile to my current browser</a>
+                  <br/>
+                </xsl:if>
+                <a href="{$baseActionURL}?action=copy&amp;profileId={@id}&amp;profileType=user">
+                  <img alt="Make a copy of this personal profile" src="{$baseMediaURL}/profile_duplicate.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Make a copy of this personal profile</a>
+                <br/>
+                <xsl:if test="$allowAdvancedProfileMapping = 'true'">
+                  <a href="{$baseActionURL}?action=map_adv&amp;profileId={@id}&amp;profileType=user">
+                    <img alt="Advanced profile mapping" src="{$baseMediaURL}/profile_map_adv.gif" width="16" height="16" border="0"/>
+                    <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Advanced profile mapping</a>
+                  <br/>
+                </xsl:if>
+                <a href="{$baseActionURL}?action=delete&amp;profileId={@id}&amp;profileType=user">
+                  <img alt="Delete this profile" src="{$baseMediaURL}/profile_delete.gif" width="16" height="16" border="0"/>
+                  <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Delete this profile</a>
+              </p>
+            </td>
+          </tr>
+        </xsl:when>
+        <xsl:otherwise>
+          <tr align="left" valign="top" class="uportal-channel-text">
+            <td rowspan="2" class="uportal-background-content">
+              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
+                <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+              </a>
+            </td>
+            <td width="100%">
+              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
+                <strong>
+                  <xsl:value-of select="@name"/>
+                </strong>
+              </a>
+              <xsl:if test="$profileId = @id and $profileType ='user'">
+                <br/>[This profile is mapped to the current browser]</xsl:if>
+            </td>
+          </tr>
+        </xsl:otherwise>
+      </xsl:choose>
+      <tr align="left" valign="top" class="uportal-background-content">
+        <td colspan="2">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+            <tr>
+              <td>
+                <img alt="interface image" src="{$baseMediaURL}/transparent.gif" width="1" height="1"/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!--End Personal Profile Instance Table -->
   </xsl:template>
-</xsl:stylesheet>
+  <xsl:template name="newProfile">
+    <!--Begin New Personal Profile Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="4">
+      <tr class="uportal-background-content">
+        <td class="uportal-background-light">
+          <img alt="interface image" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+        </td>
+      </tr>
+      <tr class="uportal-background-content">
+        <td class="uportal-channel-text">
+          <a href="{$baseActionURL}?action=newProfile">
+            <img alt="Create a new personal profile" src="{$baseMediaURL}/profile_new.gif" width="16" height="16" border="0"/>
+            <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Create a new personal profile</a>
+        </td>
+      </tr>
+    </table>
+    <!--End New Personal Profile Table -->
+  </xsl:template>
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
