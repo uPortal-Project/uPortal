@@ -62,6 +62,7 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
   
   // Hints...
   private static final Object REQUEST_PARAMS_HINT = new Object();
+  private static final Object KEYWORDS_HINT = new Object();
   private static final Object RENDERING_AS_ROOT_HINT = new Object();
   private static final Object BROWSER_INFO_HINT = new Object();
   private static final Object UP_FILE_SPEC_HINT = new Object();
@@ -100,9 +101,10 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
     }
     
     // Construct the ChannelRuntimeData object only after all the values are known.
-    if (channelRuntimeDataInfo.size() == 5) {
+    if (channelRuntimeDataInfo.size() == 6) {
       // Gather ChannelRuntimeData values stored in channelRuntimeDataInfo
       Map params = (Map)channelRuntimeDataInfo.get(REQUEST_PARAMS_HINT);
+      String keywords = (String)channelRuntimeDataInfo.get(KEYWORDS_HINT);
       boolean isRenderingAsRoot = ((Boolean)channelRuntimeDataInfo.get(RENDERING_AS_ROOT_HINT)).booleanValue();
       BrowserInfo browserInfo = (BrowserInfo)channelRuntimeDataInfo.get(BROWSER_INFO_HINT);
       UPFileSpec upfs = (UPFileSpec)channelRuntimeDataInfo.get(UP_FILE_SPEC_HINT);
@@ -112,6 +114,7 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
       // Make the ChannelRuntimeData object and set values
       ChannelRuntimeData runtimeData = new ChannelRuntimeData();      
       runtimeData.setParametersSingleValued(params);
+      runtimeData.setKeywords(keywords);
       runtimeData.setRenderingAsRoot(isRenderingAsRoot);
       runtimeData.setBrowserInfo(browserInfo);
       runtimeData.setUPFile(upfs);
@@ -173,6 +176,8 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
       DeserializerTarget dt = null;
       if (localName.equals(ChannelRuntimeDataSerializer.REQUEST_PARAMS_ELEMENT_NAME)) {
         dt = new DeserializerTarget(this, REQUEST_PARAMS_HINT);
+      } else if (localName.equals(ChannelRuntimeDataSerializer.KEYWORDS_ELEMENT_NAME)) {
+        dt = new DeserializerTarget(this, KEYWORDS_HINT);
       } else if (localName.equals(ChannelRuntimeDataSerializer.RENDERING_AS_ROOT_ELEMENT_NAME)) {
         dt = new DeserializerTarget(this, RENDERING_AS_ROOT_HINT);
       } else if (localName.equals(ChannelRuntimeDataSerializer.BROWSER_INFO_ELEMENT_NAME)) {

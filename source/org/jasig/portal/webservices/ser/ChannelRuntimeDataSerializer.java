@@ -53,6 +53,7 @@ public class ChannelRuntimeDataSerializer implements Serializer {
 
   public static final String CHANNEL_RUNTIME_DATA_ELEMENT_NAME = "channel-runtime-data";
   public static final String REQUEST_PARAMS_ELEMENT_NAME = "request-parameters";
+  public static final String KEYWORDS_ELEMENT_NAME = "keywords";
   public static final String RENDERING_AS_ROOT_ELEMENT_NAME = "rendering-as-root";
   public static final String BROWSER_INFO_ELEMENT_NAME = "browser-info";
   public static final String UP_FILE_SPEC_ELEMENT_NAME = "up-file-spec";
@@ -76,6 +77,7 @@ public class ChannelRuntimeDataSerializer implements Serializer {
     context.startElement(name, attributes);
     context.startElement(new QName("", CHANNEL_RUNTIME_DATA_ELEMENT_NAME), null);
     context.serialize(new QName("", REQUEST_PARAMS_ELEMENT_NAME), null, runtimeData.getParameters()); // a Map
+    context.serialize(new QName("", KEYWORDS_ELEMENT_NAME), null, runtimeData.getKeywords()); // a String
     context.serialize(new QName("", RENDERING_AS_ROOT_ELEMENT_NAME), null, new Boolean(runtimeData.isRenderingAsRoot())); // a Boolean 
     context.serialize(new QName("", BROWSER_INFO_ELEMENT_NAME), null, runtimeData.getBrowserInfo()); // a BrowserInfo
     context.serialize(new QName("", UP_FILE_SPEC_ELEMENT_NAME), null, runtimeData.getUPFile()); // a UPFileSpec
