@@ -18,9 +18,7 @@
  *    "This product includes software developed by the JA-SIG Collaborative
  *    (http://www.jasig.org/)."
  *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG package org.jasig.portal.services;
-
-COLLABORATIVE "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
@@ -33,9 +31,7 @@ COLLABORATIVE "AS IS" AND ANY
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
  */
-
 
 package  org.jasig.portal;
 
@@ -68,7 +64,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
   /**
    * constructor gets an rdbm service
    */
-  public void RDBMUserIdentityStore () {
+  public RDBMUserIdentityStore () {
     rdbmService = new RDBMServices();
   }
 
@@ -92,7 +88,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @throws Authorization exception if a sql error is encountered
    */
   public void removePortalUID(int uPortalUID) throws Exception {
-     Connection con = rdbmService.getConnection();
+    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       if (RDBMServices.supportsTransactions)
@@ -160,7 +156,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         throw  (ae);
       }
     finally {
-      rdbmService.releaseConnection(con);
+      RDBMServices.releaseConnection(con);
     }
     }
 
@@ -176,7 +172,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
     // Get a connection to the database
-    Connection con = rdbmService.getConnection();
+    Connection con = RDBMServices.getConnection();
     Statement stmt = null;
     Statement insertStmt = null;
 
@@ -193,7 +189,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       try
       {
         // Release the connection
-        rdbmService.releaseConnection(con);
+        RDBMServices.releaseConnection(con);
       }
       catch(Exception e) {}
 
@@ -482,7 +478,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     finally
     {
-      rdbmService.releaseConnection(con);
+      RDBMServices.releaseConnection(con);
     }
     // Return the user's ID
     return(uPortalUID);
