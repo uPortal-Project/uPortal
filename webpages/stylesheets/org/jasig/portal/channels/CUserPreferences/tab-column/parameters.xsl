@@ -47,7 +47,7 @@
                             <span class="uportal-label">
                               <xsl:value-of select="@name"/>:</span>
                             <br/>
-                            <input type="text" name="{.}" size="40" class="uportal-input-text">
+                            <input type="text" name="{@name}" size="40" class="uportal-input-text">
                               <xsl:attribute name="value">
                                 <xsl:value-of select="@value"/>
                               </xsl:attribute>
