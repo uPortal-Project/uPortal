@@ -187,6 +187,17 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      */
     public void setDescription(String  v);
 
+    /**
+     * Get the value of secure.
+     * @return value of secure.
+     */
+    public boolean isSecure();
+
+    /**
+     * Set the value of secure.
+     * @param v  Value to assign to secure.
+     */
+    public void setIsSecure(boolean  v);
 
     // channel parameter methods
 

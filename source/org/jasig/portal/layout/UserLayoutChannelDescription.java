@@ -33,7 +33,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     boolean editable=false;
     boolean hasHelp=false;
     boolean hasAbout=false;
-
+    boolean isSecure=false;
+    
     public UserLayoutChannelDescription() {
         parameters=new Hashtable();
         override=new Hashtable();
@@ -90,7 +91,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.setEditable(Boolean.valueOf(xmlNode.getAttribute("editable")).booleanValue());
         this.setHasHelp(Boolean.valueOf(xmlNode.getAttribute("hasHelp")).booleanValue());
         this.setHasAbout(Boolean.valueOf(xmlNode.getAttribute("hasAbout")).booleanValue());
-
+        this.setIsSecure(Boolean.valueOf(xmlNode.getAttribute("secure")).booleanValue());
+        
         // process parameter elements
         for(Node n=xmlNode.getFirstChild(); n!=null;n=n.getNextSibling()) {
             if(n.getNodeType()==Node.ELEMENT_NODE) {
@@ -179,6 +181,21 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.timeout = v;
     }
 
+    /**
+     * Get the value of secure setting.
+     * @return value of secure.
+     */    
+    public boolean isSecure(){
+        return isSecure;
+    }
+
+    /**
+     * Set the value of channel secure setting.
+     * @param secure  Value to assign to secure
+     */    
+    public void setIsSecure(boolean secure){
+        this.isSecure = secure;
+    }
 
     /**
      * Get the value of functionalName.
@@ -472,6 +489,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         node.setAttribute("editable",(new Boolean(this.isEditable())).toString());
         node.setAttribute("hasHelp",(new Boolean(this.hasHelp())).toString());
         node.setAttribute("hasAbout",(new Boolean(this.hasAbout())).toString());
+        node.setAttribute("secure",(new Boolean(this.isSecure())).toString());        
     }
 
     /**
