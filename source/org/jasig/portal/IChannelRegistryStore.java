@@ -99,6 +99,13 @@ public interface IChannelRegistryStore {
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws Exception;
 
   /**
+   * Get all channel definitions including ones that haven't been approved.
+   * @return channelDefs, the channel definitions
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition[] getChannelDefinitions() throws Exception;
+
+  /**
    * Publishes a channel.
    * @param channelDef the channel definition
    * @param categories the categories of which this channel should be a member

@@ -137,7 +137,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Get channel types.
-   * @return types, the channel types as a Document
+   * @return types, the channel types
    * @throws java.sql.SQLException
    */
   public ChannelType[] getChannelTypes() throws SQLException {
@@ -430,6 +430,40 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
 
     return channelDef;
+  }
+
+  /**
+   * Get all channel definitions including ones that haven't been approved.
+   * @return channelDefs, the channel definitions
+   * @throws java.sql.SQLException
+   */
+  public ChannelDefinition[] getChannelDefinitions() throws SQLException {
+    ChannelDefinition[] channelDefs = null;
+    Connection con = RDBMServices.getConnection();
+
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String query = "SELECT CHAN_ID FROM UP_CHANNEL";
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinitions(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          List channelDefsList = new ArrayList();
+          while (rs.next()) {
+            ChannelDefinition channelDef = getChannelDefinition(rs.getInt("CHAN_ID"));
+            channelDefsList.add(channelDef);
+          }
+          channelDefs = (ChannelDefinition[])channelDefsList.toArray(new ChannelDefinition[0]);
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return channelDefs;
   }
 
   /**
