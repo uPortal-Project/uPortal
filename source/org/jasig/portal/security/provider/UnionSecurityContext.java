@@ -44,5 +44,15 @@ class UnionSecurityContext extends ChainingSecurityContext {
         }
   }
 
+  public String toString(){
+      StringBuffer sb = new StringBuffer();
+      sb.append(this.getClass().getName());
+      sb.append(" principal:").append(this.myPrincipal);
+      sb.append(" additionalDescriptor:").append(this.myAdditionalDescriptor);
+      sb.append(" isAuth:").append(this.isauth);
+      sb.append(this.mySubContexts);
+      return sb.toString();
   }
+  
+}
 

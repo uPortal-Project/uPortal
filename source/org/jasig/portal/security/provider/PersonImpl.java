@@ -197,6 +197,26 @@ public class PersonImpl implements IPerson {
   public EntityIdentifier getEntityIdentifier(){
     return m_eid; 
   }
+  
+  public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(PersonImpl.class.getName());
+        sb.append(" fullName=[");
+        sb.append(this.m_FullName);
+        sb.append("]");
+        sb.append(" id=[");
+        sb.append(this.m_ID);
+        sb.append("]");
+        sb.append(" securityContext=[");
+        sb.append(this.m_securityContext);
+        sb.append("]");
+        sb.append(" attributes=[");
+        sb.append(this.m_Attributes);
+        sb.append("]");
+        sb.append(" isGuest:");
+        sb.append(this.isGuest());
+        return sb.toString();
+    }
 }
 
 

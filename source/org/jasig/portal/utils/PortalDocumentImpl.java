@@ -403,4 +403,8 @@ public class PortalDocumentImpl implements IPortalDocument {
                 " (" + node.hashCode() + ")");
         }
     }
+    
+    public String toString() {
+        return XML.serializeNode(this);
+    }
 }
