@@ -51,6 +51,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.ChannelStaticData;
@@ -146,6 +147,8 @@ public class ChannelServlet extends HttpServlet {
     if (initialized) {
       // construct runtime data object
       ChannelRuntimeData rd = new ChannelRuntimeData();
+      rd.setBrowserInfo(new BrowserInfo(req));
+
       for (Enumeration en = req.getParameterNames(); en.hasMoreElements();) {
         String pName = (String)en.nextElement();
         if (!pName.startsWith("uP_")) {
@@ -159,7 +162,7 @@ public class ChannelServlet extends HttpServlet {
       } catch (PortalException pe) {
           System.out.println("unable to construct a UPFile !");
       }
-
+      
       if (channel instanceof IPrivilegedChannel) {
         // provide as much of PCS as we can
         PortalControlStructures pcs = new PortalControlStructures();

@@ -35,9 +35,6 @@
 
 package org.jasig.portal.container.om.common;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.apache.pluto.om.common.ObjectID;
@@ -64,16 +61,6 @@ public class ObjectIDImpl implements ObjectID, Serializable {
         intOID = oid;
     }
 
-    // Internal methods.
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        intOID = stream.readInt();
-        stringOID = String.valueOf(intOID);
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.write(intOID);
-    }
 
     // Addtional methods
 

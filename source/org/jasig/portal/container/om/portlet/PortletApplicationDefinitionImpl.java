@@ -53,6 +53,7 @@ public class PortletApplicationDefinitionImpl implements PortletApplicationDefin
     private ObjectID objectId = null;
     private String version = null;
     private PortletDefinitionList portletDefinitionList = null;
+    private UserAttributeListImpl userAttributes = null;
     private WebApplicationDefinition webApplicationDefinition = null;
 
     public ObjectID getId() {
@@ -67,6 +68,10 @@ public class PortletApplicationDefinitionImpl implements PortletApplicationDefin
         return portletDefinitionList;
     }
 
+    public UserAttributeListImpl getUserAttributes() {
+        return userAttributes;
+    }
+
     public WebApplicationDefinition getWebApplicationDefinition() {
         return webApplicationDefinition;
     }
@@ -77,8 +82,12 @@ public class PortletApplicationDefinitionImpl implements PortletApplicationDefin
         this.objectId = ObjectIDImpl.createFromString(id);
     }
 
-    public void setPortletDefinitionList(PortletDefinitionList list) {
-        this.portletDefinitionList = list;
+    public void setPortletDefinitionList(PortletDefinitionList portletDefinitions) {
+        this.portletDefinitionList = portletDefinitions;
+    }
+
+    public void setUserAttributes(UserAttributeListImpl userAttributes) {
+        this.userAttributes = userAttributes;
     }
 
     public void setVersion(String version) {

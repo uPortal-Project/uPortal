@@ -64,6 +64,8 @@ public class MultipartDataSource implements DataSource {
   ByteArrayOutputStream buff = null;
   String contentType = null;
   String filename = null;
+  String errorMessage = null;
+  boolean isAvailable = false;
 
   public MultipartDataSource(FilePart filePart) throws IOException {
     contentType = filePart.getContentType();
@@ -87,6 +89,17 @@ public class MultipartDataSource implements DataSource {
         buff = new ByteArrayOutputStream();
         filePart.writeTo(buff);
     }
+    this.isAvailable = true;
+  }
+  
+  public MultipartDataSource (String fileName, String errorMessage){
+    this.filename = fileName;
+    this.errorMessage = errorMessage;
+    this.isAvailable = false;
+  }
+  
+  public boolean isAvailable () {
+    return this.isAvailable;
   }
 
   public void finalize() {
@@ -98,6 +111,9 @@ public class MultipartDataSource implements DataSource {
   }
 
   public InputStream getInputStream() throws IOException {
+    if (!isAvailable())
+      throw new IOException (this.getErrorMessage());
+      
     if(tempfile!=null){
         return new BufferedInputStream(new FileInputStream(tempfile));
     }
@@ -116,6 +132,10 @@ public class MultipartDataSource implements DataSource {
 
   public String getName() {
     return filename;
+  }
+  
+  public String getErrorMessage(){
+    return errorMessage;
   }
 
   public File getFile() throws Exception {

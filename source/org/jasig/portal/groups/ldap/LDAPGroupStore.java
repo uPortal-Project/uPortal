@@ -467,7 +467,14 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       Hashtable jndienv = new Hashtable();
       jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
       jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
-      jndienv.put(Context.PROVIDER_URL,url);
+      if (url.startsWith("ldaps")) { // Handle SSL connections
+        String newurl = url.substring(0,4) + url.substring(5);
+        jndienv.put(Context.SECURITY_PROTOCOL, "ssl");
+        jndienv.put(Context.PROVIDER_URL, newurl);
+      }
+      else {
+        jndienv.put(Context.PROVIDER_URL, url);
+      }
       if (logonid!=null)
         jndienv.put(Context.SECURITY_PRINCIPAL,logonid);
       if (logonpassword!=null)

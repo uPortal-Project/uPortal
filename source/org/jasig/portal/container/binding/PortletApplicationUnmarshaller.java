@@ -57,11 +57,15 @@ import org.jasig.portal.container.om.common.DisplayNameSetImpl;
 import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ParameterSetImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeImpl;
 import org.jasig.portal.container.om.portlet.ContentTypeSetImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionListImpl;
+import org.jasig.portal.container.om.portlet.UserAttributeImpl;
+import org.jasig.portal.container.om.portlet.UserAttributeListImpl;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
@@ -107,8 +111,9 @@ public class PortletApplicationUnmarshaller {
         Element portletAppE = doc.getDocumentElement();
         portletApplicationDefinition.setId(contextName);
         portletApplicationDefinition.setVersion(portletAppE.getAttribute("version"));
-        portletApplicationDefinition.setWebApplicationDefinition(webApplicationDefinition);
         portletApplicationDefinition.setPortletDefinitionList(getPortletDefinitions(portletAppE, webApplicationDefinition));
+        portletApplicationDefinition.setUserAttributes(getUserAttributes(portletAppE));
+        portletApplicationDefinition.setWebApplicationDefinition(webApplicationDefinition);
         return portletApplicationDefinition;
     }
     
@@ -133,6 +138,7 @@ public class PortletApplicationUnmarshaller {
             portletDefinition.setServletDefinition(webApplicationDefinition.getServletDefinitionList().get(portletName));
             portletDefinition.setPortletApplicationDefinition(portletApplicationDefinition);
             portletDefinition.setExpirationCache(XML.getChildElementText(portletE, "expiration-cache"));
+            portletDefinition.setInitSecurityRoleRefSet(getSecurityRoleRefs(portletE));
             
             portletDefinitions.add(portletDefinitionId, portletDefinition);
         }        
@@ -202,12 +208,26 @@ public class PortletApplicationUnmarshaller {
                     Element valueE = (Element)valueNL.item(j);
                     values.add(XML.getElementText(valueE));
                 }
-                boolean readOnly = Boolean.getBoolean(XML.getChildElementText(preferenceE, "read-only"));
+                boolean readOnly = Boolean.valueOf(XML.getChildElementText(preferenceE, "read-only")).booleanValue();
                 preferences.add(name, values, readOnly);
             }
             preferences.setPreferencesValidator(XML.getChildElementText(portletPreferencesE, "preferences-validator"));
         }
         return preferences;
+    }
+
+    private SecurityRoleRefSetImpl getSecurityRoleRefs(Element portletE) {
+        SecurityRoleRefSetImpl securityRoleRefs = new SecurityRoleRefSetImpl();
+        NodeList securityRoleRefsNL = portletE.getElementsByTagName("security-role-ref");
+        for (int i = 0; i < securityRoleRefsNL.getLength(); i += 1) {
+            Element securityRoleRefE = (Element)securityRoleRefsNL.item(i);
+            SecurityRoleRefImpl securityRoleRef = new SecurityRoleRefImpl();
+            securityRoleRef.setDescription(XML.getChildElementText(securityRoleRefE, "description"));
+            securityRoleRef.setRoleName(XML.getChildElementText(securityRoleRefE, "role-name"));
+            securityRoleRef.setRoleLink(XML.getChildElementText(securityRoleRefE, "role-link"));
+            securityRoleRefs.add(securityRoleRef);
+        }
+        return securityRoleRefs;
     }
     
     private ContentTypeSet getContentTypes(Element portletE) {
@@ -225,6 +245,19 @@ public class PortletApplicationUnmarshaller {
             contentTypes.add(contentType);          
         }
         return contentTypes;
+    }
+
+    private UserAttributeListImpl getUserAttributes(Element portletAppE) {
+        UserAttributeListImpl userAttributes = new UserAttributeListImpl();
+        NodeList userAttributesNL = portletAppE.getElementsByTagName("user-attribute");
+        for (int i = 0; i < userAttributesNL.getLength(); i +=1) {
+            Element userAttributeE = (Element)userAttributesNL.item(i);
+            UserAttributeImpl userAttribute = new UserAttributeImpl();
+            userAttribute.setDescription(XML.getChildElementText(userAttributeE, "description"));
+            userAttribute.setName(XML.getChildElementText(userAttributeE, "name"));
+            userAttributes.add(userAttribute);
+        }
+        return userAttributes;
     }
 
 }

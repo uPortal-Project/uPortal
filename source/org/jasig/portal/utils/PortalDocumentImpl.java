@@ -65,7 +65,8 @@ import org.w3c.dom.Text;
  */
 public class PortalDocumentImpl implements IPortalDocument {
 
-    private final Hashtable identifiers = new Hashtable(1024);
+    private Hashtable identifiers = new Hashtable(1024);
+    private final Hashtable keys = new Hashtable(1024);
 
     public Document document = null;
 
@@ -76,7 +77,15 @@ public class PortalDocumentImpl implements IPortalDocument {
     PortalDocumentImpl(Document doc) {
         document = doc;
     }
-
+    
+    public final Hashtable getIdentifiers() {
+        return identifiers;   
+    }
+    
+    public final void setIdentifiers( Hashtable identifiers ) {
+        this.identifiers = identifiers;   
+    }
+    
     /**
      * Registers an identifier name with a specified element.
      *
@@ -115,19 +124,25 @@ public class PortalDocumentImpl implements IPortalDocument {
         for (Node n = this.getFirstChild(); n != null; n = n.getNextSibling()) {
             preserveCache(sourceDoc, n);
         }
+        keys.clear();
     }
 
     private void removeElement(String key) {
-        identifiers.remove(key);
+        Element elem = getElementById(key);
+        if ( elem != null )
+         keys.remove(XML.serializeNode(elem));
+        identifiers.remove(key); 
     }
 
     private void preserveCache(IPortalDocument sourceDoc, Node node) {
         if (node instanceof Element) {
+            Element element = (Element) node;
+            String serializedNode = XML.serializeNode(element);
             String key = ((PortalDocumentImpl)sourceDoc).
-                getElementKey((Element)node);
+                getElementKey(serializedNode);
 
             if (key != null) {
-                putIdentifier(key, (Element)node);
+                putIdentifier(key, element);
             }
         }
 
@@ -138,17 +153,21 @@ public class PortalDocumentImpl implements IPortalDocument {
         }
     }
 
-    private String getElementKey(Element element) {
+    private String getElementKey(String serializedNode) {
         String key = null;
-        Iterator itr = identifiers.keySet().iterator();
-        while (itr.hasNext()) {
-            key = (String)itr.next();
-            if (XML.serializeNode(element).equals(
-                XML.serializeNode(getElementById(key)))) {
-                return key;
-            }
-        }
-        return null;
+        if ( keys.isEmpty() ) {
+         Iterator itr = identifiers.keySet().iterator();   
+         while (itr.hasNext()) {
+            String id = (String) itr.next();
+            Element element = (Element) identifiers.get(key);
+            String value = XML.serializeNode(element);
+            keys.put(value,id);
+            if ( serializedNode.equals(value) )
+             key = id;          
+         }   
+        } else 
+            key = (String) keys.get(serializedNode); 
+          return key;
     }
 
     // decorator methods
@@ -306,7 +325,10 @@ public class PortalDocumentImpl implements IPortalDocument {
         // the children won't exist and you'd have an identifier mapping
         // that was invalid.
         if (deep) {
-            newNode.copyCache(this);
+            //newNode.copyCache(this);
+            final Hashtable hash = new Hashtable(1024);
+            hash.putAll(identifiers);
+            newNode.setIdentifiers(hash);
         }
         return newNode;
     }

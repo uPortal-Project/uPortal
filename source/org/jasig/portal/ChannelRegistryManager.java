@@ -68,7 +68,7 @@ import org.w3c.dom.Text;
  * that one can subscribe to (add to their layout).
  * Also currently manages the channel types data and CPD documents.
  * (maybe these should be managed by another class  -Ken)
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class ChannelRegistryManager {
@@ -474,18 +474,14 @@ public class ChannelRegistryManager {
     channelDef.setApprovalDate(now);
     crs.saveChannelDefinition(channelDef);
 
-    // Delete existing category memberships for this channel
-    String channelDefEntityKey = String.valueOf(channelDef.getId());
-    IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
-    IEntityGroup topLevelCategory = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
-    Iterator iter = topLevelCategory.getAllMembers();
+    // Delete existing category memberships for this channel   
+    String chanKey = String.valueOf(channelDef.getId());
+    IEntity channelDefEntity = GroupService.getEntity(chanKey, ChannelDefinition.class);
+    Iterator iter = channelDefEntity.getAllContainingGroups();
     while (iter.hasNext()) {
-      IGroupMember groupMember = (IGroupMember)iter.next();
-      if (groupMember.isGroup()) {
-        IEntityGroup group = (IEntityGroup)groupMember;
+        IEntityGroup group = (IEntityGroup) iter.next();
         group.removeMember(channelDefEntity);
-        group.updateMembers();
-      }
+        group.update();
     }
 
     // For each category ID, add channel to category

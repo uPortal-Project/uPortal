@@ -1253,4 +1253,5 @@
       <arg value="${portletApp}"/>
     </java>
   </target>  
+
 </project>

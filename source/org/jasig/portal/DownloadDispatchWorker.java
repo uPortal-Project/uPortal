@@ -35,12 +35,15 @@
 
 package org.jasig.portal;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -105,6 +108,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
                   org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
+                  ServletOutputStream out = null ;
+                  InputStream ios = null ;
                     try {
 
                         // Set the headers if available
@@ -124,15 +129,14 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                         res.setContentType (ds.getContentType());
 
                         // Set the data
-                        javax.servlet.ServletOutputStream out = res.getOutputStream();
-                        java.io.InputStream ios = ds.getInputStream();
+                        out = res.getOutputStream();
+                        ios = ds.getInputStream();
                         if (ios != null) {
                             int size = 0;
                             byte[] contentBytes = new byte[8192];
                             while ((size = ios.read(contentBytes)) != -1) {
                                 out.write(contentBytes,0, size);
                             }
-                            ios.close();
                         } else {
                             /**
                              * The channel has more complicated processing it needs to do on the
@@ -143,6 +147,15 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                         out.flush();
                     } catch (Exception e) {
                         ds.reportDownloadError(e);
+                    } finally {
+                        try {
+                            if (ios != null) 
+                                ios.close();
+                            if (out != null) 
+                                out.close();
+                        } catch (IOException ioe) {
+                            LogService.log(LogService.ERROR, "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream "+ ioe);
+                        }
                     }
                 } else {
                     LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");

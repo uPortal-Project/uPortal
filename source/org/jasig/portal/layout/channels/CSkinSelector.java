@@ -35,6 +35,7 @@
 
 package org.jasig.portal.layout.channels;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.jasig.portal.ChannelRuntimeData;
@@ -47,6 +48,7 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
@@ -103,7 +105,9 @@ import org.xml.sax.ContentHandler;
 
     public void renderXML (ContentHandler out) throws PortalException {
 
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
+    	InputStream xmlStream = null;
+        try {
+      xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       UserPreferences userPrefs = upm.getUserPreferences();
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
@@ -116,6 +120,14 @@ import org.xml.sax.ContentHandler;
       if(currentSkin!=null)
         xslt.setStylesheetParameter("currentSkin", currentSkin);
       xslt.transform();
-    }
+    } finally {
+			try {
+				if (xmlStream != null)
+					xmlStream.close();
+			} catch (IOException ioe) {
+				LogService.log(LogService.ERROR,"CSkinSelector:renderXML():: Can not close InputStream "+ ioe);
+			}
+		}
+	}
 
   }

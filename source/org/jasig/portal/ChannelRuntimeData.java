@@ -35,7 +35,6 @@
 
 package org.jasig.portal;
 
-import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -273,7 +272,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         // If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
         if (baseActionURL != null) {
-          return URLEncoder.encode(baseActionURL);
+          return baseActionURL;
         }
 
         String url=null;
@@ -288,7 +287,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
-        return URLEncoder.encode(url);
+        return url;
     }
 
     /**
@@ -385,7 +384,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 
         url=upfs.getUPFile();
 
-        return URLEncoder.encode(url);
+        return url;
     }
 
     /**

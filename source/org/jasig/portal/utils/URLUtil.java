@@ -291,10 +291,13 @@ public class URLUtil
         LogService.log(LogService.DEBUG,
             "URLUtil::redirectPost() " +
             "Redirecting to framework: " + urlStr.toString());
+        OutputStreamWriter wr = null;
+        BufferedReader br = null;
+        HttpURLConnection conn = null;
     
         try {
             URL url = new URL(urlStr.toString());
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn = (HttpURLConnection)url.openConnection();
 
             conn.setDoOutput(true);
             conn.setDoInput(true);
@@ -303,31 +306,40 @@ public class URLUtil
             buildHeader(req, conn);
 
             // post the parameters
-            OutputStreamWriter wr;
             wr = new OutputStreamWriter(conn.getOutputStream(), charset);
             wr.write(parameters);
             wr.flush();
-            wr.close();
-
+           
             // now let's get the results
             conn.connect(); // throws IOException
             int responseCode = conn.getResponseCode();  // 200, 404, etc
             String responseMsg = conn.getResponseMessage(); // OK, Forbidden,etc
-            BufferedReader br = new BufferedReader(
+            br = new BufferedReader(
                 new InputStreamReader(conn.getInputStream(), charset));
             StringBuffer results = new StringBuffer(512);
             String oneline;
             while ( (oneline = br.readLine()) != null) {
                 results.append(oneline).append('\n');
             }
-            br.close();
+            
 
             // send the results back to the original requestor
             res.getWriter().print(results.toString());
         } catch (IOException ioe) {
             LogService.log(LogService.ERROR, ioe);
             throw new PortalException(ioe);
-        }
+        } finally {
+			try {
+				if (br != null)
+					br.close();
+				if (wr != null)
+					wr.close();
+				if (conn != null)
+					conn.disconnect();
+			} catch (IOException exception) {
+				LogService.log(LogService.ERROR,"URLUtil:redirectPost()::Unable to close Resources "+ exception);
+			}
+		}
     }
 }
     

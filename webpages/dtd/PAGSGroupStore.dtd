@@ -38,7 +38,7 @@ $Revision$
 <!-- A Group-Store is made up of 0 or more groups. -->
 <!ELEMENT Group-Store (group*)>
 
-<!ELEMENT group (group-key,group-name,description,selection-test?,members?)>
+<!ELEMENT group (group-key,group-name,group-description,selection-test?,members?)>
 <!-- A group key must be unique within the document.  A group-name need not be. -->
 
 <!ELEMENT group-key (#PCDATA)>

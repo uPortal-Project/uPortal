@@ -35,7 +35,6 @@
 
 package org.jasig.portal;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
@@ -43,6 +42,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.services.LogService;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -79,10 +79,13 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         if (request_verified) {
             // parse request body
             String contentType = source.getContentType();
-            if (contentType != null && contentType.startsWith("multipart/form-data")) {
+            String portletAction = source.getParameter(PortletStateManager.ACTION);
+            if (contentType != null && contentType.startsWith("multipart/form-data") && portletAction == null) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
-                    MultipartParser multi = new MultipartParser(source, sizeLimit, true, true, "UTF-8");
+                    MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
+                    boolean noAttachments = source.getContentLength() > sizeLimit;
+                    
                     while ((attachmentPart = multi.readNextPart()) != null) {
                         String partName = attachmentPart.getName();
 
@@ -108,9 +111,19 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                             FilePart filePart = (FilePart)attachmentPart;
                             String filename = filePart.getFileName();
 
-                            if (filename != null) {
-                                MultipartDataSource fileUpload = new MultipartDataSource(filePart);
-
+                            MultipartDataSource fileUpload = null;
+                            // check if this file has exceeded the maximum allowed upload size
+                            if (noAttachments){
+                                fileUpload = new MultipartDataSource(filename, "Exceeded file size allowed");
+                                MultipartDataSource[] valueArray = new MultipartDataSource[1];
+                                valueArray[0] = fileUpload;
+                                parameters.put(partName, valueArray);
+                            } else if (filename != null) {
+                                fileUpload = new MultipartDataSource(filePart);
+                            }
+                            
+                            if (fileUpload != null) {
+                                
                                 if (parameters.containsKey(partName)) {
                                     MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
                                     MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
@@ -133,11 +146,6 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                 }
             }
             // regular params
-            try {
-                source.setCharacterEncoding("UTF-8");
-            } catch (UnsupportedEncodingException uee) {
-                LogService.log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! " + uee);
-            }
             Enumeration en = source.getParameterNames();
             if (en != null) {
                 while (en.hasMoreElements()) {

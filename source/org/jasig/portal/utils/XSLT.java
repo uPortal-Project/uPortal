@@ -593,7 +593,7 @@ public class XSLT {
                                 e.removeChild(cl.item(j));
                             }
                         }
-                       e.setAttribute("select","'"+localization.getString(name)+"'");
+                       e.setAttribute("select","'"+escape(localization.getString(name))+"'");
                         keys.remove(name);
                     }
                 }
@@ -602,7 +602,7 @@ public class XSLT {
 
         for(int z=0;z<keys.size();z++){
             String k = (String)keys.get(z);
-            String v = localization.getString(k);
+            String v = escape(localization.getString(k));
             Element e = xsl.createElementNS("http://www.w3.org/1999/XSL/Transform","xsl:variable");
             e.setAttribute("name",k);
             e.setAttribute("select","'"+v+"'");
@@ -610,6 +610,17 @@ public class XSLT {
             root.insertBefore(e,ft);
         }
 
+    }
+    
+   /**
+   * Escape problem characters which will be inserted into XSL
+   *
+   * @param s the string to escape
+   */
+    protected static String escape(String s){
+        // for initial implementation, just look for single quote
+        s = CommonUtils.replaceText(s,"'","\u2019");
+        return s;
     }
 }
 

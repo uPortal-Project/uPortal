@@ -46,8 +46,8 @@ import java.util.Hashtable;
  */
 
 public class StylesheetUserPreferences {
-    int id;
-    protected Hashtable parameters;
+    private int id;
+    private Hashtable parameters;
 
     public StylesheetUserPreferences() {
         parameters=new Hashtable();
@@ -55,31 +55,36 @@ public class StylesheetUserPreferences {
 
     public StylesheetUserPreferences(StylesheetUserPreferences sup) {
         this.id=sup.id;
-        this.parameters=new Hashtable(sup.parameters);
+        this.parameters=new Hashtable(sup.getParameterValues());
     }
 
     public int getStylesheetId() { return id; }
     public void setStylesheetId(int n) { id=n; }
 
     public String getParameterValue(String parameterName) {
-        return (String) parameters.get(parameterName);
+        return (parameterName!=null)?(String)parameters.get(parameterName):null;
     }
 
     public void putParameterValue(String parameterName,String parameterValue) {
-        this.parameters.put(parameterName,parameterValue);
+      if ( parameterName != null && parameterValue != null )  
+        parameters.put(parameterName,parameterValue);
     }
 
 
     public void deleteParameter(String parameterName) {
-        this.parameters.remove(parameterName);
+      if ( parameterName != null )  
+       parameters.remove(parameterName);
     }
 
     public Hashtable getParameterValues() {
         return parameters;
     }
 
-    public void setParameterValues(Hashtable parameterTable) {
-        this.parameters=parameterTable;
+    public void setParameterValues(Hashtable parameters) {
+      if ( parameters != null )  
+        this.parameters=parameters;
+      else
+        this.parameters.clear();
     }
 
     public String getCacheKey() {

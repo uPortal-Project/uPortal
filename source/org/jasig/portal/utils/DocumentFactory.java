@@ -103,30 +103,16 @@ public class DocumentFactory {
     }
 
     public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
-        try {
             DocumentBuilder builder = newDocumentBuilder();
             Document doc = builder.parse(stream);
             return doc;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-            }
-        }
     }
 
     public static Document getDocumentFromStream(InputStream stream, EntityResolver er) throws IOException, SAXException {
-        try {
             DocumentBuilder builder = newDocumentBuilder();
             builder.setEntityResolver(er);
             Document doc = builder.parse(stream);
             return doc;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-            }
-        }
     }
 
     public static DocumentBuilder newDocumentBuilder() {

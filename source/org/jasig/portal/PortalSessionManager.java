@@ -37,6 +37,7 @@
 package  org.jasig.portal;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
@@ -176,15 +177,24 @@ public class PortalSessionManager extends HttpServlet {
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
-        res.setHeader("uPortal-version", "uPortal_rel-2-2+");
-		if (fatalError) {
-			try {
+        res.setHeader("uPortal-version", "uPortal_rel-2-3-5");
+        
+        if (fatalError) {
+            try {
                 res.sendRedirect("error/fatal.htm");
             } catch (IOException e) {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
             }
-			return;
-		} 
+            return;
+        }
+
+        // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LogService.log(LogService.ERROR, "Unable to set UTF-8 character encoding!", uee);
+        }
+        
         HttpSession session = req.getSession();
 
         if (session != null) {

@@ -156,9 +156,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-    if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
-      xslt.setStylesheetParameter("unauthenticated", "true");
-    }
+    xslt.setStylesheetParameter("unauthenticated", String.valueOf(!staticData.getPerson().getSecurityContext().isAuthenticated()));
     xslt.transform();
   }
 
@@ -187,7 +185,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
     sbKey.append("bauthenticationAttemptFailed:").append(bauthenticationAttemptFailed).append(", ");
     sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
-    sbKey.append("bSecurityError:").append(bSecurityError);
+    sbKey.append("bSecurityError:").append(bSecurityError).append(", ");
     sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));

@@ -35,6 +35,7 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class TabColumnPrefsState extends BaseState
   private String action = "none";
   private String activeTab = "none";
   private String elementID = "none";
+  private String newColumnId = null;
 
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
@@ -190,6 +192,13 @@ public class TabColumnPrefsState extends BaseState
 
     try
     {
+        
+      // Need this check so that we don't override the column width's we just set
+      if (internalState instanceof DefaultState){
+        if (((DefaultState)internalState).columnHasBeenAdded)
+          return;
+      }
+        
       // The profile the user is currently viewing or modifying...
       editedUserProfile = context.getEditedUserProfile();
       ulm = getUserLayoutManager();
@@ -292,7 +301,7 @@ public class TabColumnPrefsState extends BaseState
    * @param tabName the name of the tab
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationTabId the column to insert the new column before or append after (may actually be a tab)
-   * @throws Exception
+   * @throws PortalException
    */
   private final void addTab(String tabName, String method, String destinationTabId) throws PortalException
   {
@@ -310,6 +319,26 @@ public class TabColumnPrefsState extends BaseState
     IUserLayoutFolderDescription newColumn = createFolder("Column");
     ulm.addNode(newColumn, newTab.getId(), null);    
   }
+  
+  /**
+   * This method will remove a column from the user's layout.  The column will be added into the layout
+   * via the "add new column" link within the preferences channel.  Clicking on cancel after choosing to add
+   * a new column will not remove the column hence the introduction of this method.
+   */
+  private final void removeNewColumn() {
+      try {
+          Document doc = this.ulm.getUserLayoutDOM();
+          Node nNewColumnNode = doc.getElementById(this.newColumnId);    
+          if (nNewColumnNode != null){
+            Node parent = nNewColumnNode.getParentNode();
+            parent.removeChild(nNewColumnNode);
+            this.newColumnId = null;
+          }
+      } catch (Exception e){
+          LogService.log(LogService.DEBUG, "removeNewColumn failed to find new column with id " + this.newColumnId);
+      }
+  }
+  
 
   /**
    * Adds a new column into the layout.  Before the column is added,
@@ -330,7 +359,17 @@ public class TabColumnPrefsState extends BaseState
           if(method.equals("insertBefore")) {
               siblingId=destinationElementId;
           }
-          ulm.addNode(newColumn,ulm.getParentId(destinationElementId),siblingId);
+          // Returns the node that was just added containing the default width of 100%
+          IUserLayoutNodeDescription ulnd = ulm.addNode(newColumn,ulm.getParentId(destinationElementId),siblingId);
+          // Get the current users layout
+          Document doc = this.ulm.getUserLayoutDOM();
+          // Keep track of the new column id incase the user clicks on cancel button
+          this.newColumnId = ulnd.getId();
+          Element nE = (Element)doc.getElementById(ulnd.getId());
+          // Find out how many siblings this node contains
+          NodeList list = nE.getParentNode().getChildNodes();
+          if (list != null && list.getLength() > 0)
+              this.setEvenlyAssignedColumnWidths(list);
       }
   }
 
@@ -374,7 +413,7 @@ public class TabColumnPrefsState extends BaseState
    * @param sourceId the column to move (may actually be a tab)
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationId the column to insert the new column before or append after (may actually be a tab)
-   * @throws Exception
+   * @throws PortalException
    */
   private final void moveColumn(String sourceId, String method, String destinationId) throws PortalException
   {
@@ -390,7 +429,7 @@ public class TabColumnPrefsState extends BaseState
    * @param sourceChannelSubscribeId the channel to move
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
-   * @throws Exception
+   * @throws PortalException
    */
   private final void moveChannel(String sourceChannelSubscribeId, String method, String destinationElementId) throws PortalException
   {
@@ -416,7 +455,7 @@ public class TabColumnPrefsState extends BaseState
    * @param newChannel the channel to add
    * @param position either <code>before</code> or <code>after</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
-   * @throws Exception
+   * @throws PortalException
    */
   private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
   {
@@ -474,7 +513,46 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void deleteElement(String elementId) throws Exception
   {
-      ulm.deleteNode(elementId);
+      // Need to check if we are about to delete a column, if so, need to reset other columns to appropriate width's
+      Document doc = this.ulm.getUserLayoutDOM();
+      Element childElement=(Element)doc.getElementById(elementId);
+      // determine if this is a column
+      String whatIsThis = childElement.getAttribute("name");
+      if (whatIsThis != null && whatIsThis.startsWith("Column")){
+        userPrefs.getStructureStylesheetUserPreferences().removeFolder(childElement.getAttribute("ID"));
+        // get the id of the parent (tab)
+        String tabId = ((Element)childElement.getParentNode()).getAttribute("ID");
+        // Found a column .. lets remove the column selected first
+        ulm.deleteNode(elementId);
+        // get the updated xml document
+        doc = this.ulm.getUserLayoutDOM();
+        // Find out how many siblings this node contains
+        NodeList list = ((Element)doc.getElementById(tabId)).getChildNodes();
+        if (list != null && list.getLength() > 0)
+            this.setEvenlyAssignedColumnWidths(list);
+        this.saveUserPreferences();
+        
+      } else {
+        // this is a tab, go ahead and delete it
+        ulm.deleteNode(elementId);
+      }
+  }
+
+  /**
+ * @param list is a NodeList containing all columns found in current tab
+ */
+  private void setEvenlyAssignedColumnWidths(NodeList list) {
+    // Simply divide the number of columns by 100 and produce an evenly numbered column widths
+    int columns = list.getLength();
+    int columnSize = 100 / columns;
+    int remainder = 100 % columns;
+    // Traverse through the columns and reset with the new caculated value
+    StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+    for (int i=0; i < list.getLength(); i++){
+        Element c = (Element) list.item(i);
+        String nId = c.getAttribute("ID");
+        ssup.setFolderAttributeValue(nId, "width", (i == (list.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
+    }            
   }
 
   private final void updateTabLock(String elementId, boolean locked) throws Exception
@@ -484,7 +562,7 @@ public class TabColumnPrefsState extends BaseState
   
   /**
    * A folder is a tab if its parent element is the layout element
-   * @param folder the folder in question
+   * @param folderId the folder in question
    * @return <code>true</code> if the folder is a tab, otherwise <code>false</code>
    */
   private final boolean isTab (String folderId) throws PortalException
@@ -495,7 +573,7 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A folder is a column if its parent is a tab element
-   * @param folder the folder in question
+   * @param folderId the folder in question
    * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
    */
   private final boolean isColumn (String folderId) throws PortalException
@@ -586,7 +664,7 @@ public class TabColumnPrefsState extends BaseState
   protected class DefaultState extends BaseState
   {
     private static final boolean printXMLToLog = false;
-
+    private boolean columnHasBeenAdded = false;
     protected TabColumnPrefsState context;
 
     public DefaultState(TabColumnPrefsState context)
@@ -812,6 +890,7 @@ public class TabColumnPrefsState extends BaseState
             String destinationColumnId = elementID;
 
             addColumn(method, destinationColumnId);
+            columnHasBeenAdded = true;
           }
           catch (Exception e)
           {
@@ -915,6 +994,11 @@ public class TabColumnPrefsState extends BaseState
         else if (action.equals("cancel"))
         {
           elementID = "none";
+          // check to see if we added a new column
+          if (columnHasBeenAdded){
+            removeNewColumn();
+            columnHasBeenAdded = false;
+          }
         }
       }
       else
@@ -1056,7 +1140,9 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
+     InputStream xmlStream = null;
+   try {
+      xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
       XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
@@ -1068,7 +1154,15 @@ public class TabColumnPrefsState extends BaseState
       if(currentSkin!=null)
         xslt.setStylesheetParameter("currentSkin", currentSkin);
       xslt.transform();
-    }
+   } finally {
+				try {
+					if (xmlStream != null)
+						xmlStream.close();
+				} catch (IOException exception) {
+					LogService.log(LogService.ERROR,"TabColumnPrefsState:renderXML()::unalbe to close InputStream "+ exception);
+				}
+			}
+   }
   }
 
   /**

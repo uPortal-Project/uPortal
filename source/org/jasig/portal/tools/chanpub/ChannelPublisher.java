@@ -56,9 +56,9 @@ import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
@@ -215,21 +215,34 @@ public class ChannelPublisher {
           String target = "CHAN_ID." + ci.chanDef.getId();
           IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
 
-          // set up groups and permissions for this channel
-          // must loop because multiple groups can be declared
-          IPermission[] newPermissions = new IPermission[ci.groups.length];
-          for (int j=0; j < ci.groups.length; j++) {
-                IAuthorizationPrincipal authPrincipal = authService.newPrincipal(ci.groups[j]);
-                newPermissions[j] = upm.newPermission(authPrincipal);
-                newPermissions[j].setType(GRANT_PERMISSION_TYPE);
-                newPermissions[j].setActivity(SUBSCRIBER_ACTIVITY);
-                newPermissions[j].setTarget(target);
-          }
-          // save to store
+          // Remove old permissions
           IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
           upm.removePermissions(oldPermissions);
-          upm.addPermissions(newPermissions);
 
+          // Add new permissions for this channel based on both groups and users
+          if (ci.groups != null) {
+              IPermission[] newGroupPermissions = new IPermission[ci.groups.length];
+              for (int j=0; j < ci.groups.length; j++) {
+                    IAuthorizationPrincipal authPrincipal = authService.newPrincipal(ci.groups[j]);
+                    newGroupPermissions[j] = upm.newPermission(authPrincipal);
+                    newGroupPermissions[j].setType(GRANT_PERMISSION_TYPE);
+                    newGroupPermissions[j].setActivity(SUBSCRIBER_ACTIVITY);
+                    newGroupPermissions[j].setTarget(target);
+              }
+              upm.addPermissions(newGroupPermissions);
+          }
+          if (ci.users != null) {
+              IPermission[] newUserPermissions = new IPermission[ci.users.length];
+              for (int j=0; j < ci.users.length; j++) {
+                    IAuthorizationPrincipal authPrincipal = authService.newPrincipal(ci.users[j]);
+                    newUserPermissions[j] = upm.newPermission(authPrincipal);
+                    newUserPermissions[j].setType(GRANT_PERMISSION_TYPE);
+                    newUserPermissions[j].setActivity(SUBSCRIBER_ACTIVITY);
+                    newUserPermissions[j].setTarget(target);
+              }
+              upm.addPermissions(newUserPermissions);
+          }
+          
           // Categories
           // First, remove channel from its categories
           ChannelCategory[] categories = crs.getParentCategories(ci.chanDef);
@@ -241,7 +254,7 @@ public class ChannelPublisher {
                 crs.addChannelToCategory(ci.chanDef, ci.categories[k]);
           }
 
-          // need to approve channel
+          // Need to approve channel
           crs.approveChannelDefinition(ci.chanDef, systemUser, new Date());
 
         } catch (Exception e) {
@@ -266,10 +279,11 @@ public class ChannelPublisher {
   private static ChannelInfo getChannelInfo(String chanDefFile) throws Exception {
         ChannelInfo ci = new ChannelInfo();
         Document doc = null;
-    
+        InputStream is = null;
+        
         try {
           // Build a DOM tree out of Channel_To_Publish.xml
-          InputStream is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, chanDefsLocation + "/" + chanDefFile);
+          is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, chanDefsLocation + "/" + chanDefFile);
           doc = domParser.parse(is);
       
           Element chanDefE = doc.getDocumentElement();
@@ -347,7 +361,7 @@ public class ChannelPublisher {
                   }
                 } else if (tagname.equals("groups")) {
                   NodeList anodes = pele.getElementsByTagName("group");
-                  ci.groups = new IGroupMember[anodes.getLength()];
+                  ci.groups = new IEntityGroup[anodes.getLength()];
                   if (anodes.getLength() != 0) {
                         for (int j=0; j < anodes.getLength(); j++) {
                           Element anode = (Element) anodes.item(j);
@@ -362,6 +376,20 @@ public class ChannelPublisher {
                             throw new Exception ("Invalid entry in " + chanDefFile + " for groups entry. Please fix before running Channel Publishing Tool");
                         }
                   }
+                } else if (tagname.equals("users")) {
+                    NodeList anodes = pele.getElementsByTagName("user");
+                    ci.users = new IEntity[anodes.getLength()];
+                    if (anodes.getLength() != 0) {
+                          for (int j=0; j < anodes.getLength(); j++) {
+                            Element anode = (Element) anodes.item(j);
+                            String userStr = XML.getElementText(anode);
+                            IEntity user = getEntity(userStr, IPerson.class);
+                            if (user != null)
+                              ci.users[j] = user;
+                            else
+                              throw new Exception ("Invalid entry in " + chanDefFile + " for users entry. Please fix before running Channel Publishing Tool");
+                          }
+                    }   
                 } else if (tagname.equals("parameters")) {
                   NodeList anodes = pele.getElementsByTagName("parameter");
                   if (anodes.getLength() > 0) {
@@ -400,16 +428,33 @@ public class ChannelPublisher {
           LogService.log(LogService.ERROR, "getChannelInfo() :: Exception reading channel definition file: " + chanDefFile);
           LogService.log(LogService.ERROR, e);
           throw e;
+        } finally {
+        	if(is != null)
+        	is.close();
         }
         return ci;
-  }  
+  }
   
   /**
-   * Attempts to determine group key based on a group name or fully qualifed
-   * group key.
+   * Attempts to determine an entity based on an entity name or
+   * fully qualified entity key.
+   * @param entityName a <code>String</code> value
+   * @param entityType the kind of entity
+   * @return a matching entity or <code>null</code>
+   * @throws Exception
+   */
+  private static IEntity getEntity(String entityName, Class entityType) throws Exception {
+      IEntity entity = GroupService.getEntity(entityName, entityType);
+      return entity;  
+  }
+  
+  /**
+   * Attempts to determine a group based on a group name or 
+   * fully qualifed group key.
    * @param groupName a <code>String</code> value
    * @param entityType the kind of entity the group contains
-   * @return a group key
+   * @return a matching group or <code>null</code>
+   * @throws Exception
    */
   private static IEntityGroup getGroup(String groupName, Class entityType) throws Exception {
       IEntityGroup group = null;
@@ -458,7 +503,8 @@ public class ChannelPublisher {
   
   private static class ChannelInfo {
         ChannelDefinition chanDef;
-        IGroupMember[] groups;
+        IEntityGroup[] groups;
+        IEntity[] users;
         ChannelCategory[] categories;
   }
 }

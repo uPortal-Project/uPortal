@@ -137,7 +137,8 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
                         }
                         isPortletApp = gotWebXml && gotPortletXml;
                         if (isPortletApp) {
-                            String contextName = files1[i].getName();
+                            String contextName = resolveUri(files1[i].getName());
+                            
                             String xmlFile = null;
                             LogService.log(LogService.INFO, "Found portlet application " + contextName);
 
@@ -165,4 +166,36 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             }
         }     
     }
+    
+    /**
+     * Handles resolution of a web module's file system name to its URI identifier.
+     * @param webModule the file system name.
+     * @return the URI part.
+     */
+    private String resolveUri(String webModule) {
+        // The initial portion of the web module prefix used by JBoss.
+        final String INITIAL_TMP_PREFIX = "tmp";
+
+        // The length of the full web module prefix used by JBoss plus numeric portion).
+        final int FULL_TMP_PREFIX_LEN = INITIAL_TMP_PREFIX.length() + 5;
+
+        // The file extension for web application archives (including the leading dot).
+        final String WAR_FILE_EXT = ".war";
+        
+        // The length of the file extension for web application archives (including the leading dot).
+        final int WAR_FILE_EXT_LEN = WAR_FILE_EXT.length();
+
+        // For JBoss compatibility, change webModule from the form
+        // of "tmp12345foo.war" to "foo".
+        int len = webModule.length();
+        if (webModule.endsWith(WAR_FILE_EXT)) {
+            if (webModule.startsWith(INITIAL_TMP_PREFIX) && len > FULL_TMP_PREFIX_LEN + WAR_FILE_EXT_LEN) {
+                webModule = webModule.substring(FULL_TMP_PREFIX_LEN, len - WAR_FILE_EXT_LEN);
+            } else {
+                webModule = webModule.substring(0, len - WAR_FILE_EXT_LEN);
+            }
+        }
+        // else assumed literal.
+        return webModule;
+    }    
 }
