@@ -558,7 +558,7 @@ $Revision$
         </xsl:if>
         <td>
           <table border="0" cellspacing="0" cellpadding="2">
-            <tr class="uportal-background-content" align="center" valign="middle">
+            <tr align="center" valign="middle">
               <td colspan="3">
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
@@ -573,7 +573,7 @@ $Revision$
               </td>
             </tr>
             <tr>
-              <td align="center" valign="middle" class="uportal-background-content">
+              <td align="center" valign="middle">
                 <xsl:choose>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID)">
                     <xsl:choose>
@@ -605,13 +605,13 @@ $Revision$
                               <xsl:value-of select="@name"/>
                             </a>
                           </td>
-                          <td class="uportal-background-med">
+                          <td align="right" valign="bottom">
                             <img src="{$mediaPath}/blank.gif" width="16" height="16"/>
                           </td>
-                          <td class="uportal-background-med">
+                          <td align="right" valign="bottom">
                             <img src="{$mediaPath}/blank.gif" width="16" height="16"/>
                           </td>
-                          <td class="uportal-background-med">
+                          <td align="right" valign="bottom">
                             <xsl:choose>
                               <xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])">
                                 <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
@@ -662,7 +662,7 @@ $Revision$
                   </tr>
                 </table>
               </td>
-              <td align="center" valign="middle" class="uportal-background-content">
+              <td align="center" valign="middle">
                 <xsl:choose>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
                     <xsl:choose>
@@ -684,7 +684,7 @@ $Revision$
                 </xsl:choose>
               </td>
             </tr>
-            <tr class="uportal-background-content">
+            <tr>
               <td colspan="3" align="center" valign="middle">
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
@@ -1381,4 +1381,5 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
+
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->

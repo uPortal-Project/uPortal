@@ -77,7 +77,7 @@ $Revision$
                             <tr>
                               <td nowrap="nowrap" align="left" valign="top">
                                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
+                                <img alt="interface image" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
                                 <select name="selectedCategory" class="uportal-input-text">
                                   <xsl:for-each select="/registry/category">
                                     <xsl:sort select="@name"/>
@@ -117,10 +117,10 @@ $Revision$
                                     </img>
                                     <xsl:choose>
                                       <xsl:when test="position() = last()">
-                                        <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
+                                        <img alt="interface image" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
                                       </xsl:when>
                                       <xsl:otherwise>
-                                        <img alt="interface image" src="{$mediaPath}/arrow_down.gif" width="16" height="16"/>
+                                        <img alt="interface image" src="{$mediaPath}/arrow_down_image.gif" width="16" height="16"/>
                                       </xsl:otherwise>
                                     </xsl:choose>
                                     <select name="selectedCategory" class="uportal-input-text">
@@ -293,6 +293,7 @@ $Revision$
     <!--End top Table -->
   </xsl:template>
 </xsl:stylesheet>
+
 
 
 
