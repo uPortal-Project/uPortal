@@ -54,8 +54,8 @@ import org.apache.xerces.dom.EntityImpl;
 import org.apache.xerces.dom.NodeImpl;
 import org.apache.xerces.dom.NotationImpl;
 import org.apache.xerces.dom.ProcessingInstructionImpl;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.serialize.OutputFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
@@ -68,7 +68,7 @@ import org.xml.sax.ContentHandler;
 
 /**
  * This utility provides useful XML helper methods.
- * 
+ *
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
@@ -145,7 +145,7 @@ public class XML {
       // hash codes of the elements in the actual document.
       // Instead, I am using the serialized Element as a key
       // to store the id.
-      // -Ken      
+      // -Ken
       idTable.put(serializeNode(element), id);
     }
 
@@ -172,7 +172,7 @@ public class XML {
 
       case DocumentImpl.ELEMENT_NODE: {
         Element newelement = doc.createElement(source.getNodeName());
-        
+
         // Copy the identifier - this is a hack - please fix!!!
         // Originally:
         //   String id=(String)idTable.get((Element) source);
@@ -183,7 +183,7 @@ public class XML {
         // the id.
         // -Ken
         String id=(String)idTable.get(serializeNode(source));
-        
+
         if (id != null)
           doc.putIdentifier(id, newelement);
 
