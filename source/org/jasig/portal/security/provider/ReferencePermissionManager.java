@@ -70,8 +70,9 @@ public class ReferencePermissionManager extends PermissionManager {
   public void setPermission (Permission newPermission) {
     Connection connection = RdbmServices.getConnection();
     try {
-      StringBuffer updateStatement = "INSERT INTO UP_PERMISSIONS (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (";
-      updateStatement += "'" + m_owner + "',";
+      StringBuffer updateStatement = new StringBuffer(1000);
+      updateStatement.append("INSERT INTO UP_PERMISSIONS (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (");
+      updateStatement.append("'" + m_owner + "',");
       if (newPermission.getPrincipal() != null) {
         updateStatement.append("'" + newPermission.getPrincipal() + "',");
       } 
@@ -96,10 +97,10 @@ public class ReferencePermissionManager extends PermissionManager {
       else {
         updateStatement.append("'*',");
       }
-      updateStatement += "null, null";
-      updateStatement += ")";
+      updateStatement.append("null, null");
+      updateStatement.append(")");
       Statement statement = connection.createStatement();
-      statement.executeUpdate(updateStatement);
+      statement.executeUpdate(updateStatement.toString());
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
