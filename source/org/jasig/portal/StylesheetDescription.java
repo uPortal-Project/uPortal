@@ -77,7 +77,7 @@ public class StylesheetDescription {
 
     public StylesheetDescription(String uri, String type) {
 
-        s_href=uri; s_type=type;
+        s_href=UtilitiesBean.fixURI(uri); s_type=type;
 
         s_media=new String(""); s_charset=null; b_alternate=false;
 
@@ -89,7 +89,7 @@ public class StylesheetDescription {
 
     public StylesheetDescription(String uri, String type, String title, String media, String charset, boolean alternate) {
 
-        s_href=uri; s_type=type;
+        s_href=UtilitiesBean.fixURI(uri); s_type=type;
 
         s_media=media; s_charset=charset; b_alternate=alternate;
 
@@ -109,7 +109,7 @@ public class StylesheetDescription {
 
           PIAttributes pia= new PIAttributes(pi);
 
-          s_href=pia.getAttribute("href");
+          s_href=UtilitiesBean.fixURI(pia.getAttribute("href"));
 
           s_type=pia.getAttribute("type");
 
@@ -135,7 +135,7 @@ public class StylesheetDescription {
 
         PIAttributes pia= new PIAttributes(data);
 
-        s_href=pia.getAttribute("href");
+        s_href=UtilitiesBean.fixURI(pia.getAttribute("href"));
 
         s_type=pia.getAttribute("type");
 
@@ -177,7 +177,7 @@ public class StylesheetDescription {
 
     public void setMedia(String media) { s_media=media; }
 
-    public void setURI(String uri) { s_href=uri; }
+    public void setURI(String uri) { s_href=UtilitiesBean.fixURI(uri); }
 
     public void setCharset(String charset) { s_charset=charset; }
 
