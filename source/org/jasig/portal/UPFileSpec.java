@@ -40,19 +40,19 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This helper class allows for easy access to the information contained in the ever-changing 
+ * This helper class allows for easy access to the information contained in the ever-changing
  * uP file URL spec. The uP file syntax is likely to change often, therefore we encourage developers
  * to use this class instead of trying to parse the uP file on your own.
- * <p>Note: in case you're wondering what in the world "uP file" is, take a look at the portal URLs. 
- * The context path ends with a file-like specification that always has ".uP" at the end ... 
+ * <p>Note: in case you're wondering what in the world "uP file" is, take a look at the portal URLs.
+ * The context path ends with a file-like specification that always has ".uP" at the end ...
  * that's what we call a "uP" file. It is used to provide information on how different requests
  * should be processed.</p>
- * <p>Current uP file syntax looks like this: <code><b>"[tag.tagId.]{method}.methodId.[target.targetId.][*.]uP"</b></code>, 
+ * <p>Current uP file syntax looks like this: <code><b>"[tag.tagId.]{method}.methodId.[target.targetId.][*.]uP"</b></code>,
  * where "[]" denote optional expressions and "{}" choice-defined expressions. The "{method}" field, at the moment has
  * two choices: "render" and "worker".</p>
- * <p> uPortal will assume that the .uP file spec is always well-formed, so don't try to construct it on your own, use 
+ * <p> uPortal will assume that the .uP file spec is always well-formed, so don't try to construct it on your own, use
  * <code>baseActionURL</code> or one of the <code>workerActionURL</code>s. </p>
- * 
+ *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
@@ -67,7 +67,7 @@ public class UPFileSpec {
     public static final String PORTAL_URL_SUFFIX="uP";
 
     // individual worker URL elements
-    public static final String FILE_DOWNLOAD_WORKER = "download";    
+    public static final String FILE_DOWNLOAD_WORKER = "download";
 
 
     // int values for methods
@@ -86,15 +86,28 @@ public class UPFileSpec {
      */
     public UPFileSpec() {
     }
-    
+
     /**
      * Construct a .uP file spec object for a .uP file contained in a given request.
      *
      * @param req a <code>HttpServletRequest</code> value
      */
     public UPFileSpec(HttpServletRequest req) {
-        String servletPath = req.getServletPath();
-        String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());        
+      String servletPath = req.getServletPath();
+      int firstChar = 0;
+      if (servletPath.startsWith("/" + WORKER_URL_ELEMENT + "/" +
+                                 FILE_DOWNLOAD_WORKER)) {
+        servletPath = req.getPathInfo();
+      }
+      if (servletPath.charAt(firstChar) == '/') {
+        firstChar += 1;
+      }
+      int slash = servletPath.indexOf('/', firstChar);
+      if (slash == -1) {
+        slash = servletPath.length();
+      }
+      String uPFile = servletPath.substring(firstChar, slash);
+
         analyze(uPFile);
     }
 
@@ -181,7 +194,7 @@ public class UPFileSpec {
     public void setTargetNodeId(String nodeId) {
         this.targetNodeId=nodeId;
     }
-    
+
     /**
      * Set extras to be appended to the spec before the suffix element (".uP")
      *
@@ -190,7 +203,7 @@ public class UPFileSpec {
     public void setUPFileExtras(String extras) {
         this.uPFile_extras=extras;
     }
-        
+
 
     /**
      * Returns a tag identifier.
@@ -209,7 +222,7 @@ public class UPFileSpec {
     public String getMethod() {
         return method;
     }
-    
+
     /**
      * Determine Id specified by the method element.
      *
@@ -238,9 +251,9 @@ public class UPFileSpec {
     }
 
     /**
-     * Returns a "cleaned-up" version of the uP file with all known 
+     * Returns a "cleaned-up" version of the uP file with all known
      * fields such as tag, method, and target, removed. This can be used by...
-     * 
+     *
      * @return a <code>String</code> value, <code>null</code> if none were encountered.
      */
     public String getUPFileExtras() {
@@ -291,6 +304,11 @@ public class UPFileSpec {
 
     protected static String buildUPFileBase(String tagId,String method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
         StringBuffer sb=new StringBuffer();
+        if (method != null && method.equals(WORKER_URL_ELEMENT) &&
+            methodNodeId != null && methodNodeId.equals(FILE_DOWNLOAD_WORKER)) {
+          sb.append(method).append('/').append(methodNodeId).append('/');
+        }
+
         if(tagId!=null) {
             sb.append("tag").append(PORTAL_URL_SEPARATOR);
             sb.append(tagId).append(PORTAL_URL_SEPARATOR);
@@ -302,7 +320,7 @@ public class UPFileSpec {
             throw new PortalException("UPFileSpec: method can not be null!");
         }
 
-        if(methodNodeId!=null) { 
+        if(methodNodeId!=null) {
             sb.append(methodNodeId).append(PORTAL_URL_SEPARATOR);
         } else {
             throw new PortalException("UPFileSpec: method node Id can not be null!");
@@ -382,13 +400,13 @@ public class UPFileSpec {
             // sink the rest into the uPFile_extras
             uPFile_extras=sinkTokenization(uPTokenizer,PORTAL_URL_SEPARATOR,currentToken);
 
-            
+
         } else {
             // blank .uP file ?
             return;
         }
     }
-    
+
     /**
      * Sinks tokens back into a string. All except for the last one.
      *
@@ -404,7 +422,7 @@ public class UPFileSpec {
         } else {
             sb=new StringBuffer();
         }
-                    
+
         while(st.hasMoreTokens()) {
             String token=st.nextToken();
             if(st.hasMoreTokens()) {
