@@ -68,6 +68,7 @@ function xml(nodelist){
 	<xsl:otherwise>
         <form action="{$baseActionURL}" method="post">
       	  <input type="hidden" name="action" value="publish"/>
+      	  <input type="hidden" name="class" value="{class}"/>
 	  <input type="hidden" name="currentStep" value="{$currentStep}"/>
 	  <input type="hidden" name="numSteps" value="{$numSteps}"/>
 		<!--<xsl:param name="numSteps" select="count(params/step)"/>-->
