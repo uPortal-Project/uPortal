@@ -42,6 +42,7 @@ Version $Revision$
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <!--modes: view (default), preferences, fragment-->
     <xsl:variable name="mode" select="/layout/@mode"/>
+    <xsl:variable name="current_structure" select="/layout/@current_structure"/>
     <!-- <xsl:variable name="mediaPath">/home/immdca13/workspace/portal/webpages/media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable> -->
     <xsl:param name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:param>
     <xsl:param name="skin" select="'immII'"/>
@@ -58,7 +59,7 @@ Version $Revision$
     <xsl:param name="authorizedFragmentPublisher" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
-    <xsl:param name="currentFragmentID" select="'default_layout'"/>
+    <!-- <xsl:param name="currentFragmentID" select="'default_layout'"/> -->
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
     <xsl:param name="selectedID" select="/layout/@selectedID"/>
@@ -1359,7 +1360,13 @@ Version $Revision$
                     <img src="{$mediaPathSkin}/transparent.gif" width="20" height="1"/>
                 </td>
                 <td nowrap="nowrap" class="uportal-background-selected">
-                    <span class="uportal-channel-title">User Preferences Actions</span>
+                    <span class="uportal-channel-title">
+                        <!-- temporary fix until fragment mode added -->
+                        <xsl:choose>
+                            <xsl:when test=" $current_structure = 'fragment' ">Fragment Content Actions</xsl:when>
+                            <xsl:otherwise>User Preferences Actions</xsl:otherwise>
+                        </xsl:choose>
+                    </span>
                 </td>
                 <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
                     <img src="{$mediaPathSkin}/transparent.gif" width="19" height="1"/>
@@ -1393,106 +1400,7 @@ Version $Revision$
                     <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
                 </td>
                 <td align="left" class="uportal-background-light">
-                    <span class="uportal-label">
-                        <xsl:if test="not($targetRestriction='no targetRestriction parameter')">
-                            <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/>
-                            </a>
-                            <span> |<xsl:text>&#160;</xsl:text>
-                            </span>
-                        </xsl:if>
-                        <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Turn Preferences Off</a>
-                        <span> |<xsl:text>&#160;</xsl:text>
-                        </span>
-                        <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New Tab</a>
-                        <span> |<xsl:text>&#160;</xsl:text>
-                        </span>
-                        <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New Column</a>
-                        <span> |<xsl:text>&#160;</xsl:text>
-                        </span>
-                        <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uPcCS_action=init&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Add Content</a>
-                        <span> |<xsl:text>&#160;</xsl:text>
-                        </span>
-                        <a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Skins</a>
-                        <span> |<xsl:text>&#160;</xsl:text>
-                        </span>
-                        <a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Languages</a>
-                        <!--  Profiles action temporarily removed
-						<span> |<xsl:text>&#160;</xsl:text>
-						</span>
-						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
-						-->
-                        <xsl:if test="$authorizedFragmentPublisher='true'">
-                            <!-- <br/> -->
-                            <span> |<xsl:text>&#160;</xsl:text>
-                            </span>
-                            <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uPcFM_action=default&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=lastSessionTabID&amp;lastSessionTabID={$focusedTabID}">Fragments</a>
-                            <!-- <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content"> -->
-                            <!-- This test wil need to be modified when multiple layouts are allowed -->
-                            <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')"> -->
-                            <!-- <xsl:variable name="newFragment">true</xsl:variable> -->
-                            <!-- <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
-                                    </xsl:if>
-                                    <option value="default_layout">
-                                        <xsl:if test="$currentFragmentID='default_layout'">
-                                            <xsl:attribute name="selected">selected</xsl:attribute>
-                                        </xsl:if> My layout</option>
-                                    <xsl:for-each select="fragments/fragment">
-                                        <option value="{@ID}">
-                                            <xsl:if test="$currentFragmentID=@ID">
-                                                <xsl:attribute name="selected">selected</xsl:attribute>
-                                            </xsl:if>
-                                            <xsl:value-of select="@desc"/>
-                                        </option>
-                                    </xsl:for-each>
-                                </select>
-                                <input type="hidden" name="uP_fragment_action" value="edit"/>
-                                <input type="hidden" name="uP_sparam" value="mode"/>
-                                <input type="hidden" name="mode" value="{$mode}"/>
-                                <input type="hidden" name="uP_sparam" value="targetAction"/>
-                                <input type="hidden" name="targetAction" value="no targetAction parameter"/>
-                                <input type="hidden" name="uP_sparam" value="targetRestriction"/>
-                                <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-                                <input type="hidden" name="uP_cancel_targets" value="true"/> -->
-                            <!--<option><xsl:value-of select="New fragment"/></option>-->
-                            <!-- <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Load selected fragment" title="Load selected fragment"/> -->
-                            <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
-                            <!--  <xsl:if test="$fragmentAuthor='true'">
-                                    <span> |<xsl:text>&#160;</xsl:text>
-                                    </span> -->
-                            <!-- <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true"> -->
-                            <!-- <a href="{$baseActionURL}?uP_fragment_action=new&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">New Tab Fragment</a>
-                                    <xsl:if test="not($currentFragmentID = 'default_layout')">
-                                        <span> |<xsl:text>&#160;</xsl:text>
-                                        </span>
-                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Save Fragment</a>
-                                    </xsl:if>
-                                    <xsl:if test="$currentFragmentID = fragments/fragment/@ID and not($currentFragmentID = 'default_layout')">
-                                        <span> |<xsl:text>&#160;</xsl:text>
-                                        </span>
-                                        <a href="{$baseActionURL}?uP_fragment_action=publish&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Publish Fragment</a>
-                                    </xsl:if>
-                                    <xsl:if test="not($currentFragmentID = 'default_layout')">
-                                        <span> |<xsl:text>&#160;</xsl:text>
-                                        </span>
-                                        <a href="{$baseActionURL}?uP_fragment_action=delete&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Delete Fragment</a>
-                                    </xsl:if>
-                                </xsl:if>
-                            </form> -->
-                        </xsl:if>
-                        <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
-                            <form name="addFragNameDesc" method="post" action="{$baseActionURL}"> New Fragment Name:<input name="uP_fragment_name" type="text" class="uportal-input-text" maxlength="30"/> New Fragment Description:<input name="uP_fragment_desc" type="text" class="uportal-input-text"/>
-                                <input type="submit" name="uPCM_submit" value="Submit" class="uportal-button"/>
-                                <input type="hidden" name="uP_fragment_action" value="edit"/>
-                                <input type="hidden" name="uP_sparam" value="mode"/>
-                                <input type="hidden" name="mode" value="{$mode}"/>
-                                <input type="hidden" name="uP_sparam" value="targetAction"/>
-                                <input type="hidden" name="targetAction" value="no targetAction parameter"/>
-                                <input type="hidden" name="uP_sparam" value="targetRestriction"/>
-                                <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-                                <input type="hidden" name="uP_cancel_targets" value="true"/>
-                            </form>
-                        </xsl:if> -->
-                    </span>
+                    <xsl:call-template name="actionList"/>
                 </td>
                 <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/iconbarrightborder.gif); background-repeat:repeat-y;">
                     <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
@@ -2136,6 +2044,9 @@ Version $Revision$
         </xsl:choose>
         <!-- Check if the parent node is immutable before allowing move -->
         <xsl:choose>
+            <xsl:when test="count(/layout/navigation/*) = 1">
+                <img alt="Move tab is disabled - no place to move" title="Move tab is disabled - no place to move" src="{$mediaPathIcons}/moveicondisabled.gif" width="22" height="18" border="0"/>
+            </xsl:when>
             <xsl:when test="/layout/@immutable='false'">
                 <img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
                 <a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=Tab Move">
@@ -2152,6 +2063,10 @@ Version $Revision$
         <!-- </a> -->
         <!-- Check if the node is unremovable before allowing delete -->
         <xsl:choose>
+            <!--  temporary fix for tab only fragments -->
+            <xsl:when test=" $current_structure = 'fragment' ">
+                <img alt="Remove tab is disabled - use fragment manager" title="Remove tab is disabled - use fragment manager" src="{$mediaPathIcons}/canicondisabled.gif" width="22" height="18" border="0"/>
+            </xsl:when>
             <xsl:when test="/layout/@immutable='false' and @unremovable='false'">
                 <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
                     <img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
@@ -2445,5 +2360,78 @@ Version $Revision$
         <xsl:if test="@printable='true'">
             <xsl:call-template name="channel.action.print"/>
         </xsl:if>
+    </xsl:template>
+    <xsl:template name="actionList">
+        <xsl:choose>
+            <xsl:when test=" $current_structure = 'fragment' ">
+                <span class="uportal-label">
+                    <xsl:if test="not($targetRestriction='no targetRestriction parameter')">
+                        <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/>
+                        </a>
+                        <span> |<xsl:text>&#160;</xsl:text>
+                        </span>
+                    </xsl:if>
+                    <!--                     <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/>
+                    </a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span> -->
+                    <!-- <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Return to Fragment Manager</a>
+            <span> |<xsl:text>&#160;</xsl:text>
+            </span> -->
+                    <!-- <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New Tab</a>
+            <span> |<xsl:text>&#160;</xsl:text>
+            </span> -->
+                    <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New Column</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uPcCS_action=init&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Add Content</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <!-- <a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Skins</a>
+            <span> |<xsl:text>&#160;</xsl:text>
+            </span> -->
+                    <!-- <a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Languages</a>
+            <xsl:if test="$authorizedFragmentPublisher='true'">
+                <span> |<xsl:text>&#160;</xsl:text>
+                </span> -->
+                    <a href="{$baseActionURL}?uP_sparam=uP_save&amp;uP_save=all">Save Fragment Layout </a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uPcFM_action=default&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=lastSessionTabID&amp;lastSessionTabID={$focusedTabID}">Return to Fragment Manager</a>
+                    <!-- </xsl:if> -->
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="uportal-label">
+                    <xsl:if test="not($targetRestriction='no targetRestriction parameter')">
+                        <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/>
+                        </a>
+                        <span> |<xsl:text>&#160;</xsl:text>
+                        </span>
+                    </xsl:if>
+                    <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Turn Preferences Off</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New Tab</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New Column</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uPcCS_action=init&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Add Content</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Skins</a>
+                    <span> |<xsl:text>&#160;</xsl:text>
+                    </span>
+                    <a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Languages</a>
+                    <xsl:if test="$authorizedFragmentPublisher='true'">
+                        <span> |<xsl:text>&#160;</xsl:text>
+                        </span>
+                        <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uPcFM_action=default&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=lastSessionTabID&amp;lastSessionTabID={$focusedTabID}">Fragments</a>
+                    </xsl:if>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

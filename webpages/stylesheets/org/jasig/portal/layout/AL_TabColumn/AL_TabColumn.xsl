@@ -43,6 +43,7 @@ Version $Revision$
     <!--modes: view (default), preferences, fragment-->
     <!--<xsl:param name="mode" select="'view'"/>-->
     <xsl:param name="mode" select="'view'"/>
+    <xsl:param name="current_structure" select="'layout'"/>
     <!--Target restrictions: tab, column, channel-->
     <xsl:param name="targetRestriction" select="'no targetRestriction parameter'"/>
     <!--<xsl:param name="targetRestriction" select="'channel'"/>-->
@@ -90,7 +91,7 @@ Version $Revision$
     <!--Create root element - call child templates-->
     <!-- -->
     <xsl:template match="layout">
-        <layout authenticated="{$authenticated}" unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
+        <layout authenticated="{$authenticated}" current_structure="{$current_structure}" unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
             <!--             <xsl:if test="$mode='preferences'">
                 <xsl:apply-templates select="fragments"/>
             </xsl:if> -->
