@@ -129,6 +129,15 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException;
  */
 public Iterator getMembers() throws GroupsException;
 /**
+ * Returns the type represented by the <code>IGroupMember</code>.  In the
+ * case of an <code>IEntityGroup</code> this is <code>IEntityGroup</code>.  In
+ * the case of an <code>IEntity</code> it is the <code>entityType</code> of
+ * the <code>IEntity</code>.
+ *
+ * @return java.lang.Class
+ */
+public Class getType();
+/**
  * @return int
  */
 public int hashCode();
