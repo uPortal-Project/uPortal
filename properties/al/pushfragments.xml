@@ -71,7 +71,7 @@
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
-		<folder name="Entertainment" immutable="Y" unremovable="Y" hidden="N">
+		<folder name="Developers" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="css-viewer" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
