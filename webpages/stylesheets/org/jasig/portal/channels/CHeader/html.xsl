@@ -41,8 +41,8 @@ $Revision$
   <xsl:template match="header">
     <xsl:if test="$authenticated != 'false'">
       <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">Home </a> | <xsl:if test="chan-mgr-chanid">
-      <a href="{$baseActionURL}?uP_root={chan-mgr-chanid}" class="uportal-navigation-category"> Channel Admin </a> | </xsl:if>
-      <a href="{$baseActionURL}?uP_root={preferences-chanid}" class="uportal-navigation-category"> Preferences </a> | <a href="Logout" class="uportal-navigation-category"> Logout </a>
+      <a href="{$baseActionURL}?uP_fname={chan-mgr-chanid}" class="uportal-navigation-category"> Channel Admin </a> | </xsl:if>
+      <a href="{$baseActionURL}?uP_fname={preferences-chanid}" class="uportal-navigation-category"> Preferences </a> | <a href="Logout" class="uportal-navigation-category"> Logout </a>
     </xsl:if>
   </xsl:template>
 </xsl:stylesheet>
