@@ -117,19 +117,19 @@ final class TabColumnPrefsState extends BaseState
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
     {
-	this.runtimeData = rd;
-	
-	// see if a top-level action has been given
-	String action=rd.getParameter("action");
-	if(action!=null && action.equals("manageSkins")) {
-	    // switch the internal state 
-	    internalState=new SelectSkinsState(this);
-	    internalState.setStaticData(staticData);
-	} else if(action!=null && action.equals("managePreferences")) {
-	    internalState=new DefaultState(this);
-	    internalState.setStaticData(staticData);
-	}
-	this.internalState.setRuntimeData(rd);
+        this.runtimeData = rd;
+
+        // see if a top-level action has been given
+        String action=rd.getParameter("action");
+        if(action!=null && action.equals("manageSkins")) {
+            // switch the internal state
+            internalState=new SelectSkinsState(this);
+            internalState.setStaticData(staticData);
+        } else if(action!=null && action.equals("managePreferences")) {
+            internalState=new DefaultState(this);
+            internalState.setStaticData(staticData);
+        }
+        this.internalState.setRuntimeData(rd);
 
     try
     {
@@ -227,13 +227,48 @@ final class TabColumnPrefsState extends BaseState
     saveLayout();
   }
 
-  private final void addFolder(String folderName, String method, String destinationFolderId) throws Exception
+  /**
+   * Adds a new tab to the layout.
+   * @param tabName the name of the tab
+   * @param method either <code>insertBefore</code> or <code>appendAfter</code>
+   * @param destinationTabId the column to insert the new column before or append after (may actually be a tab)
+   * @throws Exception
+   */
+  private final void addTab(String tabName, String method, String destinationTabId) throws Exception
   {
-    Element newFolder = createFolder(folderName);
-    Node destinationFolder = userLayout.getElementById(destinationFolderId);
+    Element newTab = createFolder(tabName);
+    Element destinationTab = userLayout.getElementById(destinationTabId);
+    Node parent = destinationTab.getParentNode();
+    Element siblingTab = method.equals("insertBefore") ? destinationTab : null;
+    context.getUserLayoutManager().moveNode(newTab, parent, siblingTab);
+
+    saveLayout();
+  }
+
+  /**
+   * Adds a new column into the layout.  Before the column is added,
+   * a check is done to see whether the destination element is a tab.  If it is,
+   * a new column is inserted first.
+   * @param method either <code>insertBefore</code> or <code>appendAfter</code>
+   * @param destinationElementId the column to insert the new column before or append after (may actually be a tab)
+   * @throws Exception
+   */
+  private final void addColumn(String method, String destinationElementId) throws Exception
+  {
+    Element newColumn = createFolder("");
+    Element destinationFolder = userLayout.getElementById(destinationElementId);
+
+    // Insert a column if the destination element is a tab
+    if (isTab(destinationFolder))
+    {
+      Element aColumn = createFolder("");
+      context.getUserLayoutManager().moveNode(aColumn, destinationFolder, null);
+      destinationFolder = aColumn;
+    }
+
     Node parent = destinationFolder.getParentNode();
     Node siblingFolder = method.equals("insertBefore") ? destinationFolder : null;
-    context.getUserLayoutManager().moveNode(newFolder, parent, siblingFolder);
+    context.getUserLayoutManager().moveNode(newColumn, parent, siblingFolder);
 
     saveLayout();
   }
@@ -519,12 +554,18 @@ final class TabColumnPrefsState extends BaseState
           try
           {
             String methodAndID = runtimeData.getParameter("method_ID");
-            String sourceTabId = runtimeData.getParameter("elementID");
-            int indexOf_ = methodAndID.indexOf("_");
-            String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-            String destinationTabId = methodAndID.substring(indexOf_ + 1);
 
-            moveTab(sourceTabId, method, destinationTabId);
+            if (methodAndID != null)
+            {
+              String sourceTabId = runtimeData.getParameter("elementID");
+              int indexOf_ = methodAndID.indexOf("_");
+              String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
+              String destinationTabId = methodAndID.substring(indexOf_ + 1);
+
+              moveTab(sourceTabId, method, destinationTabId);
+            }
+            else
+              action = "selectTab";
           }
           catch (Exception e)
           {
@@ -540,11 +581,17 @@ final class TabColumnPrefsState extends BaseState
           {
             String tabName = runtimeData.getParameter("tabName");
             String methodAndID = runtimeData.getParameter("method_ID");
-            int indexOf_ = methodAndID.indexOf("_");
-            String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-            String destinationTabId = methodAndID.substring(indexOf_ + 1);
 
-            addFolder(tabName, method, destinationTabId);
+            if (methodAndID != null)
+            {
+              int indexOf_ = methodAndID.indexOf("_");
+              String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
+              String destinationTabId = methodAndID.substring(indexOf_ + 1);
+
+              addTab(tabName, method, destinationTabId);
+            }
+            else
+              action = "newTab";
           }
           catch (Exception e)
           {
@@ -630,12 +677,11 @@ final class TabColumnPrefsState extends BaseState
         {
           try
           {
-            String columnName = "";
             String method = runtimeData.getParameter("method");
             elementID = runtimeData.getParameter("elementID");
             String destinationColumnId = elementID;
 
-            addFolder(columnName, method, destinationColumnId);
+            addColumn(method, destinationColumnId);
           }
           catch (Exception e)
           {
@@ -728,7 +774,7 @@ final class TabColumnPrefsState extends BaseState
         // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
         // Currently this code assumes the use of Xalan as does much of the framework
         org.apache.xalan.xslt.XSLTProcessor processor = org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor();
-	String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
+        String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
         org.apache.xalan.xslt.StylesheetRoot ssRoot = XSLT.getStylesheetRoot(xslURI);
         processor.setStylesheet(ssRoot);
         processor.setDocumentHandler(out);
@@ -759,52 +805,52 @@ final class TabColumnPrefsState extends BaseState
   protected class SelectSkinsState extends BaseState
   {
       protected TabColumnPrefsState context;
-      
+
       public SelectSkinsState(TabColumnPrefsState context) {
-	  this.context = context;
+          this.context = context;
       }
 
       public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-	  runtimeData = rd;
-	  String action = runtimeData.getParameter("action");
-	  if (action != null) {
-	      if (runtimeData.getParameter("submitSave")!=null) {
-		  // save
-		  String skinName = runtimeData.getParameter("skinName");
-		  userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
-		  // save user preferences ?
-		  saveUserPreferences();
-		  // reset state
-		  BaseState df=new DefaultState(context);
-		  df.setStaticData(staticData);
-		  context.setState(df);
-	      } else if (runtimeData.getParameter("submitCancel")!=null) {
-		  // return to the default state
-		  BaseState df=new DefaultState(context);
-		  df.setStaticData(staticData);
-		  context.setState(df);
-	      }
-	  }
+          runtimeData = rd;
+          String action = runtimeData.getParameter("action");
+          if (action != null) {
+              if (runtimeData.getParameter("submitSave")!=null) {
+                  // save
+                  String skinName = runtimeData.getParameter("skinName");
+                  userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
+                  // save user preferences ?
+                  saveUserPreferences();
+                  // reset state
+                  BaseState df=new DefaultState(context);
+                  df.setStaticData(staticData);
+                  context.setState(df);
+              } else if (runtimeData.getParameter("submitCancel")!=null) {
+                  // return to the default state
+                  BaseState df=new DefaultState(context);
+                  df.setStaticData(staticData);
+                  context.setState(df);
+              }
+          }
       }
 
       public void renderXML (DocumentHandler out) throws PortalException
       {
-	  String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
-	  Document doc = new org.apache.xerces.dom.DocumentImpl();
+          String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+          Document doc = new org.apache.xerces.dom.DocumentImpl();
 
-	  Hashtable params = new Hashtable(2);
-	  params.put("baseActionURL", runtimeData.getBaseActionURL());
-	  if(currentSkin!=null)
-	      params.put("currentSkin", currentSkin);
+          Hashtable params = new Hashtable(2);
+          params.put("baseActionURL", runtimeData.getBaseActionURL());
+          if(currentSkin!=null)
+              params.put("currentSkin", currentSkin);
 
-	  String xslURI=set.getStylesheetURI("skinList",runtimeData.getBrowserInfo());
+          String xslURI=set.getStylesheetURI("skinList",runtimeData.getBrowserInfo());
 
-	  try {
-	      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(xslURI)), out, params);
-	  } catch (Exception e) {
-	      throw new GeneralRenderingException(e.getMessage());
-	  }
-	  
+          try {
+              XSLT.transform(doc, new URL(UtilitiesBean.fixURI(xslURI)), out, params);
+          } catch (Exception e) {
+              throw new GeneralRenderingException(e.getMessage());
+          }
+
       }
   }
 }
