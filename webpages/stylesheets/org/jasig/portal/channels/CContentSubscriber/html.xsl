@@ -40,7 +40,7 @@ Version $Revision$
   <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
   <xsl:param name="locale" select="'en_US'"/>
   <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CContentSubscriber'"/>
-  <xsl:param name="channelState" select="'search'"/>
+  <xsl:param name="channelState" select="'browse'"/>
   <!--~-->
   <!-- parameters for content search -->
   <!--~-->
@@ -880,7 +880,7 @@ Version $Revision$
               </td>
               <td align="center" valign="top">
                 <br/>
-                <input name="textfield" type="text" class="uportal-input-text" value="search term(s)" size="25"/>
+                <input name="textfield" type="text" class="uportal-input-text" value="Search mode under construction" size="40"/>
               </td>
               <td>
                 <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
@@ -1242,7 +1242,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}">
-                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
+                <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
               </a>
@@ -1259,20 +1259,21 @@ Version $Revision$
               </table>
             </td>
           </tr>
-        </table>
-        <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
-          <!-- Form not needed until language selector is reintroduced
-          <form name="subscribe_channel_form" action="{$baseActionURL}" method="post">
-          -->
           <tr>
-            <td width="100%">
-              <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                <tr class="uportal-channel-text" valign="top" align="right">
-                  <td nowrap="nowrap">Type:</td>
+            <td colspan="2" class="uportal-background-content">
+              <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+            </td>
+            <td class="uportal-background-content">
+              <!-- Form not needed until language selector is reintroduced
+                <form name="subscribe_channel_form" action="{$baseActionURL}" method="post">
+                -->
+              <table cellpadding="5" cellspacing="0" border="0" width="100%">
+                <tr class="uportal-channel-text" valign="top">
+                  <td nowrap="nowrap" align="right">Type:</td>
                   <td width="100%">Individual Channel</td>
                 </tr>
-                <tr class="uportal-channel-text" valign="top" align="right">
-                  <td nowrap="nowrap">Description:</td>
+                <tr class="uportal-channel-text" valign="top">
+                  <td nowrap="nowrap" align="right">Description:</td>
                   <td width="100%">
                     <xsl:value-of select="@description"/>
                   </td>
@@ -1305,8 +1306,8 @@ Version $Revision$
                   </td>
                 </tr>
                 Language Selector temporarily removed until i18n is more inclusive  -->
-                <tr class="uportal-channel-text" valign="top" align="right">
-                  <td nowrap="nowrap">Actions:</td>
+                <tr class="uportal-channel-text" valign="top">
+                  <td nowrap="nowrap" align="right">Actions:</td>
                   <td width="100%">
                     <table width="100%" border="0" cellspacing="3" cellpadding="3">
                       <!-- Preview of Channel Held until Later Release
@@ -1320,13 +1321,13 @@ Version $Revision$
                           <a href="#" target="_blank">Preview this channel in a new window</a>
                         </td>
                       </tr>  Preview of Channel Held until Later Release -->
-                      <tr align="left" valign="top" class="uportal-channel-text">
-                        <td>
+                      <tr align="left" class="uportal-channel-text">
+                        <td valign="top">
                           <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
-                        <td width="100%">
+                        <td width="100%" valign="top">
                           <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel"> Subscribe to this channel</a>
                         </td>
                       </tr>
@@ -1368,7 +1369,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}">
-                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
+                <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
               </a>
@@ -1404,7 +1405,7 @@ Version $Revision$
               <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="16" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <img src="{$mediaPath}/folder_open.gif" width="16" height="16" border="0" alt="" title=""/>
@@ -1434,7 +1435,7 @@ Version $Revision$
               <img src="{$mediaPath}/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="16" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
@@ -1474,10 +1475,12 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="35" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={@ID}">
+                <img src="{$mediaPath}/fragment_icon.gif" width="16" height="16" border="0" alt="" title=""/>
+                <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1493,22 +1496,24 @@ Version $Revision$
               </table>
             </td>
           </tr>
-        </table>
-        <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
           <tr>
-            <td>
-              <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                <tr class="uportal-channel-text" valign="top" align="left">
-                  <td nowrap="nowrap">Type:</td>
-                  <td width="100%">Fragment</td>
-                </tr>
-                <tr class="uportal-channel-text" valign="top" align="left">
-                  <td nowrap="nowrap">Description:</td>
-                  <td width="100%">
-                    <xsl:value-of select="./description"/>
-                  </td>
-                </tr>
-                <!-- Language Selector temporarily removed until i18n is more inclusive 
+            <td colspan="2" class="uportal-background-content"/>
+            <td class="uportal-background-content" width="100%">
+              <table cellpadding="5" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <table cellpadding="5" cellspacing="0" border="0" width="100%">
+                      <tr class="uportal-channel-text" valign="top">
+                        <td nowrap="nowrap" align="right">Type:</td>
+                        <td width="100%">Fragment</td>
+                      </tr>
+                      <tr class="uportal-channel-text" valign="top">
+                        <td nowrap="nowrap" align="right">Description:</td>
+                        <td width="100%">
+                          <xsl:value-of select="./description"/>
+                        </td>
+                      </tr>
+                      <!-- Language Selector temporarily removed until i18n is more inclusive 
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
                   <td width="100%">
@@ -1536,11 +1541,11 @@ Version $Revision$
                   </td>
                 </tr>
                 Language Selector temporarily removed until i18n is more inclusive -->
-                <tr class="uportal-channel-text" valign="top" align="left">
-                  <td nowrap="nowrap">Actions:</td>
-                  <td width="100%">
-                    <table width="100%" border="0" cellspacing="3" cellpadding="3">
-                      <!-- Preview of Channel Held until Later Release
+                      <tr class="uportal-channel-text" valign="top">
+                        <td nowrap="nowrap" align="right">Actions:</td>
+                        <td width="100%">
+                          <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                            <!-- Preview of Channel Held until Later Release
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
                           <a href="#" target="_blank">
@@ -1551,14 +1556,17 @@ Version $Revision$
                           <a href="#" target="_blank">Preview this fragment in a new window</a>
                         </td>
                       </tr>  Preview of Channel Held until Later Release -->
-                      <tr align="left" valign="top" class="uportal-channel-text">
-                        <td>
-                          <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
-                            <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
-                          </a>
-                        </td>
-                        <td width="100%">
-                          <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
+                            <tr align="left" valign="top" class="uportal-channel-text">
+                              <td valign="top">
+                                <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
+                                  <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
+                                </a>
+                              </td>
+                              <td width="100%" valign="top">
+                                <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
+                              </td>
+                            </tr>
+                          </table>
                         </td>
                       </tr>
                     </table>
@@ -1589,11 +1597,11 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="35" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={@ID}">
-                <img src="{$mediaPath}/file.gif" width="16" height="16" border="0" alt="" title=""/>
+                <img src="{$mediaPath}/fragment_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                 <xsl:value-of select="./name"/>
               </a>
