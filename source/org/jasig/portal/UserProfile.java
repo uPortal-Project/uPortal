@@ -49,6 +49,7 @@ public class UserProfile {
     protected int struct_ss_id;
     protected int theme_ss_id;
     protected boolean system=false;
+    protected String locale;
 
     public UserProfile() {};
     public UserProfile(int id, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
@@ -67,6 +68,7 @@ public class UserProfile {
     public int getStructureStylesheetId() { return struct_ss_id; }
     public int getThemeStylesheetId() { return theme_ss_id; }
     public boolean isSystemProfile(){return system; }
+    public String getLocale() { return locale; }
 
     public void setProfileId(int id) { this.id=id; }
     public void setProfileName(String name) { pName=name; }
@@ -75,6 +77,7 @@ public class UserProfile {
     public void setStructureStylesheetId(int ss_id) { struct_ss_id=ss_id; }
     public void setThemeStylesheetId(int ss_id) { theme_ss_id=ss_id; }
     public void setSystemProfile(boolean s) { system=s; }
+    public void setLocale(String l) {locale=l; }
     
     public boolean equals(Object o) {
       boolean retValue = false;
