@@ -247,10 +247,6 @@ public class TabColumnPrefsState extends BaseState
 
   private final void setActiveTab(String activeTab) throws Exception
   {
-    // Must get from store because the one in memory is comtaminated with stylesheet params
-    // that shouldn't get persisted
-    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     ssup.putParameterValue("activeTab", activeTab);
 
@@ -331,10 +327,6 @@ public class TabColumnPrefsState extends BaseState
 
   private final void changeColumnWidths(HashMap columnWidths) throws Exception
   {
-    // Must get from store because the one in memory is comtaminated with stylesheet params
-    // that shouldn't get persisted
-    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     java.util.Set sColWidths = columnWidths.keySet();
     java.util.Iterator iterator = sColWidths.iterator();
@@ -382,62 +374,6 @@ public class TabColumnPrefsState extends BaseState
           siblingId=destinationId;
       }
       ulm.moveNode(sourceId,ulm.getParentId(destinationId),siblingId);
-
-      //ken: I don't really understand what's being done below ... looks like you're trying to account for
-      //     a move where a tab becomes a column or the other way around. Those moves are prohibited by the
-      //     tab-column layout, and in fact should be restricted.
-
-      /*
-
-    Element layout = userLayout.getDocumentElement();
-    Document doc = layout.getOwnerDocument();
-
-    Element source = userLayout.getElementById(sourceId);
-    Element destination = userLayout.getElementById(destinationId);
-    Element sourceColumn = source;
-    Element destinationColumn = destination;
-
-    // If source is a tab, create a column, move the tab's children channels to this column,
-    // and use this new column as the source
-    if (isTab(source))
-    {
-      sourceColumn = createFolder("");
-      NodeList channels = source.getElementsByTagName("channel");
-      int numChannels = channels.getLength();
-      for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
-      {
-        Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
-        boolean moveSuccessful = UserPreferencesManager.moveNode(channel, sourceColumn, null);
-        // Not done yet: Need to deal with case when move isn't successful!!!
-      }
-
-      source.appendChild(sourceColumn);
-    }
-
-    // If destination is a tab, create a column, move the tab's children channels to this column,
-    // and use this new column as the destination
-    if (isTab(destination))
-    {
-      destinationColumn = createFolder("");
-      NodeList channels = destination.getElementsByTagName("channel");
-      int numChannels = channels.getLength();
-      for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
-      {
-        Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
-        boolean moveSuccessful = UserPreferencesManager.moveNode(channel, destinationColumn, null);
-        // Not done yet: Need to deal with case when move isn't successful!!!
-      }
-
-      destination.appendChild(destinationColumn);
-    }
-
-    // Move the source column before the destination column or at the end
-    Node targetTab = destinationColumn.getParentNode();
-    Node siblingColumn = method.equals("insertBefore") ? destinationColumn : null;
-    UserPreferencesManager.moveNode(sourceColumn, targetTab, siblingColumn);
-
-    saveLayout(false);
-      */
   }
 
   /**
@@ -449,8 +385,6 @@ public class TabColumnPrefsState extends BaseState
    */
   private final void moveChannel(String sourceChannelSubscribeId, String method, String destinationElementId) throws PortalException
   {
-      //ken: the meaning of destinationElement eludes me here ... I'll just guess -peterk.
-
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
           IUserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
@@ -537,21 +471,8 @@ public class TabColumnPrefsState extends BaseState
   private final void updateTabLock(String elementId, boolean locked) throws Exception
   {
       // NOTE: this method is to be removed soon.
-      /*
-    Element element = userLayout.getElementById(elementId);
-    if(locked)
-    {
-      element.setAttribute("unremovable", "true");
-      element.setAttribute("immutable", "true");
-    }
-    else
-    {
-      element.setAttribute("unremovable", "false");
-      element.setAttribute("immutable", "false");
-    }
-    saveLayout(false);
-      */
   }
+  
   /**
    * A folder is a tab if its parent element is the layout element
    * @param folder the folder in question
