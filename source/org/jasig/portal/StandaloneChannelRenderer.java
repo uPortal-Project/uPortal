@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -65,7 +63,7 @@ import javax.xml.transform.stream.StreamSource;
  * StandaloneChannelRenderer is meant to be used as a base class for channels
  * that might be rendered outside of the standard user-layout driven scheme.
  * (for example CSelectSystemProfile).
- * @author Peter Kharchenko
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 
@@ -186,43 +184,37 @@ public class StandaloneChannelRenderer extends BaseChannel {
     private ChannelRuntimeData getRuntimeData(HttpServletRequest req) {
 	// construct runtime data
         this.binfo=new BrowserInfo(req);
-	String channelTarget = null;
-        Hashtable targetParams = new Hashtable ();
-        String sp=req.getServletPath();
-        if(sp!=null) {
-            int si1=sp.indexOf(ChannelManager.channelAddressingPathElement+"/");
-            if(si1!=-1) {
-                si1+=ChannelManager.channelAddressingPathElement.length()+1;
-                int si2=sp.indexOf("/",si1);
-                if(si2!=-1) {
-                    channelTarget=sp.substring(si1,si2);
-                    if(channelTarget==null) {
-                        LogService.instance().log(LogService.ERROR,"StandaloneRenderer.render() : malformed channel address. Null channel target ID.");
-                    }
-                    LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
-                    Enumeration en = req.getParameterNames ();
-                    if (en != null) {
-                        while (en.hasMoreElements ()) {
-                            String pName= (String) en.nextElement ();
-                            if (!pName.equals ("channelTarget")) {
-                                Object[] val= (Object[]) req.getParameterValues(pName);
-                                if (val == null) {
-				    val = ((PortalSessionManager.RequestParamWrapper)req).getObjectParameterValues(pName);
-                                }
-                                targetParams.put (pName, val);
-                            }
-                        }
-                    }
-		}
-	    }
-	}
 
+        Hashtable targetParams = new Hashtable();
+        UPFileSpec upfs=new UPFileSpec(req);
+	String channelTarget = upfs.getTargetNodeId();
+
+        LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+        Enumeration en = req.getParameterNames();
+        if (en != null) {
+            while (en.hasMoreElements()) {
+                String pName= (String) en.nextElement();
+                Object[] val= (Object[]) req.getParameterValues(pName);
+                if (val == null) {
+                    val = ((PortalSessionManager.RequestParamWrapper)req).getObjectParameterValues(pName);
+                }
+                targetParams.put (pName, val);
+            }
+        }
 
 	ChannelRuntimeData rd= new ChannelRuntimeData();
 	rd.setBrowserInfo(binfo);
-	if(channelTarget!=null && chanID.equals(channelTarget))
+	if(channelTarget!=null && chanID.equals(channelTarget)) {
 	    rd.setParameters(targetParams);
-	rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/render.uP");
+        }
+
+        try {
+            String redirectURL=UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null);
+            rd.setBaseActionURL(req.getContextPath()+"/"+redirectURL);
+        } catch (Exception e) {
+            LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
+        }
+
 	return rd;
 
     }

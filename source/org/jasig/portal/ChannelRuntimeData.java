@@ -188,7 +188,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    *
    */
     public String getWorkerActionURL (String worker) {
-        return PortalSessionManager.WORKER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+worker+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+this.channelId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX;
+        return UPFileSpec.WORKER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+worker+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+this.channelId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
     }
 
   /**

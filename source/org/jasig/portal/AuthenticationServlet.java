@@ -56,8 +56,18 @@ import  org.jasig.portal.services.LogService;
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  */
 public class AuthenticationServlet extends HttpServlet {
-  private static final String redirectString = "render.uP";
+  private static final String redirectString;
   private Authentication m_authenticationService = null;
+
+    static {
+      String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
+      try {
+          upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
+      } catch(PortalException pe) { 
+          LogService.log(LogService.ERROR,"AuthenticationServlet::static "+pe);
+      }
+      redirectString=upFile;
+    }
 
   /**
    * Initializes the servlet
@@ -65,6 +75,7 @@ public class AuthenticationServlet extends HttpServlet {
    */
   public void init () throws ServletException {
     m_authenticationService = new Authentication();
+
   }
 
   /**

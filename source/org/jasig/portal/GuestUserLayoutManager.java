@@ -169,7 +169,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                         LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
                         upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
                     } else {
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched not matched any profile.");
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has not matched any profile.");
                     }
                 }
             }
@@ -253,7 +253,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
-                throw new PortalException("GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
+                LogService.instance().log(LogService.DEBUG,"GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
@@ -270,7 +270,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
      * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr uP_tcattr)
      * It also processes layout root requests (uP_root)
      */
-    public void processUserPreferencesParameters (HttpServletRequest req) {
+    public void processUserPreferencesParameters(HttpServletRequest req) {
         MState state=(MState)stateTable.get(req.getSession(false).getId());
         if(state==null) {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
@@ -283,21 +283,8 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             // to the channel's instance Id
             if (root.equals("me")) {
                 // get uPFile spec and search for "channel" clause
-                root=null;
-                String servletPath = req.getServletPath();
-                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-                StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-                while(uPTokenizer.hasMoreTokens()) {
-                    String nextToken=uPTokenizer.nextToken();
-                    if(nextToken.equals(PortalSessionManager.CHANNEL_URL_ELEMENT)) {
-                        if(uPTokenizer.hasMoreTokens()) {
-                            root=uPTokenizer.nextToken();
-                        } else {
-                            // abrupt end after channel element
-                            LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::processUserPreferencesParameters() : unable to extract channel ID. uPFile=\""+uPFile+"\".");
-                        }
-                    }
-                }
+                UPFileSpec upfs=new UPFileSpec(req);
+                root=upfs.getTargetNodeId();
             }
             if(root!=null) {
                 state.complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);

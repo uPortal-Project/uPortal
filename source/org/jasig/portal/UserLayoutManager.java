@@ -184,21 +184,8 @@ public class UserLayoutManager implements IUserLayoutManager {
             // to the channel's instance Id
             if (root.equals("me")) {
                 // get uPFile spec and search for "channel" clause
-                root=null;
-                String servletPath = req.getServletPath();
-                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-                StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-                while(uPTokenizer.hasMoreTokens()) {
-                    String nextToken=uPTokenizer.nextToken();
-                    if(nextToken.equals(PortalSessionManager.CHANNEL_URL_ELEMENT)) {
-                        if(uPTokenizer.hasMoreTokens()) {
-                            root=uPTokenizer.nextToken();
-                        } else {
-                            // abrupt end after channel element
-                            LogService.instance().log(LogService.ERROR, "UserLayoutManager::processUserPreferencesParameters() : unable to extract channel ID. uPFile=\""+uPFile+"\".");
-                        }
-                    }
-                }
+                UPFileSpec upfs=new UPFileSpec(req);
+                root=upfs.getTargetNodeId();
             }
             if(root!=null) {
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);

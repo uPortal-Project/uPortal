@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import org.jasig.portal.services.LogService;
 
 /**
  * Simple servlet to handle user logout. When a user
@@ -52,7 +53,17 @@ import java.io.IOException;
  */
 public class LogoutServlet extends HttpServlet {
 
-  private static final String redirectString = "render.uP";
+    private static final String redirectString;
+
+    static {
+      String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
+      try {
+          upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
+      } catch(PortalException pe) { 
+          LogService.log(LogService.ERROR,"LogoutServlet::static "+pe);
+      }
+      redirectString=upFile;
+    }
 
   /**
    * Process the incoming request and response.

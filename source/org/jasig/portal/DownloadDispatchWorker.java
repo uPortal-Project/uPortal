@@ -66,17 +66,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
         channelTarget=req.getParameter("uP_channelTarget");
         if(channelTarget==null) {
             // determine target channel id
-            String servletPath = req.getServletPath();
-            String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-            StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-            while(uPTokenizer.hasMoreTokens()) {
-                String eT=uPTokenizer.nextToken();
-                if(eT.equals("channel") && uPTokenizer.hasMoreTokens()) {
-                    channelTarget=uPTokenizer.nextToken();
-                    LogService.instance().log(LogService.DEBUG,"DownloadDispatchWorker::processWorkerDispatch() : channelTarget=\""+channelTarget+"\".");
-                    break;
-                }
-            }
+            UPFileSpec upfs=new UPFileSpec(req);
+            channelTarget=upfs.getTargetNodeId();
         }
 
         // gather parameters
@@ -108,7 +99,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 rd.setBrowserInfo(new BrowserInfo(req));
                 rd.setChannelId(channelTarget);
                 // just give a default baseActionURL
-                rd.setBaseActionURL(PortalSessionManager.RENDER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+channelTarget+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                rd.setBaseActionURL(UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                 ch.setRuntimeData(rd);
 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {

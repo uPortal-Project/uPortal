@@ -114,6 +114,9 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
 
+    // a string that will be used to designate user layout root node in .uP files
+    public static final String USER_LAYOUT_ROOT_NODE="userLayoutRootNode";
+
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
     private static Properties workerProperties;
 
@@ -217,6 +220,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 //
 
                 try {
+
                     // call layout manager to process all user-preferences-related request parameters
                     // this will update UserPreference object contained by UserLayoutManager, so that
                     // appropriate attribute incorporation filters and parameter tables can be constructed.
@@ -231,34 +235,25 @@ public class UserInstance implements HttpSessionBindingListener {
                     // In general transformations will start at the userLayoutRoot node, unless
                     // we are rendering something in a detach mode.
                     Node rElement = null;
-                    boolean detachMode = false;
                     // see if an old detach target exists in the servlet path
-                    String detachId = null;
-                    String servletPath = req.getServletPath();
 
-                    String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-                    StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-                    if(uPTokenizer.hasMoreTokens()) {
-                        String type=uPTokenizer.nextToken();
 
-                        if(type.equals(PortalSessionManager.DETACH_URL_ELEMENT)) {
-                            // detach mode, determine detached node
-                            if(uPTokenizer.hasMoreTokens()) {
-                                detachId=uPTokenizer.nextToken();
-                                //		  LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : found detachId=\""+detachId+"\".");
-                            }
-                        }
+                    UPFileSpec upfs=new UPFileSpec(req);
+                    String rootNodeId = upfs.getMethodNodeId();
+                    if(rootNodeId==null) {
+                        rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
 
-                    // see if a new detach target has been specified
-                    String newDetachId = req.getParameter("uP_detach_target");
+                    // see if a new root target has been specified
+                    String newRootNodeId = req.getParameter("uP_detach_target");
 
                     // set optimistic uPElement value
-                    String uPElement = PortalSessionManager.RENDER_URL_ELEMENT;
-                    if (newDetachId != null) {
-                        uPElement =  PortalSessionManager.DETACH_URL_ELEMENT +PortalSessionManager.PORTAL_URL_SEPARATOR+newDetachId;
-                    } else if (detachId!=null) {
-                        uPElement =  PortalSessionManager.DETACH_URL_ELEMENT +PortalSessionManager.PORTAL_URL_SEPARATOR+detachId;
+                    String uPElement=null;
+                    if(newRootNodeId!=null) {
+                        // set a new root
+                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null);
+                    } else {
+                        uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
                     }
                     // determine uPElement (optimistic prediction) --end
 
@@ -293,32 +288,31 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // verify upElement and determine rendering root --begin
                     // reset uPElement
-                    uPElement = PortalSessionManager.RENDER_URL_ELEMENT;
-                    if (newDetachId != null && (!newDetachId.equals(detachId))) {
+                    uPElement = UPFileSpec.RENDER_URL_ELEMENT;
+                    if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
                         // see if the new detach traget is valid
-                        rElement = userLayout.getElementById(newDetachId);
+                        rElement = userLayout.getElementById(newRootNodeId);
                         if (rElement != null) {
-                            // valid new detach id was specified. need to redirect
-                            res.sendRedirect(PortalSessionManager.DETACH_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+newDetachId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                            // valid new root id was specified. need to redirect
+                            // peterk: should we worry about forwarding parameters here ? or those passed with detach always get sacked ?
+                            res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
+                            // res.sendRedirect(UPFileSpec.DETACH_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+newRootNodeId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                             return;
                         }
                     }
-                    // else ignore new id, proceed with the old detach target (or the lack of such)
-                    if (detachId != null) {
-                        // LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+detachId+"\".");
-                        rElement = userLayout.getElementById(detachId);
-                        detachMode = true;
+                    // else ignore new id, proceed with the old root target (or the lack of such)
+                    if (rootNodeId != null) {
+                        // LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+rootNodeId+"\".");
+                        rElement = userLayout.getElementById(rootNodeId);
                     }
                     // if we haven't found root node so far, set it to the userLayoutRoot
                     if (rElement == null) {
                         rElement = userLayout;
-                        detachMode = false;
+                        rootNodeId=USER_LAYOUT_ROOT_NODE;
                     }
 
-                    if (detachMode) {
-                        LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : entering detach mode for nodeId=\"" + detachId + "\".");
-                        uPElement = PortalSessionManager.DETACH_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+detachId;
-                    }
+                    uPElement=UPFileSpec.buildUPFileBase(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,rootNodeId,null,null);
+
                     // inform channel manager about the new uPElement value
                     channelManager.setUPElement(uPElement);
                     // verify upElement and determine rendering root --begin
@@ -341,7 +335,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     if(this.CACHE_ENABLED) {
                         boolean ccache_exists=false;
                         // obtain the cache key
-                        cacheKey=constructCacheKey(this.getPerson(),userPreferences,uPElement);
+                        cacheKey=constructCacheKey(this.getPerson(),userPreferences,rootNodeId);
                         if(ccaching) {
                             // obtain character cache
                             CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
@@ -475,7 +469,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // determine and set the stylesheet params
                         // prepare .uP element and detach flag to be passed to the stylesheets
                         // Including the context path in front of uPElement is necessary for phone.com browsers to work
-                        sst.setParameter("baseActionURL", new String(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX));
+                        sst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
                         Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
@@ -503,6 +497,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // if operating in the detach mode, need wrap everything
                         // in a document node and a <layout_fragment> node
+                        boolean detachMode=!rootNodeId.equals(USER_LAYOUT_ROOT_NODE);
                         if (detachMode) {
                             saif.startDocument();
                             saif.startElement("","layout_fragment","layout_fragment", new org.xml.sax.helpers.AttributesImpl());
@@ -523,7 +518,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // prepare for the theme transformation
 
                         // set up of the parameters
-                        tst.setParameter("baseActionURL", new String(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX));
+                        tst.setParameter("baseActionURL", new String(uPElement+UPFileSpec.PORTAL_URL_SUFFIX));
 
                         Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
@@ -627,10 +622,10 @@ public class UserInstance implements HttpSessionBindingListener {
         return p_rendering_lock;
     }
 
-    private static String constructCacheKey(IPerson person,UserPreferences userPreferences,String uPElement) {
+    private static String constructCacheKey(IPerson person,UserPreferences userPreferences,String rootNodeId) {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
-        sbKey.append(uPElement).append(",");
+        sbKey.append(rootNodeId).append(",");
         sbKey.append(userPreferences.getCacheKey());
         return sbKey.toString();
     }
@@ -722,20 +717,17 @@ public class UserInstance implements HttpSessionBindingListener {
      */
     protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserLayoutManager ulm) throws PortalException {
 
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         if(session!=null) {
             // determine uPFile
             try {
-                String servletPath = req.getServletPath();
-                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-                StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-                if(uPTokenizer.hasMoreTokens() && uPTokenizer.nextToken().equals(PortalSessionManager.WORKER_URL_ELEMENT)) {
+                UPFileSpec upfs=new UPFileSpec(req);
+                // is this a worker method ?
+                if(upfs.getMethod()!=null && upfs.getMethod().equals(UPFileSpec.WORKER_URL_ELEMENT)) {
                     // this is a worker dispatch, process it
                     // determine worker type
-                    String workerName=null;
-                    if(uPTokenizer.hasMoreTokens()) {
-                        workerName=uPTokenizer.nextToken();
-                    }
+                    
+                    String workerName=upfs.getMethodNodeId();
 
                     if(workerName!=null) {
                         if(UserInstance.workerProperties==null) {
@@ -773,7 +765,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             }
                         }
                     } else {
-                        throw new PortalException("UserInstance::processWorkerDispatch() : Unable to determine worker type.  uPFile=\""+uPFile+"\".");
+                        throw new PortalException("UserInstance::processWorkerDispatch() : Unable to determine worker type.  uPFile=\""+upfs.getUPFile()+"\".");
                     }
                     
                     return true;

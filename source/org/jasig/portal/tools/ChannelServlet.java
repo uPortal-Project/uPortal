@@ -74,7 +74,6 @@ import javax.xml.transform.stream.StreamSource;
  * @version: $Revision$
  */
 public class ChannelServlet extends HttpServlet {
-  public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
   private static int sizeLimit = 3000000;       // Should be channel specific
   StylesheetSet set;

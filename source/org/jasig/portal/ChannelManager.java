@@ -226,7 +226,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -260,7 +260,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -479,7 +479,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -513,7 +513,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData();
                         rd.setBrowserInfo(binfo);
                         rd.setChannelId(chanId);
-                        rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                        rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -576,17 +576,9 @@ public class ChannelManager {
         channelTarget=req.getParameter("uP_channelTarget");
         if(channelTarget==null) {
             // determine target channel id
-            String servletPath = req.getServletPath();
-            String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
-            StringTokenizer uPTokenizer=new StringTokenizer(uPFile,PortalSessionManager.PORTAL_URL_SEPARATOR);
-            while(uPTokenizer.hasMoreTokens()) {
-                String eT=uPTokenizer.nextToken();
-                if(eT.equals("channel") && uPTokenizer.hasMoreTokens()) {
-                    channelTarget=uPTokenizer.nextToken();
-                    LogService.instance().log(LogService.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
-                    break;
-                }
-            }
+            UPFileSpec upfs=new UPFileSpec(req);
+            channelTarget=upfs.getTargetNodeId();
+            LogService.instance().log(LogService.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
         }
 
         if(channelTarget!=null) {
@@ -642,7 +634,7 @@ public class ChannelManager {
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setChannelId(channelTarget);
-                rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+channelTarget+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                 try {
                     isc.setRuntimeData(rd);
                 }
@@ -656,7 +648,7 @@ public class ChannelManager {
                         ChannelRuntimeData erd = new ChannelRuntimeData();
                         erd.setBrowserInfo(binfo);
                         erd.setChannelId(channelTarget);
-                        erd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+channelTarget+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                        erd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
                         errorChannel.setPortalControlStructures(pcs);
                         errorChannel.setRuntimeData(erd);
                     } catch (Exception e2) {
@@ -804,14 +796,14 @@ public class ChannelManager {
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
             rd.setChannelId(chanId);
-            rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+            rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
                 rd.setChannelId(chanId);
-                rd.setBaseActionURL(uPElement+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+chanId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                rd.setBaseActionURL(uPElement+UPFileSpec.TARGET_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+chanId+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
             }
         }
 
