@@ -711,6 +711,9 @@ public class UserInstance implements HttpSessionBindingListener {
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
         if ( person.getSecurityContext().isAuthenticated() ) {
           themePrefs.putParameterValue("authenticated","true");
+          String userName = person.getFullName();
+          if ( userName != null && userName.trim().length() > 0 )
+           themePrefs.putParameterValue("userName",userName);
           try {
             if ( ChannelStaticData.getAuthorizationPrincipal(person).canPublish() )
              themePrefs.putParameterValue("channelManager","true");
@@ -718,10 +721,6 @@ public class UserInstance implements HttpSessionBindingListener {
               LogService.log(LogService.ERROR, e);
             }
         }
-
-        String userName = person.getFullName();
-        if ( userName != null && userName.trim().length() > 0 )
-          themePrefs.putParameterValue("userName",userName);
 
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
