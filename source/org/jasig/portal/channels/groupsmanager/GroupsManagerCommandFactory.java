@@ -46,50 +46,40 @@ import java.util.Set;
  */
 public class GroupsManagerCommandFactory
       implements GroupsManagerConstants {
-   protected static HashMap bindings = new java.util.HashMap(16);
-   protected static GroupsManagerCommandFactory _instance = null;
+   protected static HashMap BINDINGS = new java.util.HashMap(16);
+   protected static boolean INITIALIZED = false;
 
-   /**
+ /**
+    * Lazily initialize the static variables.
     * Binds a hasmap name to an instance of a command object
     */
-   protected GroupsManagerCommandFactory () {
+   public static void init (){
+      if (INITIALIZED){
+         return;
+      }
       try {
-         bindings.put("Add", Class.forName(COMMANDS_PACKAGE + ".AddMembers").newInstance());
-         bindings.put("Permissions", Class.forName(COMMANDS_PACKAGE + ".AssignPermissions").newInstance());
-         bindings.put("Cancel", Class.forName(COMMANDS_PACKAGE + ".CancelSelection").newInstance());
-         bindings.put("Collapse", Class.forName(COMMANDS_PACKAGE + ".CollapseGroup").newInstance());
-         bindings.put("Create", Class.forName(COMMANDS_PACKAGE + ".CreateGroup").newInstance());
-         bindings.put("Delete", Class.forName(COMMANDS_PACKAGE + ".DeleteGroup").newInstance());
-         bindings.put("Done", Class.forName(COMMANDS_PACKAGE + ".DoneWithSelection").newInstance());
-         bindings.put("Lock", Class.forName(COMMANDS_PACKAGE + ".EditGroup").newInstance());
-         bindings.put("Expand", Class.forName(COMMANDS_PACKAGE + ".ExpandGroup").newInstance());
-         bindings.put("Search", Class.forName(COMMANDS_PACKAGE + ".Search").newInstance());
-         bindings.put("Highlight", Class.forName(COMMANDS_PACKAGE + ".HighlightGroup").newInstance());
-         bindings.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
-         bindings.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
-         bindings.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
-         bindings.put("Unlock", Class.forName(COMMANDS_PACKAGE + ".UnlockGroup").newInstance());
-         bindings.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());
-         bindings.put("ShowProperties", Class.forName(COMMANDS_PACKAGE + ".ShowProperties").newInstance());
-         bindings.put("HideProperties", Class.forName(COMMANDS_PACKAGE + ".HideProperties").newInstance());
+         BINDINGS.put("Add", Class.forName(COMMANDS_PACKAGE + ".AddMembers").newInstance());
+         BINDINGS.put("Permissions", Class.forName(COMMANDS_PACKAGE + ".AssignPermissions").newInstance());
+         BINDINGS.put("Cancel", Class.forName(COMMANDS_PACKAGE + ".CancelSelection").newInstance());
+         BINDINGS.put("Collapse", Class.forName(COMMANDS_PACKAGE + ".CollapseGroup").newInstance());
+         BINDINGS.put("Create", Class.forName(COMMANDS_PACKAGE + ".CreateGroup").newInstance());
+         BINDINGS.put("Delete", Class.forName(COMMANDS_PACKAGE + ".DeleteGroup").newInstance());
+         BINDINGS.put("Done", Class.forName(COMMANDS_PACKAGE + ".DoneWithSelection").newInstance());
+         BINDINGS.put("Lock", Class.forName(COMMANDS_PACKAGE + ".EditGroup").newInstance());
+         BINDINGS.put("Expand", Class.forName(COMMANDS_PACKAGE + ".ExpandGroup").newInstance());
+         BINDINGS.put("Search", Class.forName(COMMANDS_PACKAGE + ".Search").newInstance());
+         BINDINGS.put("Highlight", Class.forName(COMMANDS_PACKAGE + ".HighlightGroup").newInstance());
+         BINDINGS.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
+         BINDINGS.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
+         BINDINGS.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
+         BINDINGS.put("Unlock", Class.forName(COMMANDS_PACKAGE + ".UnlockGroup").newInstance());
+         BINDINGS.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());
+         BINDINGS.put("ShowProperties", Class.forName(COMMANDS_PACKAGE + ".ShowProperties").newInstance());
+         BINDINGS.put("HideProperties", Class.forName(COMMANDS_PACKAGE + ".HideProperties").newInstance());
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupsManagerCommandFactory::GroupsManagerCommandFactory(): \n"
-               + e, e);
+         Utility.logMessage("ERROR", "GroupsManagerCommandFactory::init(): \n" + e, e);
       }
-   }
-
-   /**
-    * Instantiates the singleton if not already instantiated and returns it.
-    * @return GroupsManagerCommandFactory
-    */
-   public static synchronized GroupsManagerCommandFactory instance () {
-      Utility.logMessage("DEBUG", "GroupsManagerCommandFactory::instance(): about to get instance");
-      if (_instance == null) {
-         Utility.logMessage("DEBUG", "GroupsManagerCommandFactory::instance(): about to create instance");
-         _instance = new GroupsManagerCommandFactory();
-      }
-      Utility.logMessage("DEBUG", "GroupsManagerCommandFactory::instance(): about to return instance");
-      return  _instance;
+      INITIALIZED = true;
    }
 
    /**
@@ -98,6 +88,7 @@ public class GroupsManagerCommandFactory
     * @return IGroupsManagerCommand
     */
    public static IGroupsManagerCommand get (String name) {
+      init();
       String cmdsString = "";
       String[] keys = getKeys();
       for (int i = 0; i < keys.length; i++) {
@@ -107,7 +98,7 @@ public class GroupsManagerCommandFactory
             + cmdsString);
       Utility.logMessage("DEBUG", "GroupsManagerCommandFactory::get(): about to get command: "
             + name);
-      return  (IGroupsManagerCommand)bindings.get(name);
+      return  (IGroupsManagerCommand)BINDINGS.get(name);
    }
 
    /**
@@ -115,7 +106,8 @@ public class GroupsManagerCommandFactory
     * @return String[]
     */
    public static String[] getKeys () {
-      Set keyset = bindings.keySet();
+      init();
+      Set keyset = BINDINGS.keySet();
       return  (String[])keyset.toArray(new String[0]);
    }
 }

@@ -46,43 +46,34 @@ import java.util.Set;
  */
 public class GroupsManagerWrapperFactory
       implements GroupsManagerConstants {
-   protected static HashMap bindings = new java.util.HashMap(2);
-   protected static GroupsManagerWrapperFactory _instance = null;
+   protected static HashMap BINDINGS = new java.util.HashMap(2);
+   protected static boolean INITIALIZED = false;
 
-   /**
+ /**
+    * Lazily initialize the static variables.
     * Binds a hashmap name to an instance of a wrapper object
     */
-   protected GroupsManagerWrapperFactory () {
+   public static void init (){
+      if (INITIALIZED){
+         return;
+      }
       try {
-         bindings.put(ENTITY_TAGNAME, Class.forName(WRAPPERS_PACKAGE + ".EntityWrapper").newInstance());
-         bindings.put(GROUP_TAGNAME, Class.forName(WRAPPERS_PACKAGE + ".GroupWrapper").newInstance());
+         BINDINGS.put(ENTITY_TAGNAME, Class.forName(WRAPPERS_PACKAGE + ".EntityWrapper").newInstance());
+         BINDINGS.put(GROUP_TAGNAME, Class.forName(WRAPPERS_PACKAGE + ".GroupWrapper").newInstance());
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupsManagerWrapperFactory:GroupsManagerWrapperFactory() \n"
-               + e, e);
+         Utility.logMessage("ERROR", "GroupsManagerWrapperFactory:init() \n" + e, e);
       }
+      INITIALIZED = true;
    }
 
-   /**
-    * Instantiates the singleton if not already instantiated and returns it.
-    * @return GroupsManagerWrapperFactory
-    */
-   public static synchronized GroupsManagerWrapperFactory instance () {
-      Utility.logMessage("DEBUG", "GroupsManagerWrapperFactory.instance(): about to get instance");
-      if (_instance == null) {
-         Utility.logMessage("DEBUG", "GroupsManagerWrapperFactory.instance(): about to create instance");
-         _instance = new GroupsManagerWrapperFactory();
-      }
-      Utility.logMessage("DEBUG", "GroupsManagerWrapperFactory.instance(): about to return instance");
-      return  _instance;
-   }
-
-   /**
+    /**
     * Returns the instance of a wrapper object bound to a name.
     * @param name
     * @return IGroupsManagerWrapper
     */
    public static IGroupsManagerWrapper get (String name) {
-      return  (IGroupsManagerWrapper)bindings.get(name);
+      init();
+      return  (IGroupsManagerWrapper)BINDINGS.get(name);
    }
 
    /**
@@ -90,7 +81,8 @@ public class GroupsManagerWrapperFactory
     * @return String[]
     */
    public static String[] getKeys () {
-      Set keyset = bindings.keySet();
+      init();
+      Set keyset = BINDINGS.keySet();
       return  (String[])keyset.toArray(new String[0]);
    }
 }
