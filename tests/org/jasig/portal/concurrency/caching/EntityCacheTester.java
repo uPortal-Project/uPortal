@@ -87,7 +87,7 @@ protected void deleteTestEntityType()
 /**
  * @return org.jasig.portal.concurrency.caching.IEntityCache
  */
-private IEntityCache getEntityCache()
+private IEntityCache getEntityCache() throws CachingException
 {
     return getEntityCache(cacheSize, cacheIdleTimeSecs*1000, cacheSweepIntervalSecs*1000);
 }
@@ -95,13 +95,14 @@ private IEntityCache getEntityCache()
  * @return org.jasig.portal.concurrency.caching.IEntityCache
  */
 private IEntityCache getEntityCache(int size, int idleTime, int sweepInterval)
+throws CachingException
 {
     return new ReferenceEntityCache(MINIMAL_ENTITY_CLASS, size, idleTime, sweepInterval);
 }
 /**
  * @return org.jasig.portal.concurrency.IEntityCache
  */
-private IEntityCache getInvalidatingEntityCache()
+private IEntityCache getInvalidatingEntityCache() throws CachingException
 {
     return getInvalidatingEntityCache(cacheSize, cacheIdleTimeSecs*1000, cacheSweepIntervalSecs*1000);
 }
@@ -109,6 +110,7 @@ private IEntityCache getInvalidatingEntityCache()
  * @return org.jasig.portal.concurrency.IEntityCache
  */
 private IEntityCache getInvalidatingEntityCache(int size, int idleTime, int sweepInterval)
+throws CachingException
 {
     return new ReferenceInvalidatingEntityCache(MINIMAL_ENTITY_CLASS, size, idleTime, sweepInterval);
 }

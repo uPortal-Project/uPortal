@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.Map;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.concurrency.CachingException;
@@ -80,8 +81,10 @@ public class ReferenceEntityCache implements IEntityCache
  * ReferenceEntityCache constructor comment.
  */
 public ReferenceEntityCache(Class type, int maxSize, int maxUnusedTime, int sweepInterval)
+throws CachingException
 {
     super();
+    initializeEntityType(type);
     entityType = type;
     sweepIntervalMillis = sweepInterval;
     setCache(new LRUCache(maxSize, maxUnusedTime));
@@ -100,6 +103,17 @@ public void add(IBasicEntity entity) throws CachingException
         { throw new CachingException("Problem adding " + entity + ": entity type is incompatible with cache.");}
 
     getCache().put(entity.getEntityIdentifier().getKey(), entity);
+}
+/**
+ *
+ */
+private void initializeEntityType(Class type) throws CachingException
+{
+    try
+        { EntityTypes.addIfNecessary(type, "Added by ReferenceEntityCache"); }
+    catch (Exception ex)
+        { throw new CachingException("Problem adding entity type " + type +
+          " : " + ex.getMessage()); }
 }
 /**
  * Remove stale entries from the cache.

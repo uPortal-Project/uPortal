@@ -4274,6 +4274,11 @@
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntity</value></column>
         <column><name>DESCRIPTIVE_NAME</name><value>Grouped Entity</value></column>
       </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>6</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.services.entityproperties.EntityProperties</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Property Lookup Results</value></column>
+      </row>
     </rows>
   </table>
 
