@@ -171,10 +171,8 @@ public class PortalSessionManager extends HttpServlet {
         // Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
-        res.setHeader("uPortal-version", "uPortal_2-0-pre-release-2002-01-14");
-        res.setDateHeader("Expires", 0);
-
-        
+        res.setHeader("uPortal-version", "uPortal_rel-2-0");
+        res.setDateHeader("Expires", 0);        
 
         HttpSession session = req.getSession();
         if (session != null) {
