@@ -151,10 +151,45 @@ public interface IChannelRegistryStore {
   /**
    * Gets an existing channel category.
    * @param channelCategoryId the id of the category to get
-   * @return channelCategory the new channel category
+   * @return channelCategory the channel category
    * @throws java.lang.Exception
    */
   public ChannelCategory getChannelCategory(int channelCategoryId) throws Exception;
+
+  /**
+   * Gets top level channel category
+   * @return channelCategories the new channel category
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory getTopLevelChannelCategory() throws Exception;
+
+  /**
+   * Gets all child channel categories for a parent category.
+   * @return channelCategories the children categories
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory[] getChildCategories(ChannelCategory parent) throws Exception;
+
+  /**
+   * Gets all child channel definitions for a parent category.
+   * @return channelDefinitions the children channel definitions
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition[] getChildChannels(ChannelCategory parent) throws Exception;
+
+  /**
+   * Gets the immediate parent categories of this category.
+   * @return parents, the parent categories.
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory[] getParentCategories(ChannelCategory child) throws Exception;
+
+  /**
+   * Gets the immediate parent categories of this channel definition.
+   * @return parents, the parent categories.
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory[] getParentCategories(ChannelDefinition child) throws Exception;
 
   /**
    * Persists a channel category.

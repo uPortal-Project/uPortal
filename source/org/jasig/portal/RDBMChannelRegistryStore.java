@@ -698,7 +698,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Gets an existing channel category.
    * @param channelCategoryId the id of the category to get
-   * @return channelCategory the new channel category
+   * @return channelCategory the channel category
    * @throws org.jasig.portal.groups.GroupsException
    */
   public ChannelCategory getChannelCategory(int channelCategoryId) throws GroupsException {
@@ -707,7 +707,100 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     ChannelCategory category = new ChannelCategory(channelCategoryId);
     category.setName(categoryGroup.getName());
     category.setDescription(categoryGroup.getDescription());
+    category.setCreatorId(Integer.parseInt(categoryGroup.getCreatorID()));
     return category;
+  }
+
+  /**
+   * Gets top level channel category
+   * @return channelCategories the new channel category
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelCategory getTopLevelChannelCategory() throws GroupsException {
+    IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
+    int categoryId = Integer.parseInt(categoryGroup.getKey());
+    return getChannelCategory(categoryId);
+  }
+
+  /**
+   * Gets all child channel categories for a parent category.
+   * @return channelCategories the children categories
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelCategory[] getChildCategories(ChannelCategory parent) throws GroupsException {
+    String parentKey = String.valueOf(parent.getId());
+    IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+    List categories = new ArrayList();
+    Iterator iter = parentGroup.getMembers();
+    while (iter.hasNext()) {
+      IGroupMember gm = (IGroupMember)iter.next();
+      if (gm.isGroup()) {
+        int categoryId = Integer.parseInt(gm.getKey());
+        categories.add(getChannelCategory(categoryId));
+      }
+    }
+    return (ChannelCategory[])categories.toArray(new ChannelCategory[0]);
+  }
+
+  /**
+   * Gets all child channel definitions for a parent category.
+   * @return channelDefinitions the children channel definitions
+   * @throws java.sql.SQLException
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelDefinition[] getChildChannels(ChannelCategory parent) throws SQLException, GroupsException {
+    String parentKey = String.valueOf(parent.getId());
+    IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+    List channelDefs = new ArrayList();
+    Iterator iter = parentGroup.getMembers();
+    while (iter.hasNext()) {
+      IGroupMember gm = (IGroupMember)iter.next();
+      if (gm.isEntity()) {
+        int channelPublishId = Integer.parseInt(gm.getKey());
+        channelDefs.add(getChannelDefinition(channelPublishId));
+      }
+    }
+    return (ChannelDefinition[])channelDefs.toArray(new ChannelDefinition[0]);
+  }
+
+  /**
+   * Gets the immediate parent categories of this category.
+   * @return parents, the parent categories.
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelCategory[] getParentCategories(ChannelCategory child) throws GroupsException {
+    String childKey = String.valueOf(child.getId());
+    IEntityGroup childGroup = GroupService.findGroup(childKey);
+    List parents = new ArrayList();
+    Iterator iter = childGroup.getContainingGroups();
+    while (iter.hasNext()) {
+      IGroupMember gm = (IGroupMember)iter.next();
+      if (gm.isGroup()) {
+        int categoryId = Integer.parseInt(gm.getKey());
+        parents.add(getChannelCategory(categoryId));
+      }
+    }
+    return (ChannelCategory[])parents.toArray(new ChannelCategory[0]);
+  }
+
+  /**
+   * Gets the immediate parent categories of this channel definition.
+   * @return parents, the parent categories.
+   * @throws org.jasig.portal.groups.GroupsException
+   */
+  public ChannelCategory[] getParentCategories(ChannelDefinition child) throws GroupsException {
+    String childKey = String.valueOf(child.getId());
+    IEntity childEntity = GroupService.getEntity(childKey, ChannelDefinition.class);
+    List parents = new ArrayList();
+    Iterator iter = childEntity.getContainingGroups();
+    while (iter.hasNext()) {
+      IGroupMember gm = (IGroupMember)iter.next();
+      if (gm.isGroup()) {
+        int categoryId = Integer.parseInt(gm.getKey());
+        parents.add(getChannelCategory(categoryId));
+      }
+    }
+    return (ChannelCategory[])parents.toArray(new ChannelCategory[0]);
   }
 
   /**
