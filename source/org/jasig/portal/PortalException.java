@@ -181,7 +181,7 @@ public class PortalException extends Exception {
         this.recordedException=exc;
     }
     /**
-     * @return
+     * @return <code>true</code> if the log is pending, otherwise <code>false</code>
      */
     public boolean isLogPending() {
         return logPending;
@@ -195,7 +195,7 @@ public class PortalException extends Exception {
     }
 
     /**
-     * @return
+     * @return the error ID
      */
     public ErrorID getErrorID() {
         return errorID;
@@ -210,7 +210,7 @@ public class PortalException extends Exception {
     
 
     /**
-     * @return
+     * @return the parameter
      */
     public String getParameter() {
         return parameter;

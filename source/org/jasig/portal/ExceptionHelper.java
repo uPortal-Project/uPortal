@@ -74,8 +74,9 @@ public class ExceptionHelper {
     /**
      * Generic Exception Handler called from catch clause
      *
-     * @param msg Error Message (as seen from catch)
-     * @param ex Exception caught
+     * @param eid the ErrorID (as seen from catch)
+     * @param parm
+     * @param ex the Exception caught
      * @throws PortalException
      */
     public static void genericHandler(ErrorID eid, String parm, Throwable ex)
@@ -193,10 +194,7 @@ public class ExceptionHelper {
      * @param ex Exception
      * @return Multiline text with message and traceback
      */
-    public static String errorInfo(
-        	ErrorID eid,
-        	String parm,
-        	Throwable ex) {
+    public static String errorInfo(ErrorID eid, String parm, Throwable ex) {
 		StringBuffer errorinfobuffer = new StringBuffer(1000);
 		
 		if (eid!=Errors.legacy)
@@ -220,8 +218,8 @@ public class ExceptionHelper {
     /**
      * Generic Top-Level Exception Handler caled from catch clause
      * (doesn't rethrow exception)
-     *
-     * @param msg Error Message (as seen from catch)
+     * @param eid Error ID
+     * @param parm Parameter string
      * @param ex Exception caught
      */
     public static void genericTopHandler(ErrorID eid, String parm, Throwable ex) {

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,9 @@
 package org.jasig.portal;
 
 /**
- * @author gilbert
- *
- * 
+ * Contains common ErrorIDs.
+ * @author Howard Gilbert
+ * @version $Revision$
  */
 public class Errors {
 	public static final ErrorID noResourceFile = new ErrorID("deploy","NoResource","Missing Resource file");
@@ -63,6 +63,4 @@ public class Errors {
 	public static final ErrorID remote         = new ErrorID("remote","remote","Error in Remote Server");
 	public static final ErrorID XMLparse	   = new ErrorID("XML","parse","Error parsing XML");
 	public static final ErrorID legacy         = new ErrorID("legacy","legacy","PortalException has no ErrorID");
-	
-	
 }

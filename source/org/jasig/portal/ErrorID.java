@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,9 @@
 package org.jasig.portal;
 
 /**
- * @author gilbert
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Represents a portal error or problem.
+ * @author Howard Gilbert
+ * @version $Revision$
  */
 public class ErrorID {
 	String category;
@@ -60,7 +59,8 @@ public class ErrorID {
 	
 	
 	/**
-     * @param key component/errorname as in "authenticate/badpassword"
+     * @param category
+     * @param specific component/errorname as in "authenticate/badpassword"
      * @param msg default message text if not replaced from resources
      */
     public ErrorID(String category, String specific, String msg) {
@@ -72,34 +72,34 @@ public class ErrorID {
 
 
     /**
-     * @return
+     * @return the message
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * @return
+     * @return the category
      */
     public String getCategory() {
         return category;
     }
 
     /**
-     * @return
+     * @return the specific
      */
     public String getSpecific() {
         return specific;
     }
 	/**
-	 * @return
+	 * @return the audience
 	 */
 	public byte getAudience() {
 		return audience;
 	}
 
 	/**
-	 * @return
+	 * @return the duration
 	 */
 	public byte getDuration() {
 		return duration;
@@ -130,5 +130,4 @@ public class ErrorID {
 		return this;
 	}
 	
-
 }

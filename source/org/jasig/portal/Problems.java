@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,9 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * @author gilbert
- *
- * 
+ * A servlet that reports portal problems.
+ * @author Howard Gilbert
+ * @version $Revision$
  */
 public class Problems extends HttpServlet {
 	
