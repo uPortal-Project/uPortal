@@ -6,9 +6,9 @@
 package org.jasig.portal.layout.al;
 
 import java.util.Set;
+
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.ILayout;
-import org.jasig.portal.layout.al.common.node.INode;
 
 /**
  * An aggregated-layout specific extension of the user layout interface
@@ -16,7 +16,7 @@ import org.jasig.portal.layout.al.common.node.INode;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.1
  */
-public interface IAggregatedLayout extends ILayout {
+public interface IAggregatedLayout extends ILayout, IAggregatedLayoutManagerCommands {
 
     // the tag names constants
     public static final String LAYOUT = "layout";
@@ -37,13 +37,6 @@ public interface IAggregatedLayout extends ILayout {
      * @exception PortalException if an error occurs
      */
     public Set getFragmentIds() throws PortalException;
-    
-    /**
-     * Import a subtree by constructing a local copy with
-     * assigned ids.
-     * @param node
-     * @return a local aggregated layout node copy with assigned ids
-     */
-    public IALNode importNodes(INode node) throws PortalException;
+
     
 }
