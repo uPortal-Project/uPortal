@@ -57,6 +57,7 @@ import  java.net.*;
  * UserLayoutManager participates in all operations associated with the
  * user layout and user preferences.
  * @author Peter Kharchenko
+ * @author Neil Blake
  * @version $Revision$
  */
 public class UserLayoutManager {
@@ -416,24 +417,24 @@ public class UserLayoutManager {
     // warning .. the channel should also be removed from uLayoutXML
     Element channel = uLayoutXML.getElementById(str_ID);
     if (channel != null) {
-	if(!this.deleteNode(channel)) {
-	    // unable to remove channel due to unremovable/immutable restrictionsn
-	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+str_ID+"\"");
-	} else {
-	    // channel has been removed from the userLayoutXML .. persist the layout ?
-	    // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
-	    // (or, alternatively, an incremental update should be done on the UserLayoutStore())
-	    try {
-		GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
-	    } catch (Exception e) {
-		Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
-		throw new GeneralRenderingException("Unable to save layout changes.");
-	    }
-	    //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+str_ID+"\"");
-	}	
+  if(!this.deleteNode(channel)) {
+      // unable to remove channel due to unremovable/immutable restrictionsn
+      Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+str_ID+"\"");
+  } else {
+      // channel has been removed from the userLayoutXML .. persist the layout ?
+      // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
+      // (or, alternatively, an incremental update should be done on the UserLayoutStore())
+      try {
+    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+      } catch (Exception e) {
+    Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
+    throw new GeneralRenderingException("Unable to save layout changes.");
+      }
+      //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+str_ID+"\"");
+	}  	
     }
     else
-	Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
+  Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
   }
 
   /**
@@ -565,11 +566,11 @@ public class UserLayoutManager {
       return  false;
     // all checks out, delete the node
     if (node.getParentNode() != null) {
-	(node.getParentNode()).removeChild(node);
-	return  true;
+  (node.getParentNode()).removeChild(node);
+  return  true;
     } else {
-	Logger.log(Logger.ERROR,"UserLayoutManager::deleteNode() : trying to remove a root node ?!?");
-	return false;
+  Logger.log(Logger.ERROR,"UserLayoutManager::deleteNode() : trying to remove a root node ?!?");
+  return false;
     }
   }
 
