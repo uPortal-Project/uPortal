@@ -71,6 +71,10 @@ public class PortalSessionManager extends HttpServlet {
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
 
+  static {
+    LogService.instance().log(LogService.INFO, "uPortal started");
+  }
+
   /**
    * Initialize the PortalSessionManager servlet
    * @throws ServletException
