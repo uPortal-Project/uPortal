@@ -205,7 +205,7 @@ public class ProxyWriter {
             fileName = fileNameGenerator(scriptUri);
             filePath = PROXIED_FILES_PATH + fileName;
             File outputFile = new File(filePath);
-            if ((outputFile.exists()==false) || (new Date().getTime()-outputFile.lastModified()>(1800 * 1000)))
+            if ((outputFile.exists()==false) || (System.currentTimeMillis()-outputFile.lastModified()>(1800 * 1000)))
             {
               try{
                 AddressTester tester = new AddressTester(scriptUri);
