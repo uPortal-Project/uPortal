@@ -45,9 +45,14 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       m_sUrl = (String) chConfig.get ("url");
       m_sUrlBaseDir =
 	  new String(m_sUrl.substring(0, m_sUrl.lastIndexOf("/")));
-      m_sUrlServer = 
-	  new String(m_sUrlBaseDir.substring(7,    // 7 to skip "http://"
-	      m_sUrlBaseDir.substring(7).indexOf("/")+7));
+      if (m_sUrlBaseDir.substring(7).indexOf("/") != -1)
+	  m_sUrlServer = 
+	      new String(m_sUrlBaseDir.substring(7,    // 7 to skip "http://"
+	        m_sUrlBaseDir.substring(7).indexOf("/")+7));
+      else
+	  m_sUrlServer = 
+	      new String(m_sUrlBaseDir.substring(7));
+
       String sLine = null;
       URL url = new URL (m_sUrl);
       HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
@@ -84,7 +89,6 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       try
       {
         out.println ("<b>" + m_sUrl + "</b> is currently unreachable.");
-        out.println ("Please choose another.");
       }
       catch (Exception ex)
       {
