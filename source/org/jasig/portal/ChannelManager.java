@@ -76,13 +76,11 @@ import org.xml.sax.ContentHandler;
 import tyrex.naming.MemoryContext;
 
 /**
- * This class shall have the burden of squeezing content
- * out of channels.
- *
- * - Validation and timeouts
- *    these two are needed for smooth operation of the portal
- *    sometimes channels will timeout with information retreival
- *    then the content should be skipped
+ * ChannelManager shall have the burden of squeezing content out of channels.
+ * <p>
+ * Validation and timeouts, these two are needed for smooth operation of the portal
+ * sometimes channels will timeout with information retreival then the content should
+ * be skipped.
  *
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
@@ -306,7 +304,7 @@ public class ChannelManager implements LayoutEventListener {
             return;
         }
 
-        if(renderingStatus==cr.RENDERING_SUCCESSFUL) {
+        if(renderingStatus==ChannelRenderer.RENDERING_SUCCESSFUL) {
             // obtain content
             if(ch instanceof CachingSerializer && this.isCharacterCaching()) {
                 CachingSerializer cs=(CachingSerializer) ch;
