@@ -1,0 +1,53 @@
+  <table>
+    <name>UP_CHAN_TYPE_MDATA</name>
+    <rows>
+      <row>
+        <column><name>TYPE_ID</name><value>0</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>RSS</value></column>
+        <column><name>TYPE_DESCR</name><value>Att\0113lo RSS (Rich Site Summary) form\0101ta inform\0101ciju</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>XML Transform\0101cija</value></column>
+        <column><name>TYPE_DESCR</name><value>Transform\0113 XML dokumentu ar stila lapu pal\012Bdz\012Bbu, kas nor\0101d\012Btas uPortal stila lapu sarakst\0101 (SSL)</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>2</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>Iek\013Cautais kadrs</value></column>
+        <column><name>TYPE_DESCR</name><value>Att\0113lo HTML lapu kadr\0101. Neatbalsta vec\0101kas p\0101rl\016Bkprogrammas par IE5 un Netscape 6.</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>3</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>Att\0113ls</value></column>
+        <column><name>TYPE_DESCR</name><value>Par\0101da att\0113lu, kam var b\016Bt virsraksts un apak\0161virsraksts</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>4</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
+        <column><name>TYPE_DESCR</name><value>Dinamiska HTML vai XML aplik\0101cija</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>5</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>Remote Channel Proxy</value></column>
+        <column><name>TYPE_DESCR</name><value>Ar SOAP pal\012Bdz\012Bbu att\0113lo kan\0101lu, kas atrodas uz att\0101lin\0101tas uPortal instances</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>6</value></column>
+        <column><name>LOCALE</name><value>lv_LV</value></column>
+        <column><name>TYPE_NAME</name><value>S\012Bklietotne</value></column>
+        <column><name>TYPE_DESCR</name><value>Att\0113lo JAVA s\012Bklietotni</value></column>
+      </row>
+    </rows>
+  </table>
