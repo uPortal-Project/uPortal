@@ -48,6 +48,7 @@ import org.jasig.portal.utils.XSLT;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.</p>
+ * <p>See http://www.mun.ca/cc/portal/cw/ for full documentation.</p>
  *
  * <p>Channel parameters to be supplied:</p>
  * <ol>
@@ -59,10 +60,17 @@ import org.jasig.portal.utils.XSLT;
  *  <li>"cw_xsl" - a URI for the stylesheet to use
  *                  <i>If <code>cw_xsl</code> is supplied, <code>cw_ssl</code>
  *                  and <code>cw_xslTitle</code> will be ignored.
- *  <li>"cw_passThrough" - indicates that RunTimeData is to be passed through.
- *                  <i>If <code>passThrough</code> is supplied, and not set
- *		    to "none", additional RunTimeData parameters and values
- *		    will be passed as request parameters to the XML URI.
+ *  <li>"cw_passThrough" - indicates how RunTimeData is to be passed through.
+ *                  <i>If <code>cw_passThrough</code> is supplied, and not set
+ *		    to "all" or "application", additional RunTimeData
+ *		    parameters not starting with "cw_" will be passed as
+ *		    request parameters to the XML URI.  If
+ *		    <code>cw_passThrough</code> is set to "marked", this will
+ *		    happen only if there is also a RunTimeData parameter of
+ *		    <code>cw_inChannelLink</code>.  "application" is intended
+ *		    to keep application-specific links in the channel, while
+ *		    "all" should keep all links in the channel.  This
+ *		    distinction is handled entirely in the stylesheets.
  *  <li>"cw_tidy" - output from <code>xmlUri</code> will be passed though Jtidy
  *  <li>"cw_info" - a URI to be called for the <code>info</code> event.
  *  <li>"cw_help" - a URI to be called for the <code>help</code> event.
@@ -205,6 +213,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if ( this.passThrough != null &&
        !this.passThrough.equalsIgnoreCase("none") &&
          ( this.passThrough.equalsIgnoreCase("all") ||
+           this.passThrough.equalsIgnoreCase("application") ||
            runtimeData.getParameter("cw_inChannelLink") != null ) )
     {
       Logger.log (Logger.DEBUG, "CWebProxy: xmlUri is " + this.xmlUri);
@@ -336,9 +345,25 @@ public class CWebProxy implements org.jasig.portal.IChannel
   throws IOException, MalformedURLException, PortalException, ParseException
   {
     URL url = new URL (UtilitiesBean.fixURI(uri));
-    URLConnection urlConnect = url.openConnection();
+    String domain = url.getHost().trim();
+    String path = url.getPath();
+    if ( path.indexOf("/") != -1 )
+    {
+      if (path.lastIndexOf("/") != 0)
+        path = path.substring(0, path.lastIndexOf("/"));
+    }
+    String port = Integer.toString(url.getPort());
 
-    sendAndStoreCookies(urlConnect);
+    URLConnection urlConnect = url.openConnection();
+    String protocol = url.getProtocol();
+
+    if (protocol.equals("http"))
+    {
+      HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
+      httpUrlConnect.setInstanceFollowRedirects(true);
+      if (domain != null && path != null)
+        sendAndStoreCookies(httpUrlConnect, domain, path, port);
+    }
 
     String xml;
     if ( (tidy != null) && (tidy.equalsIgnoreCase("on")) )
@@ -377,65 +402,123 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
   }
 
-  // Sends any cookies in the cookie vector as a request header and stores any
-  // incoming cookies in the cookie vector
-  private void sendAndStoreCookies(URLConnection urlConnect) throws ParseException
+  // Sends any cookies in the cookie vector as a request header and stores 
+  // any incoming cookies in the cookie vector (according to rfc 2109,
+  // 2965 & netscape)
+  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws ParseException
   {
-    // pass any cookies to the channel that have been stored in the cookie vector
+    // send appropriate cookies to origin server from cookie vector
     if (cookies.size() > 0)
-    {
-      String cookieValue = "";
-      Cookie cookie;
-      for (int index=0; index<cookies.size(); index++)
-      {
-         cookie = (Cookie) cookies.elementAt(index);
-         cookieValue = cookieValue + cookie.getName() + "=" +cookie.getValue();
-         if (index+1 < cookies.size())
-            cookieValue = cookieValue + ";";
-      }
-      urlConnect.setRequestProperty("Cookie", cookieValue);
-      // Logger.log(Logger.DEBUG, "CWebProxy: sending the following header: \"Cookie:"+cookieValue+"\"");
-    }
+      sendCookieHeader(httpUrlConnect, domain, path, port);
 
     // store any cookies sent by the channel in the cookie vector
     int index = 1;
     String header;
-    URL url = urlConnect.getURL();
-    String domain = url.getHost();
-    String p = url.getPath();
-    String path = p.substring(0, p.lastIndexOf("/"));
-    while ( (header=urlConnect.getHeaderFieldKey(index)) != null )
+    while ( (header=httpUrlConnect.getHeaderFieldKey(index)) != null )
     {
        if (supportSetCookie2)
        {
          if (header.equalsIgnoreCase("set-cookie2"))
-         {
-            //send Cookie2 header
-            urlConnect.setRequestProperty("Cookie2", "Version=\"$1\"");
-            processSetCookie2Header(urlConnect.getHeaderField(index), domain, path);
-         }
+            processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port);
        }
        else
        {
          if (header.equalsIgnoreCase("set-cookie2"))
          {
            supportSetCookie2 = true;
-           processSetCookie2Header(urlConnect.getHeaderField(index), domain, path);
+           processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port);
          }
          else if (header.equalsIgnoreCase("set-cookie"))
          {
-           processSetCookieHeader(urlConnect.getHeaderField(index), domain, path);
+           processSetCookieHeader(httpUrlConnect.getHeaderField(index), domain, path, port);
          }
        }
        index++;
     }
   }
 
-  private void processSetCookie2Header (String headerVal, String domain, String path)
+  // Sends a cookie header to origin server according to the netscape 
+  // specification 
+  private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port)
+  {
+     Vector cookiesToSend = new Vector();
+     WebProxyCookie cookie;
+     String cport = "";
+     boolean portOk = true;
+     for (int index=0; index<cookies.size(); index++)
+     {
+        cookie = (WebProxyCookie) cookies.elementAt(index);
+        if (cookie.isPortSet())
+        {
+           cport = cookie.getPort();
+           portOk = false;
+        }
+        if ( !cport.equals("") )
+        {
+           if (cport.indexOf(port) != -1)
+             portOk = true;
+        }
+        if ( (domain.endsWith(cookie.getDomain()) && path.startsWith(cookie.getPath()))
+             && portOk)
+          cookiesToSend.addElement(cookie);
+     }
+     if (cookiesToSend.size()>0)
+     {
+       //put the cookies in the correct order to send to origin server
+       Vector cookiesInOrder= new Vector();
+       WebProxyCookie c1;
+       WebProxyCookie c2;
+       boolean flag;
+       outerloop:
+       for (int i=0; i<cookiesToSend.size(); i++)
+       {
+         c1 = (WebProxyCookie) cookiesToSend.elementAt(i);
+         flag = false;
+         if (cookiesInOrder.size()==0)
+           cookiesInOrder.addElement(c1);
+         else
+         {
+           for (int index=0; index<cookiesInOrder.size(); index++)
+           {
+             c2 = (WebProxyCookie) cookiesInOrder.elementAt(index);
+             if ( c1.getPath().length() >= c2.getPath().length() )
+             {
+               cookiesInOrder.insertElementAt(c1, index);
+               flag = true;
+               continue outerloop;
+             }
+           }
+           if (!flag)
+             cookiesInOrder.addElement(c1);
+         }
+       }
+       //send the cookie header 
+       // **NOTE** This is NOT the syntax of the cookie header according 
+       // to rfc 2965. Tested under Apache's Tomcat, the servlet engine
+       // treats the cookie attributes as separate cookies.
+       // This is the syntax according to the Netscape Cookie Specification.
+       String headerValue = ""; 
+       WebProxyCookie c;
+       for (int i=0; i<cookiesInOrder.size(); i++)
+       {
+         c = (WebProxyCookie) cookiesInOrder.elementAt(i);
+         if (i == 0)
+           headerValue = c.getName() + "=" +c.getValue();
+         else
+           headerValue = headerValue + "; " + c.getName() + "=" +c.getValue(); 
+       }
+       if ( !headerValue.equals("") )
+       {
+         httpUrlConnect.setRequestProperty("Cookie", headerValue);
+       }
+     }
+  }
+
+  private void processSetCookie2Header (String headerVal, String domain, String path, String port)
   {
      StringTokenizer headerValue = new StringTokenizer(headerVal, ",");
      StringTokenizer cookieValue;
-     Cookie cookie;
+     WebProxyCookie cookie;
      String token;
      while (headerValue.hasMoreTokens())
      {
@@ -443,7 +526,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
        token = cookieValue.nextToken();
        if ( token.indexOf("=") != -1)
        {
-          cookie = new Cookie ( token.substring(0, token.indexOf("=")),
+          cookie = new WebProxyCookie ( token.substring(0, token.indexOf("=")),
                                 token.substring(token.indexOf("=")+1).trim() );
        }
        else
@@ -457,6 +540,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
           boolean ageSet = false;
           boolean domainSet = false;
           boolean pathSet = false;
+          boolean portSet = false;
           while( cookieValue.hasMoreTokens() )
           {
             token = cookieValue.nextToken();
@@ -469,11 +553,23 @@ public class CWebProxy implements org.jasig.portal.IChannel
             {
                cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
                domainSet = true;
+               cookie.domainIsSet();
             }
             if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
             {
                cookie.setPath(token.substring(token.indexOf("=")+1).trim());
                pathSet = true;
+               cookie.pathIsSet();
+            }
+            if ( !portSet && ((token.indexOf("Port") != -1 || token.indexOf("PORT") != -1)
+                                                           || token.indexOf("port") != -1) )
+            {
+               if (token.indexOf("=")==-1)
+                 cookie.setPort(port);
+               else
+                 cookie.setPort(token.substring(token.indexOf("=")+1).trim());
+               portSet = true;
+               cookie.portIsSet();
             }
           }
           if (!domainSet)
@@ -484,10 +580,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
           {
              cookie.setPath(path);
           }
+          // set the version attribute
+          cookie.setVersion(1); 
           // checks to see if this cookie should replace one already stored
           for (int index = 0; index < cookies.size(); index++)
           {
-             Cookie old = (Cookie) cookies.elementAt(index);
+             WebProxyCookie old = (WebProxyCookie) cookies.elementAt(index);
              if ( cookie.getName().equals(old.getName()) )
              {
                 String newPath = cookie.getPath();
@@ -523,11 +621,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
-  private void processSetCookieHeader (String headerVal, String domain, String path)    throws ParseException
+  private void processSetCookieHeader (String headerVal, String domain, String path, String port) 
+  throws ParseException
   {
      StringTokenizer cookieValue;
      String token;
-     Cookie cookie;
+     WebProxyCookie cookie;
      if ( ( (headerVal.indexOf("Expires=") != -1)
               || (headerVal.indexOf("expires=") != -1) )
               || (headerVal.indexOf("EXPIRES=") != -1) )
@@ -537,8 +636,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
        token = cookieValue.nextToken();
        if ( token.indexOf("=") != -1)
        {
-          cookie = new Cookie ( token.substring(0, token.indexOf("=")),
-                                token.substring(token.indexOf("=")+1).trim() );
+          cookie = new WebProxyCookie ( token.substring(0, token.indexOf("=")), token.substring(token.indexOf("=")+1).trim() );
        }
        else
        {
@@ -565,8 +663,8 @@ public class CWebProxy implements org.jasig.portal.IChannel
                 //set max-age for cookie
                 long l;
                 if (date.before(current))
-                   //accounts for the case where max age is 0 and cookie should
-                   //be discarded immediately
+                   //accounts for the case where max age is 0 and cookie 
+                   //should be discarded immediately
                    l = 0;
                 else
                    l = date.getTime() - current.getTime();
@@ -594,10 +692,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
          {
             cookie.setPath(path);
          }
+         // sets the version attribute of the cookie
+         cookie.setVersion(0);
          // checks to see if this cookie should replace one already stored
          for (int index = 0; index < cookies.size(); index++)
          {
-            Cookie old = (Cookie) cookies.elementAt(index);
+            WebProxyCookie old = (WebProxyCookie) cookies.elementAt(index);
             if ( cookie.getName().equals(old.getName()) )
             {
                String newPath = cookie.getPath();
@@ -634,17 +734,18 @@ public class CWebProxy implements org.jasig.portal.IChannel
      else
      {
        // can treat according to RCF 2965
-       processSetCookie2Header(headerVal, domain, path);
+       processSetCookie2Header(headerVal, domain, path, port);
      }
   }
 
-  // Removes the cookie from the vector of stored cookies when the cookie expires.
+  // Removes the cookie from the vector of stored cookies when the cookie 
+  // expires.
   private class RemoveCookieTimerTask extends TimerTask
   {
 
-     Cookie cookie;
+     WebProxyCookie cookie;
 
-     public RemoveCookieTimerTask (Cookie cookie)
+     public RemoveCookieTimerTask (WebProxyCookie cookie)
      {
        this.cookie = cookie;
      }
@@ -654,4 +755,76 @@ public class CWebProxy implements org.jasig.portal.IChannel
        cookies.removeElement(cookie);
      }
   }
+ 
+  private class WebProxyCookie extends Cookie
+  {
+     
+     protected String port = null;
+     protected boolean pathSet = false;
+     protected boolean domainSet = false;
+     protected boolean portSet = false;
+
+     public WebProxyCookie(String name, String value)
+     {
+       super(name, value);
+     }
+
+     public String getPath()
+     {
+       String path = super.getPath();
+       if (path.startsWith("\"") && path.endsWith("\""))
+         path = path.substring(1, path.length()-1);
+       return path;
+     }
+
+     public String getValue()
+     {
+       String value = super.getValue();
+       if (value.startsWith("\"") && value.endsWith("\""))
+         value = value.substring(1, value.length()-1);
+       return value;
+     }
+
+     public void pathIsSet()
+     {
+       pathSet = true;
+     }
+
+     public void domainIsSet()
+     {
+       domainSet = true;
+     }
+
+     public void portIsSet()
+     {
+       portSet = true;
+     }
+
+     public void setPort(String port)
+     {
+       this.port = port;
+     }
+   
+     public String getPort()
+     {
+       return port;
+     }
+  
+     public boolean isPathSet()
+     {
+       return pathSet;
+     }
+
+     public boolean isDomainSet()
+     {
+       return domainSet;
+     }
+
+     public boolean isPortSet()
+     {
+       return portSet;
+     }
+
+  }
+
 }
