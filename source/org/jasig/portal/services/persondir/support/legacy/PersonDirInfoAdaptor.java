@@ -91,30 +91,18 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         return QUERY_ATTRIBUTE;
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
-     */
     public Set getPossibleUserAttributeNames() {
         return this.delegate.getPossibleUserAttributeNames();
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
-     */
     public Map getUserAttributes(Map seed) {
         return this.delegate.getUserAttributes(seed);
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
-     */
     public Map getUserAttributes(String uid) {
         return this.delegate.getUserAttributes(uid);
     }
     
-    /* 
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("PersonDirInfoAdaptor: delegate=[" + this.delegate + "]");
