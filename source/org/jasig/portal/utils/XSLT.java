@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -349,12 +349,12 @@ public class XSLT {
         temp = thand.getTemplates();
         if (stylesheetRootCacheEnabled) {
           stylesheetRootCache.put(stylesheetURI, temp);
-          LogService.instance().log(LogService.INFO, "Caching templates for: " + stylesheetURI);
+          LogService.log(LogService.INFO, "Caching templates for: " + stylesheetURI);
         }
       } catch (IOException ioe) {
         throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
       } catch (TransformerConfigurationException tce) {
-        LogService.instance().log(LogService.ERROR, "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
+        LogService.log(LogService.ERROR, "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
         throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");
       } catch (SAXParseException px) {
         throw new GeneralRenderingException("XSLT:getTemplates(): SAXParseExeption: " +
@@ -383,7 +383,7 @@ public class XSLT {
     try {
       t = getTemplates(stylesheetURI).newTransformer();
     } catch (TransformerConfigurationException tce) {
-      LogService.instance().log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      LogService.log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
     }
     return t;
   }
@@ -399,7 +399,7 @@ public class XSLT {
       try {
         th = getSAXTFactory().newTransformerHandler(getTemplates(stylesheetURI));
       } catch (TransformerConfigurationException tce) {
-        LogService.instance().log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+        LogService.log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
       }
       return th;
   }
@@ -418,7 +418,7 @@ public class XSLT {
       stylesheetSet = new StylesheetSet(stylesheetListURI);
       if (stylesheetSetCacheEnabled) {
         stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
-        LogService.instance().log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
+        LogService.log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
       }
     }
     return stylesheetSet;
