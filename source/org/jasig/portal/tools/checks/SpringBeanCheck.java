@@ -63,7 +63,7 @@ public class SpringBeanCheck
             if (this.requiredBeanTypeClassName == null) {
                 remediationAdvice = "Declare a singleton bean of name [" + this.beanName + "] in a Spring bean definition file mapped in /properties/beanRef.xml.";
             } else {
-                remediationAdvice = "Declare a singleton bean of name [" + this.beanName + "] and of type [" + this.requiredBeanTypeClassName + "] in a Spring bean definition file mapped in /properties/beanRef.xml.";
+                remediationAdvice = "Declare a singleton bean of name [" + this.beanName + "] and of type [" + this.requiredBeanTypeClassName + "] in a Spring bean definition file mapped in /properties/beanRefFactory.xml.";
             }
             return CheckResult.createFailure("There is no bean named [" + this.beanName + "] in uPortal's Spring bean definition file(s) (e.g., applicationContext.xml).",
                     remediationAdvice);
