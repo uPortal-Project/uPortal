@@ -66,6 +66,7 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
     key = newKey;
     type = newType;
     authorizationService = authService;
+    initialize();
 }
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
@@ -200,10 +201,6 @@ throws AuthorizationException
  */
 public String getPrincipalString() 
 {
-    if ( principalString == null )
-    {
-        principalString = getAuthorizationService().getPrincipalString(this);
-    }
     return principalString;
 }
 /**
@@ -242,16 +239,16 @@ throws org.jasig.portal.AuthorizationException
     return getAuthorizationService().doesPrincipalHavePermission(this, owner, activity, target);
 }
 /**
+ * Set the value of the principal string.
+ */
+private void initialize() {
+    principalString = getAuthorizationService().getPrincipalString(this); 
+}
+/**
  * @param newAuthorizationService org.jasig.portal.security.IAuthorizationService
  */
 void setAuthorizationService(IAuthorizationService newAuthorizationService) {
     authorizationService = newAuthorizationService;
-}
-/**
- * @param newPrincipalString java.lang.String
- */
-private void setPrincipalString(java.lang.String newPrincipalString) {
-    principalString = newPrincipalString;
 }
 /**
  * Returns a String that represents the value of this object.

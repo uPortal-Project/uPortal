@@ -62,6 +62,7 @@ public interface IAuthorizationService
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
     public void addPermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
     throws AuthorizationException;
@@ -234,6 +235,7 @@ public interface IAuthorizationService
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
     public void removePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
     throws AuthorizationException;
@@ -248,6 +250,7 @@ public interface IAuthorizationService
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
     public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
     throws AuthorizationException;

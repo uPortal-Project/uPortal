@@ -37,14 +37,17 @@ package org.jasig.portal.security.provider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -53,11 +56,12 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPermissionPolicy;
+import org.jasig.portal.security.IPermissionSet;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.SmartCache;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -68,11 +72,10 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
-    // Clear the cache every 5 minutes.
-    protected SmartCache permissionsCache = new SmartCache(300);
-    protected Object permissionsCacheLock = new Object();
-
+    protected Map principalCache = new HashMap(100);
     protected String PERIOD_STRING = ".";
+    protected Class PERMISSION_SET_TYPE;
+    protected boolean cachePermissions;
     protected static IAuthorizationService singleton;
   /**
    *
@@ -92,8 +95,9 @@ throws AuthorizationException
 {
     if (permissions.length > 0)
     {
-        removeFromPermissionsCache(permissions);
         getPermissionStore().add(permissions);
+        if ( cachePermissions )
+            { removeFromPermissionsCache(permissions); } 
     }
 }
 /**
@@ -102,6 +106,7 @@ throws AuthorizationException
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
 public void addPermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
@@ -113,17 +118,52 @@ throws AuthorizationException
     }
 }
 /**
- * Adds <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> to the cache.
- * @param permissions IPermission[]
- * @param principals IAuthorizationPrincipal[]
- */
-private void addToPermissionsCache(IPermission[] permissions, IAuthorizationPrincipal principal)
+* Adds the <code>IPermissionSet</code> to the entity cache.
+*/
+protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
 {
-    synchronized (permissionsCacheLock)
-    {
-        permissionsCache.put(principal, permissions);
-    }
+    try
+        { EntityCachingService.instance().add(ps); }
+    catch (CachingException ce)
+        { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache: " + ce.getMessage() ); }
 }
+/**
+* Retrieves the <code>IPermissionSet</code> for the <code>IPermissionSet</code>
+* from the entity cache.
+*/
+protected IPermissionSet cacheGet(IAuthorizationPrincipal principal) 
+throws AuthorizationException
+{
+    try
+    { 
+        return (IPermissionSet)
+          EntityCachingService.instance().get(PERMISSION_SET_TYPE, principal.getPrincipalString()); 
+    }
+    catch (CachingException ce)
+        { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache: " + ce.getMessage() ); }
+}
+/**
+* Removes the <code>IPermissionSet</code> for this principal from the 
+* entity cache.
+*/
+protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException
+{
+    try
+        { EntityCachingService.instance().remove(PERMISSION_SET_TYPE, ap.getPrincipalString()); }
+    catch (CachingException ce)
+        { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache: " + ce.getMessage() ); }
+}
+/**
+* Updates the <code>IPermissionSet</code> in the entity cache.
+*/
+protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
+{
+    try
+        { EntityCachingService.instance().update(ps); }
+    catch (CachingException ce)
+        { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache: " + ce.getMessage() ); }
+}
+
 /**
  * This checks if the framework has granted principal a right to publish.  DO WE WANT SOMETHING THIS COARSE (de)?
  * @param principal IAuthorizationPrincipal
@@ -439,8 +479,11 @@ throws AuthorizationException
  */
 public String getPrincipalString(IAuthorizationPrincipal principal)
 {
-    Integer type = EntityTypes.getEntityTypeID(principal.getType());
-    return type + PERIOD_STRING + principal.getKey();
+    return getPrincipalString(principal.getType(), principal.getKey());
+}
+private String getPrincipalString(Class pType, String pKey) {
+    Integer type = EntityTypes.getEntityTypeID(pType);
+    return type + PERIOD_STRING + pKey;
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
@@ -477,6 +520,9 @@ private void initialize() throws AuthorizationException
       PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation");
     String policyName =
       PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation");
+    cachePermissions =
+      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.IAuthorizationService.cachePermissions");
+
 
     if ( factoryName == null )
     {
@@ -510,6 +556,17 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
+        LogService.log(LogService.ERROR, eMsg);
+        throw new AuthorizationException(eMsg);
+    }
+
+    try 
+    { 
+        PERMISSION_SET_TYPE = Class.forName("org.jasig.portal.security.IPermissionSet");
+    }
+    catch (ClassNotFoundException cnfe)
+    {
+        eMsg = "AuthorizationImpl.initialize(): Problem initializing service. " + cnfe.getMessage();
         LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
@@ -553,13 +610,31 @@ public IPermissionManager newPermissionManager(String owner)
 }
 /**
  * Factory method for IAuthorizationPrincipal.
+ * First check the principal cache, and if not present, create the principal 
+ * and cache it.  
  * @return org.jasig.portal.security.IAuthorizationPrincipal
  * @param key java.lang.String
  * @param type java.lang.Class
  */
 public IAuthorizationPrincipal newPrincipal(String key, Class type)
 {
-    return new AuthorizationPrincipalImpl(key, type, this);
+    String principalKey = getPrincipalString(type, key);
+    IAuthorizationPrincipal principal = (IAuthorizationPrincipal)getPrincipalCache().get(principalKey);
+    if ( principal == null )
+    {
+        synchronized (this)
+        {
+            principal = (IAuthorizationPrincipal)getPrincipalCache().get(key);
+            if ( principal == null )
+            {
+                principal = primNewPrincipal(key, type);
+                Map cache = copyPrincipalCache();
+                cache.put(principalKey, principal);
+                setPrincipalCache(cache);
+            }
+        }  // end synchronized
+    }
+    return principal;
 }
 /**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
@@ -577,6 +652,9 @@ throws GroupsException
 
     return newPrincipal(key, type);
 }
+private IAuthorizationPrincipal primNewPrincipal(String key, Class type) {
+    return new AuthorizationPrincipalImpl(key, type, this);
+}
 /**
  * Factory method for IUpdatingPermissionManager.
  * @return org.jasig.portal.security.IUpdatingPermissionManager
@@ -587,20 +665,35 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
     return new UpdatingPermissionManagerImpl(owner, this);
 }
 /**
+ * Returns permissions for a principal.  First check the entity caching
+ * service, and if the permissions have not been cached, retrieve and
+ * cache them.  
  * @return IPermission[]
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
-    // Check the smart cache for the Permissions first
-    IPermission[] permissions = (IPermission[])permissionsCache.get(principal);
-    if ( permissions == null )
+    if ( ! cachePermissions )
+        { return getUncachedPermissionsForPrincipal(principal, null, null, null);}
+        
+    IPermissionSet ps = null;
+    // Check the caching service for the Permissions first.
+    ps = cacheGet(principal);
+    
+    if ( ps == null )
+    synchronized ( principal )
     {
-        permissions = getUncachedPermissionsForPrincipal(principal, null, null, null);
-        addToPermissionsCache(permissions, principal);
-    }
-    return permissions;
+        ps = cacheGet(principal);
+        if ( ps == null )
+        {
+            IPermission[] permissions = 
+              getUncachedPermissionsForPrincipal(principal, null, null, null);
+            ps = new PermissionSetImpl(permissions, principal);
+            cacheAdd(ps);
+        }
+    }      // end synchronized
+    return ps.getPermissions();
 }
 /**
  * @return IPermission[]
@@ -616,6 +709,12 @@ private IPermission[] primGetPermissionsForPrincipal
     String target)
 throws AuthorizationException
 {
+        LogService.log (LogService.DEBUG,
+          "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
+          "Principal: " + principal + " owner: " + owner +
+          " activity: " + activity + " target: " + target);
+
+    
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
         { return perms; }
@@ -629,6 +728,11 @@ throws AuthorizationException
            )
             { al.add(perms[i]); }
     }
+    
+    LogService.log (LogService.DEBUG,
+      "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
+      "# permissions retrieved: " + al.size());
+
 
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
 
@@ -650,19 +754,18 @@ throws AuthorizationException
  * the cache.
  * @param principals IAuthorizationPrincipal[]
  */
-private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals)
+private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals) 
+throws AuthorizationException
 {
-    synchronized (permissionsCacheLock)
-    {
-        for ( int i=0; i<principals.length; i++ )
-            { permissionsCache.remove(principals[i]); }
-    }
+    for ( int i=0; i<principals.length; i++ )
+        { cacheRemove(principals[i]); }
 }
 /**
  * Removes <code>IPermissions</code> from the cache.
  * @param permissions IPermission[]
  */
-private void removeFromPermissionsCache(IPermission[] permissions) throws AuthorizationException
+private void removeFromPermissionsCache(IPermission[] permissions) 
+throws AuthorizationException
 {
     IAuthorizationPrincipal[] principals = getPrincipalsFromPermissions(permissions);
     removeFromPermissionsCache(principals);
@@ -677,8 +780,9 @@ throws AuthorizationException
 {
     if (permissions.length > 0)
     {
-        removeFromPermissionsCache(permissions);
         getPermissionStore().delete(permissions);
+        if ( cachePermissions )
+            { removeFromPermissionsCache(permissions); }  
     }
 }
 /**
@@ -687,6 +791,7 @@ throws AuthorizationException
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
 public void removePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
@@ -729,8 +834,9 @@ throws AuthorizationException
 {
     if (permissions.length > 0)
     {
-        removeFromPermissionsCache(permissions);
         getPermissionStore().update(permissions);
+        if ( cachePermissions )
+            { removeFromPermissionsCache(permissions); }
     }
 }
 /**
@@ -739,6 +845,7 @@ throws AuthorizationException
  * @param permissions IPermission[]
  * @param principal IAuthorizationPrincipal
  * @exception AuthorizationException
+ * @deprecated as of uPortal 2.2.  A convenience method that was never used.
  */
 public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
@@ -748,5 +855,24 @@ throws AuthorizationException
         removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
         getPermissionStore().update(permissions);
     }
+}
+/**
+ * @return Map
+ */
+private synchronized Map getPrincipalCache() {
+    return principalCache;
+}
+/**
+ * @param map
+ */
+private synchronized void setPrincipalCache(Map map) {
+    principalCache = map;
+}
+/**
+ * @return Map
+ */
+private Map copyPrincipalCache() {
+    HashMap hm = (HashMap)getPrincipalCache();
+    return (Map)hm.clone();
 }
 }
