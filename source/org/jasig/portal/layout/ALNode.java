@@ -38,13 +38,11 @@ package org.jasig.portal.layout;
 
 
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.util.Vector;
+
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
+import org.w3c.dom.Element;
 
 
 /**
