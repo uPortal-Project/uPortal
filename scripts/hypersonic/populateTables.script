@@ -295,10 +295,22 @@ INSERT INTO PORTAL_SHADOW ( USER_NAME, PASSWORD ) VALUES ('admin', '{MD5}IAnYXaW
 INSERT INTO PORTAL_USER_ROLES (USER_NAME, ROLE) VALUES ('admin', 'portalAdmin');
 INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE) VALUES (0, 'portalAdmin');
 
-INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (1, 1, 
+INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (1, 1,
 '<?xml version="1.0" encoding="UTF-8"?>
-<bookmarks>
-  <bookmark comments="Bank" name="X.com" url="http://x.com"/>
-  <bookmark comments="What a site" name="Yahoo" url="http://yahoo.com"/>
-  <bookmark comments="Java in Admin SIG" name="JA-SIG" url="http://www.ja-sig.org"/>
-</bookmarks>');
+<!DOCTYPE xbel PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML" "file:/xbel-1.0.dtd">
+<xbel>             
+  <title>Default Bookmarks</title>             
+  <info><metadata owner="Default User"/></info>                                     
+  <bookmark href="http://www.ja-sig.org" id="n993160244705">
+    <title>JA-SIG</title>
+    <desc>Java in Administration Special Interest Group</desc>
+  </bookmark>
+  <bookmark href="http://www.udel.edu/uPortal" id="n993160316688">
+    <title>uPortal Home Page</title>
+    <desc>Open source university portal initiative</desc>
+  </bookmark>
+  <bookmark href="http://www.interactivebusiness.com" id="n993160316688">
+    <title>IBS</title>
+    <desc>Interactive Business Solutions: uPortal services</desc>
+  </bookmark>
+</xbel>');
