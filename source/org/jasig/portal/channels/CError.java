@@ -38,6 +38,8 @@ package org.jasig.portal.channels;
 import org.xml.sax.ContentHandler;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.IChannel;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.ChannelRuntimeData;
@@ -45,6 +47,7 @@ import org.jasig.portal.ChannelManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
@@ -67,14 +70,22 @@ import java.util.Hashtable;
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
-public class CError extends BaseChannel implements IPrivilegedChannel
+public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable
 {
+
+    // codes defining the sage at which the exception was thrown
     public static final int GENERAL_ERROR=0;
     public static final int RENDER_TIME_EXCEPTION=1;
     public static final int SET_STATIC_DATA_EXCEPTION=2;
     public static final int SET_RUNTIME_DATA_EXCEPTION=3;
     public static final int TIMEOUT_EXCEPTION=4;
     public static final int SET_PCS_EXCEPTION=5;
+
+    // codes defining exception types 
+    public static final int GENERAL_RENDERING_EXCEPTION=1;
+    public static final int INTERNAL_TIMEOUT_EXCEPTION=2;
+    public static final int AUTHORIZATION_EXCEPTION=3;
+    public static final int RESOURCE_MISSING_EXCEPTION=4;
 
     protected Exception channelException=null;
     protected String str_channelID=null;
@@ -123,9 +134,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel
     }
 
     public void renderXML(ContentHandler out) {
-	    // runtime data processing needs to be done here, otherwise replaced 
-	    // channel will get duplicated setRuntimeData() calls
-	    if(str_channelID!=null) {
+        // runtime data processing needs to be done here, otherwise replaced 
+        // channel will get duplicated setRuntimeData() calls
+        if(str_channelID!=null) {
             String chFate=runtimeData.getParameter("action");
             if(chFate!=null) {
                 // a fate has been chosen
@@ -140,8 +151,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
                         cm.addChannelInstance(this.str_channelID,this.the_channel);
-			                  the_channel.renderXML(out);
-			                  return;
+                        the_channel.renderXML(out);
+                        return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the error channel
                         resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
@@ -158,11 +169,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                             resetCError(this.GENERAL_ERROR,null,this.str_channelID,null,"Channel failed to reinstantiate!");
                         } else {
                             try {
-                                if(the_channel instanceof IPrivilegedChannel)
+                                if(the_channel instanceof IPrivilegedChannel) {
                                     ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
+                                }
                                 the_channel.setRuntimeData (crd);
-				                        the_channel.renderXML(out);
-				                        return;
+                                the_channel.renderXML(out);
+                                return;
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a reload attempt.");
@@ -175,12 +187,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
-		                showStackTrace=!showStackTrace;
+                    showStackTrace=!showStackTrace;
                 }
             }
         }
-	      // if channel's render XML method was to be called, we would've returned by now
-	      localRenderXML(out);
+        // if channel's render XML method was to be called, we would've returned by now
+        localRenderXML(out);
     }
     
     private void localRenderXML(ContentHandler out) {
@@ -258,10 +270,11 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                 // channel throwing a PortalException.
 
                 // determine which type of an exception is it
-                excEl.setAttribute("code",Integer.toString(pe.getExceptionCode()));
+                excEl.setAttribute("code",Integer.toString(0));
 
                 // now specific cases for exceptions containing additional information
                 if(pe instanceof ResourceMissingException) {
+                    excEl.setAttribute("code",Integer.toString(RESOURCE_MISSING_EXCEPTION));                    
                     ResourceMissingException rme=(ResourceMissingException) pe;
                     Element resourceEl=doc.createElement("resource");
                     Element uriEl=doc.createElement("uri");
@@ -272,11 +285,14 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                     resourceEl.appendChild(descriptionEl);
                     excEl.appendChild(resourceEl);
                 } else if(pe instanceof InternalTimeoutException) {
+                    excEl.setAttribute("code",Integer.toString(INTERNAL_TIMEOUT_EXCEPTION));
                     Long v=((InternalTimeoutException)pe).getTimeoutValue();
                     if(v!=null) {
                         Element timeoutEl=doc.createElement("timeout");
                         timeoutEl.setAttribute("value",v.toString());
                     }
+                } else if(pe instanceof AuthorizationException) {
+                    excEl.setAttribute("code",Integer.toString(AUTHORIZATION_EXCEPTION));
                 }
             } else {
                 // runtime exception generated by the channel
@@ -327,5 +343,50 @@ public class CError extends BaseChannel implements IPrivilegedChannel
         } catch (Exception e) { 
             LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e); 
         }
+    }
+
+    public ChannelCacheKey generateKey() {
+        // check if either restart or refresh command has been given, otherwise generate key
+        if(runtimeData.getParameter("action")!=null) {
+            return null;
+        }
+
+        ChannelCacheKey k=new ChannelCacheKey();
+        StringBuffer sbKey = new StringBuffer(1024);
+
+        // assume that errors can be cached system-wide
+        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+
+        sbKey.append("org.jasig.portal.channels.CError: errorId=").append(Integer.toString(errorID)).append(", channelID=");
+        sbKey.append(str_channelID).append(", message=").append(str_message).append(" strace=").append(toString(showStackTrace));
+        
+        // part of the key that species what kind of exception has been generated
+        if(channelException !=null) {
+            sbKey.append("exception: ");
+            sbKey.append(channelException.getMessage());
+            if(channelException instanceof PortalException) {
+                PortalException pe= (PortalException) channelException;
+                sbKey.append(toString(pe.allowRefresh())).append(toString(pe.allowReinstantiation())).append(" ");
+                if(pe.getRecordedException() !=null) {
+                    sbKey.append(pe.getRecordedException().getMessage());
+                }
+                if(channelException instanceof ResourceMissingException) {
+                    ResourceMissingException rme=(ResourceMissingException) pe;
+                    sbKey.append("resource: ").append(rme.getResourceURI()).append(rme.getResourceDescription());
+                } else if(channelException instanceof InternalTimeoutException) {
+                    sbKey.append("timeout: ").append(((InternalTimeoutException) channelException).getTimeoutValue().toString());
+                }
+            }                                   
+        }
+        k.setKey(sbKey.toString());
+        return k;
+    }
+    
+    public boolean isCacheValid(Object validity) {
+        return true;
+    }
+
+    private String toString(boolean b) {
+        if(b) return("true"); else return ("false");
     }
 }
