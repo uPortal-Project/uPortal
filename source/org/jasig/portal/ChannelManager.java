@@ -611,7 +611,7 @@ public class ChannelManager implements LayoutEventListener {
             if ((chObj=(IChannel)channelTable.get(channelTarget)) == null) {
                 try {
                     chObj=instantiateChannel(channelTarget);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     LogService.instance().log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
                     chObj=replaceWithErrorChannel(channelTarget,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
@@ -669,7 +669,7 @@ public class ChannelManager implements LayoutEventListener {
         if(ch==null) {
             try {
                 ch=instantiateChannel(channelSubscribeId);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 return null;
             }
         }
@@ -802,8 +802,8 @@ public class ChannelManager implements LayoutEventListener {
         if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
             try {
                 ch=instantiateChannel(channel);
-            } catch (PortalException pe) {
-                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,pe,null,false);
+            } catch (Throwable e) {
+                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
             }
         }
 
