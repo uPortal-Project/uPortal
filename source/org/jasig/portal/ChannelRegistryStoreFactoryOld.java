@@ -54,12 +54,8 @@ public class ChannelRegistryStoreFactoryOld {
    * @return an IChannelRegistryStoreOld implementation
    */
   public static IChannelRegistryStoreOld getChannelRegistryStoreOldImpl() {
-    try {
-      if (channelRegistryStoreOldImpl == null)
-        channelRegistryStoreOldImpl = new RDBMChannelRegistryStoreOld();
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "ChannelRegistryStoreFactoryOld: Could not instantiate RDBMChannelRegistryStoreOld", e);
-    }
+    if (channelRegistryStoreOldImpl == null)
+      channelRegistryStoreOldImpl = new RDBMChannelRegistryStoreOld();
     return channelRegistryStoreOldImpl;
   }
 }
