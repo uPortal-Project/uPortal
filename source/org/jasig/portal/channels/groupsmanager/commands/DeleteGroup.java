@@ -95,6 +95,11 @@ public class DeleteGroup extends GroupsManagerCommand {
       Node parentNode;
       Node deletedNode;
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Group: " + elemName + "will be deleted");
+      if ((delElem.getAttribute("searchResults") != null) && (delElem.getAttribute("searchResults").equals("true") )){
+        // if it is search results, just delete the node and skip the rest
+        delElem.getParentNode().removeChild(delElem);
+      }
+      else{
       try {
          // Needed to delete cached element
          IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.instance().get(ENTITY_TAGNAME);
@@ -167,6 +172,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          retMsg = "Unable to delete group : " + elemName;
          sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + e);
+      }
       }
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Finished");
    }
