@@ -62,7 +62,7 @@ public class PortalContextProviderImpl implements PortalContextProvider {
         // Should read these from a properties file
         supportedPortletModes = new PortletMode[] {new PortletMode("view"), new PortletMode("edit"), new PortletMode("help")};
         supportedWindowStates = new WindowState[] {new WindowState("normal"), new WindowState("maximized"), new WindowState("minimized")};
-        portalInfo = "uPortal/2.3";
+        portalInfo = "uPortal/2.4";
     }
 
     // PortalContextProvider methods
