@@ -22,23 +22,23 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML='<?xml version="1.0"?>
 <layout>
 <category ID="t01" priority="1" name="Main">
   <category ID="col01" priority="0" width="40%">
-    <channel ID="chan01" priority="0" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Mozilla">
+    <channel ID="chan01" priority="0" timeout="2000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Mozilla">
        <parameter value="http://localhost:8080/portal/rss/netscape.rss" name="uri"/>
     </channel>
-    <channel ID="chan03" priority="1" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="StockCharts">
+    <channel ID="chan03" priority="1" timeout="2000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="StockCharts">
       <parameter value="http://localhost:8080/portal/rss/stockcharts.rss" name="uri"/>
     </channel>
   </category>
   <category ID="col02" priority="0" width="60%">
-    <channel ID="chan04" priority="0" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.BookmarksChannel" name="Bookmarks">
+    <channel ID="chan04" priority="0" timeout="2000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.BookmarksChannel" name="Bookmarks">
     </channel>
-    <channel ID="chan02" priority="0" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Netscape News">
+    <channel ID="chan02" priority="0" timeout="2000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.RSSDocumentChannel" name="Netscape News">
        <parameter value="http://localhost:8080/portal/rss/news.rss" name="uri"/>
     </channel>
   </category>
 </category>
 <category ID="t02" priority="0" name="Other">
- <channel ID="chan05" priority="0" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.BookmarksChannel" name="Bookmarks">
+ <channel ID="chan05" priority="0" timeout="2000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.BookmarksChannel" name="Bookmarks">
  </channel>
 </category>
 </layout>' WHERE USER_NAME='guest';
