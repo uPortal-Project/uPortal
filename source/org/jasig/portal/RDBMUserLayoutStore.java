@@ -159,7 +159,7 @@ public class RDBMUserLayoutStore
     String chanEditable = rs.getString("CHAN_EDITABLE");
     String chanHasHelp = rs.getString("CHAN_HAS_HELP");
     String chanHasAbout = rs.getString("CHAN_HAS_ABOUT");
-    String chanUnremovable = rs.getString("CHAN_UNREMOVABLE");
+    //   String chanUnremovable = rs.getString("CHAN_UNREMOVABLE");
     String chanDetachable = rs.getString("CHAN_DETACHABLE");
     String chanName = rs.getString("CHAN_NAME");
     String chanFName = rs.getString("CHAN_FNAME");
@@ -177,7 +177,7 @@ public class RDBMUserLayoutStore
     addChannelHeaderAttributeFlag("editable", chanEditable, channel);
     addChannelHeaderAttributeFlag("hasHelp", chanHasHelp, channel);
     addChannelHeaderAttributeFlag("hasAbout", chanHasAbout, channel);
-    addChannelHeaderAttributeFlag("unremovable", chanUnremovable, channel);
+    //    addChannelHeaderAttributeFlag("unremovable", chanUnremovable, channel);
     addChannelHeaderAttributeFlag("detachable", chanDetachable, channel);
   }
 
@@ -410,6 +410,7 @@ public class RDBMUserLayoutStore
    */
   protected final Element createLayoutStructure (ResultSet rs, int chanId, int userId, Statement stmt, DocumentImpl doc) throws java.sql.SQLException {
     String idTag = rs.getString("STRUCT_ID");
+    Element returnNode=null;
     if (chanId != 0) {          // Channel
 
       /* See if we have access to the channel */
@@ -425,25 +426,28 @@ public class RDBMUserLayoutStore
 
       }
 
-      return  createChannelNode(stmt.getConnection(), doc, chanId, channelPrefix + idTag);
+      returnNode = createChannelNode(stmt.getConnection(), doc, chanId, channelPrefix + idTag);
 
     }
     else {      // Folder
       String name = rs.getString("NAME");
       String type = rs.getString("TYPE");
+      returnNode = doc.createElement("folder");
+      doc.putIdentifier(folderPrefix + idTag, returnNode);
+      addChannelHeaderAttribute("ID", folderPrefix + idTag, returnNode);
+      addChannelHeaderAttribute("name", name, returnNode);
+      addChannelHeaderAttribute("type", (type != null ? type : "regular"), returnNode);
+    }
+    // set common attributes
+    if(returnNode!=null) {
       String hidden = rs.getString("HIDDEN");
       String unremovable = rs.getString("UNREMOVABLE");
       String immutable = rs.getString("IMMUTABLE");
-      Element folder = doc.createElement("folder");
-      doc.putIdentifier(folderPrefix + idTag, folder);
-      addChannelHeaderAttribute("ID", folderPrefix + idTag, folder);
-      addChannelHeaderAttribute("name", name, folder);
-      addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder);
-      addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder);
-      addChannelHeaderAttribute("immutable", (immutable != null && immutable.equals("Y") ? "true" : "false"), folder);
-      addChannelHeaderAttribute("unremovable", (unremovable != null && unremovable.equals("Y") ? "true" : "false"), folder);
-      return  folder;
+      addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), returnNode);
+      addChannelHeaderAttribute("immutable", (immutable != null && immutable.equals("Y") ? "true" : "false"), returnNode);
+      addChannelHeaderAttribute("unremovable", (unremovable != null && unremovable.equals("Y") ? "true" : "false"), returnNode);
     }
+    return returnNode;
   }
 
   /**
