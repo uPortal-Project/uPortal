@@ -169,6 +169,22 @@ public class MediaManager
     return (String) null;
   }
 
+    /** 
+     * Return a default media type.
+     * The default media type is the first
+     * media listed in the media.properties file
+     * @return default media name
+     */
+    public String getDefaultMedia() {
+	if (mediaProps == null) 
+	    this.setMediaProps ((String) null);
+	
+	if (mediaProps != null) 
+	    return mediaProps.getDefaultValue ();
+	
+	return (String) null;
+    }
+
 
   /**
    * Determines a mime name from the request object.
@@ -472,56 +488,56 @@ public class MediaManager
    */
   class OrderedProps
   {
-    /**
-     * Stores the Key and Values as an array of Strings
-     */
-    private Vector attVec = new Vector (15);
-
-    /**
-     * Constructor.
-     * @param inputStream Stream containing the properties file.
-     * @exception IOException Thrown if unable to read from stream
-     */
-    OrderedProps (InputStream inputStream) throws IOException
-    {
-      BufferedReader input  = new BufferedReader (new InputStreamReader (inputStream));
-      String currentLine, Key = null;
-      StringTokenizer currentTokens;
+      /**
+       * Stores the Key and Values as an array of Strings
+       */
+      private Vector attVec = new Vector (15);
       
-      while ((currentLine = input.readLine ()) != null)
+      /**
+       * Constructor.
+       * @param inputStream Stream containing the properties file.
+       * @exception IOException Thrown if unable to read from stream
+       */
+      OrderedProps (InputStream inputStream) throws IOException
       {
-        currentTokens = new StringTokenizer (currentLine, "=\t\r\n");
-        if (currentTokens.hasMoreTokens ()) 
-          Key = currentTokens.nextToken ().trim ();
-        
-        if ((Key != null) && !Key.startsWith ("#") && currentTokens.hasMoreTokens ())
-        {
-          String temp[] = new String[2];
-          temp[0] = Key; temp[1] = currentTokens.nextToken ().trim ();
-          attVec.addElement (temp);
-        }
+	  BufferedReader input  = new BufferedReader (new InputStreamReader (inputStream));
+	  String currentLine, Key = null;
+	  StringTokenizer currentTokens;
+	  
+	  while ((currentLine = input.readLine ()) != null) {
+	      currentTokens = new StringTokenizer (currentLine, "=\t\r\n");
+	      if (currentTokens.hasMoreTokens ()) 
+		  Key = currentTokens.nextToken ().trim ();
+	      
+	      if ((Key != null) && !Key.startsWith ("#") && currentTokens.hasMoreTokens ())  {
+		  String temp[] = new String[2];
+		  temp[0] = Key; temp[1] = currentTokens.nextToken ().trim ();
+		  attVec.addElement (temp);
+	      }
+	  }
       }
-    }
-
-    /**
-     * Iterates through the Key list and returns the first value for whose
-     * key the given string contains.  Returns "unknown" if no key is contained
-     * in the string.
-     * @param s String being searched for a key.
-     * @return Value for key found in string, otherwise "unknown"
-     */
-    String getValue (String s)
-    {
-      int i, j = attVec.size ();
       
-      for (i = 0; i < j; i++)
+      /**
+       * Iterates through the Key list and returns the first value for whose
+       * key the given string contains.  Returns "unknown" if no key is contained
+       * in the string.
+       * @param s String being searched for a key.
+       * @return Value for key found in string, otherwise "unknown"
+       */
+      String getValue (String s)
       {
-        String temp[] = (String[]) attVec.elementAt (i);
-        
-        if (s.indexOf (temp[0]) > -1)
-          return temp[1];
+	  int i, j = attVec.size ();
+	  
+	  for (i = 0; i < j; i++) {
+	      String temp[] = (String[]) attVec.elementAt (i);
+	      if (s.indexOf (temp[0]) > -1)
+		  return temp[1];
+	  }
+	  return "unknown";
       }
-      return "unknown";
-    }
+      
+      String getDefaultValue() {
+	  return  ((String[]) attVec.elementAt(0))[1];
+      }
   }
 }
