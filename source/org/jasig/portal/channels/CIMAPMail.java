@@ -1120,6 +1120,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
           tidy.parse(textPart.getInputStream (), out);
           xml.write("<msgtext>\n" + out.toString() + "\n</msgtext>");
+          System.err.println(out.toString());
           }
         } else {
           BufferedReader in = new BufferedReader (new InputStreamReader (textPart.getInputStream ()));
@@ -2583,16 +2584,19 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           if (DEBUG) System.err.println(storeFolders.length + " folders found");
           imapFolders.ensureCapacity (storeFolders.length + 1);
           for (int i = 0; i < storeFolders.length; i++) {
-            if (storeFolders[i].exists ()) {
-              imapFolders.add (storeFolders[i]);
-            }
+              if (storeFolders[i].exists ()) {
+                storeFolders[i].open(Folder.READ_ONLY);
+                imapFolders.add (storeFolders[i]);
+              }
           }
         }
 
         store.addFolderListener (folderListener);
         authenticated = true;
+        if (DEBUG) System.err.println("authenticated");
       }
     } catch (Exception e) {
+      if (DEBUG) System.err.println(e);
       cleanup ();
       throw e;
     }
@@ -2643,6 +2647,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
    * @param the servlet request object
    */
   private void reconnect (HttpServletRequest req) throws Exception, AuthenticationFailedException {
+    System.err.println("reconnecting");
     cleanup ();
     initialize ();
   }
