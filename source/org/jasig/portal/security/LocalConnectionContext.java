@@ -65,7 +65,7 @@ public abstract class LocalConnectionContext
    *
    * @param sd The calling channel's ChannelStaticData.
    */
-  public final void init (ChannelStaticData sd)
+  public void init (ChannelStaticData sd)
   {
     staticData = sd;
   }
