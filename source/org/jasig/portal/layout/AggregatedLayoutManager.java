@@ -1092,7 +1092,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       }
     }
     
-	public void createFragment( String fragmentName, String fragmentDesc ) throws PortalException {
+	public String createFragment( String fragmentName, String fragmentDesc ) throws PortalException {
 	  try {
 			 // Creating an empty layout with a root folder
 			 String newFragmentId = layoutStore.getNextFragmentId();
@@ -1115,6 +1115,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 layout = fragment;
 			
 			 updateCacheKey();
+			 
+			 // Return a new fragment ID
+			 return fragmentId;
+			 
 		  } catch ( Exception e ) {
 			throw new PortalException(e.getMessage());
 		  }

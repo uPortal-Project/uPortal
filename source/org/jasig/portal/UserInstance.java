@@ -836,7 +836,7 @@ public class UserInstance implements HttpSessionBindingListener {
 			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
 			String fragmentId = req.getParameter("uP_fragment_ID"); 
 			if ( param.equals("new") )
-		     alm.createFragment(IAggregatedUserLayoutManager.NEW_FRAGMENT,"New fragment");
+		     fragmentId = alm.createFragment(IAggregatedUserLayoutManager.NEW_FRAGMENT,"New fragment");
 		    else if ( param.equals("edit") && fragmentId != null ) {
 		     if ( CommonUtils.parseInt(fragmentId) > 0 ) 
 		       alm.loadFragment(fragmentId);

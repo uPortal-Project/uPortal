@@ -106,8 +106,9 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	  * Creates a new fragment and loads it as an user layout
 	  * @param fragmentName a fragment name
 	  * @param fragmentDesc a fragment description
+	  * @return a new generated fragment ID
 	  * @exception PortalException if an error occurs
 	  */
-	public void createFragment( String fragmentName, String fragmentDesc ) throws PortalException;
+	public String createFragment( String fragmentName, String fragmentDesc ) throws PortalException;
 
 }
