@@ -23,7 +23,7 @@ org.jasig.portal.IChannel ch = layoutBean.getChannelInstance (channel);
 <% ch.render (request, response, out); %>
 
 <center><br>
-<input type="button" value="Close" onClick="self.close()">
+<form><input type="button" value="Close" onClick="self.close()"></form>
 </center>
 
 </body>
