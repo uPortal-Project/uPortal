@@ -91,6 +91,19 @@ public class PersonImpl implements IPerson
       
     m_Attributes.put (key, value);
   }
+  
+  /**
+   * Removes the specified attribute.
+   * @param key Attribute's name
+   * @return the value of the removed object or null if there was nothing to remove
+   */
+  public Object removeAttribute (String key)
+  {
+    if (m_Attributes == null)
+      return null;
+      
+     return m_Attributes.remove(key);
+  }
 
   /**
    * Returns the user's ID that was used for authentication.

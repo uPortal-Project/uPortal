@@ -50,6 +50,7 @@ public interface IPerson extends AdditionalDescriptor
 
   public Object getAttribute (String key);
   public void setAttribute (String key, Object value);
+  public Object removeAttribute (String key);
 
   public Enumeration getAttributes ();
 }
