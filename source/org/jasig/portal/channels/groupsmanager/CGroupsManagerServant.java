@@ -85,13 +85,17 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
     * @return boolean
     */
    public boolean isFinished () {
-      CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       ChannelStaticData staticData = sessionData.staticData;
       boolean isFinished = false;
       if (staticData.containsKey("groupManagerFinished") && staticData.getParameter("groupManagerFinished").equals("true")) {
          isFinished = true;
       }
       return  isFinished;
+   }
+   
+   CGroupsManagerSessionData getSessionData(){
+    return ((CGroupsManager) channel).getSessionData(uid);
    }
 
    /**
@@ -101,7 +105,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
    public void setStaticData (ChannelStaticData sd) {
       try {
          channel.setStaticData(sd, uid);
-         sd.setParameter("grpServantMode", "true");
+         getSessionData().servantMode = true;
       }
       catch (PortalException pex) {
          Utility.logMessage("ERROR", this.getClass().getName()
