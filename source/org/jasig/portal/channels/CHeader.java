@@ -42,7 +42,6 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NotContextException;
-import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
@@ -67,12 +66,10 @@ import org.w3c.dom.Element;
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @version $Revision 1.1$
+ * @version $Revision$
  */
-public class CHeader extends BaseChannel
-    implements ICacheable {
-  // Cache the answers to canUserPublish() to speed things up
-  private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
+public class CHeader extends BaseChannel implements ICacheable {
+  
   private static final String sslLocation = "CHeader/CHeader.ssl";
 
   /**
@@ -80,60 +77,15 @@ public class CHeader extends BaseChannel
    * @return true if user can publish
    */
   private boolean canUserPublish() {
-    // Get the current user ID
-    int userID = staticData.getPerson().getID();
-    // Check the cache for the answer
-    if (m_canUserPublishResponses.get("USER_ID." + userID) != null) {
-      // Return the answer if it's in the cache
-      if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
-        return  (true);
-      }
-      else {
-        return  (false);
-      }
-    }
-    // Get a reference to an IAuthorizationPrincipal (was PermissionManager for this channel).
-    IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
+    boolean canPublish = false;    
     try {
 	    // Let the authorization service decide:
-	    boolean hasPermission = ap.canPublish();
-        // Cache the result
-        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(hasPermission));
-        return  (hasPermission);
-
+	    canPublish = staticData.getAuthorizationPrincipal().canPublish();      
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       // Deny the user publish access if anything went wrong
-      return  (false);
     }
-  }
-
-  public ChannelCacheKey generateKey() {
-    ChannelCacheKey k = new ChannelCacheKey();
-    StringBuffer sbKey = new StringBuffer(1024);
-
-    sbKey.append("org.jasig.portal.CHeader: ");
-
-    if(staticData.getPerson().isGuest()) {
-        // guest users are cached system-wide. 
-        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-        sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
-    } else {
-        // otherwise cache is instance-specific
-        k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
-    }
-    sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
-    sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
-    sbKey.append("stylesheetURI:");
-    try {
-      String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
-      sbKey.append(XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo()));
-    } catch (Exception e) {
-      sbKey.append("not defined");
-    }
-    k.setKey(sbKey.toString());
-    k.setKeyValidity(new Long(System.currentTimeMillis()));
-    return  k;
+    return canPublish;
   }
 
   /**
@@ -157,7 +109,6 @@ public class CHeader extends BaseChannel
 
   /**
    * Returns the DOM object associated with the user
-   * NOTE: This should be made more effecient through caching
    * @return DOM object associated with the user
    */
   private Document getUserXML() {
@@ -216,27 +167,64 @@ public class CHeader extends BaseChannel
       }
     }
     doc.appendChild(headerEl);
-    return  (doc);
+    return doc;
   }
 
+  /**
+   * ICacheable method - generates cache key
+   * @return key the cache key
+   */  
+  public ChannelCacheKey generateKey() {
+    ChannelCacheKey k = new ChannelCacheKey();
+    StringBuffer sbKey = new StringBuffer(1024);
 
+    sbKey.append("org.jasig.portal.CHeader: ");
+
+    if(staticData.getPerson().isGuest()) {
+        // guest users are cached system-wide. 
+        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+        sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+    } else {
+        // otherwise cache is instance-specific
+        k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+    }
+    sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
+    sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL()).append(", ");
+    sbKey.append("hasPermissionToPublish:").append(String.valueOf(canUserPublish())).append(", ");
+    sbKey.append("stylesheetURI:");
+    try {
+      String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
+      sbKey.append(XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo()));
+    } catch (Exception e) {
+      sbKey.append("not defined");
+    }
+    k.setKey(sbKey.toString());
+    k.setKeyValidity(new Long(System.currentTimeMillis()));
+    return k;
+  }  
+  
+  /**
+   * ICacheable method - checks validity of cache
+   * @param validity the validity object
+   * @return cacheValid <code>true</code> if cache is still valid, otherwise <code>false</code>
+   */    
   public boolean isCacheValid (Object validity) {
+    boolean cacheValid = false;
     if (validity instanceof Long) {
       Long oldtime = (Long)validity;
       if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
         // cache entries for unauthenticated users don't expire
-        return  true;
-      }
-      if (System.currentTimeMillis() - oldtime.longValue() < 1*60*1000) {
-        return  true;
+        cacheValid = true;
+      } else if (System.currentTimeMillis() - oldtime.longValue() < 1*60*1000) {
+        cacheValid = true;
       }
     }
-    return  false;
+    return cacheValid;
   }
 
   /**
    * Render method.
-   * @param out
+   * @param out the content handler
    * @exception PortalException
    */
   public void renderXML (ContentHandler out) throws PortalException {
