@@ -59,7 +59,7 @@ public class RDBMCounterStore implements ICounterStore {
             RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             try {
-                String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + counterName + "',0)";
+                String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE) VALUES ('" + counterName + "',0)";
                 LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
                 stmt.executeUpdate(sInsert);
                 RDBMServices.commit(con);
