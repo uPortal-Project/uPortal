@@ -2246,7 +2246,7 @@
             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectcustomSettings&amp;uPCM_capture=reviewChannel">Parameter:</a></strong></td>
             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
+            <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectcustomSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
@@ -3019,5 +3019,6 @@ Printable<br/>
 
 </xsl:template>
 </xsl:stylesheet>
+
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
