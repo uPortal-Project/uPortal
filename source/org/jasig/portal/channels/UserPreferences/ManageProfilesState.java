@@ -74,7 +74,7 @@ class ManageProfilesState extends BaseState {
   IUserLayoutStore ulsdb;
 
   static final boolean ALLOW_USER_PROFILES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowUserProfiles");
-  static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMaping");
+  static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMapping");
   static final boolean ALLOW_NEW_PROFILE_BUTTON=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowNewProfileCreation");
 
  
