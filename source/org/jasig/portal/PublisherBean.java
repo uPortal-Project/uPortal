@@ -78,7 +78,6 @@ public class PublisherBean extends GenericPortalBean
 {
   private org.jasig.portal.layout.IChannel m_chan;
   private IXml   m_chanXml;
-  private String m_sPubEmail;
   private String m_sChanName;
   private String m_sChanType;
 
@@ -97,7 +96,6 @@ public class PublisherBean extends GenericPortalBean
   {
     m_chan              = null;
     m_chanXml           = null;
-    m_sPubEmail         = null;
     m_sChanName         = null;
     m_sChanType         = null;
     m_vAllowedRoles     = null;
@@ -114,11 +112,6 @@ public class PublisherBean extends GenericPortalBean
     if(request == null)
     {
       return;
-    }
-
-    if(request.getParameter("pubEmail") != null)
-    {
-      m_sPubEmail = request.getParameter("pubEmail");
     }
 
     if(request.getParameter("chanName") != null)
@@ -449,9 +442,16 @@ public class PublisherBean extends GenericPortalBean
 
       String sQuery = "SELECT MAX(CHAN_ID)+1 FROM PORTAL_CHANNELS";
       rs = stmt.executeQuery(sQuery);
-      rs.next();
-      int nextID = rs.getInt(1);
-      debug("nextID: "+nextID);
+
+      int nextID = 0;
+
+      if(rs.next())
+      {
+        nextID = rs.getInt(1);
+      }
+
+      // Make sure the global channel ID is stored in the channel's XML
+      m_chan.setGlobalChannelIDAttribute(String.valueOf(nextID));
 
       // Make sure all parameters are escaped properly before storing
       IParameter chanParameters [] = m_chan.getParameters();
@@ -471,8 +471,8 @@ public class PublisherBean extends GenericPortalBean
       sChanXml = sChanXml.substring(trim);
 
       // Insert the channel data
-      String sInsert  = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML, USER_NAME) ";
-             sInsert += "VALUES (" + nextID + ",'" + m_sChanName + "','" +  m_sPubEmail + "',0,'" + sChanXml + "','" + person.getID() + "')";
+      String sInsert  = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, APPROVED, CHANNEL_XML, USER_NAME) ";
+             sInsert += "VALUES (" + nextID + ",'" + m_sChanName + "',0,'" + sChanXml + "','" + person.getID() + "')";
 
       int iInserted = stmt.executeUpdate (sInsert);
 
@@ -939,16 +939,6 @@ public class PublisherBean extends GenericPortalBean
   public void setChanCats(Vector vChanCats)
   {
     m_vChanCats = vChanCats;
-  }
-
-  public String getPubEmail()
-  {
-    return m_sPubEmail;
-  }
-
-  public void setPubEmail(String sPubEmail)
-  {
-    m_sPubEmail = sPubEmail;
   }
 
   public String getChanType()
