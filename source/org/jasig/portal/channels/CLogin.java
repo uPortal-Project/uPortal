@@ -37,7 +37,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 {
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
-  private String channelName = "Log in...";
   private String attemptedUserName="";
   private static final String sslLocation = "CLogin/CLogin.ssl";
   private boolean bAuthenticated = false;
