@@ -316,4 +316,16 @@ public class UtilitiesBean extends GenericPortalBean
 
     return sbText.toString ();
   }
+
+    public static String dom2PrettyString(Document doc) throws IOException
+    {
+	java.io.StringWriter outString = new java.io.StringWriter ();
+	org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+	format.setOmitXMLDeclaration(true);
+	format.setIndenting(true);
+	org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+	xsl.serialize (doc);
+	return outString.toString();
+    }
 }
+

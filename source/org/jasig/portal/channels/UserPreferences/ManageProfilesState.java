@@ -133,6 +133,7 @@ class ManageProfilesState extends BaseState {
             for(Enumeration upe=userProfileList.elements(); upe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) upe.nextElement();
                 Element pEl=doc.createElement("profile");
+		pEl.setAttribute("id",Integer.toString(p.getProfileId()));
                 pEl.setAttribute("name",p.getProfileName());
                 Element dEl=doc.createElement("description");
                 dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
@@ -145,6 +146,7 @@ class ManageProfilesState extends BaseState {
             for(Enumeration spe=systemProfileList.elements(); spe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) spe.nextElement();
                 Element pEl=doc.createElement("profile");
+		pEl.setAttribute("id",Integer.toString(p.getProfileId()));
                 pEl.setAttribute("name",p.getProfileName());
                 Element dEl=doc.createElement("description");
                 dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
@@ -152,6 +154,13 @@ class ManageProfilesState extends BaseState {
                 sEl.appendChild(pEl);
             }
             edEl.appendChild(sEl);
+
+	    /*  try {
+		Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+	    } catch (Exception e) {
+		Logger.log(Logger.ERROR,e);
+		}
+	    */
 
             // find the stylesheet and transform
             StylesheetSet set=context.getStylesheetSet();
@@ -164,7 +173,7 @@ class ManageProfilesState extends BaseState {
             Hashtable params=new Hashtable();
 
             params.put("baseActionURL", runtimeData.getBaseActionURL());
-            params.put("profileName", currentProfile.getProfileName());
+            params.put("profileId", Integer.toString(currentProfile.getProfileId()));
             if(currentProfile.isSystemProfile()) params.put("profileType","system");
             else params.put("profileType","user");
 
@@ -201,9 +210,13 @@ class ManageProfilesState extends BaseState {
                     // this is an action from the initial profile listing screen
                     // At this point we're supposed to pick up which profile is to be
                     // edited.
-                    String profileName=runtimeData.getParameter("profileName");
+                    Integer profileId=null;
+		    try {
+			profileId=new Integer(runtimeData.getParameter("profileId"));
+		    } catch (NumberFormatException nfe) {}
+
                     boolean systemProfile=false;
-                    if(profileName==null) {
+                    if(profileId==null) {
                         // return back to the base state if the profile hasn't been specified
                         context.setState(null);
                     } else {
@@ -215,9 +228,9 @@ class ManageProfilesState extends BaseState {
                             if(profileType.equals("system")) systemProfile=true;
                             // find the UserProfile
                             if(systemProfile) {
-                                profile=context.getUserPreferencesDB().getSystemProfileByName("system");
+                                profile=context.getUserPreferencesDB().getSystemProfileById(profileId.intValue());
                             } else {
-                                profile=context.getUserPreferencesDB().getUserProfileById(context.getPerson().getID(),profileName);
+                                profile=context.getUserPreferencesDB().getUserProfileById(context.getPerson().getID(),profileId.intValue());
                             }
                             if(profile==null) {
                                 // failed to find the specified profile, return to the base state

@@ -152,15 +152,19 @@ public class CUserPreferences implements IPrivilegedChannel
         this.runtimeData = rd;
         String action = runtimeData.getParameter ("userPreferencesAction");
         if(action!=null) {
-            String profileName=runtimeData.getParameter("profileName");
+            Integer profileId=null;
+	    try {
+		profileId=new Integer(runtimeData.getParameter("profileId"));
+	    } catch (NumberFormatException nfe) {};
+
             boolean systemProfile=false;
-            if(profileName!=null) {
-                String profileType=runtimeData.getParameter("profileType");
+            if(profileId!=null) {
+                String profileType=runtimeData.getParameter("proifileType");
                 if(profileType!=null && profileType.equals("system")) systemProfile=true;
             }
 
             if(action.equals("manageProfiles")) {
-                if(profileName!=null) {
+                if(profileId!=null) {
                     //if(!profile.equals(currentProfileName)) {
                     // need a new manage preferences state
 
@@ -172,13 +176,13 @@ public class CUserPreferences implements IPrivilegedChannel
                 }
             } else if(action.equals("managePreferences")) {
                 UserProfile profile=null;
-                if(profileName!=null) {
+                if(profileId!=null) {
                     // find the profile mapping
                     updb=new UserPreferencesDBImpl();
                     if(systemProfile)
-                        profile=updb.getSystemProfileByName(profileName);
+                        profile=updb.getSystemProfileById(profileId.intValue());
                     else
-                        profile=updb.getUserProfileById(ulm.getPerson().getID(),profileName);
+                        profile=updb.getUserProfileById(ulm.getPerson().getID(),profileId.intValue());
                 } else {
                     profile=up.getProfile();
                 }

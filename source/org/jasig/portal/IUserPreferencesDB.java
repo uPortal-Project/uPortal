@@ -13,33 +13,33 @@ public interface IUserPreferencesDB {
     public UserProfile getUserProfile(int userId, String userAgent);
     public void setUserProfile(int userId,UserProfile profile);
 
-    public UserProfile getUserProfileById(int userId,String profileName);
+    public UserProfile getUserProfileById(int userId,int profileId);
     public Hashtable getUserProfileList(int userId);
 
 
     public UserProfile getSystemProfile(String userAgent);
     public void setSystemProfile(UserProfile profile);
-    public UserProfile getSystemProfileByName(String profileName);
+    public UserProfile getSystemProfileById(int profileId);
     public Hashtable getSystemProfileList();
 
-    public void setUserBrowserMapping(int userId,String userAgent,String profileName);
-    public void setSystemBrowserMapping(String userAgent,String systemProfileName);
+    public void setUserBrowserMapping(int userId,String userAgent,int profileId);
+    public void setSystemBrowserMapping(String userAgent,int systemProfileId);
 
-    public String getUserBrowserMapping(int userId,String userAgent);
-    public String getSystemBrowserMapping(String userAgent);
+    // returns profileId
+    public Integer getUserBrowserMapping(int userId,String userAgent);
+    public Integer getSystemBrowserMapping(String userAgent);
 
 
-    //    public UserPreferences getUserPreferences(int userId, String profileName);
     public UserPreferences getUserPreferences(int userId, UserProfile profile);
 
     public void putUserPreferences(int userId, UserPreferences up);
 
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,String profileName,String stylesheetName);
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,String profileName,String stylesheetName);
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName);
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName);
 
 
-    public void setStructureStylesheetUserPreferences(int userId,String profileName, StructureStylesheetUserPreferences fsup);
-    public void setThemeStylesheetUserPreferences(int userId,String profileName, ThemeStylesheetUserPreferences ssup);
+    public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup);
+    public void setThemeStylesheetUserPreferences(int userId,int profileId, ThemeStylesheetUserPreferences ssup);
 
 
 }

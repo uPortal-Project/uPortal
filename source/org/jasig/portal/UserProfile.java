@@ -42,22 +42,26 @@ package org.jasig.portal;
  */
 
 public class UserProfile {
+    protected int id;
     protected String pName;
     protected String struct_ss_name;
     protected String theme_ss_name;
     protected String description;
     protected boolean system=false;
 
-    public UserProfile(String name,String struct_ss, String theme_ss, String desc) {
+    public UserProfile(int id,String name,String struct_ss, String theme_ss, String desc) {
 	pName=name; struct_ss_name=struct_ss; theme_ss_name=theme_ss; description=desc;
+	this.id=id;
     }
-
+    
+    public int getProfileId() { return id; }
     public String getProfileName() { return pName; }
     public String getProfileDescription() { return description; }
     public String getStructureStylesheetName() { return struct_ss_name; }
     public String getThemeStylesheetName() { return theme_ss_name; }
     public boolean isSystemProfile(){return system; }
 
+    public void setProfileId(int id) { this.id=id; }
     public void setProfileName(String name) { pName=name; }
     public void setStructureStylesheetName(String ss_name) { struct_ss_name=ss_name; }
     public void setThemeStylesheetName(String ss_name) { theme_ss_name=ss_name; }

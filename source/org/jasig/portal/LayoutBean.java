@@ -161,7 +161,7 @@ public class LayoutBean
               person.setID(guestUserId);
           }
           // establish mapping
-          updb.setUserBrowserMapping(person.getID(),req.getHeader("user-Agent"),"netscape");
+          updb.setUserBrowserMapping(person.getID(),req.getHeader("user-Agent"),1);
           Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : establishing UA mapping for user=\""+person.getID()+"\" and UA=\""+req.getHeader("user-Agent")+"\".");
           uLayoutManager = new UserLayoutManager(req,getPerson(req));
       }
