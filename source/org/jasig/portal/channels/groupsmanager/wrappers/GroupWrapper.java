@@ -55,42 +55,11 @@ import  org.apache.xerces.dom.DocumentImpl;
 /**
  * Returns an xml element for a given IEntityGroup or IEntityGroup key.
  */
-public class GroupWrapper
-      implements IGroupsManagerWrapper, GroupsManagerConstants {
-   //SmartCache will hold group elements with a timeout of 5 minutes
-   protected static final SmartCache GROUPS_ELEMENT_CACHE = new SmartCache(300);
+public class GroupWrapper extends GroupMemberWrapper {
 
    /** Creates new GroupWrapper */
    public GroupWrapper () {
-   }
-
-   /**
-    * Returns an xml element for a given IEntityGroup key. The element that is returned
-    * could be the same one that is passed in (usually with the expanded attribute
-    * set to "true", a cached element (no further work is required), or a new element
-    * (all attributes have to be set after the EntityGroups is retrieved).
-    * @param aKey
-    * @param aType
-    * @param anElem
-    * @param aDoc
-    * @return Element
-    */
-   public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc) {
-      Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): START");
-      Element rootElem = (anElem != null ? anElem : getNewElement (aKey, aDoc));
-      Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): rootElem: " + rootElem);
-      // Retrieve the EntityGroup only if some attributes are missing or the group
-      // has been expanded. This test will fail if we are using a cached element.
-      boolean isElemComplete = isElementFullyFormed(rootElem);
-      boolean isElemExpanded = (Boolean.valueOf(rootElem.getAttribute("expanded")).booleanValue());
-      Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): EXPANDED: " + rootElem.getAttribute("expanded"));
-      boolean isRetrievalRequired = (!isElemComplete || isElemExpanded);
-      if (isRetrievalRequired) {
-         IEntityGroup grp = GroupsManagerXML.retrieveGroup(aKey);
-         Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): grp: " + grp);
-         getXml((IGroupMember)grp, rootElem, aDoc);
-      }
-      return  rootElem;
+      ELEMENT_TAGNAME = GROUP_TAGNAME;
    }
 
    /**
@@ -152,14 +121,38 @@ public class GroupWrapper
       return  rootElem;
    }
 
-   /**
+    /**
+    * Returns a GroupMember for a key.
+    * @param aKey
+    * @return IGroupMember
+    */
+   protected IGroupMember retrieveGroupMember (String aKey, String aType) {
+      return (IGroupMember)GroupsManagerXML.retrieveGroup(aKey);
+   }
+
+    /**
+    * Answers if the group member has to be retrieved.
+    * @param anElem
+    * @return boolean
+    */
+   protected boolean isRetrievalRequired (Element anElem) {
+      // Retrieve the EntityGroup only if some attributes are missing or the group
+      // has been expanded.
+      String aKey = anElem.getAttribute("key");
+      boolean isElemComplete = isElementFullyFormed(anElem);
+      boolean isElemExpanded = (Boolean.valueOf(anElem.getAttribute("expanded")).booleanValue());
+      Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): EXPANDED: " + anElem.getAttribute("expanded"));
+      return (!isElemComplete || isElemExpanded);
+   }
+
+    /**
     * Returns the xml element for a given IEntityGroup, populated with child elements.
     * @param gm
     * @param anElem
     * @param aDoc
     * @return Element
     */
-   public Element expandElement (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
+   private Element expandElement (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): START");
       java.util.Iterator gmItr = null;
       IGroupMember aChildGm = null;
@@ -206,62 +199,17 @@ public class GroupWrapper
    }
 
    /**
-    * Returns the xml element cached for a given IEntityGroup key.
-    * @param aKey
-    * @return Element
-    */
-   private Element getCachedElement (String aKey) {
-      Utility.logMessage("DEBUG", "GroupWrapper::getCachedElement(): START, get KEY: " + aKey);
-      Element cachedElem = (Element)GROUPS_ELEMENT_CACHE.get(aKey);
-      return  (cachedElem == null ? cachedElem : (Element) cachedElem.cloneNode(false));
-   }
-
-   /**
-    * Puts an element into the xml element cached.
-    * @param aKey
-    * @param anElem
-    */
-   private void putCachedElement (String aKey, Element anElem) {
-      Utility.logMessage("DEBUG", "GroupWrapper::putCachedElement(): START, put KEY: " + aKey + " ELEM: " + anElem);
-      // has to be a deep copy because the group has an RDF element. This means the
-      // element has to be cached before it is expanded with child elements.
-      Element cachedElem = (Element) anElem.cloneNode(false);
-      GROUPS_ELEMENT_CACHE.put(aKey, cachedElem);
-      return;
-   }
-
-   /**
-    * Returns either the cached element for a given IEntityGroup key or creates a
-    * new element for the key.
-    * @param aKey
-    * @param aDoc
-    * @return Element
-    */
-   private Element getNewElement (String aKey, DocumentImpl aDoc) {
-      Utility.logMessage("DEBUG", "GroupWrapper::getNewElement(): START, KEY: " + aKey);
-      Element retElem = (Element) getCachedElement(aKey);
-      if (retElem != null) {
-         Utility.logMessage("DEBUG", "GroupWrapper::getNewElement(): Cached Elem found");
-         retElem.setAttribute("id", GroupsManagerXML.getNextUid());
-         aDoc.adoptNode(retElem);
-         Utility.logMessage("DEBUG", "GroupWrapper::getNewElement(): cachedElem adopted");
-      }
-      else {
-         Utility.logMessage("DEBUG", "GroupWrapper::getNewElement(): cachedElem NOT found");
-         retElem = GroupsManagerXML.createElement(GROUP_TAGNAME, aDoc, false);
-      }
-      return  retElem;
-   }
-   /**
     * Answers whether the group element has all required attributes set. This will
     * be used to determine if the EntityGroup will have to be retrieved in order to
     * populate the element with all required attributes. The only attribute that has
     * to be set from the EntityGroup is hasMembers. The others are can have default
-    * values or values assigned without respect to the EntityGroup (eg. "id").
+    * values or values assigned without respect to the EntityGroup (eg. "id"). This
+    * test will fail if we are using a cached element because the id attribute is
+    * not set in the cached element.
     * @param anElem
     * @return boolean
     */
-   private boolean isElementFullyFormed (Element anElem) {
+   protected boolean isElementFullyFormed (Element anElem) {
       Utility.logMessage("DEBUG", "GroupWrapper::isElementFullyFormed(): START, ELEM: " + anElem);
       //check if element is null
       boolean isGood = (anElem != null);

@@ -54,27 +54,11 @@ import  org.jasig.portal.groups.IEntity;
 /**
  * Returns an xml element for a given IEntity or IEntity key.
  */
-public class EntityWrapper
-      implements IGroupsManagerWrapper, GroupsManagerConstants {
+public class EntityWrapper extends GroupMemberWrapper {
 
    /** Creates new EntityWrapper */
    public EntityWrapper () {
-   }
-
-   /**
-    * Returns an xml element for a given IEntity key.
-    * @param aKey
-    * @param aType
-    * @param anElem
-    * @param aDoc
-    * @return Element
-    */
-   public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc) {
-      Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ENTITY_TAGNAME,
-            aDoc, false));
-      IEntity ent = GroupsManagerXML.retrieveEntity(aKey, aType);
-      getXml((IGroupMember)ent, rootElem, aDoc);
-      return  rootElem;
+      ELEMENT_TAGNAME = ENTITY_TAGNAME;
    }
 
    /**
@@ -85,7 +69,7 @@ public class EntityWrapper
     * @return Element
     */
    public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
-      Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ENTITY_TAGNAME,
+      Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME,
             aDoc, false));
       Utility.logMessage("DEBUG", "EntityWrapper.getXml(): START, Element: " + rootElem);
       try {
@@ -103,7 +87,37 @@ public class EntityWrapper
       }
       return  rootElem;
    }
+
+    /**
+    * Returns a GroupMember for a key.
+    * @param aKey
+    * @return IGroupMember
+    */
+   protected IGroupMember retrieveGroupMember (String aKey, String aType) {
+      return (IGroupMember)GroupsManagerXML.retrieveEntity(aKey, aType);
+   }
+
+    /**
+    * Answers if the GroupMember has to be retrieved.
+    * @param anElem
+    * @return boolean
+    */
+   protected boolean isRetrievalRequired (Element anElem) {
+      // Retrieve the Entity only if some attributes are missing
+      return (isElementFullyFormed(anElem));
+   }
+
+    /**
+    * Answers whether the group element has all required attributes set. This will
+    * be used to determine if the Entity will have to be retrieved in order to
+    * populate the element with all required attributes. This test will fail if we are
+    * using a cached element because the id attribute is not set in the cached element.
+    * @param anElem
+    * @return boolean
+    */
+   protected boolean isElementFullyFormed (Element anElem) {
+      return (anElem.hasAttribute("id") && anElem.hasAttribute("key") && anElem.hasAttribute("type") && anElem.hasAttribute("displayName"));
+   }
+
 }
-
-
 
