@@ -28,8 +28,8 @@ A.navigation:hover {
 }
 .uportal-text-small{
 	color : Black;
-	font-family : Georgia, "Times New Roman", Times, serif;
-	font-size : 10px;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 9px;
 }
 .uportal-button{
 	color : Black;
@@ -114,7 +114,7 @@ A.uportal-navigation-channel:hover{
 	font-weight : bold;
 }
 .uportal-channel-title-reversed{
-	color : #996666;
+	color : #CC6666;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
@@ -132,7 +132,7 @@ A.uportal-navigation-channel:hover{
 	font-weight : bold;
 }
 .uportal-channel-emphasis{
-	font-style : italic;
+	font-weight : bold;
 	font-size : 12px;
 	font-family : Georgia, "Times New Roman", Times, serif;
 }
@@ -201,4 +201,8 @@ A.uportal-navigation-channel:hover{
 .uportal-background-content{
 	background : #FFFFCC;
 }
+.uportal-background-highlight{
+	background : #FFFF99;
+}
+
 
