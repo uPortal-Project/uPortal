@@ -19,7 +19,10 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -349,7 +352,13 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         assertEquals("Comparing node used to update with the update result: ",fold,rfold);
 
         Enumeration nchildren=man.getChildIds(folderId);
-        assertEquals("Comparing child Ids of an updated folder: ",ochildren,nchildren);
+        
+        // convert to List because equals() is well defined on
+        // List whereas it is not well defined on Enumeration
+        List oldChildren = Collections.list(ochildren);
+        List newChildren = Collections.list(nchildren);
+        
+        assertEquals("Comparing child Ids of an updated folder: ",oldChildren,newChildren);
 
         assertTrue("nodeUpdated event received",nodeUpdated);
         assertTrue("LayoutEvent is not null",lastEvent!=null);
