@@ -41,7 +41,18 @@ package org.jasig.portal.groups;
  */
 public interface IEntityGroupStoreFactory {
 /**
- * 
+ * @return IEntityGroupStore
+ * @throws GroupsException
  */
 public IEntityGroupStore newGroupStore() throws GroupsException;
+/**
+ * Factory method takes a service descriptor parm, which lets the factory
+ * customize the store.
+ *
+ * @param svcDescriptor
+ * @return IEntityGroupStore
+ * @throws GroupsException
+ */
+public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
+throws GroupsException;
 }

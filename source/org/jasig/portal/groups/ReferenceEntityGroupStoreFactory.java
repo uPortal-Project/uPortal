@@ -56,6 +56,16 @@ public ReferenceEntityGroupStoreFactory() {
  */
 public IEntityGroupStore newGroupStore() throws GroupsException
 {
+    return newGroupStore(null);
+}
+/**
+ * Return an instance of the group store implementation.
+ * @return IEntityGroupStore
+ * @exception GroupsException
+ */
+public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
+throws GroupsException
+{
     return newInstance();
 }
 /**

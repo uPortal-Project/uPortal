@@ -34,6 +34,7 @@
 
 package org.jasig.portal.groups.ldap;
 
+import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntityGroupStoreFactory;
@@ -46,7 +47,7 @@ import org.jasig.portal.services.LogService;
  */
 
 public class LDAPGroupStoreFactory implements IEntityGroupStoreFactory {
-	protected static LDAPGroupStore groupStore;
+    protected static LDAPGroupStore groupStore;
 /**
  * ReferenceGroupServiceFactory constructor.
  */
@@ -56,7 +57,7 @@ public LDAPGroupStoreFactory() {
 /**
  * @return org.jasig.portal.groups.ldap.LDAPGroupStore
  */
-protected static synchronized LDAPGroupStore getGroupStore() 
+protected static synchronized LDAPGroupStore getGroupStore()
 {
     if ( groupStore == null )
         { groupStore = new LDAPGroupStore(); }
@@ -68,6 +69,16 @@ protected static synchronized LDAPGroupStore getGroupStore()
  * @exception GroupsException
  */
 public IEntityGroupStore newGroupStore() throws GroupsException
+{
+    return newGroupStore(null);
+}
+/**
+ * Return an instance of the group store implementation.
+ * @return IEntityGroupStore
+ * @exception GroupsException
+ */
+public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
+throws GroupsException
 {
     return newInstance();
 }

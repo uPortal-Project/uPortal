@@ -478,6 +478,16 @@ private void initialize() throws GroupsException
 {
     String eMsg = null;
 
+    // print service descriptor attributes:
+    LogService.log(LogService.DEBUG, "Service descriptor attributes:");
+    for (Iterator i=getServiceDescriptor().keySet().iterator(); i.hasNext();)
+    {
+        String descriptorKey = (String)i.next();
+        Object descriptorValue = getServiceDescriptor().get(descriptorKey);
+        if ( descriptorValue != null )
+            { LogService.log(LogService.DEBUG, "  " + descriptorKey + " : " + descriptorValue); }
+    }
+
     String groupStoreFactoryName = getServiceDescriptor().getGroupStoreFactoryName();
     String entityStoreFactoryName = getServiceDescriptor().getEntityStoreFactoryName();
     String entitySearcherFactoryName = getServiceDescriptor().getEntitySearcherFactoryName();
@@ -493,7 +503,7 @@ private void initialize() throws GroupsException
         try
         {
             IEntityGroupStoreFactory groupStoreFactory = (IEntityGroupStoreFactory)Class.forName(groupStoreFactoryName).newInstance();
-            groupFactory = groupStoreFactory.newGroupStore();
+            groupFactory = groupStoreFactory.newGroupStore(getServiceDescriptor());
         }
         catch (Exception e)
         {
