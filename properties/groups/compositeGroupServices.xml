@@ -15,6 +15,7 @@ This list of component group services is processed by the composite, or "root" s
     <caching_enabled>true</caching_enabled>
   </service>
 
+<!--  UNcomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
 <!--
   <service>
     <name>ldap</name>
@@ -22,6 +23,19 @@ This list of component group services is processed by the composite, or "root" s
     <entity_store_factory>org.jasig.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
     <group_store_factory>org.jasig.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
     <entity_searcher_factory>org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
+<!-- UNcomment to configure a file system group service component.  Change groupsRoot as appropriate.  -->
+<!--
+  <service groupsRoot="C:/groups">
+    <name>filesystem</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.filesystem.FileSystemEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
