@@ -44,7 +44,7 @@ import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelRuntimeProperties;
 import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.UtilitiesBean;
 import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.ResourceMissingException;
@@ -83,13 +83,8 @@ import  java.net.URL;
 public class CBookmarks extends BaseChannel {
   // A DOM document where all the bookmark information will be contained
   protected DocumentImpl m_bookmarksXML;
-  // File seperator for current OS
-  private static final String fs = System.getProperty("file.separator");
-  // Location of the stylesheet files
-  private static final String stylesheetDir = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs
-      + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
-  // Initialize StylesheetSet
-  private static StylesheetSet m_stylesheetSet;
+  // Location of the stylesheet list file
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CBookmarks/CBookmarks.ssl");
   // Define some constants to keep the state of the channel
   private final int VIEWMODE = 0;
   private final int EDITMODE = 1;
@@ -102,14 +97,6 @@ public class CBookmarks extends BaseChannel {
   // Keep track of the node that the user is currently working with
   private String m_activeNodeID = null;
   private String m_activeNodeType = null;
-
-  /**
-   * put your documentation comment here
-   */
-  public CBookmarks () throws PortalException {
-    m_stylesheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
-    m_stylesheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-  }
 
   /**
    * put your documentation comment here
@@ -603,11 +590,17 @@ public class CBookmarks extends BaseChannel {
     if (parameters == null) {
       parameters = new Hashtable(1);
     }
+    
     // Add the baseActionURL to the stylesheet parameters
     parameters.put("baseActionURL", runtimeData.getBaseActionURL());
+    
     // Use the XSLT utility to perform the transformation
-    String xslURI = m_stylesheetSet.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
-    XSLT.transform(inputXML, new URL(xslURI), out, parameters);
+    XSLT xslt = new XSLT();
+    xslt.setXML(inputXML);
+    xslt.setSSL(sslLocation, stylesheetName, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameters(parameters);
+    xslt.transform();
   }
 
   /**
