@@ -98,15 +98,13 @@ import javax.xml.parsers.ParserConfigurationException;
  *
  * <p>DbLoader will perform the following steps:
  * <ol>
- * <li>Read configurable properties from <portal.home>/properties/dbloader.xml</li>
+ * <li>Read configurable properties from dbloader.xml</li>
  * <li>Get database connection from RdbmServices
- *     (reads JDBC database settings from <portal.home>/properties/rdbm.properties).</li>
+ *     (reads JDBC database settings from rdbm.properties).</li>
  * <li>Read tables.xml and issue corresponding DROP TABLE and CREATE TABLE SQL statements.</li>
  * <li>Read data.xml and issue corresponding INSERT SQL statements.</li>
- * </ol></p>
- *
- * <p>You will need to set the system property "portal.home"  For example,
- * java -Dportal.home=/usr/local/uPortal</p>
+ * </ol>
+ * </p>
  *
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
@@ -203,7 +201,7 @@ public class DbLoader
         exit();
       }
       else
-        System.out.println("DbLoader couldn't obtain a database connection.");
+        System.out.println("DbLoader couldn't obtain a database connection.  See the portal log for details.");
 
     }
     catch (Exception e)
