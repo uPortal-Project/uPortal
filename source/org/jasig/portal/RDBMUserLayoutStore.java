@@ -195,9 +195,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   */
   public RDBMUserLayoutStore () throws Exception {
     crsdb = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
     csdb = CounterStoreFactory.getCounterStoreImpl();
@@ -473,10 +470,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       DOMParser parser = new DOMParser();
       parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
       Document stylesheetDescriptionXML = parser.getDocument();
-      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
-          + this.getName(stylesheetDescriptionXML));
-      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = "
-          + this.getDescription(stylesheetDescriptionXML));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = " + this.getName(stylesheetDescriptionXML));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = " + this.getDescription(stylesheetDescriptionXML));
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
       if (ssName == null)
@@ -594,14 +589,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return (value != null && value.equals("true") ? true : false);
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @exception Exception
-   */
-  public void deleteUserProfile (IPerson person, int profileId) throws Exception {
+  public void deleteUserProfile(IPerson person, int profileId) throws Exception {
     int userId = person.getID();
+    deleteUserProfile(userId,profileId);
+  }
+
+  private void deleteUserProfile(int userId, int profileId) throws Exception {
     Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -609,6 +602,21 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
+        
+        // remove profile mappings
+        sQuery= "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+
+        // remove parameter information
+        sQuery= "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+        
+        sQuery= "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+        
       } finally {
         stmt.close();
       }
@@ -930,14 +938,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  list;
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @param stylesheetId
-   * @return
-   * @exception Exception
-   */
+
   public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
     int userId = person.getID();
     StructureStylesheetUserPreferences ssup;
@@ -1232,14 +1233,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  list;
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @param stylesheetId
-   * @return
-   * @exception Exception
-   */
   public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
     int userId = person.getID();
     ThemeStylesheetUserPreferences tsup;
@@ -1349,17 +1342,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @param elementName
-   * @return
-   */
   private String getRootElementTextValue (Document descr, String elementName) {
     NodeList names = descr.getElementsByTagName(elementName);
     Node name = null;
     for (int i = names.getLength() - 1; i >= 0; i--) {
       name = names.item(i);
+
       if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
         break;
       else
@@ -1374,11 +1362,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @return
-   */
   private String getDescription (Document descr) {
     NodeList descriptions = descr.getElementsByTagName("description");
     Node description = null;
@@ -1398,11 +1381,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @param csd
-   */
   private void populateParameterTable (Document descr, CoreStylesheetDescription csd) {
     NodeList parametersNodes = descr.getElementsByTagName("parameters");
     Node parametersNode = null;
@@ -1443,11 +1421,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @param cxsd
-   */
   private void populateFolderAttributeTable (Document descr, StructureStylesheetDescription cxsd) {
     NodeList parametersNodes = descr.getElementsByTagName("parameters");
     NodeList folderattributesNodes = descr.getElementsByTagName("folderattributes");
@@ -1489,11 +1462,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @param cxsd
-   */
   private void populateChannelAttributeTable (Document descr, CoreXSLTStylesheetDescription cxsd) {
     NodeList channelattributesNodes = descr.getElementsByTagName("channelattributes");
     Node channelattributesNode = null;
@@ -1534,12 +1502,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param descr
-   * @param elementName
-   * @return
-   */
   private Vector getVectorOfSimpleTextElementValues (Document descr, String elementName) {
     Vector v = new Vector();
     // find "stylesheetdescription" node, take the first one
@@ -1556,11 +1518,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  v;
   }
 
-  /**
-   * put your documentation comment here
-   * @param node
-   * @return
-   */
   private String getTextChildNodeValue (Node node) {
     if (node == null)
       return  null;
@@ -1847,13 +1804,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @return
-   * @exception Exception
-   */
   public UserProfile getUserProfileById (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -1895,12 +1845,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @return
-   * @exception Exception
-   */
   public Hashtable getUserProfileList (IPerson person) throws Exception {
     int userId = person.getID();
 
@@ -1991,11 +1935,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param stylesheetName
-   * @exception Exception
-   */
   public void removeStructureStylesheetDescription (int stylesheetId) throws Exception {
     Connection con = RDBMServices.getConnection();
     try {
@@ -2019,8 +1958,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        // clean up user preferences
-        // should we do something about profiles ?
         RDBMServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
@@ -2080,11 +2017,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param stylesheetName
-   * @exception Exception
-   */
   public void removeThemeStylesheetDescription (int stylesheetId) throws Exception {
     Connection con = RDBMServices.getConnection();
     try {
@@ -2097,14 +2029,28 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        // clean up user preferences
+
+        // nuke all of the profiles that use it
+        sQuery = "SELECT USER_ID,PROFILE_ID FROM UP_USER_PROFILE WHERE THEME_SS_ID="+stylesheetId;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureThemeStylesheetDescription() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+            while (rs.next()) {
+              deleteUserProfile(rs.getInt("USER_ID"),rs.getInt("PROFILE_ID"));
+          }
+        } finally {
+            rs.close();
+        }
+
+        // clean up user preferences - directly ( in case of loose params )
         sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        // nuke the profiles as well ?
+
+
         RDBMServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
@@ -2141,12 +2087,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param doc
-   * @exception Exception
-   */
   public void saveBookmarkXML (IPerson person, Document doc) throws Exception {
     int userId = person.getID();
     StringWriter outString = new StringWriter();
@@ -2168,16 +2108,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param nodeup
-   * @param stmt
-   * @param userId
-   * @param layoutId
-   * @param structId
-   * @return
-   * @exception java.sql.SQLException
-   */
   protected final int saveStructure (Node node, RDBMServices.PreparedStatement structStmt, RDBMServices.PreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
@@ -2258,13 +2188,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  saveStructId;
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @param ssup
-   * @exception Exception
-   */
   public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -2370,13 +2293,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @param tsup
-   * @exception Exception
-   */
   public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -2452,13 +2368,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param userAgent
-   * @param profileId
-   * @exception Exception
-   */
+
   public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -2608,12 +2518,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profile
-   * @exception Exception
-   */
   public void setUserProfile (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -2800,9 +2704,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         int stylesheetId = tsd.getId();
-        String sQuery = "UPDATE UP_SS_THEME SET SS_NAME='" + tsd.getStylesheetName() + "',SS_URI='" + tsd.getStylesheetURI()
-            + "',SS_DESCRIPTION_URI='" + tsd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + tsd.getStylesheetWordDescription()
-            + "' WHERE SS_ID=" + stylesheetId;
+
+        String sQuery = "UPDATE UP_SS_THEME SET SS_NAME='" + tsd.getStylesheetName() + "',SS_URI='" + tsd.getStylesheetURI()+ "',SS_DESCRIPTION_URI='" + tsd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + tsd.getStylesheetWordDescription() + "',SAMPLE_ICON_URI='"+tsd.getSampleIconURI()+"',SAMPLE_URI='"+tsd.getSamplePictureURI()+"',MIME_TYPE='"+tsd.getMimeType()+"',DEVICE_TYPE='"+tsd.getDeviceType()+"',SERIALIZER_NAME='"+tsd.getSerializerName()+"',UP_MODULE_CLASS='"+tsd.getCustomUserPreferencesManagerClass()+"' WHERE SS_ID=" + stylesheetId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // first, see what was there before
@@ -2901,12 +2804,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profile
-   * @exception Exception
-   */
   public void updateUserProfile (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -2926,30 +2823,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param userAgent
-   * @param profileId
-   */
   public void setSystemBrowserMapping (String userAgent, int profileId) throws Exception {
     this.setUserBrowserMapping(systemUser, userAgent, profileId);
   }
 
-  /**
-   * put your documentation comment here
-   * @param userAgent
-   * @return
-   */
   private int getSystemBrowserMapping (String userAgent) throws Exception {
     return  getUserBrowserMapping(systemUser, userAgent);
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param userAgent
-   * @return
-   */
   public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception {
     int profileId = getUserBrowserMapping(person, userAgent);
     if (profileId == 0)
@@ -2957,11 +2838,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  this.getUserProfileById(person, profileId);
   }
 
-  /**
-   * put your documentation comment here
-   * @param userAgent
-   * @return
-   */
   public UserProfile getSystemProfile (String userAgent) throws Exception {
     int profileId = getSystemBrowserMapping(userAgent);
     if (profileId == 0)
@@ -2971,21 +2847,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  up;
   }
 
-  /**
-   * put your documentation comment here
-   * @param profileId
-   * @return
-   */
   public UserProfile getSystemProfileById (int profileId) throws Exception {
     UserProfile up = this.getUserProfileById(systemUser, profileId);
     up.setSystemProfile(true);
     return  up;
   }
 
-  /**
-   * put your documentation comment here
-   * @return
-   */
   public Hashtable getSystemProfileList () throws Exception {
     Hashtable pl = this.getUserProfileList(systemUser);
     for (Enumeration e = pl.elements(); e.hasMoreElements();) {
@@ -2995,27 +2862,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  pl;
   }
 
-  /**
-   * put your documentation comment here
-   * @param profile
-   */
   public void updateSystemProfile (UserProfile profile) throws Exception {
     this.updateUserProfile(systemUser, profile);
   }
 
-  /**
-   * put your documentation comment here
-   * @param profile
-   * @return
-   */
   public UserProfile addSystemProfile (UserProfile profile) throws Exception {
     return  addUserProfile(systemUser, profile);
   }
 
-  /**
-   * put your documentation comment here
-   * @param profileId
-   */
   public void deleteSystemProfile (int profileId) throws Exception {
     this.deleteUserProfile(systemUser, profileId);
   }
@@ -3041,12 +2895,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
     private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profileId
-   * @return
-   */
   public UserPreferences getUserPreferences (IPerson person, int profileId) throws Exception {
     UserPreferences up = null;
     UserProfile profile = this.getUserProfileById(person, profileId);
@@ -3056,12 +2904,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  (up);
   }
 
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param profile
-   * @return
-   */
   public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception {
     int profileId = profile.getProfileId();
     UserPreferences up = new UserPreferences(profile);
@@ -3070,12 +2912,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  up;
   }
 
-  /**
-   * Put user preferences
-   * @param person
-   * @param up
-   * @throws Exception
-   */
   public void putUserPreferences (IPerson person, UserPreferences up) throws Exception {
     // store profile
     UserProfile profile = up.getProfile();
