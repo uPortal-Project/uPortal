@@ -14,7 +14,9 @@
   </xsl:variable>
 <!--  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
 -->  
+
 <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
+
 <xsl:template match="/">
     <html>
       <head>
