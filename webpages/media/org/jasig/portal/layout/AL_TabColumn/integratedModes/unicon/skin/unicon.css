@@ -1,0 +1,1797 @@
+/*==========================UPORTAL FRAMEWORK==========================
+Classes for the uPortal outer framework that encompasses all the channels */
+
+/*_______________uPortal Header Branding_______________
+----------------------------------------------------------------------------------------*/
+.brand-identity{
+color : #000000;
+font-size : 10pt;
+font-weight : normal;
+background : #6487DC;
+padding: 0px;
+border : 0px;
+}
+
+.brand-identity-secondary{
+color : #000000;
+font-size : 10pt;
+font-weight : normal;
+background : #6487DC;
+padding: 0px;
+border : 0px;
+text-align: left;
+}
+
+/*_______________uPortal Footer Branding_______________
+---------------------------------------------------------------------------------------*/
+.brand-identity-poweredby{
+color : #000000;
+font-size : 10pt;
+font-weight : normal;
+background : #FFFFFF;
+padding: 10px;
+border-bottom: 1px dotted #D8D8D8;
+text-align: right;
+top: 0px;
+}
+
+/*_______________uPortal Date_______________
+-----------------------------------------------------------------------*/
+.date{
+color : #FFFFFF;
+font-size : 8pt;
+font-weight : normal;
+background : #6487DC;
+background-image: url(../institutional/uportal_logo_grid2.jpg);
+background-repeat: no-repeat;
+background-position: top left;
+border-bottom : 3px solid #99CC00;
+padding: 0px 5px 0px 0px;
+text-align: right;
+}
+
+/*_______________uPortal Header Bar_______________
+---------------------------------------------------------------------------------*/
+.header-bar{
+color : #666666;
+font-size : 10pt;
+font-weight : normal;
+background: #E4E3E3;
+padding: 2px 5px 2px 5px;
+border-top : 0px none;
+border-bottom : 0px none;
+border-left : 0px none;
+border-right : 0px none;
+}
+
+.header-bar-login{
+color : #666666;
+font-size : 10pt;
+font-weight : normal;
+background: #F5F5F6;
+padding: 2px 5px 2px 5px;
+border : 0px none;
+}
+
+.login{
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+ 
+ .notification{    
+     font-size: 10pt;
+	 font-weight: bold;
+     /*padding: 2px 15px 2px 6px;   
+     background-color: #FFFFFF;*/
+ }
+ 
+ A.notification-link{
+	color: #99CC00;
+}
+
+ A.notification-link:hover{
+	color: #FF6300;
+}
+
+ A.notification-link:visited{
+	color: #99CC00;
+}
+
+A.headerlinks{
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+A.headerlinks:hover{
+color : #3366CC;
+}
+
+A.headerlinks:visited{
+color : #505050;
+}
+
+/*_______________uPortal Tab Bar_______________
+----------------------------------------------------------------------------*/
+
+.tab-bar-top{
+color : #FFFFFF;
+background : #F5F5F6;
+padding: 0px;
+border : 0px;
+}
+
+.tab-bar{
+color : #FFFFFF;
+font-size : 9pt;
+font-weight : normal;
+background : #F5F5F6;
+padding: 0px;
+border-top : 0px none;
+border-bottom : 1px solid #D8D8D8;
+border-left : 0px none;
+border-right : 0px none;
+}
+
+.tab-wrapper{
+/*background : #FFFFFF;
+padding: 0px;
+border-top : 0px;
+border-bottom : 0px;
+border-left : 0px;
+border-right : 0px;*/
+}
+
+.tab-wrapper-first{
+/*background : #BBB7A8;
+padding: 0px;
+border-top : 2px solid #555143;
+border-bottom : 2px solid #555143;
+border-left : 2px solid #555143;
+border-right : 1px solid #555143;*/
+}
+
+.tab-wrapper-last{
+/*background : #BBB7A8;
+padding: 0px;
+border-top : 2px solid #555143;
+border-bottom : 2px solid #555143;
+border-left : 1px solid #555143;
+border-right : 2px solid #555143;*/
+}
+
+.tab-body{
+color : #FFFFFF;
+font-size : 9pt;
+font-weight : normal;
+background-image: url(../navigation/background_inactive.gif);
+padding-top: 2px;
+padding-bottom: 2px;
+padding-left: 10px;
+padding-right: 10px;
+border : 0px;
+}
+
+A.tab-navigation{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+A.tab-navigation:hover{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+A.tab-navigation:visited{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+.tab-active-wrapper{
+/*background : #FFFFFF;
+padding: 0px;
+border-top : 0px;
+border-bottom : 0px;
+border-left : 0px;
+border-right : 0px;*/
+}
+
+.tab-active-wrapper-first{
+/*background : #EBE8DF;
+padding: 0px;
+border-top : 2px solid #555143;
+border-bottom : 2px solid #EBE8DF;
+border-left : 2px solid #555143;
+border-right : 1px solid #555143;*/
+}
+
+.tab-active-wrapper-last{
+/*background : #EBE8DF;
+padding: 0px;
+border-top : 2px solid #555143;
+border-bottom : 2px solid #EBE8DF;
+border-left : 1px solid #555143;
+border-right : 2px solid #555143;*/
+}
+
+.tab-body-active{
+color : #FFFFFF;
+font-size : 9pt;
+font-weight : normal;
+background-image: url(../navigation/background_active.gif);
+padding-top: 2px;
+padding-bottom: 2px;
+padding-left: 10px;
+padding-right: 10px;
+border : 0px;
+}
+
+A.tab-navigation-active{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+A.tab-navigation-active:hover{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+A.tab-navigation-active:visited{
+	color: #FFFFFF;
+	font-weight : bold;
+	text-decoration: none;
+}
+
+/*_______________uPortal Body and Links_______________
+--------------------------------------------------------------------------------------*/
+BODY{
+background-color : #FFFFFF;
+color: #666666;
+font-family :  Verdana, Arial, Helvetica, sans-serif;
+font-size: 10pt;
+line-height: 14pt;
+scrollbar-face-color: #FFFFFF;
+scrollbar-shadow-color: #D8D8D8;
+scrollbar-highlight-color: #FFFFFF;
+scrollbar-3dlight-color: #D8D8D8;
+scrollbar-darkshadow-color: #666666;
+scrollbar-track-color: #F5F5F6;
+scrollbar-arrow-color: #D8D8D8;
+}
+
+A{
+color : #3366CC;
+}
+
+A:VISITED{
+color : #3366CC;
+}
+
+A:HOVER{
+color : #FF6300;
+}
+
+/*_______________uPortal Text_______________
+------------------------------------------------------------------------*/
+.uportal-text{
+}
+
+.uportal-text-reversed{
+color : White;
+}
+
+.uportal-text-small{
+font-size : 8pt;
+}
+
+.uportal-label{
+color : black;
+font-weight : bold;
+}
+
+.uportal-label-reversed{
+color : Black;
+font-weight : bold;
+}
+
+.uportal-input-text{
+color : Black;
+font-size: 9pt;
+font-family: Monaco, Andale Mono, monospace;
+background : #FFFFFF;
+}
+
+.uportal-crumbtrail{
+font-size : 7pt;
+}
+
+.uportal-copyright{
+font-size : 7pt;
+font-style : italic;
+}
+
+caption{
+color: #666666;
+font-size : 8pt;
+font-weight : bold;
+text-align: center;
+}
+
+/*_______________uPortal Navigation_______________
+-------------------------------------------------------------------------------*/
+A.navigation{
+color : Black;
+}
+
+A.navigation:visited{
+color : Black;
+}
+
+A.navigation:hover{
+color : #A94509;
+}
+
+A.uportal-navigation-category{
+color : #6A6761;
+font-weight : bold;
+vertical-align : middle;
+}
+
+A.uportal-navigation-category:visited{
+color : Black;
+font-weight : bold;
+vertical-align : middle;
+}
+
+A.uportal-navigation-category:hover{
+color : #A0522D;
+font-weight : bold;
+vertical-align : middle;
+}
+
+.uportal-navigation-category:selected{
+color : #333333;
+font-weight : bold;
+vertical-align : middle;
+}
+
+A.uportal-navigation-channel{
+color : Black;
+vertical-align : middle;
+}
+
+A.uportal-navigation-channel:visited{
+color : Black;
+vertical-align : middle;
+}
+
+A.uportal-navigation-channel:hover{
+color : #A0522D;
+vertical-align : middle;
+}
+
+.uportal-navigation-channel:selected{
+background : Black;
+color : #333333;
+vertical-align : middle;
+}
+
+/*_______________uPortal Background Colors_______________
+-------------------------------------------------------------------------------------------*/
+.uportal-background{
+background : #FFFFFF;
+}
+
+.uportal-background-channelarea{
+background : #FFFFFF;
+}
+
+.uportal-background-dark{
+background : #FFFFFF;
+}
+
+.uportal-background-med{
+background : #D8D8D8;
+}
+
+.uportal-background-light{
+/*background : #F5F5F6;*/
+background : #FFFFFF;
+}
+
+.uportal-background-content{
+background : #FFFFFF;
+}
+
+.uportal-background-highlight{
+background : #99CC00;
+}
+
+.uportal-background-shadow{
+background : #000000;
+}
+
+/*_______________uPortal Images_______________
+--------------------------------------------------------------------------*/
+.img-float-left {
+	float: left;
+	margin: 0pt 10pt 10pt 0pt;
+}
+
+.img-float-right {
+	float: right;
+	margin: 0pt 0pt 10pt 10pt;
+}
+
+/*_______________uPortal Tables_______________
+--------------------------------------------------------------------------*/
+.table-content{
+padding: 5px;
+}
+
+.table-content-iso{
+padding: 5px;
+}
+
+.table-content-top{
+padding: 5px;
+}
+
+.table-content-left-top{
+padding: 5px;
+}
+
+.table-content-right-top{
+padding: 5px;
+}
+
+.table-content-left{
+padding: 5px;
+}
+
+.table-content-right{
+padding: 5px;
+}
+
+.table-content-single{
+padding: 5px;
+}
+
+.table-content-single-top{
+padding: 5px;
+}
+
+.table-content-bottom{
+padding: 5px;
+}
+
+.table-content-left-bottom{
+padding: 5px;
+}
+
+.table-content-right-bottom{
+padding: 5px;
+}
+
+.table-content-single-bottom{
+padding: 5px;
+}
+
+.table-extend{
+color : Black;
+padding: 5px;
+}
+
+.table-extend-bottom{
+color : Black;
+padding: 5px;
+}
+
+.table-light{
+padding: 5px;
+}
+
+.table-light-left-top{
+padding: 5px;
+}
+
+.table-light-right-top{
+padding: 5px;
+}
+
+.table-light-left{
+padding: 5px;
+}
+
+.table-light-right{
+padding: 5px;
+}
+
+.table-light-single{
+padding: 5px;
+}
+
+.table-light-bottom{
+padding: 5px;
+}
+
+.table-light-left-bottom{
+padding: 5px;
+}
+
+.table-light-right-bottom{
+padding: 5px;
+}
+
+.table-light-single-bottom{
+padding: 5px;
+}
+
+.table-nav{
+color : #555143;
+text-align: center;
+padding: 5px;
+}
+
+.table-nav-gradebook{
+color : #555143;
+text-align: center;
+padding: 5px;
+}
+
+.table-option{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-right{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-left{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-single{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-bottom{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-right-bottom{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-left-bottom{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.table-option-single-bottom{
+color : #555143;
+font-size : 8pt;
+font-weight : bold;
+padding: 5px;
+}
+
+.th{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-right{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-left{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-top{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-top-single{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-top-right{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-top-left{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-thin{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-thin-left{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+
+.th-thin-right{
+color : #505050;
+font-weight : bold;
+border-bottom: 1px solid #D8D8D8;
+padding: 5px;
+}
+/*====================================================*/
+
+
+
+/*==========================UPORTAL CHANNELS==========================
+Classes for portal channels */
+
+/*_______________uPortal Channel Style_______________
+------------------------------------------------------------------------------------*/
+.channel-border{
+	border-top: 2px solid #6487DC;
+	border-left: 1px solid #D8D8D8;
+	border-right: 1px solid #D8D8D8;
+	border-bottom: 1px solid #D8D8D8;
+}
+
+.channel-title{
+	background : #FFFFFF;
+	height: 22px;
+	font-size: 10pt;
+	vertical-align: middle;
+}
+
+A.A-channel-title{
+	color : black;
+	font-size: 10pt;
+	font-weight : bold;
+	text-decoration: none;
+	padding: 0px 0px 0px 5px;
+}
+
+A.A-channel-title:hover{
+	color : #2F6BE2;
+}
+
+A.A-channel-title:visited{
+	color : black;
+}
+
+.channel{
+	background : #FFFFFF;
+	font-weight : normal;
+	border: 2px solid #FFFFFF;
+}
+
+/*_______________uPortal Channel Text_______________
+------------------------------------------------------------------------------------*/
+.uportal-channel-text{
+color : Black;
+}
+
+.uportal-channel-title{
+color : #000000;
+font-size : 10pt;
+font-weight : bold;
+vertical-align : top;
+}
+
+
+.uportal-channel-title-reversed{
+color : #666666;
+font-size : 12pt;
+font-weight : bold;
+}
+
+.uportal-channel-subtitle{
+font-size : 11pt;
+font-weight : bold;
+}
+
+.uportal-channel-subtitle-reversed{
+color : #666666;
+font-weight : bold;
+}
+
+.uportal-channel-emphasis{
+font-weight : bold;
+color : black;
+}
+.uportal-channel-strong{
+font-weight : bold;
+}
+
+.uportal-channel-code{
+color : Black;
+font-family: Monaco, Andale Mono, monospace;
+}
+
+.uportal-channel-copyright{
+font-size : 7pt;
+font-style : italic;
+}
+
+.uportal-channel-warning{
+color : #FF6300;
+font-weight : bold;
+}
+
+.uportal-channel-error{
+color : Black;
+}
+
+.uportal-channel-table-caption{
+color : #2D2B24;
+font-weight : bold;
+text-align: center;
+}
+
+.uportal-channel-table-header{
+color : #2D2B24;
+font-weight : bold;
+text-align: left;
+}
+
+.uportal-channel-table-row-even{
+color : Black;
+}
+
+.uportal-channel-table-row-odd{
+}
+
+/*_______________Channel Form Elements_______________
+----------------------------------------------------------------------------------------*/
+form{
+	margin: 0px 0px 0px 0px;
+	scrollbar-face-color: #D3D4D8;
+	scrollbar-shadow-color: #949494;
+	scrollbar-highlight-color: #FFFFFF;
+	scrollbar-3dlight-color: #CCCCCC;
+	scrollbar-darkshadow-color: #000000;
+	scrollbar-track-color: #B7B8C9;
+	scrollbar-arrow-color: #7082C0;
+}
+
+select{
+font-size: 8pt;
+text-align: left;
+font-weight: normal;
+width: auto;
+margin-left: 5px;
+}
+
+input{
+font-size: 8pt;
+text-align: center;
+}
+
+file-input{
+font-size: 8pt;
+font-weight: bold;
+width: auto;
+margin-left: 5px;
+}
+
+input.text{
+font-size: 8pt;
+text-align: left;
+width: auto;
+padding-left: 5px;
+}
+
+input.text-disabled{
+text-align: left;
+width: auto;
+padding-left: 5px;
+}
+
+input.radio{
+text-align: left;
+width: auto;
+margin-left: 0px;
+}
+
+input.image{
+background: transparent;
+}
+
+textarea{
+text-align: left;
+font-weight: normal;
+width: auto;
+margin-left: 5px;
+}
+
+.uportal-button{
+color : #FFFFFF;
+font-weight: bold;
+background : #6487DC;
+}
+
+.uportal-button-disabled{
+color : #ACAFB9;
+font-weight: bold;
+background : #FFFFFF;
+}
+/*====================================================*/
+
+
+
+/*==========================LMS CHANNEL==========================
+Classes specific to Academus LMS channels */
+
+/*_______________LMS Channel Style_______________
+--------------------------------------------------------------------------------*/
+.LMS-channel-border{
+	border-top: 1px solid #D8D8D8;
+	border-left: 1px solid #D8D8D8;
+	border-right: 1px solid #D8D8D8;
+	border-bottom: 2px solid #D8D8D8;
+}
+
+.LMS-channel-title{
+	background : #FFFFFF;
+	height: 22px;
+	font-size: 10pt;
+	vertical-align: middle;
+}
+
+A.A-LMS-channel-title{
+	color : black;
+	font-size: 10pt;
+	font-weight : bold;
+	text-decoration: none;
+	padding: 0px 0px 0px 5px;
+}
+
+A.A-LMS-channel-title:hover{
+	color : #2F6BE2;
+}
+
+A.A-LMS-channel-title:visited{
+	color : black;
+}
+
+.LMS-channel{
+	background : #FFFFFF;
+	font-weight : normal;
+	border: 2px solid #FFFFFF;
+}
+
+/*_______________LMS Channel View Navigation_______________
+------------------------------------------------------------------------------------------------*/
+.views{
+/*background: #EBEBEC;*/
+background-color: #F3F6FC;
+color : #505050;
+padding-left: 2px;
+padding-right: 2px;
+font-size : 7pt;
+font-weight : normal;
+border-top: 1px solid #D8D8D8;
+border-bottom: 1px solid #FFFFFF;
+}
+
+
+.views-title{
+/*background: #EBEBEC;*/
+background-color: #F3F6FC;
+color : #505050;
+font-size : 7pt;
+font-weight : normal;
+text-align: center;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 2px;
+padding-right: 1px;
+border-top: 1px solid #D8D8D8;
+border-bottom : 1px solid #FFFFFF;
+}
+
+/*_______________LMS Channel Sorting_______________
+-----------------------------------------------------------------------------------*/
+A.sort{
+	color: #3366CC;
+	font-size : 9pt;
+}
+
+A.sort:hover{
+	color: #FF6300;
+	font-size : 9pt;
+}
+
+A.sort:visited{
+	color: #3366CC;
+	font-size : 9pt;
+}
+
+/*_______________LMS Channel Page Navigation_______________
+------------------------------------------------------------------------------------------------*/
+.page-menu {
+	color: #BDB9D5;
+}
+
+.page-menu-current {
+	color: #99CC00;
+	font-weight: bold;
+}
+
+A.page-menu {
+	color: #684787;
+}
+
+A.page-menu:hover {
+	color: #99CC00;
+}
+
+/*_______________LMS Navigation Channel_______________
+----------------------------------------------------------------------------------------*/
+.table-nav-channel{
+	background : #FFFFFF;
+	border-top: 2px solid #F5F5F6;
+	border-bottom: 2px solid #F5F5F6;
+	border-left: 2px solid #F5F5F6;
+	border-right: 2px solid #F5F5F6;
+	padding: 5px;
+	color : #000000;
+	font-size : 8pt;
+}
+
+.table-row-nav-channel{
+}
+
+.nav-folder-administration{
+}
+
+.nav-folder-subscription{
+}
+
+.nav-folder-academics{
+}
+
+A.nav-folder{
+	font-weight: bold;
+}
+
+A.nav-folder:hover{
+	font-weight: bold;
+}
+
+/*A.nav-folder:visited{
+	font-weight: bold;
+}*/
+
+A.nav-folder-selected{
+	font-weight: bold;
+}
+
+A.nav-folder-selected:hover{
+}
+
+/*A.nav-folder-selected:visited{
+}*/
+
+IMG.nav-folder-selected{
+	background: #FCF6A2;
+}
+
+.nav-offering{
+	color: #555143;
+	font-size : 8pt;
+	padding-left: 15px;
+}
+
+A.nav-offering{
+	color: #3366CC;
+}
+
+A.nav-offering:hover{
+	color: #FF6300;
+}
+
+A.nav-offering:visited{
+	color: #3366CC;
+}
+
+A.nav-offering-selected{
+	background: #2F6BE2;
+	color: #FFFFFF;
+	font-size: 9pt;
+	font-weight: bold;
+	padding: 0px 5px 1px 5px;
+}
+
+A.nav-offering-selected:hover{
+	color: #FF6300;
+}
+
+A.nav-offering-selected:visited{
+	color: #FFFFFF;
+}
+
+.nav-offering-inactive{
+	color: #253FB1;
+	font-style: italic;
+	padding-left: 15px;
+}
+
+/*_______________LMS Gradebook Channel_______________
+-----------------------------------------------------------------------------------------*/
+.ADA-invisible{
+	display : none;
+}
+
+.gradebook-empty{
+border-top: 0px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 2px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty{
+border-top: 0px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 2px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-right{
+border-top: 0px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 0px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-left-top{
+border-top: 2px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 2px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-top{
+border-top: 2px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 0px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-right-top{
+border-top: 2px solid #F5F5F6;
+border-bottom: 0px solid #F5F5F6;
+border-left: 0px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-left-bottom{
+border-top: 0px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 2px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-bottom{
+border-top: 0px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 0px solid #F5F5F6;
+border-right: 0px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-empty-right-bottom{
+border-top: 0px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 0px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-user{
+background : #F0F0F0;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-user-left{
+background : #F0F0F0;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 2px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-user-right{
+background : #F0F0F0;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-data{
+background : #E4E4E4;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-data-right{
+background : #E4E4E4;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-data-bottom{
+background : #E4E4E4;
+border-top: 1px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+.gradebook-data-right-bottom{
+background : #E4E4E4;
+border-top: 1px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 1px;
+font-size : 8pt;
+}
+
+input.sort{
+text-align: left;
+font-weight: normal;
+width: auto;
+margin-left: 0px;
+background-color: transparent;
+color: #000000;
+border: 0px;
+}
+
+/*_______________LMS Roster Channel_______________
+----------------------------------------------------------------------------------*/
+.enrolled{
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 5px;
+color : #555143;
+font-size : 8pt;
+}
+
+.enrolled-bottom{
+background : #FFFFFF;
+border-top: 1px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 2px solid #F5F5F6;
+padding: 5px;
+color : #555143;
+font-size : 8pt;
+}
+
+.pending{
+background : #99CC00;
+border-top: 1px solid #F5F5F6;
+border-bottom: 1px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding: 5px;
+color : #555143;
+font-size : 8pt;
+}
+
+.pending-bottom{
+background : #99CC00;
+border-top: 1px solid #F5F5F6;
+border-bottom: 4px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding: 5px;
+color : #555143;
+font-size : 8pt;
+}
+
+/*_______________LMS Discussion Forums Channel_______________
+----------------------------------------------------------------------------------------------------*/
+.title{
+font-size: 12pt;
+font-weight: bold;
+color : black;
+}
+
+.subtitle{
+font-weight: bold;
+color : black;
+}
+
+.menu{
+color : black;
+}
+
+.totalmessage{
+padding: 2px 10px 2px 10px;
+background-color: #FFFFFF;
+color: #000000;
+border: 1px solid #99CC00;
+}
+
+.forumbutton{
+color : White;
+font-size : 8pt;
+text-decoration: none;
+padding: 2px 10px 2px 10px;
+background : #99CC00;
+}
+
+UL.posts{
+padding: 10px;
+width: 100%;
+background-color: #FFFFFF;
+color: #000000;
+border: 1px solid #99CC00;
+}
+
+LI.posts{
+font-weight: bold;
+}
+
+LI.replies{
+font-weight: normal;
+}
+
+A.showlink{
+text-decoration : underline;
+color : #99CC00;
+}
+
+A.authorname{
+text-decoration : underline;
+color : #684787;
+}
+
+.subject{
+font-size: 8pt;
+color: #594658;
+}
+
+.message{
+font-size: 8pt;
+color: black;
+}
+
+.inreplytoid{
+font-size: 10pt;
+color: #594658;
+}
+
+.displaysubject{
+font-size: 10pt;
+color: black;
+}
+
+.displaymessage{
+font-size: 10pt;
+color: black;
+}
+
+.authorname{
+font-size: 10pt;
+color: #684787;
+}
+
+.stamp{
+font-size: 7pt;
+font-style: normal;
+color: black;
+}
+
+.footer{
+font-size: 8pt;
+color: #E3E1ED;
+}
+
+A.footer{
+color: #CCC9DE;
+text-decoration: underline;
+}
+
+A.footer:hover{
+color: #CCC9DE;
+}
+
+A.footer:visited{
+color: #CCC9DE;
+}
+
+/*_______________LMS Calendar Channel_______________
+--------------------------------------------------------------------------------------*/
+.calendar-title{
+color : Black;
+font-family : Arial, Helvetica, sans-serif;
+font-size : 12px;
+font-weight : bold;
+}
+
+.th-calendar{
+background : #F5F5F6;
+color : Black;
+font-family : Arial, Helvetica, sans-serif;
+font-size : 10px;
+font-weight : bold;
+}
+
+
+.weekend-title1{
+background : #CCCCCC;
+border-top: 0px;
+border-bottom: 2px solid #CCCCCC;
+border-left: 4px solid #CCCCCC;
+border-right: 1px solid #CCCCCC;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekend-title2{
+background : #CCCCCC;
+border-top: 0px;
+border-bottom: 2px solid #CCCCCC;
+border-left: 1px solid #CCCCCC;
+border-right: 4px solid #CCCCCC;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekday-title{
+background : #CCCCCC;
+border-top: 0px;
+border-bottom: 2px solid #CCCCCC;
+border-left: 1px solid #CCCCCC;
+border-right: 1px solid #CCCCCC;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekview-title1{
+background : #CCCCCC;
+border-top: 4px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 4px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding: 2px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekview-title7{
+background : #CCCCCC;
+border-top: 4px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding: 2px;
+color : #EDECF4;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekview-title{
+background : #CCCCCC;
+border-top: 4px solid #F5F5F6;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 2px;
+color : White;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekday{
+background : #FFFFFF;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #000000;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekend1{
+background : #FFFFFF;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 4px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.weekend7{
+background : #FFFFFF;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : #505050;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.current-day{
+background : #2F6BE2;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : Black;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.current-day1{
+background : #2F6BE2;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 4px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : Black;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.current-day7{
+background : #2F6BE2;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+color : Black;
+font-size : 8pt;
+font-weight : bold;
+}
+
+.not-a-day{
+background : #F5F5F6;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+}
+
+.not-a-day1{
+background : #F5F5F6;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 4px solid #F5F5F6;
+border-right: 1px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+}
+
+.not-a-day7{
+background : #F5F5F6;
+border-top: 0px;
+border-bottom: 2px solid #F5F5F6;
+border-left: 1px solid #F5F5F6;
+border-right: 4px solid #F5F5F6;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 1px;
+padding-right: 1px;
+}
+
+.calendar-weekview-dom{
+background : #FFFFFF;
+border-top: 1px solid #CCC9DE;
+border-bottom: 1px solid #CCC9DE;
+border-left: 2px solid #CCC9DE;
+border-right: 2px solid #CCC9DE;
+padding-top: 1px;
+padding-bottom: 1px;
+padding-left: 5px;
+padding-right: 5px;
+color : #402B64;
+}
+
+.calendar-weekview-dom2{
+background : #CCC9DE;
+border-top: 1px solid #CCC9DE;
+border-bottom: 1px solid #CCC9DE;
+border-left: 2px solid #CCC9DE;
+border-right: 2px solid #CCC9DE;
+padding-top: 1px;
+padding-bottom: 1px;
+padding-left: 5px;
+padding-right: 5px;
+color : #402B64;
+}
+
+A.calendar{
+color: #505050;
+}
+
+A.calendar:visited{
+color: #505050;
+}
+
+A.calendar-event{
+color: #FFFFFF;
+font-size : 8pt;
+}
+
+A.calendar-event:visited{
+color: #FFFFFF;
+font-size : 8pt;
+}
+
+.calendar-event-text{
+font-size : 8pt;
+}
+
+.calendar-event-title{
+color: #2F6BE2;
+font-size: 12pt;
+font-weight: bold;
+}
+
+.calendar-event-sub{
+font-weight: bold;
+font-size: 11pt;
+}
+/*====================================================*/
+
+
+
+/*==========================UPORTAL2.2 UPDATED==========================
+These are classes that have been added to UPORTAL2.2  */
+.navigation-selected {
+    color : #A94509;
+}
+
+.uportal-background-page {
+    color : White;
+}
+
+.uportal-background-semidark {
+	/*background: #F5F5F6;*/
+	background: #E4E3E3;
+}
+
+.uportal-background-selected {
+	background: #B7D072;
+}
+
+.uportal-background-neutral-dark {
+	background : #E4E3E3;
+	padding: 2px;
+	color : #505050;
+	font-size : 8pt;
+	font-weight : bold;
+}
+
+.uportal-background-neutral-light {
+	color : #666666;
+	font-size : 10pt;
+	font-weight : normal;
+	/*background: #F5F5F6;*/
+	background: #E4E3E3;
+}
+
+.uportal-navigation-category-selected {
+	color : #000000;
+	font-size : 10pt;
+	font-weight : bold;
+}
+
+/*====================================================*/
+
+
+/*==========================UPORTAL DEPRICATED==========================
+These are classes that may still be in use by non-Academus instances of uPortal, but are no longer used in Academus */
+
+A.uportal-channel-title-link{
+color : #FAF7ED;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 16px;
+font-weight : bold;
+text-decoration : none;
+}
+
+A.uportal-channel-title-link:visited{
+color : #FAF7ED;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 16px;
+font-weight : bold;
+text-decoration : none;
+}
+
+A.uportal-channel-title-link:hover{
+color : #FAF7ED;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 16px;
+font-weight : bold;
+text-decoration : none;
+}
+
+A.uportal-nested-table-toplinks{
+color : #FFFFFF;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 12px;
+font-weight : bold;
+vertical-align : middle;
+}
+
+A.uportal-nested-table-toplinks:hover{
+color : #FFFFFF;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 12px;
+font-weight : bold;
+vertical-align : middle;
+}
+
+A.uportal-nested-table-toplinks:visited{
+color : #D6949C;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 12px;
+font-weight : bold;
+vertical-align : middle;
+}
+
+.uportal-nested-table-title{
+color : #EDECF4;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 16px;
+font-weight : bold;
+background : #EDECF4;
+padding: 4px;
+vertical-align : middle;
+border : 0px
+}
+
+.uportal-nested-table-text{
+color : #EDECF4;
+font-family : "Myriad", Arial, Helvetica, sans-serif;
+font-size : 12px;
+font-weight : bold;
+background : #EDECF4;
+padding: 5px;
+vertical-align : middle;
+border : 0px
+}
+/*====================================================*/
