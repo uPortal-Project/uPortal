@@ -109,6 +109,7 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean isSecure() { return chanIsSecure; }    
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
   public String getLocale() { return chanLocale; }
+  
   // I18n
   public String getName(String locale) {
       String chanName=(String)chanNames.get(locale);
@@ -118,6 +119,7 @@ public class ChannelDefinition implements IBasicEntity {
           return chanName;
       }
   }
+  
   public String getDescription(String locale) {
       /*
       return chanDesc;
@@ -129,15 +131,16 @@ public class ChannelDefinition implements IBasicEntity {
           return chanDesc;
       }
   }
+  
   public String getTitle(String locale) {
       /*
-      return chanDesc;
+      return chanTitle;
       */
-      String chanDesc=(String)chanDescs.get(locale);
-      if (chanDesc == null) {
-          return this.chanDesc; // fallback on "en_US"
+      String chanTitle=(String)chanTitles.get(locale);
+      if (chanTitle == null) {
+          return this.chanTitle; // fallback on "en_US"
       }  else {
-          return chanDesc;
+          return chanTitle;
       }
   }
 
