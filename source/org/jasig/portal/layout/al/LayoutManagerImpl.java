@@ -7,7 +7,6 @@ package org.jasig.portal.layout.al;
 
 import java.util.Enumeration;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.AggregatedLayout;
 import org.jasig.portal.layout.al.common.IUserLayout;
 import org.jasig.portal.layout.al.common.ILayoutManager;
 import org.jasig.portal.layout.al.common.LayoutEventListener;
@@ -32,7 +31,7 @@ public class LayoutManagerImpl implements  ILayoutManager {
     private IRestrictionManager restrictionManager;
     
     // internal representation of an assembled layout
-    AggregatedLayout currentLayout;
+    IAggregatedLayout currentLayout;
     
     // fragment manager
     IFragmentManager fragmentManager;    
