@@ -15,7 +15,7 @@
 #dest=F:/resin/html/portal-2/WEB-INF/classes
 
 # Location for properties, stylesheets, etc.
-#basedir=F:/resin/data/portal-2
+#upbasedir=F:/resin/data/portal-2
 
 
 # points to a place where jsp,html,gif,WEB-INF etc. are copied
