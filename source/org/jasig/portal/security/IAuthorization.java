@@ -49,6 +49,7 @@ public interface IAuthorization
   // For the publish mechanism to use
   public boolean isUserInRole(IPerson person, IRole role);
   public Vector  getAllRoles();
+  public Vector getChannelRoles(int channelID);
   public int     setChannelRoles(int channelID, Vector roles);
   public boolean canUserPublish(IPerson person);
 
