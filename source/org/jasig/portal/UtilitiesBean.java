@@ -86,4 +86,42 @@ public class UtilitiesBean extends GenericPortalBean
     
     return "&nbsp;";
   }
+  
+  /**
+   * Allows the hrefs in each .ssl file to be entered in one
+   * of 3 ways:
+   * 1) http://...
+   * 2) An absolute file system path optionally beginning with file://
+   *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
+   *    or file://C:\WinNT\whatever.xsl or file:///usr/local/whatever.xsl
+   * 3) A path relative to the portal base dir as determined from 
+   *    GenericPortalBean.getPortalBaseDir()
+   */
+  public static String fixURI (String str)
+  {
+    boolean bWindows = (System.getProperty ("os.name").indexOf ("Windows") != -1) ? true : false;
+    char ch0 = str.charAt (0);
+    char ch1 = str.charAt (1);
+    
+    if (str.indexOf ("://") == -1 && ch1 != ':')
+    {
+      // Relative path was specified, so prepend portal base dir
+      str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
+    }
+    else if (bWindows && str.startsWith ("file://"))
+    {
+      // Replace "file://" with "file:/" on Windows machines
+      str = "file:/" + str.substring (7);
+    }
+    else if (ch0 == java.io.File.separatorChar || ch1 == ':')
+    {
+      // It's a full path without "file://"
+      str = (bWindows ? "file:/" : "file://") + str;
+    }
+
+    // Handle platform-dependent strings
+    str = str.replace (java.io.File.separatorChar, '/');
+
+    return str;
+  }  
 }

@@ -86,8 +86,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     try
     {
       this.sChannelTitle = sd.getParameter ("name");
-      this.sXML = fixURI (sd.getParameter ("xml"));
-      this.sSSL = fixURI (sd.getParameter ("ssl"));
+      this.sXML = UtilitiesBean.fixURI (sd.getParameter ("xml"));
+      this.sSSL = UtilitiesBean.fixURI (sd.getParameter ("ssl"));
       
       stylesheetSet = new StylesheetSet (sSSL);
       stylesheetSet.setMediaProps (sMediaProps);
@@ -144,43 +144,5 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
       Logger.log (Logger.ERROR, "Problem transforming " + sXML);
       Logger.log (Logger.ERROR, e);
     }
-  }
-  
-  /**
-   * Allows uri parameters to be entered in one
-   * of 3 ways:
-   * 1) http://...
-   * 2) An absolute file system path optionally beginning with file://
-   *    e.g. C:\WinNT\whatever.ssl or /usr/local/whatever.ssl
-   *    or file://C:\WinNT\whatever.ssl
-   * 3) A path relative to the portal base dir as determined from 
-   *    GenericPortalBean.getPortalBaseDir()
-   */
-  private static String fixURI (String str)
-  {
-    // Windows fix
-    char ch0 = str.charAt (0);
-    char ch1 = str.charAt (1);
-
-    if (str.indexOf ("://") == -1 && ch1 != ':')
-    {
-      // Relative path was specified, so prepend portal base dir
-      str = "file:/" + GenericPortalBean.getPortalBaseDir () + str;
-    }
-    else if (str.startsWith ("file://"))
-    {
-      // Replace "file://" with "file:/"
-      str = "file:/" + str.substring (7);
-    }
-    else if (ch1 == ':')
-    {
-      // If Windows full path, prepend with "file:/"
-      str = "file:/" + str;
-    }
-
-    // Handle platform-dependent strings
-    str = str.replace (java.io.File.separatorChar, '/');
-
-    return str;
   }
 }

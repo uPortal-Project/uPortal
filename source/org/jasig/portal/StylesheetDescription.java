@@ -58,7 +58,7 @@ public class StylesheetDescription
 
   public StylesheetDescription (String uri, String type)
   {
-    s_href = fixURI (uri); 
+    s_href = UtilitiesBean.fixURI (uri); 
     s_type=type;
     s_media = new String (""); 
     s_charset = null; 
@@ -68,7 +68,7 @@ public class StylesheetDescription
 
   public StylesheetDescription (String uri, String type, String title, String media, String charset, boolean alternate)
   {
-    s_href = fixURI (uri); 
+    s_href = UtilitiesBean.fixURI (uri); 
     s_type = type;
     s_media = media; 
     s_charset = charset; 
@@ -82,7 +82,7 @@ public class StylesheetDescription
     if (pi.getNodeName ().equals ("xml-stylesheet"))
     {
       PIAttributes pia = new PIAttributes (pi);
-      s_href = fixURI (pia.getAttribute ("href"));
+      s_href = UtilitiesBean.fixURI (pia.getAttribute ("href"));
       s_type = pia.getAttribute ("type");
       s_title = pia.getAttribute ("title");
       s_media = pia.getAttribute ("media");
@@ -102,7 +102,7 @@ public class StylesheetDescription
   public StylesheetDescription (String data)
   {
     PIAttributes pia = new PIAttributes (data);
-    s_href = fixURI (pia.getAttribute ("href"));
+    s_href = UtilitiesBean.fixURI (pia.getAttribute ("href"));
     s_type = pia.getAttribute ("type");
     s_title = pia.getAttribute ("title");
     s_media = pia.getAttribute ("media");
@@ -179,44 +179,6 @@ public class StylesheetDescription
   { 
     b_alternate=alternate; 
   }
-  
-  /**
-   * Allows the hrefs in each .ssl file to be entered in one
-   * of 3 ways:
-   * 1) http://...
-   * 2) An absolute file system path optionally beginning with file://
-   *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
-   *    or file://C:\WinNT\whatever.xsl
-   * 3) A path relative to the portal base dir as determined from 
-   *    GenericPortalBean.getPortalBaseDir()
-   */
-  private static String fixURI (String str)
-  {
-    // Windows fix
-    char ch0 = str.charAt (0);
-    char ch1 = str.charAt (1);
-        
-    if (str.indexOf ("://") == -1 && ch1 != ':')
-    {
-      // Relative path was specified, so prepend portal base dir
-      str = "file:/" + GenericPortalBean.getPortalBaseDir () + str;
-    }
-    else if (str.startsWith ("file://"))
-    {
-      // Replace "file://" with "file:/"
-      str = "file:/" + str.substring (7);
-    }
-    else if (ch1 == ':')
-    {
-      // If Windows full path, prepend with "file:/"
-      str = "file:/" + str;
-    }
-    
-    // Handle platform-dependent strings
-    str = str.replace (java.io.File.separatorChar, '/');
-
-    return str;
-  }
 }
 
 /**
@@ -235,7 +197,7 @@ class PIAttributes
       piAttributes.put (tokenizer.nextToken ().trim (), tokenizer.nextToken ().trim ());
     }
   }
-  
+
   /**
    * Constructor.
    * @param pi The processing instruction whose attributes are to be parsed
