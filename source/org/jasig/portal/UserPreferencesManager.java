@@ -284,7 +284,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     ulm.saveUserLayout();
 
                 }
-                LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
             } catch (Exception e) {
                 LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
