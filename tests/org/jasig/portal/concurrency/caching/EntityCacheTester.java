@@ -69,14 +69,8 @@ protected void addTestEntityType()
 {
     try
     {
-        Connection conn = org.jasig.portal.RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        String sql =  "INSERT INTO UP_ENTITY_TYPE " +
-                      "VALUES (99, " + "'" + MINIMAL_ENTITY_CLASS.getName() + "')";
-        int rc = stmnt.executeUpdate( sql );
-        if ( rc == 1 )
-            { print("Test entity type inserted.");}
-
+        org.jasig.portal.EntityTypes.singleton().
+          addEntityType(MINIMAL_ENTITY_CLASS, "Test Entity Type");
     }
     catch (Exception ex) { print("EntityCacheTester.addTestEntityType(): " + ex.getMessage());}
  }
@@ -86,14 +80,7 @@ protected void deleteTestEntityType()
 {
     try
     {
-        Connection conn = org.jasig.portal.RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        String sql =  "DELETE FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
-                      MINIMAL_ENTITY_CLASS.getName() + "'";
-        int rc = stmnt.executeUpdate( sql );
-        if ( rc == 1 )
-            { print("Test entity type deleted.");}
-
+        org.jasig.portal.EntityTypes.singleton().deleteEntityType(MINIMAL_ENTITY_CLASS);
     }
     catch (Exception ex) { print("EntityCacheTester.deleteTestEntityType(): " + ex.getMessage());}
  }
@@ -297,7 +284,7 @@ public void testEntityCachingServiceAddsAndDeletes() throws Exception
  */
 public void testIEntityCacheAddsAndDeletes() throws Exception
 {
-    print("***** ENTERING EntityCacheTester.testIEntityCache() *****");
+    print("***** ENTERING EntityCacheTester.testIEntityCacheAddsAndDeletes() *****");
     String msg = null;
     int idx = 0;
     IBasicEntity ent = null;
@@ -331,7 +318,7 @@ public void testIEntityCacheAddsAndDeletes() throws Exception
     // We should have removed all entries.
     assertEquals(msg, rec.size(), 0);
 
-    print("***** LEAVING EntityCacheTester.testIEntityCache() *****");
+    print("***** LEAVING EntityCacheTester.testIEntityCacheAddsAndDeletes() *****");
 
 }
 /**

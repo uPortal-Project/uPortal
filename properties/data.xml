@@ -6053,22 +6053,27 @@
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>1</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>java.lang.Object</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Generic</value></column>
       </row>
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.security.IPerson</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Person</value></column>
       </row>
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>3</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntityGroup</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Group</value></column>
       </row>
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.ChannelDefinition</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Channel</value></column>
       </row>
       <row>
         <column><name>ENTITY_TYPE_ID</name><value>5</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntity</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Grouped Entity</value></column>
       </row>
     </rows>
   </table>

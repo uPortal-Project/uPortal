@@ -1,5 +1,4 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,17 +34,14 @@
 
 package org.jasig.portal;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import org.jasig.portal.services.LogService;
 
 /**
  * This class provides access to the entity types used by <code>IBasicEntities</code>
  * and the classes in <code>org.jasig.portal.groups</code> and
- * <code>org.jasig.portal.concurrency.*</code>.
+ * <code>org.jasig.portal.concurrency.</code>.
  * <p>
  * Each type is associated with an <code>Integer</code> used to represent the
  * type in the portal data store.  This class translates between the
@@ -59,24 +55,39 @@ public class EntityTypes {
 
     private static EntityTypes singleton;
 
-    // Caches for entityType classes.
+    // Caches for EntityType instances.
     private Map entityTypesByID;
-    private Map entityIDsByType;
+    private Map entityTypesByType;
 
     // Constant strings for ENTITY TYPE table:
     private static String ENTITY_TYPE_TABLE = "UP_ENTITY_TYPE";
     private static String TYPE_ID_COLUMN = "ENTITY_TYPE_ID";
     private static String TYPE_NAME_COLUMN = "ENTITY_TYPE_NAME";
-
-    // SQL strings for ENTITY TYPE crud:
-    private static String selectEntityTypesSql;
+    private static String DESCRIPTIVE_NAME_COLUMN = "DESCRIPTIVE_NAME";
 
     // For retrieving all types:
     public static int NULL_TYPE_ID = -1;
 
-    public static Class GROUP_ENTITY_TYPE = null;
-    public static Class LEAF_ENTITY_TYPE = null;
+    public static Class GROUP_ENTITY_TYPE = org.jasig.portal.groups.IEntityGroup.class;
+    public static Class LEAF_ENTITY_TYPE = org.jasig.portal.groups.IEntity.class;
 
+    private class EntityType
+    {
+        private Class type;
+        private Integer typeId;
+        private String descriptiveName;
+        private EntityType(Class cl, Integer id, String description) {
+            super();
+            type = cl; typeId = id; descriptiveName = description;
+        }
+        private Class getType() { return type; }
+        private Integer getTypeId() { return typeId; }
+        private String getDescriptiveName() { return descriptiveName; }
+        public String toString() {
+            String desc = (descriptiveName) == null ? "" : descriptiveName;
+            return desc + " (" + getTypeId() + ") " + getType().getName();
+        }
+    }
 /**
  * EntityTypes constructor comment.
  */
@@ -84,6 +95,86 @@ public EntityTypes()
 {
     super();
     initialize();
+}
+/**
+ * @return java.util.Iterator
+ */
+public synchronized void addEntityType(Class newType, String description) throws SQLException
+{
+    refresh();
+    if ( getEntityTypesByType().get(newType) == null )
+    {
+        int highest = 0;
+        for ( Iterator it = entityTypesByID.keySet().iterator(); it.hasNext(); )
+        {
+            int id = ((Integer) it.next()).intValue();
+            if ( id > highest ) { highest = id; }
+        }
+        highest++;
+        EntityType et = new EntityType(newType, new Integer(highest), description);
+        insertEntityType(et);
+        primAddEntityType(et);
+    }
+}
+/**
+ * @return java.util.Iterator
+ */
+public synchronized void deleteEntityType(Class type) throws SQLException
+{
+    refresh();
+    EntityType et = (EntityType)getEntityTypesByType().get(type);
+    if ( et != null )
+    {
+        deleteEntityType(et);
+        primRemoveEntityType(et);
+    }
+}
+/**
+ * delete EntityType from the store.
+ */
+private void deleteEntityType(EntityType et) throws SQLException
+{
+    Connection conn = null;
+    RDBMServices.PreparedStatement ps = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        try
+        {
+            ps = new RDBMServices.PreparedStatement(conn, getDeleteEntityTypeSql());
+
+            ps.setInt(1, et.getTypeId().intValue());
+            ps.setString(2, et.getType().getName());
+
+            LogService.log(LogService.DEBUG, "EntityTypes.deleteEntityType(): " + ps + "(" +
+              et.getTypeId() + ", " + et.getType() + ")" );
+
+            int rc = ps.executeUpdate();
+
+            if ( rc != 1 )
+            {
+                String errString = "Problem adding deleting type " + et;
+                LogService.log (LogService.ERROR, errString);
+                throw new SQLException(errString);
+            }
+        }
+        finally
+        {
+            if (ps != null) { ps.close(); }
+            RDBMServices.releaseConnection(conn); }
+    }
+    catch (java.sql.SQLException sqle)
+    {
+        LogService.log (LogService.ERROR, sqle);
+        throw sqle;
+    }
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getAllColumnNames()
+{
+    return TYPE_ID_COLUMN + ", " + TYPE_NAME_COLUMN + ", " +  DESCRIPTIVE_NAME_COLUMN;
 }
 /**
  * @return java.util.Iterator
@@ -97,7 +188,38 @@ public java.util.Iterator getAllEntityTypeIDs()
  */
 public java.util.Iterator getAllEntityTypes()
 {
-    return entityTypesByID.values().iterator();
+    Collection types = new ArrayList(getEntityTypesByType().size());
+    for (Iterator i = entityTypesByID.values().iterator(); i.hasNext(); )
+    {
+        EntityType et = (EntityType) i.next();
+        types.add(et.getType());
+    }
+    return types.iterator();
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getDeleteEntityTypeSql()
+{
+    return "DELETE FROM " + ENTITY_TYPE_TABLE + " WHERE " +
+      TYPE_ID_COLUMN + " = ? AND " + TYPE_NAME_COLUMN + " = ?";
+}
+/**
+ * Interface to the entity types cache.
+ * @return java.lang.String
+ */
+public static String getDescriptiveName(Class type)
+{
+    return singleton().getDescriptiveNameForType(type);
+}
+/**
+ * Interface to the entity types cache.
+ * @return java.lang.String
+ */
+public String getDescriptiveNameForType(Class type)
+{
+    EntityType et = (EntityType)getEntityTypesByType().get(type);
+    return et.getDescriptiveName();
 }
 /**
  * Interface to the entity types cache.
@@ -105,16 +227,8 @@ public java.util.Iterator getAllEntityTypes()
  */
 public Integer getEntityIDFromType(Class type)
 {
-    return (Integer)getEntityIDsByType().get(type);
-}
-/**
- * @return java.util.Map
- */
-private java.util.Map getEntityIDsByType()
-{
-    if ( entityIDsByType == null )
-        entityIDsByType = new HashMap(5);
-    return entityIDsByType;
+    EntityType et = (EntityType)getEntityTypesByType().get(type);
+    return et.getTypeId();
 }
 /**
  * Interface to the entity types cache.
@@ -128,9 +242,10 @@ public static Class getEntityType(Integer typeID)
  * Interface to the entity types cache.
  * @return java.lang.Class
  */
-public Class getEntityTypeFromID(Integer typeID)
+public Class getEntityTypeFromID(Integer id)
 {
-    return (Class)getEntityTypesByID().get(typeID);
+    EntityType et = (EntityType)getEntityTypesByID().get(id);
+    return et.getType();
 }
 /**
  * Interface to the entity types cache.
@@ -143,38 +258,53 @@ public static Integer getEntityTypeID(Class type)
 /**
  * @return java.util.Map
  */
-private java.util.Map getEntityTypesByID()
+private synchronized java.util.Map getEntityTypesByID()
 {
-    if ( entityTypesByID == null )
-        entityTypesByID = new HashMap(5);
     return entityTypesByID;
+}
+/**
+ * @return java.util.Map
+ */
+private synchronized java.util.Map getEntityTypesByType()
+{
+    return entityTypesByType;
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getInsertEntityTypeSql()
+{
+    return "INSERT INTO " + ENTITY_TYPE_TABLE + " (" + getAllColumnNames() + ") VALUES (?, ?, ?)";
 }
 /**
  * @return java.lang.String
  */
 private static java.lang.String getSelectEntityTypesSql()
 {
-    if ( selectEntityTypesSql == null )
-    {
-        selectEntityTypesSql =
-            "SELECT " + TYPE_ID_COLUMN + ", " + TYPE_NAME_COLUMN + " FROM " + ENTITY_TYPE_TABLE;
-    }
-    return selectEntityTypesSql;
+    return "SELECT " + getAllColumnNames() + " FROM " + ENTITY_TYPE_TABLE;
+}
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String getUpdateEntityTypeSql()
+{
+    return "UPDATE " + ENTITY_TYPE_TABLE + " SET "  + DESCRIPTIVE_NAME_COLUMN +
+      " = ? WHERE " + TYPE_ID_COLUMN + " = ?";
 }
 /**
  * Cache entityTypes.
  */
 private void initialize()
 {
+    initializeCaches();
     Connection conn = null;
     Integer typeID = null;
     Class entityType = null;
+    String description = null;
+    EntityType et = null;
 
     try
     {
-        GROUP_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntityGroup");
-        LEAF_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntity");
-
         conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         try
@@ -186,13 +316,14 @@ private void initialize()
                 {
                     typeID = new Integer(rs.getInt(1));
                     entityType = Class.forName(rs.getString(2));
-                    getEntityIDsByType().put(entityType, typeID);
-                    getEntityTypesByID().put(typeID, entityType);
+                    description = rs.getString(3);
+                    et = new EntityType(entityType, typeID, description);
+                    primAddEntityType(et);
                 }
             }
             finally
                 { rs.close(); }
-                }
+        }
         finally
             { stmnt.close(); }
     }
@@ -202,6 +333,79 @@ private void initialize()
         { RDBMServices.releaseConnection(conn); }
 }
 /**
+ * Cache entityTypes.
+ */
+private void initializeCaches()
+{
+    entityTypesByID = new HashMap(10);
+    entityTypesByType = new HashMap(10);
+}
+/**
+ * Cache entityTypes.
+ */
+private void insertEntityType(EntityType et) throws SQLException
+{
+    Connection conn = null;
+    RDBMServices.PreparedStatement ps = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        try
+        {
+            ps = new RDBMServices.PreparedStatement(conn, getInsertEntityTypeSql());
+
+            ps.setInt(1, et.getTypeId().intValue());
+            ps.setString(2, et.getType().getName());
+            ps.setString(3, et.getDescriptiveName());
+
+            LogService.log(LogService.DEBUG, "EntityTypes.insertEntityType(): " + ps + "(" +
+              et.getTypeId() + ", " + et.getType() + ", " + et.getDescriptiveName() + ")" );
+
+            int rc = ps.executeUpdate();
+
+            if ( rc != 1 )
+            {
+                String errString = "Problem adding entity type " + et;
+                LogService.log (LogService.ERROR, errString);
+                throw new SQLException(errString);
+            }
+        }
+        finally
+        {
+            if (ps != null) { ps.close(); }
+            RDBMServices.releaseConnection(conn); }
+    }
+    catch (java.sql.SQLException sqle)
+    {
+        LogService.log (LogService.ERROR, sqle);
+        throw sqle;
+    }
+}
+/**
+ * @return java.util.Iterator
+ */
+private void primAddEntityType(EntityType et)
+{
+    getEntityTypesByType().put(et.getType(), et);
+    getEntityTypesByID().put(et.getTypeId(), et);
+}
+/**
+ * @return java.util.Iterator
+ */
+private void primRemoveEntityType(EntityType et)
+{
+    getEntityTypesByType().remove(et.getType());
+    getEntityTypesByID().remove(et.getTypeId());
+}
+/**
+ * Interface to the entity types cache.
+ * @return java.lang.String
+ */
+public static synchronized void refresh()
+{
+    singleton().initialize();
+}
+/**
  * @return org.jasig.portal.groups.EntityTypes
  */
 public static synchronized EntityTypes singleton()
@@ -209,5 +413,63 @@ public static synchronized EntityTypes singleton()
     if ( singleton == null )
         { singleton = new EntityTypes(); }
     return singleton;
+}
+/**
+ * @return java.util.Iterator
+ */
+public synchronized void updateEntityType(Class type, String newDescription) throws SQLException
+{
+    refresh();
+    EntityType et = (EntityType)getEntityTypesByType().get(type);
+    if ( et == null )
+    {
+        addEntityType(type, newDescription);
+    }
+    else
+    {
+        et.descriptiveName = newDescription;
+        updateEntityType(et);
+        primAddEntityType(et);
+    }
+}
+/**
+ * Cache entityTypes.
+ */
+private void updateEntityType(EntityType et) throws SQLException
+{
+    Connection conn = null;
+    RDBMServices.PreparedStatement ps = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        try
+        {
+            ps = new RDBMServices.PreparedStatement(conn, getUpdateEntityTypeSql());
+
+            ps.setString(1, et.getDescriptiveName());
+            ps.setInt(2, et.getTypeId().intValue());
+
+            LogService.log(LogService.DEBUG, "EntityTypes.updateEntityType(): " + ps + "(" +
+              et.getType() + ", " + et.getDescriptiveName() + ", " + et.getTypeId() + ")" );
+
+            int rc = ps.executeUpdate();
+
+            if ( rc != 1 )
+            {
+                String errString = "Problem adding updating type " + et;
+                LogService.log (LogService.ERROR, errString);
+                throw new SQLException(errString);
+            }
+        }
+        finally
+        {
+            if (ps != null) { ps.close(); }
+            RDBMServices.releaseConnection(conn); }
+    }
+    catch (java.sql.SQLException sqle)
+    {
+        LogService.log (LogService.ERROR, sqle);
+        throw sqle;
+    }
 }
 }

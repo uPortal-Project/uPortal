@@ -651,6 +651,9 @@
       <column> <name>ENTITY_TYPE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>Class name of entity (ex. org.jasig.portal.security.IPerson)</desc>
       </column>
+      <column> <name>DESCRIPTIVE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
+        <desc>A name for display to end users (ex. Person)</desc>
+      </column>
     </columns>
     <primary-key>ENTITY_TYPE_ID</primary-key>
     <not-null>ENTITY_TYPE_NAME</not-null>

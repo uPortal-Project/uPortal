@@ -11,7 +11,6 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.concurrency.caching.*;
-import org.jasig.portal.services.GroupService;
 
 /**
  * Tests the groups framework (a start).
@@ -61,14 +60,8 @@ protected void addTestEntityType()
 {
     try
     {
-        Connection conn = org.jasig.portal.RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        String sql =  "INSERT INTO UP_ENTITY_TYPE " +
-                      "VALUES (99, " + "'" + TEST_ENTITY_CLASS.getName() + "')";
-        int rc = stmnt.executeUpdate( sql );
-        if ( rc == 1 )
-            { print("Test entity type inserted.");}
-
+        org.jasig.portal.EntityTypes.singleton().
+            addEntityType(TEST_ENTITY_CLASS, "Test Entity Type");
     }
     catch (Exception ex) { print("EntityCacheTester.addTestEntityType(): " + ex.getMessage());}
  }
@@ -86,14 +79,7 @@ protected void deleteTestEntityType()
 {
     try
     {
-        Connection conn = org.jasig.portal.RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        String sql =  "DELETE FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
-                      TEST_ENTITY_CLASS.getName() + "'";
-        int rc = stmnt.executeUpdate( sql );
-        if ( rc == 1 )
-            { print("Test entity type deleted.");}
-
+        org.jasig.portal.EntityTypes.singleton().deleteEntityType(TEST_ENTITY_CLASS);
     }
     catch (Exception ex) { print("EntityCacheTester.deleteTestEntityType(): " + ex.getMessage());}
  }
