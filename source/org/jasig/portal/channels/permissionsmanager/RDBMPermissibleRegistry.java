@@ -83,7 +83,7 @@ public class RDBMPermissibleRegistry {
                     Class newowner = Class.forName(classname);
                     owners.put(classname, newowner);
                 } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, "PermissibleRegistryRDBM(): Could not instantiate IPermissible "
+                    LogService.instance().log(LogService.DEBUG, "PermissibleRegistryRDBM(): Could not instantiate IPermissible "
                             + e);
                     unregister(classname);
                 }
@@ -130,7 +130,7 @@ public class RDBMPermissibleRegistry {
             prms.add(ip);
           }
           catch (Exception e){
-            LogService.instance().log(LogService.ERROR,"RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
+            LogService.instance().log(LogService.DEBUG,"RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
           }
         }
         return  (IPermissible[])prms.toArray(new IPermissible[prms.size()]);
@@ -178,7 +178,7 @@ public class RDBMPermissibleRegistry {
                     releaseConnection(conn);
                 }
             } catch (Throwable th) {
-                LogService.instance().log(LogService.ERROR, "PermissibleRegistryRDBM.registerPermissible(): error while registering "
+                LogService.instance().log(LogService.DEBUG, "PermissibleRegistryRDBM.registerPermissible(): error while registering "
                         + classname + " : " + th);
             }
         }
@@ -199,7 +199,7 @@ public class RDBMPermissibleRegistry {
             st.close();
             owners.remove(permissibleClass);
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.instance().log(LogService.DEBUG, e);
         } finally {
             releaseConnection(conn);
         }
