@@ -93,5 +93,10 @@ public interface IDBImpl {
 
   /* Authorization */
   public String[] getUserAccountInformation(String username) throws Exception;
+
+  /* Counters */
+  public int getIncrementIntegerId(String tableName) throws Exception;
+  public void createCounter(String tableName) throws Exception;
+  public void setCounter(String tableName, int value) throws Exception;
 }
 

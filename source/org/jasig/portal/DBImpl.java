@@ -472,10 +472,7 @@ public class DBImpl
     // generate an id for this profile
     Connection con = rdbmService.getConnection();
     try {
-      DBCounterImpl dbc = new DBCounterImpl();
-      Integer id = dbc.getIncrementIntegerId("UP_USER_PROFILES");
-      if (id == null)
-        return  null;
+      int id = getIncrementIntegerId("UP_USER_PROFILES");
       profile.setProfileId(id.intValue());
       Statement stmt = con.createStatement();
       String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
@@ -1183,6 +1180,60 @@ public class DBImpl
     }
     return  acct;
   }
+
+  /* DBCounter */
+
+  /*
+   * get&increment method.
+   */
+    public synchronized int getIncrementIntegerId(String tableName) throws Exception {
+        Connection con=null;
+        int id = 0;
+        try {
+            con=rdbmService.getConnection();
+            Statement stmt = con.createStatement ();
+            String str_id=null;
+
+            String sQuery = "SELECT ID FROM UP_COUNTERS WHERE TABLE_NAME='" + tableName + "'";
+            Logger.log (Logger.DEBUG, sQuery);
+            ResultSet rs = stmt.executeQuery (sQuery);
+            if (rs.next ()) {
+                    id = rs.getInt ("ID");
+            }
+            id= Integer.parseInt(str_id)+1;
+            sQuery = "UPDATE UP_COUNTERS SET ID="+id+"WHERE TABLE_NAME='" + tableName + "'";
+            stmt.executeUpdate(sQuery);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+        return id;
+    }
+
+    public synchronized void createCounter(String tableName) throws Exception {
+        Connection con=null;
+        try {
+            con=rdbmService.getConnection();
+            Statement stmt = con.createStatement ();
+            String sQuery = "INSERT INTO UP_COUNTERS ('TABLE_NAME,ID') VALUES ('"+tableName+"',0)";
+            Logger.log (Logger.DEBUG, sQuery);
+            ResultSet rs = stmt.executeQuery (sQuery);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+    }
+
+    public synchronized void setCounter(String tableName,int value) throws Exception {
+        Connection con=null;
+        try {
+            con=rdbmService.getConnection();
+            Statement stmt = con.createStatement ();
+            String sQuery = "UPDATE UP_COUNTERS SET ID="+value+"WHERE TABLE_NAME='" + tableName + "'";
+            Logger.log (Logger.DEBUG, sQuery);
+            stmt.executeUpdate (sQuery);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+    }
 
 
   private void setAutoCommit(Connection connection, boolean autocommit)

@@ -148,12 +148,14 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * This would be called by a publish channel.
  */
     public int getNextId() throws PortalException {
-      DBCounterImpl dbCounter = new DBCounterImpl();
-      Integer nextID = dbCounter.getIncrementIntegerId("UP_CHANNEL");
-      if (nextID == null) {
+      int nextID;
+      try {
+        nextID = GenericPortalBean.getDbImplObject().getIncrementIntegerId("UP_CHANNEL");
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, e);
         throw new GeneralRenderingException("Unable to allocate new channel ID");
       }
-      return nextID.intValue();
+      return nextID;
   }
 
 /** A method for removing a channel from the registry.
