@@ -213,7 +213,7 @@ public class ChannelRegistryManager {
 
     // Set groups
     AuthorizationService authService = AuthorizationService.instance();
-    String owner = "*"; // the whole framework
+    String owner = "UP_FRAMEWORK"; // the whole framework
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(owner);
     IPermission[] permissions = new IPermission[groups.length];
     for (int i = 0; i < groups.length; i++) {
