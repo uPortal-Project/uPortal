@@ -1,179 +1,255 @@
 <?xml version="1.0"?>
 
-<PersonDirInfo>
+<!--
+     PersonDirs.xml makes possible a standard way for the uPortal
+     framework and its installed channels to refer to particular person
+     attributes.  For example, if a channel wants to display a user's
+     email address, it will look for an attribute called "mail", which
+     appears as an alias in this file.  This alias maps to the actual
+     name of the field containing an email address in your data repository.
+     If no data repository at your organization contains a user's email
+     address then simply don't fill in a <name> correcponding to the "mail"
+     alias.  The requesting channel will simply get a null when requesting
+     the attribute value of "mail" indicating that this attribute is not
+     available.  Providing this level of indirection for attribute references
+     makes it possible for organizations to share channels that refer to
+     user's attributes.
 
-  <!-- Set either the LDAP Properties, the JDBC Properties, or both -->
+     The <PersonDirs> element should contain one or more <PersonDirInfo>
+     elements.  Each <PersonDirInfo> element represents a source for
+     obtaining person attributes and should contain settings for
+     either JDBC or LDAP and a set of attribute alias/name pairs.
 
-  <!-- LDAP Properties -->
-  <!--
-  <url>ldap://yu.yale.edu:389/dc=itstp, dc=yale, dc=edu</url>
-  <logonid>cn=bogus,cn=Users,dc=itstp,dc=yale,dc=edu</logonid>
-  <logonpassword>foobar</logonpassword>
-  <uidquery>(cn={0})</uidquery>
-  <usercontext>cn=Users</usercontext>
-  -->
+     This means that it is possible to obtain person attributes from more
+     than one source.
 
-  <!-- JDBC Properties -->
-  <driver>org.hsql.jdbcDriver</driver>
-  <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
-  <logonid>sa</logonid>
-  <logonpassword></logonpassword>
-  <uidquery>SELECT FIRST_NAME||' '||LAST_NAME FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
+     If a particular attribute alias is specified more than
+     once, the name value obtained from the last occurance of that attribute
+     will be used.
 
-  <attributes>
+     Author: Howard Gilbert, howard.gilbert@yale.edu
+     Version $Revision$
+-->
 
-    <!-- uPortal channels refer to user attributes using standard
-         attribute names found in the eduPerson object class. If
-         a name is found for an eduPerson attribute name or "alias",
-         it will be stuffed into the org.jasig.portal.security.IPerson object.
+<PersonDirs>
+
+  <PersonDirInfo>
+
+    <!-- Within this <PersonDirInfo> element, set either the LDAP properties
+         or the JDBC properties.  If you want to obtain person attributes from
+         both a relational database AND an LDAP directory, add an additional
+         <PersonDirInfo> element.
     -->
 
-    <attribute>
-      <name></name>
-      <alias>eduPersonAffiliation</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>eduPersonNickname</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>eduPersonOrgDN</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>eduPersonOrgUnitDN</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>eduPersonPrimaryAffiliation</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>eduPersonPrincipalName</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>c</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>cn</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>description</alias>
-    </attribute>
-    <attribute>
-      <name>FIRST_LAST</name>
-      <alias>displayName</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>facsimileTelephoneNumber</alias>
-    </attribute>
-    <attribute>
-      <name>FIRST_NAME</name>
-      <alias>givenName</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>homePhone</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>homePostalAddress</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>initials</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>jpegPhoto</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>l</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>labeledURI</alias>
-    </attribute>
-    <attribute>
-      <name>EMAIL</name>
-      <alias>mail</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>mobile</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>o</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>ou</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>pager</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>postalAddress</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>postalCode</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>postOfficeBox</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>preferredLanguage</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>seeAlso</alias>
-    </attribute>
-    <attribute>
-      <name>LAST_NAME</name>
-      <alias>sn</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>st</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>street</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>telephoneNumber</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>uid</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>userCertificate</alias>
-    </attribute>
-    <attribute>
-      <name></name>
-      <alias>userSMIMECertificate</alias>
-    </attribute>
+    <!-- LDAP Properties -->
+    <!--
+    <url>ldap://yu.yale.edu:389/dc=itstp, dc=yale, dc=edu</url>
+    <logonid>cn=bogus,cn=Users,dc=itstp,dc=yale,dc=edu</logonid>
+    <logonpassword>foobar</logonpassword>
+    <uidquery>(cn={0})</uidquery>
+    <usercontext>cn=Users</usercontext>
+    -->
 
-    <!-- givenName is not actually part of the eduPerson standard -->
-    <attribute>
-      <name>FIRST_NAME</name>
-      <alias>givenName</alias>
-    </attribute>
+    <!-- JDBC Properties -->
+    <driver>org.hsql.jdbcDriver</driver>
+    <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
+    <logonid>sa</logonid>
+    <logonpassword></logonpassword>
+    <uidquery>SELECT FIRST_NAME||' '||LAST_NAME FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
 
-  </attributes>
-</PersonDirInfo>
+    <attributes>
+
+      <!-- uPortal channels refer to user attributes using standard
+           attribute names found in the eduPerson object class. If
+           a name is found for an eduPerson attribute name or "alias",
+           it will be stuffed into the org.jasig.portal.security.IPerson object.
+           See http://www.educause.edu/eduperson/ for an explanation of each
+           of these aliases.
+      -->
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonAffiliation</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonNickname</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonOrgDN</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonOrgUnitDN</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonPrimaryAffiliation</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>eduPersonPrincipalName</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>c</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>cn</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>description</alias>
+      </attribute>
+
+      <attribute>
+        <name>FIRST_LAST</name>
+        <alias>displayName</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>facsimileTelephoneNumber</alias>
+      </attribute>
+
+      <attribute>
+        <name>FIRST_NAME</name>
+        <alias>givenName</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>homePhone</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>homePostalAddress</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>initials</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>jpegPhoto</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>l</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>labeledURI</alias>
+      </attribute>
+
+      <attribute>
+        <name>EMAIL</name>
+        <alias>mail</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>mobile</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>o</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>ou</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>pager</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>postalAddress</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>postalCode</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>postOfficeBox</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>preferredLanguage</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>seeAlso</alias>
+      </attribute>
+
+      <attribute>
+        <name>LAST_NAME</name>
+        <alias>sn</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>st</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>street</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>telephoneNumber</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>uid</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>userCertificate</alias>
+      </attribute>
+
+      <attribute>
+        <name></name>
+        <alias>userSMIMECertificate</alias>
+      </attribute>
+
+      <!-- givenName is not actually part of the eduPerson standard -->
+      <attribute>
+        <name>FIRST_NAME</name>
+        <alias>givenName</alias>
+      </attribute>
+
+    </attributes>
+
+  </PersonDirInfo>
+
+</PersonDirs>
