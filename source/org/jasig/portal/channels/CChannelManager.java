@@ -244,8 +244,6 @@ public class CChannelManager extends BaseChannel {
         channelDef.setHasAbout(hasAbout != null ? "true" : "false");
         String printable = runtimeData.getParameter("printable");
         channelDef.setPrintable(printable != null ? "true" : "false");
-        String removable = runtimeData.getParameter("removable");
-        channelDef.setRemovable(removable != null ? "true" : "false");
         String detachable = runtimeData.getParameter("detachable");
         channelDef.setDetachable(detachable != null ? "true" : "false");
       // Categories
@@ -828,7 +826,6 @@ public class CChannelManager extends BaseChannel {
     protected String hasHelp;
     protected String hasAbout;
     protected String printable;
-    protected String removable;
     protected String detachable;
     protected Map parameters;
 
@@ -861,7 +858,6 @@ public class CChannelManager extends BaseChannel {
     protected String getHasHelp() { return hasHelp; }
     protected String getHasAbout() { return hasAbout; }
     protected String getPrintable() { return printable; }
-    protected String getRemovable() { return removable; }
     protected String getDetachable() { return detachable; }
 
     protected void setTypeID(String typeID) { this.typeID = typeID; }
@@ -875,7 +871,6 @@ public class CChannelManager extends BaseChannel {
     protected void setHasHelp(String hasHelp) { this.hasHelp = hasHelp; }
     protected void setHasAbout(String hasAbout) { this.hasAbout = hasAbout; }
     protected void setPrintable(String printable) { this.printable = printable; }
-    protected void setRemovable(String removable) { this.removable = removable; }
     protected void setDetachable(String detachable) { this.detachable = detachable; }
 
     private void setAttribute(Element e, String attName, String attVal) {
@@ -909,7 +904,6 @@ public class CChannelManager extends BaseChannel {
               hasHelp = defaultControls.getAttribute("hasHelp");
               hasAbout = defaultControls.getAttribute("hasAbout");
               printable = defaultControls.getAttribute("printable");
-              removable = defaultControls.getAttribute("removable");
               detachable = defaultControls.getAttribute("detachable");
             }
           }
@@ -933,7 +927,6 @@ public class CChannelManager extends BaseChannel {
       hasHelp = channelE.getAttribute("hasHelp");
       hasAbout = channelE.getAttribute("hasAbout");
       printable = channelE.getAttribute("printable");
-      removable = channelE.getAttribute("removable");
       detachable = channelE.getAttribute("detachable");
 
       for (Node n = channelE.getFirstChild(); n != null; n = n.getNextSibling()) {
@@ -960,7 +953,6 @@ public class CChannelManager extends BaseChannel {
       setAttribute(channelE, "minimizable", minimizable);
       setAttribute(channelE, "editable", editable);
       setAttribute(channelE, "printable", printable);
-      setAttribute(channelE, "removable", removable);
       setAttribute(channelE, "detachable", detachable);
       setAttribute(channelE, "hasAbout", hasAbout);
       setAttribute(channelE, "hasHelp", hasHelp);

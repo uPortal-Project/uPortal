@@ -1429,43 +1429,6 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="removable" value="true">
-
-                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@removable='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input>
-
-                   </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>
-                  <strong>Removable</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/remove.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>when selected, removes the channel from the layout</td>
-              </tr>
-              <tr>
-                <td align="center" valign="top" colspan="7">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr class="uportal-channel-text">
-                <td align="center" valign="top">
                   <input type="checkbox" name="detachable" value="true">
                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@detachable='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
@@ -2414,10 +2377,6 @@ Has About<br/>        <xsl:choose>
 <img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
 <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
 Printable<br/>        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@removable='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Removable<br/>        <xsl:choose>
         <xsl:when test="//reviewChannel//channel[@detachable='true']">
 <img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
 <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>

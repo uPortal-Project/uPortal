@@ -202,7 +202,6 @@ public class RDBMUserLayoutStore
     boolean chanEditable;
     boolean chanHasHelp;
     boolean chanHasAbout;
-    //   boolean chanUnremovable;
     boolean chanDetachable;
     String chanName = "";
     String chanFName = "";
@@ -232,20 +231,19 @@ public class RDBMUserLayoutStore
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
       Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, String chanMinimizable, String chanEditable, String chanHasHelp,
-      String chanHasAbout, /*   String chanUnremovable, */ String chanDetachable, String chanName, String chanFName) {
+      String chanHasAbout, String chanDetachable, String chanName, String chanFName) {
         this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
               chanMinimizable != null && chanMinimizable.equalsIgnoreCase("Y"),
               chanEditable!= null && chanEditable.equalsIgnoreCase("Y"),
               chanHasHelp!= null && chanHasHelp.equalsIgnoreCase("Y"),
               chanHasAbout!= null && chanHasAbout.equalsIgnoreCase("Y"),
-              /* chanUnremovable!= null && chanUnremovable.equalsIgnoreCase("Y"), */
               chanDetachable!= null && chanDetachable.equalsIgnoreCase("Y"),
               chanName, chanFName);
     }
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
       Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, boolean chanMinimizable, boolean chanEditable, boolean chanHasHelp,
-      boolean chanHasAbout, /*   boolean chanUnremovable, */ boolean chanDetachable, String chanName, String chanFName) {
+      boolean chanHasAbout, boolean chanDetachable, String chanName, String chanFName) {
 
       this.chanId = chanId;
       this.chanTitle = chanTitle;
@@ -261,7 +259,6 @@ public class RDBMUserLayoutStore
       this.chanEditable = chanMinimizable;
       this.chanHasHelp = chanHasHelp;
       this.chanHasAbout = chanHasAbout;
-      //   this.chanUnremovable = chanUnremovable;
       this.chanDetachable = chanDetachable;
       this.chanName = chanName;
       this.chanFName =chanFName;
@@ -343,7 +340,6 @@ public class RDBMUserLayoutStore
         Element channel = getBase(doc, idTag, chanClass, chanMinimizable, chanEditable, chanHasHelp,
           chanHasAbout, chanDetachable);
         channel.setAttribute("description", chanDesc);
-        //    channel.setAttribute("unremovable", chanUnremovable ? "true" : "false");
         addParameters(doc, channel);
         return channel;
       }
@@ -507,7 +503,7 @@ public class RDBMUserLayoutStore
    protected static final MyPreparedStatement getChannelPstmt(Connection con) throws SQLException {
     String sql;
     sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
-      "UC.CHAN_TIMEOUT,UC.CHAN_MINIMIZABLE,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_UNREMOVABLE,UC.CHAN_DETACHABLE,UC.CHAN_NAME,UC.CHAN_FNAME";
+      "UC.CHAN_TIMEOUT,UC.CHAN_MINIMIZABLE,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_DETACHABLE,UC.CHAN_NAME,UC.CHAN_FNAME";
 
     if (supportsOuterJoins) {
       sql += ",CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC " + dbStrings.channel;
@@ -630,12 +626,12 @@ public class RDBMUserLayoutStore
       if (rs.next()) {
         channel = new ChannelDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
         rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getTimestamp(7), rs.getTimestamp(8), rs.getInt(9),
-          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13), // rs.getString(14),
-          rs.getString(15), rs.getString(16), rs.getString(17));
+          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
+          rs.getString(14), rs.getString(15), rs.getString(16));
 
         int dbOffset = 0;
         if (pstmtChannelParm == null) { // we are using a join statement so no need for a new query
-          dbOffset = 17;
+          dbOffset = 16;
         } else {
           rs.close();
           pstmtChannelParm.clearParameters();
@@ -818,8 +814,8 @@ public class RDBMUserLayoutStore
       this.chanId = chanId;
       this.structId = structId;
       this.hidden = hidden != null && hidden.equals("Y");
-      this.unremovable = immutable != null && immutable.equals("Y");
-      this.immutable = unremovable != null && unremovable.equals("Y");
+      this.immutable = immutable != null && immutable.equals("Y");
+      this.unremovable = unremovable != null && unremovable.equals("Y");
 
       if (DEBUG > 1) {
         System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
@@ -1534,7 +1530,6 @@ public class RDBMUserLayoutStore
       String sqlEditable = dbBool(channel.getAttribute("editable"));
       String sqlHasHelp = dbBool(channel.getAttribute("hasHelp"));
       String sqlHasAbout = dbBool(channel.getAttribute("hasAbout"));
-      String sqlUnremovable = dbBool(channel.getAttribute("unremovable"));
       String sqlDetachable = dbBool(channel.getAttribute("detachable"));
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
@@ -1559,7 +1554,6 @@ public class RDBMUserLayoutStore
         "CHAN_EDITABLE='" + sqlEditable + "', " +
         "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
         "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
-        "CHAN_UNREMOVABLE='" + sqlUnremovable + "', " +
         "CHAN_DETACHABLE='" + sqlDetachable + "', " +
         "CHAN_NAME='" + sqlName + "', " +
         "CHAN_FNAME='" + sqlFName + "' " +
@@ -1568,11 +1562,10 @@ public class RDBMUserLayoutStore
         stmt.executeUpdate(sUpdate);
       } else {
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-            + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
+            + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
         sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
             + publisherId + ", " + sysdate + ", " + timeout + ", '" + sqlMinimizable
-            + "', '" + sqlEditable + "', '" + sqlHasHelp
-            + "', '" + sqlHasAbout + "', '" + sqlUnremovable
+            + "', '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
             + "', '" + sqlDetachable + "', '" + sqlName + "', '" + sqlFName + "')";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);

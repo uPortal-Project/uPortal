@@ -27,17 +27,25 @@
   width CDATA #REQUIRED>
 
 <!ELEMENT channel (parameter)*>
-<!ATTLIST channel 
-  name CDATA #REQUIRED 
-  minimized (true|false) "true"
-  detachable (true|false) "true"
-  editable (true|false) "true"
-  hasHelp (true|false) "true"
-  removable (true|false) "true"
-  class CDATA #REQUIRED>
+<!ATTLIST channel
+  ID ID #REQUIRED
+  name CDATA #REQUIRED
+  description CDATA #REQUIRED
+  title CDATA #REQUIRED    
+  timeout CDATA "10000"
+  minimizable (true|false) "false"
+  detachable (true|false) "false"
+  editable (true|false) "false"
+  hasHelp (true|false) "false"
+  hasAbout (true|false) "false"
+  printable (true| false) "false"
+  class CDATA #REQUIRED
+  typeID CDATA #REQUIRED
+  fname CDATA #IMPLIED>
 
 
 <!ELEMENT parameter EMPTY>
-<!ATTLIST parameter 
+<!ATTLIST parameter
   name CDATA #REQUIRED
-  value CDATA #REQUIRED>
+  value CDATA #REQUIRED
+  override (yes|no) "no">
