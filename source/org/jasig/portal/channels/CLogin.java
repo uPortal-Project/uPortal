@@ -47,7 +47,7 @@ import javax.servlet.http.HttpSession;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CLogin implements ISpecialChannel
+public class CLogin implements IPrivilegedChannel
 {
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
@@ -58,12 +58,13 @@ public class CLogin implements ISpecialChannel
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
 
-    MediaManager mm;
+  MediaManager mm;
 
-    public CLogin() {
-	mm = new MediaManager();
-	mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-    }
+  public CLogin()
+  {
+    mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+  }
 
   public ChannelSubscriptionProperties getSubscriptionProperties()
   {
@@ -111,11 +112,12 @@ public class CLogin implements ISpecialChannel
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
+    String userName = null;
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append("<login-status>\n");
 
     if (bAuthorizationAttemptFailed && !bAuthenticated)
-       sb.append("  <failure/>\n");
+       sb.append("  <failure userName=\"" + userName + "\"/>\n");
 
     sb.append("</login-status>\n");
 
