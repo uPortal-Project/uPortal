@@ -1,5 +1,3 @@
-package org.jasig.portal;
-
 /**
  * Copyright Å© 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -35,9 +33,13 @@ package org.jasig.portal;
  *
  */
 
+package org.jasig.portal;
+
 /**
  * Houses constants used in the portal code base. Developers, any constants
  * added here should be clearly documented.
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $Revision$
  */
 public class Constants
 {
