@@ -62,7 +62,7 @@
         <column><name>FRAGMENT_ROOT_ID</name><value>1010</value></column>
         <column><name>FRAGMENT_NAME</name><value>The second</value></column>
         <column><name>FRAGMENT_DESCRIPTION</name><value>The second column with a few channels</value></column>
-        <column><name>PUSHED_FRAGMENT</name><value>Y</value></column>
+        <column><name>PUSHED_FRAGMENT</name><value>N</value></column>
       </row>
     </rows>
   </table>
@@ -87,25 +87,25 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Admin layout</value></column>
         <column><name>INIT_NODE_ID</name><value>1</value></column>
-      </row>       
+      </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Staff layout</value></column>
         <column><name>INIT_NODE_ID</name><value>1</value></column>
-      </row> 
+      </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Faculty layout</value></column>
         <column><name>INIT_NODE_ID</name><value>1</value></column>
-      </row>             
+      </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Student layout</value></column>
         <column><name>INIT_NODE_ID</name><value>1</value></column>
-      </row>      
+      </row>
     </rows>
   </table>
 
@@ -136,7 +136,7 @@
           <column><name>CHAN_ID</name><value>99</value></column>
           <column><name>PRIORITY</name><value>0</value></column>
         </row>
-                 
+
       <!-- Demo Layout -->
       <!-- Demo tab -->
       <row>
@@ -198,7 +198,7 @@
             <column><name>CHAN_ID</name><value>94</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
-       
+
       <!-- Staff Layout -->
       <!-- Staff tab -->
       <row>
@@ -260,7 +260,7 @@
             <column><name>CHAN_ID</name><value>12</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
-                              
+
       <!-- Student Layout -->
       <!-- Student tab -->
       <row>
@@ -5127,7 +5127,7 @@
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>15</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
-     </row>     
+     </row>
      <row>
         <column><name>GROUP_ID</name><value>3</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
