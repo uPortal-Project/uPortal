@@ -56,40 +56,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
     private Document types = null;
     String sRegDtd = "channelRegistry.dtd";
 
-
-    /**
-     * Return a Document object based on the XML string returned
-     * from the database.
-     * @param catID a category ID
-     * @param role role of the user
-     * @return Document DOM object
-     */
-    public Document getRegistryDoc (String catID, String role) {
-
-        Document regXML = getRegistryXML(catID, role);
-
-        try{
-            if(regXML!=null) {
-                DTDResolver chRegDtdResolver = new DTDResolver(sRegDtd);
-
-                // read in the layout DOM
-                org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-
-                // set parser features
-                parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-
-                parser.setEntityResolver(chRegDtdResolver);
-                //parser.parse (new org.xml.sax.InputSource (new StringReader (regXML)));
-                chanDoc = (DocumentImpl)parser.getDocument ();
-            }
-        }
-        catch (Exception e) {
-            Logger.log(Logger.ERROR,e);
-        }
-
-        return chanDoc;
-    }
-
 /** Returns a string of XML which describes the channel registry.
  * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
  * @param catID a category ID
@@ -97,7 +63,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getRegistryXML(String catID, String role) {
-        //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
 
         try {
           chanDoc = new org.apache.xerces.dom.DocumentImpl();
@@ -124,9 +89,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
           IDBImpl dbImpl = new DBImpl();
           dbImpl.getTypesXML(types, root, role);
           types.appendChild(root);
-          //System.out.println( "STRXML = " + serializeDOM(types) );
-
-          //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -138,7 +100,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return Document
  */
     public Document getCategoryXML(String role) {
-        //System.out.println("Enterering ChannelRegistryImpl::getCategoryXML()");
 
         Document catsDoc = null;
         try {
@@ -150,14 +111,8 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
-        //System.out.println("catsDoc: "+ serializeDOM(catsDoc));
         return catsDoc;
     }
-
-
-    public void addChannel(String catID[], String chanXML, String role[]) {
-    }
-
 
 /** A method for adding a channel to the channel registry.
  * This would be called by a publish channel.
@@ -167,7 +122,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public void addChannel(int id, String title, Document doc, String catID[]) {
 
-         try {
+         try {   
           IDBImpl dbImpl = new DBImpl();
           dbImpl.addChannel(id, title, doc, catID);
         }
@@ -182,7 +137,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param chanXML XML that describes the channel
  */
     public void addChannel(int id, String title, Document doc) {
-        //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
 
         try {
           IDBImpl dbImpl = new DBImpl();
@@ -221,14 +175,6 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param registryXML an XML description of the channel registry
  */
     public void setRegistryXML(String registryXML) {
-    }
-
-    public Document getChannelTypesXML () {
-        return null;
-    }
-
-    public Document getChannelCatsXML () {
-        return null;
     }
 
     public String serializeDOM(Document chanDoc) {
