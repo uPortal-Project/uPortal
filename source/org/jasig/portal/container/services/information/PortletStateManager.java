@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,9 +54,7 @@ import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.UPFileSpec;
-
-//import com.oreilly.servlet.Base64Decoder;
-//import com.oreilly.servlet.Base64Encoder;
+import org.jasig.portal.utils.CommonUtils;
 
 
 /**
@@ -239,20 +237,20 @@ public class PortletStateManager {
 	
 	
 	private static String encodeQueryString ( String text ) {
-		String result = text.replaceAll("&","_and_");
-		result = result.replaceAll("=","_eq_");
+		String result = CommonUtils.replaceText(text, "&","_and_");
+		result = CommonUtils.replaceText(result, "=","_eq_");
 		if ( UPFileSpec.PORTAL_URL_SEPARATOR.equals(".") )
-		 result = result.replaceAll("\\.","__");
+		 result = CommonUtils.replaceText(result, "\\.","__");
 		else
-		 result = result.replaceAll(UPFileSpec.PORTAL_URL_SEPARATOR,"__"); 
+		 result = CommonUtils.replaceText(result, UPFileSpec.PORTAL_URL_SEPARATOR,"__"); 
 		return result;
 	}
 
 
 	private static String decodeQueryString ( String text ) {
-		String result = text.replaceAll("_and_","&");
-		result = result.replaceAll("_eq_","=");
-		result = result.replaceAll("__",UPFileSpec.PORTAL_URL_SEPARATOR);
+		String result = CommonUtils.replaceText(text, "_and_","&");
+		result = CommonUtils.replaceText(result, "_eq_","=");
+		result = CommonUtils.replaceText(result, "__",UPFileSpec.PORTAL_URL_SEPARATOR);
 		return result;
 	}		
 	
