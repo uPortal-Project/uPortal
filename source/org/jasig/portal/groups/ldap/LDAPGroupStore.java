@@ -591,7 +591,10 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         { throw new GroupsException("Invalid group type: " + type); }
     return new EntityImpl(key, type);
   }
-  public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+  public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+  throws GroupsException {
+    if (type != group && type != iperson)
+      return new EntityIdentifier[0];
     ArrayList ids = new ArrayList();
     switch (method){
       case STARTS_WITH:
