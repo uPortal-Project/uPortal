@@ -31,7 +31,7 @@ function openBrWindow(theURL,winName,features) {
                      <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                            <td height="100" valign="top">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/uportal_logo.gif" border="0" width="133" height="75" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/uportal_logo.gif" border="0" />
                            </td>
 
                            <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Hello, 
@@ -278,7 +278,7 @@ function openBrWindow(theURL,winName,features) {
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
                </td>
 
-               <td class="uportal-background-med">
+               <td class="uportal-background-dark">
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                </td>
 
@@ -306,7 +306,7 @@ function openBrWindow(theURL,winName,features) {
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="20" />
                </td>
 
-               <td class="uportal-background-med">
+               <td class="uportal-background-dark">
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                </td>
 
@@ -380,7 +380,7 @@ function openBrWindow(theURL,winName,features) {
             </td>
          </tr>
 
-         <tr class="uportal-background-med">
+         <tr class="uportal-background-dark">
             <td height="1" colspan="2">
                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
             </td>
