@@ -462,38 +462,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
              StringBuffer newXML = new StringBuffer();
              String appendchar = "";
 
-             // want all runtime parameters not specific to WebProxy
-             Enumeration e=rd.getParameterNames ();
-             if (e!=null)
-               {
-                 while (e.hasMoreElements ())
-                   {
-                     String pName = (String) e.nextElement ();
-                     if ( !pName.startsWith("cw_") && !pName.startsWith("upc_") 
-                                                   && !pName.trim().equals("")) {
-		       String[] value_array = rd.getParameterValues(pName);
-		       if ( value_array == null || value_array.length == 0 ) {
-			   // keyword-style parameter
-			   newXML.append(appendchar);
-			   appendchar = "&";
-			   newXML.append(pName);
-			} else {
-			  int i = 0;
-			  while ( i < value_array.length ) {
-LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime parameter: " + pName);
-                            newXML.append(appendchar);
-                            appendchar = "&";
-                            newXML.append(pName);
-                            newXML.append("=");
-		            newXML.append(URLEncoder.encode(value_array[i++]));
-		          }
-			}
 
-                     }
-                   }
-               }
 	     // here add in attributes according to cw_person
-	     
 	     if (person != null) {
                StringTokenizer st = new StringTokenizer(person,",");
                if (st != null)
@@ -527,17 +497,51 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
 	       }
 	     // end new cw_person code
 
-	     // keyword processing
-	     String keywords = rd.getKeywords();
-	     if (keywords != null)
-	     {
-	LogService.instance().log(LogService.DEBUG, "CWebProxy: got keywords: " + keywords);
-	       if (appendchar.equals("&"))
-	         newXML.append("&keywords=" + keywords);
-	       else
-	         newXML.append(keywords);   
-	     }
-	     // end keyword processing
+             // keyword and parameter processing
+             // NOTE: if both exist, only keywords are appended
+             String keywords = rd.getKeywords();
+             if (keywords != null)
+             {
+               LogService.instance().log(LogService.DEBUG, "CWebProxy: got keywords: " + keywords);
+               if (appendchar.equals("&"))
+                 newXML.append("&keywords=" + keywords);
+               else
+                 newXML.append(keywords);
+             }
+             else
+             {
+               // want all runtime parameters not specific to WebProxy
+               Enumeration e=rd.getParameterNames ();
+               if (e!=null)
+               {
+                 while (e.hasMoreElements ())
+                   {
+                     String pName = (String) e.nextElement ();
+                     if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
+                                                   && !pName.trim().equals("")) {
+                       String[] value_array = rd.getParameterValues(pName);
+                       if ( value_array == null || value_array.length == 0 ) {
+                           // keyword-style parameter
+                           newXML.append(appendchar);
+                           appendchar = "&";
+                           newXML.append(pName);
+                        } else {
+                          int i = 0;
+                          while ( i < value_array.length ) {
+LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime parameter: " + pName);
+                            newXML.append(appendchar);
+                            appendchar = "&";
+                            newXML.append(pName);
+                            newXML.append("=");
+                            newXML.append(URLEncoder.encode(value_array[i++]));
+                          }
+                        }
+
+                     }
+                   }
+               }
+             }
+
 
              // to add: if not already set, make a copy of sd for
 	     // the "reset" command
