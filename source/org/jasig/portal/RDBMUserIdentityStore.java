@@ -46,6 +46,7 @@ import  java.sql.*;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.utils.CounterStoreFactory;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  * @author Susan Bramhall, Yale University
@@ -250,7 +251,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         /* get a new uid for the person */
         try
         {
-          newUID = UserLayoutStoreFactory.getUserLayoutStoreImpl().getIncrementIntegerId("UP_USER");
+          newUID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_USER");
         }
         catch (Exception e)
         {
