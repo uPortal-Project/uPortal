@@ -256,7 +256,7 @@ public class RDBMUserLayoutStore
       this.chanApvlDt = chanApvlDt;
       this.chanTimeout = chanTimeout;
       this.chanMinimizable =chanMinimizable;
-      this.chanEditable = chanMinimizable;
+      this.chanEditable = chanEditable;
       this.chanHasHelp = chanHasHelp;
       this.chanHasAbout = chanHasAbout;
       this.chanDetachable = chanDetachable;
