@@ -1,38 +1,3 @@
-/**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 package org.jasig.portal.channels;
 
 import javax.servlet.*;
@@ -48,32 +13,33 @@ import java.sql.*;
 
 /**
  * This is a channel for storing user-defined bookmarks.
- *
+ * 
  * @author M. Barton
  * @version $Revision$
  */
 
-public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IChannel
-{
+public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IChannel                         
+{ 
   ChannelConfig chConfig = null;
   private static Vector params = null;
   private String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
   private RdbmServices rdbmService = new RdbmServices ();
   private Connection con = null;
   private File dtdFile = new File (getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator + "bookmarks.dtd");
-
+  private String sPathToBookmarksDtd = GenericPortalBean.getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator + File.separator;
+  
   public Vector getParameters()
   {
     return params;
   }
-
+  
   protected void doAddBookmark (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
 	  try
 	  {
 	    // Retrieve bookmarkXml
   	  IBookmarks bm = getBookmarkData(req);
-
+  	  	
 	    out.println ("<form action=\"dispatch.jsp\">");
 	    out.println ("<table>");
 	    out.println ("  <tr>");
@@ -91,20 +57,20 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    out.println ("<input type=\"hidden\" name=\"action\" value=\"save\">");
 	    out.println ("<input type=\"submit\" name=\"submit\" value=\"Save\">");
       out.println ("<input type=\"hidden\" name=\"channelID\" value=\"" + chConfig.getChannelID () + "\">");
-	    out.println ("</form>");
+	    out.println ("</form>");        
 	  }
 	  catch (Exception e)
 	  {
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   protected void doDeleteBookmark (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
 	  try
 	  {
 	    int i = Integer.parseInt(req.getParameter("bookmark"));
-
+  		
 	    // Open xml file -- this should eventually be retrieved from a database
 	    //IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
 	    //IBookmarks bm = (IBookmarks) xml.getRoot ();
@@ -113,18 +79,18 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    IXml xml = getBookmarkXml(req);
 	    IBookmarks bm = (IBookmarks) xml.getRoot ();
   	    //IBookmarks bm = getBookmarkData(req);
-
+  	  
 	    bm.removeBookmarkAt(i);
-
+  	  
 	    // Write this to a database
 	    //xml.saveDocument (xmlFile);
-
+  	  
 	    // Store bookmarkXml in session
 	    // Write bookmarkXml to database
 	    HttpSession session = req.getSession (false);
 	    session.setAttribute ("bookmarkXml", xml);
-	    saveBookMarkXml(req);
-
+	    saveBookMarkXml(req);	  
+  	  
 	    res.sendRedirect (DispatchBean.buildURL ("edit", chConfig));
 	  }
 	  catch (Exception e)
@@ -132,24 +98,24 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   protected void doEditBookmark (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
 	  try
 	  {
 	    int i = Integer.parseInt (req.getParameter("bookmark"));
-
+  		
 	    // Open xml file -- this should eventually be retrieved from a database
 	    //IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
 	    //IBookmarks bm = (IBookmarks) xml.getRoot ();
 	    // Retrieve bookmarkXml
   	    IBookmarks bm = getBookmarkData(req);
-
+  	  
 	    IBookmark bookmark = bm.getBookmarkAt(i);
 	    String sName = bookmark.getAttribute("name");
 	    String sUrl = bookmark.getAttribute("url");
 	    String sComments = bookmark.getAttribute("comments");
-
+  		
 	    out.println ("<form action=\"dispatch.jsp\">");
 	    out.println ("<table>");
 	    out.println ("  <tr>");
@@ -175,11 +141,11 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   protected void doFinishedEditing (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  {    
 	  try
-	  {
+	  {    
 	    HttpSession session = req.getSession (false);
 	    DispatchBean dispatchBean = (DispatchBean) session.getAttribute ("dispatchBean");
 	    dispatchBean.finish (req, res);
@@ -189,7 +155,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   protected void doListBookmarks (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
 	  try
@@ -198,18 +164,18 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    //IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
 	    //IBookmarks bm = (IBookmarks) xml.getRoot ();
 	    // Retrieve bookmarkXml
-  	    IBookmarks bm = getBookmarkData(req);
-
+  	    IBookmarks bm = getBookmarkData(req);	  
+  		
 	    // Get Bookmarks
 	    IBookmark[] bookmarks = bm.getBookmarks ();
-
+  		
 	    out.println ("<table>");
 	    out.println ("  <tr>");
 	    out.println ("    <th>Name</th>");
 	    out.println ("    <th>URL</th>");
 	    out.println ("    <th>Comments</th>");
 	    out.println ("  </tr>");
-
+  		
 	    for (int i = 0; i < bookmarks.length; i++)
 	    {
 		    out.println ("  <tr bgcolor=#eeeeee>");
@@ -220,7 +186,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 		    //out.println ("    <td>[<a href=\"dispatch.jsp?method=edit&action=edit&bookmark=" + i + "\">edit</a>][<a href=\"dispatch.jsp?method=edit&action=delete&bookmark=" + i + "\">delete</a>]</td>");
 		    out.println ("  </tr>");
 	    }
-
+	    
 	    out.println ("</table>");
 	    out.println ("<table border=0><tr><form>");
 	    out.println ("<td><br><input type=button name=add value=\"Add Bookmark\" onClick=\"location=\'" + DispatchBean.buildURL ("edit", chConfig) + "&action=add\'\"></td>");
@@ -232,24 +198,24 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   protected void doSaveBookmark (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  {    
 	  int i = 0;
-
+  	
 	  try
-	  {
+	  {        
 	    // Open xml file -- this should eventually be retrieved from a database
 	    //IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
 	    //IBookmarks bm = (IBookmarks) xml.getRoot ();
 	    // Retrieve bookmarkXml
 	    IXml xml = getBookmarkXml(req);
 	    IBookmarks bm = (IBookmarks) xml.getRoot ();
-
+  	   
 	    String sName = req.getParameter ("name");
 	    String sUrl = req.getParameter ("url");
 	    String sComments = req.getParameter ("comments");
-
+  	  
 	    // Are we coming from adding or editing?
 	    if (req.getParameter("bookmark") == null)
 	    {
@@ -269,15 +235,15 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 		  bookmark.setAttribute("url", sUrl);
 		  bookmark.setAttribute("comments", sComments);
 	    }
-
+  	  
 	    // Write this to a database
 	    //xml.saveDocument (xmlFile);
-
+  	  
 	    // Write bookmarkXml to database
 	    HttpSession session = req.getSession (false);
 	    session.setAttribute ("bookmarkXml", xml);
 	    saveBookMarkXml(req);
-
+  		
 	    res.sendRedirect (DispatchBean.buildURL ("edit", chConfig));
 	  }
 	  catch (Exception e)
@@ -285,9 +251,9 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  {    
 	  try
 	  {
 	    String sAction = req.getParameter("action");
@@ -310,7 +276,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   /**
   * This method was created in VisualAge.
   * @return org.jasig.portal.channels.bookmarks.IBookmarks
@@ -320,7 +286,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   public IBookmarks getBookmarkData(HttpServletRequest req) {
 
 	  IBookmarks bm = null;
-
+  	
 	  try {
 		  //Logger.log (Logger.DEBUG, "Inside getBookmarkData, before call to getBookmarkXml");
 		  IXml xml = getBookmarkXml(req);
@@ -330,10 +296,10 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	  catch (Exception e) {
 	    e.printStackTrace ();
 	  }
-
+  	
 	  return bm;
   }
-
+  
   /**
 	checks the session for bookmark_xml for user
 		if bookmark_xml exists in session
@@ -342,7 +308,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 		if bookmark_xml doesn't exist return nothing
 			else return user's bookmark_xml
    **/
-
+   
   private IXml getBookmarkXml (HttpServletRequest req)
   {
 	  IXml bookmarkXml = null;
@@ -352,14 +318,14 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	  //if (!bookMarkXml.equals(null)) return bookMarkXml;
 
 	  //Logger.log (Logger.DEBUG, "before call to database");
-
+  	
 	  // if no bookmark XML in session, get bookmark XML from database
 	  bookmarkXml = getBookmarkXmlFromDatabase(req);
 	  //Logger.log (Logger.DEBUG, "after call to database");
 
 	  return bookmarkXml;
   }
-
+  
   /**
 	* get ID associated with User
 	* query portal_bookmarks table portal_bookmarks.ID = portal_users.ID
@@ -374,11 +340,11 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   {
 	  IXml bookmarkXml = null;
 	  String id = null;
-
+  	
 	  //consider putting this code in getUserIdFromDatabase method
 	  String sUserName = getUserName(req).equals(null)?"guest":getUserName(req);
 	  //Logger.log (Logger.DEBUG, sUserName);
-
+  	
 	  try
 	  {
 		  con = rdbmService.getConnection ();
@@ -387,7 +353,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 		  String userQuery = "SELECT ID FROM PORTAL_USERS WHERE USER_NAME = '" + sUserName + "'" ;
 		  Logger.log (Logger.DEBUG, userQuery);
 		  debug(userQuery);
-
+  		
 		  ResultSet rs = stmt.executeQuery (userQuery);
 		  if (rs.next ())
 		  {
@@ -404,28 +370,35 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	    rdbmService.releaseConnection (con);
 	  }
 
-	  // get the users bookmark_xml or return an empty bookmark channel if no user data found
+	  // get the users bookmark_xml or return an empty bookmark channel if no user data found	
 	  try
 	  {
 		  con = rdbmService.getConnection ();
 		  Statement stmt = con.createStatement();
-
+  		
 		  String sQuery = "SELECT BOOKMARK_XML FROM PORTAL_BOOKMARKS WHERE PORTAL_USER_ID=" + id;
 		  Logger.log (Logger.DEBUG, sQuery);
 		  debug(sQuery);
-
+  		
 		  ResultSet rs = stmt.executeQuery (sQuery);
 		  if (rs.next ())
 		  {
-		    String sBookmarkXml = rs.getString ("BOOKMARK_XML");
-		    String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
-		    bookmarkXml = Xml.openDocument (xmlFilePackage, new StringReader (sBookmarkXml));
-		  }
-		  else {
-		    //no record in database, return blank bookmarkXml
-		    bookmarkXml = Xml.newDocument (xmlFilePackage, dtdFile,"bookmarks");
-		  }
+		    String sBookmarksXml = rs.getString ("BOOKMARK_XML");
+        
+        // Tack on the full path to bookmarks.dtd
+        int iInsertBefore = sBookmarksXml.indexOf ("bookmarks.dtd");
+        sBookmarksXml = sBookmarksXml.substring (0, iInsertBefore) + sPathToBookmarksDtd + sBookmarksXml.substring (iInsertBefore);
 
+        
+		    String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
+		    bookmarkXml = Xml.openDocument (xmlFilePackage, new StringReader (sBookmarksXml));
+		  }
+		  else 
+      {
+		    //no record in database, return blank bookmarkXml
+		    bookmarkXml = Xml.newDocument (xmlFilePackage, dtdFile, "bookmarks");
+		  }
+  				
 		  stmt.close ();
 
 	    return bookmarkXml;
@@ -440,7 +413,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 	  }
 	  return null;
   }
-
+  
   /**
 checks the session for bookmark_xml for user
 if bookmark_xml exists in session
@@ -451,7 +424,7 @@ else
 		if bookmark_xml doesn't exist return nothing
 		else return user's bookmark_xml
 
-parse bookmarkXml data and return
+parse bookmarkXml data and return   	 
 
 
    */
@@ -461,11 +434,11 @@ parse bookmarkXml data and return
 	  IXml bookmarkXml = (IXml) session.getAttribute ("bookmarkXml");
 	  return bookmarkXml;
   }
-
-  public int getDefaultDetachHeight () {return 400;}
-  public int getDefaultDetachWidth () {return 450;}
+  
+  public int getDefaultDetachHeight () {return 400;}  
+  public int getDefaultDetachWidth () {return 450;}  
   public String getName () {return "My Bookmarks";}
-
+  
   /**
    * Gets the username from the session
    * @param the servlet request object
@@ -476,31 +449,31 @@ parse bookmarkXml data and return
 	  HttpSession session = req.getSession (false);
 	  return (String) session.getAttribute ("userName");
   }
-
+  
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
 	  // This channel has no help
-  }
-
-  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
-  public boolean isDetachable () {return true;}
-  public boolean isEditable () {return true;}
-  public boolean isMinimizable () {return true;}
+  } 
+  
+  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}  
+  public boolean isDetachable () {return true;}  
+  public boolean isEditable () {return true;}  
+  public boolean isMinimizable () {return true;}  
   public boolean isRemovable () {return true;}
   public boolean hasHelp () {return false;}
-
+  
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-	  try
+  {    
+	  try 
 	  {
 	    // Retrieve bookmarkXml
    	    IBookmarks bm = getBookmarkData(req);
-
+  	  
 	    // Get Bookmarks
 	    IBookmark[] bookmarks = bm.getBookmarks ();
-
+  	  
 	    out.println ("<table width=100%>");
-
+  		
 	    for (int i = 0; i < bookmarks.length; i++)
 	    {
 		  out.println ("  <tr bgcolor=#eeeeee>");
@@ -508,16 +481,16 @@ parse bookmarkXml data and return
 		  out.println ("    <td>" + bookmarks[i].getAttribute ("comments") + "</td>");
 		  out.println ("  </tr>");
 	    }
-
+  	  
 	    out.println ("</table>");
-
+  	  
 	  }
 	  catch (Exception e)
 	  {
 	    Logger.log (Logger.ERROR, e);
 	  }
   }
-
+  
   /**
   	Save the bookmark XML to the database
   **/
@@ -525,22 +498,22 @@ parse bookmarkXml data and return
   {
 	  // getBookMarkXML from session
 	  IXml bookmarkXml = getBookmarkXmlFromSession(req);
-
+  	
 	  //Logger.log (Logger.DEBUG, "Inside saveBookMarkXML");
 	  try {
 		  ByteArrayOutputStream outputBookmarkXml = new ByteArrayOutputStream();
 		  bookmarkXml.saveDocument(outputBookmarkXml);
-
+  		
 		  //Logger.log (Logger.DEBUG, "before saveBookMarkXmlToDatabase");
-		  if (bookmarkXml != null)
+		  if (bookmarkXml != null) 
 			  return saveBookMarkXmlToDatabase(req, outputBookmarkXml.toString());
 	}
 	catch (Exception e)
-	{
+	{	
 	  Logger.log (Logger.ERROR, "Problem in savBookMarkXml" + e);
 	}
 	return false;
-  }
+  }  
   /**
 	* get ID associated with User
 	* attempt update of users bookmark xml
@@ -561,7 +534,7 @@ parse bookmarkXml data and return
 		  String userQuery = "SELECT ID FROM PORTAL_USERS WHERE USER_NAME = '" + sUserName + "'";
 		  //Logger.log (Logger.DEBUG, userQuery);
 		  debug(userQuery);
-
+  		
 		  ResultSet rs = stmt.executeQuery (userQuery);
 		  if (rs.next ())
 		  {
@@ -578,6 +551,10 @@ parse bookmarkXml data and return
 	    rdbmService.releaseConnection (con);
 	  }
 
+    // Remove path to bookmarks dtd before saving
+    int iRemoveFrom = bookmarkXml.indexOf (sPathToBookmarksDtd);
+    int iRemoveTo = bookmarkXml.indexOf ("bookmarks.dtd");
+    bookmarkXml = bookmarkXml.substring (0, iRemoveFrom) + bookmarkXml.substring (iRemoveTo);
 
 	  try
 	  {
@@ -586,12 +563,12 @@ parse bookmarkXml data and return
 		  String sUpdate = "UPDATE PORTAL_BOOKMARKS SET BOOKMARK_XML = '"+ bookmarkXml  + "' WHERE PORTAL_USER_ID=" + id ;
 		  Logger.log (Logger.DEBUG, sUpdate);
 		  debug(sUpdate);
-
+  		
 		  int goodUpdate = stmt.executeUpdate (sUpdate);
 		  if (goodUpdate == 0) {
 			  sUpdate = "INSERT INTO PORTAL_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES('"+ id +"','" + bookmarkXml + "')";
 			  Logger.log (Logger.DEBUG, sUpdate);
-			  goodUpdate = stmt.executeUpdate (sUpdate);
+			  goodUpdate = stmt.executeUpdate (sUpdate);	
 		  }
 		  // should verify that the executeUpdate was successful
 
@@ -608,5 +585,5 @@ parse bookmarkXml data and return
 	    rdbmService.releaseConnection (con);
 	  }
 	  return true;
-  }
-}
+  }  
+} 
