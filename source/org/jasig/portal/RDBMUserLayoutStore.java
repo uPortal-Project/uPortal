@@ -500,7 +500,7 @@ public class RDBMUserLayoutStore
     } else {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT <= " + tsStart + "'" +
+    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + tsStart + "'" +
       new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
 
     return new MyPreparedStatement(con, sql);
@@ -721,7 +721,7 @@ public class RDBMUserLayoutStore
     public UserInChannelRole(Connection con, int userId) throws SQLException {
       String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
         "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId +
-        " AND URC.APPROVAL_FLG = 'Y' AND URC.RELEASE_DT <= " + tsStart + "'" + new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
+        " AND URC.APPROVAL_FLG = 'Y' AND URC.RELEASE_DT IS NOT NULL AND URC.RELEASE_DT <= " + tsStart + "'" + new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
         " AND UR.ROLE_ID = UUR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
       pstmtUserInRole = new MyPreparedStatement(con, sQuery);
       sQuery = "SELECT COUNT(ROLE_ID) FROM UP_ROLE_CHAN WHERE CHAN_ID=?";
