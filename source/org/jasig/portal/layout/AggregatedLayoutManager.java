@@ -37,6 +37,7 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 
 import org.jasig.portal.IUserLayoutStore;
@@ -1091,33 +1092,71 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         throw new PortalException(e.getMessage());
       }
     }
+      
+    public void saveFragment ( ILayoutFragment fragment ) throws PortalException {
+       layoutStore.setFragment(person,fragment);	
+    }
     
-	public String createFragment( String fragmentName, String fragmentDesc ) throws PortalException {
+   
+	public void deleteFragment ( String fragmentId ) throws PortalException {
+	   layoutStore.deleteFragment(person,fragmentId);	
+	}
+
+	public Set getFragments () throws PortalException {
+	   return layoutStore.getFragments(person).keySet();	
+	}
+	
+	public ILayoutFragment getFragment ( String fragmentId ) throws PortalException {
+	   return layoutStore.getFragment(person,fragmentId);	
+    }
+    
+	public String createFragment( String fragmentName, String fragmentDesc, String fragmentRootName ) throws PortalException {
+		
 	  try {
+	  	
 			 // Creating an empty layout with a root folder
 			 String newFragmentId = layoutStore.getNextFragmentId();
 			 ALFragment fragment = new ALFragment (newFragmentId,this);
-			 ALNode rootFolder = ALFolder.createRootFolder();
-			 Hashtable layoutData = new Hashtable();
-			 layoutData.put(getRootFolderId(),rootFolder);
+			 
+			 // Creating the layout root node
+			 ALFolder rootFolder = ALFolder.createRootFolder();
+			
+			 // Creating the fragment root node
+		     ALFolderDescription nodeDesc = (ALFolderDescription) createNodeDescription(IUserLayoutNodeDescription.FOLDER);
+			 nodeDesc.setName(fragmentRootName);
+			 // Setting the fragment ID
+			 nodeDesc.setFragmentId(newFragmentId);
+			 ALNode fragmentRoot = ALNode.createALNode(nodeDesc);
+			 
+			 //Updating the DB and getting the node ID for the new node
+			 fragmentRoot = layoutStore.addUserLayoutNode(person,userProfile,fragmentRoot);
+			 
+			 // Setting the link between the layout root and the fragment root
+			 fragmentRoot.setParentNodeId(rootFolder.getId());
+			 rootFolder.setFirstChildNodeId(fragmentRoot.getId());
+			 
+			 // Fill the hashtable with the new nodes
+		     Hashtable layoutData = new Hashtable();
+			 layoutData.put(rootFolder.getId(),rootFolder);
+		     layoutData.put(fragmentRoot.getId(),fragmentRoot);
+			 			 
+			 // Setting the layout data		 
 			 fragment.setLayoutData(layoutData);
-			 fragment.setName(fragmentName+"_"+newFragmentId);
-			 fragment.setDescription(fragmentDesc+" (id="+newFragmentId+")");
+			 fragment.setName(fragmentName);
+			 fragment.setDescription(fragmentDesc);
+			 
+			 // Setting the fragment in the database
+			 layoutStore.setFragment(person,fragment);
 		
 		     // Getting the list of the fragments	
 			 fragments = (Hashtable) layoutStore.getFragments(person);
 		     if ( fragments != null && fragments.size() > 0 ) 
-			  fragment.setFragments(fragments);
-			  
-			 this.fragmentId = newFragmentId;
-			
-			 // Setting the layout to the new fragment
-			 layout = fragment;
+			  fragment.setFragments(fragments);  
 			
 			 updateCacheKey();
 			 
 			 // Return a new fragment ID
-			 return fragmentId;
+			 return newFragmentId;
 			 
 		  } catch ( Exception e ) {
 			throw new PortalException(e.getMessage());

@@ -37,6 +37,7 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Set;
 import org.jasig.portal.PortalException;
 
 /**
@@ -90,6 +91,38 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void loadFragment( String fragmentId ) throws PortalException;
+    
+    
+	/**
+		* Saves the fragment in the store
+		* @param fragment a <code>ILayoutFragment</code> instance
+		* @exception PortalException if an error occurs
+		*/
+	public void saveFragment ( ILayoutFragment fragment ) throws PortalException;
+   
+	
+	/**
+		 * Removes the fragment
+		 * @param fragmentId a fragment ID
+		 * @exception PortalException if an error occurs
+		 */
+	public void deleteFragment ( String fragmentId ) throws PortalException;
+	
+	/**
+			 * Returns the fragment Ids associated with the current layout
+			 * @return <code>Set</code> a set of the fragment IDs
+			 * @exception PortalException if an error occurs
+			 */
+	public Set getFragments() throws PortalException;
+
+	
+	/**
+				 * Returns the fragment
+				 * @param fragmentId a fragment ID
+				 * @return <code>ILayoutFragment</code> a fragment
+				 * @exception PortalException if an error occurs
+				 */
+	public ILayoutFragment getFragment ( String fragmentId ) throws PortalException;
 
     /**
      * Returns the description of the node currently being added to the layout
@@ -112,9 +145,10 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	  * Creates a new fragment and loads it as an user layout
 	  * @param fragmentName a fragment name
 	  * @param fragmentDesc a fragment description
+	  * @param fragmentRootName a fragment root node name
 	  * @return a new generated fragment ID
 	  * @exception PortalException if an error occurs
 	  */
-	public String createFragment( String fragmentName, String fragmentDesc) throws PortalException;
+	public String createFragment( String fragmentName, String fragmentDesc, String fragmentRootName ) throws PortalException;
 
 }

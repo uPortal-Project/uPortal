@@ -359,7 +359,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @return a <code>ALNode</code> object specifying the node with the generated node ID
      * @exception PortalException if an error occurs
      */
-    public ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
+    public synchronized ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
      Connection con = RDBMServices.getConnection();
 
      try {

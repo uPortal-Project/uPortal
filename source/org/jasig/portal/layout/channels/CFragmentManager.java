@@ -37,23 +37,19 @@ package org.jasig.portal.layout.channels;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
 
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IPrivileged;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.layout.ALFolder;
 import org.jasig.portal.layout.ALFragment;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
-import org.jasig.portal.layout.IAggregatedUserLayoutStore;
 import org.jasig.portal.layout.ILayoutFragment;
-import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -72,88 +68,112 @@ import org.xml.sax.ContentHandler;
 public class CFragmentManager extends BaseChannel implements IPrivileged {
 
 	private static final String sslLocation = "/org/jasig/portal/channels/CFragmentManager/CFragmentManager.ssl";
-	private IUserLayoutManager ulm;
+	private IAggregatedUserLayoutManager alm;
 	private ThemeStylesheetUserPreferences themePrefs;
-	private static IAggregatedUserLayoutStore layoutStore;
-	private IPerson person;
 	private Map fragments;
-	private String newName;
 
 	public CFragmentManager() throws PortalException {
 		super();
-		if (layoutStore == null) {
-			IUserLayoutStore layoutStoreImpl =
-				UserLayoutStoreFactory.getUserLayoutStoreImpl();
-			if (layoutStoreImpl == null
-				|| !(layoutStoreImpl instanceof IAggregatedUserLayoutStore))
-				throw new PortalException("CFragmentManager: The user layout store is NULL or must implement IAggregatedUserLayoutStore!");
-			layoutStore = (IAggregatedUserLayoutStore) layoutStoreImpl;
-		}
-
 	}
 
-	private void createFoundation() throws PortalException {
-		IUserLayout layout = ulm.getUserLayout();
-		IUserLayoutNodeDescription tabDesc =
-			ulm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
-		tabDesc.setName(newName != null ? newName : "Unnamed");
-		String tabId = ulm.addNode(tabDesc, layout.getRootId(), null).getId();
-		if (tabId != null) {
-			IUserLayoutNodeDescription columnDesc =
-				ulm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
-			columnDesc.setName("Fragment column");
-			String columnId = ulm.addNode(tabDesc, tabId, null).getId();
-		}
+	private String createFolder( ALFragment fragment ) throws PortalException {
+		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
+		folderDesc.setName("Fragment column");
+		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	private String analyzeParameters() throws PortalException {
+	private String analyzeParameters( XSLT xslt ) throws PortalException {
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = runtimeData.getParameter("uPcFM_action");
 		if (action != null) {
-			if (ulm instanceof TransientUserLayoutManagerWrapper)
-				ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-			if (ulm instanceof IAggregatedUserLayoutManager) {
-				IAggregatedUserLayoutManager alm =
-					(IAggregatedUserLayoutManager) ulm;
 				if (action.equals("new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
+					String funcName = runtimeData.getParameter("fragment_fname");
 					String fragmentDesc = runtimeData.getParameter("fragment_desc");
 					String fragmentType = runtimeData.getParameter("fragment_type");
+					String fragmentFolder = runtimeData.getParameter("fragment_add_folder");
 					boolean isPushedFragment = ("true".equals(fragmentType))?true:false;
-					fragmentId = alm.createFragment(CommonUtils.nvl(fragmentName),CommonUtils.nvl(fragmentDesc));
-					// Refreshing the fragment map
-					refreshFragments();
-					ALFragment newFragment = (ALFragment) fragments.get(fragmentId);
+					fragmentId = alm.createFragment(CommonUtils.nvl(funcName),CommonUtils.nvl(fragmentDesc),CommonUtils.nvl(fragmentName));
+					ALFragment newFragment = (ALFragment) alm.getFragment(fragmentId);
 					if ( newFragment != null ) { 
 					  if ( isPushedFragment ) 
 					    newFragment.setPushedFragment(); 
 					  else
 					    newFragment.setPulledFragment();
+					  // Saving the changes in the database  
+					  alm.saveFragment(newFragment);
+					  // Updating the fragments map
+					  fragments.put(fragmentId,newFragment); 
+					  // Check if we need to create an additional folder on the fragment root
+					  if ( "true".equals(fragmentFolder) ) {
+					  	alm.loadFragment(fragmentId);
+					  	createFolder(newFragment);
+					  	alm.saveFragment();
+					  }
 					}     
-				} else if (action.equals("edit") && fragmentId != null) {
-					if (CommonUtils.parseInt(fragmentId) > 0)
-						alm.loadFragment(fragmentId);
-					else
-						alm.loadUserLayout();
+				} else if (action.equals("edit") ) {
+					if (CommonUtils.parseInt(fragmentId) > 0) {
+					  alm.loadFragment(fragmentId);
+					  themePrefs.putParameterValue("selectedID",CommonUtils.nvl(getFragmentRootId(fragmentId))); 
+					  themePrefs.putParameterValue("mode","preferences"); 	
+					} else
+					   new PortalException ( "Invalid fragment ID="+fragmentId);
 				} else if (action.equals("save")) {
-					alm.saveFragment();
+					String fragmentName = runtimeData.getParameter("fragment_name");
+					String fragmentDesc = runtimeData.getParameter("fragment_desc");
+					String fragmentType = runtimeData.getParameter("fragment_type");
+					boolean isPushedFragment = ("true".equals(fragmentType))?true:false;
+					ALFragment fragment = (ALFragment) fragments.get(fragmentId);
+				    if ( fragment != null ) { 
+					   if ( isPushedFragment ) 
+					     fragment.setPushedFragment(); 
+					   else
+					     fragment.setPulledFragment();
+					   fragment.setName(CommonUtils.nvl(fragmentName));
+					   fragment.setDescription(CommonUtils.nvl(fragmentDesc));  
+					   // Saving the changes in the database  
+					   alm.saveFragment(fragment);							
+					}     
 				} else if (action.equals("delete")) {
-					alm.deleteFragment();
+					if (CommonUtils.parseInt(fragmentId) > 0) {
+					  alm.deleteFragment(fragmentId);
+					  // Updating the fragments map
+					  fragments.remove(fragmentId);  
+					  fragmentId = (fragments != null && fragments.isEmpty())?(String) fragments.keySet().toArray()[0]:"";
+					}
+				} else if (action.equals("properties")) {
+				  
 				}
-				themePrefs.putParameterValue("currentFragmentID", CommonUtils.envl(fragmentId, "default_layout"));
-			}
+				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 		}
+		
 		return fragmentId;
+	}
+	
+	
+	private String getFragmentRootId( String fragmentId ) throws PortalException {
+	  if ( fragments != null && !fragments.isEmpty() ) {
+		ALFragment fragment = (ALFragment) fragments.get(fragmentId);
+		ALFolder rootFolder = (ALFolder) fragment.getNode(fragment.getRootId());
+		return rootFolder.getFirstChildNodeId();	
+	  }
+	    return null;
 	}
 
 	/**
 	 * Passes portal control structure to the channel.
 	 * @see PortalControlStructures
 	 */
-	public void setPortalControlStructures(PortalControlStructures pcs)
-		throws PortalException {
-		ulm = pcs.getUserPreferencesManager().getUserLayoutManager();
+	public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
+	    IUserLayoutManager ulm = pcs.getUserPreferencesManager().getUserLayoutManager();
+		if (ulm instanceof TransientUserLayoutManagerWrapper)
+		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+	    if (ulm instanceof IAggregatedUserLayoutManager)
+		  alm = (IAggregatedUserLayoutManager) ulm;
 		themePrefs = pcs.getUserPreferencesManager().getUserPreferences().getThemeStylesheetUserPreferences();
+		
+		// Refresh the fragment list
+		refreshFragments();
 	}
 
 	private Document getFragmentList() throws PortalException {
@@ -208,38 +228,35 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 
 	public void setStaticData(ChannelStaticData sd) throws PortalException {
 		staticData = sd;
-		person = staticData.getPerson();
-		refreshFragments();
 	}
 
 	public void refreshFragments() throws PortalException {
-		//if (fragmentMap == null)
-			Map fragmentIdsMap = layoutStore.getFragments(person);
-		//if (fragments == null) {
-			fragments = new HashMap();
-			for (Iterator ids = fragmentIdsMap.keySet().iterator(); ids.hasNext(); ) {
+		  Set fragmentIds = alm.getFragments();
+		  fragments = new HashMap();
+			for (Iterator ids = fragmentIds.iterator(); ids.hasNext(); ) {
 				String fragmentId = (String) ids.next();
-				ILayoutFragment layoutFragment =
-					layoutStore.getFragment(person, fragmentId);
+				ILayoutFragment layoutFragment = alm.getFragment(fragmentId);
 				if (layoutFragment == null || !(layoutFragment instanceof ALFragment))
 					throw new PortalException("The fragment must be "+ALFragment.class.getName()+" type!");
 				fragments.put(fragmentId,layoutFragment);
 			}
-		//}
+		
 	}
 
 	public void renderXML(ContentHandler out) throws PortalException {
 		
-		String fragmentId = analyzeParameters();
-
+		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+		
+		String fragmentId = analyzeParameters(xslt);
 		xslt.setXML(getFragmentList());
+		
 		xslt.setXSL(
 			sslLocation,
 			"fragmentManager",
 			runtimeData.getBrowserInfo());
 		xslt.setTarget(out);
-		xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
+		
 		xslt.setStylesheetParameter(
 			"baseActionURL",
 			runtimeData.getBaseActionURL());

@@ -58,8 +58,6 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
@@ -834,7 +832,7 @@ public class UserInstance implements HttpSessionBindingListener {
            newNodeDescription = null;
         }
         
-		param = req.getParameter("uP_fragment_action");
+		/*param = req.getParameter("uP_fragment_action");
 		if ( param != null ) { 
 		  if ( ulm instanceof TransientUserLayoutManagerWrapper )
 		    ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
@@ -855,7 +853,7 @@ public class UserInstance implements HttpSessionBindingListener {
 			}     
 		   themePrefs.putParameterValue("currentFragmentID",CommonUtils.envl(fragmentId,"default_layout")); 
 		  }	  
-		}
+		}*/
 
 
       } catch ( Exception e ) {
