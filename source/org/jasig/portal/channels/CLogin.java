@@ -110,7 +110,7 @@ public class CLogin implements ISpecialChannel
     try {
 	XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
     } catch (Exception e) {
-	throw new GeneralRenderingException(e.getMessage(),true);
+	throw new GeneralRenderingException(e.getMessage());
     }
   }
 }
