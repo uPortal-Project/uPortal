@@ -849,7 +849,7 @@ public class CChannelManager extends BaseChannel {
       protected String value;
       protected String override; // "yes" or "no"
 
-      protected Parameter(String name, String value, String modType) {
+      protected Parameter(String name, String value, String override) {
         this.name = name;
         this.value = value;
         this.override = override;
