@@ -124,7 +124,7 @@ public class OracleUserLayoutStore extends RDBMUserLayoutStore
       nextStructId = rs.getInt("NEXT_STRUCT_ID");
       chldStructId = rs.getInt("CHLD_STRUCT_ID");
       chanId = rs.getInt("CHAN_ID");
-      structure = createLayoutStructure(rs, chanId, userId, stmt, doc);
+      structure = createLayoutStructure(rs, chanId, userId, con, doc);
       if (chanId != 0) {        // Channel
         parameter = (Element)structure.getElementsByTagName("parameter").item(0);
       }
