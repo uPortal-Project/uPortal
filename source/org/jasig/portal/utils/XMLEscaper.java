@@ -57,12 +57,20 @@ public class XMLEscaper
    */
   public static String escape (String source)
   {
-    StringBuffer sb = new StringBuffer (source.length () + 256);
+    String result = null;
 
-    for (int i = 0 ; i < source.length() ; i++)
-      sb.append (escape (source.charAt (i)));
+    if ( source != null) 
+    {
+      StringBuffer sb = new StringBuffer (source.length () + 256);
 
-    return sb.toString ();
+      for (int i = 0 ; i < source.length() ; i++)
+        sb.append (escape (source.charAt (i)));
+ 
+      result = sb.toString();
+
+    } 
+ 
+    return (result);
   }
 
   /**
