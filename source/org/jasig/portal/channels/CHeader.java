@@ -149,16 +149,16 @@ public class CHeader extends BaseChannel {
         // Get the context that holds the global IDs for this user
         globalIDContext = (Context)staticData.getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
         if (canUserPublish()) {
-          // Create <timestamp-short> element under <header>
+          // Create <publish-chanid> element under <header>
           Element publishChanidEl = doc.createElement("publish-chanid");
           publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
           headerEl.appendChild(publishChanidEl);
         }
-        // Create <timestamp-short> element under <header>
-        Element subscribeChanidEl = doc.createElement("subscribe-chanid");
-        subscribeChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/subscribe/general")));
-        headerEl.appendChild(subscribeChanidEl);
-        // Create <timestamp-short> element under <header>
+      } catch (NamingException e) {
+        LogService.instance().log(LogService.ERROR, e);
+      }
+      try {
+        // Create <preferences-chanid> element under <header>
         Element preferencesChanidEl = doc.createElement("preferences-chanid");
         preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
         headerEl.appendChild(preferencesChanidEl);
