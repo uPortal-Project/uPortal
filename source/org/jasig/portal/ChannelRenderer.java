@@ -392,19 +392,6 @@ public class ChannelRenderer
         private String cbuffer;
         private Throwable exc=null;
 
-        protected class ChannelCacheEntry {
-            private Object buffer;
-            private final Object validity;
-            public ChannelCacheEntry() {
-                buffer=null;
-                validity=null;
-            }
-            public ChannelCacheEntry(Object buffer,Object validity) {
-                this.buffer=buffer;
-                this.validity=validity;
-            }
-        }
-
         public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel=ch;  this.rd=runtimeData;
             successful = false; done = false; setRuntimeDataComplete=false;

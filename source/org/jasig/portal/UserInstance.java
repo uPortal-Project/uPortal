@@ -42,7 +42,6 @@ import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -836,15 +835,6 @@ public class UserInstance implements HttpSessionBindingListener {
       } catch ( Exception e ) {
           e.printStackTrace();
           throw new PortalException(e);
-        }
-    }
-
-    private class CharacterCacheEntry {
-        Vector systemBuffers;
-        Vector channelIds;
-        public CharacterCacheEntry() {
-            systemBuffers=null;
-            channelIds=null;
         }
     }
 
