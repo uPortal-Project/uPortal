@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">selectChannelType</xsl:param>
+  <xsl:param name="action">channelDef</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -20,6 +20,7 @@
       <xsl:comment></xsl:comment>
       </head>
       <body>
+
         <xsl:choose>
           <xsl:when test="$action='selectChannelType'">
             <xsl:call-template name="selectChannelType"/>
@@ -132,7 +133,9 @@
 
                               <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" align="center">
-                    <input type="radio" name="ID" value="-1" /> </td>
+                    <input type="radio" name="ID" value="-1">
+                    <xsl:if test="manageChannels/selectChannelType/params/step/channel/@TypeID=-1">
+                     <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input></td>
                   <td nowrap="nowrap">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
@@ -173,7 +176,9 @@
               <xsl:sort select="name"/>
                 <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" align="center">
-                    <input type="radio" name="ID" value="{@ID}" /> </td>
+                    <input type="radio" name="ID" value="{@ID}">
+                    <xsl:if test="@ID=../../channel/@TypeID">
+                     <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input> </td>
                   <td nowrap="nowrap">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
@@ -476,7 +481,7 @@
                     <td class="uportal-text-small" align="center">
                       <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                       <xsl:choose>
-                      <xsl:when test="name !=''">
+                      <xsl:when test="normalize-space(name) !=''">
                       <xsl:value-of select="name"/>
                       </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                       </a>
@@ -511,7 +516,7 @@
                   <td class="uportal-text-small" align="center">
                       <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';<xsl:if test="name(.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
-                        <xsl:when test="name != ''">
+                        <xsl:when test="normalize-space(name) != ''">
                         <xsl:value-of select="name"/>
                         </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                     </a> </td>
@@ -540,7 +545,7 @@
                     <td class="uportal-text-small" align="center">
                       <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
-                        <xsl:when test="name !=''">
+                        <xsl:when test="normalize-space(name)!='' ">
                         <xsl:value-of select="name"/>
                         </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
 
@@ -594,7 +599,11 @@
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/> <input type="text" name="name" size="50" class="uportal-input-text"/></span> </td>
+                  <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/>
+                  <input type="text" name="name" size="50" class="uportal-input-text">
+                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@name">
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>              
+                  </span> </td>
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
@@ -613,7 +622,11 @@
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Channel Timeout:</span> <br/> <input type="text" name="timeout" size="6" class="uportal-input-text"/>milliseconds (1000 = 1 second)</td>
+                  <span class="uportal-label">Channel Timeout:</span> <br/>
+                   <input type="text" name="timeout" size="6" class="uportal-input-text">
+                                       <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@timeout">
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute></xsl:if></input>
+                   milliseconds (1000 = 1 second)</td>
               </tr>
               <tr>
                 <td colspan="3">
@@ -657,13 +670,13 @@
           <td>
             <strong>
             <xsl:choose>
-            <xsl:when test="params/step[position()=$stepID]/name != ''">
+            <xsl:when test="normalize-space(params/step[position()=$stepID]/name) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/name"/>
             </xsl:when>
             <xsl:otherwise>Step Name</xsl:otherwise></xsl:choose>:</strong>
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
                         <xsl:choose>
-            <xsl:when test="params/step[position()=$stepID]/description != ''">
+            <xsl:when test="normalize-space(params/step[position()=$stepID]/description) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/description"/>
             </xsl:when>
             <xsl:otherwise>Description</xsl:otherwise></xsl:choose>
@@ -951,7 +964,17 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-          <input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text"/>
+
+
+
+          <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
+          <xsl:if test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
+          <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
+          </xsl:attribute>
+          </xsl:if>
+          </input>              
+
         </td>
       </xsl:when>
       <xsl:when test="type/@display='textarea'">
@@ -2275,8 +2298,8 @@
                   </tr>
 
 <xsl:choose>
-<xsl:when test="//customSettings//listedParameter">
-<xsl:for-each select="//customSettings//listedParameter">
+<xsl:when test="manageChannels/customSettings/params/step/channel/parameter">
+<xsl:for-each select="manageChannels/customSettings/params/step/channel/parameter">
 
                   <tr class="uportal-channel-text" valign="top">
 
@@ -2289,7 +2312,7 @@
 
 
 
-                    <td nowrap="nowrap"><strong><xsl:value-of select="name"/>:</strong></td>
+                    <td nowrap="nowrap"><strong><xsl:value-of select="@name"/>:</strong></td>
 
 
 
@@ -2297,7 +2320,7 @@
 
 
 
-                    <td width="100%"><xsl:value-of select="value"/></td>
+                    <td width="100%"><xsl:value-of select="@value"/></td>
 
                   </tr>
 
@@ -2363,7 +2386,12 @@
 
     </table>
 </xsl:template>
+
+
 </xsl:stylesheet>
+
+
+
 
 
 
