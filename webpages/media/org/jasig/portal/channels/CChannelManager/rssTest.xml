@@ -45,10 +45,10 @@
             <definition>CImage/CImage.cpd</definition>
           </channelType>
           <channelType ID="4">
-            <class>org.jasig.portal.channels.CWebProxy</class>
+            <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
             <name>Web Proxy</name>
             <description>Incorporate a dynamic HTML or XML application</description>
-            <definition>CWebProxy/CWebProxy.cpd</definition>
+            <definition>CWebProxy.cpd</definition>
           </channelType>
         </channelTypes>
         <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
@@ -325,18 +325,18 @@
             <category ID="cat2" description="uPortal-related" name="uPortal">
               <category ID="cat3" description="Java classes implementing the IChannel interface" name="Channel Types">
                 <category ID="cat4" description="Serves as HTTP Proxy to HTML or XHTML web pages" name="CWebProxy">
-                  <channel ID="chan17" chanID="17" class="org.jasig.portal.channels.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's NumGuess" timeout="10000">
+                  <channel ID="chan17" chanID="17" class="org.jasig.portal.channels.webproxy.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's NumGuess" timeout="10000">
                     <parameter name="cw_xml" value="http://localhost:8080/examples/jsp/num/numguess.jsp"/>
-                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl"/>
+                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/webproxy/XHTML.ssl"/>
                     <parameter name="cw_tidy" value="on"/>
                     <parameter name="cw_passThrough" value="application"/>
                     <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/num_help.html"/>
                     <parameter name="cw_info" value="http://www.mun.ca/cc/portal/cw/num_info.html"/>
                     <parameter name="cw_edit" value="http://www.mun.ca/cc/portal/cw/num_edit.html"/>
                   </channel>
-                  <channel ID="chan18" chanID="18" class="org.jasig.portal.channels.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's Servlet Examples" timeout="10000">
+                  <channel ID="chan18" chanID="18" class="org.jasig.portal.channels.webproxy.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's Servlet Examples" timeout="10000">
                     <parameter name="cw_xml" value="http://localhost:8080/examples/servlets/index.html"/>
-                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl"/>
+                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/webproxy/XHTML.ssl"/>
                     <parameter name="cw_tidy" value="on"/>
                     <parameter name="cw_passThrough" value="all"/>
                     <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/servlet_help.html"/>
