@@ -131,6 +131,18 @@ public class UserLayoutManager {
     // layout root setting
     String root;
     if ((root = req.getParameter("uP_root")) != null) {
+      // If a channel specifies "me" as its root, set the root
+      // to the channel's instance ID
+      if (root.equals("me")) {
+        String chanInstanceId = null;
+        String servletPath = req.getServletPath();
+        String searchFor = "/channel/";
+        int chanIdBegIndex = servletPath.indexOf(searchFor) + searchFor.length();
+        if (chanIdBegIndex != -1) {
+          int chanIdEndIndex = servletPath.indexOf("/", chanIdBegIndex);
+          root = servletPath.substring(chanIdBegIndex, chanIdEndIndex);
+        }
+      }
       complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
     }
     // other params
