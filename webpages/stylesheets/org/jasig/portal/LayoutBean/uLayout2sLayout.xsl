@@ -51,9 +51,9 @@
 </content>
 </xsl:if></xsl:template>
 
-<xsl:template match="channel"><xsl:if test="@minimized = 'false'">
+<xsl:template match="channel">
 <xsl:copy-of select="."/>
-</xsl:if></xsl:template>
+</xsl:template>
 
 <xsl:template match="parameter">
 <xsl:copy-of select="."/>
