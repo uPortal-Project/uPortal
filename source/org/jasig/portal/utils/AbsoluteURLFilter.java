@@ -48,7 +48,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
   
-  protected static String baseUrl = null;
+  protected String baseUrl = null;
   
   /**
    * A constructor which receives a ContentHandler to which
@@ -70,7 +70,6 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
    */  
   public static final AbsoluteURLFilter newAbsoluteURLFilter(String mimeType, String baseUrl, ContentHandler handler) throws PortalException {
     AbsoluteURLFilter filter = null;
-    AbsoluteURLFilter.baseUrl = baseUrl;
     
     if (mimeType != null) {
       if (mimeType.equals("text/html")) {
@@ -83,29 +82,83 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
     } else {
       throw new PortalException("AbsoluteURLFilter.newAbsoluteURLFilter(): Unable to create AbsoluteURLFilter. Mime type is null.");
     }
+
+    filter.baseUrl = baseUrl;
     
     return filter;
   }
-  
+
   /**
    * A helper method for derivitive classes to easily fix an attribute
-   * that has a URL value
+   * that has a relative URL value
    * @param elementName the element name containing an attribute of name attName
    * @param attName the name of the attribute of elementName
    * @param qName the name of the current element
    * @param atts the attibutes of the current element
    * @param attsImpl the attributes implementation to contain the new attribute value
    */
-  protected final void fixURL(String elementName, String attName, String qName, Attributes atts, AttributesImpl attsImpl) {
-    if (qName.equals(elementName)) {
+  protected final void fixURL(String elementName, String attName, String qName, Attributes atts, AttributesImpl attsImpl) 
+  {
+    if (qName.equalsIgnoreCase(elementName)) 
+    {
       String attValue = atts.getValue(attName);
-      // Assume that if attribute value exists and doesn't contain "://",
-      // then it is a relative URL and a base URL must be prepended to it
-      if (attValue != null && attValue.indexOf("://") < 0) {
-        attValue = baseUrl + attValue;
+      if (attValue != null)
+      {
+        // Assume that if attribute value exists and doesn't contain a 
+        // semicolon, or if the URL contains a semicolon and there's a
+        // backslash before the semicolon, then it is a relative URL
+        // (http://<something> and mailto:<something> are both valid,
+        // absolute URLs)
+        int i = attValue.indexOf(":");
+        if ( i==-1 || !(i!=-1 && attValue.substring(0, i).indexOf("/")!=-1) )
+        {
+          if (attValue.startsWith("/"))
+          {
+            // Prepend the scheme and the host to the attribute value (HTTP)
+            i = baseUrl.indexOf("://");
+            if (i != -1)
+              attValue = baseUrl.substring(0, baseUrl.indexOf("/", i+3)).concat(attValue);
+          }
+          else if (attValue.trim().equals(""))
+            attValue = baseUrl;
+          else
+            attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+
+          if (attValue.indexOf("/../") != -1)
+            attValue = removeUpDirs(attValue);
+        }        
+
         int index = atts.getIndex(attName);
         attsImpl.setAttribute(index, atts.getURI(index), atts.getLocalName(index), attName, atts.getType(index), attValue);
-      }      
+      }
     }
-  }  
+  }
+
+  /**
+   * Removes the '/../' in the URL.  Some browsers and web 
+   * servers do not handle these URLs correctly.
+   * @param url the absolute URL generated from the fixURL method
+   */
+  private String removeUpDirs(String url)
+  {
+    String begin;
+    String end;
+    int upDirIndex;
+    int endProtoIndex = url.indexOf("//");
+
+    while ((upDirIndex=url.indexOf("/../")) != -1)
+    {
+       end = url.substring(upDirIndex+4);
+       begin = url.substring(0, upDirIndex);
+
+       if (begin.indexOf("/", endProtoIndex+2) != -1)       
+         begin = url.substring(0, begin.lastIndexOf("/")+1);
+       else
+         begin += "/";
+
+       url = begin.concat(end); 
+    }
+
+    return url;
+  }
 }
