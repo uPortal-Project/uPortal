@@ -185,7 +185,7 @@ Version $Revision$
 		</table>
 		<!-- END: Masthead and Header Channel -->
 	</xsl:template>
-	
+
 	<!-- Suspected Unused Code - template match="actions" being used instead
 	<xsl:template name="actions">
 		BEGIN: upActions Table - ****Comment this line out if this block is reinstated****
@@ -688,7 +688,7 @@ Version $Revision$
 		End: upActions Table - ****Comment this line out if block is reinstated****
 	</xsl:template>
 	 End Suspected Duplicate Code - template match="actions" being used instead -->
-	
+
 	<xsl:template match="content">
 		<xsl:variable name="numCols" select="count(column)"/>
 		<table width="100%" border="0" cols="{$numCols}" cellspacing="9" cellpadding="0">
@@ -2679,11 +2679,10 @@ Version $Revision$
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnCondensed}%"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnExpanded}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
+					<input type="hidden" name="width_{@ID}" value="{$thisColumnCondensed}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>-->
+					<input type="hidden" name="width_{following-sibling::column/@ID}" value="{$followingColumnExpanded}%"/>
 				</xsl:when>
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
 					<xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
@@ -2696,11 +2695,10 @@ Version $Revision$
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnCondensed}%"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{preceding-sibling::column/@ID}_value" value="{$precedingColumnExpanded}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
+					<input type="hidden" name="width_{@ID}" value="{$thisColumnCondensed}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>-->
+					<input type="hidden" name="width_{preceding-sibling::column/@ID}" value="{$precedingColumnExpanded}%"/>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:if>
@@ -2720,11 +2718,10 @@ Version $Revision$
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnExpanded}%"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{following-sibling::column/@ID}_value" value="{$followingColumnCondensed}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
+					<input type="hidden" name="width_{@ID}" value="{$thisColumnExpanded}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{following-sibling::column/@ID}"/>-->
+					<input type="hidden" name="width_{following-sibling::column/@ID}" value="{$followingColumnCondensed}%"/>
 				</xsl:when>
 				<xsl:when test="../column[position()=last()]/@ID=$thisId">
 					<xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
@@ -2737,11 +2734,10 @@ Version $Revision$
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{@ID}"/>
-					<input type="hidden" name="width_{@ID}_value" value="{$thisColumnExpanded}%"/>
-					<input type="hidden" name="uP_sfattr" value="width"/>
-					<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>
-					<input type="hidden" name="width_{preceding-sibling::column/@ID}_value" value="{$precedingColumnCondensed}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
+					<input type="hidden" name="width_{@ID}" value="{$thisColumnExpanded}%"/>
+					<!--<input type="hidden" name="width_folderId" value="{preceding-sibling::column/@ID}"/>-->
+					<input type="hidden" name="width_{preceding-sibling::column/@ID}" value="{$precedingColumnCondensed}%"/>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:if>
@@ -2760,13 +2756,13 @@ Version $Revision$
 					<xsl:choose>
 						<xsl:when test="not(round(100 mod number((count(../column))))=0) and position()=1">
 							<input type="hidden" name="uP_sfattr" value="width"/>
-							<input type="hidden" name="width_folderId" value="{@ID}"/>
+							<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
 							<input type="hidden" name="width_{@ID}_value" value="{round(100 div number((count(../column))))+1}%"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<input type="hidden" name="uP_sfattr" value="width"/>
-							<input type="hidden" name="width_folderId" value="{@ID}"/>
-							<input type="hidden" name="width_{@ID}_value" value="{round(100 div number((count(../column))))}%"/>
+							<!--<input type="hidden" name="width_folderId" value="{@ID}"/>-->
+							<input type="hidden" name="width_{@ID}" value="{round(100 div number((count(../column))))}%"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>

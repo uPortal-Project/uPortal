@@ -62,6 +62,8 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserLayoutStore;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -2793,5 +2795,208 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        }
         throw new PortalException("Unable to generate a new next fragment node id!");
     }
+
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
+    int userId = person.getID();
+    ThemeStylesheetUserPreferences tsup;
+    Connection con = RDBMServices.getConnection();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        // get stylesheet description
+        ThemeStylesheetDescription tsd = getThemeStylesheetDescription(stylesheetId);
+        // get user defined defaults
+        String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
+            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            // stylesheet param
+            tsd.setStylesheetParameterDefaultValue(rs.getString(1), rs.getString(2));
+          }
+        } finally {
+          rs.close();
+        }
+        tsup = new ThemeStylesheetUserPreferences();
+        tsup.setStylesheetId(stylesheetId);
+        // fill stylesheet description with defaults
+        for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          tsup.putParameterValue(pName, tsd.getStylesheetParameterDefaultValue(pName));
+        }
+        for (Enumeration e = tsd.getChannelAttributeNames(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          tsup.addChannelAttribute(pName, tsd.getChannelAttributeDefaultValue(pName));
+        }
+        // get user preferences
+        sQuery = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, ULS.NODE_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT_AGGR ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
+            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND UUSA.STRUCT_ID = ULS.NODE_ID AND UUSA.USER_ID = ULS.USER_ID";
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            int param_type = rs.getInt(1);
+            if (rs.wasNull()) {
+              param_type = 0;
+            }
+            int structId = rs.getInt(4);
+            if (rs.wasNull()) {
+              structId = 0;
+            }
+            int chanId = rs.getInt(5);
+            if (rs.wasNull()) {
+              chanId = 0;
+            }
+            if (param_type == 1) {
+              // stylesheet param
+              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
+                  + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
+                  + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
+            }
+            else if (param_type == 2) {
+              // folder attribute
+              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  folder attribute specified for the theme stylesheet! UP_SS_USER_ATTS corrupt. (userId="
+                  + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
+                  + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
+            }
+            else if (param_type == 3) {
+              // channel attribute
+              tsup.setChannelAttributeValue(getStructId(structId,chanId), rs.getString(2), rs.getString(3));
+            }
+            else {
+              // unknown param type
+              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+                  + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
+                  + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
+            }
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return  tsup;
+  }
+
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
+    int userId = person.getID();
+    StructureStylesheetUserPreferences ssup;
+    Connection con = RDBMServices.getConnection();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        // get stylesheet description
+        StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
+        // get user defined defaults
+        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
+            profileId;
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
+        int layoutId;
+        ResultSet rs = stmt.executeQuery(subSelectString);
+        try {
+          rs.next();
+          layoutId = rs.getInt(1);
+          if (rs.wasNull()) {
+            layoutId = 0;
+          }
+        } finally {
+          rs.close();
+        }
+
+        if (layoutId == 0) { // First time, grab the default layout for this user
+          String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            userId = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+        }
+
+        String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
+            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1";
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            // stylesheet param
+            ssd.setStylesheetParameterDefaultValue(rs.getString(1), rs.getString(2));
+          }
+        } finally {
+          rs.close();
+        }
+        ssup = new StructureStylesheetUserPreferences();
+        ssup.setStylesheetId(stylesheetId);
+        // fill stylesheet description with defaults
+        for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          ssup.putParameterValue(pName, ssd.getStylesheetParameterDefaultValue(pName));
+        }
+        for (Enumeration e = ssd.getChannelAttributeNames(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          ssup.addChannelAttribute(pName, ssd.getChannelAttributeDefaultValue(pName));
+        }
+        for (Enumeration e = ssd.getFolderAttributeNames(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          ssup.addFolderAttribute(pName, ssd.getFolderAttributeDefaultValue(pName));
+        }
+        // get user preferences
+        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.NODE_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT_AGGR ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
+            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.NODE_ID AND UUSA.USER_ID = ULS.USER_ID";
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            String temp1=rs.getString(1); // Access columns left to right
+            String temp2=rs.getString(2);
+            int param_type = rs.getInt(3);
+            int structId = rs.getInt(4);
+            if (rs.wasNull()) {
+              structId = 0;
+            }
+            int chanId = rs.getInt(5);
+            if (rs.wasNull()) {
+              chanId = 0;
+            }
+
+            if (param_type == 1) {
+              // stylesheet param
+              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
+                  + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
+                  + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
+            }
+            else if (param_type == 2) {
+              // folder attribute
+              ssup.setFolderAttributeValue(getStructId(structId,chanId), temp1, temp2);
+            }
+            else if (param_type == 3) {
+              // channel attribute
+              ssup.setChannelAttributeValue(getStructId(structId,chanId), temp1, temp2);
+            }
+            else {
+              // unknown param type
+              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+                  + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
+                  + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
+            }
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return  ssup;
+  }
 
 }

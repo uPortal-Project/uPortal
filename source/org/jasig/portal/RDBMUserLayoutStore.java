@@ -108,7 +108,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     boolean unremovable;
     boolean immutable;
     ArrayList parameters;
-    String locale;       
+    String locale;
 
     /**
      *
@@ -820,7 +820,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     StructureStylesheetDescription ssd = null;
     Connection con = null;
     try {
-      con = RDBMServices.getConnection(); 
+      con = RDBMServices.getConnection();
       Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
@@ -1068,6 +1068,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (rs.wasNull()) {
               chanId = 0;
             }
+
             if (param_type == 1) {
               // stylesheet param
               LogService.log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
@@ -1669,7 +1670,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           } finally {
             rs.close();
           }
-          
+
           int realNextStructId = 0;
 
           if (realUserId != userId) {
@@ -1691,7 +1692,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
-          
+
           /* insert row(s) into up_ss_user_atts */
           sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
@@ -1784,7 +1785,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               String temp5=rs.getString(5); // Some JDBC drivers require columns accessed in order
               String temp6=rs.getString(6); // Access 5 and 6 now, save till needed.
 
-              // uPortal i18n 
+              // uPortal i18n
               int name_index, value_index;
               if (localeAware) {
                   ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocales()[0].toString());
@@ -2233,7 +2234,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
 
-    if (localeAware) { 
+    if (localeAware) {
         structStmt.setString(11, RDBMServices.dbFlag(xmlBool(structure.getAttribute("locale")))); // for i18n by Shoji
     }
     LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
@@ -2536,9 +2537,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           System.err.println("<--");
         }
 
-        // uPortal i18n 
+        // uPortal i18n
         RDBMServices.PreparedStatement structStmt;
-        if (localeAware) { 
+        if (localeAware) {
             structStmt = new RDBMServices.PreparedStatement(con,
                                                             "INSERT INTO UP_LAYOUT_STRUCT " +
                                                             "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,LOCALE) " +
@@ -2866,7 +2867,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=" + profile.getLayoutId() 
+        String sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=" + profile.getLayoutId()
             + ", THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID="
             + profile.getStructureStylesheetId() + ", DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
             + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();

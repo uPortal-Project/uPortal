@@ -41,6 +41,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -838,11 +839,60 @@ public class UserInstance implements HttpSessionBindingListener {
                 ulm.deleteNode(values[i]);
             }
         }
+
+         // Change column width(s)
+        String value = req.getParameter("uP_sfattr");
+        if ( value != null && value.equals("width") ) {
+            HashMap columnWidths = new HashMap();
+            Enumeration eParams = req.getParameterNames();
+            while (eParams.hasMoreElements()) {
+              String param = (String)eParams.nextElement();
+              String prefix = "width_";
+              if (param.startsWith(prefix)) {
+                String folderId = param.substring(prefix.length());
+                String newWidth = req.getParameter(prefix + folderId);
+                columnWidths.put(folderId, newWidth);
+              }
+            }
+            changeColumnWidths(columnWidths);
+        }
+
       } catch ( Exception e ) {
           e.printStackTrace();
           throw new PortalException(e);
         }
     }
+
+
+  private final void changeColumnWidths(HashMap columnWidths) throws Exception {
+
+    UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
+    StructureStylesheetUserPreferences ssup = userPreferences.getStructureStylesheetUserPreferences();
+    java.util.Set sColWidths = columnWidths.keySet();
+    java.util.Iterator iterator = sColWidths.iterator();
+
+    while (iterator.hasNext()) {
+      String folderId = (String)iterator.next();
+      String newWidth = (String)columnWidths.get(folderId);
+
+      // Only accept widths that are either percentages or integers (fixed widths)
+      boolean widthIsValid = true;
+      try {
+         Integer.parseInt(newWidth.endsWith("%") ? newWidth.substring(0, newWidth.indexOf("%")) : newWidth);
+      } catch (java.lang.NumberFormatException nfe) {
+         widthIsValid = false;
+      }
+
+      if (widthIsValid)
+        ssup.setFolderAttributeValue(folderId, "width", newWidth);
+      else
+        LogService.log(LogService.DEBUG, "User id " + person.getID() + " entered invalid column width: " + newWidth);
+    }
+
+     // Persist structure stylesheet user preferences
+     // TO BE DONE
+  }
+
 
     private class CharacterCacheEntry {
         Vector systemBuffers;
