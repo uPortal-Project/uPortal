@@ -91,7 +91,7 @@ public class CGroupsManager
             activities.put(ASSIGN_PERMISSION, "Assign Permissions for this group");
          } catch (Exception e) {
             Utility.logMessage("ERROR", "CGroupsManager.init():: unable to set activities"
-                  + e);
+                  + e, e);
          }
       }
       try {
@@ -108,7 +108,7 @@ public class CGroupsManager
                         targets.put(g.getKey(), ((IEntityGroup)g).getName());
                      } catch (Exception e) {
                         Utility.logMessage("ERROR", "CGroupsManager.init():: unable to add target"
-                              + e);
+                              + e, e);
                      }
                   }
                }
@@ -125,7 +125,7 @@ public class CGroupsManager
                         targets.put(g.getKey(), ((IEntityGroup)g).getName());
                      } catch (Exception e) {
                         Utility.logMessage("ERROR", "CGroupsManager.init():: unable to add target"
-                              + e);
+                              + e, e);
                      }
                   }
                }
@@ -133,7 +133,7 @@ public class CGroupsManager
          }
       } catch (Exception e) {
          Utility.logMessage("ERROR", "CGroupsManager.init():: unable to set targets"
-               + e);
+               + e, e);
       }
    }
 
@@ -167,11 +167,11 @@ public class CGroupsManager
                //GroupsManagerCommandFactory.get("Unlock").execute(sd);
             }
             if (sd.servantChannel != null){
-               sd.servantChannel.receiveEvent(ev);  
+               sd.servantChannel.receiveEvent(ev);
             }
             sessionsMap.remove(uid); // Clean up
          } catch (Exception e){
-            Utility.logMessage("ERROR", this.getClass().getName() + "::receiveEvent(): Exception = " + e);
+            Utility.logMessage("ERROR", this.getClass().getName() + "::receiveEvent(): Exception = " + e, e);
          }
       }
    }
@@ -239,13 +239,13 @@ public class CGroupsManager
                xslt.transform();
             }
             catch (PortalException pe){
-               LogService.instance().log(LogService.ERROR, pe);
+               Utility.logMessage("ERROR", pe.toString(), pe);
                if (pe.getRecordedException()!=null){
-                LogService.instance().log(LogService.ERROR, pe.getRecordedException());
+                Utility.logMessage("ERROR", pe.getRecordedException().toString(), pe.getRecordedException());
                }
             }
             catch (Exception e) {
-               LogService.instance().log(LogService.ERROR, e);
+               Utility.logMessage("ERROR", e.toString(), e);
             }
             //Utility.printDoc(viewDoc, "viewXMl ready:\n");
 
@@ -253,7 +253,7 @@ public class CGroupsManager
             //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
       } catch (Exception e) {
-         LogService.instance().log(LogService.ERROR, e);
+         Utility.logMessage("ERROR", e.toString(), e);
       }
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Finished with Groups Management");
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): =-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_ XXXXXXXXXXXXXX _=-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_");
@@ -295,7 +295,7 @@ public class CGroupsManager
                 c.execute(sessionData);
                }
                catch(Exception e){
-                  LogService.instance().log(LogService.ERROR,e);
+                  Utility.logMessage("ERROR", e.toString(), e);
                   sessionData.feedback = "Error executing command "+theCommand+": "+e.getMessage();
                }
             }
@@ -328,7 +328,7 @@ public class CGroupsManager
             }
          } catch (Exception e) {
             Utility.logMessage("ERROR", this.getClass().getName() + ".setRuntimeDat(): Problem setting servant runtimedata "
-                  + e);
+                  + e, e);
          }
       }
    }
@@ -352,8 +352,9 @@ public class CGroupsManager
          IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
          IGroupMember currUser = AuthorizationService.instance().getGroupMember(sessionData.staticData.getAuthorizationPrincipal());
          sessionData.isAdminUser = (admin.deepContains(currUser));
-         sessionData.model = GroupsManagerXML.getGroupsManagerXml(sessionData);
          sessionData.user = sessionData.staticData.getPerson();
+         sessionData.authPrincipal = sd.getAuthorizationPrincipal();
+         sessionData.model = GroupsManagerXML.getGroupsManagerXml(sessionData);
          Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData Person ID = "
                + sessionData.user.getID());
          Iterator i = sessionData.staticData.entrySet().iterator();
@@ -363,7 +364,7 @@ public class CGroupsManager
                   + m.getKey() + " = " + m.getValue());
          }
       } catch (Exception e) {
-         LogService.instance().log(LogService.ERROR, e);
+          Utility.logMessage("ERROR", e.toString(), e);
       }
    }
 
@@ -422,7 +423,7 @@ public class CGroupsManager
           r= EntityNameFinderService.instance().getNameFinder(IEntityGroup.class).getName(token);
         }
         catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          Utility.logMessage("ERROR", e.toString(), e);
         }
       }
       return  r;

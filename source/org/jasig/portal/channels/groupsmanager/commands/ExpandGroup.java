@@ -75,13 +75,13 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
       Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, elemUid);
       String rootOwner;
       if (expandedElem != null) {
-        GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, expandedElem);
+        GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), expandedElem);
 
         if (expandedElem.getAttribute("searchResults").equals("true")){
           expandedElem.setAttribute("expanded","true");
         }
         else{
-          GroupsManagerXML.expandGroupElementXML(expandedElem,model);
+          GroupsManagerXML.expandGroupElementXML(expandedElem,sessionData.getUnrestrictedData());
         }
       }
    }

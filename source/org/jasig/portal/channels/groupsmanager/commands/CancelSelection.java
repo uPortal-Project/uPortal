@@ -80,14 +80,14 @@ public class CancelSelection extends GroupsManagerCommand {
          // Parent is locked so no other thread or process could have changed it, but
          // child members could have changed.
          Element parentElem = GroupsManagerXML.getElementById(model, parentId);
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
       }
       else {
         // @todo refactor into separate servant finish command
         if (sessionData.lockedGroup!=null){
           try{
             sessionData.lockedGroup.getLock().release();
-          }catch(Exception e){} 
+          }catch(Exception e){}
         }
          staticData.setParameter("groupManagerFinished", "true");
       }

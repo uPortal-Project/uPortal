@@ -65,7 +65,7 @@ public class HighlightGroup extends org.jasig.portal.channels.groupsmanager.comm
       // expand parent
       Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, getCommandArg(sessionData.runtimeData));
       if (expandedElem != null) {
-        GroupsManagerXML.expandGroupElementXML((Element) expandedElem.getParentNode(),model);
+        GroupsManagerXML.expandGroupElementXML((Element) expandedElem.getParentNode(), sessionData.getUnrestrictedData());
       }
       // unlock and discard any other group that may be held in a locked state
       if((sessionData.lockedGroup!=null) && (!sessionData.lockedGroup.getEntityIdentifier().getKey().equals(sessionData.highlightedGroupID)) && (!sessionData.mode.equals("select"))){

@@ -98,9 +98,9 @@ public abstract class GroupsManagerCommand
     * If an exception is generated, I do not delete the group or anything else.
     * Possible Exceptions: AuthorizationException and GroupsException
     * @param grpMbr
-    * @throws ChainedException
+    * @throws Exception
     */
-   protected void deletePermissions (IGroupMember grpMbr) throws ChainedException{
+   protected void deletePermissions (IGroupMember grpMbr) throws Exception{
       try {
          String grpKey = grpMbr.getKey();
          // first we retrieve all permissions for which the group is the principal
@@ -120,8 +120,8 @@ public abstract class GroupsManagerCommand
       }
       catch (Exception e) {
          String errMsg = "DeleteGroup::deletePermissions(): Error removing permissions for " + grpMbr;
-         Utility.logMessage("ERROR", errMsg);
-         throw new ChainedException(errMsg, e);
+         Utility.logMessage("ERROR", errMsg, e);
+         throw new Exception(errMsg);
       }
    }
 

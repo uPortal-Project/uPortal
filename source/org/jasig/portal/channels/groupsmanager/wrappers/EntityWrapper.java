@@ -55,12 +55,13 @@ public class EntityWrapper extends GroupMemberWrapper {
 
    /**
     * Returns an xml element for a given IEntity.
-    * @param gm
-    * @param anElem
-    * @param aDoc
+    * @param gm IGroupMember
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, Document aDoc) {
+   public Element getXml (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) {
+      Document aDoc = sessionData.model;
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME,
             aDoc, false));
       Utility.logMessage("DEBUG", "EntityWrapper.getXml(): START, Element: " + rootElem);
@@ -74,7 +75,7 @@ public class EntityWrapper extends GroupMemberWrapper {
          rootElem.setAttribute("selected", "false");
       } catch (Exception e) {
          Utility.logMessage("ERROR", "EntityWrapper.getXml(): ERROR retrieving entity "
-               + e.toString());
+               + e, e);
       }
       return  rootElem;
    }

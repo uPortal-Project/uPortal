@@ -47,11 +47,11 @@ import org.w3c.dom.*;
  * A Factory that produces a Groups Manager <code>IServant</code> for
  * one of several groups-management related tasks.  Each specific servant
  * is available from one of the methods documented below.
- * 
- * Groups Manager servants can relieve uPortal channels from having to 
- * implement complicated custom GUIs for managing group memberships or 
+ *
+ * Groups Manager servants can relieve uPortal channels from having to
+ * implement complicated custom GUIs for managing group memberships or
  * selecting groups and entities.
- * 
+ *
  * @see org.jasig.portal.channels.CChannelManager
  *  as an example of using Groups Manager servants
  *
@@ -74,13 +74,13 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     }
 
     /**
-    * Returns a servant that is used to select IGroupMembers. The 
+    * Returns a servant that is used to select IGroupMembers. The
     * list of selected IGroupMembers is available via the getResults() method
     *
     * @return IServant
     * @param staticData
     *   the master channel's staticData
-    * @param message 
+    * @param message
     *   a custom message to present the user to explain what they should select
     * @throws PortalException
     */
@@ -89,22 +89,22 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     }
 
     /**
-    * Returns a servant that is used to select IGroupMembers. The 
+    * Returns a servant that is used to select IGroupMembers. The
     * list of selected IGroupMembers is available via the getResults() method
     *
     * @return IServant
     * @param staticData
     *   the master channel's staticData
-    * @param message 
+    * @param message
     *   a custom message to present the user to explain what they should select
-    * @param type 
-    *   the distinguished group name representing the desired root group for 
+    * @param type
+    *   the distinguished group name representing the desired root group for
     *   selection, e.g. GroupService.EVERYONE or GroupService.ALL_CATEGORIES
     * @param allowFinish
-    *   whether or not the user can "finish" selecting. if false, the servant 
+    *   whether or not the user can "finish" selecting. if false, the servant
     *   method "isFinished()" will always return false; the master must have
     *   some other mechanism for allowing the user to change screens.
-    * @param allowEntitySelect 
+    * @param allowEntitySelect
     *   if false, only groups can be selected
     * @param members
     *   an IGroupMember[] of pre-selected members.
@@ -138,27 +138,29 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
           }
         }
         if (typeKey!=null){
-          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().model);
+          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().getUnrestrictedData());
         }
         servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
         if (members!=null && members.length>0){
           Document viewDoc = servant.getSessionData().model;
+          CGroupsManagerUnrestrictedSessionData ursd = servant.getSessionData().getUnrestrictedData();
+
             Element rootElem = viewDoc.getDocumentElement();
             try{
                 for (int mm = 0; mm< members.length;mm++){
                   IGroupMember mem = members[mm];
-                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,viewDoc);
+                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,ursd);
                   memelem.setAttribute("selected","true");
                   rootElem.appendChild(memelem);
                 }
             }
             catch (Exception e){
-              LogService.instance().log(LogService.ERROR,e);
+              Utility.logMessage("ERROR", e.toString(), e);
             }
         }
       }
       catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          Utility.logMessage("ERROR", e.toString(), e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
       long time2 = System.currentTimeMillis();
@@ -168,19 +170,19 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     }
 
     /**
-    * Returns a servant that is used to select IEntityGroups that the supplied 
+    * Returns a servant that is used to select IEntityGroups that the supplied
     * GroupMember belongs to.  Existing memberships are reflected as pre-
     * selected groups.
     *
     * @return IServant
     * @param staticData
     *   the master channel's staticData
-    * @param message 
+    * @param message
     *   a custom message to present the user to explain what they should select
     * @param member
     *   The IGroupMember whose parent groups are to be selected
     * @param allowFinish
-    *   whether or not the user can "finish" selecting. if false, the servant 
+    *   whether or not the user can "finish" selecting. if false, the servant
     *   method "isFinished()" will always return false; the master must have
     *   some other mechanism for allowing the user to change screens.
     * @throws PortalException
@@ -201,7 +203,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         ChannelStaticData slaveSD = cloneStaticData(staticData);
         servant.setStaticData(slaveSD);
         if (typeKey!=null){
-          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().model);
+          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().getUnrestrictedData());
         }
         servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
         servant.getSessionData().mode = "select";
@@ -210,6 +212,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         if (message != null){
           servant.getSessionData().customMessage = message;
         }
+        CGroupsManagerUnrestrictedSessionData ursd = servant.getSessionData().getUnrestrictedData();
         Document viewDoc = servant.getSessionData().model;
         Element rootElem = viewDoc.getDocumentElement();
         try{
@@ -217,13 +220,13 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
           IEntityGroup parent;
           while (parents.hasNext()){
              parent = (IEntityGroup) parents.next();
-             Element parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
+             Element parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,ursd);
              parentElem.setAttribute("selected","true");
              rootElem.appendChild(parentElem);
           }
         }
         catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          Utility.logMessage("ERROR", e.toString(), e);
         }
       }
       catch (Exception e){
@@ -233,55 +236,55 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     }
 
     /**
-    * Returns a servant that is used to select IGroupMembers. The 
+    * Returns a servant that is used to select IGroupMembers. The
     * list of selected IGroupMembers is available via the getResults() method
     *
     * @return IServant
     * @param staticData
     *   the master channel's staticData
-    * @param message 
+    * @param message
     *   a custom message to present the user to explain what they should select
-    * @param type 
-    *   the distinguished group name representing the desired root group for 
+    * @param type
+    *   the distinguished group name representing the desired root group for
     *   selection, e.g. GroupService.EVERYONE or GroupService.ALL_CATEGORIES
     * @throws PortalException
     */
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type) throws PortalException{
         return getGroupsServantforSelection(staticData, message, type, true,true);
     }
-    
+
     /**
-    * Returns a servant that is used to select IGroupMembers. The 
+    * Returns a servant that is used to select IGroupMembers. The
     * list of selected IGroupMembers is available via the getResults() method
     *
     * @return IServant
     * @param staticData
     *   the master channel's staticData
-    * @param message 
+    * @param message
     *   a custom message to present the user to explain what they should select
-    * @param type 
-    *   the distinguished group name representing the desired root group for 
+    * @param type
+    *   the distinguished group name representing the desired root group for
     *   selection, e.g. GroupService.EVERYONE or GroupService.ALL_CATEGORIES
     * @param allowFinish
-    *   whether or not the user can "finish" selecting. if false, the servant 
+    *   whether or not the user can "finish" selecting. if false, the servant
     *   method "isFinished()" will always return false; the master must have
     *   some other mechanism for allowing the user to change screens.
-    * @param allowEntitySelect 
+    * @param allowEntitySelect
     *   if false, only groups can be selected
     * @throws PortalException
     */
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect) throws PortalException{
       return getGroupsServantforSelection(staticData, message, type, allowFinish, allowEntitySelect, new IGroupMember[0]);
     }
-    
+
     /**
     * Returns a servant with the group corresponding to the provided key selected
-    * and locked for editing.  Only add/remove member functions are enabled - 
+    * and locked for editing.  Only add/remove member functions are enabled -
     * group name, description and permissions are not editable.
     *
     * @return IServant
     * @param staticData
-    * @param groupKey 
+    * @param groupKey
     *   the group to be managed
     * @throws PortalException
     */
@@ -297,11 +300,11 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         ((IChannel)servant).setStaticData(slaveSD);
         servant.getSessionData().mode = MEMBERS_ONLY_MODE;
         servant.getSessionData().lockedGroup = lockedGroup;
-        servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
-        servant.getSessionData().defaultRootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
+        servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().getUnrestrictedData());
+        servant.getSessionData().defaultRootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().getUnrestrictedData());
       }
       catch (Exception e){
-        LogService.instance().log(LogService.ERROR,e);
+        Utility.logMessage("ERROR", e.toString(), e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
         long time2 = Calendar.getInstance().getTime().getTime();

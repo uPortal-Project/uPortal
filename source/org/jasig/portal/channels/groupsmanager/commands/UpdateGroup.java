@@ -115,7 +115,7 @@ public class UpdateGroup extends GroupsManagerCommand {
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
             + curName);
       // update all xml nodes for this group
-      GroupsManagerXML.refreshAllNodes(model, updGroup);
+      GroupsManagerXML.refreshAllNodes(sessionData.getUnrestrictedData(), updGroup);
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Finished");
    }
 }

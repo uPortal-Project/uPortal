@@ -51,22 +51,22 @@ public interface IGroupsManagerWrapper {
 
    /**
     * Return an element for an IEntity key
-    * @param aKey
-    * @param aType
-    * @param anElem
-    * @param aDoc
+    * @param aKey String
+    * @param aType String
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public Element getXml (String aKey, String aType, Element anElem, Document aDoc);
+   public Element getXml (String aKey, String aType, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData);
 
    /**
     * Return an element for an IGroupMember holding an IEntity
-    * @param gm
-    * @param anElem
-    * @param aDoc
+    * @param gm IGroupMember
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, Document aDoc);
+   public Element getXml (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData);
 }
 
 

@@ -59,30 +59,31 @@ public abstract class GroupMemberWrapper
     * could be the same one that is passed in (usually with the expanded attribute
     * set to "true" or a new element (all attributes have to be set after the
     * GroupMember is retrieved).
-    * @param aKey
-    * @param aType
-    * @param anElem
-    * @param aDoc
+    * @param aKey String
+    * @param aType String
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public Element getXml (String aKey, String aType, Element anElem, Document aDoc) {
+   public Element getXml (String aKey, String aType, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) {
+      Document aDoc = sessionData.model;
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): START");
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME, aDoc, false));
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): rootElem: " + rootElem);
       IGroupMember gm = retrieveGroupMember(aKey, aType);
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): grp: " + gm);
-      getXml(gm, rootElem, aDoc);
+      getXml(gm, rootElem, sessionData);
       return  rootElem;
    }
 
    /**
     * Returns an xml element for a given IGroupMember.
-    * @param gm
-    * @param anElem
-    * @param aDoc
+    * @param gm IGroupMember
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public abstract Element getXml (IGroupMember gm, Element anElem, Document aDoc) ;
+   public abstract Element getXml (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) ;
 
     /**
     * Returns a GroupMember for a key.

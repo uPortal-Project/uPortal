@@ -120,7 +120,7 @@ import  javax.xml.parsers.*;
       while (parentNodes.hasNext()) {
          Element parentNode = (Element)parentNodes.next();
          GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
-               model);
+               sessionData.getUnrestrictedData());
          ((Element)parentNode).setAttribute("hasMembers", "true");
       }
 
@@ -132,7 +132,7 @@ import  javax.xml.parsers.*;
       }
       // Parent was locked so no other thread or process could have changed it, but
       // child members could have changed.
-      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
 
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Finished");
    }

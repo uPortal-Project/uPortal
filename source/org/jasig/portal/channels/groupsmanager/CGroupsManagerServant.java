@@ -111,7 +111,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
          Utility.logMessage("ERROR", this.getClass().getName()
             + ".setStaticData() : Unable to set static data for servant. "
             + "staticData parm = " + sd
-            + "uid parm = " + uid);
+            + "uid parm = " + uid, pex);
       }
    }
 
@@ -141,12 +141,12 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
          cmd.execute(sessionData);
       }
       catch(Exception e){
-         LogService.instance().log(LogService.ERROR,e);
+         Utility.logMessage("ERROR", e.toString(), e);
          sessionData.feedback = "Error executing command Done: "+e.getMessage();
       }
       Object[] results = (Object[])staticData.get("princResults");
       if (results == null){
-        results = new Object[0]; 
+        results = new Object[0];
       }
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;

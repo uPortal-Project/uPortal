@@ -72,6 +72,7 @@ public class GroupsManagerXML
       IGroupMember aGroupMember = null;
       Element rootGroupElement;
       Document viewDoc = getNewDocument();
+      sessionData.model = viewDoc;
       Element viewRoot = viewDoc.createElement("CGroupsManager");
       viewDoc.appendChild(viewRoot);
       //don't create permission elements for an admin user
@@ -92,18 +93,20 @@ public class GroupsManagerXML
       try {
          // name and class for entity types with root group
          HashMap entTypes = getEntityTypes();
+         // next line initializes the unportected subset of session data
+         CGroupsManagerUnrestrictedSessionData unrsd = sessionData.getUnrestrictedData();
          Iterator entTypeKeys = entTypes.keySet().iterator();
          while (entTypeKeys.hasNext()) {
             Object key = entTypeKeys.next();
             Class entType = (Class)entTypes.get(key);
             IEntityGroup rootGrp = GroupService.getRootGroup(entType);
-            rootGroupElement = getGroupMemberXml(rootGrp, true, null, viewDoc);
+            rootGroupElement = getGroupMemberXml(rootGrp, true, null, unrsd);
             rootGroupElement.setAttribute("editable", String.valueOf(rootGrp.isEditable()));
             rootGroupsElem.appendChild(rootGroupElement);
          }
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerXML::getGroupsManagerXML(): ERROR"
-               + e.toString());
+               + e, e);
       }
       return  viewDoc;
    }
@@ -222,9 +225,9 @@ public class GroupsManagerXML
    /**
     * Expands an element
     * @param expandedElem Element
-    * @param xmlDoc Document
+    * @param sd CGroupsManagerUnrestrictedSessionData
     */
-   public static void expandGroupElementXML(Element expandedElem, Document xmlDoc){
+   public static void expandGroupElementXML(Element expandedElem, CGroupsManagerUnrestrictedSessionData sd){
       //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
       boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
             == 0);
@@ -241,7 +244,7 @@ public class GroupsManagerXML
          IGroupMember entGrp = (!isPersistentGroup(expandedElem) ?
             null :
             (IGroupMember)retrieveGroup(expandedElem.getAttribute("key")));
-         GroupsManagerXML.getGroupMemberXml(entGrp, true, expandedElem, xmlDoc);
+         GroupsManagerXML.getGroupMemberXml(entGrp, true, expandedElem, sd);
          //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
       }
    }
@@ -265,7 +268,7 @@ public class GroupsManagerXML
          try {
             name = EntityNameFinderService.instance().getNameFinder(ap.getType()).getName(name);
          } catch (Exception e) {
-            Utility.logMessage("ERROR", e.toString());
+            Utility.logMessage("ERROR", e.toString(), e);
          }
          apRoot.setAttribute("name", name);
       }
@@ -279,7 +282,7 @@ public class GroupsManagerXML
          }
       } catch (org.jasig.portal.AuthorizationException ae) {
          Utility.logMessage("ERROR", "GroupsManagerXML::getAuthorzationXml: authorization exception "
-               + ae.getMessage());
+               + ae.getMessage(), ae);
       }
       return  apRoot;
    }
@@ -383,7 +386,7 @@ public class GroupsManagerXML
          entName = EntityNameFinderService.instance().getNameFinder(typClass).getName(aKey);
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(Class,String): ERROR retrieving entity "
-               + e.toString());
+               + e, e);
       }
       time2 = Calendar.getInstance().getTime().getTime();
       msg = "GroupsManagerXML.getEntityName(Class,String) timer: " + String.valueOf(time2 - time1)
@@ -406,7 +409,7 @@ public class GroupsManagerXML
          entName = getEntityName(Class.forName(className), aKey);
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(String,String): ERROR retrieving entity "
-               + e.toString());
+               + e, e);
       }
       return  entName;
    }
@@ -443,8 +446,8 @@ public class GroupsManagerXML
             }
          } catch (Exception e) {
             // an exception means we do not want to add this entity to the list
-            Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes [Exception] Did NOT Add : "
-                  + entName + " -- " + entClassName);
+            Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes: " +
+               entName + " -- " + entClassName + " does not have a root group.. NOT ADDED");
          }
       }
       return  entTypes;
@@ -502,12 +505,13 @@ public class GroupsManagerXML
     * @param gm
     * @param isContextExpanded
     * @param anElem
-    * @param aDoc
+    * @param sd CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
    public static Element getGroupMemberXml (IGroupMember gm, boolean isContextExpanded,
-         Element anElem, Document aDoc) {
+         Element anElem, CGroupsManagerUnrestrictedSessionData sd) {
       // search elements are nonPersistent and come in as a null group member.
+      Document aDoc = sd.model;
       if (gm == null) {return null;}
       Element rootElem = anElem;
       String tagname = ENTITY_TAGNAME;
@@ -519,7 +523,7 @@ public class GroupsManagerXML
       }
       IGroupsManagerWrapper rap = getWrapper(tagname);
       if (rap != null) {
-         rootElem = rap.getXml(gm, rootElem, aDoc);
+         rootElem = rap.getXml(gm, rootElem, sd);
       }
       return  rootElem;
    }
@@ -536,7 +540,7 @@ public class GroupsManagerXML
       }
       catch(ParserConfigurationException pce){
          Utility.logMessage("ERROR", "GroupsManagerXML::getNewDocument(): Unable to get new Document\n"
-               + pce);
+               + pce, pce);
       }
       return aDoc;
    }
@@ -678,12 +682,13 @@ public class GroupsManagerXML
 
    /**
     * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
-    * @param model  Document
+    * @param sd CGroupsManagerUnrestrictedSessionData
     * @param entGrp  IEntityGroup
     * @throws GroupsException
     */
-   public static void refreshAllNodes (Document model, IEntityGroup entGrp)
+   public static void refreshAllNodes (CGroupsManagerUnrestrictedSessionData sd, IEntityGroup entGrp)
          throws GroupsException {
+      Document model = sd.model;
       String updKey = entGrp.getKey();
       Node updNode;
       Element updElem;
@@ -704,10 +709,10 @@ public class GroupsManagerXML
    /**
     * Updates all nodes representing the same IEntityGroup that is represented by the
     * anElem, if the anElem is out of date with the IEntityGroup.
-    * @param model  Document
+    * @param sd CGroupsManagerUnrestrictedSessionData
     * @param anElem Element
     */
-   public static void refreshAllNodesIfRequired (Document model, Element anElem){
+   public static void refreshAllNodesIfRequired (CGroupsManagerUnrestrictedSessionData sd, Element anElem){
       // A search element holds search results and should not be refreshed
       // because it is not persistent.
       if (!isPersistentGroup(anElem)) {
@@ -718,12 +723,13 @@ public class GroupsManagerXML
          if (refreshRequired(anElem, null)) {
             Utility.logMessage("Debug", "GroupsManagerXML::refreshAllNodesIfRequired(): Element needs refreshing : "
                + anElem);
-            refreshAllNodes(model,retrieveGroup(anElem.getAttribute("key")));
+            refreshAllNodes(sd,retrieveGroup(anElem.getAttribute("key")));
          }
-      } catch (GroupsException ge){
+      } catch (Exception e){
          Utility.logMessage("INFO", "GroupsManagerXML::refreshAllNodesIfRequired(): "
             + "Unable to refresh all elements for IEntityGroup represented by element: "
             + anElem);
+         Utility.logMessage("INFO", e.toString(), e);
       }
       return;
    }
@@ -732,10 +738,10 @@ public class GroupsManagerXML
     * Updates all nodes representing the same IEntityGroup that is represented by the
     * anElem, if the anElem is out of date with the IEntityGroup. Additionally, we
     * do the same for each child node (one level down at this time).
-    * @param model  Document
+    * @param sd CGroupsManagerUnrestrictedSessionData
     * @param parentElem Element
     */
-   public static void refreshAllNodesRecursivelyIfRequired (Document model, Element parentElem){
+   public static void refreshAllNodesRecursivelyIfRequired (CGroupsManagerUnrestrictedSessionData sd, Element parentElem){
       /** @todo not really recursive, we only go one level down, reconcile this
        *  in code or by changing name */
       if (parentElem == null){
@@ -748,7 +754,7 @@ public class GroupsManagerXML
       NodeList childNodes;
       String childType;
       boolean isParentElementExpanded = (Utility.areEqual(parentElem.getAttribute("expanded"), "true") ? true : false);
-      refreshAllNodesIfRequired(model, parentElem);
+      refreshAllNodesIfRequired(sd, parentElem);
       if (isParentElementExpanded){
          //String parentType = parentElem.getAttribute("type");
          Node parentNode = (Node)parentElem;
@@ -758,13 +764,13 @@ public class GroupsManagerXML
             childElem = (Element)childNode;
             childType = childElem.getAttribute("type");
             if (Utility.notEmpty(childType)){
-               refreshAllNodesIfRequired(model, childElem);
+               refreshAllNodesIfRequired(sd, childElem);
             }
          }
          // Parent may have had children added or removed
          // The wrapper will do this for us.
          // Have to check for non persistent search element before doing retrieval
-         expandGroupElementXML(parentElem, model);
+         expandGroupElementXML(parentElem, sd);
       }
       return;
    }
@@ -848,7 +854,7 @@ public class GroupsManagerXML
          ent = GroupService.getEntity(aKey, iEntityClass);
       } catch (Exception e) {
          Utility.logMessage("ERROR", "EntityWrapper.retrieveEntity(): ERROR retrieving entity "
-               + e.toString());
+               + e, e);
       }
       return  ent;
    }
@@ -868,7 +874,7 @@ public class GroupsManagerXML
          }
       } catch (Throwable th) {
          Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroup(): Could not retrieve Group Member ("
-               + aKey + "): \n" + th);
+               + aKey + "): \n" + th, (Exception) th);
       }
       return  grp;
    }

@@ -58,7 +58,7 @@ public class GroupsManagerWrapperFactory
          bindings.put(GROUP_TAGNAME, Class.forName(WRAPPERS_PACKAGE + ".GroupWrapper").newInstance());
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerWrapperFactory:GroupsManagerWrapperFactory() \n"
-               + e);
+               + e, e);
       }
    }
 

@@ -33,38 +33,48 @@
  *
  */
 
+
 package  org.jasig.portal.channels.groupsmanager;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.groups.*;
+import  org.jasig.portal.security.IAuthorizationPrincipal;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Document;
+
 
 /**
  * Session data for a cached thread stored in a Map in CGroupsManager
  * @author Don Fracapane
  * @version $Revision$
  */
-public class CGroupsManagerSessionData implements GroupsManagerConstants {
+public class CGroupsManagerSessionData extends CGroupsManagerUnrestrictedSessionData
+      implements GroupsManagerConstants {
    public ChannelRuntimeData runtimeData;
    public ChannelStaticData staticData;
    public IServant servantChannel = null;
    public boolean servantMode = false;
    public boolean allowFinish = true;
    public boolean blockEntitySelect = false;
-   public Document model;
    public String uid;
-   public IPerson user;
    public long startRD;
    public ILockableEntityGroup lockedGroup = null;
    public String highlightedGroupID;
    public int currentPage = 1;
    public String rootViewGroupID;
    public String defaultRootViewGroupID = "0";
-   public String mode = BROWSE_MODE; //"browse", "edit" or "select"
+   public String mode = BROWSE_MODE;   //"browse", "edit" or "select"
    public String returnToMode;
-   public String feedback; // use to display info to user (eg. "Unable to lock...")
+   public String feedback;             // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
-   public boolean isAdminUser;
    public IPermissible permissible;
+
+   /**
+    * Returns a subset of unrestricted variables to be used for Document manipulation.
+    * This is accomplished by casting this into the unrestricted partent class.
+    * @return CGroupsManagerUnrestrictedSessionData
+    */
+   public CGroupsManagerUnrestrictedSessionData getUnrestrictedData () {
+      return  (CGroupsManagerUnrestrictedSessionData) this;
+   }
 }

@@ -81,7 +81,7 @@ public class SelectMembers extends GroupsManagerCommand {
                theElement = GroupsManagerXML.getElementByTagNameAndId(model, princeType, princeKey);
                // test first
                if (theElement != null) {
-                  GroupsManagerXML.refreshAllNodesIfRequired(model, theElement);
+                  GroupsManagerXML.refreshAllNodesIfRequired(sessionData.getUnrestrictedData(), theElement);
                   theElement.setAttribute("selected", String.valueOf(theCommand.equals("Select")));
                   Utility.logMessage("DEBUG", "SelectMembers::execute(): " + theCommand
                         + "ed element " + princeType + " " + princeKey);

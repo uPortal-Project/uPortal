@@ -71,9 +71,9 @@ public class CollapseGroup extends GroupsManagerCommand {
       if (collapseElem != null) {
          Utility.logMessage("DEBUG", "CollapseGroup::execute(): Element to be expanded: \n"
                + collapseElem);
-         GroupsManagerXML.refreshAllNodesIfRequired(model, collapseElem);
+         GroupsManagerXML.refreshAllNodesIfRequired(sessionData.getUnrestrictedData(), collapseElem);
          collapseElem.setAttribute("expanded", "false");
-         GroupsManagerXML.refreshAllNodesIfRequired(model, collapseElem);
+         GroupsManagerXML.refreshAllNodesIfRequired(sessionData.getUnrestrictedData(), collapseElem);
       }
       return;
    }

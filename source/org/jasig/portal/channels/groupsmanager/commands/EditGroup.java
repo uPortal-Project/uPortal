@@ -83,7 +83,7 @@ public class EditGroup extends GroupsManagerCommand {
       ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
       // if lockedGroup is null, an exception has probably already been thrown
       if (lockedGroup != null){
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
          // store in sessionData
          sessionData.lockedGroup=lockedGroup;
          sessionData.mode = EDIT_MODE;

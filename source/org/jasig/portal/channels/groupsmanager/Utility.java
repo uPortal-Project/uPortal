@@ -66,7 +66,7 @@ public class Utility
     * method null is the same as "".
     * @param one String
     * @param two String
-    * @return boolean
+    * @return an <code>boolean</code> object
     */
    public static boolean areEqual (String one, String two) {
       String str1 = (one==null ? "" : one).trim();
@@ -77,7 +77,7 @@ public class Utility
    /**
     * Answers if testString has a value other that null and "".
     * @param aString String
-    * @return boolean
+    * @return an <code>boolean</code> object
     */
    public static boolean notEmpty (String aString) {
       String testString = (aString==null ? "" : aString).trim();
@@ -85,12 +85,22 @@ public class Utility
    }
 
    /**
-    * An attempt to extract all calls to logger to expedite assumed future
-    * upgrades.
-    * @param msgTypeStr
-    * @param msg
+    * This method will prints to the log when an exception is not passed.
+    * @param msgTypeStr String
+    * @param msg String
     */
    public static void logMessage (String msgTypeStr, String msg) {
+      Utility.logMessage(msgTypeStr, msg, null);
+      return;
+   }
+
+   /**
+    * An attempt to extract all calls to logger to expedite assumed future upgrades.
+    * @param msgTypeStr String
+    * @param msg String
+    * @param th Throwable
+    */
+   public static void logMessage (String msgTypeStr, String msg, Throwable th) {
       // delay hesitates printing until a new millisecond is reached in order to
       // prevent overlapping messages during debugging
 
@@ -120,6 +130,12 @@ public class Utility
          }
       }
       LogService.instance().log(msgType, msg);
+
+      // if an exception object was passed, print it's stack trace
+      if (th != null){
+         LogService.instance().log(msgType, th);
+      }
+
       return;
    }
 
@@ -128,7 +144,7 @@ public class Utility
     * @param fromDelim
     * @param source
     * @param toDelim
-    * @return String
+    * @return an <code>String</code> object
     */
    public static String parseStringDelimitedBy (String fromDelim, String source, String toDelim) {
       Utility.logMessage("DEBUG", "Utility::parseStringDelimitedBy(): fromDelim = " + fromDelim +
@@ -166,7 +182,7 @@ public class Utility
          Utility.logMessage("DEBUG", aMsg + "\n" + toString(aDoc));
          Utility.logMessage("DEBUG", "########################################");
       } catch (Exception e) {
-         Utility.logMessage("ERROR", e.toString());
+         Utility.logMessage("ERROR", e.toString(), e);
       }
       return;
    }
@@ -190,7 +206,7 @@ public class Utility
     * Retrieves a Group Member for the provided key and of the provided type.
     * @param key
     * @param type
-    * @return IGroupMember
+    * @return an <code>IGroupMember</code> object
     */
    public static IGroupMember retrieveGroupMemberForKeyAndType (String key, String type) {
       IGroupMember gm = null;
@@ -211,7 +227,7 @@ public class Utility
    /**
     * Represents a document as a string.
     * @param aDoc
-    * @return String
+    * @return an <code>String</code> object
     */
    public static String toString (Document aDoc) {
       StringWriter sw = new StringWriter();
@@ -220,7 +236,7 @@ public class Utility
                "UTF-8", true));
          serial.serialize(aDoc);
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "Utility::asString(): " + e.toString());
+         Utility.logMessage("ERROR", "Utility::asString(): " + e, e);
       }
       return  sw.toString();
    }
@@ -228,12 +244,12 @@ public class Utility
    /**
     * given a group key, return an xml group id that matches it in the provided document
     *
-    * @param grpKey
-    * @param model
-    * @return String
+    * @param grpKey String
+    * @param sd CGroupsManagerUnrestrictedSessionData
+    * @return an <code>String</code> object
     */
-   public static String translateKeytoID(String grpKey, Document model){
-      Document viewDoc = model;
+   public static String translateKeytoID(String grpKey, CGroupsManagerUnrestrictedSessionData sd){
+      Document viewDoc = sd.model;
       String id = null;
       Element grpViewKeyElem;
       Iterator grpItr = GroupsManagerXML.getNodesByTagNameAndKey(viewDoc, GROUP_TAGNAME,
@@ -241,20 +257,16 @@ public class Utility
       IEntityGroup gm = GroupsManagerXML.retrieveGroup(grpKey);
       if (gm != null) {
          if (!grpItr.hasNext()) {
-            grpViewKeyElem = GroupsManagerXML.getGroupMemberXml(gm, true, null,
-                  viewDoc);
+            grpViewKeyElem = GroupsManagerXML.getGroupMemberXml(gm, true, null, sd);
             Element rootElem = viewDoc.getDocumentElement();
             rootElem.appendChild(grpViewKeyElem);
          }
          else {
             grpViewKeyElem = (Element)grpItr.next();
-            GroupsManagerXML.getGroupMemberXml(gm, true, grpViewKeyElem, viewDoc);
+            GroupsManagerXML.getGroupMemberXml(gm, true, grpViewKeyElem, sd);
          }
          id = grpViewKeyElem.getAttribute("id");
       }
       return id;
    }
 }
-
-
-

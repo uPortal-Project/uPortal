@@ -56,18 +56,18 @@ public class GroupWrapper extends GroupMemberWrapper {
 
    /**
     * Returns an xml element for a given IEntityGroup.
-    * @param gm
-    * @param anElem
-    * @param aDoc
+    * @param gm IGroupMember
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, Document aDoc) {
+   public Element getXml (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) {
+      Document aDoc = sessionData.model;
       String nextID;
       IEntityGroup entGrp = (IEntityGroup)gm;
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME, aDoc, false));
       Utility.logMessage("DEBUG", "GroupWrapper::getXml(): START, Element Expanded: " + rootElem.getAttribute("expanded"));
       try {
-         Utility.logMessage("DEBUG", "GroupWrapper::getXml(): IEntityGroup: " + gm);
          String uid = rootElem.getAttribute("id");
          if (Utility.areEqual(uid, "")) {
             nextID = GroupsManagerXML.getNextUid();
@@ -78,44 +78,37 @@ public class GroupWrapper extends GroupMemberWrapper {
          rootElem.setAttribute("type", gm.getType().getName());
          rootElem.setAttribute("editable", String.valueOf(entGrp.isEditable()));
          boolean hasMems = gm.hasMembers();
-         Utility.logMessage("DEBUG", "GroupWrapper::getXml(): gm.hasMembers(): " + hasMems);
          if (!hasMems) {
             rootElem.setAttribute("expanded", "false");
          }
          boolean isGroupExpanded = (Boolean.valueOf(rootElem.getAttribute("expanded")).booleanValue());
-         Utility.logMessage("DEBUG", "GroupWrapper::getXml(): Expanded = " + isGroupExpanded);
          if (!Utility.areEqual(rootElem.getAttribute("selected"), "true")) {
             rootElem.setAttribute("selected", "false");
          }
          rootElem.setAttribute("hasMembers", String.valueOf(hasMems));
-         Utility.logMessage("DEBUG", "GroupWrapper::getXml(): hasMembers = " + String.valueOf(hasMems));
          // If no rdf element, create it, otherwise refresh the element
          NodeList nList = rootElem.getElementsByTagName("rdf:RDF");
          if (nList.getLength() == 0) {
-            Utility.logMessage("DEBUG", "GroupWrapper::getXml(): CREATING ELEMENT RDF");
             Element rdf = GroupsManagerXML.createRdfElement(entGrp, aDoc);
-            Utility.logMessage("DEBUG", "GroupWrapper::getXml(): APPENDING rdf element TO GRPROOT");
             rootElem.appendChild(rdf);
          }
          else{
-            GroupsManagerXML.refreshAllNodesIfRequired(aDoc, rootElem);
+            GroupsManagerXML.refreshAllNodesIfRequired(sessionData, rootElem);
          }
          if (isGroupExpanded) {
-            expandElement(gm, rootElem, aDoc);
+            expandElement(gm, rootElem, sessionData);
          }
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): FINISHED");
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupWrapper::getXml(): ERROR retrieving entity "
-               + e.toString());
-         //throw new ChainedException("Exception from GroupsWrapper::getXml", e);
+         Utility.logMessage("ERROR", "GroupWrapper::getXml(): ERROR retrieving entity " + e, e);
       }
       return  rootElem;
    }
 
     /**
     * Returns a GroupMember for a key.
-    * @param aKey
-    * @param aType
+    * @param aKey String
+    * @param aType String
     * @return IGroupMember
     */
    protected IGroupMember retrieveGroupMember (String aKey, String aType) {
@@ -124,12 +117,13 @@ public class GroupWrapper extends GroupMemberWrapper {
 
     /**
     * Returns the xml element for a given IEntityGroup, populated with child elements.
-    * @param gm
-    * @param anElem
-    * @param aDoc
+    * @param gm IGroupMember
+    * @param anElem Element
+    * @param sessionData CGroupsManagerUnrestrictedSessionData
     * @return Element
     */
-   private Element expandElement (IGroupMember gm, Element anElem, Document aDoc) {
+   private Element expandElement (IGroupMember gm, Element anElem, CGroupsManagerUnrestrictedSessionData sessionData) {
+      Document aDoc = sessionData.model;
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): START");
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Group Member: " + gm);
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Element: " + anElem);
@@ -152,7 +146,7 @@ public class GroupWrapper extends GroupMemberWrapper {
             memberElementFound = GroupsManagerXML.getNodesByTagNameAndKey(anElem, tagname,
                   childKey).hasNext();
             if (!memberElementFound) {
-               tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, aDoc);
+               tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, sessionData);
                Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING "
                      + tempElem.getNodeName());
                anElem.appendChild(tempElem);
@@ -179,8 +173,7 @@ public class GroupWrapper extends GroupMemberWrapper {
 
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupWrapper::expandElement(): ERROR expanding \nElement: "
-            + anElem + "\nFor group member: " + gm + "\n" + e.toString());
-         //throw new ChainedException("Exception from GroupsWrapper::expandElement", e);
+            + anElem + "\nFor group member: " + gm + "\n" + e, e);
       }
       return  anElem;
    }

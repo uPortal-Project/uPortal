@@ -118,7 +118,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
          sessionData.rootViewGroupID=null;
          // Parent was locked so no other thread or process could have changed it, but
          // child members could have changed.
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
          sessionData.staticData.remove("groupParentId");
       }
       else {
@@ -166,7 +166,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
 
    /**
     * This section adds the selected members to an IEntityGroup.
-    * @throws ChainedException
+    * @throws Exception
     * @param gmCollection
     * @param sessionData
     * @param parentElem
@@ -200,7 +200,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
          while (parentNodes.hasNext()) {
             parent = (Element)parentNodes.next();
 
-            childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, model);
+            childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, sessionData.getUnrestrictedData());
             parent.appendChild((Node)childElem);
             parent.setAttribute("hasMembers", "true");
          }

@@ -74,11 +74,11 @@ public class AddMembers extends GroupsManagerCommand {
       String parentAddElemId = getCommandArg(runtimeData);
 
       IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(model, parentAddElemId);
-      sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),getXmlDoc(sessionData));
+      sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),sessionData.getUnrestrictedData());
       // Parent was locked so no other thread or process could have changed it, but
       // child members could have changed.
       Element parentElem = GroupsManagerXML.getElementById(model, parentAddElemId);
-      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
+      GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
       sessionData.returnToMode = sessionData.mode;
       sessionData.mode=SELECT_MODE;
       sessionData.highlightedGroupID = sessionData.rootViewGroupID;

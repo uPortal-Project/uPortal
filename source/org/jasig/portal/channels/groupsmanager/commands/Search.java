@@ -129,7 +129,7 @@ public class Search extends GroupsManagerCommand {
          IGroupMember resultGroup = GroupService.getGroupMember(entID);
          sr.addMember(resultGroup);
       }
-      Element searchElem = GroupsManagerXML.getGroupMemberXml(sr, true, null, model);
+      Element searchElem = GroupsManagerXML.getGroupMemberXml(sr, true, null, sessionData.getUnrestrictedData());
       searchElem.setAttribute("searchResults", "true");
       model.getDocumentElement().appendChild(searchElem);
       this.setCommandArg(sessionData.runtimeData, searchElem.getAttribute("id"));

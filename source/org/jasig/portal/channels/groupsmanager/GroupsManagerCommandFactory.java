@@ -74,7 +74,7 @@ public class GroupsManagerCommandFactory
          bindings.put("HideProperties", Class.forName(COMMANDS_PACKAGE + ".HideProperties").newInstance());
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerCommandFactory::GroupsManagerCommandFactory(): \n"
-               + e);
+               + e, e);
       }
    }
 

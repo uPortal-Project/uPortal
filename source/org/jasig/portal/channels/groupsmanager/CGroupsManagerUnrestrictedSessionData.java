@@ -33,45 +33,45 @@
  *
  */
 
-package org.jasig.portal.channels.groupsmanager.commands;
 
-import java.util.*;
-import org.jasig.portal.channels.groupsmanager.*;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+package  org.jasig.portal.channels.groupsmanager;
+
+import  org.jasig.portal.security.*;
+import  org.w3c.dom.*;
+
 
 /**
- * A Groups Manager command to release a lock on a group, return to browse mode
- *
- * @author Alex Vigdor
+ * Session data that is a subset of CGroupsManagerSessionData.
+ * @author Don Fracapane
  * @version $Revision$
  */
+public class CGroupsManagerUnrestrictedSessionData
+      implements GroupsManagerConstants {
+   public Document model;
+   public IPerson user;
+   public boolean isAdminUser;
+   public IGroupsManagerPermissions gmPermissions;
+   public IAuthorizationPrincipal authPrincipal;
 
-public class UnlockGroup extends GroupsManagerCommand{
+   /** Creates new CGroupsManagerUnrestrictedSessionData
+    */
+   public CGroupsManagerUnrestrictedSessionData () {}
 
-  public UnlockGroup() {
-  }
-
-   public void execute (CGroupsManagerSessionData sessionData) throws Exception{
-      Element parentElem = null;
-      sessionData.mode = BROWSE_MODE;
-      Document model = sessionData.model;
-      String key = sessionData.lockedGroup.getLock().getEntityKey();
-      Utility.logMessage("DEBUG", "UnlockGroup::execute(): Locked group key = " + key);
-      sessionData.lockedGroup.getLock().release();
-      sessionData.lockedGroup = null;
-      String parentID = getParentId(sessionData.staticData);
-
-      // Parent was locked so no other thread or process could have changed it, but
-      // child members could have changed.
-      // Parent element id is not always set.
-      if (!Utility.areEqual(parentID, "")){
-         parentElem = GroupsManagerXML.getElementById(model, parentID);
-         sessionData.staticData.remove("groupParentId");
-      }
-      Utility.logMessage("DEBUG", "UnlockGroup::execute(): parentElem = " + parentElem);
-      if (parentElem != null){
-         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
-      }
+   /** Creates new CGroupsManagerUnrestrictedSessionData
+    * @param model Document
+    * @param user IPerson
+    * @param isAdminUser boolean
+    * @param gmPermissions IGroupsManagerPermissions
+    * @param authPrincipal IAuthorizationPrincipal
+    * @return an <code>CGroupsManagerUnrestrictedSessionData</code> object
+    */
+   public CGroupsManagerUnrestrictedSessionData (Document model, IPerson user, boolean isAdminUser,
+         IGroupsManagerPermissions gmPermissions, IAuthorizationPrincipal authPrincipal) {
+      this.model = model;
+      this.user = user;
+      this.isAdminUser = isAdminUser;
+      this.gmPermissions = gmPermissions;
+      this.authPrincipal = authPrincipal;
    }
 }
+

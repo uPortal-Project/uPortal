@@ -122,9 +122,9 @@ public class RemoveMember extends GroupsManagerCommand {
     * This section removes the selected member from an IEntityGroup.
     * @param parentGroup
     * @param childGm
-    * @exception ChainedException
+    * @exception Exception
     */
-   private void removeChildFromGroup (Object parentGroup, IGroupMember childGm) throws ChainedException {
+   private void removeChildFromGroup (Object parentGroup, IGroupMember childGm) throws Exception {
       Utility.logMessage("DEBUG", "RemoveMember::removeChildrenFromGroup(): about to remove child");
       if (parentGroup != null && childGm != null) {
          try {
@@ -132,13 +132,12 @@ public class RemoveMember extends GroupsManagerCommand {
             ((ILockableEntityGroup)parentGroup).updateMembersAndRenewLock();
          } catch (GroupsException ge) {
             String aMsg = "Unable to remove child from parent/n" + ge;
-            Utility.logMessage("ERROR", aMsg);
-            throw  new ChainedException(aMsg, ge);
+            Utility.logMessage("ERROR", aMsg, ge);
          }
       }
       else {
          String suspect = (parentGroup==null ? "Parent" : "Child");
-         throw  new ChainedException(suspect + " group member was not found");
+         throw  new Exception(suspect + " group member was not found");
       }
    }
 }
