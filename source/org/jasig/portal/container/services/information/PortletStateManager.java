@@ -69,7 +69,7 @@ public class PortletStateManager {
 	public static final String UP_TCATTR = "uP_tcattr";
 	public static final String UP_HELP_TARGET = "uP_help_target";
 	public static final String UP_EDIT_TARGET = "uP_edit_target";
-	public static final String UP_ABOUT_TARGET = "uP_about_target";
+	public static final String UP_VIEW_TARGET = "uP_view_target";
 	public static final String MIN_CHAN_ID = "minimized_channelId";
 	
 	private static final String ENC_SEP = "~~%%~~";
@@ -130,6 +130,8 @@ public class PortletStateManager {
 			  setMode ( windowOfAction, PortletMode.HELP ); 
 		  } else if ( UP_EDIT_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
 		      setMode ( windowOfAction, PortletMode.EDIT ); 
+		  }	else if ( UP_VIEW_TARGET.equals(paramName) && windowId.equals(values[0]) ) {
+			  setMode ( windowOfAction, PortletMode.VIEW );   
 	      } else if ( UP_ROOT.equals(paramName) ) {
 		     if ( !ROOT.equals(values[0]) )
 		      setState ( windowOfAction, WindowState.MAXIMIZED); 
@@ -319,7 +321,10 @@ public class PortletStateManager {
 		  if ( nextMode.equals(PortletMode.EDIT) )
 		     url.append(UP_EDIT_TARGET+"="+windowId);  
 		  else if ( nextMode.equals(PortletMode.HELP) ) 
-		     url.append(UP_HELP_TARGET+"="+windowId);  	    	   
+		     url.append(UP_HELP_TARGET+"="+windowId); 
+		  else if ( nextMode.equals(PortletMode.VIEW) ) 
+			 url.append(UP_VIEW_TARGET+"="+windowId);  	    	   
+	   
 
 		  url.append("&");   
         }
