@@ -153,8 +153,6 @@ public class CChannelManager extends BaseChannel {
     }
 
     xslt.setStylesheetParameter("action", action);
-    // Temporary mediaPath param - makes it easier for Justin and I to work together
-    xslt.setStylesheetParameter("mediaPath", "media/org/jasig/portal/channels/CChannelManager");
     xslt.transform();
   }
 
@@ -611,7 +609,7 @@ public class CChannelManager extends BaseChannel {
     private String filterByID;
 
     protected ModifyChannelSettings() {
-      recordsPerPage = "5";
+      recordsPerPage = "15";
       currentPage = "1";
       filterByID = "-1";
     }
