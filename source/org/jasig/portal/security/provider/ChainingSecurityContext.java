@@ -39,7 +39,6 @@ import org.jasig.portal.security.*;
 import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
 import java.util.*;
-import java.sql.*;
 
 /**
  * <p>This is the basic abstract class for all security contexts that should
