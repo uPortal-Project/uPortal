@@ -66,10 +66,14 @@ public class ServletDefinitionImpl implements ServletDefinition, ServletDefiniti
 
     private ObjectID objectId = null;
     private String servletName = null;
+    private IconImpl icon = null;
     private DisplayNameSet displayNames = null;
     private DescriptionSet descriptions = null;
     private String servletClass = null;
+    private String jspFile = null;
     private ParameterSet parameters = null;
+    private String loadOnStartup = null;
+    private RunAsImpl runAs = null;
     private SecurityRoleRefSet initSecurityRoleRefs = null;
     private WebApplicationDefinition webApplicationDefinition = null;
     private long available = 0;
@@ -179,20 +183,60 @@ public class ServletDefinitionImpl implements ServletDefinition, ServletDefiniti
     
     // Additional methods
     
-    public ServletMappingImpl getServletMapping() {
-        return this.servletMapping;
+    public IconImpl getIcon() {
+        return this.icon;
     }
     
-    public void setServletMapping(String servletName, String urlPattern) {
-        this.servletMapping = new ServletMappingImpl(servletName, urlPattern);
+    public void setIcon(IconImpl icon) {
+        this.icon = icon;
     }
     
+    public DisplayNameSet getDisplayNames() {
+        return this.displayNames;
+    }
+    
+    public DescriptionSet getDescriptions() {
+        return this.descriptions;
+    }
+    
+    public String getLoadOnStartup() {
+        return this.loadOnStartup;
+    }
+    
+    public void setLoadOnStartup(String loadOnStartup) {
+        this.loadOnStartup = loadOnStartup;
+    }
+    
+    public RunAsImpl getRunAs() {
+        return this.runAs;
+    }
+    
+    public void setRunAs(RunAsImpl runAs) {
+        this.runAs = runAs;
+    }
+    
+    public String getJspFile() {
+        return this.jspFile;
+    }
+    
+    public void setJspFile(String jspFile) {
+        this.jspFile = jspFile;
+    }        
+        
     public SecurityRoleRefSet getSecurityRoleRefs() {
         return this.initSecurityRoleRefs;
     }
     
     public void setSecurityRoleRefs(SecurityRoleRefSet initSecurityRoleRefs) {
         this.initSecurityRoleRefs = initSecurityRoleRefs;
+    }
+
+    public ServletMappingImpl getServletMapping() {
+        return this.servletMapping;
+    }
+    
+    public void setServletMapping(String servletName, String urlPattern) {
+        this.servletMapping = new ServletMappingImpl(servletName, urlPattern);
     }
 
 }

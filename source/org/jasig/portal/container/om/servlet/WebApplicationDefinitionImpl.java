@@ -46,6 +46,7 @@ import org.apache.pluto.om.common.DisplayName;
 import org.apache.pluto.om.common.DisplayNameSet;
 import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.common.ParameterSet;
+import org.apache.pluto.om.common.SecurityRoleSet;
 import org.apache.pluto.om.servlet.ServletDefinitionList;
 import org.apache.pluto.om.servlet.WebApplicationDefinition;
 import org.jasig.portal.container.om.common.DescriptionSetImpl;
@@ -60,12 +61,20 @@ import org.jasig.portal.container.om.common.ParameterSetImpl;
  */
 public class WebApplicationDefinitionImpl implements WebApplicationDefinition, Serializable {
 
-    private ObjectID objectId = null;
-    private DisplayNameSet displayNames = null;
-    private DescriptionSet descriptions = null;
-    private ParameterSet parameters = null;
-    private ServletDefinitionList servletDefinitions = null;
-    private String contextPath = null;        
+    private ObjectID objectId;
+    private IconImpl icon;
+    private DisplayNameSet displayNames;
+    private DescriptionSet descriptions;
+    private DistributableImpl distributable;
+    private ParameterSet parameters;
+    private FilterListImpl filters;
+    private FilterMappingListImpl filterMappings;
+    private ListenerListImpl listeners;
+    private ServletDefinitionList servletDefinitions;
+    private ServletMappingListImpl servletMappings;
+    private TagLibListImpl tagLibs;
+    private SecurityRoleSet securityRoles;
+    private String contextPath;        
     
     public WebApplicationDefinitionImpl() {
         displayNames = new DisplayNameSetImpl();
@@ -109,6 +118,18 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
     public void setId(String id) {
         this.objectId = ObjectIDImpl.createFromString(id);
     }
+    
+    public IconImpl getIcon() {
+        return this.icon;
+    }
+    
+    public void setIcon(IconImpl icon) {
+        this.icon = icon;
+    }
+    
+    public DisplayNameSet getDisplayNames() {
+        return this.displayNames;
+    }
 
     public void setDisplayNames(DisplayNameSet displayNames) {
         this.displayNames = displayNames;
@@ -122,12 +143,76 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.descriptions = descriptions;
     }
     
+    public DescriptionSet getDescriptions() {
+        return this.descriptions;
+    }
+    
     public void addDescription(String description, Locale locale) {
         ((DescriptionSetImpl)descriptions).add(description, locale);
+    }
+    
+    public void setDistributable(DistributableImpl distributable) {
+        this.distributable = distributable;
+    }
+    
+    public DistributableImpl getDistributable() {
+        return this.distributable;
+    }
+    
+    public void setInitParameterSet(ParameterSet parameters) {
+        this.parameters = parameters;
+    }
+    
+    public FilterListImpl getFilters() {
+        return this.filters;
+    }
+    
+    public void setFilters(FilterListImpl filters) {
+        this.filters = filters;
+    }
+    
+    public FilterMappingListImpl getFilterMappings() {
+        return this.filterMappings;
+    }
+    
+    public void setFilterMappings(FilterMappingListImpl filterMappings) {
+        this.filterMappings = filterMappings;
+    }
+
+    public ListenerListImpl getListeners() {
+        return this.listeners;
+    }
+    
+    public void setListeners(ListenerListImpl listeners) {
+        this.listeners = listeners;
     }
 
     public void setServletDefinitionList(ServletDefinitionList servletDefinitions) {
         this.servletDefinitions = servletDefinitions;
+    }
+    
+    public ServletMappingListImpl getServletMappings() {
+        return this.servletMappings;
+    }
+    
+    public void setServletMappings(ServletMappingListImpl servletMappings) {
+        this.servletMappings = servletMappings;
+    }
+    
+    public TagLibListImpl getTagLibs() {
+        return this.tagLibs;
+    }
+    
+    public void setTagLibs(TagLibListImpl tagLibs) {
+        this.tagLibs = tagLibs;
+    }
+    
+    public SecurityRoleSet getSecurityRoles() {
+        return this.securityRoles;
+    }
+    
+    public void setSecurityRoles(SecurityRoleSet securityRoles) {
+        this.securityRoles = securityRoles;
     }
 
     public void setContextRoot(String contextPath) {
