@@ -1,5 +1,5 @@
 /**
- * IParameter.java	Java 1.3.0 Mon Dec 11 17:52:48 EST 2000
+ * IParameter.java	Java 1.3.0 Mon Jan 15 13:20:35 EST 2001
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.

@@ -1,5 +1,5 @@
 /**
- * Tab.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
+ * Tab.java	Java 1.3.0 Mon Jan 15 13:20:35 EST 2001
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -44,12 +44,24 @@ public class Tab implements ITab
     if( value != null ) 
       return value;
 
+    if( "removable".equals( name ) )
+      return "true";
+
+    if( "hidden".equals( name ) )
+      return "false";
+
     return null;
     }
   
   public Hashtable getAttributes()
     {
     Hashtable clone = (Hashtable) _Attributes.clone();
+
+    if( clone.get( "removable" ) == null )
+      clone.put( "removable", "true" );
+
+    if( clone.get( "hidden" ) == null )
+      clone.put( "hidden", "false" );
 
     return clone;
     }
@@ -62,6 +74,21 @@ public class Tab implements ITab
   public String removeAttribute( String name )
     {
     return (String) _Attributes.remove( name );
+    }
+  
+  public String getRemovableAttribute()
+    {
+    return getAttribute( "removable" );
+    }
+  
+  public void setRemovableAttribute( String value )
+    {
+    setAttribute( "removable", value );
+    }
+  
+  public String removeRemovableAttribute()
+    {
+    return removeAttribute( "removable" );
     }
   
   public String getNameAttribute()
@@ -77,6 +104,21 @@ public class Tab implements ITab
   public String removeNameAttribute()
     {
     return removeAttribute( "name" );
+    }
+  
+  public String getHiddenAttribute()
+    {
+    return getAttribute( "hidden" );
+    }
+  
+  public void setHiddenAttribute( String value )
+    {
+    setAttribute( "hidden", value );
+    }
+  
+  public String removeHiddenAttribute()
+    {
+    return removeAttribute( "hidden" );
     }
 
   // element Column

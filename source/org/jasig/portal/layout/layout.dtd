@@ -10,7 +10,9 @@
 
 <!ELEMENT tab (column+) >
 <!ATTLIST tab 
-  name CDATA #REQUIRED>
+  name CDATA #REQUIRED
+  hidden (true|false) "false"
+  removable (true|false) "true">
 
 <!ELEMENT column (channel*)>
 <!ATTLIST column 
