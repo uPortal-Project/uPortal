@@ -529,9 +529,8 @@
       <fileset dir="properties" includes="**/*"/>
     </copy>
 
-        <!-- Copy the Logger.properties file to the well-known location
-        log4j expects.-->
-        <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
+    <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
+    <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
 
     <!-- Copy serializer resources -->
     <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
