@@ -202,38 +202,8 @@
                        Version: 2.0.8
                        URL: http://jakarta.apache.org/oro/
 
-  axis.jar             Web services support. Axis is the next generation of the
-                       Apache SOAP project which itself followed IBM's SOAP4J.
-                       Version: 1.1
-                       URL: http://ws.apache.org/axis/
-
-  jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://java.sun.com/xml/jaxrpc/
-
-  saaj.jar             SOAP with Attachments API for Java (SAAJ) - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://java.sun.com/xml/javaxmlpack.html
-
-  wsdl4j.jar           Web Services Description Language for Java Toolkit developed
-                       by IBM - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
-
-  commons-discovery.jar
-                       The Discovery component, from the Apache Commons project,
-                       is about discovering, or finding, implementations for
-                       pluggable interfaces - needed for Axis.
-                       Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://jakarta.apache.org/commons/discovery.html
-
-  commons-logging.jar  Logging components from the Apache Commons project - needed
-                       for Axis. Use the version that comes with Axis.
-                       Version: (depends on Axis version)
+  commons-logging.jar  Logging components from the Apache Commons project
+                       Version: ?
                        URL: http://jakarta.apache.org/commons/logging.html
 
   portlet-api.jar      Portlet API based on JSR-168.
@@ -342,11 +312,6 @@
   <property name="jaas.jar" value="(set this in build.properties!)"/>
   <property name="cos.jar" value="(set this in build.properties!)"/>
   <property name="oro.jar" value="(set this in build.properties!)"/>
-  <property name="axis.jar" value="(set this in build.properties!)"/>
-  <property name="jaxrpc.jar" value="(set this in build.properties!)"/>
-  <property name="saaj.jar" value="(set this in build.properties!)"/>
-  <property name="wsdl4j.jar" value="(set this in build.properties!)"/>
-  <property name="commons-discovery.jar" value="(set this in build.properties!)"/>
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
   <property name="portlet-api.jar" value="(set this in build.properties!)"/>
   <property name="pluto.jar" value="(set this in build.properties!)"/>
@@ -390,11 +355,6 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${cos.jar}"/>
     <pathelement location="${oro.jar}"/>
-    <pathelement location="${axis.jar}"/>
-    <pathelement location="${jaxrpc.jar}"/>
-    <pathelement location="${saaj.jar}"/>
-    <pathelement location="${wsdl4j.jar}"/>
-    <pathelement location="${commons-discovery.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${portlet-api.jar}"/>
     <pathelement location="${pluto.jar}"/>
@@ -575,11 +535,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${axis.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jaxrpc.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${saaj.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-discovery.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-collection.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
