@@ -15,22 +15,42 @@ package org.jasig.portal.concurrency;
  * @version $Revision$
  */
 public class LockingException extends org.jasig.portal.PortalException {
-/**
- *
- */
-public LockingException() {
-	super();
-}
-/**
- * @param msg java.lang.String
- */
-public LockingException(String msg) {
-	super(msg);
-}
-/**
- * Add LOCKING_EXCEPTION to PortalExceptions.
- */
-public int getExceptionCode() {
-	return 0;
-}
+    
+    /**
+     * Instantiate a bare LockingException.
+     * Deprecated because it would be so much more helpful if you were to
+     * instead throw an exception that provides a message
+     * @deprecated use a more informative constructor
+     */
+    public LockingException() {
+        super();
+    }
+
+    /**
+     * Instantiate a LockingException with the given message.
+     * @param msg message describing nature of locking problem
+     */
+    public LockingException(String msg) {
+        super(msg);
+    }
+
+    /**
+     * Instantiate a LockingException with the given message
+     * and underlying cause.
+     * @param msg message describing nature of locking problem
+     * @param cause underlying cause
+     */
+    public LockingException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+    
+    /**
+     * This method always returns zero.  It is deprecated and will presumably be
+     * removed in the future.
+     * @return 0
+     * @deprecated
+     */
+    public int getExceptionCode() {
+        return 0;
+    }
 }

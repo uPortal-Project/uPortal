@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -14,25 +14,43 @@ package org.jasig.portal.groups;
  * javax.naming.NamingException.
  *
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01  
+ * @version $Revision$ $Date$ 
  */
 public class GroupsException extends org.jasig.portal.PortalException {
-/**
- * 
- */
-public GroupsException() {
-	super();
-}
-/**
- * @param msg java.lang.String
- */
-public GroupsException(String msg) {
-	super(msg);
-}
-/**
- * Add GROUPS_EXCEPTION to PortalExceptions.
- */
-public int getExceptionCode() {
-	return 0;
-}
+    
+    /**
+     *  Instantiate a bare GroupsException.
+     * Deprecated because it would be so much more helpful to use a contructor
+     * that includes a descriptive message.
+     * @deprecated use a more informative constructor
+     */
+    public GroupsException() {
+        super();
+    }
+
+    /**
+     * Instantiate a GroupsException with the given message.
+     * @param msg message describing problem
+     */
+    public GroupsException(String msg) {
+        super(msg);
+    }
+    
+    /**
+     * Instantiate a GroupsException with the given message and underlying cause.
+     * @param msg message describing problem
+     * @param cause underlying cause
+     */
+    public GroupsException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    /**
+     * Always returns zero.
+     * @return 0
+     * @deprecated
+     */
+    public int getExceptionCode() {
+        return 0;
+    }
 }
