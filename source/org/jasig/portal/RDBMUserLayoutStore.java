@@ -146,14 +146,19 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Element structure = null;
       if (isChannel()) {
         ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
-        structure = channelDef.getDocument(doc, channelPrefix + structId);
-        if (structure == null) {
-          // Can't find channel
+        if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
+          structure = channelDef.getDocument(doc, channelPrefix + structId);
+        } else {
+          // Create an error channel if channel is missing or not approved
           ChannelDefinition cd = new ChannelDefinition(chanId);
           cd.setTitle("Missing channel");
           cd.setName("Missing channel");
+          String missingChannel = "Unknown";
+          if (channelDef != null) {
+            missingChannel = channelDef.getName();
+          }
           structure = cd.getDocument(doc, channelPrefix + structId,
-           "This channel no longer exists. You should remove it from your layout.",
+           "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
            CError.CHANNEL_MISSING_EXCEPTION);
         }
       } else {
@@ -548,8 +553,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @param approved Date
    * @return boolean Channel is approved
    */
-   protected static boolean channelApproved(java.sql.Timestamp approvedDate) {
-      java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
+   protected static boolean channelApproved(java.util.Date approvedDate) {
+      java.util.Date rightNow = new java.util.Date();
       return (approvedDate != null && rightNow.after(approvedDate));
    }
 
