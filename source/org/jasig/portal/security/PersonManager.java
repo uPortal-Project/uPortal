@@ -43,6 +43,7 @@ import  javax.servlet.http.HttpServletRequest;
 import  javax.servlet.http.HttpSessionBindingListener;
 import  javax.servlet.http.HttpSessionBindingEvent;
 import  org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -60,16 +61,6 @@ public class PersonManager {
     // Return the person object if it exists in the cache
     IPerson person = (IPerson)m_personCache.get(request.getSession(false).getId());
     if (person != null) {
-      // DEBUG ---
-      //if (person.getSecurityContext().isAuthenticated()) {
-      //System.out.println("Found authenticated IPerson " + person.getID()
-      //    + " for session " + request.getSession(false).getId());
-      //} 
-      //else {
-      //System.out.println("Found unauthenticated IPerson " + person.getID()
-      //    + " for session " + request.getSession(false).getId());
-      //}
-      // DEBUG ---
       return  (person);
     }
     // Create a new instance of a person
@@ -78,7 +69,8 @@ public class PersonManager {
       // Add the initial security context to the person
       person.setSecurityContext(new InitialSecurityContext("root"));
     } catch (Exception e) {
-      e.printStackTrace();
+      // Log the exception
+      LogService.log(LogService.ERROR, e);
     }
     // By default new user's have the UID of 1
     person.setID(1);
@@ -86,10 +78,6 @@ public class PersonManager {
     request.setAttribute("PMSL", new PersonManagerSessionListener());
     // Add this person to the cache
     m_personCache.put(request.getSession(false).getId(), person);
-    // DEBUG ---
-    //System.out.println("Caching IPerson " + person.getID() + " for session "
-    //    + request.getSession(false).getId());
-    // DEBUG ---
     // Return the new person object
     return  (person);
   }

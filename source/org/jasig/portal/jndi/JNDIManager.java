@@ -84,7 +84,8 @@ public class JNDIManager {
       // Create a subcontext to keep track of active sessions
       context.createSubcontext("sessions");
     } catch (Exception e) {
-      e.printStackTrace();
+      // Log the exception
+      LogService.log(LogService.ERROR, e);
     }
   }
 
