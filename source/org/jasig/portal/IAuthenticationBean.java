@@ -5,7 +5,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.*; 
 import com.objectspace.xml.*;
 
-public interface IAuthorizationBean
+public interface IAuthenticationBean
 {
-  public boolean authorize (String sUserName, String sPassword);
+  public boolean authenticate (String sUserName, String sPassword);
 }

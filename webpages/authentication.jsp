@@ -2,14 +2,14 @@
 <%@ page import="org.jasig.portal.*" %>
 <%@ include file="checkinit.jsp" %>
 
-<jsp:useBean id="authBean" class="org.jasig.portal.AuthorizationBean"
-                           type="org.jasig.portal.IAuthorizationBean"/>
+<jsp:useBean id="authBean" class="org.jasig.portal.AuthenticationBean"
+                           type="org.jasig.portal.IAuthenticationBean" />
 
 <%
 String sUserName = request.getParameter ("userName");
 String sPassword = request.getParameter ("password");
 
-boolean bAuthorized = authBean.authorize (sUserName, sPassword);
+boolean bAuthorized = authBean.authenticate (sUserName, sPassword);
 
 if (bAuthorized)
 {

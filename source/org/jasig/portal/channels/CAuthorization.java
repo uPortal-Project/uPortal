@@ -16,6 +16,9 @@ import java.net.*;
  * authorization.jsp
  * @author Ken Weiner
  * @version $Revision$
+ *
+ * This channel how works in conjunction with the "authentication.jsp"
+ * -ADN
  */
 public class CAuthorization implements org.jasig.portal.IChannel                             
 {  
@@ -113,7 +116,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
       doDisplayFailedLogonMsg (req, res, out);
       
     out.println ("<p>");
-    out.println ("<form action=\"authorization.jsp\" method=post>");
+    out.println ("<form action=\"authentication.jsp\" method=post>");
     out.println ("<table align=center border=0 width=100%>");
     out.println ("  <tr>");
     out.println ("    <td>User Name: </td>");
