@@ -7,7 +7,7 @@
 			<group>Guests</group>
 		</groups>
 		<restrictions>
-			<restriction path="local" name="priority" value="0-30000"/>
+			<restriction path="local" name="priority" value="19999-20000"/>
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
@@ -27,16 +27,18 @@
 			<group>Everyone</group>
 		</groups>
 		<restrictions>
-			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="priority" value="0-19999"/>
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
 		<folder name="News" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="salon.com" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="word-of-the-day" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="motley-fool" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="unicon-news" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 		</folder>
 	</fragment>	
@@ -54,6 +56,7 @@
 		<folder name="Entertainment" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="number-guessing-game" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="minesweeper" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="daily-business-cartoon" immutable="Y" unremovable="Y" hidden="N"/>
@@ -67,17 +70,83 @@
 			<group>Developers</group>
 		</groups>
 		<restrictions>
-			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="priority" value="10000-20000"/>
 			<restriction path="local" name="depth" value="1"/>
 			<restriction path="parent" name="priority" value="1-10"/>
 		</restrictions>
 		<folder name="Developers" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="session-locales-selector" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="person-attributes" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="css-viewer" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="snooper" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="uportal-development-books" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="uportal-data-dictionary" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="uportal-developers-reference" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+
+	<fragment name="CWebProxy-examples">
+		<description>Channels that demonstrate CWebProxy</description>
+		<groups>
+			<group>Developers</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="10000-15000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="CWebProxy Examples" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="tomcat-number-guess" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="tomcat-number-guess" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="tomcat-servlet-examples" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+	
+	<fragment name="ICC-demo">
+		<description>Channels that demonstrate inter-channel communication</description>
+		<groups>
+			<group>Developers</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-9999"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="ICC Demo" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="portal/iccdemo/urlselector" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="portal/iccdemo/history" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="portal/iccdemo/viewer" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>		
+
+	<fragment name="admin-tools">
+		<description>Channels for portal administration</description>
+		<groups>
+			<group>Portal Administrators</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-20000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="Admin Tools" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="groupsmanager" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="permissionsmanager" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 		</folder>
 	</fragment>	
