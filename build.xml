@@ -88,7 +88,7 @@
 -->
 
   <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.version"   value="2.0"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -137,12 +137,12 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.3.1
+                       Version: 2.2.0
                        URL: http://xml.apache.org/xalan-j/
 
-  xercesImpl.jar       Xerces2 is the next generation of high performance,
+  xerces.jar           Xerces2 is the next generation of high performance,
                        fully compliant XML parsers in the Apache Xerces family.
-                       Be sure to use the version of XercesImpl that comes with
+                       Be sure to use the version of Xerces that comes with
                        the Xalan you are using.
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xerces2-j/
@@ -184,8 +184,7 @@
 
   jaas.jar             The Java Authentication and Authorization Service (JAAS)
                        is a Java package that enables services to authenticate
-                       and enforce access controls upon users.  This is only
-                       needed for JDK's less than 1.4.  It is included with JDK 1.4.
+                       and enforce access controls upon users.
                        Version: 1.0
                        URL: http://java.sun.com/products/jaas/
 
@@ -197,7 +196,7 @@
 
   oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
-                       Version: 2.0.5
+                       Version: 2.0.4
                        URL: http://jakarta.apache.org/oro/
 
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
@@ -212,10 +211,20 @@
                        Version: (depends on your database)
                        URL: (depends on your database)
 
+  poolman.jar          This has been added for the quick-start distribution.
+                       Poolman provides database connection pooling.
+                       Version: 2.1 beta
+                       URL: http://www.codestudio.com
+
+  jdbc20.jar           Needed for Poolman.  Use the version that comes 
+                       with Poolman.
+                       Version: depends on Poolman version
+                       URL: http://www.codestudio.com
+
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
-  <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
+  <property name="xerces.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
   <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
@@ -227,6 +236,8 @@
   <property name="oro.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
+  <property name="poolman.jar" value="(set this in build.properties!)"/>
+  <property name="jdbc20.jar" value="(set this in build.properties!)"/>
 
 
 <!-- ==================== Compilation Classpath =========================== -->
@@ -246,7 +257,7 @@
 
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
@@ -258,9 +269,16 @@
     <pathelement location="${oro.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
+    <pathelement location="${poolman.jar}"/>
+    <pathelement location="${jdbc20.jar}"/>
 
   </path>
 
+
+  <path id="tests.classpath">
+    <path refid="compile.classpath"/>
+    <pathelement location="${junit.jar}"/>
+  </path>
 
 
 <!-- ==================== All Target ====================================== -->
@@ -310,6 +328,8 @@
 
     <!-- Compile Java classes as necessary -->
     <mkdir    dir="${build.home}/WEB-INF/classes"/>
+
+
     <javac srcdir="source"
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
@@ -318,9 +338,16 @@
       <classpath refid="compile.classpath"/>
     </javac>
 
+
+
     <!-- Copy associated resource files -->
     <copy  todir="${build.home}/WEB-INF/classes/properties">
-      <fileset dir="properties" includes="**/*"/>
+      <fileset dir="properties" includes="**/*" excludes="poolman.xml"/>
+    </copy>
+
+    <!-- Copy poolman.xml -->
+    <copy  todir="${build.home}/WEB-INF/classes">
+      <fileset dir="properties" includes="poolman.xml"/>
     </copy>
 
     <!-- Copy serializer resources -->
@@ -338,6 +365,42 @@
       <fileset dir="webpages/media" excludes="CVS,**/*.gif,**/*.jpg,**/*.css"/>
     </copy>
 
+  </target>
+
+  <target name="compiletests" depends="compile"
+   description="Compile JUnit Tests">
+    <javac srcdir="tests"
+          destdir="${build.home}/WEB-INF/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="tests.classpath"/>
+    </javac>
+
+    <!-- Copy everything in media except for the source files -->
+    <copy  todir="${build.home}/WEB-INF/classes">
+      <fileset dir="tests" excludes="CVS,**/*.java"/>
+    </copy>
+  </target>
+
+
+  <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
+    <java classname="org.jasig.portal.AllTests">
+      <classpath>
+       <path refid="tests.classpath"/>
+       <path location="${build.home}/WEB-INF/classes"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="swingtests" depends="compiletests" description="Run JUnit Test Suite">
+    <java fork="true" classname="junit.swingui.TestRunner">
+      <classpath>
+       <path refid="tests.classpath"/>
+       <path location="${build.home}/WEB-INF/classes"/>
+      </classpath>
+      <arg value="org.jasig.portal.AllTests"/>
+    </java>
   </target>
 
 
@@ -365,7 +428,7 @@
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
@@ -376,6 +439,8 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${poolman.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc20.jar}"/>
 
   </target>
 
@@ -490,10 +555,12 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
     </java>
   </target>
@@ -520,10 +587,12 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="${tablename}"/>
       <arg value="${xmlfile}"/>
@@ -552,6 +621,8 @@
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="-c"/>
       <arg value="${username}"/>
@@ -586,10 +657,11 @@
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="${class}"/>
       <arg value="${name}"/>
@@ -628,10 +700,11 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="${stylesheetUri}"/>
@@ -671,10 +744,11 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="-u"/>
@@ -710,10 +784,11 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
+        <pathelement path="${poolman.jar}"/>
+        <pathelement path="${jdbc20.jar}"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="-d"/>
