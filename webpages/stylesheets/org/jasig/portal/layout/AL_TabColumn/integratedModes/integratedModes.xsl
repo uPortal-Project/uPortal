@@ -1577,7 +1577,7 @@ Version $Revision$
                         <xsl:if test="fragments">
                             <span> |<xsl:text>&#160;</xsl:text>
                             </span>Manage:<form name="selectFragments" method="post" action="{$baseActionURL}">
-                                <select name="fragmentID" class="uportal-input-text uportal-background-content">
+                                <select name="uP_fragment_ID" class="uportal-input-text uportal-background-content">
                                     <option selected="selected">My layout</option>
                                     <xsl:for-each select="fragments/fragment">
                                         <option value="{@ID}">
@@ -1585,12 +1585,13 @@ Version $Revision$
                                         </option>
                                     </xsl:for-each>
                                 </select>
+                                <input type="hidden" name="uP_fragment_action" value="edit"/>
                                 <!--<option><xsl:value-of select="New fragment"/></option>-->
                                 <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
                                 <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
                                 <span> |<xsl:text>&#160;</xsl:text>
                                 </span>
-                                <a href="javascript:alert('[New fragment] function is under construction')">New fragment</a>
+                                <a href="{$baseActionURL}?uP_fragment_action=new">New Tab Fragment</a>
                             </form>
                         </xsl:if>
                     </span>
