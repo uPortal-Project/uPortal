@@ -52,7 +52,7 @@ public class Cancel implements IPermissionCommand {
     public Cancel() {
     }
 
-    public void execute(PermissionsSessionData session) {
+    public void execute(PermissionsSessionData session) throws Exception{
         session.XML=null;
         //sd.remove("prmViewDoc");
         session.gotOwners = false;
