@@ -9,9 +9,14 @@ import java.util.*;
 import java.text.*;
 import java.sql.*;
 import java.net.*;
+
 import com.objectspace.xml.*;
+
 import org.jasig.portal.layout.*;
 
+import org.jasig.portal.AuthorizationBean;
+import org.jasig.portal.security.IRole;
+import org.jasig.portal.security.IPerson;
 
 /**
  * Provides methods associated with displaying and modifying
@@ -132,7 +137,7 @@ public class LayoutBean extends GenericPortalBean
       out.println ("A:visited { color: " + sTabColor + "}");
       out.println ("A:active { color: " + sChanColor + "}");
       out.println (".PortalTitleText     { text-decoration:none; color: " + sFgColor + ";");
-	out.println ("font-weight:bold; font-family:arial,helvetica,times,courier; font-size:14pt}");
+  out.println ("font-weight:bold; font-family:arial,helvetica,times,courier; font-size:14pt}");
       out.println (".PortalText          { text-decoration:none; color: " + sFgColor + ";");
       out.println ("font-weight:plain; font-family:arial,helvetica,times,courier; font-size:12pt}");
       out.println ("</style></head>");
@@ -201,8 +206,8 @@ public class LayoutBean extends GenericPortalBean
         sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
 
         String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
+        layoutXml = Xml.openDocument(xmlFilePackage, new StringReader (sLayoutXml));
+        session.setAttribute("layoutXml", layoutXml);
       }
       stmt.close ();
 
@@ -233,7 +238,7 @@ public class LayoutBean extends GenericPortalBean
       Statement stmt = con.createStatement();
 
       StringWriter sw = new StringWriter ();
-      layoutXml.saveDocument (sw);
+      layoutXml.saveDocument(sw);
       String sLayoutXml = sw.toString();
 
       // Remove path to layout dtd before saving
@@ -251,7 +256,7 @@ public class LayoutBean extends GenericPortalBean
       catch (SQLException e)
       {
         // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
-        PreparedStatement pstmt = con.prepareStatement ("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
+        PreparedStatement pstmt = con.prepareStatement("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
         pstmt.clearParameters ();
         pstmt.setCharacterStream (1, new StringReader (sLayoutXml), sLayoutXml.length ());
         pstmt.setString (2, sUserName);
@@ -464,6 +469,8 @@ public class LayoutBean extends GenericPortalBean
   {
     try
     {
+      AuthorizationBean authorizationBean = new AuthorizationBean();
+
       int iTab = getActiveTab (req);
       ITab activeTab = getTab (req, iTab);
 
@@ -486,98 +493,136 @@ public class LayoutBean extends GenericPortalBean
 
           for (int iChan = 0; iChan < channels.length; iChan++)
           {
-            org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);
+            // Get the ID given to the channel when it was published
+            String sGlobalChannelID = getGlobalChannelID(channels[iChan]);
 
-            // Check for minimized, maximized, added or removed channel
-            String sResize = req.getParameter ("resize");
-            String sTab = req.getParameter ("tab");
-            String sColumn = req.getParameter ("column");
-            String sChannel = req.getParameter ("channel");
-
-            if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel))
+            // Remove the channel from the user's layout if there is a channelID and the user fails authorization
+            if(sGlobalChannelID != null && !authorizationBean.canUserRender(getPerson(req), Integer.parseInt(sGlobalChannelID)))
             {
-              if (sResize.equals("minimize"))
-                channels[iChan].setAttribute("minimized", "true");
-              else if (sResize.equals("maximize"))
-                channels[iChan].setAttribute("minimized", "false");
-              else if (sResize.equals ("remove"))
-              {
-                columns[iCol].removeChannel (channels[iChan]);
-                continue;
-              }
-            }
+              // Remove the channel from the user's layout
+              columns[iCol].removeChannel(channels[iChan]);
 
-            out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
-            out.println ("  <tr>");
-            out.println ("    <td bgcolor=cccccc>");
-
-            // Channel heading
-            IXml layoutXml = getLayoutXml (req, getUserName (req));
-            ILayout layout = (ILayout) layoutXml.getRoot ();
-
-            out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
-            out.println ("        <tr>");
-            out.println ("          <td>");
-            out.println ("            <span CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</span>");
-            out.println ("          </td>");
-            out.println ("          <td nowrap valign=center align=right>");
-            out.println ("            &nbsp;");
-
-            // Channel control buttons
-            if (channels[iChan].getAttribute ("minimized").equals ("true"))
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
-            else if (ch.isMinimizable ())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
-
-            if (ch.isDetachable ())
-              out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
-
-            if (ch.isRemovable ())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
-
-            if (ch.isEditable ())
-              out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
-
-            if (ch.hasHelp ())
-              out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
-
-            out.println ("            &nbsp;");
-            out.println ("          </td>");
-            out.println ("        </tr>");
-            out.println ("      </table>");
-
-            // Channel body
-            out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100%>");
-            out.println ("        <tr>");
-            out.println ("          <td bgcolor=#ffffff>");
-
-            out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
-            out.println ("              <tr>");
-            out.println ("                <td valign=top>");
-
-            if (channels[iChan].getAttribute ("minimized").equals ("false"))
-            {
-              // Render channel contents
-              ch.render (req, res, out);
+              // Save the user's layout
+              setLayoutXml(getUserName(req), (IXml)session.getAttribute("layoutXml"));
             }
             else
             {
-              // Channel is minimized -- don't render it
+              org.jasig.portal.IChannel ch = getChannelInstance(channels[iChan]);
+
+              // Check for minimized, maximized, added or removed channel
+              String sResize  = req.getParameter ("resize");
+              String sTab     = req.getParameter ("tab");
+              String sColumn  = req.getParameter ("column");
+              String sChannel = req.getParameter ("channel");
+
+              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel))
+              {
+                if(sResize.equals("minimize"))
+                {
+                  channels[iChan].setAttribute("minimized", "true");
+                }
+                else
+                if(sResize.equals("maximize"))
+                {
+                  channels[iChan].setAttribute("minimized", "false");
+                }
+                else
+                if(sResize.equals ("remove"))
+                {
+                  columns[iCol].removeChannel(channels[iChan]);
+
+                  // Save the user's layout
+                  setLayoutXml(getUserName(req), (IXml)session.getAttribute("layoutXml"));
+
+                  continue;
+                }
+                else
+                if(sResize.equals("hide") && channels[iChan].getAttribute("hidden") != null)
+                {
+                  channels[iChan].setAttribute("hidden","true");
+                }
+                else
+                if(sResize.equals("unhide") && channels[iChan].getAttribute("hidden") != null)
+                {
+                  channels[iChan].setAttribute("hidden","false");
+                }
+              }
+
+             String hiddenAttribute = channels[iChan].getAttribute("hidden");
+             if(hiddenAttribute != null && hiddenAttribute.equals("false"))
+             {
+              out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
+              out.println ("  <tr>");
+              out.println ("    <td bgcolor=cccccc>");
+
+              // Channel heading
+              IXml layoutXml = getLayoutXml (req, getUserName (req));
+              ILayout layout = (ILayout) layoutXml.getRoot ();
+
+              out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
+              out.println ("        <tr>");
+              out.println ("          <td>");
+              out.println ("            <span CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</span>");
+              out.println ("          </td>");
+              out.println ("          <td nowrap valign=center align=right>");
+              out.println ("            &nbsp;");
+
+              // Channel control buttons
+              if (channels[iChan].getAttribute ("minimized").equals ("true"))
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
+              else if (ch.isMinimizable ())
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
+
+              if (ch.isDetachable ())
+                out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
+
+              if (ch.isRemovable ())
+                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
+
+              if (ch.isEditable ())
+                out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+
+              if (ch.hasHelp ())
+                out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+
+              out.println ("            &nbsp;");
+              out.println ("          </td>");
+              out.println ("        </tr>");
+              out.println ("      </table>");
+
+              // Channel body
+              out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100%>");
+              out.println ("        <tr>");
+              out.println ("          <td bgcolor=#ffffff>");
+
+              out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
+              out.println ("              <tr>");
+              out.println ("                <td valign=top>");
+
+              if (channels[iChan].getAttribute ("minimized").equals ("false"))
+              {
+                // Render channel contents
+                ch.render (req, res, out);
+              }
+              else
+              {
+                // Channel is minimized -- don't render it
+              }
+
+              out.println ("                </td>");
+              out.println ("              </tr>");
+              out.println ("            </table>");
+
+              out.println ("          </td>");
+              out.println ("        </tr>");
+              out.println ("      </table>");
+
+              out.println ("    </td>");
+              out.println ("  </tr>");
+              out.println ("</table>");
             }
-
-            out.println ("                </td>");
-            out.println ("              </tr>");
-            out.println ("            </table>");
-
-            out.println ("          </td>");
-            out.println ("        </tr>");
-            out.println ("      </table>");
-
-            out.println ("    </td>");
-            out.println ("  </tr>");
-            out.println ("</table>");
           }
-
+        }
           out.println ("    </td>");
         }
 
@@ -925,7 +970,7 @@ public class LayoutBean extends GenericPortalBean
 
       setLayoutXml (getUserName (req), layoutXml);
       HttpSession session = req.getSession (false);
-      session.removeAttribute ("layoutXml");
+      session.removeAttribute("layoutXml");
     }
     catch (Exception e)
     {
@@ -966,13 +1011,13 @@ public class LayoutBean extends GenericPortalBean
         }
 
         // Get new instance of channel
-	      Object channelObject = Class.forName (sClass).newInstance ();
+        Object channelObject = Class.forName (sClass).newInstance ();
 
-	      // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
-	      if (channelObject instanceof org.jasig.portal.IChannel)
-	        ch = (org.jasig.portal.IChannel) channelObject;
-	      else if (channelObject instanceof org.jasig.portal.IXMLChannel)
-	        ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
+        // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
+        if (channelObject instanceof org.jasig.portal.IChannel)
+          ch = (org.jasig.portal.IChannel) channelObject;
+        else if (channelObject instanceof org.jasig.portal.IXMLChannel)
+          ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
 
         // Send the channel its parameters
         ch.init (chConfig);
@@ -996,7 +1041,7 @@ public class LayoutBean extends GenericPortalBean
    * @param channel ID
    * @return portal channel object
    */
-  public org.jasig.portal.IChannel getChannelInstance (String sChannelID)
+  public org.jasig.portal.IChannel getChannelInstance(String sChannelID)
   {
     org.jasig.portal.IChannel ch = null;
 
@@ -1021,15 +1066,15 @@ public class LayoutBean extends GenericPortalBean
    * the member hashtable htChannelInstances.
    * @param channel ID
    */
-  public void removeChannelInstance (String sChannelID)
+  public void removeChannelInstance(String sChannelID)
   {
     try
     {
-      htChannelInstances.remove (sChannelID);
+      htChannelInstances.remove(sChannelID);
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      Logger.log(Logger.ERROR, e);
     }
   }
 
@@ -1057,6 +1102,26 @@ public class LayoutBean extends GenericPortalBean
   }
 
   /**
+   * Get the ID of the channel that was assigned at publish time
+   * @param channel object from layout XML
+   * @return the ID that was assigned at publish time
+   */
+  public String getGlobalChannelID(org.jasig.portal.layout.IChannel channel)
+  {
+    try
+    {
+      String sGlobalChannelID = channel.getGlobalChannelIDAttribute();
+
+      return(sGlobalChannelID);
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+      return(null);
+    }
+  }
+
+  /**
    * Gets the username from the session
    * @param the servlet request object
    * @return the username
@@ -1065,6 +1130,17 @@ public class LayoutBean extends GenericPortalBean
   {
     HttpSession session = req.getSession (false);
     return (String) session.getAttribute ("userName");
+  }
+
+  /**
+   * Gets the Person object from the session
+   * @param the servlet request object
+   * @return the Person object
+   */
+  public IPerson getPerson (HttpServletRequest req)
+  {
+    HttpSession session = req.getSession (false);
+    return (IPerson) session.getAttribute ("Person");
   }
 
   /**
@@ -1522,6 +1598,27 @@ public class LayoutBean extends GenericPortalBean
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, e);
+    }
+  }
+
+  /**
+   * Checks with the authorization system to see whether the
+   *  specified user can publish a channel or not
+   *
+   */
+  public boolean canUserPublish (IPerson person)
+  {
+    try
+    {
+      AuthorizationBean authorizationBean = new AuthorizationBean();
+      boolean authorized = authorizationBean.canUserPublish(person);
+
+      return(authorized);
+    }
+    catch( Exception e )
+    {
+      Logger.log(Logger.ERROR, e);
+      return(false);
     }
   }
 }
