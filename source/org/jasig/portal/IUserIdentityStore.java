@@ -24,7 +24,8 @@ public interface IUserIdentityStore {
   /**
    * Returns a unique uPortal key for a user.  A boolean flag
    * determines whether or not to auto-create data for a new user.
-   * @param person object, boolean createPortalData indicating whether to try to create all uPortal data for this user.
+   * @param person person whose portalUID will be returned
+   * @param createPortalData indicates whether to try to create all uPortal data for a new user.
    * @return uPortalUID number or -1 if no user found and unable to create user.
    * @throws AuthorizationException if createPortalData is false and no user is found
    *         or if a sql error is encountered
