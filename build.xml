@@ -1,0 +1,95 @@
+<!-- Ant v1.2 build file -->
+
+<project name="portal" default="all" basedir=".">
+
+<property file="localbuild.properties"/>
+
+<!-- The directory that contains this file -->
+<property name="classsrc" value="./source"/>
+<property name="htmlsrc" value="./webpages"/>
+<property name="props" value="properties/"/>
+<property name="scripts" value="./scripts"/>
+
+
+<target name="all" depends="classes,javadoc,sql"/>
+<!-- these targets will be used once a directory structure is decided on -->
+<!-- <target name="all" depends="classes,html,support,javadoc,sql"/> -->
+
+<target name="classes" if="htmldest">
+  <echo message="Building directories under ${htmldest}"/>
+  <mkdir dir="${htmldest}"/>
+  <mkdir dir="${htmldest}/WEB-INF"/>
+  <mkdir dir="${htmldest}/WEB-INF/sessions"/>
+  <mkdir dir="${htmldest}/WEB-INF/classes"/>
+  <echo message="Compiling classes to ${htmldest}/WEB-INF/classes"/>
+   <javac srcdir="${classsrc}"
+          destdir="${htmldest}/WEB-INF/classes"
+          classpath="${classpath}"          
+          excludes="**/*.bak"
+          debug="on" 
+    />
+</target>
+
+<!-- this target will be re-activated once we start building to a different directory -->
+<target name="html" if="htmldest">
+  <echo message="Copying JSPs and other files to ${htmldest}"/>
+  <mkdir dir="${htmldest}" />
+  <copy todir="${htmldest}" >
+    <fileset dir="${htmlsrc}">
+       <exclude name="**/*.sql" /> 
+    </fileset>
+  </copy>
+</target>
+
+<!-- this target will be re-activated once we start building to a different directory -->
+<!-- this target is for copying properties and stylesheets -->
+<target name="support" if="upbasedir">
+  <echo message="Copying properties and stylesheets to ${upbasedir}"/>
+  <mkdir dir="${upbasedir}" />
+  <copy todir="${upbasedir}" >
+    <fileset dir=".">
+       <include name="${props}" /> 
+       <include name="${htmlsrc}/stylesheets/" />
+       <exclude name="**/*.sql" /> 
+    </fileset>
+    <fileset dir="${htmlsrc}"> 
+       <include name="dtd/" />
+    </fileset>
+  </copy>
+</target>
+
+<target name="javadoc" if="docdest">
+  <echo message="Generating javadocs into ${docdest}"/>
+  <mkdir dir="${docdest}"/>
+  <javadoc sourcepath="${classsrc}"
+           packagenames="org.jasig.portal,org.jasig.portal.channels,org.jasig.portal.utils,org.jasig.portal.security"
+           destdir="${docdest}"
+           author="true"
+           version="true"
+  />
+</target>
+
+<target name="sql" if="dbdriver">
+    <echo message="Running database scripts on ${dburl}"/>
+    <sql
+        classpath="${classpath}"
+        driver="${dbdriver}"
+        url="${dburl}"
+        userid="${dblogin}"
+        password="${dbpass}"
+        onerror="continue">
+        <transaction  src="${scripts}/dropTables.script" />
+        <transaction  src="${scripts}/createTables-${dbtype}.script" />
+        <transaction  src="${scripts}/populateTables.script" />
+    </sql>
+</target>
+	
+<!-- CAREFUL HERE! We could easily delete things that we shouldn't -->
+<target name="clean">
+  <echo message="Doing a clean on ${jspdest}"/>
+  <delete dir="${jspdest}"/>
+</target>
+
+     </project>
+
+
