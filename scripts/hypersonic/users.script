@@ -72,10 +72,7 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
       </channel>
     </column>
     <column width="70%">
-      <channel instanceID="c9" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
-        <parameter value="Yahoo" name="name"/>
-        <parameter value="http://www.yahoo.com" name="url"/>
-      </channel>
+       <channel instanceID="chan05" minimized="false" class="org.jasig.portal.xmlchannels.BookmarksChannel"/>
     </column>
   </tab>
 </layout>
