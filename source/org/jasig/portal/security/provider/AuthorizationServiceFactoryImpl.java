@@ -14,6 +14,6 @@ public class AuthorizationServiceFactoryImpl implements IAuthorizationServiceFac
 {
   public IAuthorizationService getAuthorization() throws AuthorizationException
   {
-    return new AuthorizationImpl();
+    return AuthorizationImpl.singleton();
   }
 }
