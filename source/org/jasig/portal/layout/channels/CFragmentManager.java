@@ -146,6 +146,8 @@ public class CFragmentManager extends FragmentManager {
 					    newFragment.setPulledFragment();
 					  // Saving the changes in the database  
 					  alm.saveFragment(newFragment);
+                      // Saving user's layout to database
+                      alm.saveUserLayout();
 					  // Updating the fragments map
 					  fragments.put(fragmentId,newFragment); 
 					  // Check if we need to create an additional folder on the fragment root
