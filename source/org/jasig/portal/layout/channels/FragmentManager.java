@@ -106,7 +106,8 @@ public abstract class FragmentManager extends BaseChannel implements IPrivileged
 		node.appendChild(fragmentsNode);
 		Element category = document.createElement("category");
 		category.setAttribute("name", "Fragments");
-		category.setAttribute("expanded", "true");
+		category.setAttribute("view", "expanded");
+		category.setAttribute("ID", "fragcat.1");
 		fragmentsNode.appendChild(category);
 		boolean updateList = false;
 		if (fragments != null) {

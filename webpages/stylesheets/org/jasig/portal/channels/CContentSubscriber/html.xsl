@@ -1320,12 +1320,12 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=channelPublishID&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=uP_channelPublishID&amp;uP_channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td width="100%">
-                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=channelPublishID&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel"> Subscribe to this channel</a>
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=uP_channelPublishID&amp;uP_channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel"> Subscribe to this channel</a>
                         </td>
                       </tr>
                     </table>
@@ -1551,12 +1551,12 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_fragmentRootID={rootNodeID}&amp;uP_fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td width="100%">
-                          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=fragmentRootID&amp;fragmentRootID={rootNodeID}&amp;uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
+                          <a href="{$baseActionURL}?uP_root=root&amp;uP_fragmentRootID={rootNodeID}&amp;uP_fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
                         </td>
                       </tr>
                     </table>

@@ -760,21 +760,21 @@ public class UserInstance implements HttpSessionBindingListener {
             int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
             IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
             nodeDesc.setName("Unnamed");
-            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (value = req.getParameter("channelPublishID")) != null ) {
+            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (value = req.getParameter("uP_channelPublishID")) != null ) {
              String contentPublishId = value.trim();
              if ( contentPublishId.length() > 0 ) {
               ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(contentPublishId);
-              themePrefs.putParameterValue("channelPublishID",contentPublishId);
+              themePrefs.putParameterValue("uP_channelPublishID",contentPublishId);
              }
-            } else if ( nodeType == IUserLayoutNodeDescription.FOLDER && (value = req.getParameter("fragmentPublishID")) != null ) {
+            } else if ( nodeType == IUserLayoutNodeDescription.FOLDER && (value = req.getParameter("uP_fragmentPublishID")) != null ) {
 				String contentPublishId = value.trim();
-				String fragmentRootId = CommonUtils.nvl(req.getParameter("fragmentRootID"));
+				String fragmentRootId = CommonUtils.nvl(req.getParameter("uP_fragmentRootID"));
 				if ( contentPublishId.length() > 0 && fragmentRootId.length() > 0 ) {
 				  IALFolderDescription folderDesc = (IALFolderDescription) nodeDesc;	
                	  folderDesc.setFragmentId(contentPublishId);
 				  folderDesc.setFragmentNodeId(fragmentRootId);
 				} 
-				themePrefs.putParameterValue("fragmentPublishID",contentPublishId);	
+				//themePrefs.putParameterValue("uP_fragmentPublishID",contentPublishId);	
             }	
             newNodeDescription = nodeDesc;
             ulm.markAddTargets(newNodeDescription);
