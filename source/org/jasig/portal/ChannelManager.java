@@ -132,7 +132,7 @@ public class ChannelManager implements LayoutEventListener {
     public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
-    public static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
+    private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
     private Set repeatRenderings=new HashSet();
     private boolean ccaching=false;
 
@@ -1171,6 +1171,17 @@ public class ChannelManager implements LayoutEventListener {
         }
     }
 
+    /**
+     * Determines whether or not anchors should be
+     * inserted at the end of URLS within channels.
+     * These anchors typically tell a browser to
+     * position itself with the channel in-view after
+     * a link is clicked or a form is submitted.
+     * @return <code>true</code> if use of anchors is enabled, otherwise <code>false</code>
+     */
+    public static boolean isUseAnchors() {
+        return ChannelManager.useAnchors;
+    }
 
     // LayoutEventListener interface implementation
     public void channelAdded(LayoutEvent ev) {}

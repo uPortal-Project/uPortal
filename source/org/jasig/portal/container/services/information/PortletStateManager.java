@@ -565,7 +565,7 @@ public class PortletStateManager {
 				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
 				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
         
-        if (ChannelManager.useAnchors) {
+        if (ChannelManager.isUseAnchors()) {
             url.append("#").append(windowOfAction.getId());
         }
         
