@@ -97,16 +97,18 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
         doc.appendChild(secureEl);
 
         // debug block
-        try {
-            java.io.StringWriter outString = new java.io.StringWriter ();
-            org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
-            format.setOmitXMLDeclaration(true);
-            format.setIndenting(true);
-            org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
-            xsl.serialize (doc);
-            log.debug(outString.toString());
-        } catch (Exception e) {
-            log.debug(e, e);
+        if (log.isDebugEnabled()) {
+            try {
+                java.io.StringWriter outString = new java.io.StringWriter ();
+                org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+                format.setOmitXMLDeclaration(true);
+                format.setIndenting(true);
+                org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+                xsl.serialize (doc);
+                log.debug(outString.toString());
+            } catch (Exception e) {
+                log.debug(e, e);
+            }
         }
         // end of debug block
 
@@ -118,10 +120,7 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
             xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
             xslt.transform();
         } catch (Exception e) {
-            StringWriter sw=new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            sw.flush();
-            log.error( "CSecureInfo::renderXML() : Things are bad. Secure info channel threw: " + sw.toString());
+            log.error( "CSecureInfo::renderXML() : Error transforming document", e);
         }        
     }
 
