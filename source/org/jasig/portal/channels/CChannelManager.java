@@ -452,7 +452,7 @@ public class CChannelManager extends BaseChannel {
         for (int i = 0; i < permissions.length; i++) {
           String principal = permissions[i].getPrincipal();
           String groupKey = principal.substring(principal.indexOf(".") + 1);
-          groupSettings.addSelectedGroup(GroupService.find(groupKey));
+          groupSettings.addSelectedGroup(GroupService.findGroup(groupKey));
         }
 
         // Set the categories
@@ -940,7 +940,7 @@ public class CChannelManager extends BaseChannel {
       Iterator iter = selectedGroups.iterator();
       for (int i = 0; iter.hasNext(); i++) {
         String key = (String)iter.next();
-        IEntityGroup group = GroupService.find(key.substring(groupIDPrefix.length()));
+        IEntityGroup group = GroupService.findGroup(key.substring(groupIDPrefix.length()));
         if (group != null)
           selectedEntityGroups[i] = group;
         else
