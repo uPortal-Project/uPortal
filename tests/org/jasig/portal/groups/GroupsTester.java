@@ -111,7 +111,7 @@ protected void addTestEntityType()
     try
     {
         org.jasig.portal.EntityTypes.singleton().
-            addEntityType(TEST_ENTITY_CLASS, "Test Entity Type");
+            addEntityTypeIfNecessary(TEST_ENTITY_CLASS, "Test Entity Type");
     }
     catch (Exception ex) { print("GroupsTester.addTestEntityType(): " + ex.getMessage());}
  }

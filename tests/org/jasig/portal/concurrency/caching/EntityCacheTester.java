@@ -70,7 +70,7 @@ protected void addTestEntityType()
     try
     {
         org.jasig.portal.EntityTypes.singleton().
-          addEntityType(MINIMAL_ENTITY_CLASS, "Test Entity Type");
+          addEntityTypeIfNecessary(MINIMAL_ENTITY_CLASS, "Test Entity Type");
     }
     catch (Exception ex) { print("EntityCacheTester.addTestEntityType(): " + ex.getMessage());}
  }
