@@ -933,8 +933,6 @@ public class CChannelManager extends BaseChannel {
         {
             super();
             cpdDoc = ChannelRegistryManager.getCPD(chanTypeID);
-            // This doc will be modified so it must be cloned first!
-            cpdDoc = XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)cpdDoc);            
         }
 
         /**
