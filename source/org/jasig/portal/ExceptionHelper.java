@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -341,6 +341,7 @@ public class ExceptionHelper {
      */
 	public static void generateErrorPage(HttpServletResponse resp, Exception e) {
 		resp.setContentType("text/html");
+		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		try {
 			PrintWriter out = resp.getWriter();
 			out.println("<h1>Cannot start uPortal</h1>");
