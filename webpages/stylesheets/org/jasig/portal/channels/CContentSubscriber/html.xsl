@@ -66,6 +66,12 @@ Version $Revision$
         </table>
     </xsl:template>
     <!--~-->
+    <!-- match registry and recursively build the tree -->
+    <!--~-->
+    <xsl:template match="registry">
+        <xsl:apply-templates/>
+    </xsl:template>
+    <!--~-->
     <!-- tab line table template - draws the browse/search buttons. -->
     <!--~-->
     <xsl:template name="tabLine">
@@ -724,7 +730,7 @@ Version $Revision$
                 <!--~-->
                 <!-- End - Browse front tab. -->
                 <!--~-->
-                <xsl:apply-templates select="registry"/>
+                <xsl:call-template name="frame"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -926,6 +932,11 @@ Version $Revision$
                                     </table>
                                 </td>
                             </tr>
+  <tr class="uportal-background-content" valign="top" align="left" width="100%">
+                                <td colspan="10">
+                                    <xsl:apply-templates/>
+                                </td>
+                            </tr>
                         </table>
                     </form>
                 </td>
@@ -998,7 +1009,7 @@ Version $Revision$
     <!--~-->
     <!-- Begin browse content framework - draws the content subscriber frame.  includes the form and cancel button. -->
     <!--~-->
-    <xsl:template match="registry">
+    <xsl:template name="frame">
         <table cellspacing="0" cellpadding="0" width="100%" border="0">
             <tr class="uportal-background-content">
                 <td align="left" valign="top">
@@ -1086,9 +1097,10 @@ Version $Revision$
                                         </td>
                                     </tr>
                                 </table>
-                                <xsl:apply-templates select="category"/>
+                                <xsl:apply-templates/>
+                                <!-- <xsl:apply-templates select="category"/>
                                 <xsl:apply-templates select="channel"/>
-                                <xsl:apply-templates select="fragments"/>
+                                <xsl:apply-templates select="fragments"/> -->
                             </td>
                             <td class="uportal-background-content">
                                 <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
@@ -1166,23 +1178,31 @@ Version $Revision$
         <xsl:choose>
             <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <strong>
                                 <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
                                     <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
                                 </a>
                             </strong>
                         </td>
-                        <xsl:variable name="indentWidth">
-                            <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
+                        <xsl:variable name="depth">
+                            <xsl:choose>
+                                <xsl:when test="@name='Fragments' ">1</xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="count(ancestor::*)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:variable>
                         <td class="uportal-navigation-category">
-                            <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+                            <img src="{$mediaPath}/transparent.gif" width="{$depth*16+($depth - 1)*3}" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-navigation-category">
+                        <td width="100%" valign="bottom">
                             <strong>
-                                <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
+                                <a class="uportal-navigation-category" href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
                                     <img src="{$mediaPath}/folder_open.gif" width="16" height="16" border="0" alt="" title=""/>
                                     <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                                     <xsl:value-of select="@name"/>
@@ -1202,27 +1222,36 @@ Version $Revision$
                         </td>
                     </tr>
                 </table>
-                <xsl:apply-templates select="category"/>
-                <xsl:apply-templates select="channel"/>
+                <xsl:apply-templates/>
+                <!-- <xsl:apply-templates select="category"/>
+                <xsl:apply-templates select="channel"/> -->
             </xsl:when>
             <xsl:otherwise>
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <strong>
                                 <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
                                     <img src="{$mediaPath}/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
                                 </a>
                             </strong>
                         </td>
-                        <xsl:variable name="indentWidth">
-                            <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
+                        <xsl:variable name="depth">
+                            <xsl:choose>
+                                <xsl:when test="@name='Fragments' ">1</xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="count(ancestor::*)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:variable>
-                        <td class="uportal-navigation-category">
-                            <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="{$depth*16+($depth - 1)*3}" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-navigation-category">
-                            <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
+                        <td width="100%" valign="bottom">
+                            <a class="uportal-navigation-category" href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}&amp;channel-state={$channel-state}">
                                 <strong>
                                     <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
                                     <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
@@ -1254,20 +1283,23 @@ Version $Revision$
     <!--~-->
     <xsl:template match="channel">
         <xsl:choose>
-            <xsl:when test="@view='expanded'">
+            <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
                         </td>
                         <xsl:variable name="indentWidth">
                             <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
                         </xsl:variable>
-                        <td class="uportal-navigation-category">
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-text">
-                            <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
+                        <td width="100%" valign="bottom">
+                            <a class="uportal-navigation-channel" href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
                                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                                 <xsl:value-of select="@title"/>
@@ -1335,7 +1367,7 @@ Version $Revision$
                                 <tr class="uportal-channel-text" valign="top">
                                     <td nowrap="nowrap" align="right">Actions:</td>
                                     <td width="100%">
-                                        <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <!-- Preview of Channel Held until Later Release
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
@@ -1349,12 +1381,13 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                                             <tr align="left" class="uportal-channel-text">
                                                 <td valign="top">
-                                                    <a href="I stilluP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
+                                                    <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
                                                         <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                                                     </a>
                                                 </td>
-                                                <td width="100%" valign="top">
-                                                    <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel"> Subscribe to this channel</a>
+                                                <td width="100%" valign="bottom">
+                                                    <a href="{$baseActionURL}?uP_root=root&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Channel&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel">
+                                                        <img height="1" width="3" border="0" src="{$mediaPath}/transparent.gif" alt="" title=""/>Subscribe to this channel</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -1383,18 +1416,21 @@ Version $Revision$
             </xsl:when>
             <xsl:otherwise>
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
                         </td>
                         <xsl:variable name="indentWidth">
                             <xsl:value-of select="((count(ancestor::*)*16)+((count(ancestor::*)-1)*3))"/>
                         </xsl:variable>
-                        <td class="uportal-navigation-category">
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-navigation-category">
-                            <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
+                        <td width="100%" valign="bottom">
+                            <a class="uportal-navigation-channel" href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
                                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                                 <xsl:value-of select="@title"/>
@@ -1423,10 +1459,14 @@ Version $Revision$
     <!-- begin table for fragment title -->
     <!--~-->
     <xsl:template match="fragments">
-        <xsl:choose>
+        <xsl:apply-templates/>
+        <!-- <xsl:choose>
             <xsl:when test="category/@view='expanded'">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                    <tr class="uportal-channel-text" valign="top" align="left">
+                    <tr valign="top" align="left">
+                                                                       <xsl:if test="$channel-state='search' and @search-selected='true'">
+                        <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
                         <td class="uportal-navigation-category">
                             <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
                         </td>
@@ -1484,7 +1524,7 @@ Version $Revision$
                     </tr>
                 </table>
             </xsl:otherwise>
-        </xsl:choose>
+        </xsl:choose> -->
     </xsl:template>
     <!--~-->
     <!-- end table for fragment title -->
@@ -1494,17 +1534,20 @@ Version $Revision$
     <!--~-->
     <xsl:template match="fragment">
         <xsl:choose>
-            <xsl:when test="@view='expanded'">
+            <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
                         </td>
-                        <td class="uportal-navigation-category">
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="35" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-text">
-                            <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
+                        <td width="100%" valign="bottom">
+                            <a class="uportal-navigation-channel" href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
                                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                                 <xsl:value-of select="@title"/>
@@ -1588,8 +1631,9 @@ Version $Revision$
                                                                     <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                                                                 </a>
                                                             </td>
-                                                            <td width="100%" valign="top">
-                                                                <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab"> Subscribe to this fragment</a>
+                                                            <td width="100%" valign="bottom">
+                                                                <a href="{$baseActionURL}?uP_root=root&amp;fragmentRootID={rootNodeID}&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetAction&amp;targetAction=New Tab&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab">
+                                                                    <img height="1" width="3" border="0" src="{$mediaPath}/transparent.gif" alt="" title=""/> Subscribe to this fragment</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -1618,15 +1662,18 @@ Version $Revision$
             </xsl:when>
             <xsl:otherwise>
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
-                    <tr class="uportal-channel-text" valign="top" align="left">
-                        <td class="uportal-navigation-category">
+                    <tr valign="top" align="left">
+                        <xsl:if test="$channel-state='search' and @search-selected='true'">
+                            <xsl:attribute name="class">uportal-background-selected</xsl:attribute>
+                        </xsl:if>
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
                         </td>
-                        <td class="uportal-navigation-category">
+                        <td>
                             <img src="{$mediaPath}/transparent.gif" width="35" height="1" border="0" alt="" title=""/>
                         </td>
-                        <td width="100%" valign="bottom" class="uportal-navigation-category">
-                            <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
+                        <td width="100%" valign="bottom">
+                            <a class="uportal-navigation-channel" href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={@ID}&amp;uPcCS_categoryID={../@ID}&amp;channel-state={$channel-state}">
                                 <img src="{$mediaPath}/channel_icon.gif" width="16" height="16" border="0" alt="" title=""/>
                                 <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
                                 <xsl:value-of select="./name"/>
