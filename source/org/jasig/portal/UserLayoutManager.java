@@ -115,7 +115,7 @@ public class UserLayoutManager {
         UserProfile upl=updb.getUserProfile(this.person.getID(),userAgent);
         if(upl!=null) {
             IUserLayoutDB uldb = new UserLayoutDBImpl();
-            uLayoutXML = uldb.getUserLayout(this.person.getID(),upl.getProfileName());
+            uLayoutXML = uldb.getUserLayout(this.person.getID(),upl.getProfileId());
             if(uLayoutXML==null) Logger.log(Logger.ERROR,"UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\""+this.person.getID()+"\", profile=\""+upl.getProfileName()+"\".");
             this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(),upl));
         } else {
@@ -382,7 +382,7 @@ public class UserLayoutManager {
         if(newLayout!=null) {
             uLayoutXML=newLayout;
             IUserLayoutDB uldb=new UserLayoutDBImpl();
-            uldb.setUserLayout(person.getID(),up.getProfile().getProfileName(),uLayoutXML);
+            uldb.setUserLayout(person.getID(),up.getProfile().getProfileId(),uLayoutXML);
         }
         if(newPreferences!=null) {
             this.setCurrentUserPreferences(newPreferences);
