@@ -15,9 +15,10 @@ import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 
 /**
- * Several {@link org.jasig.portal.services.persondir.IPersonAttributeDao}
- * implementations need to provide a default attribute for running queries. The
- * following code is generally common between them.
+ * Abstract class implementing the IPersonAttributeDao method 
+ * {@link IPersonAttributeDao#getUserAttributes(String)} by delegation to 
+ * {@link IPersonAttributeDao#getUserAttributes(Map)} using a configurable
+ * default attribute name.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
@@ -34,11 +35,15 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
     
     
     /**
+     * Implements this interface method by creating a seed Map from the
+     * uid argument and delegating to getUserAttributes() on that Map.
+     * 
      * Uses {@link Collections#singletonMap(java.lang.Object, java.lang.Object)}
      * to create a seed with the value rerturned by 
      * {@link #getDefaultAttributeName()} as the key and <code>uid</code>
-     * as the value. {@link IPersonAttributeDao#getUserAttributes(Map)} is 
-     * called with the new {@link Map} as the argument.
+     * as the value. Returns the result of invoking
+     * {@link IPersonAttributeDao#getUserAttributes(Map)} with the new
+     *  {@link Map} as the argument.
      * 
      * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
