@@ -2451,41 +2451,4 @@
     </rows>
   </table>
 
-  <table>
-    <name>UP_SKINS</name>
-    <rows>
-      <row>
-        <column><name>SKIN_ID</name><value>0</value></column>
-		<column><name>SKIN</name><value>java</value></column>
-		<column><name>SKIN_NAME</name><value>Java</value></column>
-        <column><name>SKIN_DESCRIPTION</name><value>Sun's Java color scheme</value></column>
-      </row>
-      <row>
-        <column><name>SKIN_ID</name><value>1</value></column>
-		<column><name>SKIN</name><value>uosm</value></column>
-		<column><name>SKIN_NAME</name><value>UOSM</value></column>
-        <column><name>SKIN_DESCRIPTION</name><value>University of Santa Maria's colors</value></column>
-      </row>
-      <row>
-        <column><name>SKIN_ID</name><value>2</value></column>
-		<column><name>SKIN</name><value>vsac</value></column>
-		<column><name>SKIN_NAME</name><value>VSAC</value></column>
-        <column><name>SKIN_DESCRIPTION</name><value>VSAC color scheme</value></column>
-      </row>
-      <row>
-        <column><name>SKIN_ID</name><value>3</value></column>
-		<column><name>SKIN</name><value>imm</value></column>
-		<column><name>SKIN_NAME</name><value>IM and M</value></column>
-        <column><name>SKIN_DESCRIPTION</name><value>Instructional Media and Magic color scheme</value></column>
-      </row>
-      <row>
-        <column><name>SKIN_ID</name><value>4</value></column>
-		<column><name>SKIN</name><value>matrix</value></column>
-		<column><name>SKIN_NAME</name><value>Matrix</value></column>
-        <column><name>SKIN_DESCRIPTION</name><value>Skin based on the movie "Matrix"</value></column>
-      </row>
-    </rows>
-  </table>
-
-
 </data>
