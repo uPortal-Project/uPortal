@@ -48,6 +48,10 @@ import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.Collection;
 
@@ -61,24 +65,24 @@ public class CContentSubscriber extends FragmentManager {
     private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
     private static Document channelRegistry;
 	private Document registry;
-    private Vector expandedCategories, condensedCategories;
-    private Vector expandedChannels, condensedChannels;
-    private Vector expandedFragments, condensedFragments;
-    private Vector[] expandedItems;
-	private Vector[] condensedItems;
+    private Map expandedCategories, condensedCategories;
+    private Map expandedChannels, condensedChannels;
+    private Map expandedFragments, condensedFragments;
+    private Map[] expandedItems;
+	private Map[] condensedItems;
 	private boolean initRegistry = true;
 	
 
     public CContentSubscriber() {
        super();
-	   expandedCategories = new Vector();
-	   expandedChannels = new Vector();
-	   expandedFragments = new Vector();
-	   condensedCategories = new Vector();
-	   condensedChannels = new Vector();
-	   condensedFragments = new Vector();
-	   expandedItems = new Vector[] { expandedFragments, expandedChannels, expandedCategories }; 
-	   condensedItems = new Vector[] { condensedFragments, condensedChannels, condensedCategories }; 
+	   expandedCategories = new HashMap();
+	   expandedChannels = new HashMap();
+	   expandedFragments = new HashMap();
+	   condensedCategories = new HashMap();
+	   condensedChannels = new HashMap();
+	   condensedFragments = new HashMap();
+	   expandedItems = new Map[] { expandedFragments, expandedChannels, expandedCategories }; 
+	   condensedItems = new Map[] { condensedFragments, condensedChannels, condensedCategories }; 
     }
 
 	protected void analyzeParameters( XSLT xslt ) throws PortalException {
@@ -99,27 +103,27 @@ public class CContentSubscriber extends FragmentManager {
 			 	
 				if ( fragmentId.equals("all") ) {
 				   allFragments = true;
-				   condensedFragments.removeAllElements(); 		    
+				   condensedFragments.clear(); 		    
 				} else if ( fragmentId.trim().length() > 0 ) {
-				   expandedFragments.add(fragmentId);
-				   condensedFragments.remove(fragmentId); 
+				   expandedFragments.put(categoryId+fragmentId,fragmentId);
+				   condensedFragments.remove(categoryId+fragmentId); 
 				}  
 				
 				
 				if ( channelId.equals("all") ) {
 				   allChannels = true;
-				   condensedChannels.removeAllElements();
+				   condensedChannels.clear();
 				} else if ( channelId.trim().length() > 0 ) {
-				   expandedChannels.add(channelId);
-				   condensedChannels.remove(channelId);
+				   expandedChannels.put(categoryId+channelId,channelId);
+				   condensedChannels.remove(categoryId+channelId);
 				}  
 				   
 				
 				if ( categoryId.equals("all") ) {
 				   allCategories = true; 	
 				   condensedCategories.remove(categoryId);
-				} else if ( categoryId.trim().length() > 0 ) {
-		           expandedCategories.add(categoryId);
+				} else if ( categoryId.trim().length() > 0 && channelId.trim().length() == 0 && fragmentId.trim().length() == 0 ) {
+		           expandedCategories.put(categoryId,categoryId);
 		           condensedCategories.remove(categoryId);
 				}   
 				  	  		 	
@@ -128,27 +132,27 @@ public class CContentSubscriber extends FragmentManager {
 				
 				if ( fragmentId.equals("all") ) {
 				   allFragments = true;	
-				   expandedFragments.removeAllElements();
+				   expandedFragments.clear();
 				} else if ( fragmentId.trim().length() > 0 ) {
-				   condensedFragments.add(fragmentId); 
-				   expandedFragments.remove(fragmentId);  
+				   condensedFragments.put(categoryId+fragmentId,fragmentId); 
+				   expandedFragments.remove(categoryId+fragmentId);  
 				}    		    
 				
 				
 				if ( channelId.equals("all") ) {
 				   allChannels = true;	
-				   expandedChannels.removeAllElements();
+				   expandedChannels.clear();
 				} else if ( channelId.trim().length() > 0 ) {
-		           condensedChannels.add(channelId);
-		           expandedChannels.remove(channelId);
+		           condensedChannels.put(categoryId+channelId,channelId);
+		           expandedChannels.remove(categoryId+channelId);
 			    }   
 				   
 				
 				if ( categoryId.equals("all") ) {
 				   allCategories = true;	
-				   expandedCategories.removeAllElements();
-				} else if ( categoryId.trim().length() > 0 ) {
-		           condensedCategories.add(categoryId);	
+				   expandedCategories.clear();
+				} else if ( categoryId.trim().length() > 0 && channelId.trim().length() == 0 && fragmentId.trim().length() == 0 ) {
+		           condensedCategories.put(categoryId,categoryId);	
 		           expandedCategories.remove(categoryId); 
 				} 		 
 			 }	
@@ -164,19 +168,19 @@ public class CContentSubscriber extends FragmentManager {
 			    tagNames.add("category");
 			    
 			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
-			   Vector list = expandedItems[i];
-			   for ( int j = 0; j < list.size(); j++ ) {
+			   Set list = expandedItems[i].keySet();
+			   for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
 			    //registry.getElementById((String)list.get(j)).setAttribute("view","expanded");
-				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)list.get(j)+"']");
+				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)expandedItems[i].get(iter.next())+"']");
 				elem.setAttribute("view","expanded");
 			   } 
 			 }  
 			  
 			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
-			   Vector list = condensedItems[i];
-			   for ( int j = 0; j < list.size(); j++ ) {
+			   Set list = condensedItems[i].keySet();
+			   for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
 				//registry.getElementById((String)list.get(j)).setAttribute("view","condensed");
-				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)list.get(j)+"']");
+				Element elem = (Element) XPathAPI.selectSingleNode(registry,"//*[@ID='"+(String)condensedItems[i].get(iter.next())+"']");
 				elem.setAttribute("view","condensed");
 			   }	
 			 }    
@@ -201,6 +205,7 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("uPcCS_categoryID", categoryId );*/
 		     
 	  } catch ( Exception e ) {
+	  	  e.printStackTrace();
 	  	  throw new PortalException(e.getMessage());	     
 	  }
 			 

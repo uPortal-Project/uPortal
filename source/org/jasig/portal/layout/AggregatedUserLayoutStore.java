@@ -2145,9 +2145,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               } else {
                   if ( fragmentIdStr != null && fragmentNodes.containsKey(key) ) {
                     ALNode fragNode = (ALNode) fragmentNodes.get(key);
-                    //Setting the actual node ID
+                    //Keeping some properties of node description from the user layout for "pseudo" nodes
+                    IUserLayoutNodeDescription oldDesc = fragNode.getNodeDescription();
                     nodeDesc.setId(fragNode.getId());
                     nodeDesc.setFragmentNodeId(fragNode.getFragmentNodeId());
+                    nodeDesc.setName(oldDesc.getName());
+                    nodeDesc.setImmutable(oldDesc.isImmutable());
+                    nodeDesc.setUnremovable(oldDesc.isUnremovable());
+                    nodeDesc.setHidden(oldDesc.isHidden());
                     fragNode.setNodeDescription(nodeDesc);
                     if ( fragNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
@@ -3215,7 +3220,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     Connection con = RDBMServices.getConnection();
     try {
 	 IGroupMember groupPerson = null;
-	 String query1 = "SELECT FRAGMENT_ID,GROUP_KEY FROM UP_GROUP_FRAGMENT";
+	 String query1 = "SELECT UGF.FRAGMENT_ID,UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID" + 
+	 " AND UOF.PUSHED_FRAGMENT='N'";
 	 Statement stmt = con.createStatement();
 	 ResultSet rs = stmt.executeQuery(query1);
 	 Set groupKeys = new HashSet();
