@@ -227,7 +227,7 @@ public class CChannelManager extends BaseChannel {
             continue;
 
           String value = runtimeData.getParameter(name);
-          String override = runtimeData.getParameter(name + "_sub");
+          String override = runtimeData.getParameter("uPCM_" + name + "_sub");
           channelDef.addParameter(name, value, (override != null ? "yes" : "no"));
         }
       // Channel controls
@@ -524,62 +524,6 @@ public class CChannelManager extends BaseChannel {
     channelManager.appendChild(userSettingsE);
   }
 
-  /**
-   * Receive static channel data from the portal
-   * @param chanTypeID the channel type ID, "-1" if channel type is "custom"
-   * @return the CPD document matching the chanTypeID, <code>null</code> if "custom" channel
-   * @throws org.jasig.portal.PortalException
-   */
-  protected Document getCPDDoc(String chanTypeID) throws PortalException {
-    // This method needs some caching!!! Consider a CPDManager.java class.
-
-    //  There are no CPD docs for custom channels (chanTypeID = -1)
-    if (chanTypeID == null || chanTypeID.equals("-1"))
-      return null;
-
-    Element channelTypes = ChannelRegistryManager.getChannelTypes().getDocumentElement();
-
-    // Look for channel type element matching the channel type ID
-    Element chanType = null;
-
-    for (Node n = channelTypes.getFirstChild(); n != null; n = n.getNextSibling()) {
-      if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("channelType")) {
-        chanType = (Element)n;
-        if (chanTypeID.equals(chanType.getAttribute("ID")))
-          break;
-      }
-    }
-
-    // Find the cpd-uri within this element
-    String cpdUri = null;
-    for (Node n = chanType.getLastChild(); n != null; n = n.getPreviousSibling()) {
-      if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("cpd-uri")) {
-        // Found the <cpd-uri> element, now get its value
-        for (Node m = n.getFirstChild(); m != null; m = m.getNextSibling()) {
-          if (m instanceof Text)
-            cpdUri = m.getNodeValue();
-        }
-        break;
-      }
-    }
-
-    Document cpdDoc = null;
-    if (cpdUri != null) {
-      try {
-        cpdDoc = ResourceLoader.getResourceAsDocument(this.getClass(), cpdUri);
-      } catch (java.io.IOException ioe) {
-        throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe.getMessage());
-      } catch (org.xml.sax.SAXException se) {
-        throw new PortalException("Unable to parse CPD file: " + cpdUri, se);
-      } catch (ParserConfigurationException pce) {
-        throw new PortalException("Unable to parse CPD file: " + cpdUri, pce);
-      }
-    }
-
-    return cpdDoc;
-  }
-
-
   // This method needs some caching!!!
   protected static Document getRoles() {
     Document roleDoc = DocumentFactory.getNewDocument();
@@ -741,7 +685,7 @@ public class CChannelManager extends BaseChannel {
 
     protected CPDWorkflowSection (String chanTypeID) throws PortalException {
       super();
-      cpdDoc = getCPDDoc(chanTypeID);
+      cpdDoc = ChannelRegistryManager.getCPD(chanTypeID);
     }
 
     protected void addToStep(Element element, String stepID) {
@@ -892,7 +836,7 @@ public class CChannelManager extends BaseChannel {
     protected void resetChannelControls() {
       try {
         // Look inside CPD for controls.
-        Document cpdDoc = getCPDDoc(typeID);
+        Document cpdDoc = ChannelRegistryManager.getCPD(typeID);
         if (cpdDoc != null) {
           for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
             if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("defaultControls")) {
