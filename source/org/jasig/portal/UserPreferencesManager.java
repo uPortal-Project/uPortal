@@ -81,6 +81,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
     private static final boolean saveUserPreferencesAtLogout = PropertiesManager.getPropertyAsBoolean(UserPreferencesManager.class.getName() + ".save_UserPreferences_at_logout");
 
+
     /**
      * Constructor does the following
      *  1. Read layout.properties
@@ -97,6 +98,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
+            if(userAgent==null || userAgent.equals("")) { 
+                userAgent=MediaManager.NULL_USER_AGENT; 
+            }
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = ulsdb.getSystemProfile(userAgent);
