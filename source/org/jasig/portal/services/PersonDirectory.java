@@ -189,6 +189,8 @@ public class PersonDirectory {
             pdi.fullnamequery=value;
           } else if (tagname.equals("usercontext")) {
             pdi.usercontext=value;
+         } else if (tagname.equals("timeout")) {
+            pdi.ldaptimelimit=Integer.parseInt(value);
           } else if (tagname.equals("attributes")) {
             NodeList anodes = pele.getElementsByTagName("attribute");
             int anodecount = anodes.getLength();
@@ -282,7 +284,7 @@ public class PersonDirectory {
       // DataSource from ldap source
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0)
         processJdbcDir(username, pdi,attribs);
-      else if (pdi.url.startsWith("ldap:"))
+      else if (pdi.url.startsWith("ldap"))
         processLdapDir(username, pdi,attribs);
       else if (pdi.url.startsWith("jdbc:"))
         processJdbcDir(username, pdi,attribs);
@@ -324,6 +326,11 @@ public class PersonDirectory {
     DirContext context = null;
     jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
     jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
+    if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
+	String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
+	pdi.url=newurl;
+	jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
+    }
     jndienv.put(Context.PROVIDER_URL,pdi.url);
     if (pdi.logonid!=null)
       jndienv.put(Context.SECURITY_PRINCIPAL,pdi.logonid);
@@ -340,6 +347,7 @@ public class PersonDirectory {
     NamingEnumeration userlist = null;
     SearchControls sc = new SearchControls();
     sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+    sc.setTimeLimit(pdi.ldaptimelimit);
     Object [] args = new Object[] {username};
     try {
       userlist = context.search(pdi.usercontext,pdi.uidquery,args,sc);
@@ -461,6 +469,7 @@ public class PersonDirectory {
     String usercontext; // where are users? "OU=people" or "CN=Users"
     String uidquery; // SELECT or JNDI query for userid
     String fullnamequery; // SELECT or JNDI query using fullname
+    int ldaptimelimit = 0; // timeout for LDAP in milliseconds. 0 means wait forever
     String[] attributenames;
     String[] attributealiases;
     boolean disabled = false;
