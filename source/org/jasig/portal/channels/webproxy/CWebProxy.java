@@ -442,8 +442,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                      newXML.append(URLEncoder.encode(pVal));
                  }
                  else {
-                   log.info(
-                   "CWebProxy: request to pass " + pName + " denied.");
+                     if (log.isInfoEnabled())
+                         log.info(
+                                 "CWebProxy: request to pass " + pName + " denied.");
                  }
                }
              }
