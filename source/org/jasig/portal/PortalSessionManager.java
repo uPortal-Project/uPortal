@@ -144,6 +144,12 @@ public class PortalSessionManager extends HttpServlet {
           }
       }
 
+      // Log orderly shutdown time
+      Runtime.getRuntime().addShutdownHook(new Thread("uPortal shutdown hook") {
+          public void run() {
+            LogService.instance().log(LogService.INFO, "uPortal stopped");
+          }
+        });
 
 
       // Flag that the portal has been initialized
