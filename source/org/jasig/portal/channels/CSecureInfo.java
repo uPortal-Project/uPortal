@@ -43,6 +43,7 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,6 +89,13 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
         this.portcs=pcs;
     }
 
+    public void receiveEvent(PortalEvent ev) {
+        if (the_channel != null) {
+            // propagate the portal events to the normal channel
+            the_channel.receiveEvent(ev);
+        }
+        super.receiveEvent(ev);
+    }
 
     public void renderXML(ContentHandler out) {
         // XML of the following type is generated:
