@@ -525,7 +525,7 @@ public class LayoutBean extends GenericPortalBean
               String sColumn  = req.getParameter ("column");
               String sChannel = req.getParameter ("channel");
 
-              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel))
+              if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel) && getUserName (req) != null && getUserName (req) != "guest")
               {
                 if(sResize.equals("minimize"))
                 {
@@ -577,25 +577,33 @@ public class LayoutBean extends GenericPortalBean
               out.println ("          <td nowrap valign=\"middle\" align=right>");
               out.println ("            &nbsp;");
 
-              // Channel control buttons
-              if (channels[iChan].getAttribute ("minimized").equals ("true"))
-                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
+              //prevent the guest user from being presented with options that won't work
+              if (getUserName (req) != null && getUserName (req) != "guest")
+              {
+                // Channel control buttons
+                if (channels[iChan].getAttribute ("minimized").equals ("true"))
+                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
+                else
+                if(ch.isMinimizable ())
+                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
+
+                if (ch.isDetachable ())
+                  out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
+
+                if (ch.isRemovable ())
+                  out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
+
+                if (ch.isEditable ())
+                  out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+
+                if (ch.hasHelp ())
+                  out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+              }
               else
-              if(ch.isMinimizable ())
-                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
-
-              if (ch.isDetachable ())
-                out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
-
-              if (ch.isRemovable ())
-                out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
-
-              if (ch.isEditable ())
-                out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
-
-              if (ch.hasHelp ())
-                out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
-
+              {
+                if (ch.hasHelp ())
+                  out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+              }
               out.println ("            &nbsp;");
               out.println ("          </td>");
               out.println ("        </tr>");
