@@ -676,6 +676,8 @@ protected static void logNoTransactionWarning()
  */
 public IEntityGroup newInstance(Class type) throws GroupsException
 {
+    if ( EntityTypes.getEntityTypeID(type) == null )
+        { throw new GroupsException("Invalid group type: " + type); }
     try
         { return new EntityGroupImpl(getNextKey(), type); }
     catch ( Exception ex )

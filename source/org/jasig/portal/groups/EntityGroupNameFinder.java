@@ -75,7 +75,7 @@ public class EntityGroupNameFinder
      * @param key java.lang.String
      */
     public String getName (String key) throws Exception {
-        IEntityGroup g = GroupService.find(key);
+        IEntityGroup g = GroupService.findGroup(key);
         return  g.getName();
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,138 +32,141 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
 package org.jasig.portal.services;
+
 import org.jasig.portal.groups.*;
 import org.jasig.portal.*;
-import org.jasig.portal.utils.ResourceLoader;
-import java.util.Properties;
-import java.io.FileInputStream;
-import java.io.File;
+
 /**
- *  This class maintains a facade to an underlying IEntityGroupStore implementation specified
- *  in the portal properties file.  It privately maintains a singleton instance, and is accessed
- *  via static methods, which delegate to instance methods, which call on the specific implementation.
+ *  Bootstrap class for the IGroupService implementation.
  *
  * @author  Alex Vigdor
+ * @author  Dan Ellentuck
  * @version $Revision$
  */
-public class GroupService {
-    private static GroupService _instance = null;
-    private static IEntityGroupStore m_groupstore = null;
-    private static String s_groupstorename = PropertiesManager.getProperty("org.jasig.portal.services.GroupService.EntityGroupStoreImpl");
-    private static String everyoneGroupKey = null;
+
+public class GroupService
+{
+    // Singleton instance of the bootstrap class:
+    private static GroupService instance = null;
+    // The group service:
+    private IGroupService groupService = null;
     /** Creates new GroupService */
-    private GroupService() {
-        if (s_groupstorename == null) {
-            LogService.log(LogService.ERROR, new PortalException
-            ("EntityGroupStoreImpl not specified or incorrect in portal.properties"));
-        }
-        else {
-            try {
-                m_groupstore = (IEntityGroupStore)Class.forName(s_groupstorename).newInstance();
-            }
-            catch (Exception e) {
-                LogService.log(LogService.ERROR, new PortalException
-                ("Failed to instantiate " + s_groupstorename));
-            }
-        }
-        try {
-          File secFile = ResourceLoader.getResourceAsFile(this.getClass(),"/properties/security.properties");
-          Properties secProps = new Properties();
-          secProps.load(new FileInputStream(secFile));
-          everyoneGroupKey = secProps.getProperty("everyoneKey");
-        }
-        catch (Exception e){
-          LogService.instance().log(LogService.ERROR,"GroupService:: Unable to load everyoneKey from security.properties" + e);
-        }
+    private GroupService() throws GroupsException
+    {
+        super();
+        initialize();
     }
-
-    private static synchronized GroupService instance(){
-        if(_instance==null){
-            _instance = new GroupService();
-        }
-        return _instance;
+  /*
+   * Returns a pre-existing <code>IEntityGroup</code> or null if the
+   * <code>IGroupMember</code> does not exist.
+   * @param key String - the group key.
+   * @return org.jasig.portal.groups.IEntityGroup
+   */
+    public static IEntityGroup findGroup(String key) throws GroupsException
+    {
+        return instance().ifindGroup(key);
     }
-    protected void idelete(IEntityGroup group) throws GroupsException{
-        m_groupstore.delete(group);
-    }
-
-    public static void delete(IEntityGroup group) throws GroupsException{
-       instance().idelete(group);
+   /*
+    * Returns a pre-existing <code>IGroupMember</code> or null if the
+    * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
+    * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+    * @param key String - the group key.
+    * @param type Class - the Class of the underlying IGroupMember.
+    * @return org.jasig.portal.groups.IGroupMember
+    */
+    public static IGroupMember findGroupMember(String key, Class type)
+    throws GroupsException
+    {
+        return instance().ifindGroupMember(key, type);
     }
     /**
-     * Returns an instance of the <code>IEntityGroup</code> from the data store.
-     * @return org.jasig.portal.groups.IEntityGroup
-     * @param key java.lang.String
-     */
-    protected IEntityGroup ifind(String key) throws GroupsException{
-        return m_groupstore.find(key);
-    }
-    public static IEntityGroup find(String key) throws GroupsException{
-        return instance().ifind(key);
-    }
-    /**
-     * Returns an <code>Iterator</code> over the <code>Collection</code> of
-     * <code>IEntityGroups</code> that the <code>IGroupMember</code> belongs to.
-     * @return java.util.Iterator
-     * @param gm org.jasig.portal.groups.IEntityGroup
-     */
-    protected java.util.Iterator ifindContainingGroups(IGroupMember gm) throws GroupsException{
-        return m_groupstore.findContainingGroups(gm);
-    }
-    public static java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException{
-        return instance().ifindContainingGroups(gm);
-    }
-    /**
-     * Returns an <code>Iterator</code> over the <code>Collection</code> of
-     * <code>IEntityGroups</code> that are members of this <code>IEntityGroup</code>.
-     * @return java.util.Iterator
-     * @param group org.jasig.portal.groups.IEntityGroup
-     */
-    protected java.util.Iterator ifindMemberGroups(IEntityGroup group) throws GroupsException{
-        return m_groupstore.findMemberGroups(group);
-    }
-    public static java.util.Iterator findMemberGroups(IEntityGroup group) throws GroupsException{
-        return instance().ifindMemberGroups(group);
-    }
-    /**
+     * Returns the distinguished group called "everyone".
      * @return org.jasig.portal.groups.IEntityGroup
      */
-    protected IEntityGroup inewInstance(Class entityType) throws GroupsException{
-        return m_groupstore.newInstance(entityType);
+    public static IEntityGroup getEveryoneGroup() throws GroupsException
+    {
+        return instance().igetEveryoneGroup();
     }
-    public static IEntityGroup newInstance(Class entityType) throws GroupsException{
-        return instance().inewInstance(entityType);
+  /*
+   * Returns a pre-existing <code>IEntityGroup</code> or null if the
+   * <code>IGroupMember</code> does not exist.
+   * @param key String - the group key.
+   * @return org.jasig.portal.groups.IEntityGroup
+   */
+    protected IEntityGroup ifindGroup(String key) throws GroupsException
+    {
+        return groupService.findGroup(key);
+    }
+   /*
+    * Returns a pre-existing <code>IGroupMember</code> or null if the
+    * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
+    * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+    * @param key String - the group key.
+    * @param type Class - the Class of the underlying IGroupMember.
+    * @return org.jasig.portal.groups.IGroupMember
+    */
+    protected IGroupMember ifindGroupMember(String key, Class type) throws GroupsException
+    {
+        return groupService.findGroupMember(key, type);
     }
     /**
-     * Adds or updates the <code>IEntityGroup</code> to the data store, as appropriate.
-     * @param group org.jasig.portal.groups.IEntityGroup
+     * Returns the distinguished group called "everyone".
+     * @return org.jasig.portal.groups.IEntityGroup
      */
-    protected void iupdate(IEntityGroup group) throws GroupsException{
-        m_groupstore.update(group);
-    }
-    public static void update(IEntityGroup group) throws GroupsException{
-        instance().iupdate(group);
+    protected IEntityGroup igetEveryoneGroup() throws GroupsException
+    {
+        return groupService.getEveryoneGroup();
     }
     /**
-     * Commits the group memberships of the <code>IEntityGroup</code> to
-     * the data store.
-     * @param group org.jasig.portal.groups.IEntityGroup
-     */
-    protected void iupdateMembers(IEntityGroup group) throws GroupsException{
-        m_groupstore.updateMembers(group);
+    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+    * key.
+    * @return org.jasig.portal.groups.IEntityGroup
+    */
+    protected IEntityGroup inewGroup(Class type) throws GroupsException {
+        return groupService.newGroup(type);
     }
-    public static void updateMembers(IEntityGroup group) throws GroupsException{
-        instance().iupdateMembers(group);
-    }
-    /**
-     * Refers to the security.properties file to get the key for the group "Everyone"
-     * and asks the groupStore implementation for the corresponding IEntityGroup
-     */
-    public static IEntityGroup getEveryoneGroup() throws GroupsException{
-        instance();
-        return find(everyoneGroupKey);
+/**
+ * @exception org.jasig.portal.groups.GroupsException
+ */
+private void initialize() throws GroupsException
+{
+        String eMsg = null;
+    String factoryName =
+        PropertiesManager.getProperty("org.jasig.portal.groups.GroupServiceFactory");
+
+    if ( factoryName == null )
+    {
+        eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new GroupsException(eMsg);
     }
 
+    try
+    {
+        IGroupServiceFactory groupServiceFactory =
+            (IGroupServiceFactory)Class.forName(factoryName).newInstance();
+        groupService = groupServiceFactory.newGroupService();
+    }
+    catch (Exception e)
+    {
+        eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new GroupsException(eMsg);
+    }
+}
+    public static synchronized GroupService instance() throws GroupsException {
+        if ( instance==null ) {
+            instance = new GroupService();
+        }
+        return instance;
+    }
+    /**
+    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+    * key.
+    * @return org.jasig.portal.groups.IEntityGroup
+    */
+    public static IEntityGroup newGroup(Class type) throws GroupsException {
+        return instance().inewGroup(type);
+    }
 }

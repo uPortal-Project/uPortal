@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,48 +36,40 @@
 package org.jasig.portal.groups;
 
 /**
- * Reference implementation for <code>IEntity</code>.
+ * Defines an api for discovering an entry point into the groups system,
+ * represented by an <code>IGroupMember</code>.  This is analogous to getting an
+ * <code>InitialContext</code> in JNDI.  Subsequent requests for navigating or
+ * maintaining groups go thru the <code>IGroupMember</code>.
+ *
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class EntityImpl extends GroupMemberImpl implements IEntity {
-/**
- * EntityImpl
- */
-public EntityImpl(String newKey, Class newEntityType) throws GroupsException
-{
-    super(newKey, newEntityType);
-}
-/**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- * @see java.util.Hashtable
- */
-public boolean equals(Object obj)
-{
-    if ( obj == null )
-        return false;
-    if ( obj == this )
-        return true;
-    if ( ! ( obj instanceof EntityImpl))
-        return false;
 
-    return this.getKey().equals(((IGroupMember)obj).getKey());
-}
-/**
- * @return boolean
- */
-public boolean isEntity()
-{
-    return true;
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString()
-{
-    String clsName = getEntityType().getName();
-    return "EntityImpl (" + clsName + ") "  + getKey();
-}
+public interface IGroupService {
+  /*
+   * Returns a pre-existing <code>IEntityGroup</code> or null if the
+   * <code>IGroupMember</code> does not exist.
+   */
+  public IEntityGroup findGroup(String key) throws GroupsException;
+
+  /*
+   * Returns a pre-existing <code>IGroupMember</code> or null if the
+   * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
+   * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+   */
+  public IGroupMember findGroupMember(String key, Class type)
+    throws GroupsException;
+
+  /*
+   * Refers to the security.properties file to get the key for the group
+   * Everyone and asks the group store implementation for the corresponding
+   * <code>IEntityGroup</code>.
+   */
+  public IEntityGroup getEveryoneGroup() throws GroupsException;
+
+  /*
+   * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+   * key.
+   */
+  public IEntityGroup newGroup(Class type) throws GroupsException;
 }

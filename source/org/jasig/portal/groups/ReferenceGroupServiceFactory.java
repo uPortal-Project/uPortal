@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,53 +31,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
  */
 
 package org.jasig.portal.groups;
 
+import org.jasig.portal.services.LogService;
+
 /**
- * Reference implementation for <code>IEntity</code>.
+ * Creates the reference implemetation of <code>IGroupService</code>.
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class EntityImpl extends GroupMemberImpl implements IEntity {
-/**
- * EntityImpl
- */
-public EntityImpl(String newKey, Class newEntityType) throws GroupsException
-{
-    super(newKey, newEntityType);
-}
-/**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- * @see java.util.Hashtable
- */
-public boolean equals(Object obj)
-{
-    if ( obj == null )
-        return false;
-    if ( obj == this )
-        return true;
-    if ( ! ( obj instanceof EntityImpl))
-        return false;
 
-    return this.getKey().equals(((IGroupMember)obj).getKey());
+public class ReferenceGroupServiceFactory implements IGroupServiceFactory {
+/**
+ * ReferenceGroupServiceFactory constructor.
+ */
+public ReferenceGroupServiceFactory() {
+        super();
 }
 /**
- * @return boolean
+ * Return an instance of the service implementation.
+ * @return org.jasig.portal.groups.IGroupService
+ * @exception org.jasig.portal.groups.GroupsException
  */
-public boolean isEntity()
+public IGroupService newGroupService() throws GroupsException
 {
-    return true;
-}
-/**
- * Returns a String that represents the value of this object.
- * @return a string representation of the receiver
- */
-public String toString()
-{
-    String clsName = getEntityType().getName();
-    return "EntityImpl (" + clsName + ") "  + getKey();
+    try
+        { return ReferenceGroupService.singleton(); }
+    catch ( GroupsException ge )
+    {
+        LogService.log (LogService.ERROR, "ReferenceGroupServiceFactory.newGroupService(): " + ge);
+        throw new GroupsException(ge.getMessage());
+    }
 }
 }
