@@ -8,6 +8,9 @@ package org.jasig.portal.services.persondir.support;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * Several {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao}
@@ -18,6 +21,9 @@ import java.util.Map;
  * @version $Revision $
  */
 public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonAttributeDao {
+    
+    protected final Log log = LogFactory.getLog(getClass());
+    
     /**
      * Defaults attribute to use for a simple query
      */

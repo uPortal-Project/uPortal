@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
 
@@ -33,7 +31,6 @@ import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdde
  * @version $Revision$ $Date$
  */
 public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttributeDao {
-    private static final Log LOG = LogFactory.getLog(CascadingPersonAttributeDao.class);
     
     /**
      * A List of child IPersonAttributeDao instances which we will poll in order.
@@ -81,10 +78,10 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
                 final String msg = "Exception thrown by DAO: " + currentlyConsidering;
 
                 if (this.recoverExceptions) {
-                    LOG.warn("Recovering From " + msg, rte);
+                    log.warn("Recovering From " + msg, rte);
                 }
                 else {
-                    LOG.error(msg, rte);
+                    log.error(msg, rte);
                     throw rte;
                 }
             }
@@ -123,10 +120,10 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
                 final String msg = "Exception thrown by DAO: " + currentDao;
 
                 if (this.recoverExceptions) {
-                    LOG.warn(msg, rte);
+                    log.warn(msg + ", ignoring this DAO and continuing.", rte);
                 }
                 else {
-                    LOG.error(msg, rte);
+                    log.error(msg + ", failing.", rte);
                     throw rte;
                 }
             }
