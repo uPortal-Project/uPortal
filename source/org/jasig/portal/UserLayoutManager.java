@@ -143,7 +143,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 try {
                     // Initialize the JNDI context for this user
                     JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),uLayoutXML);
-                } catch(InternalPortalException ipe) {
+                } catch(PortalException ipe) {
                   LogService.instance().log(LogService.ERROR, "UserLayoutManager(): Could not properly initialize user context", ipe);
                 }
                 // set dirty flag on the layout
