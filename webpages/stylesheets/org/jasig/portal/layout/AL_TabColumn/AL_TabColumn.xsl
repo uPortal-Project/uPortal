@@ -9,7 +9,7 @@
   <!--Target restrictions: tab, column, channel-->
   <xsl:param name="targetRestriction" select="'no targetRestriction parameter'"/>
   <!--<xsl:param name="targetRestriction" select="'channel'"/>-->
-  <xsl:variable name="targetAction" select="'no targetAction parameter'"/>
+  <xsl:param name="targetAction" select="'no targetAction parameter'"/>
   <xsl:param name="selectedID" select="'no selectedID parameter'"/>
   <!--<xsl:param name="selectedID" select="'10'"/>-->
   <xsl:param name="userLayoutRoot" select="'root'"/>
