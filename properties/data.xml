@@ -1634,6 +1634,40 @@
         <column><name>CHAN_FNAME</name><value>portal/login/general</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
+      <row>
+        <column><name>CHAN_ID</name><value>80</value></column>
+        <column><name>CHAN_TITLE</name><value>SkinSelector</value></column>
+        <column><name>CHAN_NAME</name><value>Skin Selector</value></column>
+        <column><name>CHAN_DESC</name><value>Skin Selector channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.layout.channels.CSkinSelector</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>100000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>skinselector</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>81</value></column>
+        <column><name>CHAN_TITLE</name><value>ContentSubscriber</value></column>
+        <column><name>CHAN_NAME</name><value>Content Subscriber</value></column>
+        <column><name>CHAN_DESC</name><value>Content Subscriber channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.layout.channels.CContentSubscriber</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>100000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>contentsubscriber</value></column>
+      </row>
      </rows>
   </table>
 
@@ -4540,6 +4574,22 @@
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.80</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.4</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.81</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.89</value></column>
@@ -6019,6 +6069,18 @@
         <column><name>MEMBER_KEY</name><value>22</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>80</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>81</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+      </row>
      <row>
         <column><name>GROUP_ID</name><value>51</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
