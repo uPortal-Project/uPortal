@@ -59,7 +59,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import org.jasig.portal.*;
-import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.utils.CommonUtils;
 
 

@@ -41,8 +41,6 @@ import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.xml.sax.ContentHandler;
 import java.util.List;
-
-//import  org.apache.xerces.dom.DocumentImpl;
 import org.w3c.dom.Document;
 
 /**

@@ -35,14 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  java.io.*;
 import  org.jasig.portal.services.*;
@@ -57,8 +49,6 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Text;
-import  org.apache.xerces.parsers.DOMParser;
-import  org.apache.xerces.parsers.SAXParser;
 import  org.w3c.dom.Document;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.apache.xml.serialize.OutputFormat;
@@ -68,6 +58,8 @@ import  org.xml.sax.InputSource;
 /**
  * CGroupsManager allows users to graphically administer all groups for which
  * user has administrtaive permissions.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class CGroupsManager
       implements org.jasig.portal.IMultithreadedChannel, GroupsManagerConstants, IPermissible, IMultithreadedCacheable {
