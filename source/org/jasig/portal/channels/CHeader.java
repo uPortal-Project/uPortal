@@ -35,10 +35,6 @@
 
 package org.jasig.portal.channels;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.NotContextException;
-
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
@@ -72,8 +68,8 @@ public class CHeader extends BaseChannel implements ICacheable {
   private boolean canUserPublish() {
     boolean canPublish = false;    
     try {
-	    // Let the authorization service decide:
-	    canPublish = staticData.getAuthorizationPrincipal().canPublish();      
+            // Let the authorization service decide:
+            canPublish = staticData.getAuthorizationPrincipal().canPublish();      
     } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
       // Deny the user publish access if anything went wrong
@@ -125,39 +121,17 @@ public class CHeader extends BaseChannel implements ICacheable {
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
     if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
-      Context globalIDContext = null;
-      try {
-        // Get the context that holds the global IDs for this user
-        globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
-      } catch (NotContextException nce) {
-        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find subcontext /channel-ids in JNDI");
-      } catch (NamingException e) {
-        LogService.log(LogService.ERROR, e);
+      if (canUserPublish()) {
+        // Create <chan-mgr-chanid> element under <header>
+        Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
+        chanMgrChanidEl.appendChild(doc.createTextNode("portal/channelmanager/general"));
+        headerEl.appendChild(chanMgrChanidEl);
       }
-      try {
-        if (canUserPublish()) {
-          // Create <chan-mgr-chanid> element under <header>
-          Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
-          chanMgrChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/channelmanager/general")));
-          headerEl.appendChild(chanMgrChanidEl);
-        }
-      } catch (NotContextException nce) {
-        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/channelmanager/general for UID="
-            + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
-      } catch (NamingException e) {
-        LogService.log(LogService.ERROR, e);
-      }
-      try {
-        // Create <preferences-chanid> element under <header>
-        Element preferencesChanidEl = doc.createElement("preferences-chanid");
-        preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
-        headerEl.appendChild(preferencesChanidEl);
-      } catch (NotContextException nce) {
-        LogService.log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/userpreferences/general for UID="
-            + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
-      } catch (NamingException e) {
-        LogService.log(LogService.ERROR, e);
-      }
+
+      // Create <preferences-chanid> element under <header>
+      Element preferencesChanidEl = doc.createElement("preferences-chanid");
+      preferencesChanidEl.appendChild(doc.createTextNode("portal/userpreferences/general"));
+      headerEl.appendChild(preferencesChanidEl);
     }
     doc.appendChild(headerEl);
     return doc;
