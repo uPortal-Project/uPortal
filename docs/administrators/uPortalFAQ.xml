@@ -69,11 +69,11 @@
              <para>Who maintains this FAQ list?</para>
           </question>
           <answer>
-             <para>Bill Brooks &#60;wbrooks at calpoly.edu&#62; with help
-             from other active participants in the
-             <productname>uPortal</productname> development
-             effort. Questions (and answers), comments, corrections
-             and contributions are highly encouraged!</para>
+             <para>Bill Brooks &#60;wbrooks at calpoly.edu&#62; with
+             help from other active participants in the
+             <productname>uPortal</productname> development effort. We
+             encourage contributions of questions (and answers),
+             comments, and corrections.</para>
           </answer>
        </qandaentry>
        <qandaentry>
@@ -121,8 +121,8 @@
              <para>Simply put, <productname>uPortal</productname> is a
              framework for producing a campus portal. We don't intend
              it to be an out-of-the-box or "turn key" portal
-             solution. Instead, uPortal is a set of Java classes and
-             XML documents that you can use to produce a portal for
+             "solution". Instead, uPortal is a set of Java classes and
+             XML/XSL documents that you can use to produce a portal for
              use on your campus.
              </para>
           </answer>
@@ -142,73 +142,48 @@
           </answer>
        </qandaentry>
 
-    </qandaset> 
-
-  </sect1>
-
-  <sect1>
-    <title>Deploying The uPortal Framework</title>
-
-    <qandaset>
        <qandaentry>
           <question>
-             <para>What kind of Java expertise would I need to have in
-             order to successfully install and configure
-             <productname>uPortal</productname> for use on my
-             campus?</para>
+             <para>What level of Java knowledge is required to use
+                   JA-SIG's <productname>uPortal</productname>
+                   framework?
+             </para>
           </question>
           <answer>
 
-             <para>In general, over and above a working knowledge of
-             and substantial experience with
-             your chosen application server, the standard Java
-             Development Kit (JDK) tools, and modern client/server
-             computing, you must be familiar with
-             a few of the <ulink
-             url="http://www.javasoft.com/j2ee/overview.html">J2EE</ulink>
-             technologies for enterprise applications. At a
-             <emphasis>minimum</emphasis>, you'll have to be
-             conversant with:
+             <para>This is really three different questions rolled
+             into one, because there are three different 'levels' that
+             we can use to discuss what you have to understand in
+             order to 'use' the <productname>uPortal</productname>
+             framework. These levels aren't totally distinct - there's
+             considerable overlap between them. Let's consider them
+             one at a time.</para>
 
-             <itemizedlist mark="bullet">
+             <para> One level addresses what you have to know in order
+             to keep an instance of the portal, customized for your
+             campus' requirements and IT infrastructure, running under
+             your chosen application server. I'll call that the
+             'administrative' level, since a lot of the tasks are
+             closely analogous to administering a DBMS or HTTP
+             server. See <xref linkend="install" />, below.</para>
 
-                <listitem>
-                   <para>XML. The <productname>uPortal</productname>
-                   framework uses XML and XSLT extensively to ensure
-                   the platform independance of data and to separate 
-                   that data from it's presentation. To deploy 
-                   <productname>uPortal</productname>, you may
-                   have to edit XML files, so you'll have to be aware
-                   of how to write a valid XML file. </para>
-                </listitem>
-                <listitem>
-                   <para>Servlets. You'll have to be familiar with
-                   issues associated with server-side java
-                   applications, because you have to deploy the
-                   framework for use in the application server you're
-                   using on your campus. If you have experience
-                   configuring and deploying servlets, you know
-                   enough to deploy
-                   <productname>uPortal</productname>. </para>
-                </listitem>
-                <listitem>
-                   <para>JSP. If you want to change the look and feel
-                   of the portal significantly, you'll have to edit
-                   Java Server Pages, so you should understand how to
-                   use JSP syntax correctly.</para>
-                </listitem>
-                <listitem>
-                   <para>JNDI. if you want to use a directory service,
-                   such as LDAP for authentication and/or
-                   authorization of users to the portal, and you want
-                   to use the reference implementation that the
-                   <productname>uPortal</productname> framework
-                   provides for that purpose, you'll have to be
-                   familiar with Java Naming and Directory
-                   Interface.</para>
-                </listitem>
-             </itemizedlist>
-             </para>
+             <para>The second level addresses what you must know in
+             order to do the development necessary to
+             <emphasis>produce</emphasis> an instance of the portal,
+             customized for your campus' needs and IT infrastructure,
+             that you'll use to facilitate the delivery of content and
+             services to end-users. I'll call that the
+             'implementation' level. See <xref linkend="implementing"
+             />, below.</para>
+
+             <para>The third level addresses what you must know in
+             order to develop programs (which the
+             <productname>uPortal</productname> developers call
+             'channels') that will work within the portal to actually
+             deliver the content and services. I'll call that the
+             'content development' level. See <xref linkend="content"
+             />, below.</para>
+
           </answer>
        </qandaentry>
 
@@ -234,26 +209,104 @@
              solutions?</para>
           </question>
           <answer>
+
              <para>The primary differentiator is that
-             <productname>uPortal</productname> is focused on
-             the requirements of higher education institutions, whereas other
-             products are mostly focused on the requirements of large
-             corporations, even if the resulting product is marketed
-             to higher education
-             institutions. <productname>uPortal</productname> is a
-             100% pure Java framework that
-             provides the Java programmers on your staff with the
+             <productname>uPortal</productname> is focused on the
+             requirements of higher education institutions, whereas
+             other products are mostly focused on the requirements of
+             large corporations, even if the product is marketed to
+             higher education institutions.</para>
+
+             <para><productname>uPortal</productname> is a framework
+             that provides the Java programmers on your staff with the
              classes, interfaces, XML data files and XSL stylesheets
-             they need to develp a customized portal for your campus. Some portal
-             "solutions" are actually third party packages that a vendor of a
-             non-portal product acquired in order to enter the portal market
-             without doing any R &#38; D. Still other portal
-             "solutions" are services that are free to your campus, but require
-             your campus to accept advertising in exchange for the use of the
-             service. <productname>uPortal</productname> is also
-             available free to universities, most commercial portal
-             "solutions" cost upwards of $50,000 per year for a typical campus'
+             they need to develop a customized portal for your
+             campus. JA-SIG realizes that a portal, in order to be
+             truly useful, can't something you take out of a box and
+             install, it has to be something you customize for the
+             needs of your institution. Some portal vendors say that
+             they can have a portal ready for you in no time, but
+             after you've paid them, you realize that you're on the
+             hook for some very expensive consulting engagements in
+             order to get their closed, proprietary portal to work the
+             way you want.</para>
+
+             <para>Some portal "solutions" are actually third party
+             packages that a vendor of a non-Java, non-portal product
+             acquired in order to enter the portal market without
+             doing any R &#38; D. <productname>uPortal</productname>
+             was designed from the ground up to provide the tools you
+             need to build a portal and has always been is a 100% pure
+             Java.</para>
+
+             <para>Still other portal "solutions" are services that
+             are no charge to your campus, but require your campus to
+             accept advertising in exchange for the use of the
+             service. With <productname>uPortal</productname>, you
+             don't have to run advertising in your portal, but if you
+             wish to, your campus can keep the revenue produced.</para>
+
+             <para>Last but not least,
+             <productname>uPortal</productname> is also available free
+             to member universities, most commercial portal "solutions" cost
+             upwards of $50,000 per year for a typical campus'
              license.</para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+  <sect1 id="install">
+    <title>Deploying, administering and maintaining an instance of
+    <productname>uPortal</productname></title>
+    <qandaset>
+
+       <qandaentry>
+          <question>
+             <para>What kind of Java expertise would I need to have in
+             order to successfully deploy and keep my campus' instance of the portal running?</para>
+          </question>
+          <answer>
+             <para>In general, over and above a working knowledge of
+             and substantial experience with your chosen application
+             server, you really have to understand the issues related
+             to server-side application deployment and support in a
+             modern, web-based environment. If you understand how to
+             start, stop, and backup your your application server and
+             database server, and how to deploy a JSP 1.1/Servlet
+             2.2-based web application, then you know enough to
+             administer a uPortal instance. Your application server
+             vendor will be able to help you on this front with
+             training and documentation if you don't.</para>
+          </answer>
+       </qandaentry>
+
+      <qandaentry>
+          <question>
+             <para>What application server should I use for my campus'
+             <productname>uPortal</productname> instance?</para>
+          </question>
+          <answer>
+             <para><productname>uPortal</productname> will run in
+             conjunction with any application server that complies
+             with the Java Servlet 2.2 and Java Server Pages 1.1
+             specifications. There are members of JA-SIG currently
+             operating <productname>uPortal</productname> instances
+             with BEA's WebLogic, IBM's Websphere, and Caucho's Resin,
+             among others.</para>
+
+             <para>Please don't think that uPortal is somehow
+             dependent upon 'Tomcat', the open-source JSP and servlet
+             container from the Apache Jakarta project that ships with
+             the existing 'monterey' distribution and
+             soon-to-be-released 'plymouth' distribution. You can use
+             any JSP 1.1/Servlet 2.2-compliant container or
+             application server, and if you want commercial quality
+             tech support, formal training or documentation, then a
+             commercial application server is something to
+             consider.</para>
           </answer>
        </qandaentry>
 
@@ -263,11 +316,11 @@
              single-sign on?</para>
           </question>
           <answer>
-             <para>Yes. The <productname>uPortal</productname>
-             framework has an authentication system that explicitly
+             <para>A qualified 'Yes'. The <productname>uPortal</productname>
+             framework does provide an authentication system that explicitly
              supports the notion of single sign-on, but as of this
              writing there are few channels that ship with the framework 
-             that take advantage of it. Of course, any campus that wants to
+             which take advantage of it. Of course, any campus that wants to
              write their own channels that will use the
              <productname>uPortal</productname> single sign-on capabilities are
              certainly able to do so.</para>
@@ -303,9 +356,10 @@
              enables services to authenticate and enforce access
              controls upon users, but as currently specified by Sun,
              it makes many assumptions about how the services which
-             use it will operate. JAAS allows authentication modules
-             to be "plugged in" but doesn't allow services to modify
-             the behavior of the system as a whole. </para>
+             use it will operate for effective use in a portal. JAAS
+             allows authentication modules to be <quote>plugged
+             in</quote> but doesn't allow services to modify the
+             behavior of the system as a whole. </para>
  
              <para>uPortal doesn't operate the way that JAAS assumes
              because a portal, any portal, must aggregate content and
@@ -316,14 +370,15 @@
              authentication and/or authorization requirements.</para>
 
              <para>The bottom line is that the uPortal developers
-             think that authentication and authorization are too
-             tightly coupled within JAAS, and would therefore delay
-             the implementation of single sign-on in uPortal until a
-             later revision of the JAAS specification is published
-             that decouples them. Perhaps in the future JAAS could
-             provide uPortal with security services, but in it's
-             current state it does not have the flexibility nor the
-             functionality to be incorporated well into uPortal.</para>
+             think that authentication and authorization are currently
+             too tightly coupled within JAAS, and would therefore
+             delay the implementation of single sign-on in uPortal
+             until Sun publishes a later revision of the JAAS
+             specification which decouples them. Perhaps in the future
+             JAAS could provide uPortal with security services, but in
+             it's current state it does not have the flexibility nor
+             the functionality to be incorporated well into
+             uPortal.</para>
           </answer>
        </qandaentry>
 
@@ -331,8 +386,154 @@
 
   </sect1>
 
-  <sect1>
-    <title>Developing content for uPortal</title>
+  <sect1 id="implementing">
+    <title>Developing a campus portal using the
+    <productname>uPortal</productname> framework</title>
+
+    <qandaset>
+       <qandaentry>
+          <question>
+             <para>What kind of Java expertise is necessary to develop
+             a campus portal using <productname>uPortal</productname>?
+             </para>
+          </question>
+          <answer>
+
+             <para>In general, to use the uPortal framework to develop
+             a campus portal (the <quote>instance</quote> of the
+             portal for use with your application server), over and
+             above the level of expertise necessary to administer your
+             application server (see above), you must be an
+             experienced Java programmer, familiar with the JDK 1.2
+             tools for compiling, packaging, deploying and running
+             server-side Java programs, and conversant with most of
+             the technologies that comprise the J2EE
+             specification.</para>
+
+             <para>Specifically, at a <emphasis>minimum</emphasis>,
+             you must have experience with:
+
+             <itemizedlist mark="bullet">
+
+                <listitem>
+                   <para>XML. The <productname>uPortal</productname>
+                   framework uses XML and XSLT extensively to ensure
+                   the platform independence of data and to separate
+                   that data from it's presentation. To develop a
+                   portal with <productname>uPortal</productname>, you
+                   will have to create/edit XML files and create/edit
+                   XSL stylesheets.</para>
+
+                   <para>If you're not fluent with the XML-related
+                   APIs in Java, <citation>McLaughlin2000</citation>
+                   provides a comprehensive tutorial on writing Java
+                   programs that can create and manipulate XML
+                   documents. The <productname>uPortal</productname>
+                   developers highly recommend
+                   <citation>Kay2000</citation> to those looking for a
+                   tutorial and in-depth reference guide to
+                   XSLT. <citation>Bradley2000</citation> provides a
+                   wide-ranging overview of the XSL standard.</para>
+
+                </listitem>
+                <listitem>
+                   <para>JSP: The portal framework uses Java Server
+                   Pages to facilitate the intermixing of markup
+                   language code required by a web browser and
+                   programming language code that leverages the
+                   underlying Java Runtime environment. If you want to
+                   change the look and feel of the portal
+                   significantly, you'll have to edit Java Server
+                   Pages, so you should understand how to use JSP
+                   syntax correctly.</para>
+
+                   <para>For those looking for a tutorial on JSP,
+                   <citation>Manning</citation> is an excellent
+                   choice.</para>
+
+                </listitem>
+                <listitem>
+                   <para>Servlets. JSP works as an abstraction layer
+                   on top of the Java Servlets API and because of
+                   this, experience writing servlets will come in
+                   handy. Several programming 'idioms' in the portal
+                   code originated with Servlet programming.</para>
+
+                   <para>Although now a little dated,
+                   <citation>Hunter1998</citation> is a great tutorial
+                   on Java Servlets</para>
+                </listitem>
+                <listitem>
+                   <para>JDBC. The portal requires the use of a
+                   relational database to store some user,
+                   authentication, and channel subscription
+                   information, and the Java standard way to issue
+                   requests to a relational database server is to use
+                   the Java Database Connectivity API, which in turn
+                   requires use of SQL, the Structured Query
+                   Language. You must therefore be familiar with the
+                   syntax and proper use of JDBC and SQL in order to work with
+                   the <productname>uPortal</productname>
+                   framework. </para>
+                </listitem>
+             </itemizedlist>
+             </para>
+             <para>I say these are minimums because if you want to
+             deliver something over and above the minimum
+             functionality (for example authenticating via an LDAP
+             server) then you'll have to be familiar with other J2EE
+             technologies and/or APIs (for example, JNDI).</para>
+          </answer>
+       </qandaentry>
+
+       <qandaentry>
+          <question>
+             <para>You keep writing that
+             <productname>uPortal</productname> is a framework. Isn't
+             that just an empty yuppie marketing word?</para>
+          </question>
+          <answer>
+             <para>No. I'm using the word 'framework' in it's
+             widely-accepted, Software Engineering sense. A framework
+             is a reusable design, expressed as a set of classes, that
+             can serve as a solution to a family of related problems
+             and support reuse at a larger granularity than classes. A
+             mature framework allows components to be reused as
+             <quote>black boxes</quote>, that is, a programmer can
+             incorporate them into a system under construction without
+             knowing their implementations
+             <citation>Johnson1998</citation>.
+             </para>
+
+             <para>Most frameworks in widespread use today are for
+             constructing graphical user interfaces (GUIs) for
+             traditional desktop
+             applications. <productname>uPortal</productname>is a
+             framework for developing a web portal and developing
+             content for display within that portal, but the
+             underlying principal is the same: the framework provides
+             programmers with an infrastructure that supports a
+             coherent architectural model, allowing developers to
+             concentrate on applying their expertise to the problem
+             domain. In the case of
+             <productname>uPortal</productname>, the framework takes
+             care of the common functionality that every portal needs,
+             so that you can implement the parts that are important
+             and specific to your campus.</para>
+
+          </answer>
+       </qandaentry>
+
+
+    </qandaset>
+
+  </sect1>
+
+
+
+  <sect1 id="content">
+    <title>Developing content and applications for use with
+    <productname>uPortal</productname> </title>
 
     <qandaset>
        <qandaentry>
@@ -343,24 +544,34 @@
              </para>
           </question>
           <answer>
-             <para>For simple content provision, you only have to be
-             familiar with how to produce an XML document. One of the
-             defined kinds of channels for use with
+
+             <para>It depends upon what kind of content you want to
+             deliver through the portal.</para>
+
+             <para>For simple content provision, you only have to know
+             how to produce an XML document. One of the defined kinds
+             of channels for use with
              <productname>uPortal</productname> is an
-             <acronym>RSS</acronym> (Rich Site Summary) channel, which
-             is the same format that Netscape uses for their Internet
+             <acronym>RSS</acronym> (Rich Site Summary) channel, the
+             same format that Netscape uses for their Internet
              portal. If you create an <ulink
              url="http://my.netscape.com/publish/">XML document which
              adheres to this standard</ulink>, the
              <productname>uPortal</productname> framework will handle
              formatting and presenting the output for you.</para>
  
-             <para>To develop complete applications that can operate
-             with the portal, you have to be a reasonably experienced
-             software developer and Java programmer who is familiar
-             with the J2EE APIs (see the question above on
-             <productname>uPortal</productname> deployment, above).
-             </para>
+             <para>To deliver content which requires complex user
+             interaction, you'll have to create a complete web
+             application which uses a channel as its user
+             interface. This approach requires that you have almost
+             the same skills as someone developing a portal instance
+             (see above), as well as be able to create and edit XML
+             DTDs and XSL stylesheets. To get an idea of what you're
+             in for when you're working at this level, carefully read
+             <ulink
+             url="http://www.mis2.udel.edu/ja-sig/write-channel/">Michael
+             Oltz' tutorial</ulink>.</para>
+
           </answer>
        </qandaentry>
        <qandaentry>
@@ -370,27 +581,32 @@
              portal. Can I do this?</para>
           </question>
           <answer>
-             <para>It depends upon the application. Did you write the
-             application (and have the source code) or did
-             you purchase a binary package from a vendor? 
+
+             <para>Maybe. It depends upon the application. Did you
+             write the application (and have the source code) or did
+             you purchase a binary package from a vendor?
              </para>
 
-             <para>If you have the source code, its fairly easy to
-             provide an interface to the application that operates
-             within the portal. You would simply have to write a
-             channel that operates in the portal and feeds data to
-             your application, captures the resulting output and
-             displays it to the user inside the portal.</para>
+             <para>If you have the source code, its relatively easy to
+             create an alternate user interface to the application
+             that operates within the portal. in
+             <productname>uPortal</productname> parlance, this would
+             be called a <quote>channel</quote>. Your channel would
+             display itself to the user in the portal and feed the
+             input from that user to your application. Your legacy
+             application would then process the data and send the
+             output back to the channel, and the channel would in turn
+             display the results to the user inside the portal.</para>
 
              <para>If you purchased an application from a vendor,
-             things are a bit more complicated, but the approach is
-             the same. You'd have to write an adaptor that would wrap
-             the output of the legacy application in XML so that it
-             can be displayed inside the portal. When you have this,
-             you can then write a channel for use with the portal that
-             interacts with your adaptor and actually facilitates the
-             translation of the XML so that the portal can display
-             it. </para>
+             things are a bit more complicated, but the high-level
+             approach is the same. You'd have to write an adaptor that
+             would wrap the output of the legacy application in XML so
+             that it can be displayed inside the portal. When you have
+             this, you can then write a channel for use with the
+             portal that interacts with your adaptor and actually
+             facilitates the translation of the XML so that the portal
+             can display it. </para>
           </answer>
        </qandaentry>
 
@@ -421,15 +637,15 @@
              OASIS, <ulink url="http://www.oasis-open.org/">The
              Organization for the Advancement of Structured
              Information Standards</ulink>. Using DocBook allows us to
-             be platform and application independant, as well as
+             be platform and application independent, as well as
              facilitate the distribution of the FAQ in multiple
              formats, most notably <ulink
              url="http://partners.adobe.com/asn/developer/technotes.html#acrobat-pdf">PDF</ulink>
              and <ulink
              url="http://www.w3.org/MarkUp/">HTML</ulink>.</para>
 
-             <para>In order to produce web pages, we use The Apache
-             Group's <ulink
+             <para>In order to produce these secondary formats, we use
+             The Apache Group's <ulink
              url="http://xml.apache.org/xalan/index.html">Xalan-J</ulink>
              Java-based XSLT processor in concert with Norm Walsh's
              <ulink
@@ -448,7 +664,7 @@
           </question>
           <answer>
 
-             <para>Three reasons: Microsoft .doc files are not
+             <para>Three reasons: Microsoft Word .doc files are not
              portable, the file format is proprietary, and the format
              changes often and in highly undocumented and incompatible
              ways.</para>
@@ -469,11 +685,14 @@
              <para>The Word file format is proprietary to Microsoft
              and certain aspects of it are patented, which would
              prevent JA-SIG developers from developing and
-             distributing tools that use it free of charge. Microsoft
-             does make libraries for reading and writing .doc files
-             available to third parties, but those libraries are only
-             available for Microsoft operating systems and compilers
-             and thus are inherently non-portable. </para>
+             distributing tools and applications that use it free of
+             charge. One of JA-SIG's objectives is to deliver
+             <productname>uPortal</productname> to member institutions
+             free of charge. Microsoft does make libraries for reading
+             and writing .doc files available to third parties, but
+             those libraries are only available for Microsoft
+             operating systems and compilers and thus are inherently
+             non-portable. </para>
 
              <para>The .doc file format changes rapidly, sometimes
              with every new version of Microsoft Office and/or
@@ -494,8 +713,8 @@
           </question>
           <answer>
 
-             <para>There are at least three great reasons for us to
-             use DocBook: The document files are portable, the files
+             <para>There are at least three reasons for us to use
+             DocBook: The document files are portable, the files
              interoperate with tools from multiple vendors and the
              process for changing the set of defined tags is open and
              well-publicized.</para>
@@ -506,22 +725,21 @@
              text, including Unicode, can successfully host a DocBook
              file.</para>
 
-             <para>DocBook files can be created, displayed and
-             modified by any tool that can process XML. In addition to
-             the myriad of commercial tools available on the market
-             for processing XML, there are several free and/or
-             open-source tools available for use with XML
-             documents. An important thing to keep in mind is that
-             these tools interoperate, that is, you can use one tool
-             to create a DocBook file, use a tool from a completely
-             different source to process it and use yet another to
-             display it, with no loss of fidelity due to
-             translation. </para>
+             <para>We can create, display and modify DocBook files
+             using any tool that can process XML. In addition to the
+             myriad of commercial tools available on the market for
+             processing XML, there are several free and/or open-source
+             tools available for use with XML documents. An important
+             thing to keep in mind is that these tools interoperate,
+             that is, you can use one tool to create a DocBook file,
+             use a tool from a completely different source to process
+             it and use yet another to display it, with no loss of
+             fidelity due to translation. </para>
 
-             <para>The DocBook tag set changes with time, but the
-             changes are publicized by OASIS so that users and vendors
-             can prepare for them.  The rules for making such changes
-             are well-publicized and specific. For example, minor
+             <para>The DocBook tag set changes with time, but OASIS
+             publicizes them in advance so that users and vendors can
+             prepare for them. The specific rules for making such
+             changes reflect industry consensus. For example, minor
              releases of the DocBook can add to the markup model, but
              not change it in a backward-incompatible way. Major
              releases can introduce backwardly-incompatible changes,
@@ -532,7 +750,7 @@
              the World-Wide Web.</para>
 
              <para>One of the primary benefits of using DocBook is
-             common to any strctured markup language: separation of
+             common to any structured markup language: separation of
              semantics and presentation, which facilitates software
              translation of the document into multiple formats. For
              uPortal, we're currently using HTML for the web and PDF
@@ -553,7 +771,7 @@
           </question>
           <answer>
              <para>You're probably looking in a directory structure
-             produced by a direct checkout from the CVS
+             produced by a direct checkout from the source code
              repository. Since PDF files can get large, we only
              produce them when we issue a release of uPortal. The
              latest source XML files, however, are always available
@@ -596,6 +814,45 @@
           </biblioentry>
 
           <biblioentry>
+            <abbrev>Harold1999</abbrev>
+               <author>
+                  <firstname>Elliotte</firstname>
+                  <othername role="middle">Rusty</othername>
+                  <surname>Harold</surname>
+               </author>
+            <copyright>
+               <year>1999</year>
+            </copyright>
+            <isbn>0-764532-36-7</isbn>
+            <title>XML Bible</title>
+            <publisher>
+               <publishername>IDG Books</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
+            <abbrev>Hunter1998</abbrev>
+            <authorgroup> 
+                <author>
+                   <firstname>Jason</firstname>
+                   <surname>Hunter</surname>
+                </author>
+                 <author>
+                   <firstname>William</firstname>
+                   <surname>Crawford</surname>
+                </author>
+             </authorgroup>
+            <copyright>
+               <year>1998</year>
+            </copyright>
+            <isbn>1-565923-91-X</isbn>
+            <title>Java Servlet Programming</title>
+            <publisher>
+              <publishername>O'Reilly &#38; Associates</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
             <abbrev>Kay2000</abbrev>
                <author>
                   <firstname>Michael</firstname>
@@ -613,6 +870,30 @@
           </biblioentry>
 
           <biblioentry>
+            <abbrev>Fields2000</abbrev>
+             <authorgroup> 
+                <author>
+                   <firstname>Duane</firstname>
+                   <othername role="middle">K.</othername>
+                   <surname>Fields</surname>
+                </author>
+                 <author>
+                   <firstname>Mark</firstname>
+                   <othername role="middle">A.</othername>
+                   <surname>Kolb</surname>
+                </author>
+             </authorgroup>
+            <copyright>
+               <year>2000</year>
+            </copyright>
+            <isbn>1-884777-99-6</isbn>
+            <title>Web Development with JavaServer Pages</title>
+            <publisher>
+               <publishername>Manning Publications Company</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
             <abbrev>McLaughlin2000</abbrev>
                <author>
                   <firstname>Brett</firstname>
@@ -624,6 +905,49 @@
             </copyright>
             <isbn>0-596-00016-2</isbn>
             <title>Java and XML</title>
+            <publisher>
+               <publishername>O'Reilly &#38; Associates</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
+            <abbrev>Maruyama1999</abbrev>
+             <authorgroup>
+                <author>
+                   <firstname>Hiroshi</firstname>
+                   <surname>Maruyama</surname>
+                </author>
+                 <author>
+                   <firstname>Kento</firstname>
+                   <surname>Tamura</surname>
+                 </author>
+                 <author>
+                   <firstname>Naohiko</firstname>
+                   <surname>Uramoto</surname>
+                 </author>
+             </authorgroup>
+            <copyright>
+               <year>1999</year>
+            </copyright>
+            <isbn>0-201-48543-5</isbn>
+            <title>XML and Java : Developing Web Applications</title>
+            <publisher>
+               <publishername>Addison-Wesley Publishing Company</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
+            <abbrev>Monson-Haefel2000</abbrev>
+               <author>
+                  <firstname>Richard</firstname>
+                  <surname>Monson-Haefel</surname>
+               </author>
+            <copyright>
+               <year>2000</year>
+              <holder>O'Reilly &#38; Associates</holder>
+            </copyright>
+            <isbn>1-56592-869-5</isbn>
+            <title>Enterprise JavaBeans</title>
             <publisher>
                <publishername>O'Reilly &#38; Associates</publishername>
             </publisher>
@@ -652,6 +976,35 @@
                 <pagenums>16-25</pagenums>
              </biblioset>
              <date>May 1999</date>
+          </biblioentry>
+
+          <biblioentry>
+          <abbrev>Johnson1998</abbrev>
+             <author>
+                <firstname>Ralph</firstname>
+                <surname>Johnson</surname>
+             </author>
+             <title>Designing Reusable Classes</title>
+             <biblioset relation="journal">
+                <title>Journal of Object-Oriented Programming</title>
+                <pagenums>19-45</pagenums>
+             </biblioset>
+             <date>June/July 1998</date>
+          </biblioentry>
+
+          <biblioentry>
+          <abbrev>Wirfs-Brock1991</abbrev>
+             <author>
+                <firstname>Rebecca</firstname>
+                <othername role="middle">J.</othername>
+                <surname>Wirfs-Brock</surname>
+             </author>
+             <title>Object-Oriented Frameworks</title>
+             <biblioset relation="journal">
+                <title>American Programmer</title>
+                <pagenums>21-29</pagenums>
+             </biblioset>
+             <date>October 1991</date>
           </biblioentry>
 
        </bibliodiv>
