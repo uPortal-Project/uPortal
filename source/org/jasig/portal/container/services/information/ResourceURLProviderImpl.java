@@ -21,12 +21,10 @@ import org.jasig.portal.container.om.window.PortletWindowImpl;
  */
 public class ResourceURLProviderImpl implements ResourceURLProvider {
 
-    private PortletWindow portletWindow = null;
     private String stringUrl = "";
     private String base = "";
 
     public ResourceURLProviderImpl(PortletWindow portletWindow) {
-        this.portletWindow = portletWindow;
         this.base = getBaseUrl(((PortletWindowImpl)portletWindow).getHttpServletRequest());
     }
 
