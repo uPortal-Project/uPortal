@@ -3,7 +3,7 @@
 
   <xsl:param name="baseActionURL">render.uP</xsl:param>
   <xsl:param name="currentSkin">java</xsl:param>
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
 
   <xsl:template match="/">
     <xsl:apply-templates select="skins"/>
