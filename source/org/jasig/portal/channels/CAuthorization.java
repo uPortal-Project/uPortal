@@ -29,7 +29,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
   public boolean isMinimizable () {return false;}
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return false;}
-  public boolean isEditable () {return false;}  
+  public boolean isEditable () {return false;}
   public boolean hasHelp () {return true;}  
   
   public int getDefaultDetachWidth () {return 0;}
@@ -50,10 +50,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
   {    
     try 
     {
-      String sAction = req.getParameter ("authorizationAction");
-      
-      if (sAction == null)
-        doDisplaySignIn (req, res, out);
+       doDisplaySignIn (req, res, out);
     }
     catch (Exception e)
     {
@@ -111,7 +108,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
   {
     HttpSession session = req.getSession (false);
     String sUserName = (String) session.getAttribute ("userName");
-    
+
     if (sUserName != null && sUserName.equals ("guest"))
       doDisplayFailedLogonMsg (req, res, out);
       
@@ -131,7 +128,6 @@ public class CAuthorization implements org.jasig.portal.IChannel
     out.println ("<center>");  
     out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
     out.println ("</center>");  
-    out.println ("<input name=authorizationAction type=hidden value=\"signIn\"><br>");
     out.println ("</form>");
   }
   
