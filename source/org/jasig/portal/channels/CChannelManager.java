@@ -979,8 +979,7 @@ public class CChannelManager extends BaseChannel {
       Document groupsDoc = DocumentFactory.getNewDocument();
       Element groupsE = groupsDoc.createElement("groups");
 
-      String everyoneKey = org.jasig.portal.services.AuthorizationService.getEveryoneKey();
-      IEntityGroup everyoneGroup = GroupService.find(everyoneKey);
+      IEntityGroup everyoneGroup = GroupService.getEveryoneGroup();
 
       // Create a top-level group representing everyone
       Element everyoneGroupE = groupsDoc.createElement("group");
