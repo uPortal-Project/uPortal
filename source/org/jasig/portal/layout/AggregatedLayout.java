@@ -55,13 +55,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   public AggregatedLayout (  String layoutId ) throws PortalException {
     this.layoutId = layoutId;
-    try {
      if ( guid == null )
-      guid = new GuidGenerator();
-      updateCacheKey();
-    } catch ( Exception e ) {
-        throw new PortalException(e);
-      }
+       guid = new GuidGenerator();
+     updateCacheKey();
   }
 
   public void setLayoutManager ( IAggregatedUserLayoutManager layoutManager ) {

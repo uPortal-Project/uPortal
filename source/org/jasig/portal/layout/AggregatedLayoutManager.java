@@ -79,7 +79,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
 
-  public AggregatedLayoutManager( IPerson person, UserProfile userProfile ) throws Exception {
+  public AggregatedLayoutManager( IPerson person, UserProfile userProfile ) throws PortalException {
     this.person = person;
     this.userProfile = userProfile;
     layout = new AggregatedLayout ( String.valueOf(getLayoutId()), this );

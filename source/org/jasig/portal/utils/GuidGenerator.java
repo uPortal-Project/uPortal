@@ -6,6 +6,7 @@
 package org.jasig.portal.utils;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 /**
@@ -112,10 +113,16 @@ public class GuidGenerator {
     // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     /**
      * GuidGenerator() - default constructor
+     * @throws UnknownHostException
      */
-    public GuidGenerator() throws Exception {
+    public GuidGenerator() {
 
-        InetAddress ip = InetAddress.getByName(InetAddress.getLocalHost().getHostName());
+        InetAddress ip;
+        try {
+            ip = InetAddress.getByName(InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
         byte[] bytes = ip.getAddress();
 
         StringBuffer buffer = new StringBuffer(12);
