@@ -36,7 +36,7 @@
 package org.jasig.portal;
 
 import java.security.SecureRandom;
-
+import java.io.*;
 
 /* 
  * A generic class for storing all sorts of unique IDs
@@ -55,6 +55,17 @@ public class PortalID {
      */
     public PortalID(byte[] id) {
 	this.id=id;
+    }
+
+    /*
+     * Create an integer id
+     */
+    public PortalID(int id) {
+	this.id=new byte[4];
+	this.id[0]=(byte) id;
+	this.id[1]=(byte) (id>>8);
+	this.id[2]=(byte) (id>>16);
+	this.id[3]=(byte) (id>>24);
     }
 
     /* 
@@ -79,6 +90,10 @@ public class PortalID {
 
     public byte[] getBytes() {
 	return id;
+    }
+
+    public DataInputStream getDataInputStream() {
+	return new DataInputStream(new ByteArrayInputStream(id));
     }
 
     protected static String byteArrToHexString(byte bytes[]) {
