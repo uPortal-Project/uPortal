@@ -73,6 +73,7 @@ import org.jasig.portal.utils.CommonUtils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
+
 /**
  * A class handling holding all user state information. The class is also reponsible for
  * request processing and orchestrating the entire rendering procedure.
@@ -656,6 +657,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @exception PortalException if an error occurs
      */
     private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm) throws PortalException {
+     try {
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
@@ -687,10 +689,11 @@ public class UserInstance implements HttpSessionBindingListener {
             int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
             IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
             nodeDesc.setName("Unnamed");
-            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (values1 = req.getParameterValues("contentPublishID")) != null )
+            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (values1 = req.getParameterValues("contentPublishID")) != null ) {
              ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(values1[0]);
+            }
             newNodeDescription = nodeDesc;
-            ulm.markAddTargets(nodeDesc);
+            ulm.markAddTargets(newNodeDescription);
         } else {
             ulm.markAddTargets(null);
           }
@@ -708,7 +711,8 @@ public class UserInstance implements HttpSessionBindingListener {
              newNodeDescription = ulm.createNodeDescription(nodeType);
              newNodeDescription.setName("Unnamed");
             }
-            ulm.addNode(newNodeDescription,values2[0],value);
+             // Adding a new node
+             ulm.addNode(newNodeDescription,values2[0],value);
          }
             newNodeDescription = null;
         }
@@ -758,6 +762,10 @@ public class UserInstance implements HttpSessionBindingListener {
             for (int i = 0; i < values.length; i++) {
                 ulm.deleteNode(values[i]);
             }
+        }
+      } catch ( Exception e ) {
+          e.printStackTrace();
+          throw new PortalException(e);
         }
     }
 
