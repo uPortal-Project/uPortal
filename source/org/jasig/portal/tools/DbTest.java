@@ -38,7 +38,10 @@ public class DbTest {
          e.printStackTrace();
       }
       finally {
-         try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
+         try { 
+             if (con!= null) 
+                 RDBMServices.releaseConnection(con); 
+         }catch (Exception e) {}
       }
    }//end main
 
