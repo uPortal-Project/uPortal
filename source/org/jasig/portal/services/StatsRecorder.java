@@ -118,7 +118,7 @@ public class StatsRecorder {
           int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
           threadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
       } catch (Exception e) {
-          log.error( e);
+          log.error("Error instantiating StatsRecorder", e);
       }
   }  
   

@@ -109,7 +109,7 @@ public void add(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            log.error( ex);
+            log.error("Exception adding permissions " + perms, ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -143,7 +143,7 @@ public void add(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        log.error( ex.getMessage());
+        log.error("Exception adding permission [" + perm + "]", ex);
         throw new AuthorizationException("Problem adding Permission " + perm);
     }
     finally
@@ -164,7 +164,7 @@ public void delete(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            log.error( ex);
+            log.error("Exception deleting permissions " + perms, ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -190,7 +190,7 @@ public void delete(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        log.error( ex.getMessage());
+        log.error("Exception deleting permission [" + perm + "]", ex);
         throw new AuthorizationException("Problem deleting Permission " + perm);
     }
     finally
@@ -230,7 +230,8 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
     }
     catch (Exception ex)
     {
-        log.error( ex);
+        log.error("Exception determining whether " +
+                "permission [" + perm + "] exists in database.", ex);
         throw new AuthorizationException("RDBMPermissionImpl.existsInDatabase(): " + ex);
     }
     finally
@@ -493,7 +494,7 @@ private void primAdd(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        log.error( ex);
+        log.error("Exception adding permissions " + perms, ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -573,7 +574,7 @@ private void primDelete(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        log.error( ex);
+        log.error("Exception deleting permissions [" + perms + "]", ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -633,7 +634,7 @@ private void primUpdate(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        log.error( ex);
+        log.error("Exception updating permissions " + perms, ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -789,7 +790,7 @@ throws AuthorizationException
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Problem retrieving permissions", sqle);
         throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage());
     }
     finally
@@ -821,7 +822,7 @@ public void update(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            log.error( ex);
+            log.error("Exception updating permissions " + perms, ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -848,7 +849,7 @@ public void update(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        log.error( ex.getMessage());
+        log.error("Exception updating permission [" + perm + "]", ex);
         throw new AuthorizationException("Problem updating Permission " + perm);
     }
     finally

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.CommonUtils;
@@ -54,6 +53,8 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Collection;
+
+import javax.xml.transform.TransformerException;
 
   /**
    * A channel for adding new content to a layout.
@@ -294,9 +295,8 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( Exception e ) {
-	  	  e.printStackTrace();
-	  	  throw new PortalException(e.getMessage());	     
+	  } catch ( TransformerException e ) {
+	  	  throw new PortalException(e);	     
 	  }
 			 
 	}		 	
@@ -317,6 +317,7 @@ public class CContentSubscriber extends FragmentManager {
 	}
 
     public void initRegistry() throws PortalException {	
+    	channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
       	registry = DocumentFactory.getNewDocument();
       	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));		
         getFragmentList(registry,registry.getDocumentElement());
@@ -331,12 +332,6 @@ public class CContentSubscriber extends FragmentManager {
 			if ( alm == null )  
 			  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!");  
 	}
-
-    public void setStaticData (ChannelStaticData sd) throws PortalException {
-       super.setStaticData(sd);
-       if ( channelRegistry == null )
-        channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    }
 
     public void renderXML (ContentHandler out) throws PortalException {
     	

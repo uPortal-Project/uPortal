@@ -66,9 +66,6 @@ public class ChannelRenderer
     private static final Log log = LogFactory.getLog(ChannelRenderer.class);
     
     public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels");
-    public static final int RENDERING_SUCCESSFUL=0;
-    public static final int RENDERING_FAILED=1;
-    public static final int RENDERING_TIMED_OUT=2;
   
     public static final String[] renderingStatus={"successful","failed","timed out"};
 
@@ -230,7 +227,7 @@ public class ChannelRenderer
    * outputRendering() is a blocking function. It will return only when the channel completes rendering
    * or fails to render by exceeding allowed rendering time.
    * @param out Document Handler that will receive information rendered by the channel.
-   * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
+   * @return a code specified in IChannelRenderer
    */
     public int outputRendering (ContentHandler out) throws Throwable {
         int renderingStatus=completeRendering();
