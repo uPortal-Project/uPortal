@@ -72,8 +72,6 @@ function openWin(url, title, width, height)
 </script>
 <% layoutBean.writeBodyStyle (request, response, out); %>
 
-
->>>>>>> 1.9.2.1
 <!-- Header -->
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr>
