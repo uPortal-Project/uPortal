@@ -1,0 +1,20 @@
+<PersonDirs>
+	<!-- CVS metadata: $Revision$ $Date$ -->
+	<!-- An example PersonDirs.xml file which configures a single
+		attribute source using directly configured JDBC. 
+		This file is used for the PersonDirXmlParserTester testcase - this file should
+		only be modified in coordination with modifications to that testcase. -->
+	<PersonDirInfo>
+		<url>ldaps://mrfrumble.its.yale.edu:389/o=yale.edu</url>
+		<logonid>someUser</logonid>
+		<logonpassword>somePassword</logonpassword>
+		<uidquery>(uid={0})</uidquery>
+		<usercontext></usercontext>
+		<attributes>
+			<attribute>
+				<name>mail</name>
+				<alias>emailfromldap</alias>
+			</attribute>
+		</attributes>
+	</PersonDirInfo>
+</PersonDirs>
