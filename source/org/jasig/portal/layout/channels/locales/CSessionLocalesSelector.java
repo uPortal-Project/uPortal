@@ -67,7 +67,7 @@ public class CSessionLocalesSelector extends BaseChannel implements IPrivileged 
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
-        if (lm.isLocaleAware()) {
+        if (LocaleManager.isLocaleAware()) {
             Locale[] locales = runtimeData.getLocales();
             Document doc = LocaleManager.xmlValueOf(locales, locales[0]);
             XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
