@@ -64,11 +64,6 @@ public class LayoutBean
   ChannelManager channelManager;
   UserLayoutManager uLayoutManager;
 
-  // stylesheet sets for the first two major XSL transformations
-  // userLayout -> structuredLayout -> target markup language
-  private StylesheetSet structuredLayoutSS;
-  private StylesheetSet userLayoutSS;
-
   // contains information relating client names to media and mime types
   private MediaManager mediaM;
 
@@ -86,14 +81,6 @@ public class LayoutBean
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
     String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "LayoutBean" + fs;
     mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
-
-    // create a stylesheet set for userLayout transformations
-    userLayoutSS = new StylesheetSet (stylesheetDir + "UserLayout.ssl");
-    userLayoutSS.setMediaProps (propertiesDir + "media.properties ");
-
-    // create a stylesheet set for structuredLayout transformations
-    structuredLayoutSS = new StylesheetSet (stylesheetDir + "StructuredLayout.ssl");
-    structuredLayoutSS.setMediaProps (propertiesDir + "media.properties ");
 
     // instantiate the processors
     try
@@ -129,30 +116,29 @@ public class LayoutBean
    */
   public void writeContent (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
-    // This function does ALL the content gathering/presentation work.
-    // The following filter sequence is processed:
-    //        userLayoutXML (in UserLayoutManager)
-    //              |
-    //        uLayout2sLayout filter
-    //              |
-    //        HeaderAndFooterIncorporation filter
-    //              |
-    //        sLayout2html filter
-    //              |
-    //        ChannelRendering buffer
-    //              |
-    //        ChannelIncorporation filter
-    //              |
-    //        Serializer (XHTML/WML/HTML/etc.)
-    //              |
-    //        JspWriter
-    //
+      // This function does ALL the content gathering/presentation work.
+      // The following filter sequence is processed:
+      //        userLayoutXML (in UserLayoutManager)
+      //              |
+      //        incorporate StructureAttributes
+      //              |
+      //        Structure transformation
+      //              + (buffering step)
+      //        ChannelRendering Buffer
+      //              |
+      //        ThemeAttributesIncorporation Filter
+      //              |
+      //        Theme Transformation
+      //              |
+      //        ChannelIncorporation filter
+      //              |
+      //        Serializer (XHTML/WML/HTML/etc.)
+      //              |
+      //        JspWriter
+      //
 
     try
     {
-      // A userLayout node that transformations will be applied to.
-      // see "userLayoutRoot" parameter
-      Node rElement;
 
       // get the layout manager
       if (uLayoutManager == null) {
@@ -178,16 +164,7 @@ public class LayoutBean
       //  basically things that directly affect the userLayout structure)
       processUserLayoutParameters (req, uLayoutManager);
 
-      // set the response mime type
-      res.setContentType (mediaM.getReturnMimeType (req));
 
-      // set up the transformation pipeline
-
-      // get a serializer appropriate for the target media
-      BaseMarkupSerializer markupSerializer = mediaM.getSerializer (req, out);
-
-      // set up the serializer
-      markupSerializer.asContentHandler ();
 
       // set up the channelManager
       if (channelManager == null)
@@ -199,13 +176,27 @@ public class LayoutBean
       // values that are usually null are filled out
       UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
 
+      // set the response mime type
+      res.setContentType (uLayoutManager.getMimeType());
+
+
+
+      // get a serializer appropriate for the target media
+      BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(uLayoutManager.getSerializerName(), out);
+
+      // set up the serializer
+      markupSerializer.asContentHandler ();
+
+      // set up the transformation pipeline
+
       // initialize ChannelIncorporationFilter
-      ChannelIncorporationFilter cf = new ChannelIncorporationFilter (markupSerializer, channelManager);
+      ChannelIncorporationFilter cif = new ChannelIncorporationFilter (markupSerializer, channelManager);
 
-      // initialize ChannelRenderingBuffer
-      ChannelRenderingBuffer crb = new ChannelRenderingBuffer (cf, channelManager);
 
-      XSLTInputSource stylesheet = structuredLayoutSS.getStylesheet (req);
+      // set up the "theme" transformation
+      XSLTInputSource themeStylesheet = uLayoutManager.getThemeStylesheet ();
+      sLayoutProcessor.processStylesheet (themeStylesheet);
+      sLayoutProcessor.setDocumentHandler (cif);
 
       // Peter, this is just temporary until you get the CHeader channel working.
       // I just needed a way for the Welcome message to change when a user logged in.
@@ -219,12 +210,22 @@ public class LayoutBean
       sLayoutProcessor.setStylesheetParam("userName", sLayoutProcessor.createXString(userDisplayName));
       // End of temporary section
 
-      sLayoutProcessor.processStylesheet (stylesheet);
-      sLayoutProcessor.setDocumentHandler (crb);
+
 
       // initialize a filter to fill in channel attributes for the
       // "theme" (second) transformation.
       ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(sLayoutProcessor,cup.getThemeStylesheetUserPreferences());
+
+
+      // initialize ChannelRenderingBuffer
+      ChannelRenderingBuffer crb = new ChannelRenderingBuffer (taif, channelManager);
+
+      // filter to fill in channel/folder attributes for the "structure" transformation.
+      //      StructureAttributesIncorporationFilter saif=new StructureAttributesIncorporationFilter(sLayoutProcessor,cup.getStructureStylesheetUserPreferences());
+
+
+
+      // now that pipeline is set up, determine and set the stylesheet params
 
       // deal with parameters that are meant for the LayoutBean
       HttpSession session = req.getSession (false);
@@ -234,7 +235,7 @@ public class LayoutBean
       String req_layoutRoot = req.getParameter ("userLayoutRoot");
       String ses_layoutRoot = (String) session.getAttribute ("userLayoutRoot");
 
-      if (req_layoutRoot != null)
+      /*      if (req_layoutRoot != null)
       {
         session.setAttribute ("userLayoutRoot", req_layoutRoot);
         rElement = uLayoutManager.getNode (req_layoutRoot);
@@ -255,7 +256,9 @@ public class LayoutBean
         // Logger.log(Logger.DEBUG,"LayoutBean::writeChannels() : retrieved the session value for layoutRoot=\""+ses_layoutRoot+"\"");
       }
       else
-      rElement=uLayoutManager.getRoot ();
+      */
+
+      Node rElement=uLayoutManager.getRoot ();
 
       // "stylesheetTarget" allows to specify one of two stylesheet sets "u" or "s" to
       // a selected member of which the stylesheet parameters will be passed
@@ -320,7 +323,7 @@ public class LayoutBean
 
 
       // all the parameters are set up, fire up the filter transforms
-      uLayoutProcessor.process (new XSLTInputSource (rElement),userLayoutSS.getStylesheet (),new XSLTResultTarget (taif));
+      uLayoutProcessor.process (new XSLTInputSource (rElement),uLayoutManager.getStructureStylesheet(),new XSLTResultTarget (crb));
       uLayoutProcessor.reset();
       sLayoutProcessor.reset();
     }

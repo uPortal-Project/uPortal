@@ -68,10 +68,15 @@ public class UserLayoutManager {
   // first (structure) transformation
   private Document argumentedUserLayoutXML;
 
-  private MediaManager mediaM;
-
   private UserPreferences up;
   private UserPreferences complete_up;
+
+    // caching of stylesheet descriptions is recommended
+    // if they'll take up too much space, we can take them
+    // out, but cache stylesheet URIs, mime type and serializer name.
+    // Those are used in every rendering cycle.
+    private ThemeStylesheetDescription tsd;
+    private StructureStylesheetDescription ssd;
 
     private boolean unmapped_user_agent=false;
 
@@ -88,7 +93,6 @@ public class UserLayoutManager {
   {
     String fs = System.getProperty ("file.separator");
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
-    MediaManager mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
 
     uLayoutXML = null;
 
@@ -181,7 +185,7 @@ public class UserLayoutManager {
             }
         }
 
-        for(Enumeration e=fsup.getCategories();e.hasMoreElements();) {
+        for(Enumeration e=fsup.getFolders();e.hasMoreElements();) {
             String caID=(String)e.nextElement();
             if(!folderSet.contains(caID)) {
                 fsup.removeFolder(caID);
@@ -257,11 +261,11 @@ public class UserLayoutManager {
         NodeList folderElements=argumentedUserLayoutXML.getElementsByTagName("folder");
         if(folderElements==null)
             Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of folder elements obtained!");
-        List cl=complete_fsup.getFolderAttributeNames();
-        for(int j=0;j<cl.size();j++) {
-            for(int i=folderElements.getLength()-1;i>=0;i--) {
+	for(Enumeration fe=complete_fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
+	    String attributeName=(String) fe.nextElement();
+	    for(int i=folderElements.getLength()-1;i>=0;i--) {
                 Element folderElement=(Element) folderElements.item(i);
-                folderElement.setAttribute((String) cl.get(j),complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j)));
+                folderElement.setAttribute(attributeName,complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),attributeName));
                 //		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) cl.get(j)+"="+complete_fsup.getFolderAttributeValue(folderElement.getAttribute("ID"),(String) cl.get(j))+" for a folder "+folderElement.getAttribute("ID"));
             }
         }
@@ -269,11 +273,11 @@ public class UserLayoutManager {
         NodeList channelElements=argumentedUserLayoutXML.getElementsByTagName("channel");
         if(channelElements==null)
             Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : empty list of channel elements obtained!");
-        List chl=complete_fsup.getChannelAttributeNames();
-        for(int j=0;j<chl.size();j++) {
+	for(Enumeration ce=complete_fsup.getChannelAttributeNames(); ce.hasMoreElements();) {
+	    String attributeName=(String) ce.nextElement();
             for(int i=channelElements.getLength()-1;i>=0;i--) {
                 Element channelElement=(Element) channelElements.item(i);
-                channelElement.setAttribute((String) chl.get(j),complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j)));
+                channelElement.setAttribute(attributeName,complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),attributeName));
                 //		Logger.log(Logger.DEBUG,"UserLayoutManager::setCurrentUserPreferences() : added attribute "+(String) chl.get(j)+"="+complete_fsup.getChannelAttributeValue(channelElement.getAttribute("ID"),(String) chl.get(j))+" for a channel "+channelElement.getAttribute("ID"));
             }
         }
@@ -303,12 +307,64 @@ public class UserLayoutManager {
     }
 
     public UserPreferences getUserPreferencesCopy() {
-        return new UserPreferences(up);
+        return new UserPreferences(this.getUserPreferences());
+    }
+
+    private UserPreferences getUserPreferences() {
+	return up;
     }
 
     public UserProfile getCurrentProfile() {
-	return up.getProfile();
+	return this.getUserPreferences().getProfile();
     }
+
+    
+    private ThemeStylesheetDescription getThemeStylesheetDescription() {
+	if (this.tsd==null) {
+	    ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+	    tsd=csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetName());
+	}
+	return tsd;
+    }
+
+    private StructureStylesheetDescription getStructureStylesheetDescription() {
+	if (this.ssd==null) {
+	    ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
+	    ssd=csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetName());
+	}
+	return ssd;
+    }
+
+    /*
+     * Returns structure stylesheet defined by the user profile
+     */
+    public XSLTInputSource getStructureStylesheet() {
+	return new XSLTInputSource(UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
+    }
+
+    /*
+     * Returns theme stylesheet defined by the user profile
+     */
+    public XSLTInputSource getThemeStylesheet() {
+	return new XSLTInputSource(UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
+    }
+
+    /*
+     * returns the mime type defined by the theme stylesheet
+     * in the user profile
+     */
+    public String getMimeType() {
+	return this.getThemeStylesheetDescription().getMimeType();
+    }
+
+    /*
+     * returns a serializer defined by the theme stylesheet
+     * in the user profile
+     */
+    public String getSerializerName() {
+	return this.getThemeStylesheetDescription().getSerializerName();
+    }
+    
 
   public Node getNode (String elementID)
   {
