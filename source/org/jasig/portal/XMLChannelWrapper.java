@@ -34,7 +34,10 @@ public class XMLChannelWrapper implements IChannel
 
     public Vector getParameters()
     {
-      return null;
+      ChannelSubscriptionProperties csp;
+      if((csp=ch.getSubscriptionProperties())!=null)
+	  return csp.getParameterFields();
+      else return null;
     }
     
     public String getName () {

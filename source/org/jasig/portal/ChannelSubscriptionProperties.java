@@ -34,6 +34,8 @@ public class ChannelSubscriptionProperties
     private boolean bool_isEditable;
     private boolean bool_hasHelp;
 
+    private java.util.Vector vec_parameter_fields;
+
     public ChannelSubscriptionProperties() {
 	// set the default values here ... I've chosen something safe for now
 	str_name="";
@@ -44,6 +46,7 @@ public class ChannelSubscriptionProperties
 	bool_isRemovable=true;
 	bool_isEditable=false;
 	bool_hasHelp=false;
+	vec_parameter_fields=null;
     }
 
     // the set functions
@@ -55,6 +58,7 @@ public class ChannelSubscriptionProperties
     public void setRemovable(boolean value) { bool_isRemovable=value; }
     public void setEditable(boolean value) { bool_isEditable=value; }
     public void setHasHelp(boolean value) { bool_hasHelp=value; }
+    public void setParameterFields(java.util.Vector v) { vec_parameter_fields=v; }
 
     // the get functions
     public String getName() { return str_name; }
@@ -65,5 +69,6 @@ public class ChannelSubscriptionProperties
     public boolean isRemovable() { return bool_isRemovable; }
     public boolean isEditable() { return bool_isEditable; }
     public boolean hasHelp() { return bool_hasHelp; }
+    public java.util.Vector getParameterFields() { return vec_parameter_fields; }
 
 }
