@@ -89,6 +89,11 @@ import  java.net.URL;
 public class CBookmarks extends BaseChannel {
   // A DOM document where all the bookmark information will be contained
   protected DocumentImpl m_bookmarksXML;
+  // File seperator for current OS
+  private static final String fs = System.getProperty("file.separator");
+  // Location of the stylesheet files
+  private static final String stylesheetDir = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs
+      + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
   // Initialize StylesheetSet
   private static StylesheetSet m_stylesheetSet;
   // Define some constants to keep the state of the channel
@@ -108,10 +113,6 @@ public class CBookmarks extends BaseChannel {
    * put your documentation comment here
    */
   public CBookmarks () {
-    String fs = System.getProperty("file.separator");
-    // Location of the stylesheet files
-    String stylesheetDir = GenericPortalBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig"
-        + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
     m_stylesheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
     m_stylesheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
   }
