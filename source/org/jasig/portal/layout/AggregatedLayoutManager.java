@@ -1061,11 +1061,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
       layoutData.put(rootId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
-    
+      layout.setLayoutData(layoutData);
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootId, layoutData );
-      
-      layout.setLayoutData(layoutData);
       updateCacheKey();
     }
 
