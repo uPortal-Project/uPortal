@@ -32,8 +32,6 @@ public abstract class AbstractPool implements ThreadPool {
         private long DELAY = 200L;
         protected Queue workQueue;
 
-        private static int counter = 0;
-
         /**
          * AbstractPool Constructor
          * @param minThreads
