@@ -213,7 +213,9 @@ public class LocaleManager  {
         } else if (country != null) {
             locale = new Locale(language, country);
         } else if (language != null) {
-            locale = new Locale(language);
+            // Uncomment the following line
+            // when we can count on JDK 1.4!
+            //locale = new Locale(language);
         }
         
         return locale;
