@@ -66,18 +66,22 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * Extract eduPerson-like attributes from whatever LDAP directory or JDBC
  * database happens to be lying around in the IT infrastructure.
+ * <p>
+ * Multivalued attributes are supported as of uPortal 2.3.
  *
  * Parameterized by uPortal/properties/PersonDirs.xml.
  * Original author is Howard.Gilbert@yale.edu.
+ * @author Howard Gilbert
+ * @version $Revision$
  */
 public class PersonDirectory {
 
@@ -178,7 +182,7 @@ public class PersonDirectory {
             continue; // whitespace (typically \n) between tags
           Element pele = (Element) param;
           String tagname = pele.getTagName();
-          String value = getTextUnderElement(pele);
+          String value = XML.getElementText(pele);
 
           // each tagname corresponds to an object data field
           if (tagname.equals("url")) {
@@ -210,13 +214,13 @@ public class PersonDirectory {
                 NodeList namenodes = anode.getElementsByTagName("name");
                 String aname = "$$$";
                 if (namenodes.getLength()!=0)
-                  aname= getTextUnderElement(namenodes.item(0));
+                  aname= XML.getElementText((Element)namenodes.item(0));
                 pdi.attributenames[j]=aname;
                 NodeList aliasnodes = anode.getElementsByTagName("alias");
                 if (aliasnodes.getLength()==0) {
                   pdi.attributealiases[j]=aname;
                 } else {
-                  pdi.attributealiases[j]=getTextUnderElement(aliasnodes.item(0));
+                  pdi.attributealiases[j]=XML.getElementText((Element)aliasnodes.item(0));
                 }
               }
             } else {
@@ -265,21 +269,6 @@ public class PersonDirectory {
     return true;
   }
 
-
-  private String getTextUnderElement(Node nele) {
-    if (!(nele instanceof Element))
-      return null;
-    Element pele = (Element) nele;
-    StringBuffer vb = new StringBuffer();
-    NodeList vnodes = pele.getChildNodes();
-    for (int j =0; j<vnodes.getLength();j++) {
-      Node vnode = vnodes.item(j);
-      if (vnode instanceof Text)
-        vb.append(((Text)vnode).getData());
-    }
-    return vb.toString();
-  }
-
   /**
    * Run down the list of LDAP or JDBC sources and extract info from each
    */
@@ -315,8 +304,6 @@ public class PersonDirectory {
       }
       persons.put(uid, m_Person);
   }
-
-
 
   /**
    * Extract named attributes from a single LDAP directory
@@ -422,7 +409,7 @@ public class PersonDirectory {
     Connection conn = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
-   try {
+    try {
 
       // Get a connection with from container
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
@@ -460,23 +447,23 @@ public class PersonDirectory {
       stmt.setString(1,username);
       rs = stmt.executeQuery();
       if (rs.next()) {
-      // get the first (only) row of result
+        // get the first (only) row of result
 
-      // Foreach attribute, put its value and alias in the hashtable
-      for (int i=0;i<pdi.attributenames.length;i++) {
-        try {
-          String value = null;
-          String attName = pdi.attributenames[i];
-          if (attName != null && attName.length() != 0)
-            value = rs.getString(attName);
-          if (value!=null) {
-            attribs.put(pdi.attributealiases[i],value);
+        // Foreach attribute, put its value and alias in the hashtable
+        for (int i=0;i<pdi.attributenames.length;i++) {
+          try {
+            String value = null;
+            String attName = pdi.attributenames[i];
+            if (attName != null && attName.length() != 0)
+              value = rs.getString(attName);
+            if (value!=null) {
+              attribs.put(pdi.attributealiases[i],value);
+            }
+          } catch (SQLException sqle) {
+            ; // Don't let error in a field prevent processing of others.
+            LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
           }
-        } catch (SQLException sqle) {
-          ; // Don't let error in a field prevent processing of others.
-          LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
         }
-      }
       }
 
     } catch (Exception e) {
