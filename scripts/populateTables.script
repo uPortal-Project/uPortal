@@ -215,7 +215,7 @@ INSERT INTO THEME_STYLESHEET_DESCRIPTION_TABLE (STYLESHEET_NAME, STYLESHEET_URI,
 VALUES ('Nested tables', 'webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl', 'webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf', 'Renders tabs and columns as nested tables');
 
 INSERT INTO CSS_STYLESHEET_DESCRIPTION_TABLE (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) 
-VALUES ('general CSS', 'webpages/stylesheets/general.css', 'webpages/stylesheets/general.sdf', 'Body, channel tabs and link coloring and fonts');
+VALUES ('general CSS', 'webpages/media/org/jasig/portal/layout/tabColumn/general.css', 'webpages/media/org/jasig/portal/layout/tabColumn/general.sdf', 'Body, channel tabs and link coloring and fonts');
 
 INSERT INTO CSS_STYLESHEET_MAPPING (CSS_STYLESHEET_NAME, THEME_STYLESHEET_NAME) VALUES ('general CSS', 'Nested tables');
 
