@@ -171,6 +171,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
         
         try {
             synchronized(this) {
@@ -228,13 +229,12 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
 			portletWindow.setChannelRuntimeData(rd);
-            portletWindow.setHttpServletRequest(pcs.getHttpServletRequest());
+            portletWindow.setHttpServletRequest(wrappedRequest);
             cd.setPortletWindow(portletWindow);
                 
             // As the container to load the portlet
-            HttpServletRequest requestWrapper = pcs.getHttpServletRequest();
             synchronized(this) {
-                portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
+                portletContainer.portletLoad(portletWindow, wrappedRequest, pcs.getHttpServletResponse());
             }
             
             cd.setPortletWindowInitialized(true);
@@ -358,8 +358,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         channelState.setRuntimeData(rd);
         
-        PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
+        ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
         
         try {
             PortletContainerServices.prepare(uniqueContainerName);
@@ -368,7 +369,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 // Put the current runtime data into the portlet window
                 PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
                 portletWindow.setChannelRuntimeData(rd);
-                portletWindow.setHttpServletRequest(pcs.getHttpServletRequest());
+                portletWindow.setHttpServletRequest(wrappedRequest);
                 
                 // Get the portlet url manager which will analyze the request parameters
                 DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
@@ -387,10 +388,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     try {
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
-                        HttpServletRequest request = pcs.getHttpServletRequest();
                         HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                         //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
-                        portletContainer.processPortletAction(cd.getPortletWindow(), request, wrappedResponse);
+                        portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
                         InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
                     } catch (Exception e) {
