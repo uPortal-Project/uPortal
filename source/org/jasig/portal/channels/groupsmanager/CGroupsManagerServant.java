@@ -80,7 +80,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
    protected void finalize() throws Throwable{
       super.finalize();
       // send SESSION_DONE event to the wrapped CGroupsManager channel.
-      PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
+      PortalEvent ev=PortalEvent.SESSION_DONE_EVENT;
       channel.receiveEvent(ev, uid);
    }
 

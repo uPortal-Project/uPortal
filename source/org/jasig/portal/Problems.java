@@ -87,7 +87,7 @@ public class Problems extends HttpServlet {
         }
         sb.append("<pre>");
         PortalException pe = countid.lastPortalException;
-        Exception ex = pe.getRecordedException();
+        Throwable ex = pe.getCause();
         if (ex==null)
         	ex=pe;
         sb.append("at "+ pe.getTimestamp().toString()+"\n");

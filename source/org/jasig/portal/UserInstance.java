@@ -420,7 +420,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                         try {
                                             channelManager.startChannelRendering(channelSubscribeId);
                                         } catch (PortalException e) {
-                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
+                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getCause().toString());
                                         }
                                     } else {
                                         log.error("UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
@@ -777,21 +777,21 @@ public class UserInstance implements HttpSessionBindingListener {
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.HELP_BUTTON_EVENT));
+                channelManager.passPortalEvent(values[i], PortalEvent.HELP_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_about_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.ABOUT_BUTTON_EVENT));
+                channelManager.passPortalEvent(values[i], PortalEvent.ABOUT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_edit_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.EDIT_BUTTON_EVENT));
+                channelManager.passPortalEvent(values[i], PortalEvent.EDIT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
-            channelManager.passPortalEvent(values[0], new PortalEvent(PortalEvent.DETACH_BUTTON_EVENT));
+            channelManager.passPortalEvent(values[0], PortalEvent.DETACH_BUTTON);
         }
 
         if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
@@ -930,10 +930,10 @@ public class UserInstance implements HttpSessionBindingListener {
                             PortalEvent e = null;
 
                             if ("true".equals(aValue)) {
-                                e = new PortalEvent(PortalEvent.MINIMIZE_EVENT);
+                                e = PortalEvent.MINIMIZE;
                             }
                             else {
-                                e = new PortalEvent(PortalEvent.MAXIMIZE_EVENT);
+                                e = PortalEvent.MAXIMIZE;
                             }
 
                             channelManager.passPortalEvent(aNode[j], e);

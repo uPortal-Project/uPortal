@@ -440,7 +440,7 @@ public class ChannelManager implements LayoutEventListener {
                 if(t!=null) {
                     if(t instanceof InternalPortalException) {
                         InternalPortalException ipe=(InternalPortalException) t;
-                        Throwable e=ipe.getException();
+                        Throwable e=ipe.getCause();
                         message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
                         log.fatal("CError threw exception. Please fix CError immediately!", e);
                     } else {
@@ -474,7 +474,7 @@ public class ChannelManager implements LayoutEventListener {
                 if(t!=null ){
                     if(t instanceof InternalPortalException) {
                         InternalPortalException ipe=(InternalPortalException) t;
-                        Throwable channelException=ipe.getException();
+                        Throwable channelException=ipe.getCause();
                         replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
                     } else {
                         replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, technicalMessage, true);
