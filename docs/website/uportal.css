@@ -26,19 +26,24 @@ A.sidelinks:link {
    COLOR: #000099; 
    FONT-FAMILY: Arial, Verdana, sans-serif;
    TEXT-DECORATION: none
+; font-size: 12px
 }
 A.sidelinks:visited {
    COLOR: #000099; 
    FONT-FAMILY: Arial, Verdana, sans-serif; 
    TEXT-DECORATION: none
+; font-size: 12px
 }
 A.sidelinks:active {
    COLOR: #000099; 
    FONT-FAMILY: Arial, Verdana, sans-serif;
    TEXT-DECORATION: none
+; font-size: 12px
 }
 A.sidelinks:hover {
    COLOR: #CC0000; 
    FONT-FAMILY: Arial, Verdana, sans-serif; 
    TEXT-DECORATION: underline
+; font-size: 12px
 }
+li {  }
