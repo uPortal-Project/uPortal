@@ -48,7 +48,7 @@ Version $Revision$
     <step>
       <ID>1</ID>
 
-      <name>Parameters for the applet channel</name>
+      <name>Configuration</name>
 
       <description>
         Enter the code base, archive, and code for the applet
@@ -89,7 +89,7 @@ Version $Revision$
     <step>
       <ID>2</ID>
 
-      <name>Dimensions of the applet channel</name>
+      <name>Dimensions</name>
 
       <description>
         Enter the width and height of the applet
@@ -122,7 +122,7 @@ Version $Revision$
     <step>
       <ID>3</ID>
 
-      <name>Applet parameters</name>
+      <name>Parameters</name>
 
       <description>
         These are the parameters needed for the applet itself.  There may
