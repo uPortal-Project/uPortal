@@ -97,22 +97,13 @@ public class CInlineFrame implements org.jasig.portal.IChannel
       String sBrowser = req.getHeader("User-Agent");
       String sHeight = (String) chConfig.get ("height");
       m_sUrl = (String) chConfig.get ("url");
-      String sLine = null;
-      URL url = new URL (m_sUrl);
-      HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-      BufferedReader theHTML = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
 
       StringBuffer sbHTML = new StringBuffer (1024);
 
-      while ((sLine = theHTML.readLine()) != null)
-        sbHTML.append (sLine);
-
-        String sHTML = sbHTML.toString ();
-        if (sHTML != null)
-        {
         // This test gets IE 4 and 5 and Netscape 6 into the Iframe world
         // all others get just a link.  This could undoubtedly get refined.
         // IE3 also handled Iframes but I'm not sure of the string it returns.
+          String  sHTML;
           if ((sBrowser.indexOf("MSIE 3")>=0)||
               (sBrowser.indexOf(" MSIE 4")>=0) ||
               (sBrowser.indexOf("MSIE 5")>=0) ||
@@ -124,11 +115,6 @@ public class CInlineFrame implements org.jasig.portal.IChannel
                "<A href="+ m_sUrl +
                " target='IFrame_Window'>Click this link to view content</A> in a separate window.";
          out.println (sHTML);
-      }
-      else
-      {
-        out.println ("<p>The page you chose cannot be rendered within a channel. Please choose another.  <p><i>Note: Pages containing framesets are not allowed.</i>");
-      }
     }
     catch (Exception e)
     {
