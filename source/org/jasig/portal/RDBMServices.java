@@ -242,7 +242,7 @@ public class RDBMServices {
   protected static void loadProps () throws Exception {
       InputStream inStream = null;
       try {
-          if (!bPropsLoaded) {
+          if (!bPropsLoaded && !getDatasourceFromJndi) {
               inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
               Properties jdbcProps = new Properties();
               jdbcProps.load(inStream);
