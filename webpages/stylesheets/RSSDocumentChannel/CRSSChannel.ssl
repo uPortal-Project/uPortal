@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="webpages\stylesheets\CRSSChannel\rss2html_full.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet alternate="yes" href="webpages\stylesheets\CRSSChannel\rss2html_full.xsl"    type="text/xsl" media="explorer"?>
+<?xml-stylesheet alternate="yes" href="webpages\stylesheets\CRSSChannel\rss2html_compact.xsl"  type="text/xsl" media="avantgo"?>
+
+<document>
+
+</document>
