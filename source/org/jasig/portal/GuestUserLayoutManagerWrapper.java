@@ -192,8 +192,8 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      * Removes a channel 
      * @param channelId channel instance Id
      */
-    public void removeChannel (String channelId) throws PortalException {
-        this.gulm.removeChannel(channelId,this.sessionId);
+    public boolean removeChannel (String channelId) throws PortalException {
+        return this.gulm.removeChannel(channelId,this.sessionId);
     }
 }
 
