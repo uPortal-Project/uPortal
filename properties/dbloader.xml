@@ -5,6 +5,9 @@
   <!-- Location of tables.xml file -->
   <tables-uri>properties/tables.xml</tables-uri>
 
+  <!-- Location of tables.xsl stylesheet -->
+  <tables-xsl-uri>webpages/stylesheets/org/jasig/portal/tools/DbLoader/tables.xsl</tables-xsl-uri>
+  
   <!-- Location of data.xml file -->  
   <data-uri>properties/data.xml</data-uri>
 
@@ -48,6 +51,16 @@
     <driver-version>2.0001 (03.70.0820)</driver-version>    
     <type><generic>INTEGER</generic><local>INTEGER</local></type>
     <!-- map more types here -->
-  </db-type-mapping>   
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>MySQL</db-name>
+    <db-version>3.23.34a</db-version>
+    <driver-name><![CDATA[Mark Matthews' MySQL Driver]]></driver-name>
+    <driver-version>1.2b</driver-version>    
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping> 
+  
 </properties>
 
