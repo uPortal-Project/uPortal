@@ -38,6 +38,7 @@ package  org.jasig.portal;
 import  org.jasig.portal.services.LogService;
 import  java.io.InputStream;
 import  java.util.Date;
+import  java.util.HashMap;
 import  java.util.Properties;
 import  java.sql.Connection;
 import  java.sql.ResultSet;
@@ -65,24 +66,22 @@ public class RdbmServices {
   public static boolean supportsTransactions = false;
   private static String tsStart = "";
   private static String tsEnd = "";
+  private static final JdbcDb jdbcDb= new JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
+  private static final PostgreSQLDb postgreSQLDb = new PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
+  private static final OracleDb oracleDb = new OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
+  private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
+  public static IJoinQueryString joinQuery = null;
 
   static {
     try {
       loadProps();
 
-      /** See what the database allows us to do
-       *
+      /**
+       * See what the database allows us to do
        */
       Connection con = getConnection();
       try {
         String sql;
-
-        /**
-         * Transaction support
-         */
-        try {
-          supportsTransactions = con.getMetaData().supportsTransactions();
-        } catch (SQLException sqle) {}
 
         /**
          * Prepared statements
@@ -93,10 +92,38 @@ public class RdbmServices {
           try {
             pstmt.clearParameters ();
             pstmt.setInt(1, 0);
-            pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
+            try {
+              rs.close();
+            } catch (SQLException sqle) {}
             supportsPreparedStatements = usePreparedStatements && true;
           } finally {
             pstmt.close();
+          }
+        } catch (SQLException sqle) {}
+
+        /**
+         * Do we support outer joins?
+         */
+        try {
+          if (con.getMetaData().supportsOuterJoins()) {
+            Statement stmt = con.createStatement();
+            try {
+              for (int i = 0; i < joinTests.length; i++) {
+                sql = "SELECT COUNT(UP_USER.USER_ID) FROM " + joinTests[i].getTestJoin() + " UP_USER.USER_ID=0";
+                try {
+                  ResultSet rs = stmt.executeQuery(sql);
+                  try {
+                    rs.close();
+                  } catch (SQLException sqle) {}
+                  joinQuery = joinTests[i];
+                  supportsOuterJoins = true;
+                  break;
+                } catch (SQLException sqle) {}
+              }
+            } finally {
+              stmt.close();
+            }
           }
         } catch (SQLException sqle) {
         }
@@ -105,10 +132,13 @@ public class RdbmServices {
          * Does the JDBC driver support the '{ts' (TimeStamp) metasyntax
          */
         try {
-          sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} WHERE USER_ID=0";
+          sql = "SELECT USER_ID FROM UP_USER WHERE LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} AND USER_ID=0";
           Statement stmt = con.createStatement();
           try {
-            stmt.executeUpdate(sql);
+            ResultSet rs = stmt.executeQuery(sql);
+            try {
+              rs.close();
+            } catch (SQLException sqle) {}
             tsStart = "{ts ";
             tsEnd = "}";
           } finally {
@@ -117,8 +147,31 @@ public class RdbmServices {
         } catch (SQLException sqle) {
         }
 
-        LogService.instance().log(LogService.INFO, "Database supports: Prepared statements=" +
-          supportsPreparedStatements + ", Transactions=" + supportsTransactions + ", {ts ...} syntax=" + tsEnd.equals("}"));
+        /**
+         * Transaction support
+         */
+        String tranMsg = "";
+        if (con.getMetaData().supportsTransactions()) {
+          try {
+            con.setAutoCommit(false);
+            Statement stmt = con.createStatement();
+            try {
+              sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + sqlTimeStamp() + " WHERE USER_ID=0";
+              stmt.executeUpdate(sql);
+              con.rollback();
+              supportsTransactions = true;  // Can't trust metadata
+            } finally {
+              stmt.close();
+            }
+          } catch (SQLException sqle) {
+            tranMsg = " (driver lies)";
+          }
+        }
+
+        LogService.instance().log(LogService.INFO, con.getMetaData().getDatabaseProductName() +
+          " database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
+          ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
+          ", '{ts' metasyntax=" + tsEnd.equals("}"));
       } finally {
         releaseConnection(con);
       }
@@ -231,7 +284,7 @@ public class RdbmServices {
    * @param connection
    * @param autocommit
    */
-  static final public void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
+  public static final void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
     if (supportsTransactions) {
       connection.setAutoCommit(autocommit);
     }
@@ -241,7 +294,7 @@ public class RdbmServices {
    * rollback unwanted changes to the database
    * @param connection
    */
-  static final public void rollback (Connection connection) throws SQLException {
+  public static final void rollback (Connection connection) throws SQLException {
     if (supportsTransactions) {
         connection.rollback();
     } else {
@@ -255,7 +308,7 @@ public class RdbmServices {
    * @param boolean
    * @result String
    */
-  public static String dbFlag(boolean flag) {
+  public static final String dbFlag(boolean flag) {
     return (flag ? "Y" : "N");
   }
 
@@ -264,7 +317,7 @@ public class RdbmServices {
    * @param String
    * @result boolean
    */
-  public static boolean dbFlag(String flag) {
+  public static final boolean dbFlag(String flag) {
     return (flag != null && (flag.equalsIgnoreCase("Y") || flag.equalsIgnoreCase("T")) ? true : false);
   }
 
@@ -272,15 +325,16 @@ public class RdbmServices {
    * SQL format of current time
    * @result SQL TimeStamp
    */
-  public static String sqlTimeStamp() {
+  public static final String sqlTimeStamp() {
     return sqlTimeStamp(System.currentTimeMillis());
   }
+
   /**
    * SQL format a long timestamp
    * @param date
    * @result SQL TimeStamp
    */
-  public static String sqlTimeStamp(long date) {
+  public static final String sqlTimeStamp(long date) {
     return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" + tsEnd;
   }
   /**
@@ -288,7 +342,7 @@ public class RdbmServices {
    * @param date
    * @result SQL TimeStamp
    */
-  public static String sqlTimeStamp(Date date) {
+  public static final String sqlTimeStamp(Date date) {
     return sqlTimeStamp(date.getTime());
   }
 
@@ -448,6 +502,54 @@ public class RdbmServices {
     }
   }
 
+  public interface IJoinQueryString {
+    public String getQuery(String key) throws SQLException;
+    public void addQuery(String key, String value) throws SQLException;
+  }
+
+  public abstract static class JoinQueryString implements IJoinQueryString {
+    private HashMap queryStrings = new HashMap();
+    private String testJoin;
+
+    protected void setTestJoin(String query) {
+      testJoin = query;
+    }
+    protected String getTestJoin() {return testJoin;}
+
+    public String getQuery(String key) throws SQLException {
+      String query = (String) queryStrings.get(key);
+      if (query == null) {
+        throw new SQLException("Missing query");
+      }
+      return query;
+    };
+
+    public void addQuery(String key, String value) throws SQLException {
+      if (queryStrings.containsKey(key)) {
+        throw new SQLException("Trying to add duplicate query");
+      }
+      queryStrings.put(key, value);
+    };
+
+  }
+
+  public static final class JdbcDb extends JoinQueryString {
+    public JdbcDb(String testString) {
+      setTestJoin(testString);
+    }
+  }
+
+  public static final class OracleDb extends JoinQueryString {
+    public OracleDb(String testString) {
+      setTestJoin(testString);
+    }
+  }
+
+  public static final class PostgreSQLDb extends JoinQueryString {
+    public PostgreSQLDb(String testString) {
+      setTestJoin(testString);
+    }
+  }
 
 }
 
