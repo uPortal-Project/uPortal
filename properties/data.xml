@@ -646,8 +646,8 @@
       </row>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Nested categories</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.sdf</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>      
     </rows>
@@ -664,8 +664,8 @@
       </row>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Deck of cards</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/deck-of-cards/deck-of-cards.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
       </row>      
     </rows>
