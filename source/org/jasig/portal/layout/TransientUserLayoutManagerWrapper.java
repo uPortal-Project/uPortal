@@ -110,14 +110,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         if ( null != node ) {
           IUserLayoutNodeDescription layoutNode = man.getNode(nodeId);
           if ( layoutNode != null )
-           man.getUserLayout(nodeId,ch);
+           man.getUserLayout(nodeId, new TransientUserLayoutManagerSAXFilter(ch));
           else {
              Document doc = DocumentFactory.getNewDocument();
              try{
                 Element e = node.getXML(doc);
                 doc.appendChild(e);
                 Transformer trans=TransformerFactory.newInstance().newTransformer();
-                trans.transform(new DOMSource(doc), new SAXResult(ch));
+                trans.transform(new DOMSource(doc), new SAXResult(new TransientUserLayoutManagerSAXFilter(ch)));
              }
              catch( Exception e ){
                 throw new PortalException("Encountered an exception trying to output user layout",e);
