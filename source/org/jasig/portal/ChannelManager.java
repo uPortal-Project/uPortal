@@ -345,7 +345,11 @@ public class ChannelManager implements LayoutEventListener {
                         // LogService.log(LogService.DEBUG,"------ channel "+channelSubscribeId+" character block (retrieved):");
                         // LogService.log(LogService.DEBUG,characterContent);
                     } catch (IOException ioe) {
-                        log.debug("ChannelManager::outputChannel() : exception thrown while trying to output character cache for channelSubscribeId=\""+channelSubscribeId + "\"", ioe);
+                        if (log.isDebugEnabled())
+                            log.debug("ChannelManager::outputChannel() : " +
+                                    "exception thrown while trying to output character " +
+                                    "cache for channelSubscribeId=" +
+                                    "\""+channelSubscribeId + "\"", ioe);
                     }
                 }
             } else { // regular serializer case
@@ -513,8 +517,8 @@ public class ChannelManager implements LayoutEventListener {
     private IChannel replaceWithErrorChannel(String channelSubscribeId, ErrorCode errorCode, Throwable t, String message,boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
-        
-        log.warn("Replacing channel [" + oldInstance
+        if (log.isWarnEnabled())
+            log.warn("Replacing channel [" + oldInstance
                 + "], which had subscribeId [" + channelSubscribeId 
                 + "] with error channel because of error code " 
                 + errorCode + " message: " + message + " and throwable [" + t +"]");
@@ -743,7 +747,9 @@ public class ChannelManager implements LayoutEventListener {
             // determine target channel id
             UPFileSpec upfs=new UPFileSpec(req);
             channelTarget=upfs.getTargetNodeId();
-            log.debug("ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
+            if (log.isDebugEnabled())
+                log.debug("ChannelManager::processRequestChannelParameters() : " +
+                        "channelTarget=\""+channelTarget+"\".");
         }
 
         if(channelTarget!=null) {
@@ -785,8 +791,9 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
-                    log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
-                    log.error(e);
+                    log.error("ChannelManager::processRequestChannelParameters() : " +
+                            "unable to pass find/create an instance of a channel. " +
+                            "Bogus Id ? ! (id=\""+channelTarget+"\").", e);
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
@@ -880,7 +887,9 @@ public class ChannelManager implements LayoutEventListener {
                 log.error( e);
             }
             channelTable.remove(ch);
-            log.debug("ChannelManager::removeChannel(): removed channel with subscribe id="+channelSubscribeId);
+            if (log.isDebugEnabled())
+                log.debug("ChannelManager::removeChannel(): " +
+                        "removed channel with subscribe id="+channelSubscribeId);
         }
     }
 
