@@ -52,12 +52,12 @@ public final class LogService {
 
   static{
       initialize();
+      log.debug(LogService.class.getName() + 
+              " logging using Log implementation " + log.getClass().getName());
   }
   
   protected LogService () {
     initialize();
-    log.debug(getClass().getName() + 
-            " logging using Log implementation " + log.getClass().getName());
   }
 
   public final static LogService instance () {
