@@ -102,8 +102,8 @@ public class ProxyWriter {
      * The local domain that does not do redirection
      */
     private static final String PROXY_REWRITE_NO_REDIRECT_DOMAIN = PropertiesManager.
-      getProperty(
-      "org.jasig.portal.serialize.ProxyWriter.no_redirect_domain");
+      getProperty("org.jasig.portal.serialize.ProxyWriter.no_redirect_domain");
+
     /**
      * Examines whther or not the proxying should be done and if so handles differnt situations by delegating
      * the rewrite to other methods n the class.
@@ -114,8 +114,8 @@ public class ProxyWriter {
      */
     protected static String considerProxyRewrite(String name, String localName, String value)
     {
-
-        if ((PROXY_ENABLED==true)&&((name.equalsIgnoreCase("src"))||(name.equalsIgnoreCase("archive")))&&(value.indexOf("http://")!=-1))
+        if (PROXY_ENABLED && (name.equalsIgnoreCase("src") || name.equalsIgnoreCase("archive")) &&
+            value.indexOf("http://")!=-1)
         {
 
             //capture any resource redirect and set the value to the real address while proxying it
@@ -155,37 +155,32 @@ public class ProxyWriter {
             String domain_only = skip_protocol.substring(0,skip_protocol.indexOf("/"));
             String work_value = value;
             if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() > 0 && !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
-                boolean getRedirect = true;
-                while (getRedirect) {
-                    AddressTester tester = new AddressTester(work_value);
-                    int responseCode = tester.getResponseCode();
-                    if (responseCode != 301 ||responseCode != 302){
-                        LogService.log(LogService.DEBUG,"ProxyWriter::capture3XXCodes(): could not get deeper in getting the image.");
-                        return work_value;
-                    }
-                    getRedirect = false;
-                    URL url;
-                    url = new URL(work_value);
-                    URLConnection urlConnect = url.openConnection();
-                    HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
-                    httpUrlConnect.setRequestMethod("HEAD");
-                    httpUrlConnect.setInstanceFollowRedirects(false);
-                    httpUrlConnect.connect();
-                    int response = httpUrlConnect.getResponseCode();
-                    String location = httpUrlConnect.getHeaderField("Location");
-                    httpUrlConnect.disconnect();
-                    if (response == 301 || response == 302) {
-                        getRedirect = true;
-                        work_value = location;
-                    }
-               }
-               if (!work_value.equals(value))
-                   value = work_value;
+              while (true) {
+                AddressTester tester = new AddressTester(work_value, true);
+                try {
+                  int responseCode = tester.getResponseCode();
+                  if (responseCode != HttpURLConnection.HTTP_MOVED_PERM &&
+                      responseCode != HttpURLConnection.HTTP_MOVED_TEMP) {
+                    LogService.log(LogService.DEBUG,
+                      "ProxyWriter::capture3XXCodes(): could not get deeper in getting the image.");
+                    return work_value;
+                  }
+
+                  /* At this point we will have a redirect directive */
+
+                  HttpURLConnection httpUrlConnect = (HttpURLConnection) tester.getConnection();
+                  httpUrlConnect.connect();
+
+                  work_value = httpUrlConnect.getHeaderField("Location"); ;
+                } finally {
+                  tester.disconnect();
+                }
+              }
             }
 
             return value;
 
-         }catch(Exception e){
+         } catch(Exception e) {
              LogService.log(LogService.ERROR,"ProxyWriter::catpture3XXCodes():Failed to rewrite the value: " + e.getMessage());
              return value;
          }
@@ -200,64 +195,71 @@ public class ProxyWriter {
      private static String  reWrite(String scriptUri){
         String filePath = null;
         String fileName = null;
-        BufferedReader in = null;
-        FileWriter out = null;
         try{
             fileName = fileNameGenerator(scriptUri);
             filePath = PROXIED_FILES_PATH + fileName;
             File outputFile = new File(filePath);
-            if ((outputFile.exists()==false) || (System.currentTimeMillis()-outputFile.lastModified()>(1800 * 1000)))
+            if (!outputFile.exists() || (System.currentTimeMillis()-outputFile.lastModified() > 1800 * 1000))
             {
               try{
                 AddressTester tester = new AddressTester(scriptUri);
-                if (tester.URLAvailable() == false){
-                  LogService.log(LogService.ERROR,"ProxyWriter::rewrite(): The adress " + scriptUri + " is not available. ");
-                  return scriptUri;
-                }
-                URL url;
-                url = new URL(scriptUri);
-                URLConnection urlConnect = url.openConnection();
-                HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
-                httpUrlConnect.setInstanceFollowRedirects(false);
-                httpUrlConnect.connect();
-                int response = httpUrlConnect.getResponseCode();
-                in = new BufferedReader(new InputStreamReader(httpUrlConnect.getInputStream()));
-                String line;
-                String newLine;
-                out = new FileWriter(outputFile);
-                while((line = in.readLine()) != null){
-                   newLine = processLine(line);
-                   out.write(newLine + "\t\n");
-                 }
-                 httpUrlConnect.disconnect();
-                 in.close();
-                 out.close();
-               }catch(Exception e){
-                 LogService.log(LogService.ERROR,"ProxyWriter::rewrite():Failed to rewrite the file for: " + scriptUri + " " + e.getMessage());
-                 if(in != null)
+                try {
+                  if (!tester.URLAvailable()){
+                    LogService.log(LogService.ERROR,"ProxyWriter::rewrite(): The adress " + scriptUri + " is not available. ");
+                    return scriptUri;
+                  }
+                  HttpURLConnection httpUrlConnect = (HttpURLConnection) tester.getConnection();
+                  httpUrlConnect.connect();
+                  BufferedReader in = new BufferedReader(new InputStreamReader(httpUrlConnect.getInputStream()));
+                  try {
+                    FileWriter out = new FileWriter(outputFile);
+                    try {
+                      String line;
+                      while ((line = in.readLine()) != null) {
+                        out.write(processLine(line) + "\t\n");
+                      }
+                    } finally {
+                      out.close();
+                    }
+                  } finally {
                     in.close();
-                 if(out != null)
-                    out.close();
+                  }
+                } finally {
+                  tester.disconnect();
+                }
+              } catch(Exception e) {
+                 LogService.log(LogService.ERROR,
+                                "ProxyWriter::rewrite():Failed to rewrite the file for: " +
+                                scriptUri + " " + e.getMessage());
                  outputFile.delete();
                  return scriptUri;
-               }//end catch
+               } //end catch
              }
-             AddressTester tester = new AddressTester(PROXIED_FILES_URI + fileName);
-             if (tester.URLAvailable() == false){
-                 LogService.log(LogService.ERROR,"ProxyWriter::rewrite(): The file  "  + filePath + " is written but cannot be reached ");
+             String newScriptPath = PROXIED_FILES_URI + fileName;
+             AddressTester tester = new AddressTester(newScriptPath);
+             try {
+               if (!tester.URLAvailable()) {
+                 LogService.log(LogService.ERROR,
+                                "ProxyWriter::rewrite(): The file  " + filePath +
+                                " is written but cannot be reached at " +
+                                newScriptPath);
                  return scriptUri;
-             }else{
-                 return PROXY_REWRITE_PREFIX + PROXIED_FILES_URI.substring(7) + fileName;
-            }
+               } else {
+                 return PROXY_REWRITE_PREFIX + PROXIED_FILES_URI.substring(7) +
+                   fileName;
+               }
+             } finally {
+               tester.disconnect();
+             }
 
-         }catch(Exception e){
+         } catch(Exception e) {
              LogService.log(LogService.ERROR,"ProxyWriter::rewrite():Failed to read the file at : "  + filePath + " " + e.getMessage());
              return scriptUri;
           }
     }
 
    /**
-    * This method uses a URI and creates an html file name by simply ominting some characters from the URI.
+    * This method uses a URI and creates an html file name by simply omiting some characters from the URI.
     * The purpose of using the address for the file name is that the file names will be unique and map to addresses.
     * @param addr: is the address of the file
     * @newName: is the name built form the address
@@ -270,13 +272,8 @@ public class ProxyWriter {
         newName = CommonUtils.replaceText(newName, ".", "");
         newName = CommonUtils.replaceText(newName, "?", "");
         newName = CommonUtils.replaceText(newName, "&", "");
-        try {
-               newName = newName.substring(0,16) + ".html";
-        } catch(IndexOutOfBoundsException ignore){
-           //could not truncate the file name then it is short enough send it as it is
-           return newName + ".html";
-        }
-           return newName;
+
+        return newName.substring(0, Math.min(16, newName.length())) + ".html";
     }
 
 
@@ -288,21 +285,22 @@ public class ProxyWriter {
     */
     private static String processLine(String line) throws Exception
     {
-      try{
-        if((line.indexOf(" src") != -1)&&(line.indexOf("http://")!= -1)){
-            String srcValue = extractURL(line);
-            String srcNewValue = createProxyURL(srcValue);
-            line = CommonUtils.replaceText(line, srcValue, srcNewValue);
-            int firstPartIndex = line.lastIndexOf(srcNewValue) + srcNewValue.length();
-            String remaining = line.substring(firstPartIndex);
-            return line.substring(0,firstPartIndex) + "  " + processLine(remaining);
-        }else
-            return line;
-      }catch(Exception e){
+      try {
+        if (line.indexOf(" src") != -1 && line.indexOf("http://") != -1) {
+          String srcValue = extractURL(line);
+          String srcNewValue = createProxyURL(srcValue);
+          line = CommonUtils.replaceText(line, srcValue, srcNewValue);
+          int firstPartIndex = line.lastIndexOf(srcNewValue) + srcNewValue.length();
+          String remaining = line.substring(firstPartIndex);
+          return line.substring(0,firstPartIndex) + "  " + processLine(remaining);
+        } else {
+          return line;
+        }
+      } catch(Exception e) {
 
-         LogService.log(LogService.ERROR,"ProxyWriter::processLine():Failed to process a line : "  + line + " " + e.getMessage());
-         throw e;
-     }
+        LogService.log(LogService.ERROR,"ProxyWriter::processLine():Failed to process a line : "  + line + " " + e.getMessage());
+        throw e;
+       }
     }
 
     /**
@@ -314,20 +312,22 @@ public class ProxyWriter {
      */
     private static String extractURL(String line)
     {
-            int URLStartIndex = 0;
-            int URLEndIndex = 0;
-            //need this to make sure only image paths are pointed to and not href.
-            int srcIndex = line.indexOf(" src");
-            if(line.indexOf("https://",srcIndex)!= -1)
-                    return "";
-            if(line.indexOf("http://",srcIndex)!= -1)
-                URLStartIndex = line.indexOf("http",srcIndex);
-            else
-                    return "";
+      int URLStartIndex = 0;
+      int URLEndIndex = 0;
+      //need this to make sure only image paths are pointed to and not href.
+      int srcIndex = line.indexOf(" src");
+      if (line.indexOf("https://", srcIndex) != -1) {
+        return "";
+      }
+      if (line.indexOf("http://", srcIndex) != -1) {
+        URLStartIndex = line.indexOf("http", srcIndex);
+      } else {
+        return "";
+      }
 
-            URLEndIndex = line.indexOf(" ", URLStartIndex);
-            String srcValue = line.substring(URLStartIndex,URLEndIndex);
-            return srcValue;
+      URLEndIndex = line.indexOf(" ", URLStartIndex);
+      String srcValue = line.substring(URLStartIndex, URLEndIndex);
+      return srcValue;
     }
 
     /**
@@ -339,14 +339,16 @@ public class ProxyWriter {
      */
     private static String createProxyURL(String srcValue)
     {
-        String srcNewValue = "";
-        if(srcValue.indexOf("https://")!= -1)
-           return srcValue;
-        else if(srcValue.indexOf("http://")!= -1)
-           srcNewValue = CommonUtils.replaceText(srcValue, "http://", PROXY_REWRITE_PREFIX);
-        else
-           srcNewValue = "";
-        return srcNewValue;
+      String srcNewValue = "";
+      if (srcValue.indexOf("https://") != -1) {
+        return srcValue;
+      } else if (srcValue.indexOf("http://") != -1) {
+        srcNewValue = CommonUtils.replaceText(srcValue, "http://",
+                                              PROXY_REWRITE_PREFIX);
+      }  else {
+        srcNewValue = "";
+      }
+      return srcNewValue;
     }
 
 }
