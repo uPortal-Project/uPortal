@@ -304,9 +304,7 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
 
   private ChannelRuntimeData runtimeData = null;
   private static String fs = File.separator;
-  private static String portalBaseDir = PortalSessionManager.getPortalBaseDir ();
-  private static String stylesheetDir = portalBaseDir + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CIMAPMail";
-  private static final String sslLocation = stylesheetDir + fs + "CIMAPMail.ssl";
+  private static final String sslLocation = "/org/jasig/portal/channels/CIMAPMail/CIMAPMail.ssl";
   public CIMAPMail ()
   {
   }
@@ -2263,9 +2261,9 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
           weAre = activeMethod.getWeAre();
           if (DEBUG) System.err.println(weAre + ":" + xmlString);
 
-          XSLT xslt = new XSLT();
+          XSLT xslt = new XSLT(this);
           xslt.setXML(xmlString);
-          xslt.setXSL(UtilitiesBean.fixURI(sslLocation), weAre, runtimeData.getBrowserInfo());
+          xslt.setXSL(sslLocation, weAre, runtimeData.getBrowserInfo());
           xslt.setTarget(out);
           xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
           xslt.transform();

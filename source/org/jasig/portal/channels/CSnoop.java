@@ -43,7 +43,6 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.XMLEscaper;
 import org.xml.sax.ContentHandler;
@@ -66,7 +65,7 @@ public class CSnoop implements IPrivilegedChannel
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
 
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSnoop/CSnoop.ssl");
+  private static final String sslLocation = "CSnoop/CSnoop.ssl";
 
   /**
    * No-argument constructor for CSnoop.
@@ -171,7 +170,7 @@ public class CSnoop implements IPrivilegedChannel
     sb.append("  </headers>");
     sb.append("</request-info>");
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(sb.toString());
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

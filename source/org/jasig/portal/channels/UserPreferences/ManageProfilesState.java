@@ -270,9 +270,9 @@ class ManageProfilesState extends BaseState {
       else
         params.put("profileType", "user");
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameters(params);
         xslt.transform();
@@ -292,7 +292,7 @@ class ManageProfilesState extends BaseState {
     protected UserProfile profile;              // profile currently being edited
     protected boolean modified = false;
     // location of the properties file relative to the portal base dir.
-    protected static final String mimeImagesPropsFile = "webpages/media/org/jasig/portal/channels/CUserPreferences/mimeImages.properties";
+    protected static final String mimeImagesPropsFile = "media/org/jasig/portal/channels/CUserPreferences/mimeImages.properties";
     protected Properties mimeImagesProps = new Properties();
 
     /**
@@ -302,13 +302,11 @@ class ManageProfilesState extends BaseState {
     public CEditProfile (ManageProfilesState context) {
       // load the mimetype image properties file
       try {
-        java.io.FileInputStream in = new java.io.FileInputStream(PortalSessionManager.getPortalBaseDir() + java.io.File.separator
-            + mimeImagesPropsFile);
+        java.io.InputStream in = PortalSessionManager.getResourceAsStream(mimeImagesPropsFile);
         mimeImagesProps.load(in);
         in.close();
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at "
-            + PortalSessionManager.getPortalBaseDir() + java.io.File.separator + mimeImagesPropsFile);
+        LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
       }
       this.context = context;
     }
@@ -574,9 +572,9 @@ class ManageProfilesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();

@@ -41,7 +41,6 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
@@ -69,7 +68,7 @@ import org.w3c.dom.Element;
  */
 public class CImage extends BaseMultithreadedChannel implements IMultithreadedCacheable
 {
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CImage/CImage.ssl");
+  private static final String sslLocation = "CImage/CImage.ssl";
 
   /**
    * Output channel content to the portal
@@ -132,7 +131,7 @@ public class CImage extends BaseMultithreadedChannel implements IMultithreadedCa
 
     doc.appendChild(contentE);
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);

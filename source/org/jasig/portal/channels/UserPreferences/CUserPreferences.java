@@ -56,8 +56,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   ChannelStaticData staticData = null;
   StylesheetSet set = null;
   private static final String fs = File.separator;
-  private static final String portalBaseDir = PortalSessionManager.getPortalBaseDir();
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/CUserPreferences.ssl");
+  private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/CUserPreferences.ssl";
   private UserPreferences up = null;
   private Document userLayoutXML = null;
   private int mode;
@@ -76,8 +75,8 @@ public class CUserPreferences implements IPrivilegedChannel {
    */
   public CUserPreferences () throws PortalException {
     this.runtimeData = new ChannelRuntimeData();
-    this.set = new StylesheetSet(sslLocation);
-    this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
+    this.set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
+    this.set.setMediaProps("/properties/media.properties");
 
     manageProfiles = new ManageProfilesState(this);
   }

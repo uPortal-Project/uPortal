@@ -45,7 +45,6 @@ import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -66,7 +65,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import java.io.File;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -94,7 +93,7 @@ final class TabColumnPrefsState extends BaseState
 {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl");
+  private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl";
   private Document userLayout;
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
@@ -132,7 +131,7 @@ final class TabColumnPrefsState extends BaseState
     this.internalState = new DefaultState(this);
 
     // initialize stylesheet set
-    set = new StylesheetSet(sslLocation);
+    set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
   }
 
   public TabColumnPrefsState(CUserPreferences context) throws PortalException
@@ -140,7 +139,7 @@ final class TabColumnPrefsState extends BaseState
     super(context);
     this.internalState = new DefaultState(this);
     // initialize stylesheet set
-    set = new StylesheetSet(sslLocation);
+    set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
   }
 
   public void setStaticData (ChannelStaticData sd) throws PortalException
@@ -920,7 +919,9 @@ final class TabColumnPrefsState extends BaseState
 
           // Stylesheet transformer
           String xslURI = set.getStylesheetURI("default", runtimeData.getBrowserInfo());
-          TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(xslURI));
+          System.out.println("xsltUri is : " + xslURI);
+          System.out.println("this class is : " + this.getClass().toString());
+          TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(this.getClass().getResource(xslURI).toString()));
           th.setResult(new SAXResult(out));
           Transformer sstr = th.getTransformer();
 
@@ -992,15 +993,12 @@ final class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      File xmlFile = null;
-      String sFS = File.separator;
-      String XMLUri = PortalSessionManager.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
+      InputStream xmlStream = PortalSessionManager.getResourceAsStream("media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
-      xmlFile = new File (XMLUri);
 
-      XSLT xslt = new XSLT ();
-      xslt.setXML(xmlFile);
-      xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+      XSLT xslt = new XSLT (this);
+      xslt.setXML(xmlStream);
+      xslt.setXSL(sslLocation, "skinList", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       if(currentSkin!=null)
@@ -1111,7 +1109,7 @@ final class TabColumnPrefsState extends BaseState
     {
       Document doc = ChannelRegistryManager.getChannelRegistry();
 
-      XSLT xslt = new XSLT();
+      XSLT xslt = new XSLT(this);
       xslt.setXML(doc);
       xslt.setXSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
       xslt.setTarget(out);

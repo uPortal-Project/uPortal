@@ -46,7 +46,6 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.security.*;
 import org.xml.sax.ContentHandler;
@@ -68,7 +67,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   private ChannelRuntimeData runtimeData;
   private String channelName = "Log in...";
   private String attemptedUserName="";
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CLogin/CLogin.ssl");
+  private static final String sslLocation = "CLogin/CLogin.ssl";
   private boolean bAuthenticated = false;
   private boolean bauthenticationAttemptFailed = false;
   private boolean bSecurityError = false;
@@ -149,10 +148,10 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     }
 
     doc.appendChild(loginStatusElement);
-    
+
     try
     {
-      XSLT xslt = new XSLT();
+      XSLT xslt = new XSLT(this);
       xslt.setXML(doc);
       xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
       xslt.setTarget(out);
@@ -183,7 +182,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
 
         if(xslUriForKey==null) {
             try {
-                xslUriForKey=XSLT.getStylesheetURI(sslLocation, runtimeData.getBrowserInfo());
+                xslUriForKey=XSLT.getStylesheetURI(this.getClass().getResource(sslLocation).toString(), runtimeData.getBrowserInfo());
             } catch (PortalException pe) {
                 xslUriForKey = "Not attainable!";
             }

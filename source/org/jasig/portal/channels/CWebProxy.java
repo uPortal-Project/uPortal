@@ -45,6 +45,7 @@ import javax.servlet.http.Cookie;
 import org.w3c.tidy.*;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -305,12 +306,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if (editUri != null)
       runtimeData.put("cw_edit", editUri);
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(xml);
     if (xslUri != null)
       xslt.setXSL(xslUri);
-    else 
-      xslt.setXSL(UtilitiesBean.fixURI(sslUri), xslTitle, runtimeData.getBrowserInfo());
+    else
+      xslt.setXSL(sslUri, xslTitle, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameters(runtimeData);
     xslt.transform();
@@ -324,7 +325,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    */
   private String getXmlString (String uri) throws Exception
   {
-    URL url = new URL (UtilitiesBean.fixURI(uri));
+    URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
     String domain = url.getHost().trim();
     String path = url.getPath();
     if ( path.indexOf("/") != -1 )
@@ -337,7 +338,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     URLConnection urlConnect = url.openConnection();
     String protocol = url.getProtocol();
 
-    if (protocol.equals("http"))   
+    if (protocol.equals("http"))
     {
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
@@ -382,7 +383,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
   }
 
-  // Sends any cookies in the cookie vector as a request header and stores 
+  // Sends any cookies in the cookie vector as a request header and stores
   // any incoming cookies in the cookie vector (according to rfc 2109,
   // 2965 & netscape)
   private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws Exception
@@ -397,11 +398,11 @@ public class CWebProxy implements org.jasig.portal.IChannel
     {
        case HttpURLConnection.HTTP_NOT_FOUND:
          throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(), 
+             (httpUrlConnect.getURL().toExternalForm(),
               "", "HTTP Status-Code 404: Not Found");
        case HttpURLConnection.HTTP_FORBIDDEN:
          throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(), 
+             (httpUrlConnect.getURL().toExternalForm(),
               "", "HTTP Status-Code 403: Forbidden");
        case HttpURLConnection.HTTP_INTERNAL_ERROR:
          throw new ResourceMissingException
@@ -441,8 +442,8 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
-  // Sends a cookie header to origin server according to the netscape 
-  // specification 
+  // Sends a cookie header to origin server according to the netscape
+  // specification
   private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port)
   {
      Vector cookiesToSend = new Vector();
@@ -502,12 +503,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
              cookiesInOrder.addElement(c1);
          }
        }
-       //send the cookie header 
-       // **NOTE** This is NOT the syntax of the cookie header according 
+       //send the cookie header
+       // **NOTE** This is NOT the syntax of the cookie header according
        // to rfc 2965. Tested under Apache's Tomcat, the servlet engine
        // treats the cookie attributes as separate cookies.
        // This is the syntax according to the Netscape Cookie Specification.
-       String headerValue = ""; 
+       String headerValue = "";
        WebProxyCookie c;
        for (int i=0; i<cookiesInOrder.size(); i++)
        {
@@ -515,7 +516,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
          if (i == 0)
            headerValue = c.getName() + "=" +c.getValue();
          else
-           headerValue = headerValue + "; " + c.getName() + "=" +c.getValue(); 
+           headerValue = headerValue + "; " + c.getName() + "=" +c.getValue();
        }
        if ( !headerValue.equals("") )
        {
@@ -591,7 +592,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
              cookie.setPath(path);
           }
           // set the version attribute
-          cookie.setVersion(1); 
+          cookie.setVersion(1);
           // checks to see if this cookie should replace one already stored
           for (int index = 0; index < cookies.size(); index++)
           {
@@ -630,7 +631,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
-  private void processSetCookieHeader (String headerVal, String domain, String path, String port) 
+  private void processSetCookieHeader (String headerVal, String domain, String path, String port)
   throws ParseException
   {
      StringTokenizer cookieValue;
@@ -672,7 +673,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
                 //set max-age for cookie
                 long l;
                 if (date.before(current))
-                   //accounts for the case where max age is 0 and cookie 
+                   //accounts for the case where max age is 0 and cookie
                    //should be discarded immediately
                    l = 0;
                 else
@@ -748,7 +749,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
   private class WebProxyCookie extends Cookie
   {
-     
+
      protected String port = null;
      protected boolean pathSet = false;
      protected boolean domainSet = false;
@@ -764,7 +765,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
      {
        this.expiryDate = expiryDate;
      }
-  
+
      public Date getExpiryDate()
      {
        return expiryDate;
@@ -805,12 +806,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
      {
        this.port = port;
      }
-   
+
      public String getPort()
      {
        return port;
      }
-  
+
      public boolean isPathSet()
      {
        return pathSet;

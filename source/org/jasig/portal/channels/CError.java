@@ -48,7 +48,6 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
@@ -81,7 +80,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     public static final int TIMEOUT_EXCEPTION=4;
     public static final int SET_PCS_EXCEPTION=5;
 
-    // codes defining exception types 
+    // codes defining exception types
     public static final int GENERAL_RENDERING_EXCEPTION=1;
     public static final int INTERNAL_TIMEOUT_EXCEPTION=2;
     public static final int AUTHORIZATION_EXCEPTION=3;
@@ -96,11 +95,11 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     private boolean showStackTrace=false;
 
     private PortalControlStructures portcs;
-    private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CError/CError.ssl");
+    private static final String sslLocation = "CError/CError.ssl";
 
     public CError() {
     }
-    
+
     public CError(int errorCode, Exception exception, String channelID,IChannel channelInstance) {
         this();
         str_channelID=channelID;
@@ -134,7 +133,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     }
 
     public void renderXML(ContentHandler out) {
-        // runtime data processing needs to be done here, otherwise replaced 
+        // runtime data processing needs to be done here, otherwise replaced
         // channel will get duplicated setRuntimeData() calls
         if(str_channelID!=null) {
             String chFate=runtimeData.getParameter("action");
@@ -159,9 +158,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                     }
                 } else if(chFate.equals("restart")) {
                     LogService.instance().log(LogService.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
-		    
+
                     ChannelManager cm=portcs.getChannelManager();
-		    
+
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear();
                     try {
@@ -194,7 +193,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // if channel's render XML method was to be called, we would've returned by now
         localRenderXML(out);
     }
-    
+
     private void localRenderXML(ContentHandler out) {
         // note: this method should be made very robust. Optimally, it should
         // not rely on XSLT to do the job. That means that mime-type dependent
@@ -274,7 +273,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
                 // now specific cases for exceptions containing additional information
                 if(pe instanceof ResourceMissingException) {
-                    excEl.setAttribute("code",Integer.toString(RESOURCE_MISSING_EXCEPTION));                    
+                    excEl.setAttribute("code",Integer.toString(RESOURCE_MISSING_EXCEPTION));
                     ResourceMissingException rme=(ResourceMissingException) pe;
                     Element resourceEl=doc.createElement("resource");
                     Element uriEl=doc.createElement("uri");
@@ -331,7 +330,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // end of debug block
 
         try {
-            XSLT xslt = new XSLT();
+            XSLT xslt = new XSLT(this);
             xslt.setXML(doc);
             xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
             xslt.setTarget(out);
@@ -340,8 +339,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xslt.setStylesheetParameter("allowRefresh", allowRef);
             xslt.setStylesheetParameter("allowReinstantiation", allowRel);
             xslt.transform();
-        } catch (Exception e) { 
-            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e); 
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e);
         }
     }
 
@@ -359,7 +358,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
         sbKey.append("org.jasig.portal.channels.CError: errorId=").append(Integer.toString(errorID)).append(", channelID=");
         sbKey.append(str_channelID).append(", message=").append(str_message).append(" strace=").append(toString(showStackTrace));
-        
+
         // part of the key that species what kind of exception has been generated
         if(channelException !=null) {
             sbKey.append("exception: ");
@@ -376,12 +375,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                 } else if(channelException instanceof InternalTimeoutException) {
                     sbKey.append("timeout: ").append(((InternalTimeoutException) channelException).getTimeoutValue().toString());
                 }
-            }                                   
+            }
         }
         k.setKey(sbKey.toString());
         return k;
     }
-    
+
     public boolean isCacheValid(Object validity) {
         return true;
     }

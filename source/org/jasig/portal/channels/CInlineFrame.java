@@ -42,7 +42,6 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
@@ -65,7 +64,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class CInlineFrame extends BaseMultithreadedChannel implements IMultithreadedCacheable {
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/CInlineFrame.ssl");
+  private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
 
   /**
    * Build an XML document and transform for display using org.jasig.portal.util.XSLT
@@ -104,7 +103,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     iframeE.appendChild(heightE);
     doc.appendChild(iframeE);
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
     xslt.setTarget(out);

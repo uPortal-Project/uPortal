@@ -41,7 +41,6 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
@@ -57,7 +56,7 @@ public class CNumberGuess implements IChannel
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
 
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CNumberGuess/CNumberGuess.ssl");
+  private static final String sslLocation = "CNumberGuess/CNumberGuess.ssl";
   private int iMinNum = 0;
   private int iMaxNum = 0;
   private int iGuess = 0;
@@ -179,7 +178,7 @@ public class CNumberGuess implements IChannel
 
     w.write ("</content>\n");
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(w.toString());
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

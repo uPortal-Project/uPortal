@@ -77,7 +77,7 @@ public class CHeader extends BaseChannel
     implements ICacheable {
   // Cache the answers to canUserPublish() to speed things up
   private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
+  private static final String sslLocation = "CHeader/CHeader.ssl";
 
   /**
    * Render method.
@@ -86,7 +86,7 @@ public class CHeader extends BaseChannel
    */
   public void renderXML (ContentHandler out) throws PortalException {
     // Perform the transformation
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(getUserXML());
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
@@ -174,7 +174,7 @@ public class CHeader extends BaseChannel
       // Return the answer if it's in the cache
       if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
@@ -183,14 +183,14 @@ public class CHeader extends BaseChannel
     PermissionManager pm = staticData.getPermissionManager();
     try {
       // Check to see if the user or all user's are specifically denied access
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH", 
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH",
           "*", "DENY").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(false));
         return  (false);
       }
       // Check to see if the user or all users are granted permission by default
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH", 
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH",
           "*", "GRANT").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(true));
@@ -207,7 +207,7 @@ public class CHeader extends BaseChannel
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public ChannelCacheKey generateKey () {
     ChannelCacheKey k = new ChannelCacheKey();
@@ -231,7 +231,7 @@ public class CHeader extends BaseChannel
   /**
    * put your documentation comment here
    * @param validity
-   * @return 
+   * @return
    */
   public boolean isCacheValid (Object validity) {
     if (validity instanceof Long) {

@@ -57,7 +57,7 @@ import  java.net.URL;
  * @version $Revision$
  */
 public class CSelectSystemProfile extends StandaloneChannelRenderer {
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
+  private static final String sslLocation = "CSelectSystemProfile/CSelectSystemProfile.ssl";
   IUserPreferencesStore updb;
   private Hashtable systemProfileList;
 
@@ -134,19 +134,13 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
       sEl.appendChild(pEl);
     }
     edEl.appendChild(sEl);
-    /*  try {
-     LogService.instance().log(LogService.DEBUG,UtilitiesBean.dom2PrettyString(doc));
-     } catch (Exception e) {
-     LogService.instance().log(LogService.ERROR,e);
-     }
-     */
-    Hashtable params = new Hashtable();
-    params.put("baseActionURL", runtimeData.getBaseActionURL());
-    try {
-      XSLT.transform(doc, new URL(sslLocation), out, params, runtimeData.getBrowserInfo());
-    } catch (java.io.IOException i) {
-      throw  new GeneralRenderingException("IOException has been encountered");
-    }
+
+    XSLT xslt = new XSLT(this);
+    xslt.setXML(doc);
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    xslt.transform();
   }
 }
 

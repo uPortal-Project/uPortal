@@ -38,6 +38,7 @@ package org.jasig.portal.channels;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -48,14 +49,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.io.File;
+import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -127,7 +126,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     state.sslUri = sd.getParameter("sslUri");
 
     if (state.sslUri != null)
-      state.sslUri = UtilitiesBean.fixURI(state.sslUri);
+      state.sslUri = this.getClass().getResource(state.sslUri).toString();
 
     state.xslTitle = sd.getParameter("xslTitle");
     state.xslUri = sd.getParameter("xslUri");
@@ -158,7 +157,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       String sslUri = rd.getParameter("sslUri");
 
       if (sslUri != null)
-        state.sslUri = UtilitiesBean.fixURI(sslUri);
+        state.sslUri = sslUri;
 
       String xslTitle = rd.getParameter("xslTitle");
 
@@ -210,7 +209,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         DTDResolver dtdResolver = new DTDResolver();
         docBuilder.setEntityResolver(dtdResolver);
-        xmlDoc = docBuilder.parse(UtilitiesBean.fixURI(state.xmlUri));
+        InputStream xmlStream = ResourceLoader.getResourceAsStream(this.getClass(), state.xmlUri);
+        xmlDoc = docBuilder.parse(xmlStream);
       }
       catch (IOException ioe)
       {
@@ -223,7 +223,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
 
-      XSLT xslt = new XSLT();
+      XSLT xslt = new XSLT(this);
       xslt.setXML(xmlDoc);
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);

@@ -510,9 +510,9 @@ class GPreferencesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
@@ -629,9 +629,9 @@ class GPreferencesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
@@ -742,9 +742,9 @@ class GPreferencesState extends BaseState {
       else
         params.put("profileType", "user");
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(context.getUserLayoutXML());
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameters(params);
         xslt.transform();
@@ -844,9 +844,9 @@ class GPreferencesState extends BaseState {
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        XSLT xslt = new XSLT();
+        XSLT xslt = new XSLT(this);
         xslt.setXML(context.getUserLayoutXML());
-        xslt.setXSL(xslURI);
+        xslt.setXSL(this.getClass().getResource(xslURI).toString());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();

@@ -41,7 +41,6 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
@@ -63,7 +62,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class CApplet extends BaseMultithreadedChannel implements IMultithreadedCacheable {
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CApplet/CApplet.ssl");
+  private static final String sslLocation = "CApplet/CApplet.ssl";
 
   /**
    * Output channel content to the portal
@@ -108,7 +107,7 @@ public class CApplet extends BaseMultithreadedChannel implements IMultithreadedC
 
     doc.appendChild(appletE);
 
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);

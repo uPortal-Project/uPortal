@@ -42,9 +42,7 @@ import  org.jasig.portal.channels.BaseChannel;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelRuntimeProperties;
-import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.UtilitiesBean;
 import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.ResourceMissingException;
@@ -84,7 +82,7 @@ public class CBookmarks extends BaseChannel {
   // A DOM document where all the bookmark information will be contained
   protected DocumentImpl m_bookmarksXML;
   // Location of the stylesheet list file
-  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CBookmarks/CBookmarks.ssl");
+  private static final String sslLocation = "CBookmarks/CBookmarks.ssl";
   // Define some constants to keep the state of the channel
   private final int VIEWMODE = 0;
   private final int EDITMODE = 1;
@@ -100,7 +98,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private DocumentImpl getBookmarkXML () {
     Connection connection = null;
@@ -164,7 +162,7 @@ public class CBookmarks extends BaseChannel {
       if (rs.next()) {
         // Use the 'default' user's bookmarks...
         inputXML = rs.getString("BOOKMARK_XML");
-      } 
+      }
       else {
         // Generate the XML here as a last resort
         inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
@@ -233,7 +231,7 @@ public class CBookmarks extends BaseChannel {
             folderElement.setAttribute("folded", "yes");
           }
         }
-      } 
+      }
       else if (command.equals("unfold")) {
         // Get the ID of the specified folder to open
         String folderID = runtimeData.getParameter("ID");
@@ -243,24 +241,24 @@ public class CBookmarks extends BaseChannel {
             folderElement.setAttribute("folded", "no");
           }
         }
-      } 
+      }
       else if (command.equals("View")) {
         // Switch to view mode
         m_currentState = VIEWMODE;
         m_activeNodeID = null;
-      } 
+      }
       else if (command.equals("Edit")) {
         // Switch to edit mode
         m_currentState = EDITMODE;
         m_activeNodeID = null;
-      } 
+      }
       else if (command.equals("AddBookmark")) {
         if (m_currentState != ADDNODEMODE) {
           // Switch to add bookmark mode
           m_currentState = ADDNODEMODE;
           m_activeNodeID = null;
           m_activeNodeType = "bookmark";
-        } 
+        }
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null && submitButton.equals("Cancel")) {
@@ -268,25 +266,25 @@ public class CBookmarks extends BaseChannel {
             m_activeNodeID = null;
             m_activeNodeType = null;
             m_currentState = VIEWMODE;
-          } 
+          }
           else if (submitButton != null && submitButton.equals("Add")) {
             // Check for the incoming parameters
             String bookmarkTitle = runtimeData.getParameter("BookmarkTitle");
             String bookmarkURL = runtimeData.getParameter("BookmarkURL");
             String bookmarkDesc = runtimeData.getParameter("BookmarkDescription");
             String folderID = runtimeData.getParameter("FolderRadioButton");
-            if (bookmarkTitle == null || bookmarkTitle.length() < 1) {} 
-            else if (bookmarkURL == null || bookmarkURL.length() < 1) {} 
-            else if (folderID == null || folderID.length() < 1) {} 
+            if (bookmarkTitle == null || bookmarkTitle.length() < 1) {}
+            else if (bookmarkURL == null || bookmarkURL.length() < 1) {}
+            else if (folderID == null || folderID.length() < 1) {}
             else {
               Element folderElement;
               if (folderID.equals("RootLevel")) {
                 folderElement = (Element)m_bookmarksXML.getElementsByTagName("xbel").item(0);
-              } 
+              }
               else {
                 folderElement = m_bookmarksXML.getElementById(folderID);
               }
-              if (folderElement == null) {} 
+              if (folderElement == null) {}
               else {
                 // Build the bookmark XML DOM
                 Element bookmarkElement = m_bookmarksXML.createElement("bookmark");
@@ -314,14 +312,14 @@ public class CBookmarks extends BaseChannel {
             }
           }
         }
-      } 
+      }
       else if (command.equals("AddFolder")) {
         if (m_currentState != ADDNODEMODE) {
           // Switch to add bookmark mode
           m_currentState = ADDNODEMODE;
           m_activeNodeID = null;
           m_activeNodeType = "folder";
-        } 
+        }
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null && submitButton.equals("Cancel")) {
@@ -329,22 +327,22 @@ public class CBookmarks extends BaseChannel {
             m_activeNodeID = null;
             m_activeNodeType = null;
             m_currentState = VIEWMODE;
-          } 
+          }
           else if (submitButton != null && submitButton.equals("Add")) {
             // Check for the incoming parameters
             String folderTitle = runtimeData.getParameter("FolderTitle");
             String folderID = runtimeData.getParameter("FolderRadioButton");
-            if (folderTitle == null || folderTitle.length() < 1) {} 
-            else if (folderID == null || folderID.length() < 1) {} 
+            if (folderTitle == null || folderTitle.length() < 1) {}
+            else if (folderID == null || folderID.length() < 1) {}
             else {
               Element folderElement;
               if (folderID.equals("RootLevel")) {
                 folderElement = (Element)m_bookmarksXML.getElementsByTagName("xbel").item(0);
-              } 
+              }
               else {
                 folderElement = m_bookmarksXML.getElementById(folderID);
               }
-              if (folderElement == null) {} 
+              if (folderElement == null) {}
               else {
                 // Build the new folder XML node
                 Element newFolderElement = m_bookmarksXML.createElement("folder");
@@ -367,27 +365,27 @@ public class CBookmarks extends BaseChannel {
             }
           }
         }
-      } 
+      }
       else if (command.equals("MoveNode")) {
         m_activeNodeID = runtimeData.getParameter("ID");
         m_currentState = MOVENODEMODE;
-      } 
+      }
       else if (command.equals("EditNode")) {
         m_activeNodeID = runtimeData.getParameter("ID");
         m_currentState = EDITNODEMODE;
-      } 
+      }
       else if (command.equals("DeleteBookmark")) {
         if (m_currentState != DELETENODEMODE) {
           m_currentState = DELETENODEMODE;
           m_activeNodeType = "bookmark";
-        } 
+        }
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null) {
             if (submitButton.equals("Cancel")) {
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            } 
+            }
             else if (submitButton.equals("Delete")) {
               // Run through the passed in parameters and delete the bookmarks
               Enumeration e = runtimeData.keys();
@@ -404,23 +402,23 @@ public class CBookmarks extends BaseChannel {
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            } 
+            }
             else if (submitButton.equals("ConfirmDelete")) {}
           }
         }
-      } 
+      }
       else if (command.equals("DeleteFolder")) {
         if (m_currentState != DELETENODEMODE) {
           m_currentState = DELETENODEMODE;
           m_activeNodeType = "folder";
-        } 
+        }
         else {
           String submitButton = runtimeData.getParameter("SubmitButton");
           if (submitButton != null) {
             if (submitButton.equals("Cancel")) {
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            } 
+            }
             else if (submitButton.equals("Delete")) {
               // Run through the passed in parameters and delete the bookmarks
               Enumeration e = runtimeData.keys();
@@ -440,7 +438,7 @@ public class CBookmarks extends BaseChannel {
               saveXML();
               m_currentState = VIEWMODE;
               m_activeNodeType = null;
-            } 
+            }
             else if (submitButton.equals("ConfirmDelete")) {}
           }
         }
@@ -516,15 +514,15 @@ public class CBookmarks extends BaseChannel {
     if (m_activeNodeType == null) {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
       renderViewModeXML(out);
-    } 
+    }
     else if (m_activeNodeType.equals("bookmark")) {
       parameters.put("EditMode", "AddBookmark");
       transformXML(out, "add_node", getBookmarkXML(), parameters);
-    } 
+    }
     else if (m_activeNodeType.equals("folder")) {
       parameters.put("EditMode", "AddFolder");
       transformXML(out, "add_node", getBookmarkXML(), parameters);
-    } 
+    }
     else {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
@@ -553,15 +551,15 @@ public class CBookmarks extends BaseChannel {
     if (m_activeNodeType == null) {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
       renderViewModeXML(out);
-    } 
+    }
     else if (m_activeNodeType.equals("bookmark")) {
       parameters.put("EditMode", "DeleteBookmark");
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
-    } 
+    }
     else if (m_activeNodeType.equals("folder")) {
       parameters.put("EditMode", "DeleteFolder");
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
-    } 
+    }
     else {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
@@ -590,12 +588,12 @@ public class CBookmarks extends BaseChannel {
     if (parameters == null) {
       parameters = new Hashtable(1);
     }
-    
+
     // Add the baseActionURL to the stylesheet parameters
     parameters.put("baseActionURL", runtimeData.getBaseActionURL());
-    
+
     // Use the XSLT utility to perform the transformation
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(inputXML);
     xslt.setXSL(sslLocation, stylesheetName, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
@@ -605,7 +603,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private String createUniqueID () {
     String uniqueID = "n" + System.currentTimeMillis();
@@ -618,7 +616,7 @@ public class CBookmarks extends BaseChannel {
   /**
    * put your documentation comment here
    * @param url
-   * @return 
+   * @return
    */
   private static String makeUrlSafe (String url) {
     // Return if the url is correctly formed
@@ -644,7 +642,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private Connection getConnection () {
     try {

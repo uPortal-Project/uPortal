@@ -36,7 +36,6 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
@@ -58,7 +57,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.sql.SQLException;
-
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>Manages channels, replaces CPublisher</p>
@@ -66,7 +67,7 @@ import java.sql.SQLException;
  * @version $Revision$
  */
 public class CChannelManager extends BaseChannel {
-  protected static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CChannelManager/CChannelManager.ssl");
+  protected static final String sslLocation = "CChannelManager/CChannelManager.ssl";
   protected static final Document emptyDoc = DocumentFactory.getNewDocument();
   protected short state;
   protected static final short DEFAULT_STATE = 0;
@@ -99,7 +100,7 @@ public class CChannelManager extends BaseChannel {
   }
 
   public void renderXML (ContentHandler out) throws PortalException {
-    XSLT xslt = new XSLT();
+    XSLT xslt = new XSLT(this);
     xslt.setXML(channelManagerDoc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
@@ -156,7 +157,7 @@ public class CChannelManager extends BaseChannel {
         System.out.println("action=" + action);
         System.out.println("stepID=" + stepID);
         System.out.println("fixedStepID=" + fixStepID(stepID));
-        System.out.println(UtilitiesBean.dom2PrettyString(channelManagerDoc));
+        System.out.println(org.jasig.portal.UtilitiesBean.dom2PrettyString(channelManagerDoc));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -538,7 +539,7 @@ public class CChannelManager extends BaseChannel {
    * @return the CPD document matching the chanTypeID, <code>null</code> if "custom" channel
    * @throws org.jasig.portal.PortalException
    */
-  protected static Document getCPDDoc(String chanTypeID) throws PortalException {
+  protected Document getCPDDoc(String chanTypeID) throws PortalException {
     // This method needs some caching!!! Consider a CPDManager.java class.
 
     //  There are no CPD docs for custom channels (chanTypeID = -1)
@@ -574,13 +575,14 @@ public class CChannelManager extends BaseChannel {
     Document cpdDoc = null;
     if (cpdUri != null) {
       try {
-        org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
-        parser.parse(UtilitiesBean.fixURI(cpdUri));
-        cpdDoc = parser.getDocument();
+        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        cpdDoc = parser.parse(this.getClass().getResourceAsStream(cpdUri));
       } catch (java.io.IOException ioe) {
         throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe.getMessage());
       } catch (org.xml.sax.SAXException se) {
         throw new GeneralRenderingException("Unable to parse CPD file: " + se.getMessage());
+      } catch (ParserConfigurationException pce) {
+        throw new GeneralRenderingException("Unable to parse CPD file: " + pce.getMessage());
       }
     }
     return cpdDoc;
