@@ -45,7 +45,7 @@
   <xsl:template match="layout">
     <html>
       <head>
-        <title>uPortal 2.3.4</title>
+        <title>uPortal 2.3.5</title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
