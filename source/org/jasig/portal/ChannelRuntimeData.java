@@ -82,7 +82,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
-     * Set the HTTP Reqeust method.
+     * Set the HTTP Request method.
      *
      * @param method a <code>String</code> value
      */
