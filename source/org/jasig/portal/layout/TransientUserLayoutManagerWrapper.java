@@ -68,7 +68,7 @@ import javax.xml.transform.sax.SAXResult;
  * Wraps {@link IUserLayoutManager} interface to provide ability to
  * incorporate channels into a user layout that are not part of
  * their layout structure (persistent).
- * 
+ *
  * The channels are incorporated upon request (functional name)
  * and remain part of the layout structure only as long as they
  * are the target channel.
@@ -79,7 +79,7 @@ import javax.xml.transform.sax.SAXResult;
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     // transient folder's subscribe id <'f'older><'t'ransient><id>
-    public final static String TRANSIENT_FOLDER_ID="ft1";    
+    public final static String TRANSIENT_FOLDER_ID="ft1";
     // channel subscription prefix  <'c'hannel><'t'ransient><'f'older>
     public final static String SUBSCRIBE_PREFIX = "ctf";
     IUserLayoutManager man=null;
@@ -87,12 +87,12 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     private Map mFnameMap = Collections.synchronizedMap(new HashMap());
     // stores channel defs by subscribe id
     private Map mChanMap = Collections.synchronizedMap(new HashMap());
-    
+
     // current root/focused subscribe id
     private String mFocusedId = "";
     // subscription id counter for generating subscribe ids
     private int mSubId = 0;
-    
+
     private String cacheKey=null;
 
     public TransientUserLayoutManagerWrapper(IUserLayoutManager manager) throws PortalException {
@@ -107,48 +107,54 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
-        DocumentImpl doc = (DocumentImpl)this.getUserLayoutDOM();
-        Node n = doc.getElementById(nodeId);
-        if ( null == n ){  
+
+        if ( man.getNode(nodeId) == null ) {
+
             DocumentImpl emptyDoc = new DocumentImpl();
             // assumption is the request is for a transient channel from
             // the layout... since there isn't actually one in the layout
             // just create and transform
             ChannelDefinition chanDef = getChannelDefinition(nodeId);
-            
+
+            System.out.println("nodeId: " + nodeId);
+
             Element tChannel = emptyDoc.createElement("channel");
-            tChannel.setAttribute("ID",nodeId);            
-            tChannel.setAttribute("typeID", "" + chanDef.getTypeId());
+            tChannel.setAttribute("ID",nodeId);
             tChannel.setAttribute("hidden","false");
-            tChannel.setAttribute("editable", CommonUtils.boolToStr(chanDef.isEditable()));
             tChannel.setAttribute("unremovable","true");
-            tChannel.setAttribute("name",chanDef.getName());
-            tChannel.setAttribute("description", chanDef.getDescription());
-            tChannel.setAttribute("title",chanDef.getTitle());
-            tChannel.setAttribute("class",chanDef.getJavaClass());
-            tChannel.setAttribute("chanID", "" + chanDef.getId());
-            tChannel.setAttribute("fname",chanDef.getFName());
-            tChannel.setAttribute("timeout", "" + chanDef.getTimeout());
-            tChannel.setAttribute("hasHelp", CommonUtils.boolToStr(chanDef.hasHelp()));
-            tChannel.setAttribute("hasAbout", CommonUtils.boolToStr(chanDef.hasAbout()));
-            // now add channel parameters
-            ChannelParameter[] chanParms = chanDef.getParameters();
-            for( int i=0; i<chanParms.length; i++ )
-            {
-                ChannelParameter parm = (ChannelParameter)chanParms[i];                
-                Element tParm = emptyDoc.createElement("parameter");                
+            tChannel.setAttribute("immutable","true");
+
+            if ( chanDef != null ) {
+             tChannel.setAttribute("typeID", "" + chanDef.getTypeId());
+             tChannel.setAttribute("editable", CommonUtils.boolToStr(chanDef.isEditable()));
+             tChannel.setAttribute("name",chanDef.getName());
+             tChannel.setAttribute("description", chanDef.getDescription());
+             tChannel.setAttribute("title",chanDef.getTitle());
+             tChannel.setAttribute("class",chanDef.getJavaClass());
+             tChannel.setAttribute("chanID", "" + chanDef.getId());
+             tChannel.setAttribute("fname",chanDef.getFName());
+             tChannel.setAttribute("timeout", "" + chanDef.getTimeout());
+             tChannel.setAttribute("hasHelp", CommonUtils.boolToStr(chanDef.hasHelp()));
+             tChannel.setAttribute("hasAbout", CommonUtils.boolToStr(chanDef.hasAbout()));
+             // now add channel parameters
+             ChannelParameter[] chanParms = chanDef.getParameters();
+             for( int i=0; i<chanParms.length; i++ ) {
+                ChannelParameter parm = (ChannelParameter)chanParms[i];
+                Element tParm = emptyDoc.createElement("parameter");
                 tParm.setAttribute("name",parm.getName());
                 tParm.setAttribute("value",parm.getValue());
                 tChannel.appendChild(tParm);
+             }
             }
-            emptyDoc.appendChild(tChannel);
-            
+
+             emptyDoc.appendChild(tChannel);
+
             try{
                 Transformer emptyt=TransformerFactory.newInstance().newTransformer();
                 emptyt.transform(new DOMSource(emptyDoc), new SAXResult(ch));
             }
             catch( Exception e ){
-                throw new PortalException("Encountered an exception trying to output user layout",e);       
+                throw new PortalException("Encountered an exception trying to output user layout",e);
             }
         }
         else{
@@ -192,7 +198,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             // the layout
             ulnd = getTransientNode( nodeId );
         }
-        
+
         return ulnd;
     }
 
@@ -207,7 +213,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             IUserLayoutChannelDescription chan = (IUserLayoutChannelDescription) newNode;
             mFnameMap.put(chan.getFunctionalName(),chan.getId());
         }
-        
+
         return newNode;
     }
 
@@ -216,7 +222,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public boolean deleteNode(String nodeId) throws PortalException {
-        
+
         boolean success = man.deleteNode(nodeId);
         // remove from map if necessary
         if ( success && mFnameMap.containsValue(nodeId) ) {
@@ -227,7 +233,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                 throw new PortalException("Failed to delete node '" + nodeId +
                                           "' functional name not found in map.");
         }
-        
+
         return success;
     }
 
@@ -237,14 +243,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
         if ( success && node instanceof UserLayoutChannelDescription ) {
             UserLayoutChannelDescription chan = (UserLayoutChannelDescription)node;
-            // see if a key exists for the id       
+            // see if a key exists for the id
             String fname = getFname(chan.getId());
             if ( null != fname && !fname.equals(chan.getFunctionalName()) ) {
                 mFnameMap.remove(fname);
                 mFnameMap.put(chan.getFunctionalName(),chan.getId());
             }
         }
-        
+
         return success;
     }
 
@@ -313,7 +319,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     {
         return man.createNodeDescription(nodeType);
     }
-    
+
     public boolean addLayoutEventListener(LayoutEventListener l){
         return man.addLayoutEventListener(l);
     }
@@ -344,15 +350,15 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                 throw new PortalException( "Failed to get channel information " +
                                            "for subscribeId: " + subId );
             }
-                
+
             mChanMap.put(subId,chanDef);
             updateCacheKey(subId);
         }
 
         return chanDef;
     }
-        
-    
+
+
     /**
      * Given a subscribe Id, return its functional name.
      *
@@ -364,7 +370,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         // reverse lookup of subId --> fname
         if ( !mFnameMap.containsValue(subId) )
             return null;
-        
+
         Iterator it = mFnameMap.keySet().iterator();
         while( it.hasNext() )
         {
@@ -376,7 +382,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return null;
     }
 
-    
+
     /**
      * Given an functional name, return its subscribe id.
      *
@@ -405,7 +411,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * Get the current focused layout subscribe id.
      **/
     public String getFocusedId()
-    {            
+    {
         return mFocusedId;
     }
 
@@ -418,7 +424,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     {
         mFocusedId = subscribeId;
     }
-    
+
 
     /**
      * Return an IUserLayoutChannelDescription by way of nodeId
@@ -428,17 +434,17 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      **/
     private IUserLayoutChannelDescription getTransientNode(String nodeId)
         throws PortalException
-    {        
+    {
         // get fname from subscribe id
         String fname = getFname(nodeId);
         if ( null == fname || fname.equals("") )
             throw new PortalException( "Could not find a transient node " +
                                        "for id: " + nodeId );
 
-        IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();        
+        IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();
         try
         {
-            // check cache first            
+            // check cache first
             ChannelDefinition chanDef = (ChannelDefinition)mChanMap.get(nodeId);
 
             if ( null == chanDef )
@@ -447,7 +453,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                     getChannelRegistryStoreImpl().getChannelDefinition(fname);
                 mChanMap.put(nodeId,chanDef);
             }
-            
+
             ulnd.setId(nodeId);
             ulnd.setName(chanDef.getName());
             ulnd.setUnremovable(true);
@@ -463,7 +469,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             ulnd.setEditable(chanDef.isEditable());
             ulnd.setHasHelp(chanDef.hasHelp());
             ulnd.setHasAbout(chanDef.hasAbout());
-            
+
             ChannelParameter[] parms = chanDef.getParameters();
             for ( int i=0; i<parms.length; i++ )
             {
@@ -478,11 +484,11 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException( "Failed to obtain channel definition " +
                                        "using fname: " + fname );
         }
-                            
+
         return ulnd;
     }
 
-    
+
     /**
      * Return the next sequential subscription id.
      *
@@ -500,7 +506,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      *
      * @param value  the value to append.
      **/
-     
+
     private void updateCacheKey(String value)
         throws PortalException
     {
@@ -510,13 +516,13 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             cacheKey = getCacheKey();
     }
 
-    
+
     /**
      * This filter incorporates transient channels into a layout.
      * This provides the ability for channel definitions to reside in
      * a layout w/out the owner having to actually have them
      * persisted.
-     */    
+     */
     class TransientUserLayoutManagerSAXFilter extends SAX2FilterImpl {
 
         private static final String LAYOUT="layout";
@@ -524,7 +530,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         private static final String FOLDER="folder";
         private static final String CHANNEL="channel";
         private static final String PARAMETER="parameter";
-        
+
         public TransientUserLayoutManagerSAXFilter(ContentHandler handler) {
             super(handler);
         }
@@ -532,7 +538,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         public TransientUserLayoutManagerSAXFilter(XMLReader parent) {
             super(parent);
         }
-        
+
         public void startElement(String uri, String localName, String qName,
                                  Attributes atts)
             throws SAXException {
@@ -541,18 +547,18 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             // need to be added.
             String id = atts.getValue("ID");
             if ( null != id && id.equals(getRootFolderId()))
-            {                
+            {
                 // pass root event up the chain
                 super.startElement(uri,localName,qName,atts);
                 // create folder off of root layout to act as
                 // container for transient channels
                 AttributesImpl folderAtts = new AttributesImpl();
-                folderAtts.addAttribute("","ID","ID","ID",TRANSIENT_FOLDER_ID);            
+                folderAtts.addAttribute("","ID","ID","ID",TRANSIENT_FOLDER_ID);
                 folderAtts.addAttribute("","type","type","CDATA","regular" );
                 folderAtts.addAttribute("","hidden","hidden","CDATA","true");
                 folderAtts.addAttribute("","unremovable","unremovable","CDATA","true");
                 folderAtts.addAttribute("","immutable","immutable","CDATA","true");
-                folderAtts.addAttribute("","name","name","CDATA","Transient Folder");            
+                folderAtts.addAttribute("","name","name","CDATA","Transient Folder");
                 startElement("",FOLDER,FOLDER,folderAtts);
                 return;
             }
@@ -574,8 +580,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                         if ( null != subscribeId && !subscribeId.equals(""))
                         {
                             ChannelDefinition chanDef = getChannelDefinition(
-                                subscribeId);                            
-                            AttributesImpl channelAttrs = new AttributesImpl();                        
+                                subscribeId);
+                            AttributesImpl channelAttrs = new AttributesImpl();
                             channelAttrs.addAttribute("","ID","ID","ID",subscribeId);
                             channelAttrs.addAttribute("","typeID","typeID","CDATA",
                                                       "" + chanDef.getTypeId());
@@ -597,14 +603,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                                       CommonUtils.boolToStr(chanDef.hasHelp()));
                             channelAttrs.addAttribute("","hasAbout","hasAbout","CDATA",
                                                       CommonUtils.boolToStr(chanDef.hasAbout()));
-                                
+
                             startElement("",CHANNEL,CHANNEL,channelAttrs);
 
                             // now add channel parameters
                             ChannelParameter[] chanParms = chanDef.getParameters();
                             for( int i=0; i<chanParms.length; i++ )
                             {
-                                AttributesImpl parmAttrs = new AttributesImpl();                        
+                                AttributesImpl parmAttrs = new AttributesImpl();
                                 ChannelParameter parm = (ChannelParameter)chanParms[i];
                                 parmAttrs.addAttribute("","name","name","CDATA",parm.getName());
                                 parmAttrs.addAttribute("","value","value","CDATA",parm.getValue());
@@ -612,7 +618,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                 startElement("",PARAMETER,PARAMETER,parmAttrs);
                                 endElement("",PARAMETER,PARAMETER);
                             }
-                                
+
                             endElement("",CHANNEL,CHANNEL);
                         }
                     }
@@ -623,7 +629,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                        "from database for subscribe id: " +
                                        subscribeId + " - error is: " + e.getMessage() );
                     }
-                    
+
                     // now pass folder up the chain so it's closed
                     // out
                     super.endElement(uri,localName,qName);
@@ -632,7 +638,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                 else
                 {
                     AttributesImpl attsImpl = new AttributesImpl(atts);
-                    super.startElement(uri,localName,qName,attsImpl);                
+                    super.startElement(uri,localName,qName,attsImpl);
                 }
             }
             else if ( qName.equals(CHANNEL) )
@@ -648,8 +654,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             else
             {
                 AttributesImpl attsImpl = new AttributesImpl(atts);
-                super.startElement(uri,localName,qName,attsImpl);            
-            }            
+                super.startElement(uri,localName,qName,attsImpl);
+            }
         }
     }
 }
