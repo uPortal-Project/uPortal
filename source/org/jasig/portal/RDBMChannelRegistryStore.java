@@ -38,6 +38,7 @@ package org.jasig.portal;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -343,93 +344,109 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
     ChannelDefinition channelDef = null;
-    Connection con = null;
-    RDBMServices.PreparedStatement pstmtChannel = null;
-    RDBMServices.PreparedStatement pstmtChannelParam = null;
-    ResultSet rs = null;
-
+    
+    // Check the cache
     try {
-      con = RDBMServices.getConnection();
-      pstmtChannel = getChannelPstmt(con);
-      pstmtChannelParam = getChannelParamPstmt(con);
-      pstmtChannel.clearParameters();
-      pstmtChannel.setInt(1, channelPublishId);
-      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
-      rs = pstmtChannel.executeQuery();
-
-      if (rs.next()) {
-        int chanType = rs.getInt(4);
-        if (rs.wasNull()) {
-          chanType = 0;
-        }
-        int publisherId = rs.getInt(5);
-        if (rs.wasNull()) {
-           publisherId = 0;
-        }
-        int approverId = rs.getInt(6);
-        if (rs.wasNull()) {
-          approverId = 0;
-        }
-        int timeout = rs.getInt(9);
-        if (rs.wasNull()) {
-          timeout = 0;
-        }
-        channelDef = new ChannelDefinition(channelPublishId);
-        channelDef.setTitle(rs.getString(1));
-        channelDef.setDescription(rs.getString(2));
-        channelDef.setJavaClass(rs.getString(3));
-        channelDef.setTypeId(chanType);
-        channelDef.setPublisherId(publisherId);
-        channelDef.setApproverId(approverId);
-        channelDef.setPublishDate(rs.getTimestamp(7));
-        channelDef.setApprovalDate(rs.getTimestamp(8));
-        channelDef.setTimeout(timeout);
-        channelDef.setEditable(RDBMServices.dbFlag(rs.getString(10)));
-        channelDef.setHasHelp(RDBMServices.dbFlag(rs.getString(11)));
-        channelDef.setHasAbout(RDBMServices.dbFlag(rs.getString(12)));
-        channelDef.setName(rs.getString(13));
-        channelDef.setFName(rs.getString(14));
-
-        int dbOffset = 0;
-        if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
-          dbOffset = 14;
-        } else {
-          rs.close();
-          pstmtChannelParam.clearParameters();
-          pstmtChannelParam.setInt(1, channelPublishId);
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
-          rs = pstmtChannelParam.executeQuery();
-        }
-
-        while (true) {
-          if (pstmtChannelParam != null && !rs.next()) {
-            break;
-          }
-          String name = rs.getString(dbOffset + 1);
-          String value = rs.getString(dbOffset + 2);
-          String override = rs.getString(dbOffset + 3);
-          if (name != null) {
-            channelDef.addParameter(name, value, override);
-          }
-          if (pstmtChannelParam == null && !rs.next()) {
-            break;
-          }
-        }
-      }
-    } finally {
-      if (rs != null)
-        rs.close();
-      if (pstmtChannel != null)
-        pstmtChannel.close();
-      if (pstmtChannelParam != null)
-        pstmtChannelParam.close();
-      RDBMServices.releaseConnection(con);
-
+      channelDef = (ChannelDefinition)EntityCachingService.instance().get(ChannelDefinition.class, String.valueOf(channelPublishId));
+    } catch (Exception e) {
+      LogService.log(LogService.ERROR, e);
     }
+    
+    // If not found in cache, get it from the store and cache it, otherwise return it
+    if (channelDef == null) {
+      Connection con = null;
+      RDBMServices.PreparedStatement pstmtChannel = null;
+      RDBMServices.PreparedStatement pstmtChannelParam = null;
+      ResultSet rs = null;
+  
+      try {
+        con = RDBMServices.getConnection();
+        pstmtChannel = getChannelPstmt(con);
+        pstmtChannelParam = getChannelParamPstmt(con);
+        pstmtChannel.clearParameters();
+        pstmtChannel.setInt(1, channelPublishId);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
+        rs = pstmtChannel.executeQuery();
+  
+        if (rs.next()) {
+          int chanType = rs.getInt(4);
+          if (rs.wasNull()) {
+            chanType = 0;
+          }
+          int publisherId = rs.getInt(5);
+          if (rs.wasNull()) {
+             publisherId = 0;
+          }
+          int approverId = rs.getInt(6);
+          if (rs.wasNull()) {
+            approverId = 0;
+          }
+          int timeout = rs.getInt(9);
+          if (rs.wasNull()) {
+            timeout = 0;
+          }
+          channelDef = new ChannelDefinition(channelPublishId);
+          channelDef.setTitle(rs.getString(1));
+          channelDef.setDescription(rs.getString(2));
+          channelDef.setJavaClass(rs.getString(3));
+          channelDef.setTypeId(chanType);
+          channelDef.setPublisherId(publisherId);
+          channelDef.setApproverId(approverId);
+          channelDef.setPublishDate(rs.getTimestamp(7));
+          channelDef.setApprovalDate(rs.getTimestamp(8));
+          channelDef.setTimeout(timeout);
+          channelDef.setEditable(RDBMServices.dbFlag(rs.getString(10)));
+          channelDef.setHasHelp(RDBMServices.dbFlag(rs.getString(11)));
+          channelDef.setHasAbout(RDBMServices.dbFlag(rs.getString(12)));
+          channelDef.setName(rs.getString(13));
+          channelDef.setFName(rs.getString(14));
+  
+          int dbOffset = 0;
+          if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
+            dbOffset = 14;
+          } else {
+            rs.close();
+            pstmtChannelParam.clearParameters();
+            pstmtChannelParam.setInt(1, channelPublishId);
+            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
+            rs = pstmtChannelParam.executeQuery();
+          }
+  
+          while (true) {
+            if (pstmtChannelParam != null && !rs.next()) {
+              break;
+            }
+            String name = rs.getString(dbOffset + 1);
+            String value = rs.getString(dbOffset + 2);
+            String override = rs.getString(dbOffset + 3);
+            if (name != null) {
+              channelDef.addParameter(name, value, override);
+            }
+            if (pstmtChannelParam == null && !rs.next()) {
+              break;
+            }
+          }
+        }
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
+  
+        // Add the channel definition to the cache
+        try {
+          EntityCachingService.instance().add(channelDef);
+        } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+        }
 
-    LogService.instance().log(LogService.DEBUG,
-      "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
-
+      } finally {
+        if (rs != null)
+          rs.close();
+        if (pstmtChannel != null)
+          pstmtChannel.close();
+        if (pstmtChannelParam != null)
+          pstmtChannelParam.close();
+        RDBMServices.releaseConnection(con);
+  
+      }  
+    }
     return channelDef;
   }
 
@@ -590,6 +607,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Commit the transaction
         RDBMServices.commit(con);
+        
+        // Notify the cache
+        try {
+          EntityCachingService.instance().update(channelDef);
+        } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+        }
+
       } catch (SQLException sqle) {
         RDBMServices.rollback(con);
         throw  sqle;
@@ -644,6 +669,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           parentGroup.removeMember(channelDefEntity);
           parentGroup.updateMembers();
         }
+        
+        // Notify the cache
+        try {
+          EntityCachingService.instance().remove(channelDef.getEntityIdentifier());
+        } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+        }
 
       } finally {
         stmt.close();
@@ -673,6 +705,16 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         " WHERE CHAN_ID = " + channelPublishId;
         LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannelDefinition(): " + update);
         stmt.executeUpdate(update);
+        
+        // Notify the cache
+        try {
+          channelDef.setApproverId(approver.getID());
+          channelDef.setApprovalDate(approveDate);
+          EntityCachingService.instance().update(channelDef);
+        } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+        }
+        
       } finally {
         stmt.close();
       }
@@ -689,7 +731,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @param channelDef the channel definition to disapprove
    * @throws java.sql.SQLException
    */
-  public void disapproveChannelDefinition (ChannelDefinition channelDef) throws SQLException {
+  public void disapproveChannelDefinition (ChannelDefinition channelDef) throws SQLException {   
     Connection con = RDBMServices.getConnection();
     try {
       // Set autocommit false for the connection
@@ -704,6 +746,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Commit the transaction
         RDBMServices.commit(con);
+        
+        // Notify the cache
+        try {
+          channelDef.setApprovalDate(null);
+          EntityCachingService.instance().update(channelDef);
+        } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+        }
+
       } catch (SQLException sqle) {
         // Roll back the transaction
         RDBMServices.rollback(con);
