@@ -473,7 +473,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             // Pluto's portlet container implementation does this by creating a new render URL 
             // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
             if (cd.hasProcessedAction()) {
-                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
+                /*InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
                 PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
                 // Change modes
                 if (actionResponse.getChangedPortletMode() != null) {
@@ -486,7 +486,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 // Change render parameters
                 Map renderParameters = actionResponse.getRenderParameters();
                 PortletStateManager psm = ((DynamicInformationProviderImpl)InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest())).getPortletStateManager(cd.getPortletWindow());
-                psm.addParameters(renderParameters);
+                psm.addParameters(renderParameters);*/
             }
 
             StringWriter sw = new StringWriter();

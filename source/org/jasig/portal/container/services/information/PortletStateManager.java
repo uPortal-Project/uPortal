@@ -84,6 +84,7 @@ public class PortletStateManager {
 	
 	private PortletWindowImpl windowOfAction;
 	private ChannelRuntimeData runtimeData;
+	private InternalActionResponse response;
 	private HttpServletRequest request;
 	
 	// Indicates the current action
@@ -118,15 +119,21 @@ public class PortletStateManager {
 	}
 	
 	private void analizeRequestInformation() {
-		params.clear();
-		InternalActionResponse response = windowOfAction.getInternalActionResponse();
-		if ( response != null ) {
+	  params.clear();
+	  response = windowOfAction.getInternalActionResponse();
+	  if ( response != null ) {
 		 Map renderParams = response.getRenderParameters();
 		 if ( renderParams != null && !renderParams.isEmpty() )
 		  params.putAll(renderParams);
-	    }  
-		String windowId = windowOfAction.getId().toString();
-		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
+		  PortletMode mode = response.getChangedPortletMode();
+		  WindowState state = response.getChangedWindowState();
+		  if ( mode != null )
+		   setMode ( windowOfAction, mode );
+		  if ( state != null )
+		   setState ( windowOfAction, state );  
+	  } else {  
+		 String windowId = windowOfAction.getId().toString();
+		 for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
 		  String[] values = runtimeData.getParameterValues(paramName);
 		  
@@ -152,17 +159,13 @@ public class PortletStateManager {
 				else
 				 setState ( windowOfAction, WindowState.NORMAL ); 
 		      }	  		     
-		    } /*else {
-		       if ( values.length > 0 )	
-		        params.put(encodeMultiName(windowOfAction,paramName),encodeValues(values));
-		       else  
-			    params.put(paramName,values[0]);
-		      } */   
-		}  
+		    } 
+		 }
+	   }	   
 	}
 	
 	public void setParameters(Map parameters) {	
-	  if ( parameters != null && !parameters.isEmpty() )	
+	  if ( parameters != null && !parameters.isEmpty() && response == null )	
 	   params.putAll(parameters);
 	}
 
@@ -339,7 +342,7 @@ public class PortletStateManager {
 		while ( keys.hasNext() ) {
 			String name = (String) keys.next();
 			Object value = params.get(name);
-            String[] values = (value instanceof String[])? (String[]) value : new String[] {value.toString()};
+            String[] values = (value instanceof String[]) ? (String[]) value : new String[] {value.toString()};
 			for ( int i = 0; i < values.length; i++ ) {
 				 url.append(name).append("=").append(values[i]);
 				 url.append("&");
