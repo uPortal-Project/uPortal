@@ -1,0 +1,39 @@
+README for basic uPortal usage
+
+
+Manifest
+----------------------------------------
+build.properties    o Contains configuration for the build file that needs to
+                      be customized for your environment.
+build.xml           o Contains the ant build targets for working with uPortal.
+
+
+Library Dependencies
+----------------------------------------
+IMPORTANT Instructions for JDK1.4
+uPortal uses the JAXP 1.3 compatability libraries for its XML APIs. The JAXP
+libraries need to be copied into the endorsed library locations for the JRE
+and Tomcat.
+
+The libraries are included with uPortal in the lib/jaxp directory.
+    Copy them to the lib/endorsed directory of the JRE
+    Copy them to the common/endorsed directory of Tomcat
+
+There is a target in the ant build file named 'JAXP-Install' which will
+copy the files into these locations for you.
+
+
+Initial Configuration
+----------------------------------------
+To deploy uPortal you must set the server.home variable in the
+build.properties file to the instance of Tomcat you want to deploy to.
+
+
+Initial Deployment
+----------------------------------------
+The initportal target must be run before uPortal is started the first time.
+This target will take care of compiling, deploying, database population and
+other initial tasks. Running initportal again is similiar to hitting a reset
+button on the portal. Any saved configuration in the portal is lost and a clean
+version of the portal is configured.
+
