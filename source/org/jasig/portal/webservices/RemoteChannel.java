@@ -92,6 +92,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * <p>A remote channel web service.  This is the implementation
@@ -154,7 +155,8 @@ public class RemoteChannel implements IRemoteChannel {
 
     // Make sure user is authorized to access this channel
     IPerson person = getPerson();
-    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(String.valueOf(person.getID()), IPerson.class);
+    EntityIdentifier ei = person.getEntityIdentifier();
+    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
     int channelPublishId = channelDef.getId();
     boolean authorized = ap.canSubscribe(channelPublishId);
     if (!authorized)

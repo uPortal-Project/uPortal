@@ -60,6 +60,7 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * Error channel (aka null channel) is designed to render in
@@ -377,8 +378,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         ssTitle = "friendly";
         try {
           AuthorizationService authService = AuthorizationService.instance();
-          int personID = portcs.getUserPreferencesManager().getPerson().getID();
-          IAuthorizationPrincipal ap = authService.newPrincipal(String.valueOf(personID), IPerson.class);
+          EntityIdentifier ei = portcs.getUserPreferencesManager().getPerson().getEntityIdentifier();
+          IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(), ei.getType());
           if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS"))
             ssTitle = "detailed";
         } catch (Exception e) {
