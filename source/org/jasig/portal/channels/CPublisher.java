@@ -53,7 +53,7 @@ import java.util.*;
  */
 public class CPublisher implements IPrivilegedChannel
 {
-  private boolean DEBUG = false
+  private boolean DEBUG = false;
    
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
