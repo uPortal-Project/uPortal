@@ -387,15 +387,29 @@ public class DbLoader
 
   private static String getLocalDataTypeName (String genericDataTypeName)
   {
-    // Find the type code for this generic type name
-    int dataTypeCode = getJavaSqlType(genericDataTypeName);
-
-    // Find the first local type name matching the type code
+   
+    
     String localDataTypeName = null;
 
     try
     {
       DatabaseMetaData dbmd = con.getMetaData();
+      String dbName = dbmd.getDatabaseProductName();
+      String dbVersion = dbmd.getDatabaseProductVersion();
+      String driverName = dbmd.getDriverName();
+      String driverVersion = dbmd.getDriverVersion();
+
+      // Check for a mapping in DbLoader.xml
+      localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
+      
+      if (localDataTypeName != null)
+            return localDataTypeName;
+
+      
+      // Find the type code for this generic type name
+      int dataTypeCode = getJavaSqlType(genericDataTypeName);
+
+      // Find the first local type name matching the type code
       ResultSet rs = dbmd.getTypeInfo();
       try {
         while (rs.next())
@@ -412,26 +426,14 @@ public class DbLoader
         rs.close();
       }
 
-      // If a local data type wasn't found, look in properties file
-      // for a mapped data type name
-      if (localDataTypeName == null)
-      {
-        DatabaseMetaData dbMetaData = con.getMetaData();
-        String dbName = dbMetaData.getDatabaseProductName();
-        String dbVersion = dbMetaData.getDatabaseProductVersion();
-        String driverName = dbMetaData.getDriverName();
-        String driverVersion = dbMetaData.getDriverVersion();
-
-        localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
-
-        if (localDataTypeName == null)
-        {
-          System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
-          System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
-          System.out.println("Exiting...");
-          exit();
-        }
-      }
+      if (localDataTypeName != null)
+          return localDataTypeName;
+          
+      // No matching type found, report an error
+      System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
+      System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
+      System.out.println("Exiting...");
+      exit();
     }
     catch (Exception e)
     {
@@ -439,7 +441,7 @@ public class DbLoader
       exit();
     }
 
-    return localDataTypeName;
+    return null;
   }
 
   private static int getJavaSqlType (String genericDataTypeName)
