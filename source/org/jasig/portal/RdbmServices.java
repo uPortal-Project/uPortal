@@ -56,6 +56,7 @@ public class RdbmServices extends GenericPortalBean
   private static String sJdbcUser = null;
   private static String sJdbcPassword = null;
   public static int RETRY_COUNT = 5;
+  private static String prevErrorMsg = "";  // reduce noise in log file
 
   static
   {
@@ -107,6 +108,7 @@ public class RdbmServices extends GenericPortalBean
       {
         Class.forName (sJdbcDriver);
         conn = DriverManager.getConnection (sJdbcUrl, sJdbcUser, sJdbcPassword);
+        prevErrorMsg = "";
       }
       catch (ClassNotFoundException cnfe)
       {
@@ -115,8 +117,12 @@ public class RdbmServices extends GenericPortalBean
       }
       catch ( SQLException SQLe )
       {
-        Logger.log (Logger.WARN, "Driver "+ sJdbcDriver + "produced error " + SQLe.getMessage () + " tring to get connection again.");
-        Logger.log (Logger.INFO, SQLe);
+        String errMsg = SQLe.getMessage();
+        if (!errMsg.equals(prevErrorMsg)) { // Only need to see one instance of this error
+          Logger.log (Logger.WARN, "Driver "+ sJdbcDriver + "produced error " + SQLe.getMessage () + " tring to get connection again.");
+          Logger.log (Logger.INFO, SQLe);
+          prevErrorMsg = errMsg;
+        }
       }
     }
     return conn;
