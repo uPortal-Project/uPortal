@@ -68,86 +68,162 @@
 			 <TD><BR><BR><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000099"
 				SIZE="3"><B>Areas of Responsibility</B></FONT><BR> 
 				<P> Areas of Responsibility serves two purposes. First, it lists
-				  those areas that are under active development in the uPortal project and
-				  second, it is an expanding list of those tasks/features of uPortal that still
-				  need a developer. </P> 
-				<P>If there is a task that you would to contribute work to or
-				  become responsible for, click on the Responsible Developers name or "Help
-				  Needed" tag and make your request.</P> 
-				<TABLE BORDER="1" CELLPADDING="0" CELLSPACING="0" WIDTH="100%"> 
+				  those areas that are under active development in the uPortal project along with
+				  the people who have volunteered to manage the area.
+				  Second, it is an expanding list of those areas of uPortal that lack a leader and/or
+				  team of developers.</P> 
+				<P>If there is an area for which you would like to contribute leadership or
+				  development, click on volunteer link for that area.  Any help will be greatly appreciated!</P> 
+				<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%"> 
 				  <TR> 
-					 <TD VALIGN="TOP"><B>Task</B></TD> 
+					 <TD VALIGN="TOP"><B>Responsibility</B></TD> 
 					 <TD VALIGN="TOP" WIDTH="50%"><B>Description</B></TD> 
-					 <TD VALIGN="TOP"><B>Developer(s)</B><BR><FONT SIZE="-1">(* =
-						lead)</FONT></TD> 
+					 <TD VALIGN="TOP"><B>Developer(s)</B> <FONT SIZE="-2">(Leaders in bold)</FONT></TD> 
 				  </TR> 
 				  <TR> 
 					 <TD VALIGN="TOP" COLSPAN="3"
 					  BGCOLOR="#FF6600"><B>Framework</B></TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#exception">Exception handling</A></TD> 
+					 <TD VALIGN="TOP">Ensuring that java exceptions are thrown and caught appropriately
+					  throughout uPortal code.  This includes the design and use of portal-specific
+					  exceptions derived from java.lang.Exception.</TD> 
+					 <TD VALIGN="TOP">
+					  <A HREF="mailto:mbarton@princeton.edu">Michael Barton, Princeton University</A><br />
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
 				  </TR> 
 				  <TR> 
-					 <TD VALIGN="TOP"><A HREF="aorstatus.html#caching">Caching
-						Server</A></TD> 
-					 <TD VALIGN="TOP">Caching process, initially for RSS channels
-						(to limit timeout problems with unavailable remote channels)</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#logging">Logging</A></TD>  
+					 <TD VALIGN="TOP">Designing and maintaining an ILogger interface to be implemented
+						against different loggers.  An initial implementation could be Apache's log4j. The log output
+						should be xml format so XSLT could be used to easily view and/or filter log content.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
 				  </TR> 
 				  <TR> 
-					 <TD VALIGN="TOP"><A HREF="aorstatus.html#exception">Exception
-						Handling</A></TD> 
-					 <TD VALIGN="TOP">Review all uPortal code and exception handling
-						constructs, make consistent throughout</TD> 
-					 <TD VALIGN="TOP">*<A HREF="devprofile.html#kweiner">Ken
-						Weiner</A><BR><A HREF="devprofile.html#mbarton">Michael Barton</A></TD> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#properties">Properties</A></TD> 
+					 <TD VALIGN="TOP">Overseeing the use of uPortal properties files.  There are currently
+					  several properties files in uPortal, and we'd like to consider combining these into
+						a single properties file in XML format.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
 				  </TR> 
 				  <TR> 
-					 <TD VALIGN="TOP">Logging</TD> 
-					 <TD VALIGN="TOP">Modify/update Logger class to accommodate
-						different loggers (ie. Apache Log4J)</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#database">Database</A></TD> 
+					 <TD VALIGN="TOP">Ensuring that uPortal works with all relational databases for which
+					  there is a JDBC driver available.  This includes maintaining database scripts and
+					  approving database tables, column names, tables names, and data types.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
 				  <TR> 
-					 <TD VALIGN="TOP"><A HREF="aorstatus.html#properties">Properties
-						Files</A></TD> 
-					 <TD VALIGN="TOP">Suggestion to merge all properties files into
-						a single properties file or XML file (such as Server.xml for Tomcat)</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#rendering">Rendering</A></TD> 
+					 <TD VALIGN="TOP">Rendering via XSL transformations.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:peterk@interactivebusiness.com"><strong>Peter Kharchenko</strong>, IBS</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>				  
 				  <TR> 
-					 <TD VALIGN="TOP">Database</TD> 
-					 <TD VALIGN="TOP">Creation of database scripts for wider variety
-						of database engines. Review database column names, review database structure,
-						consider database normalization possibilities</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#channelContract">Channel contract</A></TD> 
+					 <TD VALIGN="TOP">Responsible for the design of the IChannel interface.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:peterk@interactivebusiness.com"><strong>Peter Kharchenko</strong>, IBS</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
 				  <TR> 
-					 <TD VALIGN="TOP">IChannel API</TD> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#caching">Caching service</A></TD> 
+					 <TD VALIGN="TOP">When channels request remote content, we need a service
+					  that caches that content locally, either in memory, on disk, or a combination
+					  of both.  This service will initially be used for caching XML documents (e.g.
+					  RSS) and images.  Consideration must be given to appropriate refresh freqencies
+					  for each resource.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />
+           </TD> 
+				  </TR> 				  
 				  <TR> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#docs">Documentation</A></TD> 
+					 <TD VALIGN="TOP">Responsible for organizing all of the uPortal documentation.
+					  This includes the website, FAQs, specifications, development guides, etc.
+					  The documentation and website will be kept in the uPortal CVS repository.</TD> 
+					 <TD VALIGN="TOP">
+						<a href="mailto:wbrooks@calpoly.edu"><strong>Bill Brooks</strong>, Cal Poly San Luis Obispo</a><br />					  
+						<a href="mailto:mbarton@princeton.edu">Michael Barton, Princeton University</a><br />
+						<a href="mailto:paul.zabloski@ubc.ca">Paul Zabloski, University of British Columbia</a><br />					  
+						<a href="mailto:@cornell.edu">Michael Oltz, Cornell University</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
 				  <TR> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#authentication">Authentication</A></TD> 
+					 <TD VALIGN="TOP">Providing a flexible framework for implementing authentication
+					  and facilitating single-sign-on.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:"><strong>Shawn Bayern</strong>, Yale University</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
 				  <TR> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP">&nbsp;</TD> 
-					 <TD VALIGN="TOP"><A HREF="mailto:admin@jasig.org">&lt;Help
-						Needed&gt;</A></TD> 
-				  </TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#authorization">Authorization</A></TD> 
+					 <TD VALIGN="TOP">Providing a flexible framework for implementing authorization (roles).</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:bdurfee@interactivebusiness.com"><strong>Bernie Durfee</strong>, IBS</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#administration">Administration</A></TD> 
+					 <TD VALIGN="TOP">User interfaces for managing users, layouts, channels, roles, etc.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#publishSubscribe">Publish/Subscribe</A></TD> 
+					 <TD VALIGN="TOP">User interfaces for publishing and subscribing to channels.
+					  A mechanism is needed for associating keywords with channels so they can be located
+					  via a keywork search.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:jlaker@udel.edu"><strong>John Laker</strong>, University of Delaware</a><br />					  
+						<a href="mailto:rundle@princeton.edu">Debra Rundle, Princeton University</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#addressBook">Address Book</A></TD> 
+					 <TD VALIGN="TOP">Interfaces and reference implementation for address book
+					  functionality.  This will initially be used by the CIMAPMail channel, but will
+					  service as a service for all channels.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:"><strong>Vikrant</strong>, University of British Columbia</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#asthetics">Asthetics</A></TD> 
+					 <TD VALIGN="TOP">Controlling the look and feel and usability of the uPortal reference
+					  implementation. This includes testing that the reference implementation is ADA-compliant.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:"><strong>Justin Tilton</strong>, IM&M</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>
+				  <TR> 
+					 <TD VALIGN="TOP"><A HREF="aorstatus.html#compatibility">Compatibility</A></TD> 
+					 <TD VALIGN="TOP">Testing to make sure uPortal runs effectively on all major
+					  operating systems and browsers.</TD>
+					 <TD VALIGN="TOP">
+						<a href="mailto:"><strong>Justin Tilton</strong>, IM&M</a><br />					  
+						<a href="mailto:jasig-dev@lobster.mis.udel.edu?subject=I'd like to volunteer">[Volunteer]</a><br />					  
+					 </TD> 
+				  </TR>					  
 				  <TR> 
 					 <TD COLSPAN="3" VALIGN="TOP" BGCOLOR="#FF6600"><B>Content
 						</B></TD> 
