@@ -81,22 +81,22 @@ import com.oreilly.servlet.multipart.ParamPart;
  */
 public class PortalSessionManager extends HttpServlet {
 
-    //    public static final String SESSION_TAG_VARIABLE="uP_session_tag";
-    public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
+  //public static final String SESSION_TAG_VARIABLE="uP_session_tag";
+  public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
 
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
   
 
-    // Following flag allows to disable features that prevent
-    // repeated requests from going through. This is useful
-    // when debugging and typing things in on a command line.
-    // Otherwise, the flag should be set to false.
-    private static final boolean ALLOW_REPEATED_REQUESTS=false;
+  // Following flag allows to disable features that prevent
+  // repeated requests from going through. This is useful
+  // when debugging and typing things in on a command line.
+  // Otherwise, the flag should be set to false.
+  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
 
-    // random number generator
-    private static final Random randomGenerator= new Random();
+  // random number generator
+  private static final Random randomGenerator = new Random();
 
   static {
     LogService.instance().log(LogService.INFO, "uPortal started");
