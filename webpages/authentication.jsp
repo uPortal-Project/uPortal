@@ -85,7 +85,6 @@ if(bAuthorized)
 else
 {
   redirectString = baseActionURL + "?userName=" + sUserName;
-  System.out.println("redstr=" + redirectString);
 }
 
 response.sendRedirect(redirectString);
