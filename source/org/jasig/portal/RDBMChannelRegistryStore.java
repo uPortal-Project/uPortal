@@ -40,6 +40,7 @@ package  org.jasig.portal;
 
 import  org.jasig.portal.utils.DTDResolver;
 import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.security.IPerson;
 import  java.io.*;
 import  org.apache.xml.serialize.*;
 import  org.apache.xerces.dom.*;
@@ -62,8 +63,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @return a string of XML
    * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML () throws Exception {
-    return UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelRegistryXML();
+  public Document getChannelRegistryXML (IPerson person) throws Exception {
+    return UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelRegistryXML(person);
   }
 
   /**
