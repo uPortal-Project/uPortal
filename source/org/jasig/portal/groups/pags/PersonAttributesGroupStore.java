@@ -245,10 +245,14 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          String key = ((IEntityGroup)member).getLocalKey();
          return groupDef.hasMember(key);
       } else {
-         // get the IPerson for the member and test
-         IPerson person = PersonDirectory.getRestrictedPerson(member.getKey());
-         // return groupDef.test(person);
-         return testRecursively(groupDef, person);
+         if (member.getEntityType() == IPerson.class) {
+            // get the IPerson for the member and test
+            IPerson person = PersonDirectory.getRestrictedPerson(member.getKey());
+            // return groupDef.test(person);
+            return testRecursively(groupDef, person);
+         } else {
+            return false;
+         }
       }
    }
 
