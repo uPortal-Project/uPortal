@@ -1406,7 +1406,8 @@ Version $Revision$
                           </a>
                         </td>
                         <td>
-                          <a href="#">Subscribe to this content</a>
+                          <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='subscribe'&amp;uP_sparam=uPcCS_categoryID&amp;uPcCS_action='{@ID}'">
+                          Subscribe to this content</a>
                         </td>
                       </tr>
                     </table>
