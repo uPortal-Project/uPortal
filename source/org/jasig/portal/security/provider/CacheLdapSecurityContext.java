@@ -35,22 +35,8 @@
 
 package  org.jasig.portal.security.provider;
 
-import java.util.Vector;
-
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
-import org.jasig.portal.LdapServices;
 import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
-
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -62,19 +48,9 @@ import org.jasig.portal.services.LogService;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CacheLdapSecurityContext extends ChainingSecurityContext implements ISecurityContext {
-  // Attributes that we're interested in.
-  public static final int ATTR_UID = 0;
-  public static final int ATTR_FIRSTNAME = ATTR_UID + 1;
-  public static final int ATTR_LASTNAME = ATTR_FIRSTNAME + 1;
-  private static final String[] attributes =  {
-    "uid",      // user ID
-    "givenName",                // first name
-    "sn"        // last name
-  };
+public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
   private final int CACHELDAPSECURITYAUTHTYPE = 0xFF03;
-  private byte[] cachedcredentials;
-
+  private byte[] cachedCredentials;
 
   CacheLdapSecurityContext () {
     super();
@@ -90,123 +66,26 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
      * value returned.  Subclasses might know but our getAuthType()
      * doesn't return anything easily useful.
      */
-    return  this.CACHELDAPSECURITYAUTHTYPE;
+    return this.CACHELDAPSECURITYAUTHTYPE;
   }
 
   /**
    * Authenticates the user.
    */
   public synchronized void authenticate () throws PortalSecurityException {
-    this.isauth = false;
-    LdapServices ldapservices = new LdapServices();
-    String creds = new String(this.myOpaqueCredentials.credentialstring);
-    if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring
-        != null && !creds.trim().equals("")) {
-      DirContext conn = null;
-      NamingEnumeration results = null;
-      String baseDN = null;
-      StringBuffer user = new StringBuffer("(");
-      String passwd = null;
-      String first_name = null;
-      String last_name = null;
-      user.append(ldapservices.getUidAttribute()).append("=");
-      user.append(this.myPrincipal.UID).append(")");
-      LogService.log(LogService.DEBUG, "Looking for " + user.toString());
-      conn = ldapservices.getConnection();
-      // set up search controls
-      SearchControls searchCtls = new SearchControls();
-      searchCtls.setReturningAttributes(attributes);
-      searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-      // do lookup
-      try {
-        results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
-        if (results != null) {
-          Vector entries = new Vector();
-          while (results != null && results.hasMore()) {
-            SearchResult entry = (SearchResult)results.next();
-            StringBuffer dnBuffer = new StringBuffer();
-            dnBuffer.append(entry.getName()).append(", ");
-            dnBuffer.append(ldapservices.getBaseDN());
-            Attributes attrs = entry.getAttributes();
-            first_name = getAttributeValue(attrs, ATTR_FIRSTNAME);
-            last_name = getAttributeValue(attrs, ATTR_LASTNAME);
-            // re-bind as user
-            conn.removeFromEnvironment(javax.naming.Context.SECURITY_PRINCIPAL);
-            conn.removeFromEnvironment(javax.naming.Context.SECURITY_CREDENTIALS);
-            conn.addToEnvironment(javax.naming.Context.SECURITY_PRINCIPAL, dnBuffer.toString());
-            conn.addToEnvironment(javax.naming.Context.SECURITY_CREDENTIALS, this.myOpaqueCredentials.credentialstring);
-            searchCtls = new SearchControls();
-            searchCtls.setReturningAttributes(new String[0]);
-            searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
-            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
-            // Save our credentials so that the parent's authenticate()
-            // method doesn't blow them away.
-            this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
-            System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
-            this.isauth = true;
-            this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+	// Save our credentials before parent's authenticate() method
+	// destroys them.
+	this.cachedCredentials =
+		new byte[this.myOpaqueCredentials.credentialstring.length];
+	System.arraycopy(this.myOpaqueCredentials.credentialstring, 0,
+					 this.cachedCredentials, 0,
+					 this.myOpaqueCredentials.credentialstring.length);
 
-            // Since LDAP is case-insensitive with respect to uid, force
-            // user name to lower case for use by the portal
-            this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
+	super.authenticate();
 
-          } // while (results != null && results.hasMore())
-        }
-        else {
-          LogService.log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
-        }
-      } catch (Exception e) {
-        LogService.log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
-        LogService.log(LogService.ERROR, e);
-        throw new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID);
-      } finally {
-        ldapservices.releaseConnection(conn);
-      }
-    }
-    else {
-      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
-    }
-    // Ok...we are now ready to authenticate all of our subcontexts.
-    super.authenticate();
-    return;
-  }
+	if (!this.isAuthenticated())
+	  this.cachedCredentials = null;
 
-  /*--------------------- Helper methods ---------------------*/
-  /**
-   * <p>Return a single value of an attribute from possibly multiple values,
-   * grossly ignoring anything else.  If there are no values, then
-   * return an empty string.</p>
-   *
-   * @param results LDAP query results
-   * @param attribute LDAP attribute we are interested in
-   * @return a single value of the attribute
-   */
-  private String getAttributeValue (Attributes attrs, int attribute) throws NamingException {
-    NamingEnumeration values = null;
-    String aValue = "";
-    if (!isAttribute(attribute))
-      return  aValue;
-    Attribute attrib = attrs.get(attributes[attribute]);
-    if (attrib != null) {
-      for (values = attrib.getAll(); values.hasMoreElements();) {
-        aValue = (String)values.nextElement();
-        break;                  // take only the first attribute value
-      }
-    }
-    return  aValue;
-  }
-
-  /**
-   * Is this a value attribute that's been requested?
-   *
-   * @param attribute in question
-   */
-  private boolean isAttribute (int attribute) {
-    if (attribute < ATTR_UID || attribute > ATTR_LASTNAME) {
-      return  false;
-    }
-    return  true;
   }
 
   /**
@@ -216,7 +95,7 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
   public IOpaqueCredentials getOpaqueCredentials () {
     if (this.isauth) {
       NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
-      oc.setCredentials(this.cachedcredentials);
+      oc.setCredentials(this.cachedCredentials);
       return  oc;
     }
     else
