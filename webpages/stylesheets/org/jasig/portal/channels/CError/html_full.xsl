@@ -6,109 +6,169 @@
   <xsl:param name="allowRefresh">true</xsl:param>
   <xsl:param name="allowReinstantiation">true</xsl:param>
   <xsl:param name="showStackTrace">true</xsl:param>
-  <xsl:template match="error">
-    <table border="0" width="100%" cellspacing="0" cellpadding="4">
-      <tr>
-        <td colspan="2" nowrap="nowrap" align="center" class="uportal-background-med">
-          <p class="uportal-channel-title">Error Report</p>
-        </td>
-      </tr>
-      <tr>
-        <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Channel ID: </p>
-        </td>
-        <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:value-of select="channel/id"/>
-        </td>
-      </tr>
-      <tr>
-        <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Message: </p>
-        </td>
-        <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:if test="not(message) or message = ''">Message not available</xsl:if>
-          <xsl:value-of select="message"/>
-        </td>
-      </tr>
-      <tr>
-        <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Error type: </p>
-        </td>
-        <td width="100%" valign="top" align="left" class="uportal-channel-error">
-          <xsl:choose>
-            <xsl:when test="@code='4'">Channel timed out (code 4)</xsl:when>
-            <xsl:when test="@code='1'">Channel failed to render (code 1)</xsl:when>
-            <xsl:when test="@code='2'">Channel failed to initialize (code 2)</xsl:when>
-            <xsl:when test="@code='3'">Channel failed to accept runtime data (code 3)</xsl:when>
-            <xsl:when test="@code='0'">General error (code 0)</xsl:when>
-            <xsl:when test="@code='5'">Channel failed to accept PCS (code 5)</xsl:when>
-            <xsl:when test="@code='6'">User not authorized (code 6)</xsl:when>
-            <xsl:when test="@code='7'">Channel not available (code 7)</xsl:when>
-            <xsl:when test="@code='-1'">uPortal error (code -1)</xsl:when>
-          </xsl:choose>
-        </td>
-      </tr>
-      <xsl:apply-templates select="exception"/>
-      <tr>
-        <td valign="top" align="right" class="uportal-background-med">
-          <xsl:if test="$allowRefresh='true'">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Retry the channel">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
-              </img>
-            </a>
-            <img alt="interface image" border="0" width="10" height="10">
-              <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-            </img>
-          </xsl:if>
-          <xsl:if test="$allowReinstantiation='true'">
-            <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
-              <img border="0" width="16" height="16" alt="Restart the channel">
-                <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
-              </img>
-            </a>
-            <img alt="interface image" border="0" width="10" height="10">
-              <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
-            </img>
-          </xsl:if>
-          <xsl:if test="exception">
-            <xsl:choose>
-              <xsl:when test="$showStackTrace='true' and */stack">
-                <a>
-                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
-                  <img border="0" width="16" height="16" alt="Hide stack trace">
-                    <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_hide_trace.gif</xsl:attribute>
-                  </img>
-                </a>
-              </xsl:when>
-              <xsl:otherwise>
-                <a>
-                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
-                  <img border="0" width="16" height="16" alt="Show stack trace">
-                    <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_show_trace.gif</xsl:attribute>
-                  </img>
-                </a>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:if>
-        </td>
-        <td valign="middle" align="center" class="uportal-background-med"/>
-      </tr>
-      <tr>
-        <td/>
-      </tr>
-    </table>
+  <xsl:param name="output">userFriendly</xsl:param>
 
-    <xsl:if test="$showStackTrace='true'">
-      <xsl:call-template name="stackTrace"/>
-    </xsl:if>
+  <xsl:template match="error">
+    <xsl:choose>
+      <xsl:when test="$output = 'userFriendly'">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>
+              <img src="{$baseMediaURL}wrenchworks.gif" width="112" height="119"/>
+            </td>
+            <td>
+              <img src="{$baseMediaURL}transparent.gif" width="16" height="16"/>
+            </td>
+            <td class="uportal-channel-subtitle" width="100%">Error:<br/><span class="uportal-channel-error">
+              <xsl:choose>
+                <xsl:when test="@code='4'">The Channel timed out</xsl:when>
+                  <xsl:when test="@code='1'">This channel failed to render</xsl:when>
+                  <xsl:when test="@code='2'">This channel failed to initialize</xsl:when>
+                  <xsl:when test="@code='3'">This channel failed to accept needed data</xsl:when>
+                  <xsl:when test="@code='0'">This channel experienced a general error</xsl:when>
+                  <xsl:when test="@code='5'">This channel failed to accept PCS</xsl:when>
+                  <xsl:when test="@code='6'">You are not authorized to view this channel</xsl:when>
+                  <xsl:when test="@code='7'">This channel is not available</xsl:when>
+                  <xsl:when test="@code='-1'">This channel experienced a general uPortal error</xsl:when></xsl:choose></span>
+              <br/>
+              <br/>
+
+              <xsl:if test="$allowRefresh='true'">
+                <a href="{$baseActionURL}?action=retry">
+                  <img src="{$baseMediaURL}error_refresh.gif" border="0" width="16" height="16" alt="Refresh the channel"/>
+                  <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
+                  <span class="uportal-label">Refresh the Channel</span>
+                </a>
+
+                <br/>
+              </xsl:if>
+
+              <xsl:if test="$allowReinstantiation='true'">
+                <a href="{$baseActionURL}?action=retry">
+                  <img src="{$baseMediaURL}error_reboot.gif" border="0" width="16" height="16" alt="Reboot the channel"/>
+                  <img src="{$baseMediaURL}transparent.gif" border="0" width="4" height="4"/>
+                  <span class="uportal-label">Reboot the Channel</span>
+                </a>
+              </xsl:if>
+            </td>
+          </tr>
+        </table>
+      </xsl:when>
+      <xsl:otherwise>
+        <table border="0" width="100%" cellspacing="0" cellpadding="4">
+          <tr>
+            <td colspan="2" nowrap="nowrap" align="center" class="uportal-background-med">
+              <p class="uportal-channel-title">Error Report</p>
+            </td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
+              <p class="uportal-channel-error">Channel ID:</p>
+            </td>
+            <td width="100%" valign="top" align="left" class="uportal-channel-error">
+              <xsl:value-of select="channel/id"/>
+            </td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
+              <p class="uportal-channel-error">Message:</p>
+            </td>
+            <td width="100%" valign="top" align="left" class="uportal-channel-error">
+              <xsl:if test="not(message) or message = ''">Message not available</xsl:if>
+              <xsl:value-of select="message"/>
+            </td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
+              <p class="uportal-channel-error">Error type:</p>
+            </td>
+            <td width="100%" valign="top" align="left" class="uportal-channel-error">
+              <xsl:choose>
+                <xsl:when test="@code='4'">Channel timed out (code 4)</xsl:when>
+                <xsl:when test="@code='1'">Channel failed to render (code 1)</xsl:when>
+                <xsl:when test="@code='2'">Channel failed to initialize (code 2)</xsl:when>
+                <xsl:when test="@code='3'">Channel failed to accept runtime data (code 3)</xsl:when>
+                <xsl:when test="@code='0'">General error (code 0)</xsl:when>
+                <xsl:when test="@code='5'">Channel failed to accept PCS (code 5)</xsl:when>
+                <xsl:when test="@code='6'">User not authorized (code 6)</xsl:when>
+                <xsl:when test="@code='7'">Channel not available (code 7)</xsl:when>
+                <xsl:when test="@code='-1'">uPortal error (code -1)</xsl:when>
+              </xsl:choose>
+            </td>
+          </tr>
+          <xsl:apply-templates select="exception"/>
+          <tr>
+            <td valign="top" align="right" class="uportal-background-med">
+              <xsl:if test="$allowRefresh='true'">
+                <a>
+                  <xsl:attribute name="href">
+                    <xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
+                  <img border="0" width="16" height="16" alt="Retry the channel">
+                    <xsl:attribute name="src">
+                      <xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
+                  </img>
+                </a>
+                <img alt="interface image" border="0" width="10" height="10">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
+                </img>
+              </xsl:if>
+              <xsl:if test="$allowReinstantiation='true'">
+                <a>
+                  <xsl:attribute name="href">
+                    <xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
+                  <img border="0" width="16" height="16" alt="Restart the channel">
+                    <xsl:attribute name="src">
+                      <xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
+                  </img>
+                </a>
+                <img alt="interface image" border="0" width="10" height="10">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
+                </img>
+              </xsl:if>
+              <xsl:if test="exception">
+                <xsl:choose>
+                  <xsl:when test="$showStackTrace='true' and */stack">
+                    <a>
+                      <xsl:attribute name="href">
+                        <xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
+                      <img border="0" width="16" height="16" alt="Hide stack trace">
+                        <xsl:attribute name="src">
+                          <xsl:value-of select="string($baseMediaURL)"/>error_hide_trace.gif</xsl:attribute>
+                      </img>
+                    </a>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <a>
+                      <xsl:attribute name="href">
+                        <xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
+                      <img border="0" width="16" height="16" alt="Show stack trace">
+                        <xsl:attribute name="src">
+                          <xsl:value-of select="string($baseMediaURL)"/>error_show_trace.gif</xsl:attribute>
+                      </img>
+                    </a>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:if>
+            </td>
+            <td valign="middle" align="center" class="uportal-background-med"/>
+          </tr>
+          <tr>
+            <td/>
+          </tr>
+        </table>
+
+        <xsl:if test="$showStackTrace='true'">
+          <xsl:call-template name="stackTrace"/>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <xsl:template match="exception">
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-        <p class="uportal-channel-error">Problem type: </p>
+        <p class="uportal-channel-error">Problem type:</p>
       </td>
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
         <xsl:choose>
@@ -183,4 +243,4 @@
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet>
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
