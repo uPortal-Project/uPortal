@@ -360,6 +360,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                         LogService.log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
                                     }
                                 }
+                                channelManager.commitToRenderingChannelSet();
+
                                 // go through the output loop
                                 int ccsize=cCache.systemBuffers.size();
                                 if(cCache.channelIds.size()!=ccsize-1) {

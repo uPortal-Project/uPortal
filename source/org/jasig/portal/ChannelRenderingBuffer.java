@@ -122,6 +122,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   }
 
   public void endDocument() throws SAXException {
+    cm.commitToRenderingChannelSet();
     super.endDocument();
 
     // buffer will be unplugged by the LayoutBean
