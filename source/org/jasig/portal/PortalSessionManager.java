@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Hashtable;
@@ -73,8 +74,17 @@ import com.oreilly.servlet.multipart.ParamPart;
  * @version: $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
-  public static final String renderBase = "render.uP";
-  public static final String detachBaseStart = "detach_";
+    // some URL construction elements
+    public static final String PORTAL_URL_SUFFIX="uP";
+    public static final String PORTAL_URL_SEPARATOR=".";
+    public static final String RENDER_URL_ELEMENT="render";
+    public static final String DETACH_URL_ELEMENT="detach";
+    public static final String WORKER_URL_ELEMENT="worker";
+    public static final String CHANNEL_URL_ELEMENT="channel";
+
+    // individual worker URL elements
+    public static final String FILE_DOWNLOAD_WORKER = "download";    
+
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
@@ -87,9 +97,8 @@ public class PortalSessionManager extends HttpServlet {
    * Initialize the PortalSessionManager servlet
    * @throws ServletException
    */
-  public void init () throws ServletException {
-    if(!initialized)
-    {
+  public void init() throws ServletException {
+    if(!initialized) {
       // Retrieve the servlet configuration object from the servlet container
       // and make sure it's available
       ServletConfig sc = getServletConfig();
@@ -117,173 +126,175 @@ public class PortalSessionManager extends HttpServlet {
    }
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @param res
-   * @exception ServletException, IOException
-   */
-  public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    doGet(req, res);
-  }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @param res
-   * @exception ServletException, IOException
-   */
-  public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    // Disable page caching
-    res.setHeader("pragma", "no-cache");
-    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
-    res.setHeader("uPortal-version", "uPortal_2-0-pre-release-2002-01-14");
-    res.setDateHeader("Expires", 0);
+    /**
+     * Process HTTP POST request
+     *
+     * @param req an incoming <code>HttpServletRequest</code> value
+     * @param res an outgoing <code>HttpServletResponse</code> value
+     * @exception ServletException if an error occurs
+     * @exception IOException if an error occurs
+     */
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        doGet(req, res);
+    }
 
-    // forwarding
-    ServletContext sc = this.getServletContext();
-    HttpSession session = req.getSession();
-    if (session != null) {
-      // LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
-      String redirectBase = null;
-      RequestParamWrapper myReq = new RequestParamWrapper(req);
-      myReq.setBaseRequest(req);
-      if ((redirectBase = this.doRedirect(myReq)) != null) {
-        // cache request
-        sc.setAttribute("oreqp_" + session.getId(), myReq);
+    /**
+     * Process HTTP GET request.
+     *
+     * @param req an incoming <code>HttpServletRequest</code> 
+     * @param res an outgoing <code>HttpServletResponse</code>
+     * @exception ServletException if an error occurs
+     * @exception IOException if an error occurs
+     */
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        // Disable page caching
+        res.setHeader("pragma", "no-cache");
+        res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+        res.setHeader("uPortal-version", "uPortal_2-0-pre-release-2002-01-14");
+        res.setDateHeader("Expires", 0);
 
-        int index = myReq.requestURI.indexOf("worker");
-        if ( index != -1) {
-          String worker = myReq.requestURI.substring(index+7);
-          worker = worker.substring(0, worker.indexOf('/'));
-          workerTask (req, res, worker);
+        // forwarding
+        ServletContext sc = this.getServletContext();
+        HttpSession session = req.getSession();
+        if (session != null) {
+            // LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
+            String redirectURL = null;
+            try {
+
+                // determine if the request needs to be forwarded
+                if ((redirectURL = this.getRedirectURL(req)) != null) {
+                    // cache request
+                    sc.setAttribute("oreqp_" + session.getId(), new RequestParamWrapper(req));
+                    session.setAttribute("forwarded", new Boolean(true));
+                    // forward
+                    // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+                    res.sendRedirect(redirectURL);
+
+                    /*
+                      int index = myReq.requestURI.indexOf("worker");
+                      if ( index != -1) {
+                      String worker = myReq.requestURI.substring(index+7);
+                      worker = worker.substring(0, worker.indexOf('/'));
+                      workerTask (req, res, worker);
+                      } else {
+                      // initial request, requires forwarding
+
+                      }
+                    */
+                } else {
+                    // delete old request
+                    Boolean forwarded = (Boolean)session.getAttribute("forwarded");
+                    if (forwarded != null) {
+                        session.removeAttribute("forwarded");
+                    }
+                    UserInstance userInstance = null;
+                    try {
+                        // Retrieve the user's UserInstance object
+                        userInstance = UserInstanceManager.getUserInstance(req);
+                    } catch(Exception e) {
+                        // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
+                        LogService.instance().log(LogService.ERROR, e);
+                    }
+                    RequestParamWrapper oreqp = null;
+                    if (forwarded != null && forwarded.booleanValue()) {
+                        oreqp = (RequestParamWrapper)sc.getAttribute("oreqp_" + session.getId());
+                    }
+                    if (oreqp != null) {
+                        oreqp.setBaseRequest(req);
+                        userInstance.writeContent(oreqp, res);
+                    } else {
+                        userInstance.writeContent(req, res);
+                    }
+                }
+            } catch (PortalException pe) {
+                if(pe.getRecordedException()!=null) {
+                    StringWriter sw=new StringWriter();
+                    pe.getRecordedException().printStackTrace(new PrintWriter(sw));
+                    sw.flush();
+                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
+                    throw new ServletException(pe.getRecordedException());
+                } else {
+                StringWriter sw=new StringWriter();
+                pe.printStackTrace(new PrintWriter(sw));
+                sw.flush();
+                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
+                throw new ServletException(pe);
+                }
+            } catch (Exception e) {
+                StringWriter sw=new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                sw.flush();
+                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
+                throw new ServletException(e);
+            }
+
         } else {
-          // initial request, requires forwarding
-          session.setAttribute("forwarded", new Boolean(true));
-          // forward
-          // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
-          //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-          res.sendRedirect(req.getContextPath() + redirectBase);
+            throw new ServletException("Session object is null !");
         }
-      }
-      else {
-        // delete old request
-        Boolean forwarded = (Boolean)session.getAttribute("forwarded");
-        if (forwarded != null)
-        {
-          session.removeAttribute("forwarded");
-        }
-        UserInstance userInstance = null;
-        try
-        {
-          // Retrieve the user's UserInstance object
-          userInstance = UserInstanceManager.getUserInstance(req);
-        }
-        catch(Exception e)
-        {
-          // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
-          LogService.instance().log(LogService.ERROR, e);
-        }
-        /**
-        UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
-        if (layout == null) {
-          layout = UserInstanceFactory.getUserInstance(myReq);
-          session.setAttribute("UserInstance", layout);
-          // LogService.instance().log(LogService.DEBUG,"PortalSessionManager;:doGet() : instantiating new UserInstance");
-        }
-        **/
-        RequestParamWrapper oreqp = null;
-        if (forwarded != null && forwarded.booleanValue())
-        {
-          oreqp = (RequestParamWrapper)sc.getAttribute("oreqp_" + session.getId());
-        }
-        if (oreqp != null)
-        {
-          oreqp.setBaseRequest(req);
-          userInstance.writeContent(oreqp, res, res.getWriter());
-        }
-        else
-        {
-          userInstance.writeContent(myReq, res, res.getWriter());
-        }
-      }
     }
-    else {
-      res.setContentType("text/html");
-      PrintWriter out = res.getWriter();
-      out.println("<html>");
-      out.println("<body>");
-      out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-      out.println("Session object is null !??");
-      out.println("</body></html>");
-    }
-  }
 
-  /**
-   * This function determines if a given request needs to be redirected
-   * @param req
-   * @return String
-   */
-  private String doRedirect (HttpServletRequest req) {
-    HttpSession session = req.getSession();
-    String redirectBase = "/" + renderBase;                     // default value
-    if (session != null) {
-      Boolean forwarded = (Boolean)session.getAttribute("forwarded");
-      if (forwarded != null && forwarded.booleanValue())
-        return  null;
-      String servletPath = req.getServletPath();
-      String uPFile = servletPath.substring(servletPath.lastIndexOf('/'), servletPath.length());
-      // redirect everything except for render.uP and detach.uP with no parameters
-      boolean detach_mode = uPFile.startsWith("/" + detachBaseStart);
-      if (!req.getParameterNames().hasMoreElements()) {
-        if (servletPath.equals("/" + renderBase) || servletPath.startsWith("/" + detachBaseStart))
-          return  null;
-      }
-      // the only exception to redirect is the detach
-      if (detach_mode)
-        redirectBase = uPFile;
-    }
-    // redirect by default
-    return '/' + renderBase;
-  }
-
-  /**
-   * Workers perform tasks other than channel rendering.  An example is downloading
-   * a MIME file from the portal server.
-   * To add a new worker:
-   *  1. Specify the worker name in the static final declarations.  This name will
-   *     be used to construct the URL to invoke the worker.
-   *  2. Call the worker method in the Channel manager from the workerTask() method.
-   */
-  public static final String FILE_DOWNLOAD = "download";
-
-  protected void workerTask (HttpServletRequest req, HttpServletResponse res, String worker) throws ServletException, IOException {
-    try
-    {
-      HttpSession session = req.getSession();
-
-      UserInstance userInstance = null;
-      try {
-        // Retrieve the user's UserInstance object
-        userInstance = UserInstanceManager.getUserInstance(req);
-      } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
-      }
-
-      if (userInstance != null) {
-        ChannelManager channelManager = userInstance.channelManager;
-        if (channelManager != null) {
-          channelManager.setReqNRes(req, res, "PortalWorker");
-          if (worker.equals(FILE_DOWNLOAD))
-            channelManager.getMimeContent(req, res);
-          // else other workers.  Enter a value for each worker first.
+    /**
+     * Determines if the current requests needs to be redirected.
+     *
+     * @param req an incoming <code>HttpServletRequest</code> value
+     * @return a URL element relative to the root context path (without the '/')
+     * if redirection is required, otherwise <code>null</code>
+     */
+    private String getRedirectURL(HttpServletRequest req) {
+        HttpSession session = req.getSession();
+        if(session!=null) {
+            // see if the session has already been "forwarded"
+            Boolean forwarded = (Boolean)session.getAttribute("forwarded");
+            if (forwarded != null && forwarded.booleanValue()) {
+                return null;
+            }
+            // get the uPFile URL element
+            String servletPath = req.getServletPath();
+            try {
+                String uPFile = servletPath.substring(servletPath.lastIndexOf('/')+1, servletPath.length());
+                
+                // see if this is a worker dispatch
+                if(uPFile.startsWith(WORKER_URL_ELEMENT)) {
+                    // no redirection needed
+                    return null;
+                } else {
+                    // do we have parameters ?
+                    boolean params_present=req.getParameterNames().hasMoreElements();
+                    // is this render or detach (or something else) ?
+                    if(uPFile.startsWith(RENDER_URL_ELEMENT)) { 
+                        if(params_present) {
+                            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        if(uPFile.startsWith(DETACH_URL_ELEMENT)) {
+                            if(params_present) {
+                                // redirect to the same uPFile
+                                return uPFile;
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            // unknown basic URL type
+                            LogService.instance().log(LogService.ERROR, "PortalSessionManager::getRedirectURL() : unknown basic uPFile type encountered. uPFile=\""+uPFile+"\".");
+                            // redirect to the base render
+                            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
+                        }
+                    }
+                    
+                }
+            } catch (IndexOutOfBoundsException iobe) {
+                // request came in without a uPFile spec
+                // redirect to the basic render
+                return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
+            }
+        } else {
+            // not tat this would ever happen...
+            return RENDER_URL_ELEMENT+PORTAL_URL_SEPARATOR+PORTAL_URL_SUFFIX;
         }
-      }
-    }  catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "PortalSessionManager::workerTask(): Worker " + worker +
-                                                  " task failed.", e);
     }
-  }
 
   /**
    * Gets a URL associated with the named resource.
@@ -357,6 +368,7 @@ public class PortalSessionManager extends HttpServlet {
      */
     public RequestParamWrapper (HttpServletRequest source) {
       // leech all of the information from the source request
+      this.req=source;
       parameters = new Hashtable();
       String contentType = source.getContentType();
       if (contentType != null && contentType.startsWith("multipart/form-data")) {
