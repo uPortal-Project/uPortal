@@ -44,6 +44,7 @@ import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.security.*;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.GroupService;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -273,13 +274,12 @@ throws GroupsException
         String key = principal.getKey();
         Class type = principal.getType();
         if ( type == EntityTypes.GROUP_ENTITY_TYPE )
-            { gm = EntityGroupStoreRDBM.singleton().find(key); }
+            { gm = GroupService.findGroup(key); }
         else
-            { gm = EntityStoreRDBM.singleton().newInstance(key, type); }
+            { gm = GroupService.getEntity(key, type); }
 
         groupMembersCache.put(principal, gm);
     }
-
     return gm;
 }
 /**
@@ -401,7 +401,7 @@ throws AuthorizationException
 private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
 {
     String key = group.getKey();
-    Class type = IEntityGroup.class;    //group.getEntityType();
+    Class type = EntityTypes.GROUP_ENTITY_TYPE;
     return newPrincipal(key, type);
 }
 /**
