@@ -159,9 +159,11 @@ public class UtilitiesBean extends GenericPortalBean
   }
 
 
-    /*
+    /**
      * This allows to create a deep copy of a DocumentImpl that preserves
      * ID tables, so that getElementById() would work on the returned clone
+     * @param olddoc the original document
+     * @return a clone of the original document with preserved ID tables
      */
     public static DocumentImpl cloneDocument(DocumentImpl olddoc) {
         DocumentImpl newdoc = new DocumentImpl();

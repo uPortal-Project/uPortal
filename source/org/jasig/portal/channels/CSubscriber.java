@@ -40,6 +40,7 @@ package  org.jasig.portal.channels;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.utils.XSLT;
+import org.apache.xerces.dom.*;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
@@ -75,7 +76,7 @@ public class CSubscriber
   private static final int SUBTO = 3;
   private static final int PREVIEW = 4;
   private int mode = NONE;
-  private Document userLayoutXML = null;
+  private DocumentImpl userLayoutXML = null;
   private Document channelRegistry = null;
   private String action = null;
   private String categoryID = null;
@@ -84,7 +85,7 @@ public class CSubscriber
   private boolean modified = false;             // modification flag
   private static final String regID = "top";                    // mark the top level of the categories
 
-  /** 
+  /**
    * Construct a CSubscriber.
    */
   public CSubscriber () {
@@ -104,7 +105,7 @@ public class CSubscriber
     ulm = pcs.getUserLayoutManager();
   }
 
-  /** 
+  /**
    * Returns channel runtime properties
    * @return handle to runtime properties
    */
@@ -113,7 +114,7 @@ public class CSubscriber
     return  new ChannelRuntimeProperties();
   }
 
-  /** 
+  /**
    * Receive any events from the layout
    * @param ev layout event
    */
@@ -121,7 +122,7 @@ public class CSubscriber
   // no events for this channel
   }
 
-  /** 
+  /**
    * Receive static channel data from the portal
    * @param sd static channel data
    */
@@ -129,7 +130,7 @@ public class CSubscriber
     this.staticData = sd;
   }
 
-  /** 
+  /**
    * Receives channel runtime data from the portal and processes actions
    * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
@@ -142,21 +143,21 @@ public class CSubscriber
     //chanReg = new ChannelRegistryImpl();
     //get fresh copies of both since we don't really know if changes have been made
     if (userLayoutXML == null)
-      userLayoutXML = ulm.getUserLayoutCopy();
-    if (channelRegistry == null)
-      channelRegistry = chanReg.getRegistryXML(catID, role);
+      userLayoutXML = (DocumentImpl) ulm.getUserLayoutCopy();
+    if(channelRegistry == null)
+	channelRegistry = chanReg.getRegistryXML(catID, role);
     action = runtimeData.getParameter("action");
     if (action != null) {
       try {
         if (action.equals("browse")) {
           prepareBrowse();
-        } 
+        }
         else if (action.equals("subscribe")) {
           prepareSubscribe();
-        } 
+        }
         else if (action.equals("subscribeTo")) {
           prepareSubscribeTo();
-        } 
+        }
         else if (action.equals("saveChanges")) {
           prepareSaveChanges();
         }
@@ -169,7 +170,7 @@ public class CSubscriber
       categoryID = this.regID;
   }
 
-  /** 
+  /**
    * Output channel content to the portal
    * @param out a sax document handler
    */
@@ -201,7 +202,7 @@ public class CSubscriber
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException, 
+  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException,
       GeneralRenderingException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
@@ -211,8 +212,8 @@ public class CSubscriber
         ssParams.put("categoryID", categoryID);
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      } 
-      else 
+      }
+      else
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -247,31 +248,36 @@ public class CSubscriber
     Node destination = null;
     if (destinationID == null) {
       Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : received a null destinationID !");
-    } 
+    }
     else {
       if (destinationID.equals(this.regID))
         destination = userLayoutXML.getDocumentElement();       // the layout element
-      else 
+      else
         destination = userLayoutXML.getElementById(destinationID);
       if (destination == null) {
         Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : destinationID=\"" + destinationID + "\" results in an empty node !");
-      } 
+      }
       else {
         for (int i = 0; i < subIDs.length; i++) {
-          Node channel = channelRegistry.getElementById(subIDs[i]);
-          // user wants to add an entire category to layout
-          if (subIDs[i].startsWith("cat")) {
-            NodeList channels = channel.getChildNodes();
-            for (int j = 0; j < channels.getLength(); j++) {
-              channel = channels.item(j);
-              setNextInstanceID(channel);
-              destination.insertBefore(userLayoutXML.importNode(channel, true), null);
-            }
-          } 
-          else {
-            setNextInstanceID(channel);
-            destination.insertBefore(userLayoutXML.importNode(channel, true), null);
-          }
+	    Element channel = channelRegistry.getElementById(subIDs[i]);
+	    // user wants to add an entire category to layout
+	    if (subIDs[i].startsWith("cat")) {
+		NodeList channels = channel.getChildNodes();
+		for (int j = 0; j < channels.getLength(); j++) {
+		    Element newNode=(Element)userLayoutXML.importNode(channels.item(j),true);
+		    setNextInstanceID(newNode);
+		    destination.insertBefore(newNode, null);
+		    // set the id (Xerces-specific)
+		    userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
+		}
+	    }
+	    else {
+		Element newNode=(Element)userLayoutXML.importNode(channel,true);
+		setNextInstanceID(newNode);
+		destination.insertBefore(newNode, null);
+		// set the id (Xerces-specific)
+		userLayoutXML.putIdentifier(newNode.getAttribute("ID"),newNode);
+	    }
         }
         modified = true;
       }
