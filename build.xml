@@ -144,8 +144,8 @@
                        the steps you need to take to ensure that the appropriate
                        version of Xalan is being used in your environment:
                        JDK 1.3: http://xml.apache.org/xalan-j/faq.html#faq-N100AF
-                       JDK 1.4: http://xml.apache.org/xalan-j/faq.html#faq-N100C3
-                       Version: 2.5.2
+                       JDK 1.4: http://xml.apache.org/xalan-j/faq.html#faq-N100CC
+                       Version: 2.6.0
                        URL: http://xml.apache.org/xalan-j/
 
   xercesImpl.jar       Xerces2 is the next generation of high performance,
@@ -169,7 +169,7 @@
                        download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
                        Used by the CWebProxy channel.
                        Version: 04aug2000r6 or fixed version     (see above)
-                       URL: http://lempinen.net/sami/jtidy/
+                       URL: http://jtidy.sourceforge.net/
                             http://www.mun.ca/cc/portal/cw/#depend   (see above)
 
   tyrex.jar            An in-memory JNDI implementation.
