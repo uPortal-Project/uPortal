@@ -17,7 +17,7 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
  * @version $Revision$
  */
 
-public interface IUserLayoutRestriction {
+public interface ILayoutRestriction {
 
   /**
    * Returns the name of the current restriction

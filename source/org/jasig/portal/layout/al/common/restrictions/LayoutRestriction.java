@@ -15,21 +15,21 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
  * @version $Revision$
  */
 
-public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
+public abstract class LayoutRestriction implements ILayoutRestriction {
 
   private String name;	
   private String restrictionExpression;
   protected RestrictionPath restrictionPath;
   
-  public UserLayoutRestriction() {
+  public LayoutRestriction() {
      this("",RestrictionPath.LOCAL_RESTRICTION_PATH);
   }
 
-  public UserLayoutRestriction( String name ) {
+  public LayoutRestriction( String name ) {
      this(name,RestrictionPath.LOCAL_RESTRICTION_PATH);
   }
 
-  public UserLayoutRestriction( String name, RestrictionPath restrictionPath ) {
+  public LayoutRestriction( String name, RestrictionPath restrictionPath ) {
   	 this.name = name;
      this.restrictionPath = restrictionPath;
   }

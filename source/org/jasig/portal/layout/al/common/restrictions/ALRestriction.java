@@ -18,7 +18,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @version $Revision$
  */
 
-public abstract class ALRestriction extends UserLayoutRestriction {
+public abstract class ALRestriction extends LayoutRestriction {
 	
   public ALRestriction() {
 	 super();

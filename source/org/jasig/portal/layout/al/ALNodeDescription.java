@@ -8,7 +8,7 @@ package org.jasig.portal.layout.al;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
-import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.ILayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
@@ -118,7 +118,7 @@ public class ALNodeDescription implements IALNodeDescription {
      * Adds the restriction for this node.
      * @param restriction a <code>IUserLayoutRestriction</code> a restriction
      */
-     public void addRestriction( IUserLayoutRestriction restriction ) {
+     public void addRestriction( ILayoutRestriction restriction ) {
        restrictions.add(restriction);
      }
 
@@ -128,9 +128,9 @@ public class ALNodeDescription implements IALNodeDescription {
      * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-     public IUserLayoutRestriction getRestriction( RestrictionType restrictionType, RestrictionPath restrictionPath ) {
+     public ILayoutRestriction getRestriction( RestrictionType restrictionType, RestrictionPath restrictionPath ) {
      	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+            ILayoutRestriction restriction = (ILayoutRestriction) i.next();
             if ( restriction.is(restrictionType) && restrictionPath.equals(restriction.getRestrictionPath()) )
                  return restriction;
         }
@@ -142,7 +142,7 @@ public class ALNodeDescription implements IALNodeDescription {
       * @param restrictionType a <code>RestrictionType</code> restriction type
       * @return a IUserLayoutRestriction
       */
-      public IUserLayoutRestriction getLocalRestriction( RestrictionType restrictionType ) {
+      public ILayoutRestriction getLocalRestriction( RestrictionType restrictionType ) {
       	return getRestriction(restrictionType,RestrictionPath.LOCAL_RESTRICTION_PATH);
       }
 
@@ -155,7 +155,7 @@ public class ALNodeDescription implements IALNodeDescription {
        Collection list = new HashSet();
        if ( restrictions != null ) {
         for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+          ILayoutRestriction restriction = (ILayoutRestriction) i.next();
           if ( restrictionPath.equals(restriction.getRestrictionPath()) )
                list.add(restriction);
         }
@@ -167,7 +167,7 @@ public class ALNodeDescription implements IALNodeDescription {
        if ( restrictions != null )
        	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
             Element pElement=root.createElement("restriction");
-            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+            ILayoutRestriction restriction = (ILayoutRestriction) i.next();
             pElement.setAttribute("path",restriction.getRestrictionPath().toString());
             pElement.setAttribute("value",restriction.getRestrictionExpression());
             pElement.setAttribute("type",restriction.getName());

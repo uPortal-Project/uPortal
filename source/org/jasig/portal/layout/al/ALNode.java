@@ -13,7 +13,7 @@ import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.NodeType;
-import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.ILayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
@@ -120,7 +120,7 @@ public abstract class ALNode implements IALNode {
      * @param restrictionPath a <code>RestrictionPath</code>  restriction path
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
+    public ILayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
             return ((IALNodeDescription)nodeDescription).getRestriction(restrictionType,restrictionPath);
     }
     /**
@@ -128,7 +128,7 @@ public abstract class ALNode implements IALNode {
      * @param restrictionType a <code>RestrictionType</code> restriction type
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
+    public ILayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
             return ((IALNodeDescription)nodeDescription).getLocalRestriction(restrictionType);
     }
     /**
@@ -180,7 +180,7 @@ public abstract class ALNode implements IALNode {
     /**
      * @param restriction
      */
-    public void addRestriction(IUserLayoutRestriction restriction) {
+    public void addRestriction(ILayoutRestriction restriction) {
     	((IALNodeDescription)nodeDescription).addRestriction(restriction);
     }
     /**

@@ -9,7 +9,7 @@ import java.util.Collection;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.FolderDescriptionImpl;
 import org.jasig.portal.layout.al.common.node.IFolderDescription;
-import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.ILayoutRestriction;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.jasig.portal.layout.al.common.restrictions.RestrictionType;
 import org.w3c.dom.Document;
@@ -120,7 +120,7 @@ public class ALFolderDescription extends FolderDescriptionImpl implements IALNod
      * Adds the restriction for this node.
      * @param restriction a <code>IUserLayoutRestriction</code> a restriction
      */
-    public void addRestriction( IUserLayoutRestriction restriction ) {
+    public void addRestriction( ILayoutRestriction restriction ) {
         this.alproperties.addRestriction(restriction);
     }
 
@@ -130,7 +130,7 @@ public class ALFolderDescription extends FolderDescriptionImpl implements IALNod
      * @param restrictionPath a <code>RestrictionPath</code>  restriction path
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
+    public ILayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
             return this.alproperties.getRestriction(restrictionType,restrictionPath);
     }
     /**
@@ -138,7 +138,7 @@ public class ALFolderDescription extends FolderDescriptionImpl implements IALNod
      * @param restrictionType a <code>RestrictionType</code> restriction type
      * @return a IUserLayoutRestriction
      */
-    public IUserLayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
+    public ILayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
             return this.alproperties.getLocalRestriction(restrictionType);
     }
     /**
