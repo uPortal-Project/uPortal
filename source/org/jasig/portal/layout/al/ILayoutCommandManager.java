@@ -15,7 +15,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * An interface describing layout command manager.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
- * @author Peter Kharchenko: mvi at immagic.com
+ * @author Michael Ivanov: mvi at immagic.com
  */
 public interface ILayoutCommandManager extends ILayoutManagerCommands {
     

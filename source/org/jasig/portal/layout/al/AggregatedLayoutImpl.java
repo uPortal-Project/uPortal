@@ -25,6 +25,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class AggregatedLayoutImpl implements  IAggregatedLayout {
+	
     private ILayoutCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;
     
@@ -32,7 +33,7 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
     private ILayoutSubtree currentLayout;
     
     // fragment manager
-    private IFragmentRegistry fragmentManager;    
+    private IFragmentRegistry fragmentRegistry;    
 	
     // assemble user layout from scratch
     public void loadUserLayout() {
@@ -48,16 +49,30 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         
     }
     
+    protected ILayoutNode addNodeToLostFolder(INode node) throws PortalException {
+      return currentLayout.addNode(node,IALFolderDescription.LOST_FOLDER_ID,null);	
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayout#addNodes(org.jasig.portal.layout.al.common.node.ILayoutNode, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
      */
-    public ILayoutNode addNode(INode node, INodeId parentId, INodeId nextId) {
-        
+    public ILayoutNode addNode(INode node, INodeId parentId, INodeId nextId) throws PortalException {
+    	
         // attach newly constructed copy to the active layout, checking restrictions first
-        // if fragmentId of the nodes being attached is not the same as the
-        // fragmentId of the attachment point, place the subtree under the "lost folder" for that fragment
-        // and record appropriate "move" operation.
-        
+    	if ( node != null && restrictionManager.checkAddRestrictions(node,parentId,nextId) ) {
+         IALNode parentNode = (IALNode) getNode(parentId);		
+    	 if ( ((IALNode)node).getFragmentId().equals(parentNode.getFragmentId())) {	
+    	   return currentLayout.addNode(node,parentId,nextId);
+           // if fragmentId of the nodes being attached is not the same as the
+           // fragmentId of the attachment point, place the subtree under the "lost folder" for that fragment
+           // and record appropriate "move" operation.
+    	 } else { 
+    	 	ILayoutNode newNode = addNodeToLostFolder(node);
+    	 	if (layoutCommandManager.moveNode(newNode.getId(),parentId,nextId) &&
+    	 	    currentLayout.moveNode(newNode.getId(),parentId,nextId) );
+    	 	  return newNode;
+    	 }
+    	} 
         return null;
     }
     
@@ -84,19 +99,17 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
                     //fragmentManager.deleteFragment(fragmentId);
                 }
                 //  otherwise: perform node deletion
-                IFragment fragment=fragmentManager.getFragment(fragmentId);
+                IFragment fragment=fragmentRegistry.getFragment(fragmentId);
                 if(fragment.deleteNode(node.getFragmentNodeId())) {
                     // notify command manager that a node has been centrally deleted
                     layoutCommandManager.notifyCentralDeleteNode(nodeId);
                     // perform deletion in local layout snapshot
-                    currentLayout.deleteNode(nodeId);
-                    return true;
+                    return currentLayout.deleteNode(nodeId);
                 }
             } else {
                 //  record "delete" operation
                 if(layoutCommandManager.deleteNode(nodeId)) {
-                    currentLayout.deleteNode(nodeId);
-                    return true;
+                    return currentLayout.deleteNode(nodeId);
                 }
             }
         }
@@ -152,31 +165,31 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
             if(isCentralModification(nodeId)) {
                 IALNode node=(IALNode) getNode(nodeId);
                 IFragmentId fragmentId=node.getFragmentId();
-                IFragment fragment=fragmentManager.getFragment(fragmentId);
+                IFragment fragment=fragmentRegistry.getFragment(fragmentId);
                 if(fragment.updateNode(node.getFragmentNodeId(),nodeDescription)) {
-                    currentLayout.updateNode(nodeId,nodeDescription);
+                    boolean result = currentLayout.updateNode(nodeId,nodeDescription);
                     // TODO: peterk: we should probably reload the layout, otherwise
                     // we can not gurantee that the next time user logs in the
                     // layout will look the same (i.e. some restrictions could've
                     // changed that can prevent current state from being achieved
-                    return true;
+                    return result;
                 }
             } else {
                 if(layoutCommandManager.updateNode(nodeId,nodeDescription)) {
-                    currentLayout.updateNode(nodeId,nodeDescription);
-                    return true;
+                    return currentLayout.updateNode(nodeId,nodeDescription);
                 }
             }
         }
         return false;
     }
+    
     /**
      * Import a subtree by constructing a local copy with
      * assigned ids.
      * @param node
      * @return a local aggregated layout node copy with assigned ids
      */
-    protected IALNode importNodes(INode node) {
+    public IALNode importNodes(INode node) throws PortalException {
         // construct subtree copy, assigning layout ids.
         // if the layout node implements IALNode, make use of the available
         // restriction information, otherwise assign default restrictions (none?)
@@ -218,6 +231,19 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
      */
     public void setRestrictionManager(IRestrictionManager restrictionManager) {
         this.restrictionManager = restrictionManager;
+    }
+    
+    /**
+     * @return Returns the fragmentRegistry.
+     */
+    public IFragmentRegistry getFragmentRegistry() {
+        return fragmentRegistry;
+    }
+    /**
+     * @param fragmentRegistry The fragmentRegistry to set.
+     */
+    public void setFragmentRegistry(IFragmentRegistry fragmentRegistry) {
+        this.fragmentRegistry = fragmentRegistry;
     }
 
     /* (non-Javadoc)
