@@ -71,16 +71,21 @@ public class CChannelManager extends BaseChannel {
   protected static final short CHANNEL_DEF_STATE = 3;
   protected static final short CHANNEL_CONTROLS_STATE = 4;
   protected static final short CHANNEL_CATEGORIES_STATE = 5;
-  protected static final short MODIFY_CHANNEL_STATE = 6;
+  protected static final short CHANNEL_ROLES_STATE = 6;
+  protected static final short CHANNEL_REVIEW_STATE = 7;
+  protected static final short MODIFY_CHANNEL_STATE = 8;
+  protected String action;
   protected String stepID;
   protected Document channelManagerDoc;
   protected ChannelDefinition channelDef = new ChannelDefinition();
   protected UserSettings userSettings = new UserSettings();
+  protected CategorySettings categorySettings = new CategorySettings();
+  protected RoleSettings roleSettings = new RoleSettings();
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     runtimeData = rd;
-    captureChanges();
-    String action = runtimeData.getParameter("uPCM_action");
+    action = runtimeData.getParameter("uPCM_action");
+    captureChanges(); // Keep after "action = " because action might change inside captureChanges
     if (action != null) {
       if (action.equals("selectChannelType")) {
 
@@ -88,13 +93,19 @@ public class CChannelManager extends BaseChannel {
         Workflow workflow = new Workflow();
 
         // Add channel types and channel def
-        WorkflowSection section = new WorkflowSection("selectChannelType");
-        workflow.setChannelTypesSection(section);
+        WorkflowSection chanTypeSection = new WorkflowSection("selectChannelType");
         WorkflowStep step = new WorkflowStep("1", "Channel Type");
         step.addDataElement(ChannelRegistryManager.getChannelTypes().getDocumentElement());
         step.addDataElement(channelDef.toXML());
-        section.addStep(step);
+        chanTypeSection.addStep(step);
+        workflow.setChannelTypesSection(chanTypeSection);
 
+        // Add CPD document if channel is "generic"
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null && !channelTypeID.equals("-1")) {
+          CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+          workflow.setCPDSection(cpdSection);
+        }
 
         channelManagerDoc = workflow.toXML();
 
@@ -111,7 +122,7 @@ public class CChannelManager extends BaseChannel {
         gsSection.addStep(step);
 
         // Add CPD document
-        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getChanTypeID());
+        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getTypeID());
         workflow.setCPDSection(section);
 
         channelManagerDoc = workflow.toXML();
@@ -122,8 +133,9 @@ public class CChannelManager extends BaseChannel {
         Workflow workflow = new Workflow();
 
         // Add CPD document
-        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getChanTypeID());
-        workflow.setCPDSection(section);
+        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+        cpdSection.addToStep(channelDef.toXML(), fixStepID(stepID));
+        workflow.setCPDSection(cpdSection);
 
         channelManagerDoc = workflow.toXML();
 
@@ -133,7 +145,7 @@ public class CChannelManager extends BaseChannel {
         Workflow workflow = new Workflow();
 
         // Add CPD document
-        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getChanTypeID());
+        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getTypeID());
         workflow.setCPDSection(section);
 
         channelManagerDoc = workflow.toXML();
@@ -144,7 +156,7 @@ public class CChannelManager extends BaseChannel {
         Workflow workflow = new Workflow();
 
         // Add CPD document
-        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getChanTypeID());
+        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
         workflow.setCPDSection(cpdSection);
 
         // Add channel registry
@@ -152,7 +164,52 @@ public class CChannelManager extends BaseChannel {
         workflow.setCategoriesSection(catSection);
         WorkflowStep step = new WorkflowStep("1", "Categories");
         step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
+        // Add user settings with previously chosen categories
+        step.addDataElement(categorySettings.toXML());
         catSection.addStep(step);
+
+        channelManagerDoc = workflow.toXML();
+
+      } else if (action.equals("selectRoles")) {
+
+        state = CHANNEL_ROLES_STATE;
+        Workflow workflow = new Workflow();
+
+        // Add CPD document
+        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+        workflow.setCPDSection(cpdSection);
+
+        // Add roles
+        WorkflowSection roleSection = new WorkflowSection("selectRoles");
+        workflow.setRolesSection(roleSection);
+        WorkflowStep step = new WorkflowStep("1", "Roles");
+        step.addDataElement(getRoles().getDocumentElement());
+        // Add user settings with previously chosen roles
+        step.addDataElement(roleSettings.toXML());
+        roleSection.addStep(step);
+
+        channelManagerDoc = workflow.toXML();
+
+      } else if (action.equals("reviewChannel")) {
+
+        state = CHANNEL_REVIEW_STATE;
+        Workflow workflow = new Workflow();
+
+        WorkflowSection reviewSection = new WorkflowSection("reviewChannel");
+        workflow.setReviewSection(reviewSection);
+        WorkflowStep step = new WorkflowStep("1", "Review");
+
+        // Channel Definition
+        step.addDataElement(channelDef.toXML());
+        // Selected categories
+        // Channel registry
+        step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
+        // Selected roles
+        step.addDataElement(roleSettings.toXML());
+        // Channel types
+        step.addDataElement(ChannelRegistryManager.getChannelTypes().getDocumentElement());
+
+        reviewSection.addStep(step);
 
         channelManagerDoc = workflow.toXML();
 
@@ -215,6 +272,12 @@ public class CChannelManager extends BaseChannel {
       case CHANNEL_CATEGORIES_STATE:
         action = "selectCategories";
         break;
+      case CHANNEL_ROLES_STATE:
+        action = "selectRoles";
+        break;
+      case CHANNEL_REVIEW_STATE:
+        action = "reviewChannel";
+        break;
       case MODIFY_CHANNEL_STATE:
         action = "selectModifyChannel";
         break;
@@ -224,6 +287,8 @@ public class CChannelManager extends BaseChannel {
     }
 
     xslt.setStylesheetParameter("action", action);
+    // Temporary mediaPath param - makes it easier for Justin and I to work together
+    xslt.setStylesheetParameter("mediaPath", "media/org/jasig/portal/channels/CChannelManager");
     xslt.transform();
 
     // Remove this!!!
@@ -260,9 +325,11 @@ public class CChannelManager extends BaseChannel {
     if (capture != null) {
       // Channel types
       if (capture.equals("selectChannelType")) {
-        String chanTypeID = runtimeData.getParameter("ID");
-        if (chanTypeID != null)
-          channelDef.setChanTypeID(chanTypeID);
+        String typeID = runtimeData.getParameter("ID");
+        if (typeID != null)
+          channelDef.setTypeID(typeID);
+        else
+          action = "selectChannelType";
       // General Settings (name and timeout)
       } else if (capture.equals("selectGeneralSettings")) {
         String name = runtimeData.getParameter("name");
@@ -282,8 +349,9 @@ public class CChannelManager extends BaseChannel {
           if (name.startsWith("uPCM_"))
             continue;
 
-          String val = runtimeData.getParameter(name);
-          System.out.println("name=" + name + ", val=" + val);
+          String value = runtimeData.getParameter(name);
+          String modType = "unknown"; // ???? what should we do here ????
+          channelDef.addParameter(name, value, modType);
         }
       // Channel controls
       } else if (capture.equals("selectControls")) {
@@ -301,6 +369,15 @@ public class CChannelManager extends BaseChannel {
         channelDef.setRemovable(removable != null ? "true" : "false");
         String detachable = runtimeData.getParameter("detachable");
         channelDef.setDetachable(detachable != null ? "true" : "false");
+      // Categories
+      } else if (capture.equals("selectCategories")) {
+        String selectedCategory = runtimeData.getParameter("selectedCategory");
+        if (selectedCategory != null && selectedCategory.trim().length() > 0) {
+          if (runtimeData.getParameter("uPCM_browse") != null)
+            categorySettings.setBrowsingCategory(selectedCategory);
+          else // runtimeData.getParameter("uPCM_select") != null
+            categorySettings.addSelectedCategory(selectedCategory);
+        }
       }
     }
   }
@@ -387,6 +464,26 @@ public class CChannelManager extends BaseChannel {
     return cpdDoc;
   }
 
+  // This method needs some caching!!!
+  protected static Document getRoles() {
+    Document roleDoc = DocumentFactory.getNewDocument();
+    org.jasig.portal.security.IAuthorization authorization = new org.jasig.portal.security.provider.ReferenceAuthorizationFactory().getAuthorization();
+    java.util.Vector vRoles = authorization.getAllRoles();
+    Element rolesE = roleDoc.createElement("roles");
+    for (int i = 0; i < vRoles.size(); i++) {
+      Element roleE = roleDoc.createElement("role");
+      Element nameE = roleDoc.createElement("name");
+      nameE.appendChild(roleDoc.createTextNode(((org.jasig.portal.security.IRole)vRoles.elementAt(i)).getRoleTitle()));
+      roleE.appendChild(nameE);
+      Element descriptionE = roleDoc.createElement("description");
+      descriptionE.appendChild(roleDoc.createTextNode((String)((org.jasig.portal.security.IRole)vRoles.elementAt(i)).getAttribute("description")));
+      roleE.appendChild(descriptionE);
+      rolesE.appendChild(roleE);
+    }
+    roleDoc.appendChild(rolesE);
+    return  roleDoc;
+  }
+
   // This method is just for testing and will be removed...
   public static void main(String[] args) throws Exception {
     UtilitiesBean.setPortalBaseDir("D:\\Projects\\JA-SIG\\uPortal2\\");
@@ -469,7 +566,7 @@ public class CChannelManager extends BaseChannel {
         channelManagerE.appendChild(cpdSection.toXML(doc));
 
       addSection(controlsSection, "selectControls", "Channel Controls", channelManagerE);
-      addSection(categoriesSection, "selectCategory", "Categories", channelManagerE);
+      addSection(categoriesSection, "selectCategories", "Categories", channelManagerE);
       addSection(rolesSection, "selectRoles", "Roles", channelManagerE);
       addSection(reviewSection, "reviewChannel", "Review", channelManagerE);
 
@@ -495,17 +592,11 @@ public class CChannelManager extends BaseChannel {
 
     protected WorkflowSection(String name) {
       this.name = name;
+      steps = new ArrayList();
     }
-
-    // Accessor methods
-    protected String getName() { return name; }
-    protected List getSteps() { return steps; }
 
     protected void setName(String name) { this.name = name; }
     protected void addStep(WorkflowStep step) {
-      if (steps == null)
-        steps = new ArrayList();
-
       steps.add(step);
     }
 
@@ -534,6 +625,29 @@ public class CChannelManager extends BaseChannel {
     protected CPDWorkflowSection (String chanTypeID) throws PortalException {
       super();
       cpdDoc = getCPDDoc(chanTypeID);
+    }
+
+    protected void addToStep(Element element, String stepID) {
+      for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
+        if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("params")) {
+          for (Node n2 = n1.getFirstChild(); n2 != null; n2 = n2.getNextSibling()) {
+            if (n2.getNodeType() == Node.ELEMENT_NODE && n2.getNodeName().equals("step")) {
+              for (Node n3 = n2.getFirstChild(); n3 != null; n3 = n3.getNextSibling()) {
+                if (n3.getNodeType() == Node.ELEMENT_NODE && n3.getNodeName().equals("ID")) {
+                  for (Node n4 = n3.getFirstChild(); n4 != null; n4 = n4.getNextSibling()) {
+                    if (n4.getNodeType() == Node.TEXT_NODE) {
+                      String ID = n4.getNodeValue();
+                      if (ID.equals(stepID)) {
+                        n2.appendChild(cpdDoc.importNode(element, true));
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     protected Element toXML(Document doc) {
@@ -580,7 +694,7 @@ public class CChannelManager extends BaseChannel {
 
   protected class ChannelDefinition {
     protected String ID;
-    protected String chanTypeID;
+    protected String typeID;
     protected String name;
     protected String timeout;
     protected String fname;
@@ -599,6 +713,12 @@ public class CChannelManager extends BaseChannel {
       protected String value;
       protected String modType; // Need to make this part of parameter table
 
+      protected Parameter(String name, String value, String modType) {
+        this.name = name;
+        this.value = value;
+        this.modType = modType;
+      }
+
       protected String getName() { return name; }
       protected String getValue() { return value; }
       protected String getModType() { return modType; }
@@ -611,8 +731,8 @@ public class CChannelManager extends BaseChannel {
       parameters = new ArrayList();
     }
 
-    protected String getChanTypeID() { return chanTypeID; }
-    protected void setChanTypeID(String chanTypeID) { this.chanTypeID = chanTypeID; }
+    protected String getTypeID() { return typeID; }
+    protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
     protected void setTimeout(String timeout) { this.timeout = timeout; }
     protected void setMinimizable(String minimizable) { this.minimizable = minimizable; }
@@ -629,10 +749,14 @@ public class CChannelManager extends BaseChannel {
         e.setAttribute(attName, attVal);
     }
 
+    protected void addParameter(String name, String value, String modType) {
+      parameters.add(new Parameter(name, value, modType));
+    }
+
     protected Element toXML() {
       Element channelE = emptyDoc.createElement("channel");
       setAttribute(channelE, "ID", ID);
-      setAttribute(channelE, "chanTypeID", chanTypeID); // Need to officially make this part of channel def
+      setAttribute(channelE, "typeID", typeID); // Need to officially make this part of channel def
       setAttribute(channelE, "name", name);
       setAttribute(channelE, "fname", fname);
       setAttribute(channelE, "class", javaClass);
@@ -658,6 +782,72 @@ public class CChannelManager extends BaseChannel {
     }
   }
 
+  protected class CategorySettings {
+    protected String browsingCategory;
+    protected List selectedCategories;
+
+    protected CategorySettings() {
+      browsingCategory = "top";
+      selectedCategories = new ArrayList();
+    }
+
+    protected void setBrowsingCategory(String browsingCategory) { this.browsingCategory = browsingCategory; }
+    protected void addSelectedCategory(String selectedCategory) {
+      selectedCategories.add(selectedCategory);
+    }
+
+    protected Element toXML() {
+      Element userSettingsE = emptyDoc.createElement("userSettings");
+      Element browsingCategoryE = emptyDoc.createElement("browsingCategory");
+      browsingCategoryE.appendChild(emptyDoc.createTextNode(browsingCategory));
+      userSettingsE.appendChild(browsingCategoryE);
+
+      // Add selected categories if there are any
+      if (selectedCategories.size() > 0) {
+        Element selectedCategoriesE = emptyDoc.createElement("selectedCategories");
+        Iterator iter = selectedCategories.iterator();
+        while (iter.hasNext()) {
+          Element selectedCategoryE = emptyDoc.createElement("selectedCategory");
+          selectedCategoryE.appendChild(emptyDoc.createTextNode((String)iter.next()));
+          selectedCategoriesE.appendChild(selectedCategoryE);
+        }
+        userSettingsE.appendChild(selectedCategoriesE);
+      }
+
+      return userSettingsE;
+    }
+  }
+
+  protected class RoleSettings {
+    protected List selectedRoles;
+
+    protected RoleSettings() {
+      selectedRoles = new ArrayList();
+    }
+
+    protected void addSelectedRole(String selectedRole) {
+      selectedRoles.add(selectedRole);
+    }
+
+    protected Element toXML() {
+      Element userSettingsE = emptyDoc.createElement("userSettings");
+
+      // Add selected roles if there are any
+      if (selectedRoles.size() > 0) {
+        Element selectedRolesE = emptyDoc.createElement("selectedRoles");
+        Iterator iter = selectedRoles.iterator();
+        while (iter.hasNext()) {
+          Element selectedRoleE = emptyDoc.createElement("selectedRole");
+          selectedRoleE.appendChild(emptyDoc.createTextNode((String)iter.next()));
+          selectedRolesE.appendChild(selectedRoleE);
+        }
+        userSettingsE.appendChild(selectedRolesE);
+      }
+
+      return userSettingsE;
+    }
+  }
+
   /*
    * Channel Types
    *   Channel types
@@ -678,7 +868,6 @@ public class CChannelManager extends BaseChannel {
    *   CPD
    *   Roles
    * Review
-   *   CPD
    *   Channel XML
    *   Selected categories
    *   Channel Registry
