@@ -42,36 +42,36 @@ package org.jasig.portal;
  */
 
 public class UserProfile {
-    protected int id;
+    protected int id=-1;
     protected String pName;
     protected String description;
     protected int layout_id;
-    protected String struct_ss_name;
-    protected String theme_ss_name;
+    protected int struct_ss_id;
+    protected int theme_ss_id;
     protected boolean system=false;
 
-    public UserProfile(int id, String name, String desc, int layout_id, String struct_ss, String theme_ss) {
+    public UserProfile(int id, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
         this.id=id;
         pName=name;
         description=desc != null ? desc : "";
         this.layout_id=layout_id;
-        struct_ss_name=struct_ss;
-        theme_ss_name=theme_ss;
+        struct_ss_id=struct_ss;
+        theme_ss_id=theme_ss;
     }
 
     public int getProfileId() { return id; }
     public String getProfileName() { return pName; }
     public String getProfileDescription() { return description; }
     public int getLayoutId() { return layout_id; }
-    public String getStructureStylesheetName() { return struct_ss_name; }
-    public String getThemeStylesheetName() { return theme_ss_name; }
+    public int getStructureStylesheetId() { return struct_ss_id; }
+    public int getThemeStylesheetId() { return theme_ss_id; }
     public boolean isSystemProfile(){return system; }
 
     public void setProfileId(int id) { this.id=id; }
     public void setProfileName(String name) { pName=name; }
     public void setProfileDescription(String desc) { description=desc; }
     public void setLayoutId(int layout_id) { this.layout_id=layout_id; }
-    public void setStructureStylesheetName(String ss_name) { struct_ss_name=ss_name; }
-    public void setThemeStylesheetName(String ss_name) { theme_ss_name=ss_name; }
+    public void setStructureStylesheetId(int ss_id) { struct_ss_id=ss_id; }
+    public void setThemeStylesheetId(int ss_id) { theme_ss_id=ss_id; }
     public void setSystemProfile(boolean s) { system=s; }
 }
