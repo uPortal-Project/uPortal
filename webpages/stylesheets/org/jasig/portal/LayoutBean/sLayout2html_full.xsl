@@ -3,7 +3,7 @@
 <xsl:output method="html" indent="no"/>
   
 <xsl:param name="baseActionURL">render.uP</xsl:param>
-<xsl:param name="theme" select="'vsac'"/>
+<xsl:param name="theme" select="'java'"/>
 <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>  
 
 <xsl:template match="layout"><html>
