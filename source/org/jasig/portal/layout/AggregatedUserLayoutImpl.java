@@ -723,6 +723,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     }
 
 
+
+
     // If we add a new node in a general case
     if ( nextNode != null && !nextNode.equals(firstNode) ) {
 
@@ -947,7 +949,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
                  if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
                   if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,nodeId,nextNodeId) )
                     createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,nextNodeId);
-                  if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,nodeId,nextNodeId) )
+                   if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextNodeId) && canMoveNode(moveTargetsNodeId,nodeId,nextNodeId) )
                     createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,nextNodeId);
                  }
 
@@ -1135,7 +1137,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
              if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nextId) )
                createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
 
-             if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,parentId,nextId) )
+             if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextId) && canMoveNode(moveTargetsNodeId,parentId,nextId) )
                createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nextId,node);
 
             }
@@ -1760,12 +1762,21 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     /**
      * Returns a subscription id given a functional name.
-     *
      * @param fname  the functional name to lookup.
      * @return a <code>String</code> subscription id.
      */
-    public String getSubscribeId(String fname){
-        return "";
+    public String getSubscribeId (String fname) {
+        for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+          String nodeId = nodeIds.nextElement().toString();
+          ALNode node  = getLayoutNode(nodeId);
+          if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+              ALChannelDescription channelDesc = (ALChannelDescription) node.getNodeDescription();
+              if ( fname.equals(channelDesc.getFunctionalName()) )
+                return node.getId();
+          }
+        }
+                return null;
     }
+
 
 }
