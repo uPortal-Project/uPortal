@@ -51,6 +51,7 @@ public class ChannelRenderer
       
 
   protected IChannel channel;
+    protected ChannelRuntimeData rd;
   protected SAXBufferImpl buffer;
 
   protected boolean rendering;
@@ -66,9 +67,10 @@ public class ChannelRenderer
    * Default constructor.
    * @param chan Channel associated with this ChannelRenderer
    */
-  public ChannelRenderer (IChannel chan)
+  public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData)
   {
     this.channel=chan;
+    this.rd=runtimeData;
     rendering = false;
   }
 
@@ -91,7 +93,7 @@ public class ChannelRenderer
   {
     // start the rendering thread
     buffer = new SAXBufferImpl ();
-    worker = new Worker (channel,buffer);
+    worker = new Worker (channel,rd,buffer);
     workerThread = new Thread (this.worker);
     workerThread.start ();
     rendering = true;
@@ -174,11 +176,12 @@ public class ChannelRenderer
 	private boolean successful;
 	private boolean done;
 	private IChannel channel;
+	private ChannelRuntimeData rd;
 	private DocumentHandler documentHandler;
 	private Exception exc=null;
 	
-	public Worker (IChannel ch, DocumentHandler dh) {
-	    this.channel=ch; this.documentHandler=dh;
+	public Worker (IChannel ch, ChannelRuntimeData runtimeData,DocumentHandler dh) {
+	    this.channel=ch; this.documentHandler=dh; this.rd=runtimeData;
 	}
 	
 	public void run () {
@@ -186,6 +189,8 @@ public class ChannelRenderer
 	    done = false;
 	    
 	    try {
+		if(rd!=null)
+		    channel.setRuntimeData(rd);
 		channel.renderXML (documentHandler);
 		successful = true;
 	    } catch (Exception e) {
