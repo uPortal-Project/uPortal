@@ -1,0 +1,154 @@
+uPortal 2.3.5 Distribution
+--------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.3.5
+2) uPortal 2.3.5 java libraries (Xalan, Pluto, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://ant.apache.org/
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+initportal - installs uPortal into a servlet container, 
+             prepares a relational database with uPortal schema and data,
+	     publishes channels and layout fragments,
+             deploys portlet applications
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal
+Your URL may be different if you have configured a different port
+and/or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-Several properties files and one database table changed
+ since uPortal 2.2.x.  If you are upgrading from this version,
+ you will need to see to it that your properties files and
+ database data are upgraded appropriately.  The difficulty
+ of upgrading from 2.2.x to 2.3.x is expected to be much lower 
+ than similar upgrades in past versions.
+
+-uPortal does not strictly require the use of connection
+ pooling, but it is highly recommended for production
+ installations.  If your servlet container does not provide
+ connection pooling, try something like Yet Another Poolman.  
+ For information about Yet Another Poolman, 
+ see http://yapoolman.sourceforge.net/.
+
+-Bug fixes from 2.2.x releases have been implemented in 2.3.x
+ whenever they were appropriate
+
+-If you experience XML/XSLT-related errors, there is a good
+ chance that your environment is not using the version of
+ Xalan/Xerces that comes with this release. If you are using
+ Tomcat, try copying the following files into Tomcat's
+ common/endorsed directory: xalan.jar, xercesImpl.jar, xml-apis.jar.
+ Alternatively, you can specify the use of these jar files
+ via a java parameter when starting your servlet container:
+  -Xbootclasspath/p:xalan.jar;xercesImpl.jar;xml-apis.jar
+ For more information, see Version section of
+ http://xml.apache.org/xalan-j/faq.html
+
+-JSR 168 Portlets are supported in this version of uPortal.
+ For information on installing Portlets, see 
+ http://www.uportal.org/implementors/portlets/workingWithPortlets.html.
+
+-WSRP functionality was included in uPortal as early as uPortal 2.2.
+ However, both the WSRP consumer and producer included in this release
+ are known to have problems and should be avoided.  A working
+ WSRP4J-based consumer is planned for uPortal 2.4.
+
+Please report bugs and suggestions:
+
+ http://www.uportal.org/bugzilla/
+
+uPortal website:
+
+ http://www.uportal.org
+
+
+Changes since uPortal 2.3.4
+---------------------------
+Database:
+
+-Changed size of VARCHAR from 30 to 255 in columns UP_SS_THEME.SS_NAME and UP_SS_STRUCT.SS_NAME.
+
+
+Properties:
+
+(no changes)
+
+
+Bug fixes:
+
+-Bug 1248, Removed dependency on rdbm.properties when using JNDI data source.
+-Bug 1550, Reported file upload errors to channels.
+-Bug 1586, Checked for multivalued display name in PersonDirNameFinder.
+-Bug 1594, Used lockable group to ensure that child channel category is deleted properly.
+-Bug 1635, Cached properties from security.properties so that it isn't parsed with every login.
+-Bug 1643, Set character encoding on request before any calls made to getParameter().
+-Bug 1645, Removed improper use of URL encoding of URLs in ChannelRuntimeData.
+-Bug 1646, Computed default column width when adding a new column in TabColumnUserPreferences.
+-Bug 1647, Removed new column when user clicks "cancel" while adding a new column,
+-Bug 1650, Properly inserted skin from template user when using aggregated layouts.
+-Bug 1654, Allows portal users to have any ID rather than just positive ones.
+-Bug 1658, Fixed getParameter() and getParameterValues() methods in ServletRequestImpl.
+-Bug 1665, URL-encoded request parameters for portlets.
+-Bug 1666, AggregatedLayoutManager needed to support empty folders for migration.
+-Bug 1668, Fixed recursive calls in SecurityRoleSetImpl and SecurityRoleRefSetImpl.
+-Bug 1672, Add parsing of <security-role-ref> elements to PortletApplicationUnmarshaller.
+-Bug 1674, Fixed PAGS contains() method for an IPerson who is not a portal user.
+-Bug 1676, Lengthened the maximum size for structure and theme stylesheet names.
+-Bug 1679, Fixed FileSystemGroupService so it doesn't fail running contains() on a directory.
+-Bug 1681, Changed regular SQL statement to prepared statement in RDBMUserLayoutStore.
+-Bug 1686, Changed encoding of integratedModes_ja_JP.xsl back to UTF-8.
+
+
+Other changes:
+
+-Moved dbconvert21 ant target from build.xml to upgrade21.xml.
+-Added SimpleLayout2ALIM tool to assist conversion of simple layouts to aggregated layouts.
+-Changed RDBMCounterStore.getIncrementIntegerId() method to create counter if it doesn't exist.
