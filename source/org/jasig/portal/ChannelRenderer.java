@@ -56,7 +56,7 @@ public class ChannelRenderer
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
     public static final int RENDERING_TIMED_OUT=2;
-
+    public static final String[] renderingStatus={"successful","failed","timed out"};
 
     protected IChannel channel;
     protected ChannelRuntimeData rd;
@@ -207,12 +207,18 @@ public class ChannelRenderer
 
       if(POOL_THREADS) {
 	  synchronized(workerReceipt) {
-	      if(wait>0 && !workerReceipt.isJobdone())
+	      if(wait>0 && !workerReceipt.isJobdone()) {
 		  workerReceipt.wait(wait);
+              } else if(timeOut==0) {
+		  workerReceipt.wait();
+              }
 	  }
       } else {
-	  if (wait > 0)
-	      workerThread.join (wait);
+	  if (wait>0) {
+	      workerThread.join(wait);
+          } else if(timeOut==0) {
+              workerThread.join();
+          }
       }
     }
     catch (InterruptedException e)
@@ -307,12 +313,18 @@ public class ChannelRenderer
 
       if(POOL_THREADS) {
 	  synchronized(workerReceipt) {
-	      if(wait>0 && !workerReceipt.isJobdone())
+	      if(wait>0 && !workerReceipt.isJobdone()) {
 		  workerReceipt.wait(wait);
+              } else if(timeOut==0) {
+		  workerReceipt.wait();
+              }
 	  }
       } else {
-	  if (wait > 0)
-	      workerThread.join (wait);
+	  if (wait>0) {
+	      workerThread.join(wait);
+          } else if(timeOut==0) {
+              workerThread.join();
+          }
       }
     }
     catch (InterruptedException e)
