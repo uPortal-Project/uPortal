@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,14 @@ package  org.jasig.portal.security.provider;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.services.*;
 
 
 /**
@@ -78,7 +81,32 @@ public class PersonImpl implements IPerson {
   public Object getAttribute (String key) {
     if (m_Attributes == null)
       return  null;
-    return  m_Attributes.get(key);
+    Object value = m_Attributes.get(key);
+    if (value instanceof List)
+      return ((List)value).get(0);
+    else
+      return value;
+  }
+  
+  /**
+   * Returns multiple attributes for a key.  If only one
+   * value exists, it will be stuffed into a Vector and
+   * returned.
+   * 
+   */
+  public Object[] getAttributeValues (String key) {
+     if (m_Attributes == null)
+       return null;
+     Object value = m_Attributes.get(key);
+     if (value == null) {
+        return null;
+     } else if (value instanceof List) {
+       return ((List)value).toArray();
+     } else {
+       Vector rval = new Vector();
+       rval.add(value);
+       return rval.toArray();
+     } 
   }
 
   /**

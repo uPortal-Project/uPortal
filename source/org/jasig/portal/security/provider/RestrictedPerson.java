@@ -59,6 +59,10 @@ public class RestrictedPerson implements IPerson {
     public Object getAttribute(String key) {
         return person.getAttribute(key);
     }
+    
+    public Object[] getAttributeValues(String key) {
+        return person.getAttributeValues(key);
+    }
 
     public Enumeration getAttributeNames() {
         return person.getAttributeNames();

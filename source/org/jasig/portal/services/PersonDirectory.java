@@ -380,12 +380,26 @@ public class PersonDirectory {
             tattrib = ldapattribs.get(pdi.attributenames[i]);
           if (tattrib!=null) {
             // determine if this attribute is a String or a binary (byte array)
-            Object att = tattrib.get();
-            if (att instanceof byte[]) {
-                attribs.put(pdi.attributealiases[i],(Object)att);
+            if (tattrib.size() == 1) {
+            	Object att = tattrib.get();
+                if (att instanceof byte[]) {
+                    attribs.put(pdi.attributealiases[i],(Object)att);
+                } else {
+                    String value = att.toString();
+                    attribs.put(pdi.attributealiases[i],value);
+                }
             } else {
-                String value = att.toString();
-                attribs.put(pdi.attributealiases[i],value);
+                // multivalued
+                Vector values = new Vector();
+                for (NamingEnumeration ne = tattrib.getAll(); ne.hasMoreElements(); ) {
+                    Object value = ne.nextElement();
+                    if (value instanceof byte[]) {
+                        values.add(value);
+                    } else {
+                        values.add(value.toString());
+                    }
+                }
+                attribs.put(pdi.attributealiases[i], values);
             }
           }
         }

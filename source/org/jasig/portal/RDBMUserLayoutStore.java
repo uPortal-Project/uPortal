@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2931,6 +2931,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       public String getFullName() {return "uPortal System Account";}
 
       public Object getAttribute (String key) {return null;}
+      public Object[] getAttributeValues (String key) {return null;}
       public void setAttribute (String key, Object value) {}
 
       public Enumeration getAttributes () {return null;}

@@ -79,6 +79,13 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializab
    * @return attribute associated with the user
    */
   public Object getAttribute (String key);
+  
+  /**
+   * Gets multiple values of an attribute associated with the user
+   * @param key
+   * @return attributes associated with the user
+   */
+  public Object[] getAttributeValues (String key);
 
   /**
    * Associates an attribute with the user
