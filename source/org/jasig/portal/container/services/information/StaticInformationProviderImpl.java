@@ -91,7 +91,6 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
     // Additional methods
     
     public void init(ServletConfig servletConfig, Properties properties) {
-        System.out.println("setting servletConfig="+servletConfig);
         this.servletConfig = servletConfig;
         this.properties = properties;
         portletApplicationDefinitionList = new PortletApplicationDefinitionListImpl();
