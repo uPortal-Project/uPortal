@@ -292,12 +292,11 @@ public class ChannelInstanceManager {
             // If there is a better way to obtain the base URL, please improve this!      
             MessageContext messageContext = MessageContext.getCurrentContext();
             HttpServletRequest request = (HttpServletRequest)messageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-            String protocol = request.getProtocol();
-            String protocolFixed = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
+            String scheme = request.getScheme();
             String serverName = request.getServerName();
             int serverPort = request.getServerPort();
             String contextPath = request.getContextPath();
-            baseUrl = protocolFixed + "://" + serverName + ":" + serverPort + contextPath + "/";
+            baseUrl = scheme + "://" + serverName + ":" + serverPort + contextPath + "/";
         }
         return baseUrl;
     }           
