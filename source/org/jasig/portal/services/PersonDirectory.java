@@ -386,8 +386,9 @@ public class PersonDirectory {
         
         //ILdapServer instances have no DN in the connect string
         //Append the baseDN for the server here.
-        if (fromLdapServices) {
-            userCtx = userCtx + "," + srvr.getBaseDN();
+        String baseDN = srvr.getBaseDN();
+        if (fromLdapServices && baseDN != null && baseDN.trim().length() > 0) {
+            userCtx = userCtx + "," + baseDN;
         }
         
         userlist = context.search(userCtx,pdi.uidquery,args,sc);
