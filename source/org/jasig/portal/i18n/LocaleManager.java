@@ -289,6 +289,7 @@ public class LocaleManager  {
     }
     
     public void updateUserLocales(Locale[] userLocales) throws Exception {
+        setUserLocales(userLocales);
         LocaleStoreFactory.getLocaleStoreImpl().updateUserLocales(person, userLocales);
     }
 }
