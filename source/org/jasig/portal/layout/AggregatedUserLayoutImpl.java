@@ -271,20 +271,12 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
      */
     private void appendDescendants(Document domLayout,Element node, String nodeId) throws PortalException {
           UserLayoutNode layoutNode = getLayoutNode(nodeId);
-          System.out.println( "appendDescendants: layoutNode = " + layoutNode );
-          System.out.println( "appendDescendants: 1");
           UserLayoutNodeDescription nodeDesc = layoutNode.getNodeDescription();
-          System.out.println( "appendDescendants: 2");
           Element newNode = domLayout.createElement(layoutNode.getNodeType());
-          System.out.println( "appendDescendants: 3");
           nodeDesc.addNodeAttributes(newNode);
-          System.out.println( "appendDescendants: 4");
           node.appendChild(newNode);
-          System.out.println( "appendDescendants: 5");
           if (layoutNode.getNodeType().equals(FOLDER)) {
-           System.out.println( "appendDescendants: 6");
            List childIds = getLayoutFolder(nodeId).getChildNodes();
-           System.out.println( "appendDescendants: 7");
            if ( childIds != null )
             for ( Iterator i = childIds.iterator(); i.hasNext(); )
              appendDescendants(domLayout,newNode,(String)i.next());

@@ -274,7 +274,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             } else if(oldNode instanceof UserLayoutRootDescription) {
                 throw new PortalException("Update of root node is not currently allowed!");
             } else {
-                // must be a folder
+                 // must be a folder
                 UserLayoutFolderDescription oldFolder=(UserLayoutFolderDescription) oldNode;
                 if(node instanceof UserLayoutFolderDescription) {
                     DocumentImpl ulm=this.userLayoutDocument;

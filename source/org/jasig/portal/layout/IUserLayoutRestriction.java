@@ -18,7 +18,7 @@ import org.jasig.portal.PortalException;
 public interface IUserLayoutRestriction {
 
 
- public boolean checkRestriction( UserLayoutNode node ) throws PortalException;
+  public boolean checkRestriction( UserLayoutNode node ) throws PortalException;
 
 }
 

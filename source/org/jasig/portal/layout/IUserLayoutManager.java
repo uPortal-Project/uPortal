@@ -212,7 +212,7 @@ public interface IUserLayoutManager {
     public String getCacheKey() throws PortalException;
 
 
-    // This method should be removed whenever it becomes possible
+    //  This method should be removed whenever it becomes possible
     public Document getUserLayoutDOM() throws PortalException;
 
     /**

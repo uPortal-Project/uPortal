@@ -8,7 +8,7 @@ import java.util.Hashtable;
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: Instructional Media & Magic</p>
  * @author Michael Ivanov
- * @version 1.0
+ * @version 1.1
  */
 
 public class UserLayoutNode {

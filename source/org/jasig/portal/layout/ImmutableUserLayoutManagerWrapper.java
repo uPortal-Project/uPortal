@@ -114,8 +114,8 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return this.cacheKey;
     }
 
-    // temp methods, to be removed (getDOM() might actually stay)
-    // This method should be removed whenever it becomes possible
+     // temp methods, to be removed (getDOM() might actually stay)
+     // This method should be removed whenever it becomes possible
     public void setUserLayoutDOM(DocumentImpl doc) {}
 
     // This method should be removed whenever it becomes possible
