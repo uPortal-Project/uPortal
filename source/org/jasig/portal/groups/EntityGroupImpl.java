@@ -308,23 +308,22 @@ public String getGroupID() {
     return getKey();
 }
 /**
- * Returns the named <code>IEntityGroup</code> from our members <code>Collection</code>.
+ * Returns the named <code>IEntityGroup</code> from our members Collection.
  * @return org.jasig.portal.groups.IEntityGroup
  * @param name java.lang.String
  */
 public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
 {
-    IGroupMember gm = (IGroupMember) primGetMembers().get(name);
+    if ( ! isMembersInitialized() )
+        { initializeMembers(); }
 
-    if ( gm == null && ( ! isMembersInitialized() ) )
+    IGroupMember gm;
+    for ( Iterator itr=getMembers(); itr.hasNext(); )
     {
-        initializeMembers();
-        gm = (IGroupMember) primGetMembers().get(name);
+        gm = (IGroupMember) itr.next();
+        if (gm.isGroup() && ((IEntityGroup)gm).getName().equals(name))
+            { return (IEntityGroup)gm; }
     }
-
-    if ( gm != null && gm.isGroup() )
-        return (IEntityGroup) gm;
-
     return null;
 }
 /**
