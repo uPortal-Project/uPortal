@@ -41,10 +41,13 @@ package org.jasig.portal;
  * <ul>
  *  <li> editButtonEvent - occurs when an edit button on the channel frame has been hit </li>
  *  <li> helpButtonEvent - occurs when a help button on the channel frame has been hit </li>
- *  <li> detachButtonEvent - occurs when a detach button on the channel frame has been hit </li>
  *  <li> aboutButtonEvent - occurs when an about button on the channel frame has been hit </li>
+ *  <li> detachButtonEvent - occurs when a detach button on the channel frame has been hit </li>
+ *  <li> renderingDone - occurs at the end of each rendering cycle </li>
+ *  <li> sessionDone - signlas channel that current session is beign terminated </li>
+ *  <li> unsubscribe - signlas channel that the user has unsubscribed the channel </li>
  * </ul>
- * @author Peter Kharchenko
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class PortalEvent
@@ -53,42 +56,35 @@ public class PortalEvent
   public static final int RENDERING_DONE = 0;
   public static final int SESSION_DONE = 1;
   public static final int UNSUBSCRIBE = 2;
-  public static final int LOAD_HIGH = 3;
-  public static final int MEMORY_LOW = 4;
 
     // layout-generated events
-  public static final int EDIT_BUTTON_EVENT = 5;
-  public static final int HELP_BUTTON_EVENT = 6;
-  public static final int DETACH_BUTTON_EVENT = 7;
-  public static final int ABOUT_BUTTON_EVENT = 8;
+  public static final int EDIT_BUTTON_EVENT = 3;
+  public static final int HELP_BUTTON_EVENT = 4;
+  public static final int ABOUT_BUTTON_EVENT = 5;
+  public static final int DETACH_BUTTON_EVENT = 6;
 
   private static final String [] eventName =
   {
       "renderingDone",
       "sessionDone",
       "unsubscribe",
-      "loadHigh",
-      "memoryLow",
       "editButtonEvent",
       "helpButtonEvent",
-      "detachButtonEvent",
       "aboutButtonEvent",
+      "detachButtonEvent",
   };
 
   private int event;
 
-  public PortalEvent (int ev)
-  {
+  public PortalEvent(int ev) {
     event = ev;
   }
 
-  public String getEventName ()
-  {
+  public String getEventName() {
     return eventName[event];
   }
 
-  public int getEventNumber ()
-  {
+  public int getEventNumber() {
     return event;
   }
 }
