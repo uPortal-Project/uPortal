@@ -796,7 +796,7 @@ Example:
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
     <property name="descriptionUri" value=" "/>
-    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+    <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
@@ -835,7 +835,7 @@ Example:
     <property name="stylesheetUri" value=" "/>
     <property name="descriptionUri" value=" "/>
     <property name="stylesheetId" value=" "/>
-    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+    <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>

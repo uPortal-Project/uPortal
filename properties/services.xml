@@ -24,6 +24,12 @@
     <jndi_name>org.jasig.portal.services.LogService</jndi_name>
   </service>
 
+  <!-- Any DOM implementation specific initialization -->
+  <service>
+    <name>DOMInitService</name>
+    <class>org.jasig.portal.services.dom.DOMInitService</class>
+  </service>
+
   <!-- An example with simple static start method (no arguments),
        that does not get bound into the jndi tree
   -->
