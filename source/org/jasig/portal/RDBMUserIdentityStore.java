@@ -162,171 +162,247 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    */
    public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
-
+    // Get a connection to the database
     Connection con = rdbmService.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      if (con.getMetaData().supportsTransactions())  con.setAutoCommit(false);
+    Statement stmt = null;
+    
+    try 
+    {
+      // Create the JDBC statement
+      stmt = con.createStatement();
+    }
+    catch(SQLException se)
+    {
+      try
+      {
+        // Release the connection
+        rdbmService.releaseConnection(con);
+      }
+      catch(Exception e) {}
+      
+      // Log the exception
+      LogService.instance().log(LogService.ERROR, "RDBMUserIdentityStore: Could not create database statement", se);
+      throw new AuthorizationException("RDBMUserIdentityStore: Could not create database statement");
+    }
+    
+    try
+    {
+      // Retrieve the USER_ID that is mapped to their portal UID
+      String query = "SELECT USER_ID, USER_NAME FROM UP_USER WHERE USER_NAME = '" + person.getAttribute("username") + "'";
+      
+      // DEBUG
+      LogService.log(LogService.DEBUG, query);
+      // Execute the query
+      ResultSet rset = stmt.executeQuery(query);
+      
+      // Check to see if we've got a result
+      if (rset.next())
+      {
+        uPortalUID = rset.getInt("USER_ID");
+      }
+      // If no result and we're not creating new users then fail
+      else if(!createPortalData)
+      {
+        throw new AuthorizationException("No portal information exists for user " + person.getAttribute("username"));
+      }
+      else
+      {           
+        /* attempt to create portal data for a new user */
+        int newUID;
+        int templateUID;
+        int templateUSER_DFLT_USR_ID ;
+        int templateUSER_DFLT_LAY_ID;
+        int templateCURR_LAY_ID ;
+        int templateNEXT_STRUCT_ID;
+        java.sql.Date templateLST_CHAN_UPDT_DT = new java.sql.Date(System.currentTimeMillis());
 
-      try {
-        String query = "SELECT UP_USER.USER_ID FROM UP_USER "+
-        "WHERE UP_USER.USER_NAME = '" + person.getAttribute("username") + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
-        ResultSet rset = stmt.executeQuery(query);
-        try {
-          if (rset.next()) {
-            uPortalUID = rset.getInt("USER_ID");
-           }
-          else
-            if (createPortalData==true)
-            {
-            /* attempt to create portal data for a new user */
-            int newUID;
-            int templateUID;
-            int templateUSER_DFLT_USR_ID ;
-            int templateUSER_DFLT_LAY_ID;
-            int templateCURR_LAY_ID ;
-            int templateNEXT_STRUCT_ID;
-            java.sql.Timestamp templateLST_CHAN_UPDT_DT = new java.sql.Timestamp(System.currentTimeMillis());
+        // Retrieve the username of the user to use as a template for this new user
+        String templateName=(String) person.getAttribute(templateAttrName);
+        if (DEBUG>0) System.err.println("template name is "+templateName);
 
-            /* examine person object for role title in affiliation attribute.
-            If not present return uPortalUID=-1.  */
-            String templateName=(String) person.getAttribute(templateAttrName);
-            if (DEBUG>0) System.err.println("template name is "+templateName);
-
-            /*Use template user to build new user
-            If no template use guest userid.  */
-            if (templateName == null || templateName=="") templateUID=guestUID;
-
-            query = "SELECT USER_ID,USER_DFLT_USR_ID, USER_DFLT_LAY_ID,CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
-            if (DEBUG>0) System.err.println(query);
-            LogService.log(LogService.DEBUG, "DBMUserIdentityStore::getPortalUID(): " + query);
-            rset = stmt.executeQuery(query);
-            if (rset.next()) {
-              templateUID = rset.getInt("USER_ID");
-              templateUSER_DFLT_USR_ID = rset.getInt("USER_DFLT_USR_ID");
-              templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
-              templateCURR_LAY_ID = rset.getInt("CURR_LAY_ID");
-              templateNEXT_STRUCT_ID = rset.getInt("NEXT_STRUCT_ID");
-              }
-            else return uPortalUID;
-
-            /* get a new uid for the person */
-            try {
-              newUID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_USER");
-              }
-              catch (Exception e) {
-              LogService.log(LogService.ERROR, "RDBMUserIdentityStore error getting next sequence: ", e);
-              throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
-              }
-            String Insert;
-            /* insert new user record in UP_USER */
-            Insert = "INSERT INTO UP_USER "+
-              "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
-              " VALUES ("+
-                newUID+", '"+
-                person.getAttribute("username")+ "',"+
-                templateUSER_DFLT_USR_ID+", "+
-                templateUSER_DFLT_LAY_ID+", "+
-                templateCURR_LAY_ID+", "+
-                templateNEXT_STRUCT_ID+", "+
-                "'"+templateLST_CHAN_UPDT_DT+"')";
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_layout */
-            Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
-              " SELECT "+newUID+", LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_param */
-            Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
-              " SELECT "+newUID+", USER_PARAM_NAME, USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_profiles */
-            Insert = "INSERT INTO UP_USER_PROFILES (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-              " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID "+
-              "FROM UP_USER_PROFILES WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_role */
-            Insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID, PRIM_ROLE_IND) "+
-              " SELECT "+newUID+", ROLE_ID, PRIM_ROLE_IND FROM UP_USER_ROLE WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_ss_atts */
-            Insert = "INSERT INTO UP_USER_SS_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-              " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
-              " FROM UP_USER_SS_ATTS WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_ss_parms */
-            Insert = "INSERT INTO UP_USER_SS_PARMS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-              " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
-              " FROM UP_USER_SS_PARMS WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_struct_param */
-            Insert = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) "+
-              " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL "+
-              " FROM UP_STRUCT_PARAM WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_user_ua_map */
-            Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
-              " SELECT "+newUID+", USER_AGENT, PROFILE_ID"+
-              " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            /* insert row into up_layout_struct  */
-            Insert = "INSERT INTO UP_LAYOUT_STRUCT (USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE) "+
-              " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE"+
-              " FROM UP_LAYOUT_STRUCT WHERE USER_ID="+templateUID;
-            LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
-            stmt.executeUpdate(Insert);
-
-            if (con.getMetaData().supportsTransactions())  con.commit();
-
-            uPortalUID=newUID;
-           }
-        /* if not creating new data and user not found, throw exception */
-        else throw new AuthorizationException("User "+person.getAttribute("username")+ "not found");
-        } finally {
-          rset.close();
+        // Just use the guest account if the template could not be found
+        if (templateName == null || templateName=="")
+        {
+          templateUID = guestUID;
         }
-      } finally {
-        stmt.close();
+
+        // Retrieve the information for the template user
+        query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID,CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
+        // DEBUG
+        if (DEBUG>0) System.err.println(query);
+        LogService.log(LogService.DEBUG, query);
+        // Execute the query
+        rset = stmt.executeQuery(query);
+        // Check to see if the template user exists
+        if (rset.next())
+        {
+          templateUID = rset.getInt("USER_ID");
+          templateUSER_DFLT_USR_ID = rset.getInt("USER_DFLT_USR_ID");
+          templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
+          templateCURR_LAY_ID = rset.getInt("CURR_LAY_ID");
+          templateNEXT_STRUCT_ID = rset.getInt("NEXT_STRUCT_ID");
+        }
+        else 
+        {
+          throw new AuthorizationException("No information found for template user = " + templateName + ". Cannot create new account for " + person.getAttribute("username"));
+        }
+
+        /* get a new uid for the person */
+        try 
+        {
+          newUID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_USER");
+        }
+        catch (Exception e) 
+        {
+          LogService.log(LogService.ERROR, "RDBMUserIdentityStore error getting next sequence: ", e);
+          throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
+        }
+            
+        try
+        {
+          // Turn off autocommit if the database supports it
+          if (con.getMetaData().supportsTransactions())
+          {
+            con.setAutoCommit(false);
+          }
+        }
+        catch(SQLException se)
+        {
+          // Log the exception
+          LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
+        }
+        
+        String Insert = new String();
+        /* insert new user record in UP_USER */
+        Insert = "INSERT INTO UP_USER "+
+          "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
+          " VALUES ("+
+            newUID+", '"+
+            person.getAttribute("username")+ "',"+
+            templateUSER_DFLT_USR_ID+", "+
+            templateUSER_DFLT_LAY_ID+", "+
+            templateCURR_LAY_ID+", "+
+            templateNEXT_STRUCT_ID+", "+
+            "null)";
+            //"'"+templateLST_CHAN_UPDT_DT+"')";
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
+        stmt.executeUpdate(Insert);
+
+        /* insert row into up_user_layout */
+        Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
+          " SELECT "+newUID+", LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+
+        /* insert row into up_user_param */
+        Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
+          " SELECT "+newUID+", USER_PARAM_NAME, USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+  
+        /* insert row into up_user_profiles */
+        Insert = "INSERT INTO UP_USER_PROFILES (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
+          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID "+
+          "FROM UP_USER_PROFILES WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+
+        /* insert row into up_user_role */
+        Insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID, PRIM_ROLE_IND) "+
+          " SELECT "+newUID+", ROLE_ID, PRIM_ROLE_IND FROM UP_USER_ROLE WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+  
+        /* insert row into up_user_ss_atts */
+        Insert = "INSERT INTO UP_USER_SS_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
+          " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
+          " FROM UP_USER_SS_ATTS WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
+        stmt.executeUpdate(Insert);
+  
+        /* insert row into up_user_ss_parms */
+        Insert = "INSERT INTO UP_USER_SS_PARMS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+          " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
+          " FROM UP_USER_SS_PARMS WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+
+        /* insert row into up_struct_param */
+        Insert = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) "+
+          " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL "+
+          " FROM UP_STRUCT_PARAM WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+  
+        /* insert row into up_user_ua_map */
+        Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
+          " SELECT "+newUID+", USER_AGENT, PROFILE_ID"+
+          " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, Insert);
+        stmt.executeUpdate(Insert);
+
+        /* insert row into up_layout_struct  */
+        Insert = "INSERT INTO UP_LAYOUT_STRUCT (USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE) "+
+          " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE"+
+          " FROM UP_LAYOUT_STRUCT WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
+        stmt.executeUpdate(Insert);
+        
+        // Check to see if the database supports transactions
+        boolean supportsTransactions = false;
+        try
+        {
+           supportsTransactions = con.getMetaData().supportsTransactions();
+        }
+        catch(Exception e)  {}
+        
+        if(supportsTransactions)
+        { 
+          // Commit the transaction
+          con.commit();
+          // Use our new ID if we made it through all of the SQL
+          uPortalUID = newUID;
+        }
+        else
+        {
+          // Use our new ID if we made it through all of the SQL
+          uPortalUID = newUID;
+        }
       }
     }
-    catch (SQLException se) {
+    catch (SQLException se)
+    {
       // Log the exception
       LogService.log(LogService.ERROR, se);
-      try {
-        if (con.getMetaData().supportsTransactions())  con.rollback();
+      // Rollback the transaction
+      try
+      {
+        if (con.getMetaData().supportsTransactions()) 
+        {
+          con.rollback();
         }
-        catch (SQLException e) {}
-        if (DEBUG>0){
+      }
+      catch (SQLException e)
+      {
+        LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
+      }
+      // DEBUG
+      if (DEBUG>0)
+      {
         System.err.println("SQLException: " + se.getMessage());
         System.err.println("SQLState:  " + se.getSQLState());
         System.err.println("Message:  " + se.getMessage());
-        System.err.println("Vendor:  " + se.getErrorCode());}
-
-        AuthorizationException ae = new AuthorizationException("SQL Database Error");
-        throw  (ae);
+        System.err.println("Vendor:  " + se.getErrorCode());
       }
-    finally {
+      // Throw an exception
+      throw  (new AuthorizationException("SQL database error while retrieving user's portal UID"));
+    }
+    finally
+    {
       rdbmService.releaseConnection(con);
     }
-    return  uPortalUID;
+    // Return the user's ID
+    return(uPortalUID);
   }
 
   /**
