@@ -81,7 +81,12 @@ public class UserLayoutManagerFactory {
             Object[] cArgs={person,profile,UserLayoutStoreFactory.getUserLayoutStoreImpl()};
             IUserLayoutManager ulm = (IUserLayoutManager)c.newInstance(cArgs);
             ulm.addLayoutEventListener(StatsRecorder.newLayoutEventListener(person, profile));
-            return ulm;
+            
+            // Wrap the implementation to provide lookup by fname support
+            // which basically merges infrastructure channels (non-persisted)
+            // into the layout
+            IUserLayoutManager ulmWrapper = new InfrastructureUserLayoutManagerWrapper(ulm);
+            return ulmWrapper;
         } catch (Exception e) {
             throw new PortalException("Unable to instantiate a \""+coreUserLayoutManagerImpl.getName()+"\"",e);
         }
