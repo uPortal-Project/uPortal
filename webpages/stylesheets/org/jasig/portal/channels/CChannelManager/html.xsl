@@ -5,7 +5,7 @@
   <xsl:param name="action">selectModifyChannel</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
+  <xsl:param name="mediaPath">\media\org\jasig\portal\channels\CChannelManager</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
@@ -14,14 +14,6 @@
 
 
   <xsl:template match="/">
-    <html>
-      <head>
-        <title>Untitled Document</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-        <link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>
-      <xsl:comment></xsl:comment>
-      </head>
-      <body>
 
         <xsl:choose>
           <xsl:when test="$action='selectChannelType'">
@@ -55,8 +47,7 @@
             <xsl:call-template name="defaultView"/>
           </xsl:otherwise>
         </xsl:choose>
-      </body>
-    </html>
+
   </xsl:template>
   <xsl:template name="defaultView">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -2603,10 +2594,3 @@ Detachable<br/>
 
 </xsl:stylesheet>
 
-
-
-
-
-
-
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
