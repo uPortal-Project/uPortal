@@ -35,12 +35,25 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
+
 import org.jasig.portal.utils.XSLT;
+
+import org.jasig.portal.*;
+
+import org.jasig.portal.services.LogService;
+
 import org.xml.sax.DocumentHandler;
-import java.io.*;
+
 import java.net.URL;
+
+import java.io.File;
+import java.io.StringWriter;
+
 import java.util.Hashtable;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.InitialContext;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>
@@ -129,7 +142,9 @@ public class CNumberGuess implements IChannel
     {
       iMinNum = 0;
       iMaxNum = 100;
-      Logger.log (Logger.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      
+      LogService logger = getLogger();
+      logger.log(logger.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 
@@ -207,12 +222,34 @@ public class CNumberGuess implements IChannel
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      LogService logger = getLogger();
+      logger.log(logger.ERROR, e);
     }
   }
 
   private int getRandomNumber (int min, int max)
   {
     return new Double ((max - min) * Math.random () + min).intValue ();
+  }
+  
+  private LogService getLogger()
+  {
+    try
+    {
+      Hashtable environment = new Hashtable(1);
+      
+      // Set up the path
+      environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+      Context ctx = new InitialContext(environment);
+      
+      LogService logger = (LogService)ctx.lookup("/services/logger");
+      
+      return(logger);
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
+      return(null);
+    }
   }
 }
