@@ -261,4 +261,26 @@ public interface IAuthorizationService
  * @param principal IAuthorizationPrincipal
  */
     public String getPrincipalString(IAuthorizationPrincipal principal);
+
+/**
+ * Answers if the owner has given the principal permission to perform the activity on
+ * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code> 
+ * and <code>activity</code> must be non-null.  If <code>target</code> is null, then 
+ * target is not checked.
+ *
+ * @return boolean
+ * @param principal IAuthorizationPrincipal
+ * @param owner java.lang.String
+ * @param activity java.lang.String
+ * @param target java.lang.String
+ * @exception AuthorizationException indicates authorization information could not
+ * be retrieved.
+ */
+    public boolean doesPrincipalHavePermission(
+      IAuthorizationPrincipal principal,
+      String owner,
+      String activity,
+      String target,
+      IPermissionPolicy policy)
+    throws AuthorizationException;
 }

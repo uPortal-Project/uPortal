@@ -1,7 +1,5 @@
-package org.jasig.portal.security.provider;
-
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +32,8 @@ package org.jasig.portal.security.provider;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+package org.jasig.portal.security.provider;
 
 import org.jasig.portal.*;
 import org.jasig.portal.security.*;
@@ -257,5 +257,25 @@ private void setPrincipalString(java.lang.String newPrincipalString) {
 public String toString() 
 {
     return getPrincipalString();
+}
+
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to perform the
+ * <code>activity</code> on the <code>target</code>, as evaluated by the 
+ * <code>policy</code>.  Params <code>policy</code>, <code>owner</code> and
+ * <code>activity</code> must be non-null.  
+ *
+ * @return boolean
+ * @param owner java.lang.String
+ * @param activity java.lang.String
+ * @param target java.lang.String
+ * @param policy org.jasig.portal.security.IPermissionPolicy
+ * @exception AuthorizationException indicates authorization information could not
+ * be retrieved.
+ */
+public boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy) 
+throws AuthorizationException
+{
+    return getAuthorizationService().doesPrincipalHavePermission(this, owner, activity, target, policy);
 }
 }

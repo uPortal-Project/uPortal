@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ©  2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,21 +56,22 @@ import org.jasig.portal.services.GroupService;
  */
 public class AuthorizationImpl implements IAuthorizationService {
 
-    private IPermissionStore permissionStore;
+    protected IPermissionStore permissionStore;
+    protected IPermissionPolicy defaultPermissionPolicy;
     // Clear the caches every 5 minutes
     protected SmartCache groupMembersCache = new SmartCache(300);
     protected SmartCache permissionsCache = new SmartCache(300);
     protected Object permissionsCacheLock = new Object();
 
     protected String PERIOD_STRING = ".";
-    private static AuthorizationImpl singleton;
+    protected static IAuthorizationService singleton;
   /**
    *
    */
 public AuthorizationImpl () throws AuthorizationException
 {
-          super();
-          initialize();
+    super();
+    initialize();
 }
 /**
  * Adds <code>IPermissions</code> to the back end store.
@@ -152,19 +153,6 @@ throws AuthorizationException
       (principal, owner, IPermission.CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }
 /**
- * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
- * @param owner - String
- * @param activity - String - the Permission activity
- * @param target - String
- * @return boolean
- */
-private boolean doesGroupHavePermission(IEntityGroup group, String owner, String activity, String target)
-throws AuthorizationException
-{
-    IAuthorizationPrincipal principal = getPrincipalForGroup(group);
-    return primDoesPrincipalHavePermission(principal, owner, activity, target);
-}
-/**
  * Answers if the owner has given the principal (or any of its parents) permission
  * to perform the activity on the target.  Params <code>owner</code> and
  * <code>activity</code> must be non-null.  If <code>target</code> is null, then
@@ -185,31 +173,30 @@ public boolean doesPrincipalHavePermission(
     String target)
 throws AuthorizationException
 {
-    IPermission[] perms = primGetPermissionsForPrincipal(principal, owner, activity, target);
-
-    // We found one.  Check if it's good.
-    if ( perms.length == 1 )
-        { return permissionIsGranted(perms[0]); }
-
-    // Should never be.
-    if ( perms.length > 1 )
-        { throw new AuthorizationException("Duplicate permissions for: " + perms[0]); }
-
-    // No permissions for this principal.  Check inherited permissions.
-    boolean hasPermission = false;
-    try
-    {
-        Iterator i = getGroupsForPrincipal(principal);
-        while ( i.hasNext() && ! hasPermission )
-        {
-            IAuthorizationPrincipal prn = getPrincipalForGroup( (IEntityGroup) i.next() );
-            hasPermission = primDoesPrincipalHavePermission(prn, owner, activity, target);
-         }
-    }
-    catch ( GroupsException ge )
-        { throw new AuthorizationException(ge.getMessage(),ge); }
-
-    return hasPermission;
+     return doesPrincipalHavePermission(principal, owner, activity, target, getDefaultPermissionPolicy());
+}
+/**
+ * Answers if the owner has given the principal permission to perform the activity on
+ * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code>
+ * and <code>activity</code> must be non-null.
+ *
+ * @return boolean
+ * @param principal IAuthorizationPrincipal
+ * @param owner java.lang.String
+ * @param activity java.lang.String
+ * @param target java.lang.String
+ * @exception AuthorizationException indicates authorization information could not
+ * be retrieved.
+ */
+public boolean doesPrincipalHavePermission(
+    IAuthorizationPrincipal principal,
+    String owner,
+    String activity,
+    String target,
+    IPermissionPolicy policy)
+throws AuthorizationException
+{
+    return policy.doesPrincipalHavePermission(this, principal, owner, activity, target);
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
@@ -272,6 +259,12 @@ throws AuthorizationException
 {
     IPermission[] permissions = getPermissionsForOwner(owner, activity, target);
     return getPrincipalsFromPermissions(permissions);
+}
+/**
+ * @return org.jasig.portal.security.IPermissionPolicy
+ */
+protected IPermissionPolicy getDefaultPermissionPolicy() {
+    return defaultPermissionPolicy;
 }
 /**
  * @return org.jasig.portal.groups.IGroupMember
@@ -340,16 +333,6 @@ throws AuthorizationException
         al.add(p);
     }
     return al.iterator();
-}
-/**
- * @return IPermission[]
- * @param group org.jasig.portal.groups.IEntityGroup
- */
-private IPermission[] getPermissionsForGroup(IEntityGroup group)
-throws AuthorizationException
-{
-    IAuthorizationPrincipal principal = getPrincipalForGroup(group);
-    return primGetPermissionsForPrincipal(principal);
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted for the specified activity
@@ -482,7 +465,8 @@ throws AuthorizationException
  */
 private void initialize() throws AuthorizationException
 {
-        setPermissionStore(new RDBMPermissionImpl());
+    setPermissionStore(new RDBMPermissionImpl());
+    setDefaultPermissionPolicy(new DefaultPermissionPolicy());
 }
 /**
  * Factory method for an <code>IPermission</code>.
@@ -519,6 +503,16 @@ public IPermissionManager newPermissionManager(String owner)
     return new PermissionManagerImpl(owner, this);
 }
 /**
+ * Factory method for IAuthorizationPrincipal.
+ * @return org.jasig.portal.security.IAuthorizationPrincipal
+ * @param key java.lang.String
+ * @param type java.lang.Class
+ */
+public IAuthorizationPrincipal newPrincipal(String key, Class type)
+{
+    return new AuthorizationPrincipalImpl(key, type, this);
+}
+/**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
  * @return org.jasig.portal.security.IAuthorizationPrincipal
  * @param groupMember org.jasig.portal.groups.IGroupMember
@@ -531,16 +525,6 @@ throws GroupsException
     return newPrincipal(key, type);
 }
 /**
- * Factory method for IAuthorizationPrincipal.
- * @return org.jasig.portal.security.IAuthorizationPrincipal
- * @param key java.lang.String
- * @param type java.lang.Class
- */
-public IAuthorizationPrincipal newPrincipal(String key, Class type)
-{
-    return new AuthorizationPrincipalImpl(key, type, this);
-}
-/**
  * Factory method for IUpdatingPermissionManager.
  * @return org.jasig.portal.security.IUpdatingPermissionManager
  * @param owner java.lang.String
@@ -548,46 +532,6 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type)
 public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
 {
     return new UpdatingPermissionManagerImpl(owner, this);
-}
-/**
- * Checks that the permission is explicitly granted and not expired.
- * @return boolean
- * @param permission org.jasig.portal.security.IPermission
- */
-private boolean permissionIsGranted(IPermission p)
-{
-    Date now = new Date();
-    return
-        (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) &&
-        (p.getEffective() == null || p.getEffective().after(now)) &&
-        (p.getExpires() == null || p.getExpires().after(now));
-}
-/**
- * Answers if this specific principal (as opposed to its parents) has the permission.
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved or was invalid.
- */
-private boolean primDoesPrincipalHavePermission(
-    IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
-throws AuthorizationException
-{
-    IPermission[] perms = primGetPermissionsForPrincipal(principal, owner, activity, target);
-
-    if ( perms.length == 0 )
-        { return false; }
-
-    if ( perms.length == 1 )
-        { return permissionIsGranted(perms[0]); }
-    else
-        { throw new AuthorizationException("Duplicate permissions for: " + perms[0]); }
 }
 /**
  * @return IPermission[]
@@ -701,20 +645,26 @@ throws AuthorizationException
     }
 }
 /**
+ * @param newDefaultPermissionPolicy org.jasig.portal.security.IPermissionPolicy
+ */
+protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
+    defaultPermissionPolicy = newDefaultPermissionPolicy;
+}
+/**
  * @param newPermissionManager org.jasig.portal.security.provider.ReferencePermissionStore
  */
 private void setPermissionStore(IPermissionStore newPermissionStore) {
     permissionStore = newPermissionStore;
 }
 /**
- * @return org.jasig.portal.security.provider.AuthorizationImpl
+ * @return org.jasig.portal.security.provider.IAuthorizationService
  */
-public static synchronized AuthorizationImpl singleton()
+public static synchronized IAuthorizationService singleton()
 throws AuthorizationException
 {
-        if ( singleton == null )
-                { singleton = new AuthorizationImpl(); }
-        return singleton;
+    if ( singleton == null )
+        { singleton = new AuthorizationImpl(); }
+    return singleton;
 }
 /**
  * Updates <code>IPermissions</code> in the back end store.

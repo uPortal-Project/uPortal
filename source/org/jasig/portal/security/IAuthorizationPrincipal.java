@@ -150,4 +150,21 @@ public interface IAuthorizationPrincipal {
  */
     public boolean hasPermission(String owner, String activity, String target) throws
     AuthorizationException;
+
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to perform the
+ * <code>activity</code> on the <code>target</code>, as evaluated by the 
+ * <code>policy</code>.  Params <code>policy</code>, <code>owner</code> and
+ * <code>activity</code> must be non-null.  
+ *
+ * @return boolean
+ * @param owner java.lang.String
+ * @param activity java.lang.String
+ * @param target java.lang.String
+ * @param policy org.jasig.portal.security.IPermissionPolicy
+ * @exception AuthorizationException indicates authorization information could not
+ * be retrieved.
+ */
+    public boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy) 
+    throws AuthorizationException;
 }
