@@ -116,7 +116,10 @@ public class SubscriberBean extends GenericPortalBean{
     }
 
     Collections.sort (instanceIDs);
-    int iHighest = ((Integer) instanceIDs.get (instanceIDs.size () - 1)).intValue ();
+    int iHighest = -1;
+    if (instanceIDs.size() > 0) {
+       iHighest = ((Integer) instanceIDs.get (instanceIDs.size () - 1)).intValue ();
+    }
     String sInstanceID = "c" + (iHighest + 1);
     channel.setInstanceIDAttribute (sInstanceID);
     channel.setMinimizedAttribute("false");
