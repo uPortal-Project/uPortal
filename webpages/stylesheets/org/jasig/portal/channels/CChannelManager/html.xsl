@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">selectRoles</xsl:param>
+  <xsl:param name="action">selectModifyChannel</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -11,6 +11,8 @@
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
   <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
+
+
   <xsl:template match="/">
     <html>
       <head>
@@ -289,7 +291,7 @@
             <xsl:choose>
               <xsl:when test="(//*[@ID = $filterByID]//channel)">
                 <tr class="uportal-channel-table-header">
-                  <td colspan="3" align="center" valign="top">Option</td>
+                  <td colspan="2" align="center" valign="top">Option</td>
                   <td nowrap="nowrap" valign="top">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                   </td>
@@ -300,7 +302,7 @@
                   <td width="100%" valign="top">Description</td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top">
-                  <td nowrap="nowrap" colspan="7">
+                  <td nowrap="nowrap" colspan="6">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
@@ -314,11 +316,7 @@
                   <xsl:sort select="@name"/>
                   <xsl:if test="(position() &gt; (//recordsPerPage * //currentPage)-//recordsPerPage) and (position() &lt;= //recordsPerPage * //currentPage)">
                     <tr class="uportal-channel-text" valign="top">
-                      <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?uPCM_action=reviewChannelSettings&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/view.gif" width="16" height="16" border="0" alt="Review settings for {@ID}"/>
-                        </a>
-                      </td>
+                
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
@@ -345,7 +343,7 @@
                       </td>
                     </tr>
                     <tr class="uportal-channel-text" valign="top">
-                      <td colspan="7" align="center">
+                      <td colspan="6" align="center">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                           <tr>
                             <td>
@@ -2600,6 +2598,7 @@ Detachable<br/>
   </xsl:template>
 
 </xsl:stylesheet>
+
 
 
 
