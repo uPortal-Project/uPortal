@@ -46,12 +46,8 @@ import  java.io.IOException;
 
 /**
  * A set of runtime data acessable by a channel.
- * Includes the following data
- * <ul>
- *  <li>Base channel action URL</li>
- *  <li>A hashtable of parameters passed to the current channel</li>
  *
- * @author Peter Kharchenko
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
@@ -78,14 +74,21 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     ChannelRuntimeData crd = new ChannelRuntimeData();
     crd.baseActionURL = baseActionURL;
     crd.binfo = binfo;
+    crd.channelId=channelId;
+    crd.renderingAsRoot=renderingAsRoot;
     crd.putAll(this);
     return  crd;
   }
 
-    //set methods
-  public void setBaseActionURL (String baURL) {
-    baseActionURL = baURL;
-  }
+    
+    /**
+     * Setter method for baseActionURL
+     *
+     * @param baURL a baseActionURL value.
+     */
+    public void setBaseActionURL (String baURL) {
+        baseActionURL = baURL;
+    }
 
   /**
    * Sets whether or not the channel is rendering as the root of the layout.
@@ -95,47 +98,86 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     renderingAsRoot = rar;
   }
 
-  public void setBrowserInfo (BrowserInfo bi) {
+    /**
+     * Setter method for browser info object.
+     *
+     * @param bi a browser info associated with the current request
+     */
+    public void setBrowserInfo (BrowserInfo bi) {
     this.binfo = bi;
-  }
+    }
 
-  public void setChannelId(String chanId) {
-    this.channelId=chanId;
-  }
+    /**
+     * Setter method for channel (instance) Id.
+     *
+     * @param chanId a <code>String</code> value, first character must be alphanumeric.
+     */
+    public void setChannelId(String chanId) {
+        this.channelId=chanId;
+    }
 
-  public BrowserInfo getBrowserInfo () {
-    return  binfo;
-  }
+    /**
+     * Provides information about a user-agent associated with the current request/response.
+     *
+     * @return a <code>BrowserInfo</code> object ecapsulating various user-agent information.
+     */
+    public BrowserInfo getBrowserInfo () {
+        return  binfo;
+    }
 
-  public void setParameters (Map params) {
-    // copy a Map
-    this.putAll(params);
-  }
+    /**
+     * A convenience method for setting a whole set of parameters at once.
+     *
+     * @param params a <code>Map</code> of parameter names to parameter values.
+     */
+    public void setParameters (Map params) {
+        // copy a Map
+        this.putAll(params);
+    }
 
-  public synchronized String[] setParameterValues (String pName, String[] values) {
-    return  (String[])super.put(pName, values);
-  }
+    /**
+     * Sets multi-valued parameter.
+     *
+     * @param pName parameter name
+     * @param values an array of parameter values
+     * @return an array of parameter values
+     */
+    public String[] setParameterValues (String pName, String[] values) {
+        return  (String[])super.put(pName, values);
+    }
 
-  public synchronized void setParameter (String key, String value) {
-    String[] valueArray = new String[1];
-    valueArray[0] = value;
-    super.put(key, valueArray);
-  }
+    /**
+     * Establish a parameter name-value pair.
+     *
+     * @param pName parameter name
+     * @param value parameter value
+     */
+    public  void setParameter(String pName, String value) {
+        String[] valueArray = new String[1];
+        valueArray[0] = value;
+        super.put(pName, valueArray);
+    }
 
-  public synchronized com.oreilly.servlet.multipart.Part[] setParameterValues (String pName, com.oreilly.servlet.multipart.Part[] values) {
-    return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
-  }
+    public  com.oreilly.servlet.multipart.Part[] setParameterValues(String pName, com.oreilly.servlet.multipart.Part[] values) {
+        return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
+    }
 
-  public synchronized void setParameter (String key, com.oreilly.servlet.multipart.Part value) {
+  public synchronized void setParameter(String key, com.oreilly.servlet.multipart.Part value) {
     com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
     valueArray[0] = value;
     super.put(key, valueArray);
   }
 
-  // the get methods ...
-  public String getBaseActionURL () {
-    return  baseActionURL;
-  }
+
+    /**
+     * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
+     * will be placed into the ChannelRuntimeData object for channel's use.
+     *
+     * @return a value of URL to which parameter sequences should be appended.
+     */
+    public String getBaseActionURL() {
+        return  baseActionURL;
+    }
 
   /**
    * Returns the URL to invoke one of the workers specified in PortalSessionManager.
@@ -145,9 +187,9 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
    * @return URL to invoke the worker.
    *
    */
-  public String getWorkerActionURL (String worker) {
-      return PortalSessionManager.WORKER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+worker+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+this.channelId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX;
-  }
+    public String getWorkerActionURL (String worker) {
+        return PortalSessionManager.WORKER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+worker+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+this.channelId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX;
+    }
 
   /**
    * Tells whether or not the channel is rendering as the root of the layout.
@@ -157,24 +199,44 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     return renderingAsRoot;
   }
 
-  public synchronized String getParameter (String key) {
-    String[] value_array = this.getParameterValues(key);
-    if ((value_array != null) && (value_array.length > 0))
-      return  value_array[0];
-    else
-      return  null;
-  }
+    /**
+     * Get a parameter value. If the parameter has multiple values, only the first value is returned.
+     *
+     * @param pName parameter name
+     * @return parameter value
+     */
+    public String getParameter(String pName) {
+        String[] value_array = this.getParameterValues(pName);
+        if ((value_array != null) && (value_array.length > 0))
+            return  value_array[0];
+        else
+            return  null;
+    }
 
-  public synchronized Object getObjectParameter (String key) {
-    Object[] value_array = this.getParameterValues(key);
-    if ((value_array != null) && (value_array.length > 0))
-      return  value_array[0];
-    else
-      return  null;
-  }
 
-  public String[] getParameterValues (String parameter) {
-    Object[] pars = (Object[])super.get(parameter);
+    /**
+     * Obtain an <code>Object</code> parameter value. If the parameter has multiple values, only the first value is returned.
+     *
+     * @param pName parameter name
+     * @return parameter value
+     */
+    public Object getObjectParameter(String pName) {
+        Object[] value_array = this.getParameterValues(pName);
+        if ((value_array != null) && (value_array.length > 0)) {
+            return  value_array[0];
+        } else {
+            return  null;
+        }
+    }
+
+    /**
+     * Obtain all values for a given parameter.
+     *
+     * @param pName parameter name
+     * @return an array of parameter string values
+     */
+    public String[] getParameterValues(String pName) {
+    Object[] pars = (Object[])super.get(pName);
     if (pars instanceof String[]) {
       return  (String[])pars;
     }
@@ -183,16 +245,25 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
   }
 
-  public Object[] getObjectParameterValues (String parameter) {
-    return  (Object[])super.get(parameter);
-  }
+    /**
+     * Obtain all values for a given parameter as <code>Object</code>s.
+     *
+     * @param pName parameter name
+     * @return a vector of parameter <code>Object[]</code> values
+     */
+    public Object[] getObjectParameterValues(String pName) {
+        return  (Object[])super.get(pName);
+    }
 
-  /**
-   * Return the names of all the runtimeData parameters
-   */
-  public Enumeration getParameterNames () {
-    return  (Enumeration)super.keys();
-  }
+
+    /**
+     * Get an enumeration of parameter names.
+     *
+     * @return an <code>Enumeration</code> of parameter names.
+     */
+    public Enumeration getParameterNames() {
+        return  (Enumeration)super.keys();
+    }
 
 }
 

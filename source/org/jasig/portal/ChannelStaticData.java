@@ -5,7 +5,6 @@ import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.ISecurityContext;
 import  org.jasig.portal.security.IAuthorizationPrincipal;
 import  org.jasig.portal.services.AuthorizationService;
-// import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.services.LogService;
 import  javax.naming.Context;
 import  java.util.Hashtable;
@@ -15,9 +14,10 @@ import  java.util.Hashtable;
  * Used to store channel configuration items and parameters.
  * @author Ken Weiner, Peter Kharchenko
  * @version $Revision$
- * @author Peter Kharchenko
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  */
 public class ChannelStaticData extends Hashtable {
+
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
   private Context m_portalContext = null;
@@ -32,14 +32,7 @@ public class ChannelStaticData extends Hashtable {
   // Cache the PermissionManager for this channel
   //  private PermissionManager m_permissionManager = null;
 
-  /**
-   * Similar to the {@link #getParameter(String)}, but can be used to pass things other then strings.
-   * @param key
-   * @return Object
-   */
-  public synchronized Object get (Object key) {
-    return  super.get(key);
-  }
+
   /**
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
    * @return instance of the IAuthorizationPrincipal for the IPerson
@@ -58,12 +51,16 @@ public class ChannelStaticData extends Hashtable {
     }
     return ap;
   }
-  /**
-   * put your documentation comment here
-   */
-  public String getChannelGlobalID () {
-    return  (m_channelGlobalID);
-  }
+
+    /**
+     * Determine channel global (publish) Id.
+     *
+     * @return channel's Global Id (defined at publish-time)
+     */
+    public String getChannelGlobalID () {
+        return  (m_channelGlobalID);
+    }
+
   /**
    * Gets the channel ID
    * @return the channel's ID
@@ -71,6 +68,7 @@ public class ChannelStaticData extends Hashtable {
   public String getChannelID () {
     return  (m_channelInstanceID);
   }
+
   /**
    * Obtain a channel JNDI context
    * @return JNDI context
@@ -78,6 +76,7 @@ public class ChannelStaticData extends Hashtable {
     public Context getJNDIContext() {
         return m_portalContext;
     }
+
   /**
    * Get information contained in a particular <param> element
    * @param key param name
@@ -86,44 +85,39 @@ public class ChannelStaticData extends Hashtable {
   public synchronized String getParameter (String key) {
     return  (String)super.get(key);
   }
+
   /**
-   * put your documentation comment here
-   * @return IPerson
+   * Provide information on the user the channel is serving
+   * @return <code>IPerons</code> object.
    */
   public IPerson getPerson () {
     return  (m_person);
   }
+
   /**
-   * put your documentation comment here
-   * @return timeout
+   * Maximum time the channel will be allowed to spend in the rendering cycle.
+   * @return timeout (in milliseconds) after which the channel thread will be killed. Ideally, channels should monitor for this timeout and abort internal execution if the rendering cycle takes too long. 
    */
   public long getTimeout () {
     return  (m_timeout);
   }
+
+
   /**
-   * If you need to pass Objects, use this
-   * Similar to the {@link #setParameter(String,String)}, but can be used to pass things other then strings.
-   * @param key
-   * @param value
-   * @return Object
-   */
-  public synchronized Object put (Object key, Object value) {
-    return  super.put(key, value);
-  }
-  /**
-   * put your documentation comment here
+   * Setter method for channel global (publish-time) Id
    * @param   String channelGlobalID
    */
-  public void setChannelGlobalID (String channelGlobalID) {
-    m_channelGlobalID = channelGlobalID;
-  }
-  /**
-   * Sets the channel instance ID
-   * @param sChannelID the unique channelID
-   */
-  public void setChannelID (String sChID) {
-    m_channelInstanceID = sChID;
-  }
+    public void setChannelGlobalID (String channelGlobalID) {
+        m_channelGlobalID = channelGlobalID;
+    }
+
+    /**
+     * Sets the channel instance ID
+     * @param sChannelID the unique channelID
+     */
+    public void setChannelID (String sChID) {
+        m_channelInstanceID = sChID;
+    }
     /**
      * Set channel JNDI context.
      *
@@ -132,35 +126,39 @@ public class ChannelStaticData extends Hashtable {
     public void setJNDIContext(Context c) {
         m_portalContext=c;
     }
-  /**
-   * Set information contained in a channel <param> element
-   * Parameters are strings!
-   * @param key param name
-   * @param value param value
-   */
-  public synchronized String setParameter (String key, String value) {
-    return  (String)super.put(key, value);
-  }
-  /**
-   * Copy parameter list from a Map
-   * @param params a map of params
-   */
-  public void setParameters (Map params) {
-    // Copy the map
-    putAll(params);
-  }
-  /**
-   * put your documentation comment here
-   * @param per
-   */
-  public void setPerson (IPerson person) {
-    m_person = person;
-  }
-  /**
-   * put your documentation comment here
-   * @param value
-   */
-  public void setTimeout (long value) {
-    m_timeout = value;
-  }
+    
+    /**
+     * Set information contained in a channel <param> element
+     * Parameters are strings!
+     * @param key param name
+     * @param value param value
+     */
+    public String setParameter (String key, String value) {
+        return  (String)super.put(key, value);
+    }
+
+    /**
+     * Copy parameter list from a Map
+     * @param params a map of params
+     */
+    public void setParameters (Map params) {
+        // Copy the map
+        putAll(params);
+    }
+
+    /**
+     * Setter method for the user being served by the channel
+     * @param person an <code>IPerson<code> value.
+     */
+    public void setPerson (IPerson person) {
+        m_person = person;
+    }
+
+    /**
+     * Setter method for channel timeout.
+     * @param value
+     */
+    public void setTimeout (long value) {
+        m_timeout = value;
+    }
 }
