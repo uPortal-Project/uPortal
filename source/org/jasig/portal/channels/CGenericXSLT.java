@@ -134,7 +134,6 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (xslUri != null)
        this.xslUri = xslUri;
 
-
     media = runtimeData.getMedia();
   }
 
@@ -161,6 +160,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   public void renderXML (DocumentHandler out) throws PortalException
   {
     String xml;
+    sslUri = UtilitiesBean.fixURI(sslUri);
 
     try
     {
@@ -176,13 +176,13 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     try
     {
       if (xslUri != null)
-        XSLT.transform(out, xml, xslUri, runtimeData);
+        XSLT.transform(xml, new URL(xslUri), out, runtimeData);
       else
       {
         if (xslTitle != null)
-          XSLT.transform(out, media, xml, sslUri, xslTitle, runtimeData);
+          XSLT.transform(xml, new URL(sslUri), out, runtimeData, xslTitle, media);
         else
-          XSLT.transform(out, media, xml, sslUri, runtimeData);
+          XSLT.transform(xml, new URL(sslUri), out, runtimeData, media);
       }
     }
     catch (org.xml.sax.SAXException e)

@@ -175,14 +175,14 @@ public class CWebProxy implements org.jasig.portal.IChannel
             {
               String pName = (String) e.nextElement ();
               Logger.log (Logger.DEBUG, "CWebProxy: got reqparam " + pName);
-	      if ( !pName.equals("inChannelLink") )
-	      {
-  	        newXML.append(appendchar);
-	        appendchar = "&";
-	        newXML.append(pName);
-	        newXML.append("=");
-	        newXML.append(URLEncoder.encode(runtimeData.getParameter(pName)));
-	      }
+              if ( !pName.equals("inChannelLink") )
+              {
+                newXML.append(appendchar);
+                appendchar = "&";
+                newXML.append(pName);
+                newXML.append("=");
+                newXML.append(URLEncoder.encode(runtimeData.getParameter(pName)));
+              }
             }
         }
       fullxmlUri = newXML.toString();
@@ -255,14 +255,14 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
     try
     {
-      if (xslUri != null) 
-        XSLT.transform(out, xml, xslUri, runtimeData);
+      if (xslUri != null)
+        XSLT.transform(xml, new URL(xslUri), out, runtimeData);
       else
       {
         if (xslTitle != null)
-          XSLT.transform(out, media, xml, sslUri, xslTitle, runtimeData);
+          XSLT.transform(xml, new URL(sslUri), out, runtimeData, xslTitle, media);
         else
-          XSLT.transform(out, media, xml, sslUri, runtimeData);
+          XSLT.transform(xml, new URL(sslUri), out, runtimeData, media);
       }
     }
     catch (org.xml.sax.SAXException e)
@@ -277,9 +277,9 @@ public class CWebProxy implements org.jasig.portal.IChannel
   }
 
   /**
-   * Get the contents of a URI as a String but send it through tidy first 
+   * Get the contents of a URI as a String but send it through tidy first
    * @param uri the URI
-   * @return the data pointed to by a URI 
+   * @return the data pointed to by a URI
    */
   public static String getTidyString (String uri) throws IOException, MalformedURLException, PortalException
   {
@@ -305,5 +305,5 @@ public class CWebProxy implements org.jasig.portal.IChannel
     return stream.toString ();
 
   }
-  
+
 }

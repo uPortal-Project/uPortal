@@ -37,9 +37,9 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
-import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
 import java.io.*;
+import java.net.URL;
 import java.util.Hashtable;
 
 /** <p>A number guessing game which asks the user to enter a number within
@@ -202,7 +202,7 @@ public class CNumberGuess implements IChannel
 
         Hashtable ssParams = new Hashtable();
         ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-        XSLT.transform(out, media, w.toString(), sslLocation, "main", ssParams);
+        XSLT.transform(w.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, ssParams, "main", media);
       }
     }
     catch (Exception e)

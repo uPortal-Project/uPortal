@@ -48,11 +48,11 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.XMLEscaper;
-import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.net.URL;
 
 /**
  * <p>A channel which displays HTTP request and HTML header info.
@@ -196,7 +196,7 @@ public class CSnoop implements IPrivilegedChannel
 
     try
     {
-      XSLT.transform(out, sb.toString(), set.getStylesheetURI(media));
+      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(set.getStylesheetURI(media))), out);
     }
     catch (Exception e)
     {

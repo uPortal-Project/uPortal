@@ -36,12 +36,15 @@
 package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.*;
-import org.jasig.portal.security.*;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.DocumentHandler;
-import java.io.*;
-import java.util.*;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.net.URL;
 
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
@@ -409,7 +412,7 @@ class GPreferencesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
+                    org.jasig.portal.utils.XSLT.transform(doc, new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -535,7 +538,7 @@ class GPreferencesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
+                    XSLT.transform(doc, new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -630,7 +633,7 @@ class GPreferencesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, context.getUserLayoutXML(), xslURI, params);
+                    XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -720,7 +723,7 @@ class GPreferencesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, context.getUserLayoutXML(), xslURI, params);
+                    XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {

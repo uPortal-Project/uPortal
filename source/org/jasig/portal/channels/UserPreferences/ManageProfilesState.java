@@ -36,13 +36,15 @@
 package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.*;
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.DocumentHandler;
 import java.util.*;
 import javax.servlet.http.*;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
-import java.io.*;
+import java.io.StringWriter;
+import java.net.URL;
 
 /** <p>CUserPreferences state for managing profiles</p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
@@ -133,7 +135,7 @@ class ManageProfilesState extends BaseState {
             for(Enumeration upe=userProfileList.elements(); upe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) upe.nextElement();
                 Element pEl=doc.createElement("profile");
-		pEl.setAttribute("id",Integer.toString(p.getProfileId()));
+                pEl.setAttribute("id",Integer.toString(p.getProfileId()));
                 pEl.setAttribute("name",p.getProfileName());
                 Element dEl=doc.createElement("description");
                 dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
@@ -146,7 +148,7 @@ class ManageProfilesState extends BaseState {
             for(Enumeration spe=systemProfileList.elements(); spe.hasMoreElements(); ) {
                 UserProfile p=(UserProfile) spe.nextElement();
                 Element pEl=doc.createElement("profile");
-		pEl.setAttribute("id",Integer.toString(p.getProfileId()));
+                pEl.setAttribute("id",Integer.toString(p.getProfileId()));
                 pEl.setAttribute("name",p.getProfileName());
                 Element dEl=doc.createElement("description");
                 dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
@@ -155,12 +157,12 @@ class ManageProfilesState extends BaseState {
             }
             edEl.appendChild(sEl);
 
-	    /*  try {
-		Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
-	    } catch (Exception e) {
-		Logger.log(Logger.ERROR,e);
-		}
-	    */
+            /*  try {
+                Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+            } catch (Exception e) {
+                Logger.log(Logger.ERROR,e);
+                }
+            */
 
             // find the stylesheet and transform
             StylesheetSet set=context.getStylesheetSet();
@@ -179,7 +181,7 @@ class ManageProfilesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
+                    XSLT.transform(doc, new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -211,9 +213,9 @@ class ManageProfilesState extends BaseState {
                     // At this point we're supposed to pick up which profile is to be
                     // edited.
                     Integer profileId=null;
-		    try {
-			profileId=new Integer(runtimeData.getParameter("profileId"));
-		    } catch (NumberFormatException nfe) {}
+                    try {
+                        profileId=new Integer(runtimeData.getParameter("profileId"));
+                    } catch (NumberFormatException nfe) {}
 
                     boolean systemProfile=false;
                     if(profileId==null) {
@@ -446,7 +448,7 @@ class ManageProfilesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
+                    XSLT.transform(doc, new URL(xslURI), out, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {

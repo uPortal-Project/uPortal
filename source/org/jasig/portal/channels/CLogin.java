@@ -40,6 +40,8 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.security.IPerson;
 import org.xml.sax.DocumentHandler;
 import java.io.File;
+import java.util.Hashtable;
+import java.net.URL;
 import javax.servlet.http.HttpSession;
 
 /** <p>Allows a user to logon to the portal.  Logon info is posted to
@@ -116,7 +118,7 @@ public class CLogin implements IPrivilegedChannel
 
     try
     {
-        XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
+        XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, (Hashtable)null, "login", media);
     }
     catch (Exception e)
     {

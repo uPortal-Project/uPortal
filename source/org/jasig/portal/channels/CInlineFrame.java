@@ -36,6 +36,7 @@
 package org.jasig.portal.channels;
 import java.io.*;
 import java.util.*;
+import java.net.URL;
 import org.jasig.portal.*;
 import org.xml.sax.DocumentHandler;
 import org.jasig.portal.utils.XSLT;
@@ -51,8 +52,8 @@ import org.jasig.portal.utils.XSLT;
 public class CInlineFrame extends BaseChannel
 {
   /**
- *  The URL for the IFrame content
- */
+   *  The URL for the IFrame content
+   */
   protected String srcUrl = null;
   protected String frameHeight = null;
   protected String channelName = null;
@@ -66,21 +67,21 @@ public class CInlineFrame extends BaseChannel
   private String media;
 
   /**
- * Constructs CInlineFrame
- *  Locate and stylesheet set CInlineFrame.ssl
- */
+   * Constructs CInlineFrame
+   *  Locate and stylesheet set CInlineFrame.ssl
+   */
   public CInlineFrame()
   {
     this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
     this.set = new StylesheetSet (stylesheetDir + fs + "CInlineFrame.ssl");
-//    this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
-    }
+    //this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
+  }
 
-    /**
-     * discover browser via mediaManager and save for render time
-     */
-public void setRuntimeData (ChannelRuntimeData rd)
+  /**
+   * discover browser via mediaManager and save for render time
+   */
+  public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
 
@@ -89,7 +90,6 @@ public void setRuntimeData (ChannelRuntimeData rd)
     MediaManager mm = new MediaManager();
     mm.setMediaProps(portalBaseDir + "properties" + fs + "media.properties");
     media = runtimeData.getMedia();
-
   }
 
   /**
@@ -109,11 +109,11 @@ public void setRuntimeData (ChannelRuntimeData rd)
     }
   }
 
-/**
- * Build an XML string and transform for display using org.jasig.portal.util.XSLT
- * Create IFrame or link depending on Browser.
- */
-      public void renderXML (DocumentHandler out)
+  /**
+   * Build an XML string and transform for display using org.jasig.portal.util.XSLT
+   * Create IFrame or link depending on Browser.
+   */
+  public void renderXML (DocumentHandler out)
   {
     try
     {
@@ -123,7 +123,7 @@ public void setRuntimeData (ChannelRuntimeData rd)
       Hashtable ssParams = new Hashtable();
       ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
       Logger.log(Logger.DEBUG, "sXML is "+sXML);
-      XSLT.transform(out, media, sXML, sslLocation, "main", ssParams);
+      XSLT.transform(sXML, new URL(sslLocation), out, ssParams, "main", media);
 
          }
     }
