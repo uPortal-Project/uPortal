@@ -719,6 +719,59 @@
     <not-null>GROUP_ID</not-null>
   </table>
 
+  <!-- Used by the EntityCachingService to synchronize caches on multiple servers. -->
+  <table>
+    <name>UP_ENTITY_CACHE_INVALIDATION</name>
+    <desc>Each row indicates an entity that has been updated or deleted and whose cache entry is now invalid.</desc>
+    <columns>
+      <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
+        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
+        <desc>The unique key of the entity.</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>INVALIDATION_TIME</name>  <type>TIMESTAMP</type>
+        <desc>The time the entity was invalidated.</desc>
+      </column>
+     </columns>
+    <primary-key>ENTITY_TYPE_ID</primary-key>
+    <primary-key>ENTITY_KEY</primary-key>
+    <not-null>INVALIDATION_TIME</not-null>
+  </table>
+
+  <!-- Used by the EntityLockService to share locks among multiple servers. -->
+  <table>
+    <name>UP_ENTITY_LOCK</name>
+    <desc>Each row represents a lock held on a portal entity on behalf of an owner.</desc>
+    <columns>
+      <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
+        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_GROUP_ENTITY_TYPE</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
+        <desc>The unique key of the entity being locked.</desc>
+        <key>CK</key>
+      </column>
+      <column> <name>LOCK_TYPE</name>  <type>INTEGER</type>
+        <desc>Either READ (0) or WRITE (1)</desc>
+      </column>
+      <column> <name>EXPIRATION_TIME</name>  <type>TIMESTAMP</type>
+        <desc>The time the lock expires.</desc>
+      </column>
+     <column> <name>LOCK_OWNER</name>       <type>VARCHAR</type>     <param>30</param>
+        <desc>The owner of the lock.</desc>
+        <key>CK</key>
+      </column>
+     </columns>
+    <primary-key>ENTITY_TYPE_ID</primary-key>
+    <primary-key>ENTITY_KEY</primary-key>
+    <primary-key>LOCK_OWNER</primary-key>
+    <not-null>LOCK_TYPE</not-null>
+    <not-null>EXPIRATION_TIME</not-null>
+  </table>
+
 </tables>
 
 
