@@ -397,7 +397,7 @@ public class PersonDirectory {
       // Get a connection with from container
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
           RDBMServices rdbmServices = new RDBMServices();
-          conn = rdbmServices.getConnection(pdi.ResRefName);
+          conn = RDBMServices.getConnection(pdi.ResRefName);
           LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
             " for person attributes of "+username);
         }

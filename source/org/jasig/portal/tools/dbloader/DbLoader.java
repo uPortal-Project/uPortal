@@ -138,7 +138,7 @@ public class DbLoader
     {
       System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
       propertiesURL = DbLoader.class.getResource("/properties/dbloader.xml");
-      con = rdbmService.getConnection ();
+      con = RDBMServices.getConnection ();
 
       if (con != null)
       {
@@ -280,9 +280,9 @@ public class DbLoader
     String dbVersion = dbMetaData.getDatabaseProductVersion();
     String driverName = dbMetaData.getDriverName();
     String driverVersion = dbMetaData.getDriverVersion();
-    String driverClass = rdbmService.getJdbcDriver();
-    String url = rdbmService.getJdbcUrl();
-    String user = rdbmService.getJdbcUser();
+    String driverClass = RDBMServices.getJdbcDriver();
+    String url = RDBMServices.getJdbcUrl();
+    String user = RDBMServices.getJdbcUser();
     System.out.println("Starting DbLoader...");
     System.out.println("Database name: '" + dbName + "'");
     System.out.println("Database version: '" + dbVersion + "'");
@@ -1393,7 +1393,7 @@ public class DbLoader
 
   private static void exit()
   {
-    rdbmService.releaseConnection(con);
+	RDBMServices.releaseConnection(con);
 
     if (scriptOut != null)
       scriptOut.close();
