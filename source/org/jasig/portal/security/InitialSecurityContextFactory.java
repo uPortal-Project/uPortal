@@ -36,8 +36,12 @@
 package org.jasig.portal.security;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.jasig.portal.services.LogService;
 
@@ -66,98 +70,250 @@ import org.jasig.portal.services.LogService;
  */
 
 public class InitialSecurityContextFactory {
+    private static final String CONTEXT_PROPERTY_PREFIX = "securityContextProperty";
+    
+    /**
+     * Used to store the configuration for each initial context, this allows
+     * a the ISecurityContext chain to be created more quickly since the
+     * properties file doesn't need to be parsed at each getInitialContext call.
+     */
+    private static final Map contextConfigs = new Hashtable();
+    
+    public static ISecurityContext getInitialContext(String ctx) throws PortalSecurityException {
+        BaseContextConfiguration contextConfig;
 
-  public static ISecurityContext getInitialContext(String ctx)
-      throws PortalSecurityException {
-    Properties pr;
-    Enumeration ctxnames;
-    String factoryname;
-    ISecurityContextFactory factory;
-    ISecurityContext ictx;
-
-    // Initial contexts must have names that are not compound
-
-    if (ctx.indexOf('.') != -1) {
-      PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-      LogService.log(LogService.ERROR,ep);
-      throw(ep);
-    }
-
-    // Find our properties file and open it
-    java.io.InputStream secprops =
-      InitialSecurityContextFactory.class.
-       getResourceAsStream("/properties/security.properties");
-    pr = new Properties();
-    try {
-      pr.load(secprops);
-    }
-    catch (IOException e) {
-      PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-      LogService.log(LogService.ERROR,ep);
-      throw(ep);
-    } finally {
-            try {
-                if (secprops != null) 
-                    secprops.close();
-            } catch (IOException ioe) {
-                LogService.log(LogService.ERROR,
-                        "InitialSecurityContextFactory:getInitialContext::unable to close InputStream "
-                                + ioe);
+        /*
+         * Synchronize on the contextConfigs Map, this ensures two threads don't
+         * end up creating the same BaseContextConfiguration.
+         */
+        synchronized (contextConfigs) {
+            contextConfig = (BaseContextConfiguration)contextConfigs.get(ctx);
+    
+            //The desired base context configuraton doesn't exist
+            if (contextConfig == null) {
+                
+                //Initial contexts must have names that are not compound
+                if (ctx.indexOf('.') != -1) {
+                    PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
+                    LogService.log(LogService.ERROR,ep);
+                    throw(ep);
+                }
+                
+                contextConfig = new BaseContextConfiguration();
+                contextConfigs.put(ctx, contextConfig);
             }
         }
-
-    // Look for our security context factory and instantiate an instance
-    // of it or die trying.
-
-    if ((factoryname = pr.getProperty(ctx)) == null) {
-      PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-      LogService.log(LogService.ERROR,ep);
-      throw(ep);
-    }
-    try {
-      factory = (ISecurityContextFactory)
-          Class.forName(factoryname).newInstance();
-    }
-    catch (Exception e) {
-      PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryname);
-      LogService.log(LogService.ERROR,ep);
-      throw(ep);
-    }
-
-    // From our factory get an actual security context instance
-
-    ictx = factory.getSecurityContext();
-
-    // Iterate through all of the other property keys looking for ones
-    // rooted in this initial context
-
-    ctxnames = pr.propertyNames();
-    while (ctxnames.hasMoreElements()) {
-      String secname, sfactoryname;
-      String candidate = (String)ctxnames.nextElement();
-      ISecurityContextFactory sfactory;
-
-      if (candidate.startsWith(ctx+".")) {
-        secname = candidate.substring(ctx.length()+1);
-        sfactoryname = pr.getProperty(candidate);
-
+        
+        /*
+         * Changing the synchronized object will minimize blocking in the case
+         * of different root contexts. The config initialization code is thread
+         * safe as long as each thread is initializing a different config.
+         */
+        
+        /*
+         * Synchronize on the contextConfig, this ensures two threads don't
+         * try to intialize the config in parallel. Only one will be allowed
+         * into the synchronized block at a time, if the config has not been
+         * initialized it will initialize it and set the flag to true then
+         * exit the block. The waiting thread(s) will have a reference to a
+         * now initialized config and skip the initalization code.
+         */
+        synchronized (contextConfig) {
+            if (!contextConfig.initialized) {
+                //Try to load the properties
+                InputStream secprops = InitialSecurityContextFactory.class.getResourceAsStream("/properties/security.properties");
+                Properties pr = new Properties();
+                try {
+                    pr.load(secprops);      
+                }
+                catch (IOException e) {
+                  PortalSecurityException ep = new PortalSecurityException(e.getMessage());
+                  LogService.log(LogService.ERROR,ep);
+                  throw(ep);
+                } 
+                finally {
+                    try {
+                        if (secprops != null)
+                        {
+                            secprops.close();
+                        }
+                    }
+                    catch (IOException ioe) {
+                        LogService.log(LogService.ERROR, "InitialSecurityContextFactory:getInitialContext::unable to close InputStream ", ioe);
+                    }
+                }
+                
+                //Load the root context factory name
+                String factoryName = pr.getProperty(ctx);
+                if (factoryName == null) {
+                    PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
+                    LogService.log(LogService.ERROR,ep);
+                    throw(ep);
+                }
+                
+                //Create the root context factory
+                try {
+                    ISecurityContextFactory factory = (ISecurityContextFactory)Class.forName(factoryName).newInstance();
+                    contextConfig.rootConfig.contextFactory = factory;
+                    contextConfig.rootConfig.contextName = ctx;
+                }
+                catch (Exception e) {
+                    PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryName);
+                    LogService.log(LogService.ERROR,ep);
+                    throw(ep);
+                }
+                
+                //Context configuration properties as securityContextProperty. entries
+                // Format is:
+                //  securityContextProperty.<PropertyName> - root context properties
+                //  securityContextProperty.<SecurityContextName>.<PropertyName> - sub context properties
+                //  <PropertyName> cannot contain .
+                
+                //Load sub context factories and context configuration properties
+                Map subContextConfigs = new Hashtable();
+                Map subContextProperties = new Hashtable();
+                for (Enumeration ctxnames = pr.propertyNames(); ctxnames.hasMoreElements(); ) {
+                    String secname, sfactoryname;
+                    String candidate = (String)ctxnames.nextElement();
+          
+                    //For sub context properties
+                    if (candidate.startsWith(ctx + ".")) {
+                        secname = candidate.substring(ctx.length()+1);
+                        sfactoryname = pr.getProperty(candidate);
+          
+                        try {
+                            if (subContextConfigs.get(secname) != null) {
+                                throw new IllegalArgumentException("Two sub contexts cannot share a name. (" + candidate + "=" + sfactoryname + ")");
+                            }
+                            
+                            ISecurityContextFactory sfactory = (ISecurityContextFactory)Class.forName(sfactoryname).newInstance();
+                            
+                            ContextConfiguration subContextConfig = new ContextConfiguration();
+                            subContextConfig.contextFactory = sfactory;
+                            subContextConfig.contextName = secname;
+                            
+                            Properties existingProps = (Properties)subContextProperties.remove(secname);
+                            if (existingProps != null) {
+                                subContextConfig.contextProperties = existingProps;
+                            }
+                            
+                            subContextConfigs.put(secname, subContextConfig);
+                        }
+                        catch (Exception e) {
+                            String errorMsg = "(Subcontext) Failed to instantiate " + sfactoryname;
+                            PortalSecurityException ep = new PortalSecurityException(errorMsg);
+                            ep.setRecordedException(e);
+                            LogService.log(LogService.ERROR, errorMsg);
+                            LogService.log(LogService.ERROR, e);
+                            throw ep;
+                        }
+                    }
+                    //For context configuration properties
+                    else if (candidate.startsWith(CONTEXT_PROPERTY_PREFIX)) {
+                        try {
+                            StringTokenizer propNameParts = new StringTokenizer(candidate, ".", true);
+                            int tokenCount = propNameParts.countTokens();
+                                            
+                            if (tokenCount == 3 || tokenCount  == 5) {
+                                String ctxName = null;
+                                propNameParts.nextToken(); //Skip the prefix
+                                propNameParts.nextToken(); //Skip the first . 
+                                
+                                if (tokenCount == 3) {
+                                    ctxName = "";
+                                }
+                                else if (tokenCount == 5) {
+                                    ctxName = propNameParts.nextToken();
+                                    propNameParts.nextToken(); //Skip the second .
+                                }
+                
+                                if (ctxName != null) {
+                                    String ctxPropName = propNameParts.nextToken();
+                                    String ctxPropValue = pr.getProperty(candidate);
+                                    
+                                    Properties subContextProps; 
+                                    if (ctxName.equals("")) {
+                                        //"" context name means root context
+                                        subContextProps = contextConfig.rootConfig.contextProperties;
+                                    }
+                                    else {
+                                        //See if the desired context has been created yet
+                                        ContextConfiguration subContextConfig = (ContextConfiguration)subContextConfigs.get(ctxName);
+                                        
+                                        if (subContextConfig == null) {
+                                            //Desired context doesn't exist
+                                            //See if properties have been stored for this sub context yet
+                                            subContextProps = (Properties)subContextProperties.get(ctxName);
+                                            
+                                            if (subContextProps == null) {
+                                                //No properties stored for this sub context yet, create and store them
+                                                subContextProps = new Properties();
+                                                subContextProperties.put(ctxName, subContextProps);
+                                            }
+                                        }
+                                        else {
+                                            //Desired context exists, use the properties object from it
+                                            subContextProps = subContextConfig.contextProperties;
+                                        }
+                                    }
+                                    
+                                    //Set the property on the context
+                                    subContextProps.setProperty(ctxPropName, ctxPropValue);
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                            LogService.log(LogService.WARN, "Error parsing security context property from security.properties: " + candidate, e);
+                        }
+                    }
+                }
+                
+                contextConfig.subConfigs = (ContextConfiguration[])subContextConfigs.values().toArray(new ContextConfiguration[subContextConfigs.size()]);
+            }
+        }
+        
+        //Should have a valid contextConfig here
         try {
-          sfactory = (ISecurityContextFactory)
-              Class.forName(sfactoryname).newInstance();
-          ictx.addSubContext(secname, sfactory.getSecurityContext());
+            //Create the root context
+            ISecurityContext ictx = contextConfig.rootConfig.contextFactory.getSecurityContext();
+            
+            //If it is a configurable SecurityContext pass in the properties
+            if (ictx instanceof IConfigurableSecurityContext) {
+                ((IConfigurableSecurityContext)ictx).setProperties((Properties)contextConfig.rootConfig.contextProperties.clone());
+            }            
+            
+            //Create all the sub contexts
+            for (int index = 0; index < contextConfig.subConfigs.length; index++) {
+                ISecurityContext subIctx = contextConfig.subConfigs[index].contextFactory.getSecurityContext();
+                
+                //If it is a configurable SecurityContext pass in the properties                
+                if (subIctx instanceof IConfigurableSecurityContext) {
+                    ((IConfigurableSecurityContext)subIctx).setProperties((Properties)contextConfig.subConfigs[index].contextProperties.clone());
+                }
+                
+                ictx.addSubContext(contextConfig.subConfigs[index].contextName, subIctx);
+            }
+            
+            return ictx;
         }
-        catch (Exception e) {
-          String errorMsg = "(Subcontext) Failed to instantiate " + sfactoryname;
-          PortalSecurityException ep = new PortalSecurityException(errorMsg);
-          ep.setRecordedException(e);
-          LogService.log(LogService.ERROR, errorMsg);
-          LogService.log(LogService.ERROR, e);
-          throw ep;
+        catch (NullPointerException npe) {
+            String errorMsg = "Error while creating ISecurityContext chain.";
+            PortalSecurityException ep = new PortalSecurityException(errorMsg);
+            ep.setRecordedException(npe);
+            LogService.log(LogService.ERROR, ep);
+            throw ep;
         }
-      }
     }
+}
 
-    return ictx;
-  }
+class BaseContextConfiguration {
+    final ContextConfiguration rootConfig = new ContextConfiguration();
+    ContextConfiguration[] subConfigs = null;
+    boolean initialized = false;
+}
 
+class ContextConfiguration {
+    ISecurityContextFactory contextFactory = null;
+    String contextName = null;
+    Properties contextProperties = new Properties();
 }

@@ -36,6 +36,7 @@
 
 package  org.jasig.portal.security.provider;
 
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.naming.AuthenticationException;
@@ -48,7 +49,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.LdapServices;
-import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
 
@@ -63,7 +64,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class SimpleLdapSecurityContext extends ChainingSecurityContext
-    implements ISecurityContext {
+    implements IConfigurableSecurityContext {
   // Attributes that we're interested in.
   public static final int ATTR_UID = 0;
   public static final int ATTR_FIRSTNAME = ATTR_UID + 1;
@@ -74,11 +75,24 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     "givenName",                // first name
     "sn"        // last name
   };
+  
+  private static final String LDAP_PROPERTIES_FILE_PROP_NAME = "properties";
+  private Properties ctxProperties;
 
-
-  SimpleLdapSecurityContext () {
+  SimpleLdapSecurityContext() {
     super();
+    ctxProperties = new Properties();
   }
+  
+  /**
+   * Sets the properties to use for this security context.
+   * 
+   * @see org.jasig.portal.security.IConfigurableSecurityContext#setProperties(java.util.Properties)
+   */
+  public void setProperties(Properties props)
+  {
+      ctxProperties = props;
+  }  
 
   /**
    * Returns the type of authentication this class provides.
@@ -98,7 +112,14 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
    */
   public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
-    LdapServices ldapservices = new LdapServices();
+    LdapServices ldapservices;
+    
+    String propFile = ctxProperties.getProperty(LDAP_PROPERTIES_FILE_PROP_NAME);
+    if(propFile != null && propFile.length() > 0)
+        ldapservices = new LdapServices(propFile);
+    else
+        ldapservices = new LdapServices();    
+    
     String creds = new String(this.myOpaqueCredentials.credentialstring);
     if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring
         != null && !creds.trim().equals("")) {

@@ -38,6 +38,7 @@ package org.jasig.portal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -52,56 +53,80 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class LdapServices
-{
-  private static boolean bPropsLoaded = false;
-  private static String sLdapHost           = null;
-  private static String sLdapPort           = null;
-  private static String sLdapBaseDN         = null;
-  private static String sLdapUidAttribute   = null;
-  private static String sLdapManagerDN      = null;
-  private static String sLdapManagerPW      = null;
-  private static String sLdapManagerProto   = null;
+{  
+  private static final Map loadedProperties = new Hashtable();
+  private final String propFileName;
+  private LDAPProperties props;
+
+  public LdapServices()
+  {
+      propFileName = "ldap.properties";
+      init();
+  }
+
+  public LdapServices(String propFile)
+  {
+      propFileName = propFile;
+      init();
+  }
+  
   /**
    * Constructor that loads LDAP parameters from property file
    * upon first invocation.
    */
-  public LdapServices () {      
-      InputStream ins = null;    
-     try {
-      if (!bPropsLoaded) {
-        ins = this.getClass().getResourceAsStream("/properties/ldap.properties");
-        Properties ldapProps = new Properties ();
-        ldapProps.load (ins);
-
-
-        sLdapHost         = ldapProps.getProperty ("ldap.host",         "");
-        sLdapPort         = ldapProps.getProperty ("ldap.port",         "389");
-        sLdapBaseDN       = ldapProps.getProperty ("ldap.baseDN",       "");
-        sLdapUidAttribute = ldapProps.getProperty ("ldap.uidAttribute", "");
-        sLdapManagerDN    = ldapProps.getProperty ("ldap.managerDN",    "");
-        sLdapManagerPW    = ldapProps.getProperty ("ldap.managerPW",    "");
-        sLdapManagerProto = ldapProps.getProperty ("ldap.protocol",     "");
-
-        LogService.log(LogService.DEBUG, "ldap.host = "         + sLdapHost);
-        LogService.log(LogService.DEBUG, "ldap.port = "         + sLdapPort);
-        LogService.log(LogService.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
-        LogService.log(LogService.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
-        LogService.log(LogService.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
-        LogService.log(LogService.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
-	    LogService.log(LogService.DEBUG, "ldap.protocol = "     + sLdapManagerProto);
-        bPropsLoaded = true;
+  public void init() {      
+      InputStream ins = null;
+      try
+      {
+          synchronized (loadedProperties) {
+              props = (LDAPProperties)loadedProperties.get(propFileName);
+              if(props == null)
+              {
+                  props = new LDAPProperties();
+                  loadedProperties.put(propFileName, props);
+              }
+          }
+          
+          synchronized (props) {
+              if(!props.bPropsLoaded)
+              {
+                  ins = getClass().getResourceAsStream("/properties/" + propFileName);
+                  Properties ldapProps = new Properties();
+                  ldapProps.load(ins);
+                  props.sLdapHost = ldapProps.getProperty("ldap.host", "");
+                  props.sLdapPort = ldapProps.getProperty("ldap.port", "389");
+                  props.sLdapBaseDN = ldapProps.getProperty("ldap.baseDN", "");
+                  props.sLdapUidAttribute = ldapProps.getProperty("ldap.uidAttribute", "");
+                  props.sLdapManagerDN = ldapProps.getProperty("ldap.managerDN", "");
+                  props.sLdapManagerPW = ldapProps.getProperty("ldap.managerPW", "");
+                  props.sLdapManagerProto = ldapProps.getProperty("ldap.protocol", "");
+                  LogService.log(LogService.DEBUG, "ldap.host = " + props.sLdapHost);
+                  LogService.log(LogService.DEBUG, "ldap.port = " + props.sLdapPort);
+                  LogService.log(LogService.DEBUG, "ldap.baseDN = " + props.sLdapBaseDN);
+                  LogService.log(LogService.DEBUG, "ldap.uidAttribute = " + props.sLdapUidAttribute);
+                  LogService.log(LogService.DEBUG, "ldap.managerDN = " + props.sLdapManagerDN);
+                  LogService.log(LogService.DEBUG, "ldap.managerPW = " + props.sLdapManagerPW);
+                  LogService.log(LogService.DEBUG, "ldap.protocol = " + props.sLdapManagerProto);
+                  props.bPropsLoaded = true;
+              }
+          }
       }
-    }
-    catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-    } finally {
-        try {
-            if(ins != null)        
-            ins.close();
-        }catch(IOException ioe) {
-            LogService.log(LogService.ERROR,"LdapServices::unalbe to close InputStream "+ioe);
-        }
-    }
+      catch(Exception e)
+      {
+          LogService.log(LogService.ERROR, e);
+      }
+      finally
+      {
+          try
+          {
+              if(ins != null)
+                  ins.close();
+          }
+          catch(IOException ioe)
+          {
+              LogService.log(LogService.ERROR, "LdapServices::unalbe to close InputStream " + ioe);
+          }
+      }
   }
 
   /**
@@ -115,13 +140,13 @@ public class LdapServices
       Hashtable env = new Hashtable(5, 0.75f);
       env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
       StringBuffer urlBuffer = new StringBuffer("ldap://");
-      urlBuffer.append(sLdapHost).append(":").append(sLdapPort);
+      urlBuffer.append(props.sLdapHost).append(":").append(props.sLdapPort);
 
       env.put(Context.PROVIDER_URL, urlBuffer.toString());
       env.put(Context.SECURITY_AUTHENTICATION, "simple");
-      env.put(Context.SECURITY_PRINCIPAL,      sLdapManagerDN);
-      env.put(Context.SECURITY_CREDENTIALS,    sLdapManagerPW);
-      if(sLdapManagerProto.equals("ssl")) env.put(Context.SECURITY_PROTOCOL,"ssl");
+      env.put(Context.SECURITY_PRINCIPAL,      props.sLdapManagerDN);
+      env.put(Context.SECURITY_CREDENTIALS,    props.sLdapManagerPW);
+      if(props.sLdapManagerProto.equals("ssl")) env.put(Context.SECURITY_PROTOCOL,"ssl");
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
@@ -136,7 +161,7 @@ public class LdapServices
    * @return a DN to use as reference point or context for queries
    */
   public String getBaseDN() {
-    return sLdapBaseDN;
+    return props.sLdapBaseDN;
   }
 
   /**
@@ -144,7 +169,7 @@ public class LdapServices
    * @return a DN to use as reference point or context for queries
    */
   public String getUidAttribute() {
-    return sLdapUidAttribute;
+    return props.sLdapUidAttribute;
   }
 
   /**
@@ -161,6 +186,34 @@ public class LdapServices
       LogService.log(LogService.DEBUG, e);
     }
   }
+  
+  /**
+   * Data structure for holding loaded ldap properties
+   * 
+   * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+   */
+  private class LDAPProperties {
+      boolean bPropsLoaded;
+      String sLdapHost;
+      String sLdapPort;
+      String sLdapBaseDN;
+      String sLdapUidAttribute;
+      String sLdapManagerDN;
+      String sLdapManagerPW;
+      String sLdapManagerProto;
+
+      private LDAPProperties() {
+          bPropsLoaded = false;
+          sLdapHost = null;
+          sLdapPort = null;
+          sLdapBaseDN = null;
+          sLdapUidAttribute = null;
+          sLdapManagerDN = null;
+          sLdapManagerPW = null;
+          sLdapManagerProto = null;
+      }
+
+  }  
 }
 
 // eof: LdapServices.java
