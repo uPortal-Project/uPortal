@@ -91,7 +91,11 @@ public class CNumberGuess implements IChannel
       iMinNum = 0;
       iMaxNum = 100;
 
-      log.warn("CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      if (log.isWarnEnabled())
+          log.warn("CNumberGuess::setStaticData() : either " + 
+                  sMinNum + " or " + sMaxNum + 
+                  " (minNum, maxNum) is not a valid integer. Defaults " + 
+                  iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 
