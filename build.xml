@@ -484,7 +484,7 @@
       <classpath refid="compile.classpath"/>
     </javac>
       
-    <!-- Copy resources with classes -->
+    <!-- Copy non-java resources -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="source" excludes="CVS,**/*.java"/>
     </copy>
@@ -496,11 +496,6 @@
 
     <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
     <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
-
-    <!-- Copy serializer resources -->
-    <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
-      <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
-    </copy>
 
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
