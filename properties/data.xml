@@ -342,6 +342,14 @@
         <column><name>DESCR</name><value>The Inline Frame channel can be used to render an HTML page within a frame. This channel does not work correctly in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
         <column><name>DEF_URI</name><value>properties/channel_defs/InlineFrame.xml</value></column>
       </row>
+
+      <row>
+        <column><name>NAME</name><value>Image Channel</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
+        <column><name>DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
+        <column><name>DEF_URI</name><value>properties/channel_defs/Image.xml</value></column>
+      </row>
+      
     </rows>
   </table>
 
