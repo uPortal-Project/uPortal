@@ -55,8 +55,6 @@ import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.Logger;
-import org.jasig.portal.DBImpl;
-import org.jasig.portal.IDBImpl;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -117,8 +115,7 @@ public class ReferenceAuthorization implements IAuthorization
 
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      return dbImpl.isUserInRole(userId, (String)role.getRoleTitle());
+      return GenericPortalBean.getDbImplObject().isUserInRole(userId, (String)role.getRoleTitle());
     }
     catch(Exception e)
     {
@@ -131,8 +128,7 @@ public class ReferenceAuthorization implements IAuthorization
   {
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      return dbImpl.getAllRoles();
+      return GenericPortalBean.getDbImplObject().getAllRoles();
     }
     catch (Exception e)
     {
@@ -150,8 +146,7 @@ public class ReferenceAuthorization implements IAuthorization
     }
 
     try {
-      IDBImpl dbImpl = new DBImpl();
-      return dbImpl.setChannelRoles(channelID, roles);
+      return GenericPortalBean.getDbImplObject().setChannelRoles(channelID, roles);
     }
     catch (Exception e)
     {
@@ -243,8 +238,7 @@ public class ReferenceAuthorization implements IAuthorization
 
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      dbImpl.getChannelRoles(channelRoles, channelID);
+      GenericPortalBean.getDbImplObject().getChannelRoles(channelRoles, channelID);
 
       chanRolesCache.put("" + channelID, channelRoles);
 
@@ -281,8 +275,7 @@ public class ReferenceAuthorization implements IAuthorization
 
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      dbImpl.getUserRoles(userRoles, userId);
+      GenericPortalBean.getDbImplObject().getUserRoles(userRoles, userId);
       userRolesCache.put(new Integer(userId), userRoles);
       return userRoles;
     }
@@ -303,8 +296,7 @@ public class ReferenceAuthorization implements IAuthorization
 
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      dbImpl.addUserRoles(person.getID(), roles);
+      GenericPortalBean.getDbImplObject().addUserRoles(person.getID(), roles);
     }
     catch(Exception e)
     {
@@ -321,8 +313,7 @@ public class ReferenceAuthorization implements IAuthorization
 
     try
     {
-      IDBImpl dbImpl = new DBImpl();
-      dbImpl.removeUserRoles(person.getID(), roles);
+      GenericPortalBean.getDbImplObject().removeUserRoles(person.getID(), roles);
       return;
     }
     catch(Exception e)
