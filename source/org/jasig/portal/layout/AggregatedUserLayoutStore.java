@@ -89,36 +89,36 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   private static final int LOST_FOLDER_ID = -1;
 
 
-  protected static final String FRAGMENT_UPDATE_SQL = "UPDATE UP_FRAGMENTS SET next_node_id=?,prev_node_id=?,chld_node_id=?,prnt_node_id=?,"+
-                                                               "external_id=?,chan_id=?,name=?,type=?,hidden=?,immutable=?,unremovable=?,group_key=?,"+
-                                                               "priority=? WHERE fragment_id=? AND node_id=?";
-  protected static final String LAYOUT_UPDATE_SQL = "UPDATE UP_LAYOUT_STRUCT_AGGR SET next_node_id=?,prev_node_id=?,chld_node_id=?,prnt_node_id=?,"+
-                                                               "external_id=?,chan_id=?,name=?,type=?,hidden=?,immutable=?,unremovable=?,group_key=?,"+
-                                                               "priority=?,fragment_id=?,fragment_node_id=? WHERE layout_id=? AND user_id=? AND node_id=?";
-  protected static final String FRAGMENT_RESTRICTION_UPDATE_SQL = "UPDATE UP_FRAGMENT_RESTRICTIONS SET restriction_value=?"+
-                                  " WHERE fragment_id=? AND node_id=? AND restriction_type=? AND restriction_tree_path=?";
-  protected static final String LAYOUT_RESTRICTION_UPDATE_SQL = "UPDATE UP_LAYOUT_RESTRICTIONS SET restriction_value=?"+
-                                  " WHERE layout_id=? AND user_id=? AND node_id=? AND restriction_type=? AND restriction_tree_path=?";
-  protected static final String CHANNEL_PARAM_UPDATE_SQL = "UPDATE UP_CHANNEL_PARAM SET chan_parm_desc=?,chan_parm_val=?,chan_parm_ovrd=?" +
-                                  " WHERE chan_id=? AND chan_parm_nm=?";
-  protected static final String CHANNEL_UPDATE_SQL = "UPDATE UP_CHANNEL SET chan_title=?,chan_name=?,chan_desc=?,chan_class=?,chan_type_id=?,"+
-                      "chan_publ_id=?,chan_publ_dt=?,chan_apvl_id=?,chan_apvl_dt=?,chan_timeout=?,chan_editable=?,chan_has_help=?,chan_has_about=?,"+
-                      "chan_fname=? WHERE chan_id=?";
-  protected static final String FRAGMENT_ADD_SQL = "INSERT INTO UP_FRAGMENTS (fragment_id,node_id,next_node_id,prev_node_id,chld_node_id,prnt_node_id,"+
-                                                               "external_id,chan_id,name,type,hidden,immutable,unremovable,group_key,priority)"+
+  protected static final String FRAGMENT_UPDATE_SQL = "UPDATE UP_FRAGMENTS SET NEXT_NODE_ID=?,PREV_NODE_ID=?,CHLD_NODE_ID=?,PRNT_NODE_ID=?,"+
+                                                               "EXTERNAL_ID=?,CHAN_ID=?,NAME=?,TYPE=?,HIDDEN=?,IMMUTABLE=?,UNREMOVABLE=?,GROUP_KEY=?,"+
+                                                               "PRIORITY=? WHERE FRAGMENT_ID=? AND NODE_ID=?";
+  protected static final String LAYOUT_UPDATE_SQL = "UPDATE UP_LAYOUT_STRUCT_AGGR SET NEXT_NODE_ID=?,PREV_NODE_ID=?,CHLD_NODE_ID=?,PRNT_NODE_ID=?,"+
+                                                               "EXTERNAL_ID=?,CHAN_ID=?,NAME=?,TYPE=?,HIDDEN=?,IMMUTABLE=?,UNREMOVABLE=?,GROUP_KEY=?,"+
+                                                               "PRIORITY=?,FRAGMENT_ID=?,FRAGMENT_NODE_ID=? WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=?";
+  protected static final String FRAGMENT_RESTRICTION_UPDATE_SQL = "UPDATE UP_FRAGMENT_RESTRICTIONS SET RESTRICTION_VALUE=?"+
+                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?";
+  protected static final String LAYOUT_RESTRICTION_UPDATE_SQL = "UPDATE UP_LAYOUT_RESTRICTIONS SET RESTRICTION_VALUE=?"+
+                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?";
+  protected static final String CHANNEL_PARAM_UPDATE_SQL = "UPDATE UP_CHANNEL_PARAM SET CHAN_PARM_DESC=?,CHAN_PARM_VAL=?,CHAN_PARM_OVRD=?" +
+                                  " WHERE CHAN_ID=? AND CHAN_PARM_NM=?";
+  protected static final String CHANNEL_UPDATE_SQL = "UPDATE UP_CHANNEL SET CHAN_TITLE=?,CHAN_NAME=?,CHAN_DESC=?,CHAN_CLASS=?,CHAN_TYPE_ID=?,"+
+                      "CHAN_PUBL_ID=?,CHAN_PUBL_DT=?,CHAN_APVL_ID=?,CHAN_APVL_DT=?,CHAN_TIMEOUT=?,CHAN_EDITABLE=?,CHAN_HAS_HELP=?,CHAN_HAS_ABOUT=?,"+
+                      "CHAN_FNAME=? WHERE CHAN_ID=?";
+  protected static final String FRAGMENT_ADD_SQL = "INSERT INTO UP_FRAGMENTS (FRAGMENT_ID,NODE_ID,NEXT_NODE_ID,PREV_NODE_ID,CHLD_NODE_ID,PRNT_NODE_ID,"+
+                                                               "EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,GROUP_KEY,PRIORITY)"+
                                                                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  protected static final String LAYOUT_ADD_SQL = "INSERT INTO UP_LAYOUT_STRUCT_AGGR (layout_id,user_id,node_id,next_node_id,prev_node_id,chld_node_id,prnt_node_id,"+
-                                                               "external_id,chan_id,name,type,hidden,immutable,unremovable,group_key,priority,fragment_id,fragment_node_id)"+
+  protected static final String LAYOUT_ADD_SQL = "INSERT INTO UP_LAYOUT_STRUCT_AGGR (LAYOUT_ID,USER_ID,NODE_ID,NEXT_NODE_ID,PREV_NODE_ID,CHLD_NODE_ID,PRNT_NODE_ID,"+
+                                                               "EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,GROUP_KEY,PRIORITY,FRAGMENT_ID,FRAGMENT_NODE_ID)"+
                                                                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  protected static final String FRAGMENT_RESTRICTION_ADD_SQL = "INSERT INTO UP_FRAGMENT_RESTRICTIONS (restriction_type,node_id,fragment_id,restriction_value,restriction_tree_path)"+
+  protected static final String FRAGMENT_RESTRICTION_ADD_SQL = "INSERT INTO UP_FRAGMENT_RESTRICTIONS (RESTRICTION_TYPE,NODE_ID,FRAGMENT_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
                                                                " VALUES (?,?,?,?,?)";
-  protected static final String LAYOUT_RESTRICTION_ADD_SQL = "INSERT INTO UP_LAYOUT_RESTRICTIONS (restriction_type,layout_id,user_id,node_id,restriction_value,restriction_tree_path)"+
+  protected static final String LAYOUT_RESTRICTION_ADD_SQL = "INSERT INTO UP_LAYOUT_RESTRICTIONS (RESTRICTION_TYPE,LAYOUT_ID,USER_ID,NODE_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
                                                                " VALUES (?,?,?,?,?,?)";
-  protected static final String CHANNEL_PARAM_ADD_SQL = "INSERT INTO UP_CHANNEL_PARAM (chan_id,chan_parm_nm,chan_parm_desc,chan_parm_val,chan_parm_ovrd)"+
+  protected static final String CHANNEL_PARAM_ADD_SQL = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID,CHAN_PARM_NM,CHAN_PARM_DESC,CHAN_PARM_VAL,CHAN_PARM_OVRD)"+
                                                         " VALUES (?,?,?,?,?)";
-  protected static final String CHANNEL_ADD_SQL = "INSERT INTO UP_CHANNEL (chan_id,chan_title,chan_name,chan_desc,chan_class,chan_type_id,chan_publ_id,"+
-                                  "chan_publ_dt,chan_apvl_id,chan_apvl_dt,chan_timeout,chan_editable,chan_has_help,chan_has_about,"+
-                                  "chan_fname) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  protected static final String CHANNEL_ADD_SQL = "INSERT INTO UP_CHANNEL (CHAN_ID,CHAN_TITLE,CHAN_NAME,CHAN_DESC,CHAN_CLASS,CHAN_TYPE_ID,CHAN_PUBL_ID,"+
+                                  "CHAN_PUBL_DT,CHAN_APVL_ID,CHAN_APVL_DT,CHAN_TIMEOUT,CHAN_EDITABLE,CHAN_HAS_HELP,CHAN_HAS_ABOUT,"+
+                                  "CHAN_FNAME) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   private static String fragmentJoinQuery = "";
 
@@ -1179,7 +1179,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if ( !isFolder ) {
           IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
           PreparedStatement  psParam =
-             con.prepareStatement("DELETE FROM UP_CHANNEL_PARAM WHERE chan_id=?,chan_parm_nm=?");
+             con.prepareStatement("DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?,CHAN_PARM_NM=?");
           tmpValue = CommonUtils.parseInt(channelDesc.getChannelPublishId());
           for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
             String paramName = (String) paramNames.nextElement();
@@ -1198,7 +1198,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            // deleting channel attributes
            PreparedStatement  psChan =
-             con.prepareStatement("DELETE FROM UP_CHANNEL WHERE chan_id=?");
+             con.prepareStatement("DELETE FROM UP_CHANNEL WHERE CHAN_ID=?");
 
              if ( tmpValue > 0 )
               psChan.setInt(1,tmpValue);
@@ -1220,7 +1220,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            PreparedStatement  psFragmentRestr =
              con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS"+
-                                  " WHERE fragment_id=? AND node_id=? AND restriction_type=? AND restriction_tree_path=?");
+                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?");
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
@@ -1243,7 +1243,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            PreparedStatement  psRestr =
              con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS"+
-                                  " WHERE layout_id=? AND user_id=? AND node_id=? AND restriction_type=? AND restriction_tree_path=?");
+                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?");
 
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
@@ -1268,7 +1268,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
        PreparedStatement  psFragment =
-        con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE node_id=? AND fragment_id=?");
+        con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE NODE_ID=? AND FRAGMENT_ID=?");
 
          psFragment.setInt(1,nodeId);
          psFragment.setInt(2,fragmentId);
@@ -1279,7 +1279,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       } else {
        PreparedStatement  psLayout =
-        con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE layout_id=? AND user_id=? AND node_id=?");
+        con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=?");
 
          psLayout.setInt(1,layoutId);
          psLayout.setInt(2,userId);
@@ -1357,14 +1357,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
       // Clear the previous data related to the user layout
-      PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE user_id=? AND layout_id=?");
+      PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
       // Deleting the node from the user layout
       psDeleteLayout.setInt(1,userId);
       psDeleteLayout.setInt(2,layoutId);
       psDeleteLayout.executeUpdate();
 
       // Deleting restrictions for regular nodes
-      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS WHERE user_id=? AND layout_id=?");
+      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS WHERE USER_ID=? AND LAYOUT_ID=?");
       // Deleting restrictions for the node
       psDeleteLayoutRestriction.setInt(1,userId);
       psDeleteLayoutRestriction.setInt(2,layoutId);
@@ -1389,7 +1389,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       PreparedStatement  psAddChannelParam = con.prepareStatement(CHANNEL_PARAM_ADD_SQL);
       PreparedStatement  psAddChannel = con.prepareStatement(CHANNEL_ADD_SQL);
 
-      PreparedStatement psLayout = con.prepareStatement("SELECT node_id FROM UP_LAYOUT_STRUCT_AGGR WHERE node_id=? AND user_id=? AND layout_id=?");
+      PreparedStatement psLayout = con.prepareStatement("SELECT NODE_ID FROM UP_LAYOUT_STRUCT_AGGR WHERE NODE_ID=? AND USER_ID=? AND LAYOUT_ID=?");
       //PreparedStatement psFragment = con.prepareStatement("SELECT node_id FROM up_layout_struct_aggr WHERE node_id=? AND fragment_id=?");
 
        // The loop for all the nodes from the hashtable
@@ -1545,8 +1545,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //Connection extraCon = RDBMServices.getConnection();
 
         // Getting the "pushed" fragments based on a group key parameter
-        PreparedStatement psGroups = con.prepareStatement("SELECT UOF.fragment_id, UOF.fragment_root_id FROM UP_GROUP_FRAGMENT UPG, UP_OWNER_FRAGMENT UOF " +
-                                                          "WHERE UPG.group_key=? AND UPG.fragment_id = UOF.fragment_id");
+        PreparedStatement psGroups = con.prepareStatement("SELECT UOF.FRAGMENT_ID, UOF.FRAGMENT_ROOT_ID FROM UP_GROUP_FRAGMENT UPG, UP_OWNER_FRAGMENT UOF " +
+                                                          "WHERE UPG.GROUP_KEY=? AND UPG.FRAGMENT_ID = UOF.FRAGMENT_ID");
 
         pushFragmentRoots = new Hashtable();
         while ( containingGroups.hasNext() ) {
@@ -1579,9 +1579,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         // we have to delete all the records from up_layout_struct_aggr table related to the pushed fragments that an user is not allowed to have
         if ( pushFragmentIds != null ) {
-         ResultSet pushedFragRs = stmt.executeQuery("SELECT uof.fragment_id FROM UP_OWNER_FRAGMENT uof, UP_LAYOUT_STRUCT_AGGR uls WHERE uls.fragment_id != NULL AND " +
-          "uof.fragment_id = uls.fragment_id AND uof.pushed_fragment='Y' AND uls.fragment_id NOT IN ("+pushFragmentIds+")");
-         PreparedStatement psDeletePushed = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR where fragment_id=?");
+         ResultSet pushedFragRs = stmt.executeQuery("SELECT UOF.FRAGMENT_ID FROM UP_OWNER_FRAGMENT UOF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ULS.FRAGMENT_ID != NULL AND " +
+          "UOF.FRAGMENT_ID = ULS.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y' AND ULS.FRAGMENT_ID NOT IN ("+pushFragmentIds+")");
+         PreparedStatement psDeletePushed = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE FRAGMENT_ID=?");
          while ( pushedFragRs.next() ) {
            psDeletePushed.setInt(1,pushedFragRs.getInt(1));
            psDeletePushed.executeUpdate();
@@ -1676,10 +1676,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
 
-        String restrLayoutSQL = "SELECT restriction_type, restriction_value, restriction_tree_path FROM UP_LAYOUT_RESTRICTIONS "+
-                                      "WHERE layout_id="+layoutId+" AND user_id="+userId+" AND node_id=?";
-        String restrFragmentSQL = "SELECT restriction_type, restriction_value, restriction_tree_path FROM UP_FRAGMENT_RESTRICTIONS "+
-                                      "WHERE fragment_id=? AND node_id=?";
+        String restrLayoutSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
+                                      "WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId+" AND NODE_ID=?";
+        String restrFragmentSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
+                                      "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
@@ -1729,7 +1729,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += " UF.fragment_id=ULS.fragment_id" + ((pushFragmentIds!=null)?" OR UF.fragment_id IN ("+pushFragmentIds+")":"");
+        sqlFragment += " UF.FRAGMENT_ID=ULS.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
         System.out.println( "SQL FRAGMENT QUERY: " + sqlFragment );
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
         //psFragment.setInt(1,userId);
