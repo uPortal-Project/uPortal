@@ -3,7 +3,7 @@
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
   <xsl:param name="action">defaultView</xsl:param>>
-  <!--xsl:param name="action">selectCategory</xsl:param-->
+  <!--xsl:param name="action">selectCategories</xsl:param-->
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -41,8 +41,8 @@
           <xsl:when test="$action='selectControls'">
             <xsl:call-template name="selectControls"/>
           </xsl:when>
-          <xsl:when test="$action='selectCategory'">
-            <xsl:call-template name="selectCategory"/>
+          <xsl:when test="$action='selectCategories'">
+            <xsl:call-template name="selectCategories"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="defaultView"/>
@@ -71,7 +71,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td width="100%">
-                <a href="{$baseActionURL}?action=selectChannelType">Publish a new channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectChannelType">Publish a new channel</a>
               </td>
             </tr>
             <tr valign="top">
@@ -79,7 +79,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?action=selectModifyChannel">Modify a currently published channel</a>
+                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modify a currently published channel</a>
               </td>
             </tr>
           </table>
@@ -92,7 +92,8 @@
 
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-      <input type="hidden" name="action" value="none"/>
+      <input type="hidden" name="uPCM_action" value="none"/>
+      <input type="hidden" name="uPCM_capture" value="selectChannelType"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
         <td>
@@ -159,7 +160,9 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="submit" value="Next &gt;" onclick="document.workflow.action.value='selectGeneralSettings'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="cancel" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
       </tr>
     </table>
     </form>
@@ -188,7 +191,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
+                <a href="{$baseActionURL}?uPCM_action=cancel">Cancel and return</a>
               </td>
             </tr>
           </table>
@@ -199,13 +202,13 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-light">
       <tr class="uportal-channel-text" valign="top">
         <form name="formFilterByCategory" method="post" action="{$baseActionURL}">
-          <input type="hidden" name="action" value="filterByCategory"/>
+          <input type="hidden" name="uPCM_action" value="filterByCategory"/>
           <td nowrap="nowrap">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]"><xsl:for-each select="ancestor::category"><a class="uportal-navigation-category-selected"><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
+          <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]"><xsl:for-each select="ancestor::category"><a class="uportal-navigation-category-selected"><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
                   <em>
                     <xsl:value-of select="@name"/>
                   </em></a>::</xsl:for-each>
@@ -219,7 +222,7 @@
                   <xsl:attribute name="value">
                     <xsl:value-of select="//registry[1]/@ID"/>
                   </xsl:attribute>No Filter</option></select>
-              <input type="submit" name="buttonFilterByCategory" value="go" class="uportal-input-text"/></xsl:for-each>
+              <input type="submit" name="uPCM_submit" value="go" class="uportal-input-text"/></xsl:for-each>
           </td>
         </form>
       </tr>
@@ -255,17 +258,17 @@
                   <xsl:if test="(position() &gt; (//recordsPerPage * //currentPage)-//recordsPerPage) and (position() &lt;= //recordsPerPage * //currentPage)">
                     <tr class="uportal-channel-text" valign="top">
                       <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?action=reviewChannelSettings&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?uPCM_action=reviewChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/view.gif" width="16" height="16" border="0" alt="Review settings for {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?action=editChannelSettings&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
-                        <a href="{$baseActionURL}?action=removePublishedChannel&amp;channelID={@ID}">
+                        <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}">
                           <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}"/>
                         </a>
                       </td>
@@ -310,7 +313,7 @@
       </tr>
       <tr class="uportal-channel-text">
         <form name="formRecordsDisplayed" method="post" action="{$baseActionURL}">
-          <input type="hidden" name="action" value="changeRecordsPerPage"/>
+          <input type="hidden" name="uPCM_action" value="changeRecordsPerPage"/>
           <td nowrap="nowrap" valign="top">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
@@ -332,7 +335,7 @@
       <xsl:if test="$i = 1 and //currentPage[1] &gt; 1">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)-1"/></xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)-1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" alt="Go to page [{(//currentPage)-1}]" border="0"/>
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
@@ -346,7 +349,7 @@
       <xsl:if test="$i != //currentPage[1]">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
           <xsl:value-of select="$i"/>
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
@@ -357,7 +360,7 @@
       <xsl:if test="$i = ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1]) and //currentPage[1] &lt;   ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1])">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)+1"/></xsl:attribute>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)+1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" alt="Go to page [{(//currentPage)+1}]" border="0"/>
         </a>
       </xsl:if>
@@ -421,7 +424,7 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-med">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="#">
+                      <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
                         <xsl:value-of select="."/>
                       </a>
                     </td>
@@ -453,7 +456,7 @@
               <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr>
                   <td class="uportal-text-small" align="center">
-                    <a href="#">
+                    <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
                       <xsl:value-of select=".//step/name"/>
                     </a> </td>
                 </tr>
@@ -479,7 +482,7 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-light" width="8">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="#">
+                      <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
                         <xsl:value-of select="."/>
                       </a> </td>
                   </tr>
@@ -491,11 +494,13 @@
       </xsl:for-each>
     </xsl:if>
   </xsl:template>
+
   <xsl:template name="selectGeneralSettings">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-    <input type="hidden" name="action" value="none"/>
+    <input type="hidden" name="uPCM_action" value="none"/>
+    <input type="hidden" name="uPCM_capture" value="selectGeneralSettings"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
         <td>
@@ -524,11 +529,11 @@
             </tr>
             <tr>
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox63" value="checkbox"/> </td>
+                <input type="checkbox" name="modifyName" value="checkbox"/> </td>
               <td>
               </td>
               <td>
-                <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/> <input type="text" name="textfield222" size="50" class="uportal-input-text"/></span> </td>
+                <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/> <input type="text" name="name" size="50" class="uportal-input-text"/></span> </td>
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top" colspan="3">
@@ -543,11 +548,11 @@
             </tr>
             <tr>
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox632" value="checkbox"/> </td>
+                <input type="checkbox" name="modifyTimeout" value="checkbox"/> </td>
               <td>
               </td>
               <td>
-                <span class="uportal-label">Channel Timeout:</span> <br/> <input type="text" name="textfield3" size="6" class="uportal-input-text"/>milliseconds (1000 = 1 second)</td>
+                <span class="uportal-label">Channel Timeout:</span> <br/> <input type="text" name="timeout" size="6" class="uportal-input-text"/>milliseconds (1000 = 1 second)</td>
             </tr>
             <tr>
               <td colspan="3">
@@ -565,7 +570,10 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="submit" value="&lt; Back" onclick="document.workflow.action.value='selectChannelType'" class="uportal-button"/> <input type="submit" name="submit" value="Next &gt;" onclick="document.workflow.action.value='channelDef'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="submit" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
       </tr>
     </table>
     </form>
@@ -578,7 +586,9 @@
   <xsl:template match="channelDef" mode="dynamicSettings">
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-    <input type="hidden" name="action" value="none"/>
+    <input type="hidden" name="uPCM_action" value="changeMe"/>
+    <input type="hidden" name="uPCM_capture" value="channelDef"/>
+    <input type="hidden" name="uPCM_step" value="changeMe"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
         <td>
@@ -615,7 +625,32 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="submit" value="&lt; Back" onclick="document.workflow.action.value='selectGeneralSettings'" class="uportal-button"/> <input type="submit" name="Submit3" value="Next &gt;" onclick="document.workflow.action.value='selectControls'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="submit" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button"> 
+            <xsl:attribute name="onclick">
+              <xsl:choose>
+                <xsl:when test="$stepID = 1">
+                  document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'
+                </xsl:when>
+                <xsl:otherwise>
+                  document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) - 1"/>'
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:attribute>
+          </input>          
+          <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button"> 
+            <xsl:attribute name="onclick">
+              <xsl:choose>
+                <xsl:when test="$stepID = count(params/step)">
+                  document.workflow.uPCM_action.value='selectControls';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'
+                </xsl:when>
+                <xsl:otherwise>
+                  document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) + 1"/>'
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:attribute>
+          </input>
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
       </tr>
     </table>
     </form>
@@ -878,8 +913,12 @@
   </xsl:template>
   <xsl:template name="selectControls">
     <xsl:call-template name="workflow"/>
+    <!-- form begin -->
+    <form name="workflow" method="post" action="{$baseActionURL}">
+    <input type="hidden" name="uPCM_action" value="changeMe"/>
+    <input type="hidden" name="uPCM_capture" value="selectControls"/>
+
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <!-- form begin -->
       <tr class="uportal-channel-text">
         <td>
           <strong>Channel Controls:</strong>
@@ -916,7 +955,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox633" value="checkbox"/> </td>
+                <input type="checkbox" name="minimizable" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -949,7 +988,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox6322" value="checkbox"/> </td>
+                <input type="checkbox" name="editable" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -980,7 +1019,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox64" value="checkbox"/> </td>
+                <input type="checkbox" name="hasHelp" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -1011,7 +1050,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox622" value="checkbox"/> </td>
+                <input type="checkbox" name="hasAbout" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -1042,7 +1081,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox622" value="checkbox"/> </td>
+                <input type="checkbox" name="printable" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -1073,7 +1112,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox622" value="checkbox"/> </td>
+                <input type="checkbox" name="removable" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -1104,7 +1143,7 @@
             </tr>
             <tr class="uportal-channel-text">
               <td align="center" valign="top">
-                <input type="checkbox" name="checkbox622" value="checkbox"/> </td>
+                <input type="checkbox" name="detachable" value="true"/> </td>
               <td>
                 <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
               </td>
@@ -1127,16 +1166,17 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="Submit42" value="&lt; Back" class="uportal-button"/>
-          <input type="submit" name="Submit32" value="Next &gt;" class="uportal-button"/>
-          <input type="submit" name="Submit533" value="Review" class="uportal-button"/>
-          <input type="submit" name="Submit83" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
       </tr>
-      <!-- form end -->
     </table>
+    </form>
+    <!-- form end -->
   </xsl:template>
 
-  <xsl:template name="selectCategory">
+  <xsl:template name="selectCategories">
     <xsl:variable name="catID">
       <xsl:value-of select="//browsingCategory[1]"/>
     </xsl:variable>
@@ -1202,7 +1242,7 @@
 
                       </option>
 
-                    </select> <input type="submit" name="Submit6" value="go" class="uportal-button" /> <input type="submit" name="Submit7" value="add >>" class="uportal-button" /> </td>
+                    </select> <input type="submit" name="uPCM_submit" value="go" class="uportal-button" /> <input type="submit" name="uPCM_submit" value="add >>" class="uportal-button" /> </td>
 
                   </tr>
 
@@ -1243,7 +1283,7 @@
 
                       </option>
 
-                    </select> <input type="submit" name="Submit22" value="go" class="uportal-button" /> <input type="submit" name="Submit72" value="add" class="uportal-button" /> </td>
+                    </select> <input type="submit" name="uPCM_submit" value="go" class="uportal-button" /> <input type="submit" name="Submit72" value="add" class="uportal-button" /> </td>
 
                   </tr>
 
@@ -1259,7 +1299,7 @@
                             <xsl:when test="$catID = 'top' or $catID = 'all'">
                               <table width="100%" border="0">
                                 <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                  <input type="hidden" name="action" value="newChannel"/>
+                                  <input type="hidden" name="uPCM_action" value="newChannel"/>
                                   <tr>
                                     <td nowrap="nowrap" align="left" valign="top">
                                       <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
@@ -1283,8 +1323,8 @@
                                     </xsl:otherwise>
                                   </xsl:choose>
 -->                                </select>
-                                      <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                                      <input type="submit" name="selectCategory" value="add" class="uportal-button"/>
+                                      <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
+                                      <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                     </td>
                                   </tr>
                                 </form>
@@ -1295,7 +1335,7 @@
                                 <xsl:for-each select="ancestor-or-self::category">
                                   <table width="100%" border="0">
                                     <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                      <input type="hidden" name="action" value="newChannel"/>
+                                      <input type="hidden" name="uPCM_action" value="newChannel"/>
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
@@ -1328,8 +1368,8 @@
                                       </xsl:if>
 -->                                    </select>
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                          <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                                          <input type="submit" name="addCategory" value="add" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
                                     </form>
@@ -1345,7 +1385,7 @@
                                   </table>
                                   <table width="100%" border="0">
                                     <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                      <input type="hidden" name="action" value="newChannel"/>
+                                      <input type="hidden" name="uPCM_action" value="newChannel"/>
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
                                           <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
@@ -1361,8 +1401,8 @@
                                             <option value=" " selected="selected">Select a subcategory</option>
                                           </select>
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                          <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                                          <input type="submit" name="addCategory" value="add" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_submit" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
                                     </form>
@@ -1380,7 +1420,7 @@
                     <xsl:if test="$catID != 'top'">
                       <table width="100%" border="0" class="uportal-channel-text">
                         <form name="formSelectChannel" method="post" action="{$baseActionURL}">
-                          <input type="hidden" name="action" value="newChannel"/>
+                          <input type="hidden" name="uPCM_action" value="newChannel"/>
                           <tr valign="top">
                             <td>
                               <strong>2.</strong>
@@ -1431,13 +1471,13 @@
                             <td>
                               <strong>3.</strong>
                             </td>
-                            <td>Get more informaton about the selected channel:<input type="submit" name="channelMoreInfo" value="?" class="uportal-button"/> [optional]</td>
+                            <td>Get more informaton about the selected channel:<input type="submit" name="uPCM_submit" value="?" class="uportal-button"/> [optional]</td>
                           </tr>
                           <tr valign="top">
                             <td>
                               <strong>4.</strong>
                             </td>
-                            <td>Add the selected channel:<input type="submit" name="addChannel" value="Add" class="uportal-button"/></td>
+                            <td>Add the selected channel:<input type="submit" name="uPCM_submit" value="Add" class="uportal-button"/></td>
                           </tr>
                         </form>
                       </table>
@@ -1597,13 +1637,9 @@
       <tr>
 
         <td>
-          <input type="submit" name="Submit422" value="&lt; Back" class="uportal-button"/> <input type="submit" name="Submit322" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit534" value="Review" class="uportal-button"/> <input type="submit" name="Submit84" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Review" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button"/> </td>
       </tr>
       <!-- form end -->
     </table>
   </xsl:template>
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios ><scenario default="no" name="emptyDocument" userelativepaths="no" url="file://c:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CPublisher\empty.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="channelRegistry" userelativepaths="no" url="file://c:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CPublisher\channelRegistry.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="yes" name="newchannel" userelativepaths="no" url="file://C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CGenericXSLT\RSS\rssTest.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="no" />
-</metaInformation>
--->
+</xsl:stylesheet>
