@@ -53,8 +53,8 @@ import java.util.*;
 
 public class RDBMPersonSearcher  implements ITypedEntitySearcher{
 
-  private static final String user_is_search="select USER_ID from UP_USER where USER_NAME=?";
-  private static final String user_partial_search="select USER_ID from UP_USER where USER_NAME like ?";
+  private static final String user_is_search="select USER_NAME from UP_USER where USER_NAME=?";
+  private static final String user_partial_search="select USER_NAME from UP_USER where USER_NAME like ?";
   private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (FIRST_NAME like ? or LAST_NAME like ?)";
   private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (FIRST_NAME = ? or LAST_NAME = ?)";
   private Class personDef;
