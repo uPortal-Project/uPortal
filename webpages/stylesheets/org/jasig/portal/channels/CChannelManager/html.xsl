@@ -2144,7 +2144,7 @@
 
                 <form name="addParameter" method="post" action="{$baseActionURL}">
                   <input type="hidden" name="uPCM_action" value="channelDef"/>
-                  <input type="hidden" name="uPCM_capture" value="channelDef"/>
+                  <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
                   <input type="hidden" name="uPCM_step" value="$stepID"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
@@ -2199,12 +2199,14 @@
                       </table>
                     </td>
                   </tr>
-                  <xsl:choose>
-                    <xsl:when test="/manageChannels/channelDef/params/step/channel/parameter">
-                      <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter">
+                  <xsl:variable name="prefix" select="/manageChannels/channelDef/params/step/arbitrary-parameters/paramName-prefix"/>
+                  <xsl:variable name="prefixLength" select="string-length($prefix)"/>
+                  <xsl:choose>         
+                    <xsl:when test="/manageChannels/channelDef/params/step/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
+                      <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=channelDef&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
@@ -2216,7 +2218,7 @@
                                                     <td nowrap="nowrap">
                             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
-                          <td nowrap="nowrap"><strong><xsl:value-of select="@name"/></strong></td>
+                          <td nowrap="nowrap"><strong><xsl:value-of select="substring(@name,$prefixLength+1)"/></strong></td>
                           <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
