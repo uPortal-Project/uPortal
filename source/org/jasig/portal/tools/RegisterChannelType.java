@@ -54,7 +54,6 @@ public class RegisterChannelType {
   protected static IChannelRegistryStore chanRegStore = null;
 
   public static void main (String[] args) {
-
     // Enforce that exactly 4 arguments are given: class, name, description, and URI
     // and that no arguments are empty
     if (args.length == 4 &&
@@ -63,11 +62,14 @@ public class RegisterChannelType {
         args[2].trim().length() > 0 && // the description
         args[3].trim().length() > 0) { // the CPD URI
 
-      ChannelType chanType = new ChannelType(-1, args[0], args[1], args[2], args[3]);
-
       try {
         chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-        chanRegStore.addChannelType(chanType);
+        ChannelType chanType = chanRegStore.newChannelType();
+        chanType.setJavaClass(args[0]);
+        chanType.setName(args[1]);
+        chanType.setDescription(args[2]);
+        chanType.setCpdUri(args[3]);
+        chanRegStore.saveChannelType(chanType);
         msg("The \"" + args[1] + "\" channel type has been added successfully.");
       } catch (Exception e) {
         e.printStackTrace();
