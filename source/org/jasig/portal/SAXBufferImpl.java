@@ -108,17 +108,16 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
     buffering=true;
   }
 
-  /**
-   * Equivalent to sequential call to setDocumentHander(dh) and stopBuffering()
-   */
-  public synchronized void outputBuffer (DocumentHandler dh) throws SAXException
-  {
-    this.setDocumentHandler (dh);
-    this.stopBuffering ();
-  }
+    public synchronized boolean isEmpty() {
+	return eventTypes.isEmpty();
+    }
+	
+    public synchronized void outputBuffer(DocumentHandler dh) throws SAXException {
+	this.setDocumentHandler(dh);
+	this.outputBuffer();
+    }
 
-  public synchronized void stopBuffering () throws SAXException
-  {
+    public synchronized void outputBuffer() throws SAXException {
     // unqueue all of the buffered events
     if (outDocumentHandler != null)
     {
@@ -210,8 +209,19 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
     } 
     else 
       Logger.log (Logger.ERROR, "SAXBufferImpl:stopBuffering() : trying to ouput buffer to a null DocumentHandler.");
+    }
 
-    buffering = false;
+    public synchronized void clearBuffer() {
+	// clean out the vectors
+	eventTypes.clear();
+	eventArguments.clear();    
+    }	
+
+  public synchronized void stopBuffering () throws SAXException
+  {
+      this.outputBuffer();
+      this.clearBuffer();
+      buffering = false;
   }
 
   public DocumentHandler getDocumentHandler ()
