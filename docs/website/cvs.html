@@ -96,7 +96,44 @@
 				browse through all the branches of the uPortal Code.</P> 
 			 <P>If you are interested in contributing to the uPortal coding
 				effort, refer to the <A HREF="getinv.html">Getting Involved</A> section of the
-				website for more information.</P></TD> 
+				website for more information.</P>
+
+			 <P><strong>Anonymous access to CVS:</strong><br/><br/>
+			    We have created a generic account on our server for logging
+					in and creating the SSH tunnel. The instructions for logging into this account
+					will be sent to you upon
+					<A HREF="mailto:John%20Laker<jlaker@udel.edu>?subject=CVS Access Request">request</A>.
+			    <br/><br/>
+					You will then want to review the
+						<A HREF="docs.html#developer">Developer Information</A> under the
+						<A HREF="docs.html">Documentation</A> section of this site for details on
+						setting up your SSH and CVS clients.<br/><br/>
+
+         The uPortal project's CVS repository can be checked out through anonymous
+         (pserver) CVS with the following instruction set. When prompted for a password
+         for anonymous, simply press the Enter key.<br/><br/>
+
+         <code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig login</code><br/><br/>
+
+         <code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig co portal</code><br/><br/>
+
+         Updates from within the module's directory do not need the -d parameter.</p>
+
+        
+				<p>Current CVS branches:<br/>
+				<ul>
+  				<li>the main branch</li>
+  				<li><code>rel-1-0-patches</code></li>
+				</ul>
+				Current CVS tags:
+				<ul>
+  				<li><code>rel-2-0-alpha</code></li>  				  				
+  				<li><code>rel-1-5</code></li>
+          <li><code>rel-1-0</code></li>
+				</ul>
+				</p></TD>
+
+			  
 		</TR> 
 	 </TABLE>
 <!-- page footer -->
