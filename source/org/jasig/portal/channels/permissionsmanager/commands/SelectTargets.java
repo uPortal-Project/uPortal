@@ -33,7 +33,6 @@ public class SelectTargets implements IPermissionCommand {
     public void execute(PermissionsSessionData session) throws Exception{
             log.debug("PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
-            Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerTgts = new HashMap();
             while (formkeys.hasMoreElements()) {

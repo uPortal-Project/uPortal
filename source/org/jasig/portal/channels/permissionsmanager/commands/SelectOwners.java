@@ -33,7 +33,6 @@ public class SelectOwners implements IPermissionCommand {
     public void execute(PermissionsSessionData session) {
             log.debug("PermissionsManager->SelectOwners processing");
             boolean foundOne = false;
-            Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             ArrayList ownerkeys = new ArrayList();
             while (formkeys.hasMoreElements()) {

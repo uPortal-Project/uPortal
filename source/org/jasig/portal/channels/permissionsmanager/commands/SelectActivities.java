@@ -36,7 +36,6 @@ public class SelectActivities
     public void execute (PermissionsSessionData session) throws Exception{
             log.debug("PermissionsManager->SelectActivities processing");
             boolean foundOne = false;
-            Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerActs = new HashMap();
             while (formkeys.hasMoreElements()) {

@@ -42,7 +42,6 @@ public class AssignPermissions
     public void execute (PermissionsSessionData session) throws Exception {
             if (log.isDebugEnabled())
                 log.debug("PermissionsManager->AssignPermissions processing");
-            Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
             while (formkeys.hasMoreElements()) {
