@@ -95,14 +95,14 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final boolean logXMLBeforeThemeTransformation = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".log_xml_before_theme_transformation");;
 
     // manages layout and preferences
-    UserPreferencesManager uPreferencesManager;
+    private IUserPreferencesManager uPreferencesManager;
     // manages channel instances and channel rendering
-    ChannelManager channelManager;
+    private ChannelManager channelManager;
     // manages locale
-    LocaleManager localeManager;
+    private LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
-    static MediaManager mediaM;
+    private static MediaManager mediaM;
 
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
@@ -115,8 +115,8 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_xslt_cache_min_size");
     private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
-	public static final boolean PROXY_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.resource_proxy_enabled");
-	public static final String PROXY_REWRITE_PREFIX=PropertiesManager.getProperty("org.jasig.portal.UserInstance.resource_proxy_rewrite_prefix");
+    public static final boolean PROXY_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.resource_proxy_enabled");
+    public static final String PROXY_REWRITE_PREFIX=PropertiesManager.getProperty("org.jasig.portal.UserInstance.resource_proxy_rewrite_prefix");
 
     // a string that will be used to designate user layout root node in .uP files
     public static final String USER_LAYOUT_ROOT_NODE=IALFolderDescription.ROOT_FOLDER_ID;
@@ -160,7 +160,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 throw new PortalException(e);
             }
         }
-        
+
         // instantiate locale manager (uPortal i18n)
         if (localeManager == null) {
             localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));
@@ -198,7 +198,7 @@ public class UserInstance implements HttpSessionBindingListener {
             uPreferencesManager.getUserLayoutManager().addLayoutEventListener(channelManager);
             p_rendering_lock=new Object();
         }
-        renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager,p_rendering_lock);
+        renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager, p_rendering_lock);
     }
 
     /**
@@ -206,13 +206,14 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param req the <code>HttpServletRequest</code>
      * @param res the <code>HttpServletResponse</code>
      * @param channelManager the <code>ChannelManager</code> instance
-     * @param upm an <code>IUserPreferencesManager</code> value
+     * @param upm the <code>IUserPreferencesManager</code> instance
      * @param rendering_lock a lock for rendering on a single user
      * @exception PortalException if an error occurs
      */
     public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, LocaleManager localeManager, IUserPreferencesManager upm, Object rendering_lock) throws PortalException {
+        uPreferencesManager = upm;
         // process possible worker dispatch
-        if(!processWorkerDispatch(req,res,channelManager,upm)) {
+        if(!processWorkerDispatch(req,res,channelManager)) {
             synchronized(rendering_lock) {
                 // This function does ALL the content gathering/presentation work.
                 // The following filter sequence is processed:
@@ -236,10 +237,11 @@ public class UserInstance implements HttpSessionBindingListener {
                 //
 
                 try {
+
                     // call layout manager to process all user-preferences-related request parameters
                     // this will update UserPreference object contained by UserPreferencesManager, so that
                     // appropriate attribute incorporation filters and parameter tables can be constructed.
-                    upm.processUserPreferencesParameters(req);
+                    uPreferencesManager.processUserPreferencesParameters(req);
 
                     // determine uPElement (optimistic prediction) --begin
                     // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
@@ -260,7 +262,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // give channels the current locale manager
                     channelManager.setLocaleManager(localeManager);
-            
+
                     // see if a new root target has been specified
                     String newRootNodeId = req.getParameter("uP_detach_target");
 
@@ -271,27 +273,31 @@ public class UserInstance implements HttpSessionBindingListener {
                         // set a new root
                         uPElement.setMethodNodeId(newRootNodeId);
                     }
-                    IUserLayoutManager ulm=upm.getUserLayoutManager();
+
+                    IUserLayoutManager ulm=uPreferencesManager.getUserLayoutManager();
+
+                    // process events that have to be handed directly to the userPreferencesManager.
+                    // (examples of such events are "remove channel", "minimize channel", etc.
+                    //  basically things that directly affect the userLayout structure)
+                    try {
+                        processUserLayoutParameters(req,channelManager);
+                    } catch (PortalException pe) {
+                        LogService.log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
+                    }
+
 
                     // determine uPElement (optimistic prediction) --end
 
                     // set up the channel manager
 
                     channelManager.startRenderingCycle(req, res, uPElement);
-                    // process events that have to be handed directly to the userPreferencesManager.
-                    // (examples of such events are "remove channel", "minimize channel", etc.
-                    //  basically things that directly affect the userLayout structure)
-                    try {
-                        processUserLayoutParameters(req,channelManager,ulm,upm);
-                    } catch (PortalException pe) {
-                        LogService.log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
-                    }
+
 
                     // after this point the layout is determined
 
-                    UserPreferences userPreferences=upm.getUserPreferences();
-                    StructureStylesheetDescription ssd= upm.getStructureStylesheetDescription();
-                    ThemeStylesheetDescription tsd=upm.getThemeStylesheetDescription();
+                    UserPreferences userPreferences=uPreferencesManager.getUserPreferences();
+                    StructureStylesheetDescription ssd= uPreferencesManager.getStructureStylesheetDescription();
+                    ThemeStylesheetDescription tsd=uPreferencesManager.getThemeStylesheetDescription();
 
                     // verify upElement and determine rendering root --begin
                     if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
@@ -379,7 +385,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     if(UserInstance.CACHE_ENABLED) {
                         boolean ccache_exists=false;
                         // obtain the cache key
-                        cacheKey=constructCacheKey(this.getPerson(),upm,rootNodeId);
+                        cacheKey=constructCacheKey(this.getPerson(),rootNodeId);
                         if(ccaching) {
                             // obtain character cache
                             CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
@@ -393,7 +399,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                         try {
                                             channelManager.startChannelRendering(channelSubscribeId);
                                         } catch (PortalException e) {
-                                            LogService.log(LogService.ERROR,"UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+upm.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
+                                            LogService.log(LogService.ERROR,"UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
                                         }
                                     } else {
                                         LogService.log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
@@ -644,12 +650,12 @@ public class UserInstance implements HttpSessionBindingListener {
         return p_rendering_lock;
     }
 
-    private static String constructCacheKey(IPerson person,IUserPreferencesManager upm,String rootNodeId) throws PortalException {
+    private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
         sbKey.append(rootNodeId).append(",");
-        sbKey.append(upm.getUserPreferences().getCacheKey());
-        sbKey.append(upm.getUserLayoutManager().getCacheKey());
+        sbKey.append(uPreferencesManager.getUserPreferences().getCacheKey());
+        sbKey.append(uPreferencesManager.getUserLayoutManager().getCacheKey());
         return sbKey.toString();
     }
 
@@ -702,12 +708,13 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param channelManager a <code>ChannelManager</code> value
      * @exception PortalException if an error occurs
      */
-    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager, IUserLayoutManager ulm, IUserPreferencesManager upm) throws PortalException {
+    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager) throws PortalException {
      try {
 
+       IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
        // Sending the theme stylesheets parameters based on the user security context
-       UserPreferences userPrefs = upm.getUserPreferences();
+       UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
         if ( person.getSecurityContext().isAuthenticated() ) {
           themePrefs.putParameterValue("authenticated","true");
@@ -811,7 +818,7 @@ public class UserInstance implements HttpSessionBindingListener {
         }
 
         // folder attributes processing
-        String[] sfattrs = req.getParameterValues("uP_sfattr");
+        /*String[] sfattrs = req.getParameterValues("uP_sfattr");
         if (sfattrs != null) {
             for (int i = 0; i < sfattrs.length; i++) {
                 String aName = sfattrs[i];
@@ -824,7 +831,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     }
                 }
             }
-        }
+        }*/
 
         if ((values = req.getParameterValues("uP_remove_target")) != null) {
             for (int i = 0; i < values.length; i++) {
@@ -851,11 +858,10 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param req the <code>HttpServletRequest</code>
      * @param res the <code>HttpServletResponse</code>
      * @param cm the <code>ChannelManager</code> instance
-     * @param ulm an <code>IUserPreferencesManager</code> value
      * @return a <code>boolean</code> value
      * @exception PortalException if an error occurs
      */
-    protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserPreferencesManager upm) throws PortalException {
+    protected boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm) throws PortalException {
 
         HttpSession session = req.getSession(false);
         if(session!=null) {
@@ -895,7 +901,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 IWorkerRequestProcessor wrp=(IWorkerRequestProcessor) obj;
                                 // invoke processor
                                 try {
-                                    wrp.processWorkerDispatch(new PortalControlStructures(req,res,cm,upm));
+                                    wrp.processWorkerDispatch(new PortalControlStructures(req,res,cm,uPreferencesManager));
                                 } catch (PortalException pe) {
                                     throw pe;
                                 } catch (RuntimeException re) {

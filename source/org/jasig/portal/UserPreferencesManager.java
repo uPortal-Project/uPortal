@@ -282,8 +282,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 } else if(saveWhat.equals("all")) {
                     ulsdb.putUserPreferences(m_person, complete_up);
                     ulm.saveUserLayout();
-
-                }
+                  }
                 LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
             } catch (Exception e) {
@@ -334,7 +333,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                            "UserPreferencesManager::processUserPreferencesParameters() : " +
                            "setting sfname \" userLayoutRoot" + "\"=\"" + subId + "\".");
         }
-        
+
         // Request to change the locale
         String localesString = req.getParameter(Constants.LOCALES_PARAM);
         if (localesString != null) {
