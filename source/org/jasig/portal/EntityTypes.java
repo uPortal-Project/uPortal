@@ -174,8 +174,15 @@ private void deleteEntityType(EntityType et) throws SQLException
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {
@@ -394,8 +401,15 @@ private void insertEntityType(EntityType et) throws SQLException
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {
@@ -485,8 +499,15 @@ private void updateEntityType(EntityType et) throws SQLException
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {

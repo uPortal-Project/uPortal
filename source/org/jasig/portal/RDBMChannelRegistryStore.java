@@ -438,14 +438,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         }
 
       } finally {
-        if (rs != null)
-          rs.close();
-        if (pstmtChannel != null)
-          pstmtChannel.close();
-        if (pstmtChannelParam != null)
-          pstmtChannelParam.close();
-        RDBMServices.releaseConnection(con);
-  
+        try { rs.close(); } catch (Exception e) {}
+        try { pstmtChannel.close(); } catch (Exception e) {}
+        try { pstmtChannelParam.close(); } catch (Exception e) {}
+        try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }  
     }
     return channelDef;

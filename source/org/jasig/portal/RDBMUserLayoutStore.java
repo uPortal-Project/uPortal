@@ -775,9 +775,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
     StructureStylesheetDescription ssd = null;
-    Connection con = RDBMServices.getConnection();
-    Statement stmt = con.createStatement();
+    Connection con = null;
     try {
+      con = RDBMServices.getConnection();
+      Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
       if (RDBMServices.supportsOuterJoins) {
@@ -838,10 +839,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
         }
       } finally {
-        rs.close();
+        try { rs.close(); } catch (Exception e) {}
+        try { stmt.close(); } catch (Exception e) {}
       }
     } finally {
-      stmt.close();
       RDBMServices.releaseConnection(con);
     }
     return  ssd;
@@ -1067,9 +1068,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {
     ThemeStylesheetDescription tsd = null;
-    Connection con = RDBMServices.getConnection();
-    Statement stmt = con.createStatement();
+    Connection con = null;
     try {
+      con = RDBMServices.getConnection();
+      Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS";
       if (RDBMServices.supportsOuterJoins) {
@@ -1139,10 +1141,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
         }
       } finally {
-        rs.close();
+        try { rs.close(); } catch (Exception e) {}
+        try { stmt.close(); } catch (Exception e) {}
       }
     } finally {
-      stmt.close();
       RDBMServices.releaseConnection(con);
     }
     return  tsd;

@@ -54,7 +54,7 @@ public class DbTest {
 
    public static void main(String[] args) {
 
-      Connection con=null;
+      Connection con = null;
       try {
          con = RDBMServices.getConnection ();
 	 if (con == null) {
@@ -65,9 +65,8 @@ public class DbTest {
       }
       catch (SQLException e) {
          e.printStackTrace();
-         if (con != null) {
-            RDBMServices.releaseConnection(con);
-         }
+      } finally {
+         try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
    }//end main
 
