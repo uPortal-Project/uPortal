@@ -274,8 +274,7 @@ public class InitialSecurityContextFactory {
         }
         catch (NullPointerException npe) {
             String errorMsg = "Error while creating ISecurityContext chain.";
-            PortalSecurityException ep = new PortalSecurityException(errorMsg);
-            ep.setRecordedException(npe);
+            PortalSecurityException ep = new PortalSecurityException(errorMsg, npe);
             log.error(ep, ep);
             throw ep;
         }
