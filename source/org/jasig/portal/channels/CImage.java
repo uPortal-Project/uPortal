@@ -123,7 +123,6 @@ public class CImage extends BaseChannel
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
     xslt.transform();
-    System.out.println(sb.toString());
   }
 
   private static boolean exists (String s)
