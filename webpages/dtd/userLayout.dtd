@@ -11,9 +11,9 @@
 
 
 <!ELEMENT channel (parameter)*>
-<!ATTLIST channel 
+<!ATTLIST channel
   ID ID #REQUIRED
-  name CDATA #REQUIRED 
+  name CDATA #REQUIRED
   timeout CDATA "5000"
   editable (true|false) "true"
   hasHelp (true|false) "true"
@@ -24,6 +24,7 @@
 
 
 <!ELEMENT parameter EMPTY>
-<!ATTLIST parameter 
+<!ATTLIST parameter
   name CDATA #REQUIRED
   value CDATA #REQUIRED>
+  override (yes|no) "no"
