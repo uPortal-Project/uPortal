@@ -136,7 +136,7 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
             xsl.serialize (doc);
             log.debug(outString.toString());
         } catch (Exception e) {
-            log.debug(e);
+            log.debug(e, e);
         }
         // end of debug block
 

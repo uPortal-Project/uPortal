@@ -72,7 +72,7 @@ public class CHeader extends BaseChannel implements ICacheable {
             // Let the authorization service decide:
             canPublish = staticData.getAuthorizationPrincipal().canPublish();      
     } catch (Exception e) {
-      log.error( e);
+      log.error("Exception determining whether user can publish, defaulting to false.", e);
       // Deny the user publish access if anything went wrong
     }
     return canPublish;
@@ -91,7 +91,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       return formatter.format(currentTime);
     }
     catch (Exception e) {
-      log.error( e);
+      log.error("Exception getting current date.", e);
     }
 
     return "&nbsp;";
