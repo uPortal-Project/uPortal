@@ -176,13 +176,13 @@ final class TabColumnPrefsState extends BaseState
     return userLayout;
   }
   
-  private final Document getChannelRegistry()
+  private final Document getChannelRegistry() throws java.sql.SQLException
   {
     Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
     if (channelRegistry == null)
     {
       // Channel registry has expired, so get it and cache it
-      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getRegistryXML(null, null);   
+      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getChannelRegistryXML();   
 
       if (channelRegistry != null)
       {
@@ -444,9 +444,11 @@ final class TabColumnPrefsState extends BaseState
     Element layout = userLayout.getDocumentElement();
     
     Document channelRegistry = getChannelRegistry();
-	  Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
+    Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
     String instanceId = ulStore.getNextStructChannelId(staticData.getPerson().getID());
     newChannel.setAttribute("ID", instanceId);
+    // The following line is Xerces-specific
+    ((org.apache.xerces.dom.DocumentImpl)userLayout).putIdentifier(instanceId, newChannel);
     
     Element destinationElement = userLayout.getElementById(destinationElementId);
 
@@ -564,10 +566,6 @@ final class TabColumnPrefsState extends BaseState
   private boolean modifyingCurrentProfile () throws PortalException
   {
     // If the we are editing the current profile, return true, otherwise false
-    boolean b = context.getUserLayoutManager().getCurrentProfile().equals(editedUserProfile);
-    System.out.println("editingCurrentProfile="+b);
-    System.out.println("current="+context.getUserLayoutManager().getCurrentProfile().getProfileId());
-    System.out.println("edited="+editedUserProfile.getProfileId());
     return context.getUserLayoutManager().getCurrentProfile().equals(editedUserProfile);
   }  
   
