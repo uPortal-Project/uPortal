@@ -175,6 +175,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>daily-business-cartoon</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>2</value></column>
@@ -190,6 +191,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>stockcharts.com</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>3</value></column>
@@ -205,6 +207,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>bookmarks</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>4</value></column>
@@ -220,6 +223,7 @@
         <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>person-attributes</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>5</value></column>
@@ -235,6 +239,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-powered-sites</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
@@ -250,6 +255,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>ibs-news</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -265,6 +271,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-developers-reference</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>8</value></column>
@@ -280,6 +287,7 @@
         <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-home-page</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>9</value></column>
@@ -295,6 +303,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>minesweeper</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>10</value></column>
@@ -310,6 +319,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>header</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>11</value></column>
@@ -325,6 +335,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>word-of-the-day</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>12</value></column>
@@ -340,6 +351,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>salon.com</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>13</value></column>
@@ -355,6 +367,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>motley-fool</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>14</value></column>
@@ -370,6 +383,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>number-guessing-game</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>15</value></column>
@@ -385,6 +399,7 @@
         <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>css-viewer</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>16</value></column>
@@ -400,6 +415,7 @@
         <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>snooper</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>17</value></column>
@@ -416,6 +432,7 @@
         <column><name>CHAN_EDITABLE</name><value>Y</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>tomcat-number-guess</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>18</value></column>
@@ -432,6 +449,7 @@
         <column><name>CHAN_EDITABLE</name><value>Y</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>tomcat-servlet-examples</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>19</value></column>
@@ -447,6 +465,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>footer</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>20</value></column>
@@ -462,8 +481,8 @@
         <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-development-books</value></column>
       </row>
-      <!-- uPortal Data Dictionary -->
       <row>
         <column><name>CHAN_ID</name><value>22</value></column>
         <column><name>CHAN_TITLE</name><value>uPortal Data Dictionary</value></column>
@@ -479,6 +498,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>uportal-data-dictionary</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>90</value></column>
@@ -527,6 +547,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/login/general</value></column>
       </row>
      </rows>
   </table>
@@ -1457,6 +1478,14 @@
         <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>TYPE_DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>5</value></column>
+        <column><name>TYPE_NAME</name><value>Remote Channel Proxy</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.remotechannel.CRemoteChannel</value></column>
+        <column><name>TYPE_DESCR</name><value>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/remotechannel/CRemoteChannel.cpd</value></column>
       </row>
 
     </rows>
