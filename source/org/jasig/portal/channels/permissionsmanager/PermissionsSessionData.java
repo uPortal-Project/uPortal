@@ -61,6 +61,7 @@ public class PermissionsSessionData {
   public Document XML;
   public IServant servant;
   public IAuthorizationPrincipal[] principals;
+  public IPermissible[] owners;
   public long startRD;  // used for timing response generation
   public boolean gotActivities = false;
   public boolean gotTargets = false;
