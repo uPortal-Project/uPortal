@@ -1845,7 +1845,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
             + userId + " AND PROFILE_ID=" + profileId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserProfileId(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserProfileById(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
