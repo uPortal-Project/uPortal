@@ -45,11 +45,14 @@ import org.apache.pluto.om.window.PortletWindow;
 public class ChannelData {
     private boolean portletWindowInitialized = false;
     private PortletWindow portletWindow = null;
+    private boolean processedAction = false;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
+    public boolean hasProcessedAction() { return this.processedAction; }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
+    public void setProcessedAction(boolean processedAction) { this.processedAction = processedAction; }
 }
 
