@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 (http://www.xmlspy.com) by JTL (UD) -->
 <!ELEMENT channelDef (description, params)>
 <!ELEMENT description (#PCDATA)>
 <!ELEMENT params (step+)>
@@ -11,10 +12,12 @@
 >
 <!ELEMENT label (#PCDATA)>
 <!ELEMENT defaultValue (#PCDATA)>
+<!ATTLIST type
+	base (string | integer | float | boolean) #REQUIRED
+	input (multi-choice | single-choice | text) #REQUIRED
+	display (drop-down | radio | select-list | checkbox | text | textarea | hidden) #IMPLIED
+>
 <!ELEMENT type (data, base, display?, length?, maxlength?, restriction?)>
-<!ELEMENT data (#PCDATA)>
-<!ELEMENT base (#PCDATA)>
-<!ELEMENT display (#PCDATA)>
 <!ELEMENT length (#PCDATA)>
 <!ELEMENT maxlength (#PCDATA)>
 <!ELEMENT restriction (value*, min?, max?)>
