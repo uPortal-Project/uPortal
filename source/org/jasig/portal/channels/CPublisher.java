@@ -40,10 +40,10 @@ package  org.jasig.portal.channels;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.utils.*;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.services.Authorization;
 import  org.jasig.portal.security.*;
 import  org.w3c.dom.*;
-import  org.apache.xalan.xslt.*;
 import  org.apache.xerces.dom.*;
 import  org.xml.sax.DocumentHandler;
 import  java.net.URL;
@@ -224,7 +224,7 @@ public class CPublisher
           break;
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -250,9 +250,9 @@ public class CPublisher
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
       } 
       else 
-        Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
+        LogService.instance().log(LogService.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -347,7 +347,7 @@ public class CPublisher
     try {
       chanReg.approveChannel(nextID, staticData.getPerson().getID(), new java.sql.Timestamp(System.currentTimeMillis()));
     } catch (Exception exc) {
-      Logger.log(Logger.ERROR, exc);
+      LogService.instance().log(LogService.ERROR, exc);
     }
   }
 
@@ -435,10 +435,10 @@ public class CPublisher
       Statement stmt = con.createStatement();
       String sUpdate = "UPDATE UP_CHANNELS SET APPROVED = 1 WHERE CHAN_ID = " + sChanId;
       int iUpdated = stmt.executeUpdate(sUpdate);
-      Logger.log(Logger.DEBUG, "Approving channel ID: " + sChanId + ". Updated " + iUpdated + " rows.");
+      LogService.instance().log(LogService.DEBUG, "Approving channel ID: " + sChanId + ". Updated " + iUpdated + " rows.");
       stmt.close();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -463,7 +463,7 @@ public class CPublisher
       }
       roleDoc.appendChild(root);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  roleDoc;
   }
@@ -489,7 +489,7 @@ public class CPublisher
         return  (false);
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (false);
     }
   }
