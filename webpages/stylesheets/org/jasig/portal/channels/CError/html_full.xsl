@@ -9,72 +9,104 @@
 
 
 <xsl:template match="error">
-<html>
-<h2>Error Report</h2>
+
 <xsl:apply-templates select="channel"/>
-<!-- analyze error codes, give user-friendly reports (i.e. hexadecimal code value :) -->
 
-
-<table cellpadding="1">
-<xsl:if test="message">
-<tr><td><b>uPortal message</b></td><td><xsl:value-of select="message"/></td></tr>
-</xsl:if>
-<tr><td><b>Error type</b></td><td>
-<xsl:choose>
-<xsl:when test="@code='4'">channel timed out (code 4)</xsl:when>
-<xsl:when test="@code='1'">channel failed to render (code 1)</xsl:when>
-<xsl:when test="@code='2'">channel failed to initialize (code 2)</xsl:when>
-<xsl:when test="@code='3'">channel failed to accept runtime data (code 3)</xsl:when>
-<xsl:when test="@code='0'">general error (code 0)</xsl:when>
-<xsl:when test="@code='5'">channel failed to accept PCS (code 5)</xsl:when>
-<xsl:when test="@code='-1'">uPortal error (code -1)</xsl:when>
-</xsl:choose>
-</td> </tr>
-<xsl:apply-templates select="exception"/>
+<table align="center" border="0" cellspacing="2" cellpadding="3" width="90%">
+  <caption class="uportal-channel-table-caption">Error Report</caption>
+  <xsl:if test="message">
+  <tr>
+    <th class="uportal-channel-table-header">Message</th>
+    <td><xsl:value-of select="message"/></td>
+  </tr>
+  </xsl:if>
+  <tr>
+    <th class="uportal-channel-table-header">Error type</th>
+    <td>
+      <xsl:choose>
+        <xsl:when test="@code='4'">Channel timed out (code 4)</xsl:when>
+        <xsl:when test="@code='1'">Channel failed to render (code 1)</xsl:when>
+        <xsl:when test="@code='2'">Channel failed to initialize (code 2)</xsl:when>
+        <xsl:when test="@code='3'">Channel failed to accept runtime data (code 3)</xsl:when>
+        <xsl:when test="@code='0'">General error (code 0)</xsl:when>
+        <xsl:when test="@code='5'">Channel failed to accept PCS (code 5)</xsl:when>
+        <xsl:when test="@code='-1'">uPortal error (code -1)</xsl:when>
+      </xsl:choose>
+    </td>
+  </tr>
+  <xsl:apply-templates select="exception"/>
 </table>
 
+<div align="center">
 <form action="{$baseActionURL}" method="post">       
-<input type="hidden" name="action" value="channelFate"/>
-<xsl:if test="$allowRefresh='true'">
- <input type="submit" name="channel_fate" value="retry"/>
-</xsl:if>
-<xsl:if test="$allowReinstantiation='true'">
- <input type="submit" name="channel_fate" value="restart channel"/>
-</xsl:if>
-<xsl:if test="exception">
-<xsl:choose>
-<xsl:when test="$showStackTrace='true'">
-<input type="submit" name="toggle_stack_trace" value="hide stack trace"/>
-</xsl:when>
-<xsl:otherwise>
-<input type="submit" name="toggle_stack_trace" value="show stack trace"/>
-</xsl:otherwise>
-</xsl:choose>
-</xsl:if>
+  <input type="hidden" name="action" value="channelFate"/>
+  <xsl:if test="$allowRefresh='true'">
+  <input type="submit" name="channel_fate" value="Retry"/>
+  </xsl:if>
+  <xsl:if test="$allowReinstantiation='true'">
+  <input type="submit" name="channel_fate" value="Restart channel"/>
+  </xsl:if>
+  <xsl:if test="exception">
+  <xsl:choose>
+    <xsl:when test="$showStackTrace='true'">
+      <input type="submit" name="toggle_stack_trace" value="Hide stack trace"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <input type="submit" name="toggle_stack_trace" value="Show stack trace"/>
+    </xsl:otherwise>
+  </xsl:choose>
+  </xsl:if>
 </form>
- </html>
+</div>
+
 </xsl:template>
 
 
 <xsl:template match="channel">
-<b>An error has occurred in a channel named "<xsl:value-of select="name"/>" (channelID=<xsl:value-of select="id"/>).</b>
+  <table align="center" width="100%"><tr><td bgcolor="#eeeeee" class="uportal-channel-warning">
+    <xsl:value-of select="name"/> [ID=<xsl:value-of select="id"/>]<br/>
+    is currently experiencing problems.
+  </td></tr></table>
 </xsl:template>
 
 <xsl:template match="exception">
-<tr><td><b>Problem type</b></td><td>
-<xsl:choose>
-<xsl:when test="@code='-1'">runtime exception (code -1)</xsl:when>
-<xsl:when test="@code='0'">general rendering problem (code 0)</xsl:when>
-<xsl:when test="@code='1'">internal timeout (code 1)</xsl:when>
-<xsl:when test="@code='2'">authorization problem (code 2)</xsl:when>
-<xsl:when test="@code='3'">missing resource (code 3)</xsl:when>
-</xsl:choose>
-</td></tr>
-<xsl:if test="@code='1'"><tr><td>Timeout limit</td><td><xsl:value-of select="timeout/@value"/></td></tr></xsl:if>
-<xsl:if test="@code='3'"><tr><td>Resource description</td><td><xsl:value-of select="resource/description"/></td></tr>
-<tr><td>Resource URI</td><td><xsl:value-of select="resource/uri"/></td></tr></xsl:if>
-<tr><td><b>Error message</b></td><td><xsl:value-of select="message"/></td></tr>
-<xsl:if test="$showStackTrace='true'"><tr><td><b>Stack trace</b></td><td><xsl:value-of select="stack"/></td></tr></xsl:if>
+  <tr>
+    <th class="uportal-channel-table-header">Problem type</th>
+    <td>
+      <xsl:choose>
+        <xsl:when test="@code='-1'">runtime exception (code -1)</xsl:when>
+        <xsl:when test="@code='0'">general rendering problem (code 0)</xsl:when>
+        <xsl:when test="@code='1'">internal timeout (code 1)</xsl:when>
+        <xsl:when test="@code='2'">authorization problem (code 2)</xsl:when>
+        <xsl:when test="@code='3'">missing resource (code 3)</xsl:when>
+      </xsl:choose>
+    </td></tr>
+  <xsl:if test="@code='1'">
+  <tr>
+    <th class="uportal-channel-table-header">Timeout limit</th>
+    <td><xsl:value-of select="timeout/@value"/></td>
+  </tr>
+  </xsl:if>
+  <xsl:if test="@code='3'">
+  <tr>
+    <th class="uportal-channel-table-header">Resource description</th>
+    <td><xsl:value-of select="resource/description"/>&#160;</td>
+  </tr>
+  <tr>
+    <th class="uportal-channel-table-header">Resource URI</th>
+    <td><xsl:value-of select="resource/uri"/></td>
+  </tr>
+  </xsl:if>
+  <tr>
+    <th class="uportal-channel-table-header">Error message</th>
+    <td><xsl:value-of select="message"/></td>
+  </tr>
+  <xsl:if test="$showStackTrace='true'">
+  <tr>
+    <th class="uportal-channel-table-header"><b>Stack trace</b></th>
+    <td><xsl:value-of select="stack"/></td>
+  </tr>
+  </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
