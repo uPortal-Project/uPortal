@@ -142,8 +142,9 @@ public class CUserPreferences implements ISpecialChannel
 	internalState.setStaticData(sd);
     }
     
-    /** Receives channel runtime data from the portal and processes actions 
-     * passed to it.  The names of these parameters are entirely up to the channel. 
+    /** CUserPreferences listens for an HttpRequestParameter "userPreferencesAction"
+     * and based on its value changes state between profile management and layout/stylesheet
+     * preferences.
      * @param rd handle to channel runtime data
      */
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
@@ -152,9 +153,11 @@ public class CUserPreferences implements ISpecialChannel
 	String action = runtimeData.getParameter ("userPreferencesAction");
 	if(action!=null) {
 	    String profileName=runtimeData.getParameter("profileName");
-	    String profileType=runtimeData.getParameter("profileType");
 	    boolean systemProfile=false;
-	    if(profileType.equals("system")) systemProfile=true;
+	    if(profileName!=null) {
+		String profileType=runtimeData.getParameter("profileType");
+		if(profileType!=null && profileType.equals("system")) systemProfile=true;
+	    }
 	    
 	    if(action.equals("manageProfiles")) {
 		if(profileName!=null) {
@@ -163,8 +166,9 @@ public class CUserPreferences implements ISpecialChannel
 		    
 		    //			}
 		} else {
-		    // reset back to the main state
-		    this.internalState=null;
+		    // reset to the manage profiles state
+		    manageProfiles.setRuntimeData(rd);
+		    this.internalState=manageProfiles;
 		}
 	    } else if(action.equals("managePreferences")) {
 		UserProfile profile=null;
@@ -178,11 +182,8 @@ public class CUserPreferences implements ISpecialChannel
 		} else {
 		    profile=up.getProfile();
 		}
-		/*currentProfileName=profile.getProfileName();
-		  ICoreStylesheetDescriptionDB csdb=new ICoreStylesheetDescriptionDBImpl();
-		  // get the optional management class from the ThemeStylesheetDescription
-		  ThemeStylesheetDescription theme=csdb.getThemeStylesheetDescription(profile.getThemeStylesheetName());
-		*/
+		managePreferences.setRuntimeData(rd);
+		this.internalState=managePreferences;
 		
 	    }
 	} else 
