@@ -208,7 +208,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
             }
         }
-        
+
         // fname and root are mutually exclusive and
         // should not be used in the same request,
         // as an fname is treated as the root target.
@@ -220,10 +220,10 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 // get wrapper implementation for focusing
                 InfrastructureUserLayoutManagerWrapper iulm =
                     (InfrastructureUserLayoutManagerWrapper) ulm;
-                // .. and now set it as the focused id                
+                // .. and now set it as the focused id
                 iulm.setFocusedId(subId);
             }
-            
+
             complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",
                                                                                   subId);
             LogService.log(LogService.DEBUG,
@@ -231,7 +231,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                            "setting sfname \" userLayoutRoot" + "\"=\"" + subId + "\".");
         }
 
-        // other params    
+        // other params
         String[] sparams = req.getParameterValues("uP_sparam");
         if (sparams != null) {
             for (int i = 0; i < sparams.length; i++) {
@@ -355,8 +355,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     }
 
     public void finishedSession(HttpSessionBindingEvent bindingEvent) {
-        // persist the layout
+        // persist the layout and user preferences
         try {
+            ulsdb.putUserPreferences(m_person, complete_up);
             ulm.saveUserLayout();
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
