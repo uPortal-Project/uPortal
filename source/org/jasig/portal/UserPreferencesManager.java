@@ -334,6 +334,13 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                            "UserPreferencesManager::processUserPreferencesParameters() : " +
                            "setting sfname \" userLayoutRoot" + "\"=\"" + subId + "\".");
         }
+        
+        // Request to change the locale
+        String localesString = req.getParameter(Constants.LOCALES_PARAM);
+        if (localesString != null) {
+            LocaleManager localeManager = complete_up.getProfile().getLocaleManager();
+            localeManager.setSessionLocales(LocaleManager.parseLocales(localesString));
+        }
 
         // other params
         String[] sparams = req.getParameterValues("uP_sparam");
