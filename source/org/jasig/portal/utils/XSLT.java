@@ -271,7 +271,9 @@ public class XSLT {
         throw pe;
       }
     } catch (Exception e) {
-      throw new PortalException(e);
+      PortalException pe = new PortalException(e);
+      pe.setRecordedException(e);
+      throw (pe);
     }
   }
 
