@@ -140,11 +140,11 @@ public class PortalDocumentImpl implements IPortalDocument {
 
     private String getElementKey(Element element) {
         String key = null;
+        String serializedNode = XML.serializeNode(element);
         Iterator itr = identifiers.keySet().iterator();
         while (itr.hasNext()) {
             key = (String)itr.next();
-            if (XML.serializeNode(element).equals(
-                XML.serializeNode(getElementById(key)))) {
+            if (serializedNode.equals(XML.serializeNode(getElementById(key)))) {
                 return key;
             }
         }
