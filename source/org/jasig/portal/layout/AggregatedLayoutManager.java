@@ -1425,7 +1425,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        // Deleting the node from the parent
        ALFolder parentFolder = getLayoutFolder(node.getParentNodeId());
 
-       boolean result = false;
+       boolean result = true;
        if ( nodeId.equals(parentFolder.getFirstChildNodeId()) ) {
          // Set the new first child node ID to the source folder
          parentFolder.setFirstChildNodeId(node.getNextNodeId());
@@ -1453,14 +1453,27 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        // DELETE THE NODE FROM THE DB
        if ( autoCommit )
          result = layoutStore.deleteUserLayoutNode(person,userProfile,node);
-
-       // Deleting the nodefrom the hashtable and returning the result value
-       result = (layout.getLayoutData().remove(nodeId)!=null) && ((autoCommit)?result:true);
+       
+       // Deleting the node and its children from the hashtable and returning the result value
+       cleanLayoutData(nodeId,result);
        
        updateCacheKey();
        
        return result;
 
+    }
+    
+    private void cleanLayoutData( String nodeId, boolean result ) throws PortalException {
+    	ALNode node = getLayoutNode(nodeId);
+    	result = (layout.getLayoutData().remove(nodeId)!=null) && result;
+        if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
+         // Loop for all children
+          String firstChildId = ((ALFolder)node).getFirstChildNodeId();
+          for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
+           cleanLayoutData(nextNodeId,result);
+           nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
+          } 
+        }  
     }
 
     public synchronized IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription nodeDesc, String parentId,String nextSiblingId) throws PortalException {
