@@ -2,19 +2,15 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">defaultView</xsl:param>
-  <!--<xsl:param name="action">reviewChannel</xsl:param>-->
+  <xsl:param name="action">customSettings</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
-  <xsl:variable name="filterByID">
-    <xsl:value-of select="//filterByID[1]"/>
-  </xsl:variable>
-  <!--<xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>-->
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
+  <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
   <xsl:template match="/">
     <html>
       <head>
@@ -381,9 +377,7 @@
       <tr>
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
-            <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2">Publish a new channel:</td>
-            </tr>
+
             <tr class="uportal-channel-strong" valign="top">
               <td colspan="2">
                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
@@ -412,9 +406,9 @@
   </xsl:template>
   <xsl:template match="manageChannels/*">
     <xsl:if test="name(.)=$action and ./params/step/ID = $stepID">
-      <xsl:for-each select="preceding::step/name">
+      <xsl:for-each select="preceding::step">
         <xsl:if test="position() != 1">
-          <td width="{round(100 div count(//step/name))}%">
+          <td width="{round(100 div count(//step))}%">
             <table border="0" cellspacing="0" cellpadding="0" width="100%">
               <tr>
                 <td class="uportal-background-shadow">
@@ -432,7 +426,10 @@
                   <tr>
                     <td class="uportal-text-small" align="center">
                       <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
-                        <xsl:value-of select="."/>
+                        <xsl:choose>
+                        <xsl:when test="name !=''">
+                        <xsl:value-of select="name"/>
+                        </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                       </a>
                     </td>
                   </tr>
@@ -443,7 +440,7 @@
         </td>
       </xsl:for-each>
       <xsl:if test="position() != 1">
-        <td width="{round(100 div count(//step/name))}%">
+        <td width="{round(100 div count(//step))}%">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-shadow">
@@ -464,7 +461,10 @@
                 <tr>
                   <td class="uportal-text-small" align="center">
                     <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
-                      <xsl:value-of select=".//step/name"/>
+                        <xsl:choose>
+                        <xsl:when test=".//step/name != ''">
+                        <xsl:value-of select=".//step/name"/>
+                        </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                     </a> </td>
                 </tr>
               </table>
@@ -472,8 +472,8 @@
           </tr>
         </table>
       </td>
-      <xsl:for-each select="following::step/name">
-        <td width="{round(100 div count(//step/name))}%">
+      <xsl:for-each select="following::step">
+        <td width="{round(100 div count(//step))}%">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-med">
@@ -490,7 +490,11 @@
                   <tr>
                     <td class="uportal-text-small" align="center">
                       <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
-                        <xsl:value-of select="."/>
+                        <xsl:choose>
+                        <xsl:when test="name !=''">
+                        <xsl:value-of select="name"/>
+                        </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
+
                       </a> </td>
                   </tr>
                 </table>
@@ -2083,6 +2087,206 @@
 
 <xsl:template name="customSettings">
 	      <xsl:call-template name="workflow"/>
+<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 
+      <!-- form begin -->
+
+
+
+      <tr class="uportal-channel-text">
+
+        <td><strong>Add Parameters:</strong> Complete the form below to add custom channel parameters</td>
+
+      </tr>
+
+
+
+      <tr>
+
+        <td>
+
+          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+
+            <tr valign="top">
+
+              <td class="uportal-label">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+
+                  <tr class="uportal-label">
+
+                    <td>Name:<br />
+
+                     <input type="text" name="textfield4" class="uportal-input-text" /> </td>
+
+                  </tr>
+
+
+
+                  <tr class="uportal-label">
+
+                    <td>Value:<br />
+
+                     <input type="text" name="textfield5" class="uportal-input-text" /> </td>
+
+                  </tr>
+
+
+
+                  <tr class="uportal-label">
+
+                    <td align="right"><input type="submit" name="Submit5" value="add" class="uportal-button" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+
+
+              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+
+
+
+              <td class="uportal-background-light"><img alt="interface image" src="transparent.gif" width="2" height="2" /></td>
+
+
+
+              <td width="100%">
+
+                <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+
+                  <tr>
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="16" height="8" /></td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="interface image" src="transparent.gif" width="8" height="8" /></td>
+
+
+
+                    <td width="100%" class="uportal-channel-table-header">Value</td>
+
+                  </tr>
+
+
+
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td nowrap="nowrap" colspan="5">
+
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                        <tr>
+
+                          <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+
+                        </tr>
+
+                      </table>
+
+                    </td>
+
+                  </tr>
+
+<xsl:choose>
+<xsl:when test="//customSettings//listedParameter">
+<xsl:for-each select="//customSettings//listedParameter">
+
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td nowrap="nowrap" align="center"><a href="#">
+                    <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this parameter" /></a></td>
+
+
+
+                    <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+
+
+                    <td nowrap="nowrap"><strong><xsl:value-of select="name"/>:</strong></td>
+
+
+
+                    <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+
+
+                    <td width="100%"><xsl:value-of select="value"/></td>
+
+                  </tr>
+
+
+
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td colspan="5" align="center">
+
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                        <tr>
+
+                          <td><img alt="interface image" src="transparent.gif" width="1" height="1" /></td>
+
+                        </tr>
+
+                      </table>
+
+                    </td>
+
+                  </tr>
+
+</xsl:for-each>
+</xsl:when>
+<xsl:otherwise>
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td colspan="5" align="left">
+
+                     No custom parameters
+
+                    </td>
+
+                  </tr>
+
+                  </xsl:otherwise>
+                  </xsl:choose>
+
+
+
+                </table>
+
+              </td>
+
+            </tr>
+
+          </table>
+
+        </td>
+
+      </tr>
+
+
+
+      <tr>
+
+        <td><input type="submit" name="Submit4222" value="&lt; Back" class="uportal-button" /> <input type="submit" name="Submit3222" value="Next &gt;" class="uportal-button" /> <input type="submit" name="Submit5342" value="Review" class="uportal-button" /> <input type="submit" name="Submit842" value="Cancel" class="uportal-button" /> </td>
+
+      </tr>
+
+      <!-- form end -->
+
+    </table>
 </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
