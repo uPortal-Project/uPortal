@@ -269,6 +269,22 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
 
+	/**
+			 * Returns the depth of a node in the layout tree.
+			 *
+			 * @param nodeId a <code>String</code> value
+			 * @return a depth value
+			 * @exception PortalException if an error occurs
+			 */
+  public int getDepth(String nodeId) throws PortalException {
+	int depth = 0;
+	for ( String parentId = nodeId; parentId != null; parentId = getParentId(parentId), depth++ );
+	return depth;
+  }
+
+
+
+
     public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
         boolean isChannel=false;
         IUserLayoutNodeDescription parent=this.getNode(parentId);

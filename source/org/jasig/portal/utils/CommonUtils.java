@@ -60,6 +60,16 @@ public class CommonUtils {
     public static String nvl( String sourceStr, String replaceStr ) {
       return (sourceStr != null)?sourceStr:replaceStr;
     }
+    
+	/**
+		 * Replaces "sourceString" with "replaceString" if sourceString is null or empty
+		 * @param sourceStr the string to replace
+		 * @param replaceStr the replacement string
+		 * @return the processed string
+		 */
+	public static String envl( String sourceStr, String replaceStr ) {
+		  return (sourceStr != null && sourceStr.trim().length() > 0 )?sourceStr:replaceStr;
+	}
 
     /**
      * Replaces "sourceString" with "replaceString" if sourceString equals null

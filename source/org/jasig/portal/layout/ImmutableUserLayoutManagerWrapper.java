@@ -171,6 +171,18 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     public String getRootFolderId() {
         return man.getRootFolderId();
     }
+    
+	/**
+				 * Returns the depth of a node in the layout tree.
+				 *
+				 * @param nodeId a <code>String</code> value
+				 * @return a depth value
+				 * @exception PortalException if an error occurs
+				 */
+	 public int getDepth(String nodeId) throws PortalException {
+		return man.getDepth(nodeId);
+	 }
+
 
     /**
      * Returns a subscription id given a functional name.

@@ -551,7 +551,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @return a depth value
      * @exception PortalException if an error occurs
      */
-  private int getDepth(String nodeId) throws PortalException {
+  public int getDepth(String nodeId) throws PortalException {
     int depth = 0;
     for ( String parentId = nodeId; parentId != null; parentId = getLayoutNode(parentId).getParentNodeId(), depth++ );
     return depth;

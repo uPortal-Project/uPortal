@@ -784,7 +784,13 @@ public class UserInstance implements HttpSessionBindingListener {
              newNodeDescription.setName("Unnamed");
             }*/
              // Adding a new node
-             ulm.addNode(newNodeDescription,values2[0],value);
+             String nodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
+         
+             // If we have a tab we need to focus it
+             if ( nodeId != null && ulm.getDepth(nodeId) == 1 ) {
+			   themePrefs.putParameterValue("focusedTabID",nodeId);
+			   themePrefs.putParameterValue("selectedID",nodeId);
+             }  
           }
          }
             newNodeDescription = null;
@@ -835,9 +841,12 @@ public class UserInstance implements HttpSessionBindingListener {
 		  if ( ulm instanceof IAggregatedUserLayoutManager ) {		
 			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
 			String fragmentId = req.getParameter("uP_fragment_ID"); 
-			if ( param.equals("new") )
-		     fragmentId = alm.createFragment(IAggregatedUserLayoutManager.NEW_FRAGMENT,"New fragment");
-		    else if ( param.equals("edit") && fragmentId != null ) {
+			if ( param.equals("new") ) {
+			   String fragmentName = req.getParameter("uP_fragment_name");
+			   String fragmentDesc = req.getParameter("uP_fragment_desc");
+			   String defaultValue = IAggregatedUserLayoutManager.NEW_FRAGMENT;
+		       fragmentId = alm.createFragment(CommonUtils.envl(fragmentName,defaultValue),CommonUtils.envl(fragmentDesc,"The fragment"));
+			} else if ( param.equals("edit") && fragmentId != null ) {
 		     if ( CommonUtils.parseInt(fragmentId) > 0 ) 
 		       alm.loadFragment(fragmentId);
 		     else 

@@ -308,6 +308,15 @@ public interface IUserLayoutManager {
      * @return a <code>String</code> value
      */
     public String getRootFolderId();
+    
+	/**
+		 * Returns the depth of a node in the layout tree.
+		 *
+		 * @param nodeId a <code>String</code> value
+		 * @return a depth value
+		 * @exception PortalException if an error occurs
+		 */
+	public int getDepth(String nodeId) throws PortalException;
 
     /**
      * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
