@@ -19,6 +19,8 @@ import org.jasig.portal.groups.pags.testers.IntegerLTTester;
 import org.jasig.portal.groups.pags.testers.RegexTester;
 import org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester;
 import org.jasig.portal.groups.pags.testers.StringEqualsTester;
+import org.jasig.portal.groups.pags.testers.ValueExistsTester;
+import org.jasig.portal.groups.pags.testers.ValueMissingTester;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 
@@ -141,6 +143,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new PAGSTester("testIntegerGETester")); 
   suite.addTest(new PAGSTester("testIntegerLETester")); 
   suite.addTest(new PAGSTester("testRegexTester"));  
+  suite.addTest(new PAGSTester("testValueExistsTester"));
+  suite.addTest(new PAGSTester("testValueMissingTester"));
   
 //  Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -501,5 +505,75 @@ public void testRegexTester() throws Exception
 
 }
 
+public void testValueExistsTester() throws Exception
+{
+    print(CR + "***** ENTERING PAGSTester.testValueExistsTester() *****" + CR);
+    String msg = null;
+   
+    msg = "Creating a new IPerson";
+    print(msg);
+    IPerson newPerson = getIPerson("de3");
+    assertNotNull(msg, newPerson);
+        
+    print("Adding attributes to IPerson.");
+    newPerson.setAttribute(key1, randomStrings[0]);
+    newPerson.setAttribute(key2, randomStrings[1].toLowerCase());
+ 
+    msg = "Testing IPerson " + newPerson;
+    print(msg);
+
+    String testKey = randomStrings[0].toLowerCase();
+    // These tests should pass since the IPerson attribute exists.
+    IPersonTester tester1 = new ValueExistsTester(key1, testKey);
+    IPersonTester tester2 = new ValueExistsTester(key2, null);
+    // This test should fail; the IPerson does not have a value for key3.
+    IPersonTester tester3 = new ValueExistsTester(key3, new String());
+    
+    msg = "Testing " + tester1;
+    assertTrue(msg, tester1.test(newPerson));
+    msg = "Testing " + tester2;
+    assertTrue(msg, tester2.test(newPerson));
+    msg = "Testing " + tester3;
+    assertFalse(msg, tester3.test(newPerson));
+ 
+    print("Success!");
+    print(CR + "***** LEAVING PAGSTester.testValueExistsTester() *****" + CR);
+}
+public void testValueMissingTester() throws Exception
+{
+    print(CR + "***** ENTERING PAGSTester.testValueMissingTester() *****" + CR);
+    String msg = null;
+   
+    msg = "Creating a new IPerson";
+    print(msg);
+    IPerson newPerson = getIPerson("de3");
+    assertNotNull(msg, newPerson);
+        
+    print("Adding attributes to IPerson.");
+    newPerson.setAttribute(key1, randomStrings[0]);
+    newPerson.setAttribute(key2, new String());
+ 
+    msg = "Testing IPerson " + newPerson;
+    print(msg);
+
+    String testKey = randomStrings[0].toLowerCase();
+    // This test should fail since the IPerson attribute exists.
+    IPersonTester tester1 = new ValueMissingTester(key1, randomStrings[0]);
+    // This test should pass; the attribute is blank.
+    IPersonTester tester2 = new ValueMissingTester(key2, testKey);
+    // This test should pass; the IPerson does not have a value for key3.
+    IPersonTester tester3 = new ValueMissingTester(key3, testKey);
+    
+    msg = "Testing " + tester1;
+    assertFalse(msg, tester1.test(newPerson));
+    msg = "Testing " + tester2;
+    assertTrue(msg, tester2.test(newPerson));
+    msg = "Testing " + tester3;
+    assertTrue(msg, tester3.test(newPerson));
+ 
+    print("Success!");
+    print(CR + "***** LEAVING PAGSTester.testValueMissingTester() *****" + CR);
+
+}
 
 }
