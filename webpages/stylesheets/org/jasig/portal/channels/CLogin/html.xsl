@@ -8,7 +8,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <xsl:choose>
         <xsl:when test="$guest='true'">
-          <form action="authentication.jsp" method="post">
+          <form action="Authentication" method="post">
             <input type="hidden" name="action" value="login"/>
             <input type="hidden" name="baseActionURL" value="{$baseActionURL}"/>
             <xsl:call-template name="buildTable"/>

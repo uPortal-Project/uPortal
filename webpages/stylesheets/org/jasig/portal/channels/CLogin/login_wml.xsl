@@ -60,7 +60,7 @@ $Revision$
 
   <xsl:template name="login-form">
     <do type="accept" label="Submit">
-      <go href="authentication.jsp">
+      <go href="Authentication">
         <postfield name="baseActionURL" value="{$baseActionURL}" />
         <postfield name="userName" value="$(userName)" />
         <postfield name="password" value="$(password)" />
