@@ -335,6 +335,9 @@
       <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
     </copy>
 
+    <!-- Copy tables.xml to datadictviewer channel -->
+    <copy todir="${build.home}/WEB-INF/classes/org/jasig/portal/channels/CGenericXSLT/DataDictViewer" file="properties/tables.xml"/>
+
     <!-- Copy all stylesheets and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl"/>
