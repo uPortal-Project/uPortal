@@ -57,7 +57,7 @@ else
   <p> 
     <input type="hidden" name="chan_type" value="<%= sChan_type %>">
 	<input type="hidden" name="pub_email" value="<%= sPub_email %>">
-    <input type="submit" name="Submit" value="Next">
+    <input type="submit" value="Next">
   </p>
 <% } %>  
 </form>

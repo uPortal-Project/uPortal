@@ -54,7 +54,7 @@ String sAction = request.getParameter ("action");
 
   </table>
   <p> 
-    <input type="submit" name="Submit" value="Next">
+    <input type="submit" value="Next">
   </p>
 </form>
 
