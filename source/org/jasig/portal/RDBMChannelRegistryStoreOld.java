@@ -114,9 +114,15 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
         IEntity channelDefMember = (IEntity)member;
         int channelPublishId = Integer.parseInt(channelDefMember.getKey());
         ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
-        Element channelDefE = channelDef.getDocument(registryDoc, "chan" + channelPublishId);
-        channelDefE = (Element)registryDoc.importNode(channelDefE, true);
-        parentGroup.appendChild(channelDefE);
+        if (channelDef != null) {
+          // Make sure channel is approved
+          Date approvalDate = channelDef.getApprovalDate();
+          if (approvalDate != null && approvalDate.before(new Date())) {
+            Element channelDefE = channelDef.getDocument(registryDoc, "chan" + channelPublishId);
+            channelDefE = (Element)registryDoc.importNode(channelDefE, true);
+            parentGroup.appendChild(channelDefE);
+          }
+        }
       }
     }
   }
@@ -217,10 +223,19 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
     String chanName = channel.getAttribute("name");
     String chanFName = channel.getAttribute("fname");
 
-    ChannelDefinition channelDef = new ChannelDefinition(id, chanTitle, chanDesc,
-      chanClass, chanTypeId, chanPupblUsrId, chanApvlId,
-      null, null, chanTimeout, chanEditable, chanHasHelp,
-      chanHasAbout, chanName, chanFName);
+    ChannelDefinition channelDef = new ChannelDefinition(id);
+    channelDef.setTitle(chanTitle);
+    channelDef.setDescription(chanDesc);
+    channelDef.setJavaClass(chanClass);
+    channelDef.setTypeId(chanTypeId);
+    channelDef.setPublisherId(chanPupblUsrId);
+    channelDef.setApproverId(chanApvlId);
+    channelDef.setTimeout(chanTimeout);
+    channelDef.setEditable(chanEditable != null && chanEditable.equals("true") ? true : false);
+    channelDef.setHasHelp(chanHasHelp != null && chanHasHelp.equals("true") ? true : false);
+    channelDef.setHasAbout(chanHasAbout != null && chanHasAbout.equals("true") ? true : false);
+    channelDef.setName(chanName);
+    channelDef.setFName(chanFName);
 
     NodeList parameters = channel.getChildNodes();
     if (parameters != null) {
