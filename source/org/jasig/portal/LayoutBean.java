@@ -237,12 +237,6 @@ public class LayoutBean
 
       // prepare .uP element and detach flag to be passed to the stylesheets
       XString xuPElement=processor.createXString (uPElement);
-      XString xdm;
-      if(detachMode) 
-	  xdm=processor.createXString("true");
-      else 
-	  xdm=processor.createXString("false");
-
 
       // set up the channelManager
       if (channelManager == null)
@@ -272,7 +266,6 @@ public class LayoutBean
 
       // now that pipeline is set up, determine and set the stylesheet params
       processor.setStylesheetParam ("baseActionURL",xuPElement);
-      processor.setStylesheetParam ("detachMode",xdm);
 
       Hashtable supTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
       for (Enumeration e = supTable.keys (); e.hasMoreElements ();) {
@@ -309,7 +302,6 @@ public class LayoutBean
       processor.reset();
       // set up of the parameters
       processor.setStylesheetParam ("baseActionURL",xuPElement);
-      processor.setStylesheetParam ("detachMode",xdm);
 
       Hashtable tupTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
       for (Enumeration e = tupTable.keys (); e.hasMoreElements ();) {
