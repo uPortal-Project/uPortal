@@ -76,6 +76,17 @@ public class PersonDirPropertyFinder
             Object o = getPropertiesHash(entityID).get(name);
             if (o instanceof String) {
                 r = (String)o;
+            } else if (o instanceof List) {
+                StringBuffer sb = new StringBuffer();
+                List values = (List)o;
+                for (Iterator iter = values.iterator(); iter.hasNext();) {
+                    Object value = (Object)iter.next();
+                    sb.append(value.toString());
+                    if (iter.hasNext()) {
+                        sb.append(", ");
+                    }
+                }
+                r = sb.toString();
             }
         }
         return  r;
