@@ -322,12 +322,15 @@ public class CChannelManager extends BaseChannel {
             }
             else if (capture.equals("selectGeneralSettings")) {
                 String name = runtimeData.getParameter("name");
+                String fname = runtimeData.getParameter("fname");
                 String description = runtimeData.getParameter("description");
                 String title = runtimeData.getParameter("title");
                 String timeout = runtimeData.getParameter("timeout");
                 String javaClass = runtimeData.getParameter("class");
                 if (name != null)
                     channelDef.setName(name.trim());
+                if (description != null)
+                    channelDef.setFunctionalName(fname.trim());
                 if (description != null)
                     channelDef.setDescription(description.trim());
                 if (title != null)
@@ -1184,6 +1187,14 @@ public class CChannelManager extends BaseChannel {
             this.name = name;
         }
 
+        /**
+         * Set the channel functional name
+         * @param fname the functional name
+         */
+        protected void setFunctionalName (String fname) {
+            this.fname = fname;
+        }
+        
         /**
          * put your documentation comment here
          * @param description

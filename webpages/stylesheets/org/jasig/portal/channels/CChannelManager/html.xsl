@@ -590,18 +590,15 @@
               <tr class="uportal-channel-table-header" valign="bottom">
                 <!--<td align="center" nowrap="nowrap">User can<br/> Modify?</td>-->
 
-<td align="center" nowrap="nowrap">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
-
+                <td align="center" nowrap="nowrap">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td width="100%">General Settings</td>
               </tr>
-
-
-
+              
               <tr class="uportal-channel-table-header">
                 <td align="center" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -613,12 +610,13 @@
                   </table>
                 </td>
               </tr>
-              <tr>
+              
+              <!-- Channel Title -->
               <tr>
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Title\n\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
-    </a></td>
+                  <a href="javascript:alert('Name: Channel Title\n\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
                 <td>
                 </td>
                 <td>
@@ -628,6 +626,7 @@
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
                   </span> </td>
               </tr>
+              
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -639,10 +638,13 @@
                   </table>
                 </td>
               </tr>
+              
+              <!-- Channel name -->
+              <tr>
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Name\n\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
-    </a></td>
+                  <a href="javascript:alert('Name: Channel Name\n\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
                 <td>
                 </td>
                 <td>
@@ -652,6 +654,7 @@
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>
                   </span> </td>
               </tr>
+              
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -663,12 +666,41 @@
                   </table>
                 </td>
               </tr>
+              
+              <!-- Channel fname -->
               <tr>
-
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
-    </a></td>
+                  <a href="javascript:alert('Name: Channel Functional Name\n\nExample: stock-charts\n\nDescription: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identiy this channel definition.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Functional Name:</span> <span class="uportal-text-small">[example - stock-charts]<br/>
+                  <input type="text" name="fname" size="50" class="uportal-input-text">
+                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@fname">
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@fname"/></xsl:attribute></xsl:if></input>
+                  </span> </td>
+              </tr>
+              
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+               
+              <!-- Channel Description -->
+              <tr>
+                <td align="center" valign="top">
+                  <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
                 <td>
                 </td>
                 <td>
@@ -680,6 +712,7 @@
                   </textarea>
                 </td>
               </tr>
+              
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -692,14 +725,15 @@
                 </td>
               </tr>
 
+              <!-- Channel Timeout -->
               <tr class="uportal-channel-text">
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
-    </a></td>
+                  <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
                 <td>
                 </td>
                 <td>
@@ -709,6 +743,7 @@
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute></xsl:if></input>
                    milliseconds (1000 = 1 second)</td>
               </tr>
+              
               <tr>
                 <td colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -720,6 +755,8 @@
                   </table>
                 </td>
               </tr>
+              
+              <!-- Channel Java Class -->
               <xsl:choose>
                 <xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
                 <tr class="uportal-channel-text">
@@ -739,6 +776,7 @@
                                        <xsl:if test="/manageChannels/selectGeneralSettings/params/step/channel/@class">
                      <xsl:attribute name="value"><xsl:value-of select="/manageChannels/selectGeneralSettings/params/step/channel/@class"/></xsl:attribute></xsl:if></input></td>
               </tr>
+              
               <tr>
                 <td colspan="2">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -1582,6 +1620,8 @@
                </table>
              </td>
            </tr>
+           
+           <!-- Channel name -->
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
@@ -1598,6 +1638,25 @@
                </table>
              </td>
            </tr>
+           
+           <!-- Channel fname -->
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Functional Name:</a></strong></td>
+             <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@fname"/></a></td>
+           </tr>
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" colspan="5">
+               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                 <tr>
+                   <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                 </tr>
+               </table>
+             </td>
+           </tr>           
+           
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
