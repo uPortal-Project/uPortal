@@ -184,23 +184,13 @@ public class ChannelRegistryManager {
 
   /**
    * Publishes a channel.
-   *
-   * I think we need to change the types of some of the arguments to arrays so they are more clearly
-   * defined.  For example,
-   *
-   *   publishChannel (Element channel, String[] categoryIDs, IEntityGroups[] groups, IPerson publisher)
-   *
-   * CChannelManager is currently sending over a Set of group IDs or "keys".  It should be changed to
-   * maintain IEntityGroup objects instead of group keys.  Hopefully I'll get to that soon.
-   *     -Ken
-   *
    * @param the channel XML fragment
    * @param a list of categories that the channel belongs to
    * @param a list of group keys that are permitted to subscribe to and view the channel
    * @param the user ID of the channel publisher
    * @throws java.lang.Exception
    */
-  public static void publishChannel (Element channel, Set categoryIDs, Set groups, IPerson publisher) throws Exception {
+  public static void publishChannel (Element channel, String[] categoryIDs, IEntityGroup[] groups, IPerson publisher) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
@@ -217,20 +207,17 @@ public class ChannelRegistryManager {
     }
 
     // Add channel
-    String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
     Document channelDoc = DocumentFactory.getNewDocument();
     channelDoc.appendChild(channelDoc.importNode(channel, true));
-    chanRegStore.addChannel(ID, publisher, channelDoc, catIDs);
+    chanRegStore.addChannel(ID, publisher, channelDoc, categoryIDs);
 
     // Set groups
     AuthorizationService authService = AuthorizationService.instance();
     String owner = "*"; // the whole framework
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(owner);
-    IPermission[] permissions = new IPermission[groups.size()];
-    Iterator iter = groups.iterator();
-    for (int i = 0; iter.hasNext(); i++) {
-      String groupKey = (String)iter.next();
-      String principalKey = groupKey.startsWith("g") ? groupKey.substring(1) : groupKey; // Messy!
+    IPermission[] permissions = new IPermission[groups.length];
+    for (int i = 0; i < groups.length; i++) {
+      String principalKey = groups[i].getKey();
       IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
       permissions[i] = upm.newPermission(authPrincipal);
       permissions[i].setType("GRANT");
