@@ -37,6 +37,7 @@
 package  org.jasig.portal;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -124,6 +125,14 @@ public class LoginServlet extends HttpServlet {
    */
   public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
   	CommonUtils.setNoCache(response);
+    
+    // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
+    try {
+        request.setCharacterEncoding("UTF-8");
+    } catch (UnsupportedEncodingException uee) {
+        log.error("Unable to set UTF-8 character encoding!", uee);
+    }
+    
   	/* Grab the target functional name, if any, off the login request.
 	 * Also any arguments for the target
   	 * We will pass them  along after authentication.
