@@ -253,11 +253,13 @@ public class DbLoader
     String driverVersion = dbMetaData.getDriverVersion();
     String driverClass = rdbmService.getJdbcDriver();
     String url = rdbmService.getJdbcUrl();
+    String user = rdbmService.getJdbcUser();
     System.out.println("Starting DbLoader...");
     System.out.println("Database name: '" + dbName + "', version: '" + dbVersion + "'");
     System.out.println("Driver name: '" + driverName + "', version: '" + driverVersion + "'");
     System.out.println("Driver class: '" + driverClass + "'");
     System.out.println("Connection URL: '" + url + "'");
+    System.out.println("User: '" + user + "'");
   }
 
   private static void readData (XMLReader parser) throws SAXException, IOException
