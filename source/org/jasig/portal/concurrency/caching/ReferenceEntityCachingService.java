@@ -242,7 +242,7 @@ public IEntityCache newCache(Class type, int maxSize, int maxIdleTime, int sweep
 throws CachingException
 {
     return (multiServer)
-        ? new ReferenceInvalidatingEntityCache( type, maxSize, maxIdleTime, sweepInterval )
+        ? new ReferenceInvalidatingEntityCache( type, maxSize, maxIdleTime, sweepInterval, clockToleranceMillis )
         : new ReferenceEntityCache( type, maxSize, maxIdleTime, sweepInterval );
 }
 /**
