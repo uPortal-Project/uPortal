@@ -82,6 +82,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
             try {
                 lm.persistUserLocales(new Locale[] { userLocale });
                 upm.getUserLayoutManager().loadUserLayout();
+                runtimeData.setLocales(lm.getLocales());
             } catch (Exception e) {
                 throw new PortalException(e);
             }
@@ -90,7 +91,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
 
     public void renderXML(ContentHandler out) throws PortalException {
         Document doc = DocumentFactory.getNewDocument();
-        Locale[] locales = lm.getLocales();
+        Locale[] locales = runtimeData.getLocales();
 
         // <locales>
         Element localesE = doc.createElement("locales");
@@ -129,7 +130,7 @@ public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
         }
 
         doc.appendChild(localesE);
-        XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+        XSLT xslt = XSLT.getTransformer(this, locales);
         xslt.setXML(doc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
