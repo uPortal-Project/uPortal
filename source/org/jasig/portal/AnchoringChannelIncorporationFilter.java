@@ -35,11 +35,7 @@
 
 package org.jasig.portal;
 
-import org.apache.xpath.XPathAPI;
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -61,12 +57,9 @@ public class AnchoringChannelIncorporationFilter extends SAX2FilterImpl {
     private static final String FORM_KEY = "form";
     private static final String ANCHOR_LINK_KEY = "a";
     private static final String ACTION_KEY = "action";
-    private Document userLayout;
 
-    public AnchoringChannelIncorporationFilter(Document userLayout,
-            ContentHandler parent) {
+    public AnchoringChannelIncorporationFilter(ContentHandler parent) {
         super(parent);
-        this.userLayout = userLayout;
     }
 
     public void startElement(String uri, String localName, String qName,
@@ -110,44 +103,11 @@ public class AnchoringChannelIncorporationFilter extends SAX2FilterImpl {
      * channel instance Id and return the appropriate channel name.
      * 
      * @param baseActionURL that will be parsed to find the correct channel instance Id
-     * @return String representing the appropriate channel "title" name used when it was published
+     * @return String representing the appropriate channel instance Id or null if none were found.
      */
     private String appendChannelName(String baseActionURL) {
         // parse the baseActionURL param and get the channel instance Id
-        String channelInstanceId = getChannelInstanceId(baseActionURL);
-        // lookup the channel name based on this channel instance Id
-        return getChannelName(channelInstanceId);
-    }
-
-    /**
-     * 
-     * Will return the appropriate channel name based on the incoming channel
-     * instance Id.
-     * 
-     * @param channelInstanceId
-     * @return String representing the appropriate channel "title" name used when it was published 
-     */
-    private String getChannelName(String channelInstanceId) {
-        try {
-            Document userLayout = getUserLayout();
-            Node channelNode = userLayout.getElementById(channelInstanceId);
-            if (channelNode == null) {
-              // Aggregated Layout Managers has a different DOM implementation  
-              channelNode = XPathAPI.selectSingleNode(userLayout, "//*[@ID='"+channelInstanceId+"']");
-            }
-            
-            if (channelNode == null) return null;
-            // else we found the channel XML, let's find the name
-            String channelName = ((Element) channelNode).getAttribute("title");
-            if (channelName != null) return channelName;
-        } catch (Exception e) {
-            // if we threw, let's give up on this anchor link 
-        }
-        return null;
-    }
-
-    private Document getUserLayout() throws Exception {
-        return userLayout;
+        return getChannelInstanceId(baseActionURL);
     }
 
     /**
