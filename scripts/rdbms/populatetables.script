@@ -1,0 +1,3 @@
+insert into portal_shadow_password (USER_NAME, USER_ID, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL) values ('guest', 0, 'guest', 'Guest', 'Guest', 'guest@guest.com');
+insert into portal_shadow_password (USER_NAME, USER_ID, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL) values ('default', 0, 'default', 'Default', 'Default', 'default@default.com');
+insert into portal_shadow_password (USER_NAME, USER_ID, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL) values ('demo', 0, 'demo', 'Demo', 'Demo', 'demo@demo.com');
