@@ -75,6 +75,9 @@ public class XML {
         break;
       }
     }
+    if (val == null) {
+      val = new String();
+    }
     return val;
   }
   
