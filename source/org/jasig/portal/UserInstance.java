@@ -702,8 +702,10 @@ public class UserInstance implements HttpSessionBindingListener {
          if ( (values1 = req.getParameterValues("uP_target_name")) != null ) {
             IUserLayoutNodeDescription nodeDesc = ulm.getNode(values[0]);
             if ( nodeDesc != null ) {
+             String oldName = nodeDesc.getName();
              nodeDesc.setName(values1[0]);
-             ulm.updateNode(nodeDesc);
+             if ( !ulm.updateNode(nodeDesc) )
+              nodeDesc.setName(oldName);
             }
          }
         }
