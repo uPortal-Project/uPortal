@@ -57,6 +57,8 @@ public class XMLChannelWrapper
     implements IChannel {
   // Cache the channel instance
   private IXMLChannel m_ch = null;
+  // Cache the BrowserInfo object
+  private BrowserInfo m_browserInfo = new BrowserInfo();
   // Cache the PortalControlStructures instance
   private PortalControlStructures m_pcs = null;
   // Cache the channel ID
@@ -208,8 +210,8 @@ public class XMLChannelWrapper
     HttpSession session = req.getSession();
     // Add the request object to the runtime data
     rd.setHttpRequest(req);
-    // Create the BrowserInfo object for the RuntimeData object
-    BrowserInfo m_browserInfo = new BrowserInfo(req);
+    // Set the request object in the BrowserInfo object
+    m_browserInfo.setRequest(req);
     // Add the BrowserInfo object to the RuntimeData object
     rd.setBrowserInfo(m_browserInfo);
     // Create the baseAction URL
