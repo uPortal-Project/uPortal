@@ -35,7 +35,7 @@ Author: Jultin Tilton, jet@immagic.com
 $Revision$
 -->
   <xsl:output method="html" indent="no"/>
-  <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="activeTab">1</xsl:param>
   <xsl:param name="action">no parameter passed</xsl:param>
   <xsl:param name="position">no parameter passed</xsl:param>

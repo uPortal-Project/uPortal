@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences</xsl:variable>
 
   <xsl:template match="profile">

@@ -38,7 +38,7 @@ Version $Revision$
 
   <xsl:output method="html" indent="yes"/>
 
-  <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
 
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
 

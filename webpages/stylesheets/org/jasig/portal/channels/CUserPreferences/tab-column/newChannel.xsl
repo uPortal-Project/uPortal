@@ -36,7 +36,7 @@ Author: Jultin Tilton, jet@immagic.com
 $Revision$
 -->
   <xsl:output method="html" indent="no"/>
-  <xsl:param name="baseActionURL">render.uP</xsl:param>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="catID">top</xsl:param>
   <xsl:param name="errorID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
