@@ -45,7 +45,7 @@ $Revision$
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS-->
-  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <!--<xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
   <!--end remove-->
 
   <xsl:template match="layout">
@@ -1371,4 +1371,5 @@ $Revision$
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
