@@ -21,6 +21,12 @@ import java.util.Vector;
 
 import  org.apache.xerces.dom.DocumentImpl;
 
+/**
+ * An implementation of a user layout manager that uses 2.0-release store implementations.
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version 1.0
+ */
 public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected final IPerson owner;
     protected final UserProfile profile;
@@ -41,13 +47,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         this.owner=owner;
         this.profile=profile;
         this.setLayoutStore(store);
-        
+        this.loadUserLayout();
     }
 
 
     // This method should be removed whenever it becomes possible
-    public void setUserLayoutDOM(Document doc) {
-        this.userLayoutDocument=(DocumentImpl) doc;
+    public void setUserLayoutDOM(DocumentImpl doc) {
+        this.userLayoutDocument= doc;
     }
     // This method should be removed whenever it becomes possible
     public DocumentImpl getUserLayoutDOM() {
@@ -59,15 +65,35 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         if(ulm==null) {
             throw new PortalException("User layout has not been initialized");
         } else {
-            // do a DOM2SAX transformation
-            try {
-                Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-                emptyt.transform(new DOMSource(ulm), new SAXResult(ch));
-            } catch (Exception e) {
-                throw new PortalException("Encountered an exception trying to output user layout",e);
+            getUserLayout(ulm,ch);
+        }
+    }
+
+    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
+        Document ulm=this.getUserLayoutDOM();
+
+        if(ulm==null) {
+            throw new PortalException("User layout has not been initialized");
+        } else {
+            Node rootNode=ulm.getElementById(nodeId);
+            if(rootNode==null) {
+                throw new PortalException("A requested root node (with id=\""+nodeId+"\") is not in the user layout.");
+            } else {
+                getUserLayout(rootNode,ch);
             }
         }
     }
+    
+    protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {
+        // do a DOM2SAX transformation
+        try {
+            Transformer emptyt=TransformerFactory.newInstance().newTransformer();
+            emptyt.transform(new DOMSource(n), new SAXResult(ch));
+        } catch (Exception e) {
+            throw new PortalException("Encountered an exception trying to output user layout",e);
+        }
+    }
+
 
     public void setLayoutStore(IUserLayoutStore store) {
         this.store=store;
@@ -83,7 +109,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             throw new PortalException("Store implementation has not been set.");
         } else {
             try {
-                this.setUserLayoutDOM(this.getLayoutStore().getUserLayout(this.owner,this.profile));
+                DocumentImpl uli=(DocumentImpl)this.getLayoutStore().getUserLayout(this.owner,this.profile);
+                if(uli!=null) {
+                    this.setUserLayoutDOM(uli);
+                } else {
+                    throw new PortalException("Null user layout returned for ownerId=\""+owner.getID()+"\", profileId=\""+profile.getProfileId()+"\", layoutId=\""+profile.getLayoutId()+"\"");
+                }
             } catch (PortalException pe) {
                 throw pe;
             } catch (Exception e) {
@@ -312,7 +343,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         UserLayoutNodeDescription node=getNode(nodeId);
     }
 
-    String getParentId(String nodeId) throws PortalException {
+    public String getParentId(String nodeId) throws PortalException {
         Document ulm=this.getUserLayoutDOM();
         Element nelement=(Element)ulm.getElementById(nodeId);
         if(nelement!=null) {
@@ -332,7 +363,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
-    String getNextSiblingId(String nodeId) throws PortalException {
+    public String getNextSiblingId(String nodeId) throws PortalException {
         Document ulm=this.getUserLayoutDOM();
         Element nelement=(Element)ulm.getElementById(nodeId);
         if(nelement!=null) {
@@ -352,7 +383,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
-    List getChildIds(String nodeId) throws PortalException {
+    public List getChildIds(String nodeId) throws PortalException {
         Vector v=new Vector();
         UserLayoutNodeDescription node=getNode(nodeId);
         if(node instanceof UserLayoutFolderDescription) {
