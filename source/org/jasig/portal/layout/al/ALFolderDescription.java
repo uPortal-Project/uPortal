@@ -21,30 +21,30 @@ import org.w3c.dom.Element;
  * An extension of the FolderDescription for the Aggregated Layout implementation
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Michael Ivanov</a>
- * @version 1.0
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version 1.2
  */
-public class ALFolderDescription extends FolderDescriptionImpl implements IALFolderDescription {
+public class ALFolderDescription extends FolderDescriptionImpl implements IALNodeDescription {
 
-    protected ALNodeProperties alproperties;
+    protected ALNodeDescription alproperties;
 
     public ALFolderDescription() {
         super();
-        alproperties=new ALNodeProperties();
+        alproperties=new ALNodeDescription();
     }
 
     public ALFolderDescription(IFolderDescription d) {
         super(d);
-        if(d instanceof IALFolderDescription) {
-            alproperties=new ALNodeProperties((IALFolderDescription)d);
+        if(d instanceof IALNodeDescription) {
+            alproperties=new ALNodeDescription((IALNodeDescription)d);
         } else {            
-            this.alproperties=new ALNodeProperties();
+            this.alproperties=new ALNodeDescription();
         }
     }
 
     public ALFolderDescription(Element xmlNode) throws PortalException {
         super(xmlNode);
-        alproperties=new ALNodeProperties();
+        alproperties=new ALNodeDescription();
     }
 
     /**

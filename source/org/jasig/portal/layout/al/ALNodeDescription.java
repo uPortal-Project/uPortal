@@ -20,9 +20,10 @@ import org.w3c.dom.Element;
  * Thanks to the java's inability to support multiple inheritance, we can make a mess out of an elegant class structure.
  * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0
  */
-public class ALNodeProperties implements IALNodeProperties {
+public class ALNodeDescription implements IALNodeDescription {
 
     protected IFragmentId fragmentId = null;
     protected IFragmentLocalNodeId fragmentNodeId = null;
@@ -31,11 +32,11 @@ public class ALNodeProperties implements IALNodeProperties {
     protected String group = "";
 
 
-    public ALNodeProperties() {
+    public ALNodeDescription() {
     	restrictions = new HashSet();
     }
 
-    public ALNodeProperties(IALNodeProperties p) {
+    public ALNodeDescription(IALNodeDescription p) {
         this();
         this.fragmentId=p.getFragmentId();
         this.fragmentNodeId=p.getFragmentNodeId();

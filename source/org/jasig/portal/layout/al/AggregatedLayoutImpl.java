@@ -51,7 +51,7 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
     }
     
     protected ILayoutNode addNodeToLostFolder(INode node) throws PortalException {
-      return currentLayout.addNode(node,IALFolderDescription.LOST_FOLDER_ID,null);	
+      return currentLayout.addNode(node,IALFolder.LOST_FOLDER_ID,null);	
     }
     
     /* (non-Javadoc)

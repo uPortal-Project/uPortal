@@ -5,7 +5,9 @@
 
 package org.jasig.portal.layout.al;
 
+import org.jasig.portal.layout.al.common.node.IChannelDescription;
 import org.jasig.portal.layout.al.common.node.NodeType;
+import org.jasig.portal.layout.al.common.node.INodeDescription;
 
 
 
@@ -21,7 +23,7 @@ import org.jasig.portal.layout.al.common.node.NodeType;
 
 public class ALChannel extends ALNode {
 
-    public ALChannel ( IALChannelDescription nd ) {
+    public ALChannel ( INodeDescription nd ) {
         super (nd);
     }
 
@@ -31,5 +33,11 @@ public class ALChannel extends ALNode {
      */
      public NodeType getNodeType() {
        return NodeType.CHANNEL;
+     }
+     
+     public void setNodeDescription(INodeDescription nd) {
+    	if ( !(nd instanceof IChannelDescription) )
+      	  throw new RuntimeException("The node description object must implement IChannelDescription interface!");	
+        super.setNodeDescription(nd);
      }
 }

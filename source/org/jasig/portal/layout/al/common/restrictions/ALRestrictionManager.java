@@ -174,7 +174,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
   	
     IALNode node = (IALNode) layout.getNode(nodeId);
     IALNode oldParentNode = (IALNode) node.getParentNode();
-    IALFolder newParentNode = (IALFolder) layout.getNode(newParentId);
+    IALNode newParentNode = (IALNode) layout.getNode(newParentId);
 
     /*if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
          checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {*/
@@ -313,7 +313,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
         if ( nodeId == null ) return false;
         
         IALNode node = (IALNode) layout.getNode(nodeId);
-        IALNodeDescription currentNodeDesc = node.getNodeDescription();
+        INodeDescription currentNodeDesc = node.getNodeDescription();
 
         // Checking the immutable node restriction
         //if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
@@ -341,7 +341,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
         
         Collection restrictions = nodeDesc.getRestrictions();
         // Setting the new node description to the node
-        node.setNodeDescription(nodeDesc);
+        node.setNodeDescription(nodeDescription);
 
         // Checking restrictions for the node
         if ( restrictions != null ) {

@@ -9,7 +9,6 @@ package org.jasig.portal.layout.al;
 
 import java.util.Collection;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
 import org.jasig.portal.layout.al.common.node.INode;
@@ -31,30 +30,18 @@ import org.w3c.dom.Element;
 public abstract class ALNode implements IALNode {
     
     
-    protected IALNodeDescription nodeDescription;
+    protected INodeDescription nodeDescription;
     protected ALNode parentNode;
     protected ALNode nextSiblingNode;
     protected ALNode previousSiblingNode;
-    protected ALNode firstChildNode;
     protected INodeId id;
     
     protected int priority = 0;
     
-    public ALNode(IALNodeDescription nd) {
-        nodeDescription = nd;
+    public ALNode(INodeDescription nd) {
+       setNodeDescription(nd);
     }
-    /**
-     * @return Returns the firstChildNode.
-     */
-    public ILayoutNode getFirstChildNode() {
-        return firstChildNode;
-    }
-    /**
-     * @param firstChildNode The firstChildNode to set.
-     */
-    public void setFirstChildNode(ALNode firstChildNode) {
-        this.firstChildNode = firstChildNode;
-    }
+    
     /**
      * @return Returns the nextSiblingNode.
      */
@@ -95,10 +82,10 @@ public abstract class ALNode implements IALNode {
         return id;
     }
     public IFragmentId getFragmentId() {
-        return nodeDescription.getFragmentId();
+        return ((IALNodeDescription)nodeDescription).getFragmentId();
     }
     public IFragmentLocalNodeId getFragmentNodeId() {
-        return nodeDescription.getFragmentNodeId();
+        return ((IALNodeDescription)nodeDescription).getFragmentNodeId();
     }
     /**
      * Gets the node type
@@ -106,10 +93,12 @@ public abstract class ALNode implements IALNode {
      */
     public abstract NodeType getNodeType();
     
-    public void setNodeDescription(IALNodeDescription nd) {
-        nodeDescription = nd;
+    public void setNodeDescription(INodeDescription nd) {
+    	if ( !(nd instanceof IALNodeDescription) )
+      	  throw new RuntimeException("The node description object must implement IALNodeDescription interface!");	
+           nodeDescription = nd;
     }
-    public IALNodeDescription getNodeDescription() {
+    public INodeDescription getNodeDescription() {
         return nodeDescription;
     }
     /**
@@ -132,7 +121,7 @@ public abstract class ALNode implements IALNode {
      * @return a IUserLayoutRestriction
      */
     public IUserLayoutRestriction getRestriction(RestrictionType restrictionType,RestrictionPath restrictionPath) {
-            return nodeDescription.getRestriction(restrictionType,restrictionPath);
+            return ((IALNodeDescription)nodeDescription).getRestriction(restrictionType,restrictionPath);
     }
     /**
      * Gets a restriction by the type.
@@ -140,7 +129,7 @@ public abstract class ALNode implements IALNode {
      * @return a IUserLayoutRestriction
      */
     public IUserLayoutRestriction getLocalRestriction(RestrictionType restrictionType) {
-            return nodeDescription.getLocalRestriction(restrictionType);
+            return ((IALNodeDescription)nodeDescription).getLocalRestriction(restrictionType);
     }
     /**
      * Gets a restrictions list by a restriction path.
@@ -148,7 +137,7 @@ public abstract class ALNode implements IALNode {
      * @return a IUserLayoutRestriction
      */
     public Collection getRestrictionsByPath(RestrictionPath restrictionPath) {
-            return nodeDescription.getRestrictionsByPath(restrictionPath);
+            return ((IALNodeDescription)nodeDescription).getRestrictionsByPath(restrictionPath);
     }
     /**
      * Add all of common node attributes to the <code>Element</code>.
@@ -166,7 +155,7 @@ public abstract class ALNode implements IALNode {
      * @return an <code>IALNodeDescription</code> value
      * @exception PortalException if the xml passed is somehow invalid.
      */
-    public static IALNodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {
+    public static INodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {
         // is this a folder or a channel ?
         String nodeName = xmlNode.getNodeName();
         if (nodeName.equals("channel")) {
@@ -178,11 +167,11 @@ public abstract class ALNode implements IALNode {
         }
     }
     public static ALNode createALNode(INodeDescription nodeDescription) throws PortalException {
-        if (nodeDescription instanceof IALFolderDescription) {
+        if (nodeDescription.getType().equals(NodeType.FOLDER)) {
             // should be a folder
-            return new ALFolder(new ALFolderDescription((IALFolderDescription) nodeDescription));
-        } else if (nodeDescription instanceof IALChannelDescription) {
-            return new ALChannel(new ALChannelDescription((IALChannelDescription) nodeDescription));
+            return new ALFolder(nodeDescription);
+        } else if (nodeDescription.getType().equals(NodeType.CHANNEL)) {
+            return new ALChannel(nodeDescription);
         } else {
             throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
         }
@@ -192,20 +181,20 @@ public abstract class ALNode implements IALNode {
      * @param restriction
      */
     public void addRestriction(IUserLayoutRestriction restriction) {
-        nodeDescription.addRestriction(restriction);
+    	((IALNodeDescription)nodeDescription).addRestriction(restriction);
     }
     /**
      * @param node
      * @param root
      */
     public void addRestrictionChildren(Element node, Document root) {
-        nodeDescription.addRestrictionChildren(node, root);
+    	((IALNodeDescription)nodeDescription).addRestrictionChildren(node, root);
     }
     /**
      * @return
      */
     public String getGroup() {
-        return nodeDescription.getGroup();
+        return ((IALNodeDescription)nodeDescription).getGroup();
     }
     /**
      * @return
@@ -217,7 +206,7 @@ public abstract class ALNode implements IALNode {
      * @return
      */
     public Collection getRestrictions() {
-        return nodeDescription.getRestrictions();
+        return ((IALNodeDescription)nodeDescription).getRestrictions();
     }
     /**
      * @return
@@ -236,7 +225,7 @@ public abstract class ALNode implements IALNode {
      * @return
      */
     public boolean isFragmentRoot() {
-        return nodeDescription.isFragmentRoot();
+        return ((IALNodeDescription)nodeDescription).isFragmentRoot();
     }
     /**
      * @return
@@ -260,25 +249,25 @@ public abstract class ALNode implements IALNode {
      * @param fragmentId
      */
     public void setFragmentId(IFragmentId fragmentId) {
-        nodeDescription.setFragmentId(fragmentId);
+    	((IALNodeDescription)nodeDescription).setFragmentId(fragmentId);
     }
     /**
      * @param fragmentNodeId
      */
     public void setFragmentNodeId(IFragmentLocalNodeId fragmentNodeId) {
-        nodeDescription.setFragmentNodeId(fragmentNodeId);
+    	((IALNodeDescription)nodeDescription).setFragmentNodeId(fragmentNodeId);
     }
     /**
      * @param value
      */
     public void setFragmentRoot(boolean value) {
-        nodeDescription.setFragmentRoot(value);
+    	((IALNodeDescription)nodeDescription).setFragmentRoot(value);
     }
     /**
      * @param group
      */
     public void setGroup(String group) {
-        nodeDescription.setGroup(group);
+    	((IALNodeDescription)nodeDescription).setGroup(group);
     }
     /**
      * @param setting
@@ -308,7 +297,7 @@ public abstract class ALNode implements IALNode {
      * @param restrictions
      */
     public void setRestrictions(Collection restrictions) {
-        nodeDescription.setRestrictions(restrictions);
+    	((IALNodeDescription)nodeDescription).setRestrictions(restrictions);
     }
     /**
      * @param setting

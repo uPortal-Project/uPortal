@@ -21,11 +21,12 @@ import org.w3c.dom.Element;
  * An extension of the ChannelDescription for the Aggregated Layout implementation
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0
  */
-public class ALChannelDescription extends ChannelDescriptionImpl implements IALChannelDescription {
+public class ALChannelDescription extends ChannelDescriptionImpl implements IALNodeDescription {
 
-    protected ALNodeProperties alproperties=new ALNodeProperties();
+    protected ALNodeDescription alproperties=new ALNodeDescription();
 
     public ALChannelDescription() {
         super();
@@ -37,10 +38,10 @@ public class ALChannelDescription extends ChannelDescriptionImpl implements IALC
 
     public ALChannelDescription(IChannelDescription d) {
         super(d);
-        if(d instanceof IALChannelDescription) {
-            this.alproperties=new ALNodeProperties((IALChannelDescription)d);
+        if(d instanceof IALNodeDescription) {
+            this.alproperties=new ALNodeDescription((IALNodeDescription)d);
         } else {
-            this.alproperties=new ALNodeProperties();
+            this.alproperties=new ALNodeDescription();
         }
     }
 
