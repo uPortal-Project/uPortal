@@ -2228,20 +2228,20 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (pValue != null) {
               // store user preferences
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + folderId.substring(1) + "' AND PARAM_NAME='" + pName
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=2";
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + folderId.substring(1) + "' AND PARAM_NAME='"
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId.substring(1) + " AND PARAM_NAME='"
                     + pName + "' AND PARAM_TYPE=2";
               }
               else {
                 // insert
                 sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + folderId.substring(1) + "','" + pName + "',2,'" + pValue
+                    + userId + "," + profileId + "," + stylesheetId + ",1," + folderId.substring(1) + ",'" + pName + "',2,'" + pValue
                     + "')";
               }
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
@@ -2258,20 +2258,20 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (pValue != null) {
               // store user preferences
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='"
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
                     + pName + "' AND PARAM_TYPE=3";
               }
               else {
                 // insert
                 sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + channelId.substring(1) + "','" + pName + "',3,'" + pValue
+                    + userId + "," + profileId + "," + stylesheetId + ",1," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
@@ -2333,20 +2333,20 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (pValue != null) {
               // store user preferences
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='"
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
                     + pName + "' AND PARAM_TYPE=3";
               }
               else {
                 // insert
                 sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",2,'" + channelId.substring(1) + "','" + pName + "',3,'" + pValue
+                    + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
