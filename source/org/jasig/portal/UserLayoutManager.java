@@ -37,6 +37,8 @@ package org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 
+import org.jasig.portal.jndi.JNDIManager;
+
 import java.sql.*;
 import org.w3c.dom.*;
 
@@ -124,6 +126,9 @@ public class UserLayoutManager {
             unmapped_user_agent=true;
             Logger.log(Logger.DEBUG,"UserLayoutManager::UserLayoutManager() : unable to find a profile for user \""+this.person.getID()+"\" and userAgent=\""+userAgent+"\".");
         };
+        
+        // Initialize the JNDI context for this user
+        JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), person);
     }
     catch (Exception e)
     {

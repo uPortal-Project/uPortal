@@ -11,9 +11,6 @@ import javax.naming.InitialContext;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import tyrex.naming.MemoryContextFactory;
-import tyrex.naming.NamingPermission;
-
 import java.security.AccessController;
 
 import org.jasig.portal.services.LogService;
