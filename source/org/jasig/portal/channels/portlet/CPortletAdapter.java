@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.PortletContainer;
-import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.services.information.InformationProviderAccess;
@@ -327,13 +326,17 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             }
             
-            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
-            markup = sw.toString();
+            // Clear the request parameters if this portlet isn't targeted
+            if (!rd.isTargeted()) {
+                wrappedRequest.getParameterMap().clear();
+            }
             
-        } catch (PortletContainerException e) {
-            e.printStackTrace(System.err);
+            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            
+            markup = sw.toString();
+                        
         } catch (Throwable t) {
-            t.printStackTrace(System.err);
+            t.printStackTrace();
         }
         
         return markup;
