@@ -65,7 +65,8 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
       if (person.getAttributeValues(attName) != null) {
         Object[] values = person.getAttributeValues(attName);
         for (int i = 0; i < values.length; i++) {
-           log.trace("type of value["+i+"] is " + values[i].getClass().getName());
+           if (log.isTraceEnabled())
+               log.trace("type of value["+i+"] is " + values[i].getClass().getName());
            String value = values[i].toString();
            Element valueE = doc.createElement("value");
            valueE.appendChild(doc.createTextNode(value));
