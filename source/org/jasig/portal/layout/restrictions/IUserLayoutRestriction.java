@@ -7,7 +7,7 @@ package org.jasig.portal.layout.restrictions;
 
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.ILayoutNode;
 
 
 /**
@@ -29,6 +29,9 @@ import org.jasig.portal.layout.ALNode;
 
 
 public interface IUserLayoutRestriction {
+	
+  // The local restriction path defined for every restriction by default 	   
+  public final static String LOCAL_RESTRICTION_PATH = "local";	
 
 
   /**
@@ -55,11 +58,11 @@ public interface IUserLayoutRestriction {
 
   /**
      * Checks the relative restriction on a given node
-     * @param node a <code>ALNode</code> node
+     * @param node a <code>ILayoutNode</code> node
      * @return a boolean value
      * @exception PortalException
      */
-  public boolean checkRestriction ( ALNode node ) throws PortalException;
+  public boolean checkRestriction ( ILayoutNode node ) throws PortalException;
 
 
   /**

@@ -9,6 +9,7 @@ package org.jasig.portal.layout.restrictions;
 import java.util.StringTokenizer;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -19,7 +20,7 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 
-public class PriorityRestriction extends UserLayoutRestriction {
+public class PriorityRestriction extends ALRestriction {
 
 
          private int minPriority, maxPriority;
@@ -29,7 +30,7 @@ public class PriorityRestriction extends UserLayoutRestriction {
          }
 
          public PriorityRestriction() {
-           super(LOCAL_RESTRICTION);
+           super();
          }
 
          /**
@@ -63,7 +64,7 @@ public class PriorityRestriction extends UserLayoutRestriction {
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
           */
          public int getRestrictionType() {
-          return RestrictionTypes.PRIORITY_RESTRICTION|super.getRestrictionType();
+          return RestrictionTypes.PRIORITY_RESTRICTION;
          }
 
           /**
@@ -106,11 +107,15 @@ public class PriorityRestriction extends UserLayoutRestriction {
            * Checks the restriction for the current node
            * @exception PortalException
          */
-         public boolean checkRestriction( ALNode node ) throws PortalException {
+         public boolean checkRestriction( ILayoutNode node ) throws PortalException {
+         
+          if ( !(node instanceof ALNode) )
+          	throw new PortalException ( "The node must be ALNode type!");
+          ALNode alNode = (ALNode) node;
 
           // if we have a related priority restriction we should check the priority ranges
-          if ( nodePath != null && !nodePath.equals(LOCAL_RESTRICTION) ) {
-             PriorityRestriction restriction = (PriorityRestriction) node.getRestriction(getRestrictionName(RestrictionTypes.PRIORITY_RESTRICTION,null));
+          if ( nodePath != null && !nodePath.equals(LOCAL_RESTRICTION_PATH) ) {
+             PriorityRestriction restriction = (PriorityRestriction) alNode.getRestriction(getRestrictionName(RestrictionTypes.PRIORITY_RESTRICTION));
              if ( restriction != null ) {
               int[] range = restriction.getRange();
               if ( minPriority > range[1] || maxPriority < range[0] )
@@ -119,7 +124,7 @@ public class PriorityRestriction extends UserLayoutRestriction {
                 return true;
           }
 
-           int priority = node.getPriority();
+           int priority = alNode.getPriority();
            if ( priority <= maxPriority && priority >= minPriority )
              return true;
              return false;
