@@ -238,7 +238,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean checkRestriction(String nodeId, int restrictionType, String propertyValue ) throws PortalException {
-    return checkRestriction(nodeId, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue);
+    return (nodeId!=null)?checkRestriction(nodeId, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue):true;
   }
 
   /**
@@ -262,7 +262,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   while ( nodes.hasMoreElements() ) {
     String nodeId = (String) nodes.nextElement();
     ALNode node = getLayoutNode(nodeId);
-    if ( node != null ) {
+    if ( node != null && nodeId != null ) {
      if ( !moveNodeToLostFolder(nodeId) )
       LogService.log(LogService.INFO, "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
     }
@@ -494,7 +494,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      */
   private boolean checkDeleteRestrictions( String nodeId ) throws PortalException {
     ALNode node = getLayoutNode(nodeId);
-    if ( node == null ) return true;
+    if ( nodeId == null || node == null ) return true;
     //if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
     if ( !getLayoutNode(node.getParentNodeId()).getNodeDescription().isImmutable() ) {
          // Checking the unremovable restriction on the node to be deleted
@@ -809,6 +809,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean changeSiblingNodesOrder(String firstNodeId) throws PortalException {
+    if ( firstNodeId == null )
+      throw new PortalException ( "The first node ID in the sibling line cannot be NULL!" );
     ALNode firstNode = getLayoutNode(firstNodeId);
     String parentNodeId = firstNode.getParentNodeId();
     boolean rightOrder = true;
@@ -1554,8 +1556,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public IALNodeDescription getNodeBeingMoved() throws PortalException {
+     if ( moveTargetsNodeId != null ) {
       ALNode node = getLayoutNode(moveTargetsNodeId);
       return (node != null ) ? node.getNodeDescription() : null;
+     }
+      return null;
     }
 
 
