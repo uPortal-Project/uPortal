@@ -162,11 +162,11 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
   public void receiveEvent (PortalEvent ev, String uid) 
   {
-    if (ev.getEventNumber() == PortalEvent.SESSION_DONE || ev.getEventNumber() == PortalEvent.UNSUBSCRIBE) 
-    {
-      // clean up
-      stateTable.remove(uid);
-    }
+      if (ev.getEventNumber() == PortalEvent.SESSION_DONE) 
+      {
+          // clean up
+          stateTable.remove(uid);
+      }
   }
     
   public ChannelRuntimeProperties getRuntimeProperties (String uid)  
