@@ -35,15 +35,16 @@
 
 package  org.jasig.portal.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * Produces an empty Document implementation
@@ -53,7 +54,7 @@ import java.io.IOException;
 public class DocumentFactory {
     protected static DocumentFactory _instance;
     protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
-    protected static javax.xml.parsers.DocumentBuilderFactory dbFactory = null;
+    protected DocumentBuilderFactory dbFactory = null;
 
 
   protected static synchronized DocumentFactory instance(){
@@ -129,7 +130,7 @@ public class DocumentFactory {
       protected Object initialValue(){
           Object r = null;
           try{
-            r = dbFactory.newDocumentBuilder();
+            r = instance().dbFactory.newDocumentBuilder();
           }
           catch(Exception e){
               LogService.log(LogService.ERROR,e);
