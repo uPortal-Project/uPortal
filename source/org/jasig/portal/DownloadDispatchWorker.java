@@ -98,6 +98,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(new BrowserInfo(req));
                 rd.setChannelSubscribeId(channelTarget);
+                rd.setHttpRequestMethod(req.getMethod());
                 // just give a default baseActionURL
                 // this value should never really be used
                 rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,channelTarget,null));
