@@ -111,10 +111,15 @@ public class ChannelDefinition implements IBasicEntity {
   public void setEditable(boolean editable) {this.chanEditable = editable; }
   public void setHasHelp(boolean hasHelp) {this.chanHasHelp = hasHelp; }
   public void setHasAbout(boolean hasAbout) {this.chanHasAbout = hasAbout; }
+  public void clearParameters() { this.parameters.clear(); }
   public void setParameters(ChannelParameter[] parameters) {
     for (int i = 0; i < parameters.length; i++) {
       this.parameters.put(parameters[i].getName(), parameters[i]);
     }
+  }
+  public void replaceParameters(ChannelParameter[] parameters) {
+    clearParameters();
+    setParameters(parameters);
   }
   
   /**
