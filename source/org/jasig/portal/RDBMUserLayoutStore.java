@@ -2537,19 +2537,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           System.err.println("<--");
         }
 
-        // uPortal i18n
-        RDBMServices.PreparedStatement structStmt;
-        if (localeAware) {
-            structStmt = new RDBMServices.PreparedStatement(con,
-                                                            "INSERT INTO UP_LAYOUT_STRUCT " +
-                                                            "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,LOCALE) " +
-                                                            "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?,?)");
-        }  else {
-            structStmt = new RDBMServices.PreparedStatement(con,
-                                                            "INSERT INTO UP_LAYOUT_STRUCT " +
-                                                            "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
-                                                            "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
-        }
+        RDBMServices.PreparedStatement structStmt = new RDBMServices.PreparedStatement(con,
+                                                        "INSERT INTO UP_LAYOUT_STRUCT " +
+                                                        "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
+                                                        "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
         try {
           RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +
