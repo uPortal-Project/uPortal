@@ -195,6 +195,8 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
+         PersonDirectory.persons.put(person.getAttribute(IPerson.USERNAME), person);
+         
          // Record the successful authentication
          StatsRecorder.recordLogin(person);
       }
