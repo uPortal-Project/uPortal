@@ -481,7 +481,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
                         }
-                        sst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
+                        // sst.setParameter("locale", localeManager.getLocaleFromSessSessionParameter());
                         // all the parameters are set up, fire up structure transformation
 
                         // filter to fill in channel/folder attributes for the "structure" transformation.
@@ -544,7 +544,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
-                        tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
+                        // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
 
                         // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
                         // attach it downstream of the channel rendering buffer
