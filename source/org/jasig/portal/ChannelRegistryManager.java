@@ -113,7 +113,7 @@ public class ChannelRegistryManager {
 
       if (channelRegistry != null) {
         channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
-        LogService.instance().log(LogService.INFO, "Caching channel registry.");
+        LogService.log(LogService.INFO, "Caching channel registry.");
       }
     }
 
@@ -436,12 +436,12 @@ public class ChannelRegistryManager {
       newChannel = false;
       ID = Integer.parseInt(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
       channelDef = crs.getChannelDefinition(ID);
-      LogService.instance().log(LogService.DEBUG, "Attempting to modify channel " + ID + "...");
+      LogService.log(LogService.DEBUG, "Attempting to modify channel " + ID + "...");
     }
     else {
       channelDef = crs.newChannelDefinition();
       ID = channelDef.getId();
-      LogService.instance().log(LogService.DEBUG, "Attempting to publish new channel " + ID + "...");
+      LogService.log(LogService.DEBUG, "Attempting to publish new channel " + ID + "...");
     }
 
     // Add channel
@@ -495,7 +495,7 @@ public class ChannelRegistryManager {
     }
     upm.addPermissions(permissions);
 
-    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
+    LogService.log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
 
     // Record that a channel has been published or modified
     if (newChannel)
@@ -541,7 +541,7 @@ public class ChannelRegistryManager {
       if (channelTypes != null)
       {
         channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
-        LogService.instance().log(LogService.INFO, "Caching channel types.");
+        LogService.log(LogService.INFO, "Caching channel types.");
       }
     }
 
@@ -603,7 +603,7 @@ public class ChannelRegistryManager {
 
       if (cpd != null) {
         cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
-        LogService.instance().log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
+        LogService.log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
       }
     }
 

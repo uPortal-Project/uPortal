@@ -75,7 +75,7 @@ public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
             for(Enumeration ca=ssup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
                 attsImpl.addAttribute("",attrName,attrName,"CDATA",ssup.getChannelAttributeValue(channelSubscribeId,attrName));
-                //		LogService.instance().log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
+                //		LogService.log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else {

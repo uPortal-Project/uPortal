@@ -71,7 +71,7 @@ public class UserInstanceManager {
       // Retrieve the person object that is associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
+      LogService.log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
       throw  (new PortalSecurityException("Could not retrieve IPerson"));
     }
     // Return the UserInstance object if it's in the session

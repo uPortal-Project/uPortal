@@ -960,7 +960,7 @@ protected static void logNoTransactionWarning()
     String msg = "You are running the portal on a database that does not support transactions.  " +
                  "This is not a supported production environment for uPortal.  " +
                  "Sooner or later, your database will become corrupt.";
-    LogService.instance().log(LogService.WARN, msg);
+    LogService.log(LogService.WARN, msg);
 }
 /**
  * @return org.jasig.portal.groups.IEntity
@@ -1390,8 +1390,8 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             }
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.log(LogService.ERROR, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }

@@ -137,7 +137,7 @@ public class Authentication {
                }
             }
             else {
-               LogService.instance().log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
+               LogService.log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
             }
          }
          // Populate the person object using the PersonDirectory if applicable
@@ -185,7 +185,7 @@ public class Authentication {
                   autocreate);
             person.setID(newUID);
          } catch (AuthorizationException ae) {
-            LogService.instance().log(LogService.ERROR, ae);
+            LogService.log(LogService.ERROR, ae);
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
@@ -234,7 +234,7 @@ public class Authentication {
       // set in security properties. We will then use the value for root.
       username = (username != null ? username : (String)principals.get("root"));
       credential = (credential != null ? credential : (String)credentials.get("root"));
-      LogService.instance().log(LogService.DEBUG, "Authentication::setContextParameters() username: " + username);
+      LogService.log(LogService.DEBUG, "Authentication::setContextParameters() username: " + username);
       // Retrieve and populate an instance of the principal object
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
       if (username != null && !username.equals("")) {

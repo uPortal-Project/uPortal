@@ -80,8 +80,8 @@ public class ResourceLoader {
       System.setProperty("java.protocol.handler.pkgs",handler);
     }
     catch(Exception e){
-      LogService.instance().log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
-      LogService.instance().log(LogService.ERROR,e);
+      LogService.log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
+      LogService.log(LogService.ERROR,e);
     }
   }
 

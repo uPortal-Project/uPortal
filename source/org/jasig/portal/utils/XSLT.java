@@ -131,7 +131,7 @@ public class XSLT {
       }
     }
     if (saxTFactory == null) {
-      LogService.instance().log(LogService.ERROR, "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
+      LogService.log(LogService.ERROR, "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
     }
     return saxTFactory;
   }

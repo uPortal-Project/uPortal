@@ -131,7 +131,7 @@ private void initialize() throws CachingException
     if ( factoryName == null )
     {
         eMsg = "EntityCachingService.initialize(): No entry for org.jasig.portal.concurrency.caching.IEntityCachingServiceFactory in portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new CachingException(eMsg);
     }
 
@@ -144,7 +144,7 @@ private void initialize() throws CachingException
     catch (Exception e)
     {
         eMsg = "EntityCachingService.initialize(): Problem creating entity caching service... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new CachingException(eMsg);
     }
 }

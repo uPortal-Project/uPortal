@@ -480,14 +480,14 @@ private void initialize() throws AuthorizationException
     if ( factoryName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
     if ( policyName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -498,7 +498,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -509,7 +509,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 

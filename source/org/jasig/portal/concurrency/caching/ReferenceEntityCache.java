@@ -139,7 +139,7 @@ public void clearCache()
 void debug(String msg)
 {
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    LogService.instance().log(LogService.DEBUG, ts + " : " + msg);
+    LogService.log(LogService.DEBUG, ts + " : " + msg);
 }
 /**
  * @param String key - the key of the entity.

@@ -106,7 +106,7 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
         stmt = conn.createStatement();
         String sql = getCreateCounterSql(tableName);
 
-        LogService.instance().log
+        LogService.log
             (LogService.DEBUG, "ReferenceSequenceGenerator.createCounter: " + sql);
 
         int rc = stmt.executeUpdate(getCreateCounterSql(tableName));
@@ -116,7 +116,7 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
     }
     catch ( SQLException sqle )
     {
-        LogService.instance().log
+        LogService.log
             (LogService.ERROR, "ReferenceSequenceGenerator::createCounter(): " + sqle.getMessage());
         throw sqle;
     }
@@ -163,7 +163,7 @@ throws SQLException
         try
         {
             ps.setString(1, tableName);
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "ReferenceSequenceGenerator.getNextInt(): " + ps + " (" + tableName + ")");
             rs = ps.executeQuery();
             int currentInt = ( rs.next() ) ? rs.getInt(VALUE_COLUMN) : NO_COUNTER_VALUE;
@@ -231,7 +231,7 @@ public synchronized int getNextInt(String tableName) throws Exception
 
     catch ( SQLException sqle )
     {
-        LogService.instance().log
+        LogService.log
             (LogService.ERROR, "ReferenceSequenceGenerator.getNextInt(): " + sqle.getMessage());
         throw sqle;
     }
@@ -329,7 +329,7 @@ throws SQLException
             ps.setInt(1, nextCounterValue);
             ps.setString(2, tableName);
             ps.setInt(3, currentCounterValue);
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
                   "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
             int rc = ps.executeUpdate();
@@ -338,7 +338,7 @@ throws SQLException
         }
         catch (SQLException sqle)
         {
-            LogService.instance().log(LogService.ERROR,
+            LogService.log(LogService.ERROR,
                 "ReferenceSequenceGenerator.primIncrementCounter(): " + sqle.getMessage());
             throw sqle;
         }
@@ -367,7 +367,7 @@ public synchronized void setCounter (String tableName, int newCounterValue) thro
 
     catch ( SQLException sqle )
     {
-        LogService.instance().log
+        LogService.log
             (LogService.ERROR, "ReferenceSequenceGenerator::setCounter(): " + sqle.getMessage());
         throw sqle;
     }
@@ -394,7 +394,7 @@ throws SQLException
         {
             ps.setInt(1, newCounterValue);
             ps.setString(2, tableName);
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "ReferenceSequenceGenerator.setCounter(): " + ps + "(" + newCounterValue + ", " + tableName + ")");
             int rc = ps.executeUpdate();
             if (rc != 1)
@@ -402,7 +402,7 @@ throws SQLException
          }
         catch (SQLException sqle)
         {
-            LogService.instance().log(LogService.ERROR, sqle.getMessage());
+            LogService.log(LogService.ERROR, sqle.getMessage());
             throw sqle;
         }
     }

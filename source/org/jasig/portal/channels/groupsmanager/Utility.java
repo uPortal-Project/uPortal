@@ -130,11 +130,11 @@ public class Utility
             ts2 = Calendar.getInstance().getTime().getTime();
          }
       }
-      LogService.instance().log(msgType, msg);
+      LogService.log(msgType, msg);
 
       // if an exception object was passed, print it's stack trace
       if (th != null){
-         LogService.instance().log(msgType, th);
+         LogService.log(msgType, th);
       }
 
       return;

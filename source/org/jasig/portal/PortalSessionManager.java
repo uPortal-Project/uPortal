@@ -108,7 +108,7 @@ public class PortalSessionManager extends HttpServlet {
   private static final Random randomGenerator = new Random();
 
   static {
-    LogService.instance().log(LogService.INFO, "uPortal started");
+    LogService.log(LogService.INFO, "uPortal started");
   }
 
   /**
@@ -133,13 +133,13 @@ public class PortalSessionManager extends HttpServlet {
               StringWriter sw=new StringWriter();
               pe.getRecordedException().printStackTrace(new PrintWriter(sw));
               sw.flush();
-              LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
+              LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
               throw new ServletException(pe.getRecordedException());
           } else {
               StringWriter sw=new StringWriter();
               pe.printStackTrace(new PrintWriter(sw));
               sw.flush();
-              LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
+              LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
               throw new ServletException(pe);
           }
       }
@@ -206,7 +206,7 @@ public class PortalSessionManager extends HttpServlet {
                     request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
                 }
 
-                LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
+                LogService.log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
             }
 
             try {
@@ -216,7 +216,7 @@ public class PortalSessionManager extends HttpServlet {
                     userInstance = UserInstanceManager.getUserInstance(req);
                 } catch(Exception e) {
                     // NOTE: Should probably be forwarded to error page if the user instance could not be properly retrieved.
-                    LogService.instance().log(LogService.ERROR, e);
+                    LogService.log(LogService.ERROR, e);
                     // invalidate session, throw exception
                     if(session!=null) {
                         session.invalidate();
@@ -237,10 +237,10 @@ public class PortalSessionManager extends HttpServlet {
                 } else {
                     // generate and register a new tag
                     String newTag=Long.toHexString(randomGenerator.nextLong());
-                    LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+req.getSession(false).getId());
+                    LogService.log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+req.getSession(false).getId());
                     // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
                     if(!requestTags.add(newTag)) {
-                        LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
+                        LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
 
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
@@ -253,7 +253,7 @@ public class PortalSessionManager extends HttpServlet {
                 StringWriter sw = new StringWriter();
                 pe.printStackTrace(new PrintWriter(sw));
                 sw.flush();
-                LogService.instance().log(LogService.ERROR, "PortalSessionManager::doGet() : a PortalException has occurred: " + sw.toString());
+                LogService.log(LogService.ERROR, "PortalSessionManager::doGet() : a PortalException has occurred: " + sw.toString());
                 Throwable t = pe.getRecordedException();
                 if (t == null)
                   throw new ServletException(pe);
@@ -261,7 +261,7 @@ public class PortalSessionManager extends HttpServlet {
                   sw = new StringWriter();
                   t.printStackTrace(new PrintWriter(sw));
                   sw.flush();
-                  LogService.instance().log(LogService.ERROR, "PortalSessionManager::doGet() : with nested Exception: " + sw.toString());
+                  LogService.log(LogService.ERROR, "PortalSessionManager::doGet() : with nested Exception: " + sw.toString());
                   if (t instanceof PortalException) {
                     t = ((PortalException)t).getRecordedException();
                   } else if (t instanceof java.lang.reflect.InvocationTargetException) {
@@ -275,7 +275,7 @@ public class PortalSessionManager extends HttpServlet {
                 StringWriter sw=new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 sw.flush();
-                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
+                LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
                 throw new ServletException(e);
             }
 
@@ -539,14 +539,14 @@ public class PortalSessionManager extends HttpServlet {
                             }
                         }
                     } catch (Exception e) {
-                        LogService.instance().log(LogService.ERROR, e);
+                        LogService.log(LogService.ERROR, e);
                     }
                 }
                 // regular params
                 try {
                     source.setCharacterEncoding("UTF-8");
                 } catch (UnsupportedEncodingException uee) {
-                    LogService.instance().log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! "+uee);
+                    LogService.log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! "+uee);
                 }
                 Enumeration en = source.getParameterNames();
                 if (en != null) {

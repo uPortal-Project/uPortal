@@ -79,7 +79,7 @@ public class InitialSecurityContextFactory {
 
     if (ctx.indexOf('.') != -1) {
       PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
       }
 
@@ -94,7 +94,7 @@ public class InitialSecurityContextFactory {
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -103,7 +103,7 @@ public class InitialSecurityContextFactory {
 
     if ((factoryname = pr.getProperty(ctx)) == null) {
       PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
     try {
@@ -112,7 +112,7 @@ public class InitialSecurityContextFactory {
     }
     catch (Exception e) {
       PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryname);
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -142,7 +142,7 @@ public class InitialSecurityContextFactory {
           PortalSecurityException ep =
               new PortalSecurityException("(Subcontext)Failed to instantiate " +
                 sfactoryname);
-          LogService.instance().log(LogService.ERROR,ep);
+          LogService.log(LogService.ERROR,ep);
           throw(ep);
         }
       }

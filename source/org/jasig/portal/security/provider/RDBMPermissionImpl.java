@@ -132,7 +132,7 @@ public void add(IPermission perm) throws AuthorizationException
         try
         {
             primAdd(perm, ps);
-            LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.add(): " + ps);
+            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.add(): " + ps);
             rc = ps.executeUpdate();
             if ( rc != 1 )
                 { throw new AuthorizationException("Problem adding Permission " + perm); }
@@ -220,7 +220,7 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
             ps.setString(3, getPrincipalKey(perm));
             ps.setString(4, perm.getActivity());
             ps.setString(5, perm.getTarget());
-            LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
+            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
             ResultSet rs = ps.executeQuery();
             try {
               return ( rs.next() );
@@ -494,7 +494,7 @@ private void primAdd(IPermission[] perms) throws Exception
             for ( int i=0; i<perms.length; i++ )
             {
                 primAdd(perms[i], ps);
-                LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primAdd(): " + ps);
+                LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primAdd(): " + ps);
                 rc = ps.executeUpdate();
 
                 if ( rc != 1 )
@@ -618,7 +618,7 @@ private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(3, getPrincipalKey(perm));
     ps.setString(4, perm.getActivity());
     ps.setString(5, perm.getTarget());
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
 
     return ps.executeUpdate();
 }
@@ -702,7 +702,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(6, getPrincipalKey(perm));
     ps.setString(7, perm.getActivity());
     ps.setString(8, perm.getTarget());
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
 
 
     return ps.executeUpdate();
@@ -783,7 +783,7 @@ throws AuthorizationException
             sqlQuery.append("' ");
         }
 
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.select(): " + sqlQuery.toString());
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.select(): " + sqlQuery.toString());
 
     try
     {
@@ -855,7 +855,7 @@ public void update(IPermission perm) throws AuthorizationException
     {
         conn = RDBMServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.update(): " + sQuery);
+        LogService.log(LogService.DEBUG, "RDBMPermissionImpl.update(): " + sQuery);
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
         try
             { primUpdate(perm, ps); }

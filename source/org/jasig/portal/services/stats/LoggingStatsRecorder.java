@@ -72,7 +72,7 @@ public class LoggingStatsRecorder extends MessageStatsRecorder {
    * @param message, the message to print
    */   
   protected void outputMessage(String message) {
-    LogService.instance().log(priority, message);
+    LogService.log(priority, message);
   }
      
 }

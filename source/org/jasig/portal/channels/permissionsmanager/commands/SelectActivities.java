@@ -62,7 +62,7 @@ public class SelectActivities
     }
 
     public void execute (PermissionsSessionData session) throws Exception{
-            LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectActivities processing");
+            LogService.log(LogService.DEBUG,"PermissionsManager->SelectActivities processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();

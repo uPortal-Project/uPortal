@@ -305,9 +305,9 @@ class ManageProfilesState extends BaseState {
       }
       edEl.appendChild(sEl);
       /*  try {
-       LogService.instance().log(LogService.DEBUG,org.jasig.portal.utils.XML.serializeNode(doc));
+       LogService.log(LogService.DEBUG,org.jasig.portal.utils.XML.serializeNode(doc));
        } catch (Exception e) {
-       LogService.instance().log(LogService.ERROR,e);
+       LogService.log(LogService.ERROR,e);
        }
        */
       // debug printout of the document sent to the XSLT
@@ -318,9 +318,9 @@ class ManageProfilesState extends BaseState {
       org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, outputFormat);
       try {
           dbser1.serialize(doc);
-      LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
+      LogService.log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
       } catch (Exception e) {
-          LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : problems serializing incoming XML");
+          LogService.log(LogService.DEBUG, "ManageProfilesState::renderXML() : problems serializing incoming XML");
       }
       */
 
@@ -378,7 +378,7 @@ class ManageProfilesState extends BaseState {
         mimeImagesProps.load(in);
         in.close();
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
+        LogService.log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
       }
       this.context = context;
     }
@@ -649,9 +649,9 @@ class ManageProfilesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)

@@ -71,7 +71,7 @@ public class Cancel implements IPermissionCommand {
         session.isFinished=true;
         session.view = null;
         //sd.setParameter("prmFinished","true");
-        LogService.instance().log(LogService.DEBUG,"PermissionsManager.Cancel complete");
+        LogService.log(LogService.DEBUG,"PermissionsManager.Cancel complete");
     }
 
 }

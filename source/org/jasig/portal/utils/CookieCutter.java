@@ -201,7 +201,7 @@ public class CookieCutter
            }
            catch(ParseException e)
            {
-             LogService.instance().log(LogService.WARN, "CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
+             LogService.log(LogService.WARN, "CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
            }
          }
        }
@@ -234,7 +234,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
+          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
@@ -349,7 +349,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
+          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie

@@ -108,7 +108,7 @@ public class MediaManager {
         mediaProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -128,7 +128,7 @@ public class MediaManager {
         mimeProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -148,7 +148,7 @@ public class MediaManager {
         serializerProps = new OrderedProps(url.openStream());
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -269,7 +269,7 @@ public class MediaManager {
       return getSerializerByName(serializerName, out);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
+      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
       return  null;
     }
   }
@@ -343,7 +343,7 @@ public class MediaManager {
       return  getSerializer(mediaProps.getValue(req.getHeader("User-Agent")), out);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
+      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
       return  null;
     }
   }

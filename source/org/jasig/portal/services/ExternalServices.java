@@ -93,7 +93,7 @@ public class ExternalServices {
    */
   protected void outputMessage(String msg) {
     System.out.println("External services: " + msg);
-    LogService.instance().log(LogService.INFO, "External services: " + msg);
+    LogService.log(LogService.INFO, "External services: " + msg);
   }
 
   /**

@@ -57,7 +57,7 @@ public class UserLayoutStoreFactory {
     } catch (Exception e ) {}
   
     if (className == null || className.length() == 0 )
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: org.jasig.portal.UserLayoutStoreFactory.implementation must be specified in portal.properties");
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: org.jasig.portal.UserLayoutStoreFactory.implementation must be specified in portal.properties");
   }
 
   /**
@@ -68,11 +68,11 @@ public class UserLayoutStoreFactory {
     try {
       return getUserLayoutStoreImpl( className );
     } catch ( PortalException pe ) {
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + className, pe);
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + className, pe);
       try {
         return getUserLayoutStoreImpl( DEFAULT_CLASS_NAME );
       } catch ( PortalException pe1 ) {
-        LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
+        LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
         return null;
       }
     }
@@ -90,7 +90,7 @@ public class UserLayoutStoreFactory {
       }
       return userLayoutStoreImpl;
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not instantiate " + className, e);
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not instantiate " + className, e);
       throw new PortalException(e.getMessage());
     }
   }

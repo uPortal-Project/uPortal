@@ -80,7 +80,7 @@ public class PermissibleSubscribeChannels
                 targets.put("CHAN_ID." + chanID, chanf.getName(chanID));
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 

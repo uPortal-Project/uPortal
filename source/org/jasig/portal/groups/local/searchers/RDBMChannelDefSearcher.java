@@ -63,7 +63,7 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
       chanDef = Class.forName("org.jasig.portal.ChannelDefinition");
     }
     catch(Exception e){
-      LogService.instance().log(LogService.ERROR,e); 
+      LogService.log(LogService.ERROR,e); 
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -105,8 +105,8 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
             }
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.log(LogService.ERROR, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }

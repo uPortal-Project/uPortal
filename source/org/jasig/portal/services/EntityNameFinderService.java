@@ -105,7 +105,7 @@ private synchronized void initialize()
             {
                 String dMsg = "EntityNameFinderService.initialize(): " +
                     "could not find property for " + type.getName() + " factory.";
-                LogService.instance().log( LogService.DEBUG, dMsg );
+                LogService.log( LogService.DEBUG, dMsg );
             }
             if ( factoryName != null )
             {
@@ -119,7 +119,7 @@ private synchronized void initialize()
                 {
                     String eMsg = "EntityNameFinderService.initialize(): " +
                         "Could not instantiate finder for " + type.getName() + ": ";
-                    LogService.instance().log( LogService.ERROR, eMsg + e.getMessage() );
+                    LogService.log( LogService.ERROR, eMsg + e.getMessage() );
                 }
             }
         }

@@ -84,7 +84,7 @@ public class AuthenticationServlet extends HttpServlet {
          while (propNames.hasMoreElements()) {
             String propName = (String)propNames.nextElement();
             String propValue = props.getProperty(propName);
-            //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
+            //LogService.log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
             if (propName.startsWith("credentialToken.")) {
                key = propName.substring(16);
                cHash.put(key, propValue);
@@ -188,7 +188,7 @@ public class AuthenticationServlet extends HttpServlet {
     Iterator tokenItr = tokens.keySet().iterator();
     while (tokenItr.hasNext()) {
       String ctxName = (String)tokenItr.next();
-      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
+      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
       String parmName = (String)tokens.get(ctxName);
       String parmValue = request.getParameter(parmName);
       // null value causes exception in context.authentication
@@ -200,7 +200,7 @@ public class AuthenticationServlet extends HttpServlet {
       // as example, the contexts ["root", "root.simple", "root.cas"] are represented
       // as ["root", "simple", "cas"].
       String key = (ctxName.startsWith("root.") ? ctxName.substring(5) : ctxName);
-      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
+      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
       retHash.put(key, parmValue);
     }
     return (retHash);

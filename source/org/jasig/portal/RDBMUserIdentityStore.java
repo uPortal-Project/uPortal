@@ -198,7 +198,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       catch(Exception e) {}
 
       // Log the exception
-      LogService.instance().log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
+      LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
       throw new AuthorizationException("RDBMUserIdentityStore: Could not create database statement");
     }
 
@@ -317,7 +317,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         catch(SQLException se)
         {
           // Log the exception
-          LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
+          LogService.log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
         }
 
         String Insert = new String();
@@ -467,7 +467,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
       catch (SQLException e)
       {
-        LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
+        LogService.log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
       }
       // DEBUG
       if (DEBUG>0)

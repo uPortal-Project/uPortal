@@ -147,11 +147,11 @@ public class CUserPreferences implements IPrivilegedChannel {
                 managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
                 ((BaseState)managePreferences).setContext(this);
             } else {
-                LogService.instance().log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+                LogService.log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
                 managePreferences = new GPreferencesState(this);
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             managePreferences = new GPreferencesState(this);
         }
     }

@@ -122,7 +122,7 @@ public class CarResources {
 	    PrintWriter p = new PrintWriter( sw );
 	    e.printStackTrace( p );
 	    p.flush();
-	    LogService.instance().log( LogService.ERROR,
+	    LogService.log( LogService.ERROR,
 				       "An Exception occurred while loading " +
 				       "channel archives. Any channels " +
 				       "deployed via CARs will not be " +
@@ -152,7 +152,7 @@ public class CarResources {
 
         if ( carDirRealPath == null )
         {
-            LogService.instance().log( LogService.ERROR,
+            LogService.log( LogService.ERROR,
                                        "Channel Archives will not be " +
                                        " loaded. Unable to aquire the real " +
 				       "path to '" + WELL_KNOWN_DIR +
@@ -171,7 +171,7 @@ public class CarResources {
        
         if ( ! carDir.exists() )
         {
-            LogService.instance().log( LogService.ERROR,
+            LogService.log( LogService.ERROR,
                                        "Channel Archives can not be " +
                                        " loaded. CAR directory '" +
                                        carDirRealPath + "' does not exist." );
@@ -200,7 +200,7 @@ public class CarResources {
         }
         catch( RuntimeException re )
         {
-            LogService.instance().log( LogService.ERROR,
+            LogService.log( LogService.ERROR,
                                        "CAR directory property '" +
 				       CAR_DIR_PROP_NAME +
 				       "' not specified. Defaulting to " +
@@ -211,7 +211,7 @@ public class CarResources {
 
         if ( ! carDir.exists() )
         {
-            LogService.instance().log( LogService.ERROR,
+            LogService.log( LogService.ERROR,
                                        "CAR directory '" + carDirPath +
 				       "' specified by property '" +
 				       CAR_DIR_PROP_NAME +
@@ -238,7 +238,7 @@ public class CarResources {
 	if ( carDir != null )
 	{    
 	    scanDir( carDir );
-	    LogService.instance().log( LogService.INFO,
+	    LogService.log( LogService.INFO,
 				       "Channel Archives Loaded: " +
 				       carsByPath.size() +
 				       " from '" + this.carDirPath + "'" );
@@ -280,7 +280,7 @@ public class CarResources {
         }
         catch( IOException ioe )
         {
-            LogService.instance().log( LogService.ERROR,
+            LogService.log( LogService.ERROR,
                                        "CAR " + getCarPath( car ) +
                                        " could not be loaded. Details: " +
                                        ( ioe.getMessage() != null ?

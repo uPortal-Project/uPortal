@@ -64,8 +64,8 @@ public class PropertiesManager {
     try {
       props.load(PropertiesManager.class.getResourceAsStream(PORTAL_PROPERTIES_FILE_NAME));
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "Unable to read portal.properties file.");
-      LogService.instance().log(LogService.ERROR, ioe);
+      LogService.log(LogService.ERROR, "Unable to read portal.properties file.");
+      LogService.log(LogService.ERROR, ioe);
     }
   }
 

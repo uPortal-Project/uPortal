@@ -93,9 +93,9 @@ public class LogoutServlet extends HttpServlet {
                if (propName.startsWith("logoutRedirect.")) {
                   key = propName.substring(15);
                   key = (key.startsWith("root.") ? key.substring(5) : key);
-                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                  LogService.log(LogService.DEBUG, "LogoutServlet::initializer()" +
                      " Redirect key = " + key);
-                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                  LogService.log(LogService.DEBUG, "LogoutServlet::initializer()" +
                      " Redirect value = " + propValue);
                   rdHash.put(key, propValue);
                }
@@ -179,7 +179,7 @@ public class LogoutServlet extends HttpServlet {
          // Retrieve the security context for the user
          ISecurityContext securityContext = person.getSecurityContext();
          if (securityContext.isAuthenticated()) {
-            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
                " Looking for redirect string for the root context");
             redirect = (String)REDIRECT_MAP.get("root");
             if (redirect != null && !redirect.equals("")) {
@@ -189,18 +189,18 @@ public class LogoutServlet extends HttpServlet {
          Enumeration subCtxNames = securityContext.getSubContextNames();
          while (subCtxNames.hasMoreElements()) {
             String subCtxName = (String)subCtxNames.nextElement();
-            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl() " +
+            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl() " +
                " subCtxName = " + subCtxName);
             // strip off "root." part of name
             ISecurityContext sc = securityContext.getSubContext(subCtxName);
-            LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
                " subCtxName isAuth = " + sc.isAuthenticated());
             if (sc.isAuthenticated()) {
-               LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+               LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
                   " Looking for redirect string for subCtxName = " + subCtxName);
                redirect = (String)REDIRECT_MAP.get(subCtxName);
                if (redirect != null && !redirect.equals("")) {
-                  LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+                  LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
                      " subCtxName redirect = " + redirect);
                   break;
                }
@@ -214,7 +214,7 @@ public class LogoutServlet extends HttpServlet {
       if (redirect == null) {
          redirect = defaultRedirect;
       }
-      LogService.instance().log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+      LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
          " redirectionURL = " + redirect);
       return  redirect;
    }

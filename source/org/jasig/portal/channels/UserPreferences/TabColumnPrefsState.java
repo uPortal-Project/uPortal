@@ -206,7 +206,7 @@ public class TabColumnPrefsState extends BaseState
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
-      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
+      LogService.log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
   }
 
   // Helper methods...
@@ -239,7 +239,7 @@ public class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
+      LogService.log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
     }
 
     return activeTab;
@@ -357,7 +357,7 @@ public class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        LogService.instance().log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+        LogService.log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
 
@@ -687,7 +687,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageSetActiveTab;
           }
@@ -704,7 +704,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageRenameTab;
           }
@@ -730,7 +730,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveTab;
           }
@@ -756,7 +756,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageAddTab;
           }
@@ -772,7 +772,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
           }
@@ -788,7 +788,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageLockTab;
           }
@@ -804,7 +804,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageUnlockTab;
           }
@@ -836,7 +836,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageChangeColumnWidths;
           }
@@ -866,7 +866,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveColumn;
           }
@@ -884,7 +884,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageNewColumn;
           }
@@ -907,7 +907,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteColumn;
           }
@@ -959,7 +959,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveChannel;
           }
@@ -975,7 +975,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteChannel;
           }
@@ -1049,14 +1049,14 @@ public class TabColumnPrefsState extends BaseState
           
           // Debug piece to print out the recorded pre-structure transformation XML
           if (printXMLToLog) {
-            LogService.instance().log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
+            LogService.log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
           }          
 
         } else {
-          LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
+          LogService.log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
         throw new GeneralRenderingException(e.getMessage());
       }
     }

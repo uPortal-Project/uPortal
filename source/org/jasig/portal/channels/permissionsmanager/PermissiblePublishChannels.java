@@ -64,7 +64,7 @@ public class PermissiblePublishChannels
             activities.put("PUBLISH", "Publish a Channel");
             targets.put("CHAN_ID.*", "This uPortal installation");
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
