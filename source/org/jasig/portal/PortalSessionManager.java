@@ -63,40 +63,46 @@ public class PortalSessionManager extends HttpServlet {
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
   private static int sizeLimit = 3000000;       // Should be channel specific
+  private static boolean initialized = false;
 
   /**
    * Initialize the PortalSessionManager servlet
    * @exception ServletException
    */
   public void init () throws ServletException {
-    // Retrieve the servlet configuration object from the servlet container
-    ServletConfig sc = getServletConfig();
-    // Make sure the ServletConfig object is available
-    if (sc == null) {
-      throw  new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
+    if(!initialized)
+    {
+      // Retrieve the servlet configuration object from the servlet container
+      ServletConfig sc = getServletConfig();
+      // Make sure the ServletConfig object is available
+      if (sc == null) {
+        throw  new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
+      }
+      // Get the portal base directory
+      String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
+      // Make sure the directory is a properly formatted string
+      sPortalBaseDir.replace('/', File.separatorChar);
+      sPortalBaseDir.replace('\\', File.separatorChar);
+      // Add a seperator on the end of the path if it's missing
+      if (!sPortalBaseDir.endsWith(File.separator)) {
+        sPortalBaseDir += File.separator;
+      }
+      // Make sure the portal base directory is properly set
+      if (sPortalBaseDir == null) {
+        throw  new ServletException("PortalSessionManager.init(): portalBaseDir not found, check web.xml file");
+      }
+      // Try to create a file pointing to the portal base directory
+      File portalBaseDir = new java.io.File(sPortalBaseDir);
+      // Make sure the directory exists
+      if (!portalBaseDir.exists()) {
+        throw  new ServletException("PortalSessionManager.init(): Portal base directory " + sPortalBaseDir + " does not exist");
+      }
+      // Set the portal base directory
+      GenericPortalBean.setPortalBaseDir(sPortalBaseDir);
+      JNDIManager.initializePortalContext();
+      // Flag that the portal has been initialized
+      initialized = true;
     }
-    // Get the portal base directory
-    String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
-    // Make sure the directory is a properly formatted string
-    sPortalBaseDir.replace('/', File.separatorChar);
-    sPortalBaseDir.replace('\\', File.separatorChar);
-    // Add a seperator on the end of the path if it's missing
-    if (!sPortalBaseDir.endsWith(File.separator)) {
-      sPortalBaseDir += File.separator;
-    }
-    // Make sure the portal base directory is properly set
-    if (sPortalBaseDir == null) {
-      throw  new ServletException("PortalSessionManager.init(): portalBaseDir not found, check web.xml file");
-    }
-    // Try to create a file pointing to the portal base directory
-    File portalBaseDir = new java.io.File(sPortalBaseDir);
-    // Make sure the directory exists
-    if (!portalBaseDir.exists()) {
-      throw  new ServletException("PortalSessionManager.init(): Portal base directory " + sPortalBaseDir + " does not exist");
-    }
-    // Set the portal base directory
-    GenericPortalBean.setPortalBaseDir(sPortalBaseDir);
-    JNDIManager.initializePortalContext();
   }
 
   /**
